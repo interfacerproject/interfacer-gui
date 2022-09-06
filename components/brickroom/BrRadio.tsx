@@ -1,5 +1,5 @@
 import React, {ChangeEvent} from "react";
-// import {ExclamationIcon} from "@heroicons/react/solid";
+import {ExclamationIcon} from "@heroicons/react/solid";
 
 type BrRadioProps = {
     array: Array<{ id: string, name: string, value: string, label: string}>;
@@ -27,7 +27,7 @@ const BrRadio = (props: BrRadioProps) => {
             </label>)}
             <label className="label">
                 {props.error && <span className="flex flex-row items-center justify-between label-text-alt text-warning">
-                    {/* <ExclamationIcon className='w-5 h-5' /> */}
+                    <ExclamationIcon className='w-5 h-5' />
                     {props.error}</span>}
                 {props.hint && <span className="label-text-alt">{props.hint}</span>}
             </label>

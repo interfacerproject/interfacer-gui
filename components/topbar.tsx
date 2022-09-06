@@ -1,5 +1,5 @@
 import React from 'react';
-// import {BellIcon, MailIcon} from "@heroicons/react/outline";
+import {BellIcon} from "@heroicons/react/outline";
 import LocationMenu from "./LocationMenu";
 
 
@@ -19,7 +19,7 @@ function Topbar() {
             </div>
             <div className="navbar-end">
                  <button className="btn btn-circle btn-accent  bg-white mr-4" disabled>
-                     {/* <BellIcon className="w-5 h-5"/> */}
+                     <BellIcon className="w-5 h-5"/>
                 </button>
                 <LocationMenu/>
             </div>

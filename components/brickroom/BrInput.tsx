@@ -1,5 +1,5 @@
 import React, {ChangeEventHandler, LegacyRef} from "react";
-// import {ExclamationIcon} from '@heroicons/react/solid'
+import {ExclamationIcon} from '@heroicons/react/solid'
 
 type BrInputProps = {
     type?: 'number' | 'text' | 'password' | 'date' | 'email',

@@ -5,7 +5,7 @@ import {useRouter} from 'next/router'
 // import ActionsBlock from "../../components/ActionsBlock";
 // import {mapUnit} from "../../lib/mapUnit";
 import QrCodeButton from "../../components/brickroom/QrCodeButton";
-// import {ArrowNarrowLeftIcon} from "@heroicons/react/solid";
+import {ArrowNarrowLeftIcon} from "@heroicons/react/solid";
 import Card from "../../components/brickroom/Card";
 
 const Resource: NextPage = () => {
@@ -61,7 +61,7 @@ const Resource: NextPage = () => {
     return (
         <>
             <div className="btn btn-outline" onClick={back}>
-				{/* <ArrowNarrowLeftIcon className="w-6 mr-2" /> */}
+				<ArrowNarrowLeftIcon className="w-6 mr-2" />
 				Back</div>
             <div className="grid grid-cols-3 justify-between my-6">
                 <div>
