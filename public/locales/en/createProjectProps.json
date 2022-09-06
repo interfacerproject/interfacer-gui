@@ -1,0 +1,79 @@
+{
+  "headline": {
+    "title": "Create a new asset",
+    "description": "Make sure you read the Comunity Guidelines before you create a new asset."
+  },
+  "generalInfo": {
+    "title": "General Information",
+    "description": "Help us display your asset correctly."
+  },
+  "projectType": {
+    "label": "Select asset type:",
+    "array": [
+      {
+        "id": "Design",
+        "name": "Design",
+        "value": "Design",
+        "label": "The asset would be available to anyone who has the link"
+      },
+      {
+        "id": "Service",
+        "name": "Service",
+        "value": "Service",
+        "label": "Only member of this asset would be able to acces"
+      },
+      {
+        "id": "Product",
+        "name": "Product",
+        "value": "Product",
+        "label": "You are the only one able to access this asset"
+      }
+    ],
+    "hint": "Refer to the standards we want to follow for this field"
+  },
+  "projectName": {
+    "label": "asset name:",
+    "placeholder": "E.g. Fabulaser",
+    "hint": "Working name of the asset module"
+  },
+  "projectDescription": {
+    "label": "Short but concise description of this asset:",
+    "placeholder": "E.g. An open source laser cutter within you reach",
+    "hint": "Short description to be displayed inside the asset page"
+  },
+  "repositoryOrId": {
+    "label": "Repository link or Interfacer ID:",
+    "placeholder": "E.g. github.com/my-repo",
+    "hint": "Reference to repository in which the technical documentation is developed"
+  },
+  "imageUpload": {
+    "label": "Upload up to 10 pictures:",
+    "placeholder": "SVG, PNG, JPG or GIF (MAX. 800x400px)",
+    "hint": "SVG, PNG, JPG or GIF (MAX. 800x400px)"
+  },
+  "projectTags": {
+    "label": "Tags:",
+    "hint": "press space or return to add tags",
+    "placeholder": "E.g. laser cutter, open source, 3d printing"
+  },
+  "location": {
+    "name": {
+      "label": "Location name:",
+      "placeholder": "E.g. Amburg Warehouse",
+      "hint": "Short name to refers to the location"
+    },
+    "address": {
+      "label": "Address:",
+      "placeholder": "An d. Alsterschleife 3, 22399 - Hamburg, Germany",
+      "hint": "Short description to be displayed inside the asset page"
+    }
+  },
+  "price": {
+    "label": "Value in Fab Token:",
+    "placeholder": "E.g. 1 Fab Token",
+    "hint": "Short description to be displayed inside the asset page"
+  },
+  "button": "Save",
+  "resourceSpec": "73u648QASpCtC80ihY0KLg",
+  "unitId": "82XqknZlTsGcFbQw8Gg6ow"
+}

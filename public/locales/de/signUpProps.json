@@ -1,0 +1,21 @@
+{
+  "title": "Welcome!",
+  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "name": {
+    "label": "name",
+    "placeholder": "Type your name"
+  },
+  "user": {
+    "label": "User",
+    "placeholder": "Type your visible username"
+  },
+  "email": {
+    "label": "Email",
+    "placeholder": "alice@email.com"
+  },
+  "register": {
+    "question": "✌️ yet regisetered?",
+    "answer": "Sign In"
+  },
+  "button": "Next Step"
+}

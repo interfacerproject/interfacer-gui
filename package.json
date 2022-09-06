@@ -9,9 +9,26 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.6.9",
+    "@heroicons/react": "^2.0.10",
+    "@tailwindcss/typography": "^0.5.7",
+    "@types/base45": "^2.0.0",
+    "autoprefixer": "^10.4.8",
+    "base45": "^2.0.1",
+    "boring-avatars": "^1.7.0",
+    "crypto-js": "^4.1.1",
+    "daisyui": "^2.25.0",
+    "dayjs": "^1.11.5",
     "next": "12.2.5",
+    "next-i18next": "^12.0.1",
+    "postcss": "^8.4.16",
+    "postcss-preset-env": "^7.8.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-qr-code": "^2.0.7",
+    "sass": "^1.54.8",
+    "tailwindcss": "^3.1.8",
+    "zenroom": "2.2.3-f0193d51"
   },
   "devDependencies": {
     "@types/node": "18.7.15",
