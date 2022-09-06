@@ -3,7 +3,7 @@ import {useAuth} from "../lib/auth";
 import {useRouter} from "next/router";
 import Card, {CardWidth} from "../components/brickroom/Card";
 import BrInput from "../components/brickroom/BrInput";
-// import {LinkIcon} from "@heroicons/react/solid";
+import {LinkIcon} from "@heroicons/react/solid";
 import KeyringGeneration from "../components/KeyringGeneration";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import {useTranslation} from "next-i18next";
@@ -83,7 +83,7 @@ export default function SignUp() {
                     </form>
                     <p className="flex flex-row items-center justify-between">
                         {t('register.question')}
-                        {/* <LinkIcon className='h-5 w-5 ml-28'/> */}
+                        <LinkIcon className='h-5 w-5 ml-28'/>
                         {t('register.answer')}
                     </p>
                 </>}

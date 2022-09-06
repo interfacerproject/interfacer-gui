@@ -3,7 +3,7 @@ import {useAuth} from "../lib/auth";
 // import User from "../components/UserActivities"
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import {useTranslation} from "next-i18next";
-// import {CheckCircleIcon} from "@heroicons/react/outline";
+import {CheckCircleIcon} from "@heroicons/react/outline";
 import Link from "next/link";
 import React from "react";
 
@@ -24,10 +24,10 @@ const Home: NextPage = () => {
                 <div className="logo mb-4"/>
                 <h2>{t('title')}</h2>
                 <p className="mt-4">
-					{/* <CheckCircleIcon className="w-5 h-5 float-left"/> */}
+					<CheckCircleIcon className="w-5 h-5 float-left"/>
 					{t('paragraph1')}</p>
                 <p className="mt-4">
-					{/* <CheckCircleIcon className="w-5 h-5 float-left"/> */}
+					<CheckCircleIcon className="w-5 h-5 float-left"/>
 					{t('paragraph2')}</p>
 
                 <Link href="/sign_in"><a className={`btn btn-primary mt-4 ${isSignedIn()? 'btn-disabled' : ''}`}>sign in</a></Link>

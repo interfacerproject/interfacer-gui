@@ -1,4 +1,4 @@
-// import {ExclamationIcon} from "@heroicons/react/solid";
+import {ExclamationIcon} from "@heroicons/react/solid";
 import React, {useEffect, useState} from "react";
 import devLog from "../../lib/devLog";
 import useStorage from "../../lib/useStorage";
@@ -141,7 +141,7 @@ const BrImageUpload = (props: BrImageUploadProps) => {
             <label className="label">
                 {props.error &&
                 <span className="flex flex-row items-center justify-between label-text-alt text-warning">
-                    {/* <ExclamationIcon className='w-5 h-5'/> */}
+                    <ExclamationIcon className='w-5 h-5'/>
                     {props.error}</span>}
                 {props.hint && <span className="label-text-alt">{props.hint}</span>}
             </label>

@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@apollo/client': ^3.6.9
-  '@heroicons/react': ^2.0.10
+  '@heroicons/react': ^1.0.6
   '@tailwindcss/typography': ^0.5.7
   '@types/base45': ^2.0.0
   '@types/node': 18.7.15
@@ -30,7 +30,7 @@ specifiers:
 
 dependencies:
   '@apollo/client': 3.6.9_onqnqwb3ubg5opvemcqf7c2qhy
-  '@heroicons/react': 2.0.10_react@18.2.0
+  '@heroicons/react': 1.0.6_react@18.2.0
   '@tailwindcss/typography': 0.5.7_tailwindcss@3.1.8
   '@types/base45': 2.0.0
   autoprefixer: 10.4.8_postcss@8.4.16
@@ -285,8 +285,8 @@ packages:
       graphql: 16.6.0
     dev: false
 
-  /@heroicons/react/2.0.10_react@18.2.0:
-    resolution: {integrity: sha512-Ufr+pgAElNiRCSklnHGOR10bXb02BLlosvbDK7sCRUMOcQ3R/HCXTfXs4BUkYZ4dKpx6l5dUD06VSW1dTpTEDw==}
+  /@heroicons/react/1.0.6_react@18.2.0:
+    resolution: {integrity: sha512-JJCXydOFWMDpCP4q13iEplA503MQO3xLoZiKum+955ZCtHINWnx26CUxVxxFQu/uLb4LW3ge15ZpzIkXKkJ8oQ==}
     peerDependencies:
       react: '>= 16'
     dependencies:

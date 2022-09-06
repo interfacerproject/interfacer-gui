@@ -1,5 +1,4 @@
 import React, {ReactEventHandler} from 'react';
-// import {MailIcon} from "@heroicons/react/solid";
 
 type PopupPops = {
     name: string,

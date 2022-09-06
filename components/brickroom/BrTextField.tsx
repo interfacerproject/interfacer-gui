@@ -1,4 +1,5 @@
 import React, {ChangeEventHandler} from "react";
+import {ExclamationIcon} from '@heroicons/react/solid'
 
 type BrTextFieldProps = {
     placeholder?: string,
@@ -9,7 +10,6 @@ type BrTextFieldProps = {
     value?: string
     onBlur?: ChangeEventHandler,
 }
-// import {ExclamationIcon} from '@heroicons/react/solid'
 
 
 const BrTextField = (props: BrTextFieldProps) => {
@@ -30,7 +30,7 @@ const BrTextField = (props: BrTextFieldProps) => {
             <label className="label">
                 {props.error &&
                 <span className="flex flex-row items-center justify-between label-text-alt text-warning">
-                    {/* <ExclamationIcon className='w-5 h-5'/> */}
+                    <ExclamationIcon className='w-5 h-5'/>
                     {props.error}</span>}
                 {props.hint && <span className="label-text-alt">{props.hint}</span>}
             </label>

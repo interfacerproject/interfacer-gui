@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
-// import {ChatIcon, CubeIcon, HomeIcon, GlobeIcon, ChevronUpIcon, ChevronDownIcon} from "@heroicons/react/outline";
+import {ChatIcon, CubeIcon, HomeIcon, GlobeIcon, ChevronUpIcon, ChevronDownIcon} from "@heroicons/react/outline";
 import LoginBtn from "./LoginMenu";
 import { useRouter } from "next/router";
 import IfSideBarButton from "./brickroom/IfSideBarButton";
@@ -11,7 +11,7 @@ const SideBarProps = {
 	home: {
 		name: 'Home',
 		link: "/",
-		// svg: <HomeIcon className="w-5 h-5 float-left mr-2"/>
+		svg: <HomeIcon className="w-5 h-5 float-left mr-2"/>
 	},
 	createAsset: {
 		name: 'Create asset',
@@ -39,13 +39,13 @@ const SideBarProps = {
 	userGuide: {
 		name: 'User guide',
 		link: "/",
-		// svg: <ChatIcon className="w-5 h-5 float-left mr-2"/>,
+		svg: <ChatIcon className="w-5 h-5 float-left mr-2"/>,
 		disabled: true,
 	},
 	map: {
 		name: 'Map',
 		link: "/",
-		// svg: <GlobeIcon className="w-5 h-5 float-left mr-2"/>,
+		svg: <GlobeIcon className="w-5 h-5 float-left mr-2"/>,
 		disabled: true,
 	},
 }
@@ -69,7 +69,7 @@ function Sidebar() {
 				<ul className="p-0">
 					<li>
 						<IfSideBarButton text={'home'} link={'/'}
-							//  svg={<HomeIcon className="w-5 h-5 float-left mr-2"/>}
+							 svg={<HomeIcon className="w-5 h-5 float-left mr-2"/>}
 							active={isActive('/')} w={64} />
 					</li>
 					<li tabIndex={0}>
@@ -77,10 +77,10 @@ function Sidebar() {
 							<button className={`flex flex-row items-center pl-3 text-left h-full`}
 								onClick={() => setIsAssetsMenuOpen(!isAssetsMenuOpen)}>
 								<>
-									{/* <CubeIcon className="w-5 h-5 float-left mr-2"/> */}
+									<CubeIcon className="w-5 h-5 float-left mr-2"/>
 									Assets
-									{/* {isAssetsMenuOpen ? <ChevronUpIcon className="w-5 h-5 float-right ml-32"/> :
-                                            <ChevronDownIcon className="w-5 h-5 float-right ml-32"/>} */}
+									{isAssetsMenuOpen ? <ChevronUpIcon className="w-5 h-5 float-right ml-32"/> :
+                                            <ChevronDownIcon className="w-5 h-5 float-right ml-32"/>}
 								</>
 							</button>
 						</a>
@@ -100,12 +100,12 @@ function Sidebar() {
 					</li>
 					<li>
 						<IfSideBarButton text={SideBarProps.userGuide.name} link={SideBarProps.userGuide.link}
-							//  svg={SideBarProps.userGuide.svg}
+							 svg={SideBarProps.userGuide.svg}
 							active={isActive(SideBarProps.userGuide.link)} disabled={true} w={64} />
 					</li>
 					<li>
 						<IfSideBarButton text={SideBarProps.map.name} w={64} link={SideBarProps.map.link}
-							//  svg={SideBarProps.map.svg}
+							 svg={SideBarProps.map.svg}
 							active={isActive(SideBarProps.map.link)}
 							disabled={true} />
 					</li>
