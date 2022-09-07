@@ -1,16 +1,14 @@
 import React, {useState} from "react";
 import Link from "next/link";
 import BrTable from "./brickroom/BrTable";
-import QrCodeButton from "./brickroom/QrCodeButton";
 import BrTags from "./brickroom/BrTags";
-import Avatar from "boring-avatars";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 
 const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead:Array<string> }) => {
 
     return (<>
         <BrTable headArray={assetsHead}>
-            {(assets?.length !== 0) && <>{assets.map((e) =>
+            {assets.map((e) =>
                 <tr key={e.cursor}>
                     <td>
                         <div className="flex">
@@ -41,30 +39,7 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead:Arra
                         <BrTags tags={['this', 'tags', 'are', 'fakes']}/>
                     </td>
                 </tr>
-            )}</>}
-            {(assets?.length === 0) && <>
-                <tr className="disabled">
-                    <td>xxxxxxx</td>
-                    <td>xxxxxx xxxx</td>
-                    <td>xxxxxxxxxxxx xxx xxxxx</td>
-                    <td className="whitespace-normal">xxxxx, xxxxxx xx</td>
-                    <td><QrCodeButton id='' outlined={true}/></td>
-                    <td className="p-1">
-                        xxxxxxx
-                    </td>
-                    <td className="whitespace-normal">xxxxxxxxx xxxxxxxx xxxxxxxxxxxx xxxxxxxx xxxxxxxxxx xxxxxx xxxx
-                    </td>
-
-                </tr>
-                <tr>
-                    <td colSpan={assetsHead.length}>
-                        <h4>There’s nothing to display here.</h4>
-                        <p>
-                            This table will display the assets.
-                        </p>
-                    </td>
-                </tr>
-            </>}
+            )}
         </BrTable>
     </>)
 }
