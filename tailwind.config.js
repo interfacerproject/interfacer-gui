@@ -30,6 +30,7 @@ module.exports = {
                 "warning-content": "#351507",
                 error: "#FF7A70",
                 "error-content": "#300502",
+                "--rounded-btn": "2px",
             },
         }, ],
     },
@@ -44,7 +45,10 @@ module.exports = {
             spacing: {
                 '128': '32rem',
                 '156': '49rem',
-            }
+            },
+            fontFamily: {
+                'display': ['"Space Grotesk"', 'sans-serif'],
+            },
         },
     },
     plugins: [

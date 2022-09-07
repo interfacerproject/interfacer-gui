@@ -1,17 +1,19 @@
 import Avatar from "boring-avatars";
 import Link from "next/link";
+import { LocationMarkerIcon } from '@heroicons/react/solid'
 
 type BrDisplayUserProps = {
     id: string,
-    name: string
+    name: string,
+    location?: string,
 }
 
 const BrDisplayUser = (props: BrDisplayUserProps) => {
     return (
         <Link href={`/profile/${props.id}`}>
-            <a className="pl-0 flex items-center">
+            <a className="flex items-center pl-0">
                 <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                    <div className="w-10 rounded-full">
+                    <div className="w-12 rounded-full">
                         <Avatar
                             size={'full'}
                             name={props.name}
@@ -20,9 +22,17 @@ const BrDisplayUser = (props: BrDisplayUserProps) => {
                         />;
                     </div>
                 </label>
-                <h4 className="flex-auto text-primary">
-                    {props.name}
-                </h4>
+                <div className="ml-4">
+                    <h4 className="flex-auto">
+                        {props.name}
+                    </h4>
+                    {props.location &&
+                        <span className="flex items-center text-primary">
+                            <LocationMarkerIcon className="w-4 h-4 mr-1" />
+                            {props.location}
+                        </span>
+                    }
+                </div>
             </a>
         </Link>
     )

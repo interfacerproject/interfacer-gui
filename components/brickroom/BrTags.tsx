@@ -20,7 +20,7 @@ const BrTags = ({tags, onCancel}:{tags?:Array<string>, onCancel?: (tag:string)=>
     return <><div className="hidden badge-neutral badge-error badge-accent badge-primary badge-succes badge-warning"/>
             <div className="w-full">
                  {tags && tags.length > 0 && <>{
-                tags?.map((tag: string, index) => <span key={tag} className={`badge badge-${colors(index)} rounded-md float-left mb-1 mr-1 py-4 pr-4`}>
+                tags?.map((tag: string, index) => <span key={tag} className={`badge badge-${colors(index)} rounded-md float-left mb-1 mr-1 p-3`}>
                     {onCancel &&<button  className={'btn btn-ghost btn-xs ml-0'} onClick={()=>{onCancel(tag)}}>x</button>}
                     {tag}</span>)
             }</>}

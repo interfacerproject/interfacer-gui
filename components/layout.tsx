@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
-import Sidebar from "./sidebar"
-import Topbar from "./topbar";
+import Sidebar from "./Sidebar"
+import Topbar from "./Topbar";
 import {useAuth} from "../lib/auth";
 import SignIn from "../pages/sign_in";
 import {useRouter} from 'next/router'
@@ -28,7 +28,7 @@ const Layout:React.FunctionComponent<layoutProps> = (layoutProps:layoutProps) =>
                     <input id = "my-drawer" type = "checkbox" className = "drawer-toggle" />
                     <div className="drawer-content">
                         <Topbar/>
-                        <div className="container p-10 bg-[#F3F3F1] min-h-screen">
+                        <div className="container bg-[#F3F3F1] min-h-screen">
                             {layoutProps?.children}
                         </div>
                     </div>

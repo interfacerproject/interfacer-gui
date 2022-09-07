@@ -5,7 +5,7 @@ import LocationMenu from "./LocationMenu";
 
 function Topbar() {
     return (
-        <div className="navbar bg-[#F3F3F1] px-2 pt-0 h-16 border-b border-primary">
+        <div className="navbar bg-[#F3F3F1] px-2 pt-0 h-16 border-b border-base-400">
             <div className="navbar-start">
                 <label htmlFor="my-drawer" className= "btn btn-square btn-ghost drawer-button lg:hidden">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -18,7 +18,7 @@ function Topbar() {
             <div className="navbar-center">
             </div>
             <div className="navbar-end">
-                 <button className="btn btn-circle btn-accent  bg-white mr-4" disabled>
+                 <button className="mr-4 bg-white btn btn-circle btn-accent" disabled>
                      <BellIcon className="w-5 h-5"/>
                 </button>
                 <LocationMenu/>
