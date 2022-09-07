@@ -1,0 +1,12 @@
+{
+  "title": "Welcome to Interfacer Alpha",
+  "description": "en: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque pellentesque hendrerit ultrices mauris et non pellentesque suspendisse est.",
+  "Load more": "Load more...",
+  "tableHead": [
+    "Asset",
+    "Last update",
+    "Value",
+    "Owner",
+    "tags"
+  ]
+}

@@ -1,5 +1,6 @@
 import React, {ChangeEvent, useEffect} from 'react';
 import BrTextField from "./BrTextField";
+import BrTags from "./BrTags";
 
 type TagSelectorProps = {
     tags?: Array<string>,
@@ -28,35 +29,13 @@ const TagSelelector = (props: TagSelectorProps) => {
     useEffect(() => {
         props.onSelect && props.onSelect(tags!);
     }, [tags]);
-    const colors = (i:number)=>{
-        switch((i+1)%6){
-            case 1:
-                return 'primary'
-            case 2:
-                return 'error'
-            case 3:
-                return 'accent'
-            case 4:
-                return 'warning'
-            case 5:
-                return 'success'
-            case 0:
-                return 'neutral'
-        }
-    }
 
     return (<>
         <div className={`form-control ${props.className}`}>
              <label className="label mb-[-3px]">
                 <span className="label-text">{props.label}</span>
             </label>
-            <div className="hidden badge-neutral badge-error badge-accent badge-primary badge-succes badge-warning"/>
-            <div className="w-full">
-                 {tags && tags.length > 0 && <>{
-                tags?.map((tag: string, index) => <span key={tag} className={`badge badge-${colors(index)} rounded-md float-left mb-1 mr-1 py-4 pr-4`}><button  className={'btn btn-ghost btn-xs ml-0'} onClick={()=>cancelTag(tag)}>x</button> {tag}</span>)
-            }</>}
-            </div>
-
+            <BrTags onCancel={cancelTag} tags={tags}/>
             <BrTextField placeholder={props.placeholder} hint={props.hint} error={props.error} onChange={handleAdd}/>
         </div>
         </>)
