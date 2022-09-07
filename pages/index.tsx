@@ -10,7 +10,7 @@ import React from "react";
 export async function getStaticProps({ locale }:any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['signInProps', 'homeProps'])),
+      ...(await serverSideTranslations(locale, ['signInProps', 'homeProps', 'SideBarProps'])),
     },
   };
 }
