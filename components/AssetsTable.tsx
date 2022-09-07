@@ -1,24 +1,24 @@
 import React, {useState} from "react";
 import Link from "next/link";
-
-
 import BrTable from "./brickroom/BrTable";
 import QrCodeButton from "./brickroom/QrCodeButton";
 
-const AssetsTable = ({assets}: { assets: Array<any> }) => {
-    const assetsHead = ['Asset', 'Last update', 'Value', 'Owner', 'tags']
+const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead:Array<string> }) => {
 
     return (<>
         <BrTable headArray={assetsHead}>
             {(assets?.length !== 0) && <>{assets.map((e) =>
                 <tr key={e.cursor}>
                     <td>
-                        <Link href={`/asset/${e.node.id}`}>
-                            <a>
-                                <span>{e.node.primaryIntents[0].resourceInventoriedAs?.name}</span><br/>
-                                <span>{e.node.primaryIntents[0].resourceInventoriedAs?.note.split(':')[1].split(',')[0]}</span>
-                            </a>
-                        </Link>
+                        <div className="flex w-64">
+                            <img src={`https://picsum.photos/120/120?random=${e.cursor}`} className="flex-none mr-1"/>
+                            <Link href={`/asset/${e.node.id}`} className="flex-auto">
+                                <a>
+                                    <h3>{e.node.primaryIntents[0].resourceInventoriedAs?.name}</h3>
+                                    <p className="whitespace-normal">{e.node.primaryIntents[0].resourceInventoriedAs?.note.split(':')[1].split(',')[0]}</p>
+                                </a>
+                            </Link>
+                        </div>
                     </td>
                     <td>date hour</td>
                     <td>{e.node.reciprocalIntents[0].resourceQuantity.hasNumericalValue}/{e.node.reciprocalIntents[0].resourceQuantity.hasUnit.label}</td>
