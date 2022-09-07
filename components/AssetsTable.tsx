@@ -2,6 +2,9 @@ import React, {useState} from "react";
 import Link from "next/link";
 import BrTable from "./brickroom/BrTable";
 import QrCodeButton from "./brickroom/QrCodeButton";
+import BrTags from "./brickroom/BrTags";
+import Avatar from "boring-avatars";
+import BrDisplayUser from "./brickroom/BrDisplayUser";
 
 const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead:Array<string> }) => {
 
@@ -10,8 +13,10 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead:Arra
             {(assets?.length !== 0) && <>{assets.map((e) =>
                 <tr key={e.cursor}>
                     <td>
-                        <div className="flex w-64">
-                            <img src={`https://picsum.photos/120/120?random=${e.cursor}`} className="flex-none mr-1"/>
+                        <div className="flex">
+                            <div className="w-2/5 flex-none">
+                                <img src={`https://picsum.photos/120/120?random=${e.cursor}`} className="mr-1"/>
+                            </div>
                             <Link href={`/asset/${e.node.id}`} className="flex-auto">
                                 <a>
                                     <h3>{e.node.primaryIntents[0].resourceInventoriedAs?.name}</h3>
@@ -20,10 +25,21 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead:Arra
                             </Link>
                         </div>
                     </td>
-                    <td>date hour</td>
-                    <td>{e.node.reciprocalIntents[0].resourceQuantity.hasNumericalValue}/{e.node.reciprocalIntents[0].resourceQuantity.hasUnit.label}</td>
-                    <td>{e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.name}</td>
-                    <td>tags</td>
+                    <td>
+                        <h4>4 min ago</h4>
+                        <h5>11:00 AM, 11/06/2022</h5>
+                    </td>
+                    <td>
+                        <h3>{e.node.reciprocalIntents[0].resourceQuantity.hasNumericalValue}</h3>
+                        <p className="text-primary">Fab Tokens</p>
+                    </td>
+                    <td>
+                        <BrDisplayUser id={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id} name={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.name}/>
+                    </td>
+                    <td className="max-w-[12rem]">
+
+                        <BrTags tags={['this', 'tags', 'are', 'fakes']}/>
+                    </td>
                 </tr>
             )}</>}
             {(assets?.length === 0) && <>

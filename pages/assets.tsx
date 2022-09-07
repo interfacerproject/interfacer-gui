@@ -27,6 +27,12 @@ const Assets = () => {
         id
         name
         primaryIntents {
+          action {
+            id
+          }
+          hasPointInTime
+          hasBeginning
+          hasEnd
           resourceInventoriedAs {
             conformsTo {
               name
