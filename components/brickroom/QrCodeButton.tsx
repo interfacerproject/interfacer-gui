@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import base45 from "base45";
 import QRCode from "react-qr-code";
-import Popup from "./popup";
+import Popup from "./Popup";
 import Spinner from "./Spinner";
 
 const QrCodeButton = ({id, outlined}: { id: string, outlined?: boolean}) => {

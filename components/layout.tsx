@@ -1,5 +1,5 @@
 import React, {ReactNode} from 'react';
-import Sidebar from "./sidebar"
+import Sidebar from "./Sidebar"
 import Topbar from "./Topbar";
 import {useAuth} from "../lib/auth";
 import SignIn from "../pages/sign_in";
