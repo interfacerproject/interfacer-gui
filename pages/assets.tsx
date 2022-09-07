@@ -118,7 +118,7 @@ const Assets = () => {
 export async function getStaticProps({locale}: any) {
     return {
         props: {
-            ...(await serverSideTranslations(locale, ['signInProps', 'lastUpdatedProps'])),
+            ...(await serverSideTranslations(locale, ['signInProps', 'lastUpdatedProps', 'SideBarProps'])),
         },
     };
 }

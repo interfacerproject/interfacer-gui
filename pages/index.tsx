@@ -7,12 +7,13 @@ import { CheckCircleIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 import React from "react";
 
-export async function getStaticProps({ locale }: any) {
-    return {
-        props: {
-            ...(await serverSideTranslations(locale, ['signInProps', 'homeProps'])),
-        },
-    };
+
+export async function getStaticProps({ locale }:any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['signInProps', 'homeProps', 'SideBarProps'])),
+    },
+  };
 }
 
 const Home: NextPage = () => {

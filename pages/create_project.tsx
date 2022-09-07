@@ -319,7 +319,7 @@ const CreateProject: NextPage = () => {
 export async function getStaticProps({ locale }: any) {
     return {
         props: {
-            ...(await serverSideTranslations(locale, ['createProjectProps', 'signInProps'])),
+            ...(await serverSideTranslations(locale, ['createProjectProps', 'signInProps', 'SideBarProps', 'SideBarProps'])),
         },
     };
 }

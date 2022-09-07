@@ -1,6 +1,7 @@
 import { NextPage } from 'next';
 import React from 'react';
 import useStorage from "../lib/useStorage";
+import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 
 
 
@@ -13,5 +14,12 @@ const Logged_in: NextPage = () => {
         <h2>How do you arrive here? This app is still under construction!</h2>
         </>
     )
+}
+export async function getStaticProps({ locale }:any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['signInProps', 'SideBarProps'])),
+    },
+  };
 }
 export default Logged_in;
