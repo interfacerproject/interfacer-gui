@@ -82,7 +82,7 @@ const Resources: NextPage = () => {
 export async function getStaticProps({locale}: any) {
     return {
         props: {
-            ...(await serverSideTranslations(locale, ['resourcesProps', 'signInProps'])),
+            ...(await serverSideTranslations(locale, ['resourcesProps', 'signInProps', 'SideBarProps'])),
         },
     };
 }
