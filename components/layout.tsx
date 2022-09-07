@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import Sidebar from "./sidebar"
-import Topbar from "./topbar";
+import Topbar from "./Topbar";
 import {useAuth} from "../lib/auth";
 import SignIn from "../pages/sign_in";
 import {useRouter} from 'next/router'

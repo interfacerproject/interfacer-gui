@@ -18,7 +18,7 @@ function Topbar() {
             <div className="navbar-center">
             </div>
             <div className="navbar-end">
-                 <button className="btn btn-circle btn-accent  bg-white mr-4" disabled>
+                 <button className="mr-4 bg-white btn btn-circle btn-accent" disabled>
                      <BellIcon className="w-5 h-5"/>
                 </button>
                 <LocationMenu/>
