@@ -11,7 +11,7 @@ const SideBarProps = {
 	home: {
 		name: 'Home',
 		link: "/",
-		svg: <HomeIcon className="w-5 h-5 float-left mr-2"/>
+		svg: <HomeIcon className="float-left w-5 h-5 mr-2"/>
 	},
 	createAsset: {
 		name: 'Create asset',
@@ -37,13 +37,13 @@ const SideBarProps = {
 	userGuide: {
 		name: 'User guide',
 		link: "/",
-		svg: <ChatIcon className="w-5 h-5 float-left mr-2"/>,
+		svg: <ChatIcon className="float-left w-5 h-5 mr-2"/>,
 		disabled: true,
 	},
 	map: {
 		name: 'Map',
 		link: "/",
-		svg: <GlobeIcon className="w-5 h-5 float-left mr-2"/>,
+		svg: <GlobeIcon className="float-left w-5 h-5 mr-2"/>,
 		disabled: true,
 	},
 }
@@ -55,30 +55,30 @@ function Sidebar() {
 	const isNewProcess = router.asPath === '/new_process'
 	const { isSignedIn } = useAuth()
 	return (<>
-		<div className="title overflow-y-auto w-72 text-primary-content bg-white border-r border-primary">
+		<div className="overflow-y-auto bg-white border-r title w-72 text-primary-content border-base-400">
 			{!isNewProcess && <>
 				<div className="w-auto h-16 pt-4 mb-4 border-b border-primary">
 					<Link href="/">
 						<a>
-							<div className="logo mx-auto" />
+							<div className="mx-auto logo" />
 						</a>
 					</Link>
 				</div>
 				<ul className="p-0">
 					<li>
 						<IfSideBarButton text={'home'} link={'/'}
-							 svg={<HomeIcon className="w-5 h-5 float-left mr-2"/>}
+							 svg={<HomeIcon className="float-left w-5 h-5 mr-2"/>}
 							active={isActive('/')} w={64} />
 					</li>
 					<li tabIndex={0}>
-						<a className="ml-4 w-64 gap-2 pl-0 btn btn-ghost font-medium normal-case text-primary border-0 hover:bg-amber-200">
+						<a className="w-64 gap-2 pl-0 ml-4 font-medium normal-case border-0 btn btn-ghost text-primary hover:bg-amber-200">
 							<button className={`flex flex-row items-center pl-3 text-left h-full`}
 								onClick={() => setIsAssetsMenuOpen(!isAssetsMenuOpen)}>
 								<>
-									<CubeIcon className="w-5 h-5 float-left mr-2"/>
+									<CubeIcon className="float-left w-5 h-5 mr-2"/>
 									Assets
-									{isAssetsMenuOpen ? <ChevronUpIcon className="w-5 h-5 float-right ml-32"/> :
-                                            <ChevronDownIcon className="w-5 h-5 float-right ml-32"/>}
+									{isAssetsMenuOpen ? <ChevronUpIcon className="float-right w-5 h-5 ml-32"/> :
+                                            <ChevronDownIcon className="float-right w-5 h-5 ml-32"/>}
 								</>
 							</button>
 						</a>

@@ -63,10 +63,10 @@ const Resource: NextPage = () => {
             <div className="btn btn-outline" onClick={back}>
 				<ArrowNarrowLeftIcon className="w-6 mr-2" />
 				Back</div>
-            <div className="grid grid-cols-3 justify-between my-6">
+            <div className="grid justify-between grid-cols-3 my-6">
                 <div>
                     <h2>{resource?.name}</h2>
-                    <p className="text-gray-500 mb-1">{resource?.note}</p>
+                    <p className="mb-1 text-gray-500">{resource?.note}</p>
                     <p className="text-gray-500">
                         {resource?.onhandQuantity?.hasNumericalValue}
 						{/* {mapUnit(resource?.onhandQuantity?.hasUnit.label)} */}

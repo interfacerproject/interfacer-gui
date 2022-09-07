@@ -69,14 +69,14 @@ const Resources: NextPage = () => {
         }
     }
     devLog(data?.economicResources.edges)
-    return <>
-        <div className="w-80 mb-6">
+    return <div className="p-8">
+        <div className="mb-6 w-80">
             <h1>{t('title')}</h1>
             <p>{t('description')}</p>
         </div>
         {data && <ResourceTable resources={data?.economicResources.edges}/>}
         <BrLoadMore handleClick={loadMore} disabled={!getHasNextPage} text={t('Load more')}/>
-    </>
+    </div>
 };
 
 export async function getStaticProps({locale}: any) {

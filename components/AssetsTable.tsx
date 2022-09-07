@@ -35,7 +35,6 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead:Arra
                         <BrDisplayUser id={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id} name={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.name}/>
                     </td>
                     <td className="max-w-[12rem]">
-
                         <BrTags tags={['this', 'tags', 'are', 'fakes']}/>
                     </td>
                 </tr>

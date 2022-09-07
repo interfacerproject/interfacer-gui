@@ -97,22 +97,22 @@ const Assets = () => {
     devLog(data)
 
 
-    return (<>
-        <div className="w-96 mb-6">
+    return (<div className="p-8">
+        <div className="mb-6 w-96">
             <h1>{t('title')}</h1>
             <p className="my-2">{t('description')}</p>
             <NewProjectButton/>
             <Link href="mailto:bugreport@dyne.org">
-            <a className="btn font-medium normal-case btn-accent btn-outline btn-md ml-2">
+            <a className="ml-2 font-medium normal-case btn btn-accent btn-outline btn-md">
                 {t('Report a bug')}
             </a>
         </Link>
         </div>
         {data && <AssetsTable assets={data.proposals.edges} assetsHead={t('tableHead', { returnObjects: true })}/>}
-        <div className="grid grid-cols-1 gap-4 place-items-center mt-4">
+        <div className="grid grid-cols-1 gap-4 mt-4 place-items-center">
             <button className="btn btn-primary" onClick={loadMore} disabled={!getHasNextPage}>{t('Load more')}</button>
         </div>
-    </>)
+    </div>)
 }
 
 export async function getStaticProps({locale}: any) {
