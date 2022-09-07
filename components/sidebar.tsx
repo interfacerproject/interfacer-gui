@@ -28,13 +28,11 @@ const SideBarProps = {
 	},
 	lastUpdated: {
 		name: 'Last updated',
-		link: '/',
-		disabled: true,
+		link: '/assets',
 	},
 	seeAll: {
 		name: 'See all',
-		link: '/assets',
-		disabled: true
+		link: '/assets'
 	},
 	userGuide: {
 		name: 'User guide',
@@ -91,7 +89,7 @@ function Sidebar() {
 							<li><IfSideBarButton w="60" text={SideBarProps.MyInventory.name}
 								link={SideBarProps.MyInventory.link} disabled /></li>
 							<li><IfSideBarButton w="60" text={SideBarProps.lastUpdated.name}
-								link={SideBarProps.lastUpdated.link} disabled /></li>
+								link={SideBarProps.lastUpdated.link} /></li>
 							<li><IfSideBarButton w="60" text={SideBarProps.resources.name}
 								link={SideBarProps.resources.link} /></li>
 							<li><IfSideBarButton w="60" text={SideBarProps.seeAll.name}

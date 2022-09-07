@@ -3,10 +3,13 @@ import AssetsTable from "../components/AssetsTable";
 import devLog from "../lib/devLog";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import {useTranslation} from "next-i18next";
+import React from "react";
+import NewProjectButton from "../components/NewProjectButton";
+import Link from "next/link";
 
 
 const Assets = () => {
-    const {t} = useTranslation('common')
+    const {t} = useTranslation('lastUpdatedProps')
 
     const QUERY_ASSETS = gql`query ($first: Int, $after: ID, $last: Int, $before: ID) {
   proposals(first: $first, after: $after, before: $before, last: $last) {
@@ -24,6 +27,12 @@ const Assets = () => {
         id
         name
         primaryIntents {
+          action {
+            id
+          }
+          hasPointInTime
+          hasBeginning
+          hasEnd
           resourceInventoriedAs {
             conformsTo {
               name
@@ -89,7 +98,17 @@ const Assets = () => {
 
 
     return (<>
-        {data && <AssetsTable assets={data.proposals.edges}/>}
+        <div className="w-96 mb-6">
+            <h1>{t('title')}</h1>
+            <p className="my-2">{t('description')}</p>
+            <NewProjectButton/>
+            <Link href="mailto:bugreport@dyne.org">
+            <a className="btn font-medium normal-case btn-accent btn-outline btn-md ml-2">
+                {t('Report a bug')}
+            </a>
+        </Link>
+        </div>
+        {data && <AssetsTable assets={data.proposals.edges} assetsHead={t('tableHead', { returnObjects: true })}/>}
         <div className="grid grid-cols-1 gap-4 place-items-center mt-4">
             <button className="btn btn-primary" onClick={loadMore} disabled={!getHasNextPage}>{t('Load more')}</button>
         </div>
@@ -99,7 +118,7 @@ const Assets = () => {
 export async function getStaticProps({locale}: any) {
     return {
         props: {
-            ...(await serverSideTranslations(locale, ['common', 'signInProps'])),
+            ...(await serverSideTranslations(locale, ['signInProps', 'lastUpdatedProps'])),
         },
     };
 }

@@ -2,13 +2,13 @@ import React, {ChangeEventHandler} from "react";
 import Link from "next/link";
 // import {RefreshIcon} from "@heroicons/react/solid";
 
-const CreateProjectButton = () => {
+const CreateProjectButton = ({className, text}:{className?:string, text?:string}) => {
 
-    const createProjectText = 'Create a new asset'
+    const createProjectText = text? text : 'Create a new asset'
 
     return (<>
         <Link href="/create_project">
-            <a className="btn font-medium normal-case btn-primary w-60 ml-4">
+            <a className={`btn font-medium normal-case btn-accent ${className}`}>
                 {createProjectText}
             </a>
         </Link>
