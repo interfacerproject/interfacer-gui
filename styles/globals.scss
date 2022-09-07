@@ -20,23 +20,19 @@ a {
 
 
 h1, .heading1 {
-  @apply text-4xl font-bold leading-11;
-  font-family: 'Space Grotesk', sans-serif;
+  @apply text-4xl font-bold leading-11 font-display;
 }
 
 h2, .heading2 {
-  @apply text-2xl font-bold leading-8;
-  font-family: 'Space Grotesk', sans-serif;
+  @apply text-2xl font-bold leading-8 font-display;
 }
 
 h3, .heading3 {
-  @apply text-xl font-bold leading-6;
-  font-family: 'Space Grotesk', sans-serif;
+  @apply text-xl font-bold leading-6 font-display;
 }
 
 h4, .heading4 {
-  @apply text-base font-semibold;
-  font-family: 'Space Grotesk', sans-serif;
+  @apply text-base font-semibold font-display;
 }
 
 p, .paragraph {
