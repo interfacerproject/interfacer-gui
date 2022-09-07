@@ -44,6 +44,9 @@ module.exports = {
             spacing: {
                 '128': '32rem',
                 '156': '49rem',
+            },
+            fontFamily: {
+                'display': ['"Space Grotesk"', 'sans-serif'],
             }
         },
     },
