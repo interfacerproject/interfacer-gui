@@ -9,10 +9,10 @@ const Logged_in: NextPage = () => {
     const {getItem, setItem} = useStorage()
     const username = getItem('authName', 'local')
 
-    return (<>
+    return (<div className="p-8">
         <h1>Hello {username}</h1>
         <h2>How do you arrive here? This app is still under construction!</h2>
-        </>
+        </div>
     )
 }
 export async function getStaticProps({ locale }:any) {

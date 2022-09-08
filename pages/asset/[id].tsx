@@ -9,12 +9,32 @@ import BrDisplayUser from '../../components/brickroom/BrDisplayUser';
 import BrTags from '../../components/brickroom/BrTags';
 import devLog from "../../lib/devLog";
 
+interface AssetIface {
+    name: string;
+    conformsTo: {
+        name: string;
+    };
+    images: [{
+        hash: string;
+        mimeType: string;
+    }];
+    note: string;
+    tags: string[];
+    primaryAccountable: {
+        id: string;
+        name: string;
+    };
+    currentLocation: {
+        name: string;
+    };
+}
+
 const Asset = () => {
     const router = useRouter()
     const { id } = router.query
     const { t } = useTranslation('common')
-    const [mainImage, setMainImage] = useState(false);
-    const [asset, setAsset] = useState(null);
+    const [mainImage, setMainImage] = useState('');
+    const [asset, setAsset] = useState<AssetIface|undefined>();
     const QUERY_ASSET = gql`query ($id: ID!) {
   proposal(id: $id) {
     primaryIntents {
@@ -62,7 +82,7 @@ const Asset = () => {
     devLog(data)
 
     useEffect(() => {
-        const _asset = data?.proposal.primaryIntents[0].resourceInventoriedAs;
+        const _asset: AssetIface = data?.proposal.primaryIntents[0].resourceInventoriedAs;
         fetch(`${process.env.FILE}/${_asset?.images[0]?.hash}`, { method: 'get' }).then(async (r) => {
             setMainImage(`data:${_asset?.images[0]?.mimeType};base64,${await r.text()}`)
         }).catch((e) => {
@@ -104,7 +124,7 @@ const Asset = () => {
                         <BrTags tags={asset?.tags || ["lasercutter", "lasercut", "DIY", "kit"]} />
                     </div>
                     <div id="images">
-                        {asset?.images.map((image) => <AssetImage image={image} className="w-1/2" />)}
+                        {asset?.images.map((image, i) => <AssetImage key={i} image={image} className="w-1/2" />)}
                     </div>
                 </div>
                 <div id="right-col" className="flex flex-col mt-16">
