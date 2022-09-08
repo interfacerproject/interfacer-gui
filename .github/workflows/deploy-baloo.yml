@@ -1,0 +1,10 @@
+name: 🚀 Baloo deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    uses: dyne/workflows/.github/workflows/node-staging-deploy.yml@main
+    secrets: inherit
