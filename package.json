@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "reload": "pm2 startOrGracefulReload ecosystem.config.js"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
