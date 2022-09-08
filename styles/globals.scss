@@ -44,3 +44,6 @@ p, .paragraph {
   background-image: url('/logo.png');
   @apply bg-cover;
 }
+table {
+  @apply table;
+}

@@ -293,9 +293,6 @@ const CreateProject: NextPage = () => {
                 <BrMdEditor onChange={handleEditorChange} className="my-2" editorClass="h-60"
                             label={t('projectDescription.label')}
                             hint={t('projectDescription.hint')}/>
-                <BrTextField label={t('projectDescription.label')} hint={t('projectDescription.hint')}
-                    value={projectDescription} placeholder={t('projectDescription.placeholder')}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setAssetDescription(e.target.value)} />
                 <BrRadio array={t('projectType.array', { returnObjects: true })} label={t('projectType.label')}
                     hint={t('projectType.hint')} onChange={setAssetType} value={projectType} />
                 <BrImageUpload onChange={setImages} setImagesFiles={setImagesFiles} label={t('imageUpload.label')}

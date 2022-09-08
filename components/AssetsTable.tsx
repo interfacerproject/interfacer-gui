@@ -12,7 +12,7 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead: Arr
             {assets.map((e) =>
                 <tr key={e.cursor}>
                     <td>
-                        <div className="flex max-w-xs">
+                        <div className="flex max-w-xs min-w-[10rem]">
                            {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] && <div className="w-2/5 flex-none">
                                 <AssetImage
                                     image={{
@@ -23,19 +23,16 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead: Arr
                             </div>}
                             <Link href={`/asset/${e.node.id}`} className="flex-auto">
                                 <a className="ml-1">
-                                    <h3 className="whitespace-normal">
+                                    <h3 className="whitespace-normal break-words">
                                         {e.node.primaryIntents[0].resourceInventoriedAs?.name}
                                     </h3>
-                                    <p className="whitespace-normal">
-                                        {e.node.primaryIntents[0].resourceInventoriedAs?.note.split(':')[1].split(',')[0]}
-                                    </p>
                                 </a>
                             </Link>
                         </div>
                     </td>
                     <td className="pl-1">
                         <h4>4 min ago</h4>
-                        <h5>11:00 AM, 11/06/2022</h5>
+                        <h5 className="whitespace-normal">11:00 AM, 11/06/2022</h5>
                     </td>
                     <td>
                         <h3>{e.node.reciprocalIntents[0].resourceQuantity.hasNumericalValue}</h3>
