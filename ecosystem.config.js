@@ -21,8 +21,8 @@ module.exports = {
     baloo: {
       host: 'deploy_staging',
       ref: 'origin/main',
-      repo: 'https://github.com/dyne/pattern',
-      path: '/root/pattern',
+      repo: 'https://github.com/dyne/interfacer-gui',
+      path: '/root/interfacer-gui',
       'post-deploy':
         'yarn install && yarn build && pm2 reload ecosystem.config.js --env production && pm2 save',
       env: {
