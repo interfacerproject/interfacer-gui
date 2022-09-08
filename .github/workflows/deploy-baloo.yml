@@ -12,3 +12,4 @@ jobs:
     secrets: inherit
     with:
       deploy_url: https://interfacer-gui-staging.dyne.org
+
