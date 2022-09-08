@@ -98,8 +98,7 @@ const Assets = () => {
     useEffect(() => {
         const intervalId = setInterval(() => {
             const total =
-                (queryResult.data?.proposals.edges.length || 0) +
-                queryResult.variables!.last;
+                (queryResult.data?.proposals.edges.length || 0)
 
             queryResult?.refetch({
                 ...queryResult.variables,
@@ -110,7 +109,7 @@ const Assets = () => {
         return () => clearInterval(intervalId);
     }, [
         ...Object.values(queryResult.variables!).flat(),
-        queryResult.data?.proposals.pageInfo.endCursor
+        queryResult.data?.proposals.pageInfo.startCursor
     ]);
     devLog(queryResult.data)
 
