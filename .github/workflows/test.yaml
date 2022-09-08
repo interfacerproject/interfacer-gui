@@ -10,7 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [14, 16, 17, 18]
+        node: [16, 18]
+        machines: [1, 2]
+
     name: E2E on Node v${{ matrix.node }}
     steps:
       - name: Setup Node
@@ -43,6 +45,7 @@ jobs:
           record: true
           tag: node-${{ matrix.node }}
           browser: chrome
+          paraller: true
           config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
