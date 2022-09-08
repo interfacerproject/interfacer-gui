@@ -8,7 +8,7 @@ const CreateProjectButton = ({className, text}:{className?:string, text?:string}
 
     return (<>
         <Link href="/create_project">
-            <a className={`btn font-medium normal-case btn-accent ${className}`}>
+            <a className={`btn normal-case btn-accent ${className}`}>
                 {createProjectText}
             </a>
         </Link>
