@@ -1,5 +1,6 @@
 echo "Deploy starting..."
 
+git submodule update --init --recursive
 pnpm install || exit
 
 BUILD_DIR=temp pnpm run build || exit
