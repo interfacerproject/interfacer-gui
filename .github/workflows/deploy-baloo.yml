@@ -4,7 +4,11 @@ on:
   push:
     branches: [ "main" ]
 
+
 jobs:
-  build:
+  deploy:
     uses: dyne/workflows/.github/workflows/node-staging-deploy.yml@main
     secrets: inherit
+    with:
+      deploy_url: https://interfacer-gui-staging.dyne.org
+

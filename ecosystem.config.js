@@ -23,7 +23,8 @@ module.exports = {
       ref: 'origin/main',
       repo: 'https://github.com/dyne/interfacer-gui',
       path: '/root/interfacer-gui',
-      'post-deploy': 'sh deploy.sh',
+      'pre-deploy': 'git submodule update --init --recursive',
+      'post-deploy': 'pnpm install && pnpm build && pnpm reload',
       env: {
         NODE_ENV: 'production',
       },
