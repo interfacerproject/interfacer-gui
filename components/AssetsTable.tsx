@@ -5,7 +5,7 @@ import BrTags from "./brickroom/BrTags";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import AssetImage from "./AssetImage";
 
-const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead:Array<string> }) => {
+const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead: Array<string> }) => {
 
     return (<>
         <BrTable headArray={assetsHead}>
@@ -13,13 +13,22 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead:Arra
                 <tr key={e.cursor}>
                     <td>
                         <div className="flex max-w-xs">
-                            <div className="w-2/5 flex-none">
-                                <AssetImage image={{hash:e.node.primaryIntents[0].resourceInventoriedAs?.images[0]?.hash, mimeType:e.node.primaryIntents[0].resourceInventoriedAs?.images[0]?.hash}} className="mr-1"/>
-                            </div>
+                           {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] && <div className="w-2/5 flex-none">
+                                <AssetImage
+                                    image={{
+                                        hash: e.node.primaryIntents[0].resourceInventoriedAs?.images[0]?.hash,
+                                        mimeType: e.node.primaryIntents[0].resourceInventoriedAs?.images[0]?.hash
+                                    }}
+                                    className="mr-1 max-h-20"/>
+                            </div>}
                             <Link href={`/asset/${e.node.id}`} className="flex-auto">
                                 <a className="ml-1">
-                                    <h3 className="whitespace-normal">{e.node.primaryIntents[0].resourceInventoriedAs?.name}</h3>
-                                    <p className="whitespace-normal">{e.node.primaryIntents[0].resourceInventoriedAs?.note.split(':')[1].split(',')[0]}</p>
+                                    <h3 className="whitespace-normal">
+                                        {e.node.primaryIntents[0].resourceInventoriedAs?.name}
+                                    </h3>
+                                    <p className="whitespace-normal">
+                                        {e.node.primaryIntents[0].resourceInventoriedAs?.note.split(':')[1].split(',')[0]}
+                                    </p>
                                 </a>
                             </Link>
                         </div>
@@ -33,12 +42,13 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead:Arra
                         <p className="text-primary">Fab Tokens</p>
                     </td>
                     <td>
-                        <BrDisplayUser id={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id} name={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.name}/>
+                        <BrDisplayUser id={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id}
+                                       name={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.name}/>
                     </td>
                     <td className="max-w-[12rem]">
                         <BrTags tags={['this', 'tags', 'are', 'fakes']}/>
                     </td>
-                    </tr>
+                </tr>
             )}
         </BrTable>
     </>)
