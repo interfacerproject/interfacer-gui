@@ -6,7 +6,6 @@ const nextConfig = {
     i18n,
     reactStrictMode: true,
     swcMinify: true,
-    concurrentFeatures: true,
     env: {
         GRAPHQL: "http://65.109.11.42:8000/api/",
         FILE: "http://65.109.11.42:8000/api/file",
