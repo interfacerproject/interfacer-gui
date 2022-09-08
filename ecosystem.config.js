@@ -20,7 +20,7 @@ module.exports = {
   deploy: {
     baloo: {
       host: 'deploy_staging',
-      ref: 'origin/stagin-deploy',
+      ref: 'origin/main',
       repo: 'https://github.com/dyne/interfacer-gui',
       path: '/root/interfacer-gui',
       'post-deploy': 'sh deploy.sh',
