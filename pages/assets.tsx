@@ -103,7 +103,7 @@ const Assets = () => {
             <p className="my-2">{t('description')}</p>
             <NewProjectButton/>
             <Link href="mailto:bugreport@dyne.org">
-            <a className="ml-2 font-medium normal-case btn btn-accent btn-outline btn-md">
+            <a className="ml-2 normal-case btn btn-accent btn-outline btn-md">
                 {t('Report a bug')}
             </a>
         </Link>
