@@ -3,7 +3,7 @@ import AssetsTable from "../components/AssetsTable";
 import devLog from "../lib/devLog";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import {useTranslation} from "next-i18next";
-import React from "react";
+import React, {useEffect} from "react";
 import NewProjectButton from "../components/NewProjectButton";
 import Link from "next/link";
 
@@ -70,7 +70,7 @@ const Assets = () => {
   }
 }
 `
-    const {loading, data, error, fetchMore } = useQuery(QUERY_ASSETS, {variables: {last: 10}})
+    const queryResult = useQuery(QUERY_ASSETS, {variables: {last: 10}})
     const updateQuery = (previousResult: any, {fetchMoreResult}: any) => {
         if (!fetchMoreResult) {
             return previousResult;
@@ -83,18 +83,36 @@ const Assets = () => {
 
         return {...fetchMoreResult}
     }
-    const getHasNextPage = data?.proposals.pageInfo.hasNextPage;
+    const getHasNextPage = queryResult.data?.proposals.pageInfo.hasNextPage;
     const loadMore = () => {
-        if (data && fetchMore) {
+        if (queryResult.data && queryResult.fetchMore) {
             const nextPage = getHasNextPage;
-            const before = data.proposals.pageInfo.endCursor;
+            const before = queryResult.data.proposals.pageInfo.endCursor;
 
             if (nextPage && before !== null) {
-                fetchMore({updateQuery, variables: {before}});
+                queryResult.fetchMore({updateQuery, variables: {before}});
             }
         }
     }
-    devLog(data)
+    // Poll interval that works with pagination
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const total =
+                (queryResult.data?.proposals.edges.length || 0) +
+                queryResult.variables!.last;
+
+            queryResult?.refetch({
+                ...queryResult.variables,
+                last: total
+            });
+        }, 7000);
+
+        return () => clearInterval(intervalId);
+    }, [
+        ...Object.values(queryResult.variables!).flat(),
+        queryResult.data?.proposals.pageInfo.endCursor
+    ]);
+    devLog(queryResult.data)
 
 
     return (<div className="p-8">
@@ -103,12 +121,13 @@ const Assets = () => {
             <p className="my-2">{t('description')}</p>
             <NewProjectButton/>
             <Link href="mailto:bugreport@dyne.org">
-            <a className="ml-2 normal-case btn btn-accent btn-outline btn-md">
-                {t('Report a bug')}
-            </a>
-        </Link>
+                <a className="ml-2 normal-case btn btn-accent btn-outline btn-md">
+                    {t('Report a bug')}
+                </a>
+            </Link>
         </div>
-        {data && <AssetsTable assets={data.proposals.edges} assetsHead={t('tableHead', { returnObjects: true })}/>}
+        {queryResult.data &&
+        <AssetsTable assets={queryResult.data.proposals.edges} assetsHead={t('tableHead', {returnObjects: true})}/>}
         <div className="grid grid-cols-1 gap-4 mt-4 place-items-center">
             <button className="btn btn-primary" onClick={loadMore} disabled={!getHasNextPage}>{t('Load more')}</button>
         </div>
