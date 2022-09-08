@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "reload": "pm2 startOrGracefulReload ecosystem.config.js"
+    "reload": "pm2 startOrGracefulReload ecosystem.config.js",
+    "cypress": "cypress open",
+    "cypress:headless": "cypress run",
+    "e2e": "start-server-and-test dev http://localhost:3000 cypress",
+    "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
@@ -23,6 +27,7 @@
     "base45": "^2.0.1",
     "boring-avatars": "^1.7.0",
     "crypto-js": "^4.1.1",
+    "cypress": "^10.7.0",
     "daisyui": "^2.25.0",
     "dayjs": "^1.11.5",
     "graphql": "^16.6.0",
@@ -34,6 +39,7 @@
     "react-dom": "18.2.0",
     "react-qr-code": "^2.0.7",
     "sass": "^1.54.8",
+    "start-server-and-test": "^1.14.0",
     "tailwindcss": "^3.1.8",
     "typescript": "^4.8.2",
     "zenroom": "2.2.3-f0193d51"

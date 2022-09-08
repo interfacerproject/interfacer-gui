@@ -1,0 +1,51 @@
+name: E2E tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [16, 18]
+
+    name: E2E on Node v${{ matrix.node }}
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Git Sumbodule Update
+        run: |
+          git submodule update --init
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 6
+      - name: Install dependencies
+        run: pnpm install
+      #- name: Write the cypress.env.json file 📝
+      #  run: |
+      #    echo '${{ secrets.CYPRESS_ENV_CI }}' > cypress.env.json
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          install: false
+          start: pnpm run dev
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 130
+          record: true
+          tag: node-${{ matrix.node }}
+          browser: chrome
+          config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
