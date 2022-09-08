@@ -46,6 +46,7 @@ jobs:
           tag: node-${{ matrix.node }}
           browser: chrome
           paraller: true
+          group: 'GActions group'
           config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
