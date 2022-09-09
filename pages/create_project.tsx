@@ -201,7 +201,7 @@ const CreateProject: NextPage = () => {
 `
     const handleEditorChange = ({ html, text }:any)=> {
       devLog('handleEditorChange', html, text);
-      setAssetDescription(html)
+      setAssetDescription(text)
     }
 
     const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables
@@ -237,7 +237,7 @@ const CreateProject: NextPage = () => {
                 oneUnit: instanceVariables?.units?.unitOne.id,
                 creationTime: dayjs().toISOString(),
                 images: images,
-                tags: assetTags.map((t)=>encodeURI(t))
+                tags: assetTags?.map((t)=>encodeURI(t))
             }
         })
             .then((re: any) => {
