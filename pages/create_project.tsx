@@ -13,6 +13,7 @@ import TagSelector from "../components/brickroom/TagSelector";
 import { useAuth } from "../lib/auth";
 import devLog from "../lib/devLog";
 import BrMdEditor from "../components/brickroom/BrMdEditor";
+import AddContributors from "../components/AddContributors";
 
 type Image = {
     description: string,
@@ -40,6 +41,7 @@ const CreateProject: NextPage = () => {
     const [resourceId, setResourceId] = useState('')
     const [intentId, setIntentId] = useState('')
     const [images, setImages] = useState([] as Images)
+    const [contributors, setContributors] = useState([] as string[])
     const [imagesFiles, setImagesFiles] = useState([] as Array<any>)
     const { t } = useTranslation('createProjectProps')
 
@@ -313,6 +315,7 @@ const CreateProject: NextPage = () => {
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setLocationAddress(e.target.value)}
                         onBlur={handleCreateLocation} />
                 </div>
+                <AddContributors  setContributors={(c) => setContributors(c)} />
                 <BrInput type={'number'} label={t('price.label')} hint={t('price.hint')} value={price}
                     placeholder={t('price.placeholder')}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setPrice(e.target.value)} />

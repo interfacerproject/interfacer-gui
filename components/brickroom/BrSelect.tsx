@@ -11,10 +11,12 @@ type BrSelectProps = {
     error?: string,
     className?: string,
     roundedLG?: boolean,
+    multiple?: boolean,
 }
 
 
 const BrSelect = (props: BrSelectProps) => {
+    const selectClass = props.roundedLG ? 'select select-bordered rounded-full' : 'select select-bordered'
 
     return (<>
         <div className={`form-control ${props.className}`}>
@@ -22,7 +24,7 @@ const BrSelect = (props: BrSelectProps) => {
                 <span className="label-text">{props.label}</span>
             </label>
             <select onChange={(e: React.ChangeEvent<HTMLSelectElement>) => props.handleSelect(e)}
-                    className="select select-bordered rounded-full" value={props.value}>
+                    className={selectClass} value={props.value} multiple={props.multiple}>
                 {props.placeholder && <option disabled selected className="disabled" value="">{props.placeholder}</option>}
                 {props.array?.map((unit: { id: string, name: string }) =>
                     (<option key={unit?.id} value={unit?.id}>{unit?.name}</option>))}
