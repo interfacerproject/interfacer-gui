@@ -12,6 +12,7 @@ import BrTextField from "../components/brickroom/BrTextField";
 import TagSelector from "../components/brickroom/TagSelector";
 import { useAuth } from "../lib/auth";
 import devLog from "../lib/devLog";
+import BrMdEditor from "../components/brickroom/BrMdEditor";
 
 type Image = {
     description: string,
@@ -198,6 +199,10 @@ const CreateProject: NextPage = () => {
   }
 }
 `
+    const handleEditorChange = ({ html, text }:any)=> {
+      devLog('handleEditorChange', html, text);
+      setAssetDescription(text)
+    }
 
     const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables
 
@@ -232,6 +237,7 @@ const CreateProject: NextPage = () => {
                 oneUnit: instanceVariables?.units?.unitOne.id,
                 creationTime: dayjs().toISOString(),
                 images: images,
+                tags: assetTags?.map((t)=>encodeURI(t))
             }
         })
             .then((re: any) => {
@@ -285,9 +291,9 @@ const CreateProject: NextPage = () => {
                 <BrInput label={t('projectName.label')} hint={t('projectName.hint')} value={projectName}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setAssetName(e.target.value)}
                     placeholder={t('projectName.placeholder')} />
-                <BrTextField label={t('projectDescription.label')} hint={t('projectDescription.hint')}
-                    value={projectDescription} placeholder={t('projectDescription.placeholder')}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setAssetDescription(e.target.value)} />
+                <BrMdEditor onChange={handleEditorChange} className="my-2" editorClass="h-60"
+                            label={t('projectDescription.label')}
+                            hint={t('projectDescription.hint')}/>
                 <BrRadio array={t('projectType.array', { returnObjects: true })} label={t('projectType.label')}
                     hint={t('projectType.hint')} onChange={setAssetType} value={projectType} />
                 <BrImageUpload onChange={setImages} setImagesFiles={setImagesFiles} label={t('imageUpload.label')}

@@ -8,6 +8,7 @@ import AssetImage from '../../components/AssetImage';
 import BrDisplayUser from '../../components/brickroom/BrDisplayUser';
 import BrTags from '../../components/brickroom/BrTags';
 import devLog from "../../lib/devLog";
+import MdParser from "../../lib/MdParser";
 
 interface AssetIface {
     name: string;
@@ -117,9 +118,7 @@ const Asset = () => {
                         <span className="rounded-lg btn btn-disabled">{t("Contributions")}</span>
                         <span className="rounded-lg btn btn-disabled">{t("DPP")}</span>
                     </div>
-                    <div>
-                        <p>{asset.note.split(':')[1].split(',')[0]}</p>
-                    </div>
+                    <div dangerouslySetInnerHTML={{ __html: MdParser.render(asset.note.split(':')[1].split(',')[0]) }}/>
                     <div id="tags">
                         <BrTags tags={asset?.tags || ["lasercutter", "lasercut", "DIY", "kit"]} />
                     </div>
