@@ -237,6 +237,7 @@ const CreateProject: NextPage = () => {
                 oneUnit: instanceVariables?.units?.unitOne.id,
                 creationTime: dayjs().toISOString(),
                 images: images,
+                tags: assetTags.map((t)=>encodeURI(t))
             }
         })
             .then((re: any) => {
