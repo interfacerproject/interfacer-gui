@@ -47,7 +47,7 @@ Cypress.Commands.add('login', (email: string, password: string) => {
     cy.get('input:first').should('be.visible').type(email)
     cy.get('button').first().click()
     cy.wait('@api').get('input').eq(0).should('be.visible').type(password)
-        .get('button').eq(0).should('be.visible').click()
+        .get('button').eq(0).should('be.visible').click().wait(4000)
     cy.get('button').eq(1).should('be.visible').click()
 })
 // Prevent TypeScript from reading file as legacy script
