@@ -36,19 +36,11 @@
 //   }
 // }
 // @ts-ignore
-Cypress.Commands.add('login', (email: string, password: string) => {
-    cy.intercept({
-        method: 'POST',
-        url: 'http://65.109.11.42:8000/api',
-    }).as('api')
-    cy.viewport('macbook-13')
-    cy.visit('/sign_in')
-    cy.get('button').first().should('be.visible').click()
-    cy.get('input:first').should('be.visible').type(email)
-    cy.get('button').first().click()
-    cy.wait('@api').get('input').eq(0).should('be.visible').type(password)
-        .get('button').eq(0).should('be.visible').click().wait(4000)
-    cy.get('button').eq(1).should('be.visible').click()
+Cypress.Commands.add('login', () => {
+    const attrs = "authName authId eddsa_public_key eddsa_key authUsername seed authEmail eddsa".split(" ")
+    for (const attr of attrs) {
+        cy.setLocalStorage(attr, Cypress.env(attr))
+    }
 })
 // Prevent TypeScript from reading file as legacy script
-export {}
+export { }
