@@ -35,6 +35,12 @@
 //     }
 //   }
 // }
-
+// @ts-ignore
+Cypress.Commands.add('login', () => {
+    const attrs = "authName authId eddsa_public_key eddsa_key authUsername seed authEmail eddsa".split(" ")
+    for (const attr of attrs) {
+        cy.setLocalStorage(attr, Cypress.env(attr))
+    }
+})
 // Prevent TypeScript from reading file as legacy script
-export {}
+export { }

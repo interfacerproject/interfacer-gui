@@ -1,8 +1,22 @@
-import {defineConfig} from 'cypress'
+import { defineConfig } from "cypress";
 
 export default defineConfig({
+    retries: 2,
+
     e2e: {
-        baseUrl: 'http://localhost:3000',
+        baseUrl: "http://localhost:3000",
+        setupNodeEvents(on, config) {
+            require("cypress-localstorage-commands/plugin")(on, config);
+            return config;
+        },
     },
-    projectId: "nqct2i"
-})
+
+    projectId: "nqct2i",
+
+    component: {
+        devServer: {
+            framework: "next",
+            bundler: "webpack",
+        },
+    },
+});
