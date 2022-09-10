@@ -11,7 +11,7 @@ const Logged_in: NextPage = () => {
 
     return (<div className="p-8">
         <h1>Hello {username}</h1>
-        <h2>How do you arrive here? This app is still under construction!</h2>
+        <h2>How did you arrived here? This app is still under construction!</h2>
         </div>
     )
 }
