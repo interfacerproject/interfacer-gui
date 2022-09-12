@@ -10,6 +10,7 @@
     "reload": "pm2 startOrGracefulReload ecosystem.config.js",
     "cypress": "cypress open",
     "cypress:headless": "cypress run",
+    "test:component": "cypress run-ct",
     "e2e": "start-server-and-test dev http://localhost:3000 cypress",
     "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless"
   },
