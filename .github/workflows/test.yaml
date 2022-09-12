@@ -62,6 +62,6 @@ jobs:
           browser: chrome
           config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY_COMPONENTS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          CYPRESS_PROJECT_ID: 7iq8xz
