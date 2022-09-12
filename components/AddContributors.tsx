@@ -12,10 +12,7 @@ type AddContributorsProps = {
     hint?: string,
     error?: string
 }
-
-const AddContributors = ({contributors, setContributors, label, hint, error}: AddContributorsProps) => {
-    const [searchTerm, setSearchTerm] = useState<string>("");
-    const QUERY_AGENTS = gql`query ($first: Int, $id: ID){
+export const QUERY_AGENTS = gql`query ($first: Int, $id: ID){
   agents(first:$first, after: $id) {
     pageInfo {
       startCursor
@@ -34,6 +31,10 @@ const AddContributors = ({contributors, setContributors, label, hint, error}: Ad
     }
   }
 }`
+
+const AddContributors = ({contributors, setContributors, label, hint, error}: AddContributorsProps) => {
+    const [searchTerm, setSearchTerm] = useState<string>("");
+
     const agents = useQuery(QUERY_AGENTS).data?.agents.edges.map((agent: any) => agent.node)
     devLog('agents:', agents)
     const filteredContributors = agents?.filter((contributor: { id: string, name: string }) => {
