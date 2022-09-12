@@ -40,7 +40,7 @@ const AddContributors = ({contributors, setContributors, label, hint, error}: Ad
         return contributor.name.toLowerCase().includes(searchTerm.toLowerCase())
     })
     devLog(searchTerm, 'filtered contributors:', filteredContributors)
-    const  handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         // @ts-ignore
         const updatedOptions = [...e.target.options]
             .filter(option => option.selected)
@@ -48,11 +48,15 @@ const AddContributors = ({contributors, setContributors, label, hint, error}: Ad
         devLog("contributors", updatedOptions);
         setContributors(updatedOptions);
     }
+    const handleCancel = (contr: string) => {
+        const updatedOptions = contributors.filter(contributor => contributor !== contr)
+        setContributors(updatedOptions)
+    }
     return <div className="w-full">
-         <label className="label">
-                <span className="label-text">{label}</span>
-         </label>
-        <label htmlFor="email" className="relative text-gray-400 focus-within:text-gray-600 block">
+        <label className="label">
+            <span className="label-text">{label}</span>
+        </label>
+        <label htmlFor="searchTerm" className="relative py-2 text-gray-400 focus-within:text-gray-600 block">
             <SearchIcon className="pointer-events-none w-8 h-8 absolute top-1/2 transform -translate-y-1/2 left-3"/>
             <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
                    className="w-full input input-bordered focus:input-primary pl-14"/>
@@ -67,18 +71,21 @@ const AddContributors = ({contributors, setContributors, label, hint, error}: Ad
         </select>
         }
 
-            {contributors.length > 0 && <div className="w-full flex mt-1">{contributors.map((contributor: string) =><>
-                <div key={contributor} className="badge badge-success bg-green-200 rounded-md float-left mb-1 mr-1 p-3">{agents.find((a:{id:string, name:string})=>a.id === contributor).name}</div>
-            </>)}
-            </div>}
+        {contributors.length > 0 && <div className="w-full flex flex-wrap mt-1">{contributors.map((contributor: string) => <>
+            <div key={contributor}
+                 className="badge badge-success bg-green-200 rounded-md float-left mb-1 mr-1 p-3 break-normal">
+                <button className={'btn btn-ghost btn-xs ml-0'} onClick={() => handleCancel(contributor)}>x</button>
+                {agents.find((a: { id: string, name: string }) => a.id === contributor).name}</div>
+        </>)}
+        </div>}
         <label className="label">
-                {error &&
-                <span className="flex flex-row items-center justify-between label-text-alt text-warning">
+            {error &&
+            <span className="flex flex-row items-center justify-between label-text-alt text-warning">
                     <ExclamationIcon className='w-5 h-5'/>
-                    {error}</span>}
-                {hint && <span className="label-text-alt">{hint}
+                {error}</span>}
+            {hint && <span className="label-text-alt">{hint}
                 </span>}
-            </label>
+        </label>
     </div>
 }
 export default AddContributors
