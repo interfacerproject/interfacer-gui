@@ -1,4 +1,4 @@
-name: E2E tests
+name: Tests E2E and Components
 on:
   push:
     branches:
