@@ -1,12 +1,10 @@
 import type { NextPage } from 'next'
 import { useAuth } from "../lib/auth";
-// import User from "../components/UserActivities"
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { CheckCircleIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 import React from "react";
-
 
 export async function getStaticProps({ locale }:any) {
   return {

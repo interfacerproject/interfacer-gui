@@ -1,12 +1,13 @@
 import React, {ReactNode} from 'react';
-import Sidebar from "./Sidebar"
 import Topbar from "./Topbar";
 import {useAuth} from "../lib/auth";
 import SignIn from "../pages/sign_in";
 import {useRouter} from 'next/router'
+import {ArrowLeftIcon} from "@heroicons/react/outline";
 
 type layoutProps = {
-    children: ReactNode
+    children: ReactNode,
+    cta?: ReactNode
 }
 
 
@@ -26,14 +27,17 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
                 <div className="drawer drawer-mobile">
                     <input id="my-drawer" type="checkbox" className="drawer-toggle"/>
                     <div className="drawer-content">
-                        <Topbar/>
+                         <Topbar search={false} userMenu={false} cta={layoutProps.cta}>
+                            <div className="w-auto h-16 p-4 border-r mx-2">
+                                <div className="logo mx-auto"/>
+                            </div>
+                            <button className="btn btn-accent btn-outline" onClick={() => router.back()}>
+                                <ArrowLeftIcon className="w-5 h-5"/> Go back and discard
+                            </button>
+                        </Topbar>
                         <div className="container bg-[#F3F3F1] min-h-screen max-w-full">
                             {layoutProps?.children}
                         </div>
-                    </div>
-                   <div className="drawer-side">
-                        <label htmlFor="my-drawer" className="drawer-overlay"/>
-                        <Sidebar/>
                     </div>
                 </div>
             </>}
