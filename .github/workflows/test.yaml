@@ -36,6 +36,21 @@ jobs:
       - name: Write the cypress.env.json file 📝
         run: |
           echo '${{ secrets.CYPRESS_ENV_CI }}' > cypress.env.json
+      - name: Cypress E2E tests 🧪
+        uses: cypress-io/github-action@v4
+        with:
+          install: false
+          start: pnpm run dev
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 130
+          record: true
+          tag: node-${{ matrix.node }}
+          browser: chrome
+          config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
       - name: Cypress Component tests 🧪
         uses: cypress-io/github-action@v4
         with:
@@ -52,18 +67,3 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY_COMPONENTS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_PROJECT_ID: 7iq8xz
-      - name: Cypress E2E tests 🧪
-        uses: cypress-io/github-action@v4
-        with:
-          install: false
-          start: pnpm run dev
-          wait-on: 'http://localhost:3000'
-          wait-on-timeout: 130
-          record: true
-          tag: node-${{ matrix.node }}
-          browser: chrome
-          config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
