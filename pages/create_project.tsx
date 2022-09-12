@@ -8,12 +8,12 @@ import { ChangeEvent, useEffect, useState } from "react";
 import BrImageUpload from "../components/brickroom/BrImageUpload";
 import BrInput from "../components/brickroom/BrInput";
 import BrRadio from "../components/brickroom/BrRadio";
-import BrTextField from "../components/brickroom/BrTextField";
 import TagSelector from "../components/brickroom/TagSelector";
 import { useAuth } from "../lib/auth";
 import devLog from "../lib/devLog";
 import BrMdEditor from "../components/brickroom/BrMdEditor";
 import AddContributors from "../components/AddContributors";
+
 
 type Image = {
     description: string,
@@ -315,7 +315,7 @@ const CreateProject: NextPage = () => {
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setLocationAddress(e.target.value)}
                         onBlur={handleCreateLocation} />
                 </div>
-                <AddContributors  setContributors={(c) => setContributors(c)} />
+                <AddContributors  label={t('contributors.label')} hint={t('contributors.hint')} setContributors={(c) => setContributors(c)} contributors={contributors}/>
                 <BrInput type={'number'} label={t('price.label')} hint={t('price.hint')} value={price}
                     placeholder={t('price.placeholder')}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setPrice(e.target.value)} />

@@ -5,7 +5,7 @@ type BrSelectProps = {
     array: Array<{ id: string, name: string }>
     placeholder?: string,
     label?: string,
-    value?:string,
+    value?:string | Array<string>,
     handleSelect: ChangeEventHandler,
     hint?: string,
     error?: string,
