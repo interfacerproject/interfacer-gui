@@ -1,7 +1,7 @@
-import { defineConfig } from "cypress";
+import {defineConfig} from "cypress";
 
 export default defineConfig({
-    retries: 2,
+    retries: 4,
 
     e2e: {
         baseUrl: "http://localhost:3000",

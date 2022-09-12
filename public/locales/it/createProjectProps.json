@@ -73,6 +73,11 @@
     "placeholder": "E.g. 1 Fab Token",
     "hint": "Short description to be displayed inside the asset page"
   },
+    "contributors": {
+    "label": "Contributors:",
+    "placeholder": "Search agents by name",
+    "hint": "Contributors must have an account"
+  },
   "button": "Save",
   "resourceSpec": "73u648QASpCtC80ihY0KLg",
   "unitId": "82XqknZlTsGcFbQw8Gg6ow"
