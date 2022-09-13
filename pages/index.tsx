@@ -13,12 +13,6 @@ export async function getStaticProps({ locale }: any) {
             ...(await serverSideTranslations(locale, ['signInProps', 'homeProps', 'SideBarProps'])),
         },
     };
-export async function getStaticProps({ locale }:any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['signInProps', 'homeProps', 'SideBarProps'])),
-    },
-  };
 }
 
 const Home: NextPage = () => {
