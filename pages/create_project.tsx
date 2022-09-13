@@ -282,7 +282,7 @@ const CreateProject: NextPageWithLayout = () => {
     }
 
     return (<div className="p-8">
-        <div className="w-3/5">
+        <div className="w-full md:w-3/5">
             <div className="w-80">
                 <h2 className="text-primary">{t('headline.title')} </h2>
                 <p>{t('headline.description')}</p>
