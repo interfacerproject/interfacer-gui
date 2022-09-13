@@ -1,10 +1,14 @@
-import React, {useState} from "react";
 import Link from "next/link";
 import BrTable from "./brickroom/BrTable";
 import BrTags from "./brickroom/BrTags";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import AssetImage from "./AssetImage";
 import {decodeTime} from 'ulid';
+import dayjs from 'dayjs';
+var relativeTime = require('dayjs/plugin/relativeTime')
+dayjs.extend(relativeTime)
+var calendar = require('dayjs/plugin/calendar')
+dayjs.extend(calendar)
 
 const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead: Array<string> }) => {
 
@@ -32,7 +36,7 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead: Arr
                         </div>
                     </td>
                     <td className="">
-                        {new Date(decodeTime(e.node.id)).toLocaleTimeString()}
+                        {dayjs().calendar(dayjs(e.node.created))}
                     </td>
                     <td>
                         <h3>{e.node.reciprocalIntents[0].resourceQuantity.hasNumericalValue}</h3>
