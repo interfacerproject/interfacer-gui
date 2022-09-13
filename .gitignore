@@ -39,3 +39,5 @@ next-env.d.ts
 /cypress/videos/**
 cypress.env.json
 
+# IDE
+.vscode

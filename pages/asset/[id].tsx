@@ -80,8 +80,6 @@ const Asset = () => {
     const { loading, error, data, startPolling } = useQuery(QUERY_ASSET, { variables: { id } })
     startPolling(2000)
 
-    devLog(data)
-
     useEffect(() => {
         const _asset: AssetIface = data?.proposal.primaryIntents[0].resourceInventoriedAs;
         fetch(`${process.env.FILE}/${_asset?.images[0]?.hash}`, { method: 'get' }).then(async (r) => {

@@ -11,7 +11,7 @@ describe("when user is logged in", () => {
 
     it('Should see /logged_in', () => {
         cy.visit('/logged_in')
-        cy.contains('How do you arrive here? This app is still under construction!')
+        cy.contains('How did you arrived here? This app is still under construction!')
     })
 
     it('Should see /resources', () => {
