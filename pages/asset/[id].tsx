@@ -111,9 +111,9 @@ const Asset = () => {
                     </div>
                 </div>
             </div>
-            <div className="flex md:mx-32">
-                <div id="left-col" className="flex flex-col w-2/3 space-y-14">
-                    <div id="tabs" className="my-6 space-x-8">
+            <div className="grid md:grid-cols-3 sm:grid-cols-1 gap-4 md:mx-32 mx-6">
+                <div id="left-col" className="flex flex-col col-span-2 space-y-14">
+                    <div id="tabs" className="my-6 space-x-8 hidden md:block">
                         <button className="px-12 text-black bg-gray-300 border-0 rounded-lg btn">{t("Overview")}</button>
                         <span className="rounded-lg btn btn-disabled">{t("Contributions")}</span>
                         <span className="rounded-lg btn btn-disabled">{t("DPP")}</span>
