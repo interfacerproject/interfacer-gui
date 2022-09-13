@@ -6,7 +6,6 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: 'IBM Plex Sans', sans-serif;
 }
 
 a {
@@ -41,7 +40,7 @@ p, .paragraph {
 .logo {
   width: 169px;
   height: 20px;
-  background-image: url('/logo.png');
+  background-image: url('/logo.svg');
   @apply bg-cover;
 }
 table {

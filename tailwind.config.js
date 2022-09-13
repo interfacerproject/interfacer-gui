@@ -48,6 +48,7 @@ module.exports = {
             },
             fontFamily: {
                 'display': ['"Space Grotesk"', 'sans-serif'],
+                'sans': ['"IBM Plex Sans"', 'sans-serif'],
             },
         },
     },
