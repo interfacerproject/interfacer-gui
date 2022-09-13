@@ -7,8 +7,8 @@ const nextConfig = {
     reactStrictMode: true,
     swcMinify: true,
     env: {
-        GRAPHQL: "http://65.109.11.42:8000/api/",
-        FILE: "http://65.109.11.42:8000/api/file",
+        GRAPHQL: "https://fcos.interfacer.dyne.org/api/",
+        FILE: "https://fcos.interfacer.dyne.org/api/file",
     },
     webpack: (config) => {
         config.resolve.fallback = {
