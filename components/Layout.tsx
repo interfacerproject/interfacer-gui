@@ -11,37 +11,37 @@ type layoutProps = {
 }
 
 
-const Layout:React.FunctionComponent<layoutProps> = (layoutProps:layoutProps) => {
-  const { isSignedIn } = useAuth()
+const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
+    const {isSignedIn} = useAuth()
     const router = useRouter()
     const path = router.asPath
     const authentication = path === '/sign_out' || path === '/sign_up' || path === '/sign_in' || !isSignedIn() && path !== '/'
 
     return (
         <>
-            {authentication&&<>
-                {(!isSignedIn || path === '/sign_up')&&layoutProps?.children}
-                {path !== '/sign_up'&&<SignIn/>}
+            {authentication && <>
+                {(!isSignedIn || path === '/sign_up') && layoutProps?.children}
+                {path !== '/sign_up' && <SignIn />}
             </>}
-            {!authentication&&<>
+            {!authentication && <>
                 {isSignedIn() ?
-                <div className="drawer drawer-mobile">
-                    <input id = "my-drawer" type = "checkbox" className = "drawer-toggle" />
-                    <div className="drawer-content">
-                        <Topbar/>
-                        <div className="container bg-[#F3F3F1] min-h-screen">
-                            {layoutProps?.children}
+                    <div className="drawer drawer-mobile">
+                        <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+                        <div className="drawer-content">
+                            <Topbar />
+                            <div className="bg-[#F3F3F1] min-h-screen">
+                                {layoutProps?.children}
+                            </div>
+                        </div>
+                        <div className="drawer-side">
+                            <label htmlFor="my-drawer" className="drawer-overlay" />
+                            <Sidebar />
                         </div>
                     </div>
-                    <div className="drawer-side">
-                        <label htmlFor="my-drawer" className="drawer-overlay"/>
-                        <Sidebar/>
-                    </div>
-                </div>
-                :
-                <div className="bg-[#F3F3F1] min-h-screen">
-                    {layoutProps?.children}
-                </div>}
+                    :
+                    <div className="bg-[#F3F3F1] min-h-screen">
+                        {layoutProps?.children}
+                    </div>}
             </>}
         </>
 
