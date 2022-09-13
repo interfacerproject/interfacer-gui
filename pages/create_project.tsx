@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import dayjs from 'dayjs';
-import Layout from '../components/CreateProjectLayout'
+import Layout from "../components/CreateProjectLayout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
