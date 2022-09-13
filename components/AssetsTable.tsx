@@ -4,6 +4,7 @@ import BrTable from "./brickroom/BrTable";
 import BrTags from "./brickroom/BrTags";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import AssetImage from "./AssetImage";
+import {decodeTime} from 'ulid';
 
 const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead: Array<string> }) => {
 
@@ -13,7 +14,7 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead: Arr
                 <tr key={e.cursor}>
                     <td>
                         <div className="flex max-w-xs min-w-[10rem]">
-                           {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] && <div className="w-2/5 flex-none">
+                           {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] && <div className="flex-none w-2/5">
                                 <AssetImage
                                     image={{
                                         hash: e.node.primaryIntents[0].resourceInventoriedAs?.images[0]?.hash,
@@ -23,16 +24,15 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead: Arr
                             </div>}
                             <Link href={`/asset/${e.node.id}`} className="flex-auto">
                                 <a className="ml-1">
-                                    <h3 className="whitespace-normal break-words">
+                                    <h3 className="break-words whitespace-normal">
                                         {e.node.primaryIntents[0].resourceInventoriedAs?.name}
                                     </h3>
                                 </a>
                             </Link>
                         </div>
                     </td>
-                    <td className="pl-1">
-                        <h4>4 min ago</h4>
-                        <h5 className="whitespace-normal">11:00 AM, 11/06/2022</h5>
+                    <td className="">
+                        {new Date(decodeTime(e.node.id)).toLocaleTimeString()}
                     </td>
                     <td>
                         <h3>{e.node.reciprocalIntents[0].resourceQuantity.hasNumericalValue}</h3>

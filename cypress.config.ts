@@ -2,7 +2,9 @@ import {defineConfig} from "cypress";
 
 export default defineConfig({
     retries: 4,
-
+    env: {
+        ZENFLOWS_URL: "http://65.109.11.42:9000/api",
+    },
     e2e: {
         baseUrl: "http://localhost:3000",
         setupNodeEvents(on, config) {
@@ -10,9 +12,7 @@ export default defineConfig({
             return config;
         },
     },
-
     projectId: "nqct2i",
-
     component: {
         devServer: {
             framework: "next",

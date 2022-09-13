@@ -47,6 +47,7 @@ specifiers:
   start-server-and-test: ^1.14.0
   tailwindcss: ^3.1.8
   typescript: ^4.8.2
+  ulid: ^2.3.0
   zenroom: 2.2.3-f0193d51
 
 dependencies:
@@ -99,6 +100,7 @@ devDependencies:
   eslint: 8.23.0
   eslint-config-next: 12.2.5_yqf6kl63nyoq5megxukfnom5rm
   start-server-and-test: 1.14.0
+  ulid: 2.3.0
 
 packages:
 
@@ -5079,6 +5081,11 @@ packages:
   /uc.micro/1.0.6:
     resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==}
     dev: false
+
+  /ulid/2.3.0:
+    resolution: {integrity: sha512-keqHubrlpvT6G2wH0OEfSW4mquYRcbe/J8NMmveoQOjUqmo+hXtO+ORCpWhdbZ7k72UtY61BL7haGxW6enBnjw==}
+    hasBin: true
+    dev: true
 
   /unbox-primitive/1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}

@@ -10,7 +10,7 @@ describe('Authentication', () => {
     it('should get HMAC from the server at sign in', () => {
         cy.intercept({
             method: 'POST',
-            url: 'https://fcos.interfacer.dyne.org/api',
+            url: Cypress.env('ZENFLOWS_URL'),
         }).as('api')
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
@@ -23,7 +23,7 @@ describe('Authentication', () => {
     it('At sign in Should render error if passhprase is != 12 words', () => {
         cy.intercept({
             method: 'POST',
-            url: 'https://fcos.interfacer.dyne.org/api',
+            url: Cypress.env('ZENFLOWS_URL'),
         }).as('api')
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
@@ -38,7 +38,7 @@ describe('Authentication', () => {
     it('Should render error if user answer less than 3 question', () => {
         cy.intercept({
             method: 'POST',
-            url: 'https://fcos.interfacer.dyne.org/api',
+            url: Cypress.env('ZENFLOWS_URL'),
         }).as('api')
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
@@ -56,7 +56,7 @@ describe('Authentication', () => {
     it('Should save in local storage keys at sign in via question', () => {
         cy.intercept({
             method: 'POST',
-            url: 'https://fcos.interfacer.dyne.org/api',
+            url: Cypress.env('ZENFLOWS_URL'),
         }).as('api')
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
@@ -83,7 +83,7 @@ describe('Authentication', () => {
     it('Should render a landing page after log in and save keyring in local storage', () => {
         cy.intercept({
             method: 'POST',
-            url: 'https://fcos.interfacer.dyne.org/api',
+            url: Cypress.env('ZENFLOWS_URL'),
         }).as('api')
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
@@ -106,7 +106,7 @@ describe('Authentication', () => {
     it('Should save in local storage keys at sign up', () => {
         cy.intercept({
             method: 'POST',
-            url: 'https://fcos.interfacer.dyne.org/api',
+            url: Cypress.env('ZENFLOWS_URL'),
         }).as('api')
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
