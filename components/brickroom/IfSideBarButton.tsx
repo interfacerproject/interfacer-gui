@@ -1,3 +1,4 @@
+// @ts-ignore
 import classNames from "classnames";
 import Link from "next/link";
 import React from "react";

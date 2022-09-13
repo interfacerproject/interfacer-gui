@@ -88,7 +88,7 @@ function useProvideAuth() {
 
     const createApolloClient = () => {
         const link = new HttpLink({
-            uri: 'http://65.109.11.42:8000/api',
+            uri: process.env.GRAPHQL,
             headers: getAuthHeaders(),
         })
 
