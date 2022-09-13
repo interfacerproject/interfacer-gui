@@ -28,7 +28,7 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
                     <input id="my-drawer" type="checkbox" className="drawer-toggle"/>
                     <div className="drawer-content">
                          <Topbar search={false} userMenu={false} cta={layoutProps.cta}>
-                            <div className="w-auto h-16 p-4 border-r mx-2">
+                            <div className="w-auto h-16 p-4 border-r mx-2 hidden md:block">
                                 <div className="logo mx-auto"/>
                             </div>
                             <button className="btn btn-accent btn-outline" onClick={() => router.back()}>
