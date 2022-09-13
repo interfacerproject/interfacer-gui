@@ -58,7 +58,7 @@ export default function SignUp() {
         <div className="mx-auto h-screen grid place-items-center bg-cover" style={{['backgroundImage' as any]: "url('https://www.interfacerproject.eu/assets/index/ABOUT.png')"}}>
             <Card title={t('title')}
                   width={CardWidth.LG}
-                  className="px-16 py-[4.5rem]">
+                  className="md:px-16 py-[4.5rem]">
                 {(step === 0) && <>
                     <p>{t('presentation')}</p>
                     <form onSubmit={onSubmit}>

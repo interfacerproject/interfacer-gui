@@ -64,7 +64,7 @@ export default function Sign_in() {
             <div className="container mx-auto h-screen grid place-items-center">
                 <Card title={t('title')}
                       width={CardWidth.LG}
-                      className="px-16 py-[4.5rem]">
+                      className="md:px-16 py-[4.5rem]">
                     <>
                         {step === 0 && <><p>{t('presentation')}</p>
                             <button className="btn btn-block" type="button"
