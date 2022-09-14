@@ -93,17 +93,20 @@ const AssetsTable = ({userid}:{userid?:string}) => {
             }
         }
     }
+    const assets = userid?
+        queryResult.data?.proposals.edges.filter((edge:any) => edge.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id === userid) :
+        queryResult.data?.proposals.edges
     // Poll interval that works with pagination
     useEffect(() => {
         const intervalId = setInterval(() => {
             const total =
-                (queryResult.data?.proposals.edges.length || 0)
+                ((queryResult.data?.proposals.edges.length*2)-assets.length || 0)
 
             queryResult?.refetch({
                 ...queryResult.variables,
                 last: total
             });
-        }, 7000);
+        }, 1000);
 
         return () => clearInterval(intervalId);
     }, [
@@ -111,9 +114,7 @@ const AssetsTable = ({userid}:{userid?:string}) => {
         queryResult.data?.proposals.pageInfo.startCursor
     ]);
     devLog(queryResult.data)
-    const assets = userid?
-        queryResult.data?.proposals.edges.filter((edge:any) => edge.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id === userid) :
-        queryResult.data?.proposals.edges
+
 
 
     return (<>
