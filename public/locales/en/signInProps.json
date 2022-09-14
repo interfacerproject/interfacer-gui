@@ -1,8 +1,8 @@
 {
-  "title": "Welcome!",
-  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-  "button1": "Sign In via passprhase",
-  "button2": "Sign In answering some questions",
+  "title": "Sign in/up",
+  "presentation": " Sign up to create a new profile, or sign in. The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase.",
+  "button1": "Sign In: passphrase",
+  "button2": "Sign In: answer questions",
   "button3": "Sign Up",
   "button4": "Next",
   "email": {

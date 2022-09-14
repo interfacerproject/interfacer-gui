@@ -1,10 +1,10 @@
 {
   "home": "Home",
   "createAsset": "Create asset",
-  "resources": "Economic Resources",
+  "resources": "Resources",
   "myInventory": "My inventory",
-  "lastUpdated": "Last updated",
-  "seeAll": "See all",
+  "lastUpdated": "Latest assets",
+  "seeAll": "All assets",
   "userGuide": "User guide",
   "map": "Map"
 }

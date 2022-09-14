@@ -1,6 +1,6 @@
 {
     "title": "Welcome!",
-    "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "presentation": "The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase.",
     "name": {
         "label": "name",
         "placeholder": "Type your name"
@@ -14,7 +14,7 @@
         "placeholder": "alice@email.com"
     },
     "register": {
-        "question": "✌️ yet regisetered?",
+        "question": "✌️ already regisetered?",
         "answer": "Sign In"
     },
     "questions": [
