@@ -11,12 +11,12 @@ import {useTranslation} from "next-i18next";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 
 
-export async function getStaticProps({ locale }:any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['signInProps'])),
-    },
-  };
+export async function getStaticProps({locale}: any) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['signInProps', 'signUpProps'])),
+        },
+    };
 }
 
 export default function Sign_in() {
@@ -39,7 +39,7 @@ export default function Sign_in() {
         setIsPassphrase(false)
         setStep(1)
     }
-    const toNextStep = async (step:number) => {
+    const toNextStep = async (step: number) => {
         const result = await askKeypairoomServer(email, false)
         if (await result?.keypairoomServer) {
             setPdfk(result?.keypairoomServer)
@@ -60,20 +60,26 @@ export default function Sign_in() {
     }
 
     return (
-        <div className="h-screen bg-cover" style={{['backgroundImage' as any]: "url('https://www.interfacerproject.eu/assets/index/ABOUT.png')"}}>
+        <div className="h-screen bg-cover"
+             style={{['backgroundImage' as any]: "url('https://www.interfacerproject.eu/assets/index/ABOUT.png')"}}>
             <div className="container mx-auto h-screen grid place-items-center">
                 <Card title={t('title')}
                       width={CardWidth.LG}
                       className="md:px-16 py-[4.5rem]">
                     <>
                         {step === 0 && <><p>{t('presentation')}</p>
+                            <div className="w-full border-y-2 h-2 my-2"/>
+                            <Link href={'/sign_up'}>
+                                <a className="btn btn-block">{t('button3')}</a>
+                            </Link>
+                                <div className="w-full border-y-2 h-2 my-2"/>
                             <button className="btn btn-block" type="button"
                                     onClick={() => viaPassphrase()}>{t('button1')}</button>
                             <button className="btn btn-block my-4" type="button"
                                     onClick={() => viaQuestions()}>{t('button2')}</button>
-                            <Link href={'/sign_up'}>
-                                <a className="btn btn-block">{t('button3')}</a>
-                            </Link></>}
+                        </>}
+
+
                         {step === 1 && <>
                             <BrInput type="email" label={t('email.label')}
                                      error={errorMail}
@@ -91,11 +97,11 @@ export default function Sign_in() {
                             </>}
                         </>}
                         {step === 3 && <>
-                    <VerifySeed email={email} HMAC={pdfk}/>
-                </>}
+                            <VerifySeed email={email} HMAC={pdfk}/>
+                        </>}
                         {step === 2 && <>
-                    <KeyringGeneration email={email} HMAC={pdfk}/>
-                </>}
+                            <KeyringGeneration email={email} HMAC={pdfk}/>
+                        </>}
                     </>
                 </Card>
             </div>

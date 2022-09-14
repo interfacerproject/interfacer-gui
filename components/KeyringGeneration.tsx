@@ -7,6 +7,9 @@ import keypairoomClient from "../zenflows-crypto/src/keypairoomClient-8-9-10-11-
 import {useRouter} from "next/router";
 import {useAuth} from "../lib/auth";
 import devLog from "../lib/devLog";
+import {useTranslation} from "next-i18next";
+
+type Question = string;
 
 
 const KeyringGeneration = ({
@@ -15,8 +18,9 @@ const KeyringGeneration = ({
                                user,
                                HMAC,
                                isSignUp
-                           }: { email: string, name?: string, user?: string, HMAC: string, isSignUp?:boolean }) => {
+                           }: { email: string, name?: string, user?: string, HMAC: string, isSignUp?: boolean }) => {
     const {signUp, generateKeys, signIn} = useAuth()
+    const {t} = useTranslation('signUpProps')
     const keyringGenProps: any = {
         title: "Welcome!",
         presentation: "Answer at least three question",
@@ -30,11 +34,6 @@ const KeyringGeneration = ({
         },
         button: "Check",
         button2: "Sign Up",
-        question1: "Where my parents met?",
-        question2: "What is the name of your first pet?",
-        question3: "What is your home town?",
-        question4: "What is the name of your first teacher?",
-        question5: "What is the surname of your mother before wedding?"
     }
     const [eddsaPublicKey, setEddsaPublicKey] = useState('')
     const [seed, setSeed] = useState('')
@@ -49,21 +48,41 @@ const KeyringGeneration = ({
     const {getItem, setItem} = useStorage()
     const router = useRouter()
 
-    useEffect(()=>{
+    const mapQuestions: (question:number)=>{question:string, setQuestion:Function} | undefined = (question) => {
+        switch (question) {
+            case 1:
+                return {question:question1, setQuestion:setQuestion1}
+            case 2:
+                return {question:question2, setQuestion:setQuestion2}
+            case 3:
+                return {question:question3, setQuestion:setQuestion3}
+            case 4:
+                return {question:question4, setQuestion:setQuestion4}
+            case 5:
+                return {question:question5, setQuestion:setQuestion5}
+        }
+    }
+
+    useEffect(() => {
         devLog(error)
     }, [error])
 
     const onSignUp = async (e: { preventDefault: () => void; }) => {
         e.preventDefault()
-        signUp({name, user, email, eddsaPublicKey}).catch((err:string) => setError(err)).then(() => window.location.replace('/logged_in'))
+        signUp({
+            name,
+            user,
+            email,
+            eddsaPublicKey
+        }).catch((err: string) => setError(err)).then(() => window.location.replace('/logged_in'))
     }
     const nullAnswers = [question1, question2, question3, question4, question5].reduce((nullOccs, question) => {
         return (question === 'null') ? nullOccs + 1 : nullOccs
     }, 0)
 
-    const fillMoreAnswer = (q:string)=> {
+    const fillMoreAnswer = (q: string) => {
         const filledAnswer = (q === 'null') || (q === '')
-        return (notEnoughtAnswers&&filledAnswer) ? `Fill at least ${nullAnswers-2} more answers` : undefined
+        return (notEnoughtAnswers && filledAnswer) ? `Fill at least ${nullAnswers - 2} more answers` : undefined
     }
 
     const onSubmit = (e: { preventDefault: () => void; }) => {
@@ -72,9 +91,9 @@ const KeyringGeneration = ({
             setNotEnoughtAnswers(true)
         } else {
             generateKeys({question1, question2, question3, question4, question5, email, HMAC}).then(() => {
-                    setEddsaPublicKey(getItem('eddsa_public_key', 'local'))
-                    setSeed(getItem('seed', 'local'))
-                    setStep(1)
+                setEddsaPublicKey(getItem('eddsa_public_key', 'local'))
+                setSeed(getItem('seed', 'local'))
+                setStep(1)
             })
         }
     }
@@ -82,54 +101,41 @@ const KeyringGeneration = ({
     const completeSignIn = async (e: { preventDefault: () => void; }) => {
         e.preventDefault()
 
-        await signIn({email}).then(() => {window.location.replace('/logged_in')}).catch((e:any) => setError(e))
+        await signIn({email}).then(() => {
+            window.location.replace('/logged_in')
+        }).catch((e: any) => setError(e))
     }
 
 
     return (
-            <>
-                {(step === 0) && <>  <p>{keyringGenProps.presentation}</p>
+        <>
+            {(step === 0) && <>  <p>{keyringGenProps.presentation}</p>
                 <form onSubmit={onSubmit}>
-                    <BrInput type="text"
-                             error={fillMoreAnswer(question1)}
-                             label={keyringGenProps.question1}
-                             onChange={(e: ChangeEvent<HTMLInputElement>) => setQuestion1(e.target.value)}/>
-                    <BrInput type="text"
-                             label={keyringGenProps.question2}
-                             error={fillMoreAnswer(question2)}
-                             onChange={(e: ChangeEvent<HTMLInputElement>) => setQuestion2(e.target.value)}/>
-                    <BrInput type="text"
-                             error={fillMoreAnswer(question3)}
-                             label={keyringGenProps.question3}
-                             onChange={(e: ChangeEvent<HTMLInputElement>) => setQuestion3(e.target.value)}/>
-                    <BrInput type="text"
-                             error={fillMoreAnswer(question4)}
-                             label={keyringGenProps.question4}
-                             onChange={(e: ChangeEvent<HTMLInputElement>) => setQuestion4(e.target.value)}/>
-                    <BrInput type="text"
-                             error={fillMoreAnswer(question5)}
-                             label={keyringGenProps.question5}
-                             onChange={(e: ChangeEvent<HTMLInputElement>) => setQuestion5(e.target.value)}/>
-
+                    {[].concat(t('questions', {returnObjects: true})).map((question: string, index: number) =>
+                        <BrInput type="text"
+                                 key={index}
+                                 error={fillMoreAnswer(mapQuestions(index + 1)!.question)}
+                                 label={question}
+                                 onChange={(e: ChangeEvent<HTMLInputElement>) => mapQuestions(index + 1)!.setQuestion(e.target.value)}/>)}
                     <button className="btn btn-block" type="submit">{keyringGenProps.button}</button>
                 </form>
                 <p className="flex flex-row items-center justify-between">
                     {keyringGenProps.register.question}
                     {keyringGenProps.register.answer}
                 </p></>}
-                {(step === 1) && <>
-                    <p>
-                        <b>passphrase:</b> {seed}
-                    </p>
-                    {isSignUp&&<button className="btn btn-block" type="button" onClick={onSignUp}>
-                        {keyringGenProps.button2}
-                    </button>}
-                    {!isSignUp&&<p>
-                        <button className="btn btn-block" type="button" onClick={completeSignIn}>complete signin</button>
-                    </p>}
-                </>}
-                {error !== ''&& <h5 className="text-warning">user not found: maybe wrong answers?</h5>}
-            </>
+            {(step === 1) && <>
+                <p>
+                    <b>passphrase:</b> {seed}
+                </p>
+                {isSignUp && <button className="btn btn-block" type="button" onClick={onSignUp}>
+                    {keyringGenProps.button2}
+                </button>}
+                {!isSignUp && <p>
+                    <button className="btn btn-block" type="button" onClick={completeSignIn}>complete signin</button>
+                </p>}
+            </>}
+            {error !== '' && <h5 className="text-warning">user not found: maybe wrong answers?</h5>}
+        </>
     )
 }
 
