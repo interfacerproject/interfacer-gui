@@ -275,7 +275,7 @@ const CreateProject: NextPageWithLayout = () => {
                     setLogs(logsText)
                     const filesArray = new FormData()
                     filesArray.append(i.hash, imagesFiles[index])
-                    fetch(process.env.FILE!, {
+                    fetch(process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL!, {
                         method: "post",
                         body: filesArray,
                     }).catch((error) => {
@@ -324,7 +324,7 @@ const CreateProject: NextPageWithLayout = () => {
             })
     }
 
-    return (<div className="p-8 grid grid-cols-1 md:grid-cols-12 gap-4">
+    return (<div className="grid grid-cols-1 gap-4 p-8 md:grid-cols-12">
         <div className="w-full md:col-start-2 md:col-end-8">
             <div className="w-80">
                 <h2 className="text-primary">{t('headline.title')} </h2>
@@ -376,9 +376,9 @@ const CreateProject: NextPageWithLayout = () => {
         </div>
         <div className="w-full md:col-start-8 md:col-end-12">
             <div className="hidden text-error text-success text-warning text-info"/>
-            <div className="w-full border-2 px-2 pb-2">
+            <div className="w-full px-2 pb-2 border-2">
                 <h4 className="text-primary">{t('control window')}</h4>
-                <div className="border-2 max-h-80 overflow-y-scroll font-mono">
+                <div className="overflow-y-scroll font-mono border-2 max-h-80">
                     {logs.map((l, index) => <p key={index} className={logsClass(l)}>{l}</p>)}
                 </div>
             </div>

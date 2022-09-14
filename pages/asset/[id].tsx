@@ -82,7 +82,7 @@ const Asset = () => {
 
     useEffect(() => {
         const _asset: AssetIface = data?.proposal.primaryIntents[0].resourceInventoriedAs;
-        fetch(`${process.env.FILE}/${_asset?.images[0]?.hash}`, { method: 'get' }).then(async (r) => {
+        fetch(`${process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL}/${_asset?.images[0]?.hash}`, { method: 'get' }).then(async (r) => {
             setMainImage(`data:${_asset?.images[0]?.mimeType};base64,${await r.text()}`)
         }).catch((e) => {
             console.error(e);
@@ -102,16 +102,16 @@ const Asset = () => {
                         </ul>
                     </div>
                 </div>
-                <div className="absolute w-full bottom-8 p-2 md:p-0 md:bottom-12 h-100">
+                <div className="absolute w-full p-2 bottom-8 md:p-0 md:bottom-12 h-100">
                     <div className="flex flex-col content-end h-full md:mx-32 md:w-1/2">
                         <h2>{asset.name}</h2>
                         <p>{t('This is a')} <span className="font-bold text-primary">{asset.conformsTo.name}</span></p>
                     </div>
                 </div>
             </div>
-            <div className="grid md:grid-cols-3 grid-cols-1 md:gap-4 px-2 md:px-0 md:mx-32">
+            <div className="grid grid-cols-1 px-2 md:grid-cols-3 md:gap-4 md:px-0 md:mx-32">
                 <div id="left-col" className="flex flex-col col-span-2 space-y-14">
-                    <div id="tabs" className="my-6 space-x-8 hidden md:block">
+                    <div id="tabs" className="hidden my-6 space-x-8 md:block">
                         <button className="px-12 text-black bg-gray-300 border-0 rounded-lg btn">{t("Overview")}</button>
                         <span className="rounded-lg btn btn-disabled">{t("Contributions")}</span>
                         <span className="rounded-lg btn btn-disabled">{t("DPP")}</span>
