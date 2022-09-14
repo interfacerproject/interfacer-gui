@@ -18,6 +18,7 @@ interface AssetIface {
     images: [{
         hash: string;
         mimeType: string;
+        bin: string;
     }];
     note: string;
     tags: string[];
@@ -62,6 +63,7 @@ const Asset = () => {
           hash
           name
           mimeType
+          bin
         }
       }
     }
@@ -82,11 +84,8 @@ const Asset = () => {
 
     useEffect(() => {
         const _asset: AssetIface = data?.proposal.primaryIntents[0].resourceInventoriedAs;
-        fetch(`${process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL}/${_asset?.images[0]?.hash}`, { method: 'get' }).then(async (r) => {
-            setMainImage(`data:${_asset?.images[0]?.mimeType};base64,${await r.text()}`)
-        }).catch((e) => {
-            console.error(e);
-        })
+        const _image = _asset?.images[0];
+        setMainImage(`data:${_image?.mimeType};base64,${_image?.bin}`);
         setAsset(_asset)
     }, [data])
 

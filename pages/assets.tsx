@@ -54,6 +54,7 @@ const Assets = () => {
               hash
               name
               mimeType
+              bin
             }
           }
         }
