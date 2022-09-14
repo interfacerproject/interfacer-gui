@@ -12,7 +12,9 @@
     "cypress:headless": "cypress run",
     "test:component": "cypress run-ct --record",
     "e2e": "start-server-and-test dev http://localhost:3000 cypress",
-    "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless"
+    "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless",
+    "test": "start-server-and-test dev http://localhost:3000 cypress:headless",
+    "translate": "pnpx json-autotranslate -s deepl-free -i public/locales -c YOUR_DEEPL_FREE_KEY"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
@@ -30,12 +32,13 @@
     "autoprefixer": "^10.4.8",
     "base45": "^2.0.1",
     "boring-avatars": "^1.7.0",
+    "classnames": "^2.3.1",
     "crypto-js": "^4.1.1",
     "cypress": "^10.7.0",
     "cypress-localstorage-commands": "^2.2.1",
     "daisyui": "^2.25.0",
     "dayjs": "^1.11.5",
-    "graphql": "^16.6.0",
+    "graphql": "^15.0.0",
     "markdown-it": "^13.0.1",
     "markdown-it-abbr": "^1.0.4",
     "markdown-it-deflist": "^2.1.0",
@@ -55,13 +58,15 @@
     "react-markdown-editor-lite": "^1.3.3",
     "react-qr-code": "^2.0.7",
     "sass": "^1.54.8",
-    "start-server-and-test": "^1.14.0",
     "tailwindcss": "^3.1.8",
     "typescript": "^4.8.2",
     "zenroom": "2.2.3-f0193d51"
   },
   "devDependencies": {
+    "cypress": "^10.7.0",
+    "cypress-fail-fast": "^5.0.1",
     "eslint": "8.23.0",
-    "eslint-config-next": "12.2.5"
+    "eslint-config-next": "12.2.5",
+    "start-server-and-test": "^1.14.0"
   }
 }

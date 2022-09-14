@@ -22,7 +22,7 @@ const MdEditor = dynamic(async () => await import('react-markdown-editor-lite'),
 const BrMdEditor = ({className, onChange, error, hint, label, editorClass}: BrMdEditorProps) => {
     return <div className={className}>
         <label className="label">
-            <span className="label-text">{label}</span>
+            <h4 className="label-text capitalize">{label}</h4>
         </label>
         <MdEditor className={editorClass} renderHTML={text => MdParser.render(text)} onChange={onChange}/>
         <label className="label">

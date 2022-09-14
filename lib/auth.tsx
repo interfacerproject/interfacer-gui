@@ -37,21 +37,22 @@ export const useAuth: any = () => {
 
 
 const headersMiddleware = setContext(async (operation, {headers}) => {
-        const {getItem} = useStorage()
-        const variables = operation.variables
-        const query = operation.query.loc?.source.body!
-        const completeHeaders = await SignRequest({query, variables}).then(({result, logs}) => {
-            devLog('signing request...')
-            devLog(logs)
-            devLog('result',result)
-            return{
+    const {getItem} = useStorage()
+    const variables = operation.variables
+    const query = operation.query.loc?.source.body!
+    const completeHeaders = await SignRequest({query, variables}).then(({result, logs}) => {
+        devLog('signing request...')
+        devLog(logs)
+        devLog('result', result)
+        return {
             ...headers,
             'zenflows-sign': JSON.parse(result).eddsa_signature,
             'zenflows-user': getItem('authUsername', 'local'),
             'zenflows-hash': JSON.parse(result).hash
-        }})
-        return {headers: completeHeaders}
-    }
+        }
+    })
+    return {headers: completeHeaders}
+}
 );
 
 function useProvideAuth() {
@@ -88,7 +89,7 @@ function useProvideAuth() {
 
     const createApolloClient = () => {
         const link = new HttpLink({
-            uri: 'http://65.109.11.42:8000/api',
+            uri: process.env.NEXT_PUBLIC_ZENFLOWS_URL,
             headers: getAuthHeaders(),
         })
 
@@ -120,14 +121,14 @@ function useProvideAuth() {
     }
 
     const generateKeys = async ({
-                                    question1,
-                                    question2,
-                                    question3,
-                                    question4,
-                                    question5,
-                                    email,
-                                    HMAC
-                                }: { question1: string, question2: string, question3: string, question4: string, question5: string, email: string, HMAC: string }) => {
+        question1,
+        question2,
+        question3,
+        question4,
+        question5,
+        email,
+        HMAC
+    }: {question1: string, question2: string, question3: string, question4: string, question5: string, email: string, HMAC: string}) => {
         const zenData = `
             {
                 "userChallenges": {
@@ -156,7 +157,7 @@ function useProvideAuth() {
     }
 
 
-    const signIn = async ({email}: { email: string }) => {
+    const signIn = async ({email}: {email: string}) => {
         const client = createApolloClient()
         const SignInMutation = gql`query ($email: String!  $pubkey: String!) {
                                       personExists(email: $email, eddsaPublicKey: $pubkey) {
@@ -179,11 +180,11 @@ function useProvideAuth() {
     }
 
     const signUp = async ({
-                              name,
-                              user,
-                              email,
-                              eddsaPublicKey
-                          }: { name: string, user: string, email: string, eddsaPublicKey: string }) => {
+        name,
+        user,
+        email,
+        eddsaPublicKey
+    }: {name: string, user: string, email: string, eddsaPublicKey: string}) => {
         const client = createApolloClient()
         const SignUpMutation = gql`mutation  {
               createPerson(person: {

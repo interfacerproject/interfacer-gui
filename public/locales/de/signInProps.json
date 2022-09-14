@@ -1,12 +1,12 @@
 {
-  "title": "Welcome!",
+  "title": "Herzlich willkommen!",
   "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-  "button1": "Sign In via passprhase",
-  "button2": "Sign In answering some questions",
-  "button3": "Sign Up",
-  "button4": "Next",
+  "button1": "Anmeldung über passprhase",
+  "button2": "Anmelden und einige Fragen beantworten",
+  "button3": "Anmeldung",
+  "button4": "Weiter",
   "email": {
-    "label": "Email address",
+    "label": "E-Mail Adresse",
     "placeholder": "alice@email.com"
   }
 }

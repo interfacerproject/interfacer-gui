@@ -1,84 +1,84 @@
 {
   "headline": {
-    "title": "Create a new asset",
-    "description": "Make sure you read the Comunity Guidelines before you create a new asset."
+    "title": "Creare una nuova risorsa",
+    "description": "Assicuratevi di leggere le Linee guida della comunità prima di creare una nuova risorsa."
   },
   "generalInfo": {
-    "title": "General Information",
-    "description": "Help us display your asset correctly."
+    "title": "Informazioni generali",
+    "description": "Aiutateci a visualizzare correttamente la vostra risorsa."
   },
   "projectType": {
-    "label": "Select asset type:",
+    "label": "Selezionare il tipo di risorsa:",
     "array": [
       {
         "id": "Design",
         "name": "Design",
         "value": "Design",
-        "label": "The asset would be available to anyone who has the link"
+        "label": "La risorsa sarebbe disponibile a chiunque abbia il link"
       },
       {
-        "id": "Service",
-        "name": "Service",
-        "value": "Service",
-        "label": "Only member of this asset would be able to acces"
+        "id": "Servizio",
+        "name": "Servizio",
+        "value": "Servizio",
+        "label": "Solo i membri di questa risorsa potranno accedere a"
       },
       {
-        "id": "Product",
-        "name": "Product",
-        "value": "Product",
-        "label": "You are the only one able to access this asset"
+        "id": "Prodotto",
+        "name": "Prodotto",
+        "value": "Prodotto",
+        "label": "Lei è l'unico in grado di accedere a questa risorsa."
       }
     ],
-    "hint": "Refer to the standards we want to follow for this field"
+    "hint": "Fare riferimento agli standard che vogliamo seguire per questo campo."
   },
   "projectName": {
-    "label": "asset name:",
-    "placeholder": "E.g. Fabulaser",
-    "hint": "Working name of the asset module"
+    "label": "nome dell'attività:",
+    "placeholder": "Ad esempio Fabulaser",
+    "hint": "Nome di lavoro del modulo delle risorse"
   },
   "projectDescription": {
-    "label": "Short but concise description of this asset:",
-    "placeholder": "E.g. An open source laser cutter within you reach",
-    "hint": "Short description to be displayed inside the asset page"
+    "label": "Descrizione breve ma concisa di questa risorsa:",
+    "placeholder": "Ad esempio, una fresa laser open source a portata di mano.",
+    "hint": "Breve descrizione da visualizzare nella pagina della risorsa"
   },
   "repositoryOrId": {
-    "label": "Repository link or Interfacer ID:",
-    "placeholder": "E.g. github.com/my-repo",
-    "hint": "Reference to repository in which the technical documentation is developed"
+    "label": "Collegamento al repository o ID dell'interfaccia:",
+    "placeholder": "Ad esempio, github.com/my-repo",
+    "hint": "Riferimento al repository in cui è sviluppata la documentazione tecnica"
   },
   "imageUpload": {
-    "label": "Upload up to 10 pictures:",
-    "placeholder": "SVG, PNG, JPG or GIF (MAX. 800x400px)",
-    "hint": "SVG, PNG, JPG or GIF (MAX. 800x400px)"
+    "label": "Caricare fino a 10 immagini:",
+    "placeholder": "SVG, PNG, JPG o GIF (max. 800x400px)",
+    "hint": "SVG, PNG, JPG o GIF (max. 800x400px)"
   },
   "projectTags": {
-    "label": "Tags:",
-    "hint": "press space or return to add tags",
-    "placeholder": "E.g. laser cutter, open source, 3d printing"
+    "label": "Tag:",
+    "hint": "premere spazio o return per aggiungere i tag",
+    "placeholder": "Ad esempio, laser cutter, open source, stampa 3d"
   },
   "location": {
     "name": {
-      "label": "Location name:",
-      "placeholder": "E.g. Amburg Warehouse",
-      "hint": "Short name to refers to the location"
+      "label": "Nome della località:",
+      "placeholder": "Ad esempio, il Magazzino Amburg",
+      "hint": "Nome breve per indicare la località"
     },
     "address": {
-      "label": "Address:",
-      "placeholder": "An d. Alsterschleife 3, 22399 - Hamburg, Germany",
-      "hint": "Short description to be displayed inside the asset page"
+      "label": "Indirizzo:",
+      "placeholder": "An d. Alsterschleife 3, 22399 - Amburgo, Germania",
+      "hint": "Breve descrizione da visualizzare nella pagina della risorsa"
     }
   },
   "price": {
-    "label": "Value in Fab Token:",
-    "placeholder": "E.g. 1 Fab Token",
-    "hint": "Short description to be displayed inside the asset page"
+    "label": "Valore in gettoni Fab:",
+    "placeholder": "Ad esempio, 1 gettone Fab",
+    "hint": "Breve descrizione da visualizzare nella pagina della risorsa"
   },
-    "contributors": {
-    "label": "Contributors:",
-    "placeholder": "Search agents by name",
-    "hint": "Contributors must have an account"
+  "contributors": {
+    "label": "Collaboratori:",
+    "placeholder": "Ricerca agenti per nome",
+    "hint": "I collaboratori devono avere un account"
   },
-  "button": "Save",
+  "button": "Risparmiare",
   "resourceSpec": "73u648QASpCtC80ihY0KLg",
   "unitId": "82XqknZlTsGcFbQw8Gg6ow"
 }

@@ -1,84 +1,84 @@
 {
   "headline": {
-    "title": "Create a new asset",
-    "description": "Make sure you read the Comunity Guidelines before you create a new asset."
+    "title": "Ein neues Asset erstellen",
+    "description": "Lesen Sie unbedingt die Gemeinschaftsrichtlinien, bevor Sie ein neues Asset erstellen."
   },
   "generalInfo": {
-    "title": "General Information",
-    "description": "Help us display your asset correctly."
+    "title": "Allgemeine Informationen",
+    "description": "Helfen Sie uns, Ihr Asset korrekt anzuzeigen."
   },
   "projectType": {
-    "label": "Select asset type:",
+    "label": "Wählen Sie den Asset-Typ:",
     "array": [
       {
-        "id": "Design",
-        "name": "Design",
-        "value": "Design",
-        "label": "The asset would be available to anyone who has the link"
+        "id": "Gestaltung",
+        "name": "Gestaltung",
+        "value": "Gestaltung",
+        "label": "Das Asset wäre für jeden zugänglich, der den Link hat."
       },
       {
-        "id": "Service",
-        "name": "Service",
-        "value": "Service",
-        "label": "Only member of this asset would be able to acces"
+        "id": "Dienst",
+        "name": "Dienst",
+        "value": "Dienst",
+        "label": "Nur Mitglieder dieser Anlage können auf folgende Informationen zugreifen"
       },
       {
-        "id": "Product",
-        "name": "Product",
-        "value": "Product",
-        "label": "You are the only one able to access this asset"
+        "id": "Produkt",
+        "name": "Produkt",
+        "value": "Produkt",
+        "label": "Sie sind der Einzige, der auf dieses Asset zugreifen kann"
       }
     ],
-    "hint": "Refer to the standards we want to follow for this field"
+    "hint": "Verweisen Sie auf die Normen, die wir für dieses Feld befolgen wollen"
   },
   "projectName": {
-    "label": "asset name:",
-    "placeholder": "E.g. Fabulaser",
-    "hint": "Working name of the asset module"
+    "label": "Asset-Name:",
+    "placeholder": "z.B. Fabulaser",
+    "hint": "Arbeitsname des Anlagenmoduls"
   },
   "projectDescription": {
-    "label": "Short but concise description of this asset:",
-    "placeholder": "E.g. An open source laser cutter within you reach",
-    "hint": "Short description to be displayed inside the asset page"
+    "label": "Kurze, aber prägnante Beschreibung dieser Anlage:",
+    "placeholder": "Z.B. Ein Open-Source-Laserschneider in Ihrer Reichweite",
+    "hint": "Kurze Beschreibung, die auf der Asset-Seite angezeigt werden soll"
   },
   "repositoryOrId": {
-    "label": "Repository link or Interfacer ID:",
-    "placeholder": "E.g. github.com/my-repo",
-    "hint": "Reference to repository in which the technical documentation is developed"
+    "label": "Repository-Link oder Interfacer-ID:",
+    "placeholder": "Z.B. github.com/mein-repo",
+    "hint": "Verweis auf das Repository, in dem die technische Dokumentation entwickelt wird"
   },
   "imageUpload": {
-    "label": "Upload up to 10 pictures:",
-    "placeholder": "SVG, PNG, JPG or GIF (MAX. 800x400px)",
-    "hint": "SVG, PNG, JPG or GIF (MAX. 800x400px)"
+    "label": "Laden Sie bis zu 10 Bilder hoch:",
+    "placeholder": "SVG, PNG, JPG oder GIF (MAX. 800x400px)",
+    "hint": "SVG, PNG, JPG oder GIF (MAX. 800x400px)"
   },
   "projectTags": {
     "label": "Tags:",
-    "hint": "press space or return to add tags",
-    "placeholder": "E.g. laser cutter, open source, 3d printing"
+    "hint": "Drücken Sie die Leertaste oder die Eingabetaste, um Tags hinzuzufügen.",
+    "placeholder": "z.B. Laserschneider, Open Source, 3D-Druck"
   },
   "location": {
     "name": {
-      "label": "Location name:",
-      "placeholder": "E.g. Amburg Warehouse",
-      "hint": "Short name to refers to the location"
+      "label": "Name des Ortes:",
+      "placeholder": "Z.B. Amburger Lagerhaus",
+      "hint": "Kurzer Name, der sich auf den Ort bezieht"
     },
     "address": {
-      "label": "Address:",
-      "placeholder": "An d. Alsterschleife 3, 22399 - Hamburg, Germany",
-      "hint": "Short description to be displayed inside the asset page"
+      "label": "Adresse:",
+      "placeholder": "An d. Alsterschleife 3, 22399 - Hamburg, Deutschland",
+      "hint": "Kurze Beschreibung, die auf der Asset-Seite angezeigt werden soll"
     }
   },
   "price": {
-    "label": "Value in Fab Token:",
-    "placeholder": "E.g. 1 Fab Token",
-    "hint": "Short description to be displayed inside the asset page"
+    "label": "Wert in Fab Token:",
+    "placeholder": "Z.B. 1 Fab Token",
+    "hint": "Kurze Beschreibung, die auf der Asset-Seite angezeigt werden soll"
   },
-    "contributors": {
-    "label": "Contributors:",
-    "placeholder": "Search agents by name",
-    "hint": "Contributors must have an account"
+  "contributors": {
+    "label": "Mitwirkende:",
+    "placeholder": "Agenten nach Namen suchen",
+    "hint": "Beitragende müssen ein Konto haben"
   },
-  "button": "Save",
+  "button": "Speichern Sie",
   "resourceSpec": "73u648QASpCtC80ihY0KLg",
   "unitId": "82XqknZlTsGcFbQw8Gg6ow"
 }

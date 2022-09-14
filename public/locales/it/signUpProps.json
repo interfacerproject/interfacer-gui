@@ -1,21 +1,21 @@
 {
-  "title": "Welcome!",
+  "title": "Benvenuti!",
   "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
   "name": {
-    "label": "name",
-    "placeholder": "Type your name"
+    "label": "nome",
+    "placeholder": "Digitare il proprio nome"
   },
   "user": {
-    "label": "User",
-    "placeholder": "Type your visible username"
+    "label": "Utente",
+    "placeholder": "Digitare il nome utente visibile"
   },
   "email": {
     "label": "Email",
     "placeholder": "alice@email.com"
   },
   "register": {
-    "question": "✌️ yet regisetered?",
-    "answer": "Sign In"
+    "question": "✌️ ancora registrato?",
+    "answer": "Accedi"
   },
-  "button": "Next Step"
+  "button": "Passo successivo"
 }

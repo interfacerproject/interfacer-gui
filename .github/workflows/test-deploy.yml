@@ -1,4 +1,4 @@
-name: E2E & Components tests
+name: Test 🧪 and deploy 🚀 on staging
 on:
   push:
     branches:
@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  cypress-run:
+  tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -36,6 +36,8 @@ jobs:
       - name: Write the cypress.env.json file 📝
         run: |
           echo '${{ secrets.CYPRESS_ENV_CI }}' > cypress.env.json
+      - name: Write local env file
+        run: cp .env.example .env.local
       - name: Cypress E2E tests 🧪
         uses: cypress-io/github-action@v4
         with:
@@ -67,3 +69,12 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY_COMPONENTS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_PROJECT_ID: 7iq8xz
+
+  deploy:
+    name: 🚀 Deploy on staging server
+    needs: tests
+    if: github.ref == 'refs/heads/main'
+    uses: dyne/workflows/.github/workflows/node-staging-deploy.yml@main
+    secrets: inherit
+    with:
+      deploy_url: https://interfacer-gui-staging.dyne.org

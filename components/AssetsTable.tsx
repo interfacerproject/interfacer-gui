@@ -120,11 +120,11 @@ const AssetsTable = ({userid}:{userid?:string}) => {
     return (<>
         <BrTable headArray={t('tableHead', {returnObjects: true})}>
             {assets?.map((e: any) =>
-                <tr key={e.cursor}>
+                {e.node.primaryIntents.length > 0 && <tr key={e.cursor}>
                     <td>
-                        <div className="flex max-w-xs min-w-[10rem]">
+                        <div className="grid grid-col-1 mx-auto md:mx-0 md:flex max-w-xs min-w-[10rem]">
                             {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] &&
-                            <div className="w-2/5 flex-none">
+                              <div className="flex-none w-full md:w-2/5">
                                 <AssetImage
                                     image={{
                                         hash: e.node.primaryIntents[0].resourceInventoriedAs?.images[0]?.hash,
@@ -134,16 +134,15 @@ const AssetsTable = ({userid}:{userid?:string}) => {
                             </div>}
                             <Link href={`/asset/${e.node.id}`} className="flex-auto">
                                 <a className="ml-1">
-                                    <h3 className="whitespace-normal break-words">
+                                    <h3 className="break-words whitespace-normal">
                                         {e.node.primaryIntents[0].resourceInventoriedAs?.name}
                                     </h3>
                                 </a>
                             </Link>
                         </div>
                     </td>
-                    <td className="pl-1">
-                        <h4>4 min ago</h4>
-                        <h5 className="whitespace-normal">11:00 AM, 11/06/2022</h5>
+                    <td className="">
+                        {new Date(e.node.created).toISOString()}
                     </td>
                     <td>
                         <h3>{e.node.reciprocalIntents[0].resourceQuantity.hasNumericalValue}</h3>
@@ -156,7 +155,7 @@ const AssetsTable = ({userid}:{userid?:string}) => {
                     <td className="max-w-[12rem]">
                         <BrTags tags={['this', 'tags', 'are', 'fakes']}/>
                     </td>
-                </tr>
+                </tr>}</>
             )}
         </BrTable>
         <div className="grid grid-cols-1 gap-4 mt-4 place-items-center">

@@ -127,7 +127,7 @@ const BrImageUpload = (props: BrImageUploadProps) => {
     return (<>
         <div className={`form-control ${props.className}`}>
             <label className="label">
-                <span className="label-text">{props.label}</span>
+                <h4 className="label-text capitalize">{props.label}</h4>
             </label>
             <div className="flex justify-center items-center w-full">
                 <label htmlFor="dropzone-file"
@@ -147,10 +147,10 @@ const BrImageUpload = (props: BrImageUploadProps) => {
 
                             </div>
                         </>}
-                        <div className="hidden grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4 grid-cols-5"/>
+                        <div className="hidden grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4 grid-cols-5 object-contain"/>
                         {!isNotImageSelected && <div
                             className={`grid grid-cols-${imagesPreview.length < 5 ? imagesPreview.length % 5 : 5} gap-1`}>{imagesPreview?.map((i: any) => (<>
-                            <img src={i}/>
+                            <img src={i} className="object-contain max-h-64"/>
                         </>))}</div>}
                         <input id="dropzone-file" type="file" className="hidden" onChange={(e) => {
                             handleUpload(e.target.files)

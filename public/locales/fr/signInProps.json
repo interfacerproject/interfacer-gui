@@ -1,0 +1,12 @@
+{
+  "title": "Bienvenue !",
+  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "button1": "Se connecter via passprhase",
+  "button2": "Se connecter en répondant à quelques questions",
+  "button3": "S'inscrire",
+  "button4": "Suivant",
+  "email": {
+    "label": "Adresse électronique",
+    "placeholder": "alice@email.com"
+  }
+}

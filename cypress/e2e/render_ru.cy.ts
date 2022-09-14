@@ -11,7 +11,7 @@ describe("when user is logged in", () => {
 
     it('Should see /logged_in', () => {
         cy.visit('/logged_in')
-        cy.contains('How do you arrive here? This app is still under construction!')
+        cy.contains('How did you arrived here? This app is still under construction!')
     })
 
     it('Should see /resources', () => {
@@ -19,9 +19,17 @@ describe("when user is logged in", () => {
         cy.contains('Resources')
     })
 
-    it('Should see /asset/061J529YVK747JYSJFG3XQZFQG', () => {
-        cy.visit('/asset/061J529YVK747JYSJFG3XQZFQG')
+    it('Should see /asset/:id', () => {
+        cy.visit('/asset/'+ Cypress.env('asset_id'))
         cy.contains('Asset')
+    })
+
+    it.skip('Should render html in /asset/:id', () => {
+        cy.login()
+        cy.visit('/asset/'+ Cypress.env('asset_id'))
+        cy.contains('strong', 'bold')
+        cy.contains('em', 'italics')
+        cy.contains('ins', 'subbed')
     })
 
     it('Should see /create_project', () => {
@@ -34,8 +42,8 @@ describe("when user is logged in", () => {
         cy.contains(Cypress.env('authEmail'));
     });
 
-    it('Should see /resource/061HRASS22MHVFCCM6BF7D1GM4', () => {
-        cy.visit('/resource/061HRASS22MHVFCCM6BF7D1GM4')
+    it('Should see /resource/:id', () => {
+        cy.visit('/resource/'+ Cypress.env('resource_id'))
         cy.contains('Material passport')
     });
 
