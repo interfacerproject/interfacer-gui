@@ -26,6 +26,7 @@ const Assets = () => {
       node {
         id
         name
+        created
         primaryIntents {
           action {
             id

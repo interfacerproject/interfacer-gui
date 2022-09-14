@@ -6,10 +6,6 @@ const nextConfig = {
     i18n,
     reactStrictMode: true,
     swcMinify: true,
-    env: {
-        GRAPHQL: "https://fcos.interfacer.dyne.org/api/",
-        FILE: "https://fcos.interfacer.dyne.org/api/file",
-    },
     webpack: (config) => {
         config.resolve.fallback = {
             fs: false,
