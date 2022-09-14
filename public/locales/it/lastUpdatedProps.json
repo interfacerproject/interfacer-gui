@@ -2,5 +2,11 @@
   "title": "titolo",
   "description": "descrizione",
   "Load more": "Per saperne di più",
-  "tableHead": "capotavola"
+  "tableHead": [
+    "Asset",
+    "Ultimo aggiornamento",
+    "Valore",
+    "Proprietario",
+    "tag"
+  ]
 }
