@@ -14,7 +14,7 @@ function Sidebar() {
         Home: { name: t('home'), link: "/", svg: <HomeIcon className="float-left w-5 h-5 mr-2"/> },
         createAsset: {
             name: t('createAsset'),
-            link: '/create_project',
+            link: '/create_asset',
             tag: 'NEW'
         },
         resources: {
