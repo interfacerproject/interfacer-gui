@@ -43,7 +43,7 @@ jobs:
           start: pnpm run dev
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 130
-          record: true
+          record: false
           tag: node-${{ matrix.node }}
           browser: chrome
           config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
@@ -59,7 +59,7 @@ jobs:
           command: pnpm run test:component
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 130
-          record: true
+          record: false
           tag: node-${{ matrix.node }}
           browser: chrome
           config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
