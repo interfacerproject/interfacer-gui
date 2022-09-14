@@ -66,7 +66,7 @@ const VerifySeed = ({
                              label={VerifySeedProps.label}
                              placeholder={VerifySeedProps.placeholder}
                              onChange={(e: ChangeEvent<HTMLInputElement>) => validateSeed(e.target.value)}/>
-                    <button className="btn btn-block" type="submit" onClick={onSubmit}>{VerifySeedProps.button}</button>
+                    <button className="btn btn-block btn-accent" type="submit" onClick={onSubmit}>{VerifySeedProps.button}</button>
                 </form>
 
             </>

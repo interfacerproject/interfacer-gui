@@ -10,6 +10,7 @@ import {useTranslation} from "next-i18next";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import Layout from "../components/SignInLayout";
 import {NextPageWithLayout} from "./_app";
+import {LinkIcon} from "@heroicons/react/solid";
 
 
 export async function getStaticProps({locale}: any) {
@@ -75,9 +76,11 @@ const Sign_in: NextPageWithLayout = () => {
                     <button className="btn btn-block my-4 btn-primary" type="button"
                             onClick={() => viaQuestions()}>{t('button2')}</button>
                     <p className="flex flex-row items-center justify-between">
-                        {t('register.question')}
+                        <span className="flex-auto"> {t('register.question')}</span>
                         <Link href={'/sign_up'}>
-                            <a>{t('register.answer')}</a>
+                            <a className="flex flex-row">
+                            <LinkIcon className='h-5 w-5'/>
+                            {t('register.answer')}</a>
                         </Link>
 
                     </p>
@@ -89,12 +92,12 @@ const Sign_in: NextPageWithLayout = () => {
                              placeholder={t('email.placeholder')}
                              onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}/>
                     {!isPassprhase && <>
-                        <button className="btn btn-block" type="button" onClick={() => toNextStep(2)}>
+                        <button className="btn btn-block btn-primary" type="button" onClick={() => toNextStep(2)}>
                             {t('button4')}
                         </button>
                     </>}
                     {isPassprhase && <>
-                        <button className="btn btn-block" type="button" onClick={() => toNextStep(3)}>
+                        <button className="btn btn-block btn-primary" type="button" onClick={() => toNextStep(3)}>
                             {t('button4')}
                         </button>
                     </>}

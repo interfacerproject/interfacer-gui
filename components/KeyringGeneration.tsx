@@ -114,7 +114,7 @@ const KeyringGeneration = ({
                                  error={fillMoreAnswer(mapQuestions(index + 1)!.question)}
                                  label={question}
                                  onChange={(e: ChangeEvent<HTMLInputElement>) => mapQuestions(index + 1)!.setQuestion(e.target.value)}/>)}
-                    <button className="btn btn-block" type="submit">{keyringGenProps.button}</button>
+                    <button className="btn btn-block btn-primary" type="submit">{keyringGenProps.button}</button>
                 </form>
                 <p className="flex flex-row items-center justify-between">
                     {keyringGenProps.register.question}
@@ -124,11 +124,11 @@ const KeyringGeneration = ({
                 <p>
                     <b>passphrase:</b> {seed}
                 </p>
-                {isSignUp && <button className="btn btn-block" type="button" onClick={onSignUp}>
+                {isSignUp && <button className="btn btn-block btn-accent" type="button" onClick={onSignUp}>
                     {keyringGenProps.button2}
                 </button>}
                 {!isSignUp && <p>
-                    <button className="btn btn-block" type="button" onClick={completeSignIn}>complete signin</button>
+                    <button className="btn btn-block btn-accent" type="button" onClick={completeSignIn}>complete signin</button>
                 </p>}
             </>}
             {error !== '' && <h5 className="text-warning">user not found: maybe wrong answers?</h5>}

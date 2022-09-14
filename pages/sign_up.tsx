@@ -1,22 +1,24 @@
-import React, {ChangeEvent, useState, useTransition} from 'react';
+import React, {ChangeEvent, ReactElement, useState, useTransition} from 'react';
 import {useAuth} from "../lib/auth";
 import {useRouter} from "next/router";
-import Card, {CardWidth} from "../components/brickroom/Card";
 import BrInput from "../components/brickroom/BrInput";
 import {LinkIcon} from "@heroicons/react/solid";
 import KeyringGeneration from "../components/KeyringGeneration";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import {useTranslation} from "next-i18next";
+import Layout from "../components/SignInLayout";
+import {NextPageWithLayout} from "./_app";
+import Link from "next/link";
 
-export async function getStaticProps({ locale }:any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ['signUpProps'])),
-    },
-  };
+export async function getStaticProps({locale}: any) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['signUpProps'])),
+        },
+    };
 }
 
-export default function SignUp() {
+const SignUp: NextPageWithLayout = () => {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [user, setUser] = useState('')
@@ -55,10 +57,9 @@ export default function SignUp() {
     const isButtonEnabled = (HMAC === '') ? 'btn-disabled' : ''
 
     return (
-        <div className="mx-auto h-screen grid place-items-center bg-cover" style={{['backgroundImage' as any]: "url('https://www.interfacerproject.eu/assets/index/ABOUT.png')"}}>
-            <Card title={t('title')}
-                  width={CardWidth.LG}
-                  className="md:px-16 py-[4.5rem]">
+        <div className="h-full grid grid-cols-6 md:mt-40 mt-2">
+            <div className="col-span-6 p-2 md:col-span-4 md:col-start-2 md:col-end-6">
+                <h2>{t('title')}</h2>
                 {(step === 0) && <>
                     <p>{t('presentation')}</p>
                     <form onSubmit={onSubmit}>
@@ -78,18 +79,31 @@ export default function SignUp() {
                                  label={t('user.label')}
                                  onChange={(e: ChangeEvent<HTMLInputElement>) => setUser(e.target.value)}
                         />
-                        <button className={`btn btn-block ${isButtonEnabled}`}
+                        <button className={`btn btn-block btn-primary ${isButtonEnabled}`}
                                 type="submit">{t('button')}</button>
                     </form>
                     <p className="flex flex-row items-center justify-between">
-                        {t('register.question')}
-                        <LinkIcon className='h-5 w-5 ml-28'/>
-                        {t('register.answer')}
+                        <span className="flex-auto"> {t('register.question')}</span>
+                        <Link href={'/sign_in'}>
+                            <a className="flex flex-row">
+                                <LinkIcon className='h-5 w-5'/>
+                                {t('register.answer')}
+                            </a>
+                        </Link>
                     </p>
                 </>}
                 {(step === 1) &&
                 <KeyringGeneration email={email} user={user} name={name} HMAC={HMAC} isSignUp={true}/>}
-            </Card>
+            </div>
         </div>
     )
 }
+SignUp.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}
+export default SignUp
+
