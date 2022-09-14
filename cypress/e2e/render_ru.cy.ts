@@ -32,14 +32,14 @@ describe("when user is logged in", () => {
         cy.contains('ins', 'subbed')
     })
 
-    it('Should see /create_project', () => {
-        cy.visit('/create_project')
+    it('Should see /create_asset', () => {
+        cy.visit('/create_asset')
         cy.contains('Create a new asset')
     });
 
     it('Should see /profile/my_profile', () => {
         cy.visit('/profile/my_profile')
-        cy.contains(Cypress.env('authEmail'));
+        cy.contains(Cypress.env('authEmail'))
     });
 
     it('Should see /resource/:id', () => {

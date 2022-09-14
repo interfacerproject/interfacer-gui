@@ -40,7 +40,7 @@ const Home: NextPage = () => {
                     {t('paragraph2')}</p>
 
                 <Link href="/sign_in"><a className={`btn btn-primary mt-6 ${isSignedIn() ? 'btn-disabled' : ''}`}>{t('cta_1')}</a></Link>
-                <Link href="/about">
+                <Link href="/">
                     <a className="ml-4 btn btn-outline btn-primary">{t('cta_2')}</a>
                 </Link>
             </div>
@@ -49,7 +49,7 @@ const Home: NextPage = () => {
             <h2>{t('Sign-in to add your own assets')}</h2>
             <p className="mt-2">{t('Join the fast-growing community of FabcityOS. Lorem ipsum, dolor sit amet consectetur')} <br /> {t('adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor.')}</p>
             <Link href="/sign_in"><a className={`btn btn-primary mt-6 ${isSignedIn() ? 'btn-disabled' : ''}`}>{t('cta_1')}</a></Link>
-            <Link href="/about">
+            <Link href="/">
                 <a className="ml-4 btn btn-outline btn-primary">{t('cta_2')}</a>
             </Link>
         </div>
