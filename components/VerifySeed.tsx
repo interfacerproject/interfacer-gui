@@ -6,8 +6,6 @@ import {zencode_exec} from "zenroom";
 import keypairoomClientRecreateKeys from "../zenflows-crypto/src/keypairoomClientRecreateKeys";
 import {useRouter} from "next/router";
 import {useAuth} from "../lib/auth";
-import devLog from "../lib/devLog";
-
 
 const VerifySeed = ({
                                email,
@@ -20,16 +18,10 @@ const VerifySeed = ({
         label: "paste you pass phrase",
         placeholder: "state stumble clever trap excuse scheme world human above age pet jealous",
         button: "Sign in",
-        question1: "Where my parents met?",
-        question2: "What is the name of your first pet?",
-        question3: "What is your home town?",
-        question4: "What is the name of your first teacher?",
-        question5: "What is the surname of your mother before wedding?"
     }
     const [eddsaPublicKey, setEddsaPublicKey] = useState('')
     const [seed, setSeed] = useState('')
     const [error, setError] = useState('')
-    const [isButtonEnabled, setIsButtonEnabled] = useState(false)
     const {getItem, setItem} = useStorage()
     const router = useRouter()
 
@@ -41,9 +33,7 @@ const VerifySeed = ({
         }
         else {setError('Invalid pass phrase')}
     }
-    const completeSignIn = async (e: { preventDefault: () => void; }) => {
-        e.preventDefault()
-
+    const completeSignIn = async () => {
         await signIn({email}).then(() => {window.location.replace('/logged_in')})
     }
 
@@ -63,8 +53,7 @@ const VerifySeed = ({
                 setItem('schnorr', res.keyring.schnorr, 'local')
                 setItem('eddsa', res.keyring.eddsa, 'local')
                 setItem('seed', res.seed, 'local')
-                setIsButtonEnabled(true)
-            }).catch(()=>setError('Invalid pass phrase'))
+            }).catch(()=>setError('Invalid pass phrase')).then(() => completeSignIn())
     }
 
     return (
@@ -78,7 +67,6 @@ const VerifySeed = ({
                              placeholder={VerifySeedProps.placeholder}
                              onChange={(e: ChangeEvent<HTMLInputElement>) => validateSeed(e.target.value)}/>
                     <button className="btn btn-block" type="submit" onClick={onSubmit}>{VerifySeedProps.button}</button>
-                    {isButtonEnabled&&<button className="btn btn-block mt-4" type="submit" onClick={completeSignIn}>Complete signin</button>}
                 </form>
 
             </>

@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import AssetImage from '../../components/AssetImage';
 import BrDisplayUser from '../../components/brickroom/BrDisplayUser';
 import BrTags from '../../components/brickroom/BrTags';
-import devLog from "../../lib/devLog";
 import MdParser from "../../lib/MdParser";
 
 interface AssetIface {
@@ -93,7 +92,7 @@ const Asset = () => {
         {asset && <>
             <div className="relative">
                 <div className='w-full bg-center bg-cover backdrop-grayscale-0 h-72'
-                    style={{ backgroundImage: `url(${mainImage})`, filter: "blur(1px)" }}></div>
+                    style={{ backgroundImage: `url(${mainImage})`, filter: "blur(1px)" }}/>
                 <div className="absolute top-0 w-full p-2 md:p-8 h-72 backdrop-grayscale bg-white/70">
                     <div className="text-primary breadcrumbs">
                         <ul>
