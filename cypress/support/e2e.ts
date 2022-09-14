@@ -27,6 +27,7 @@ declare global {
        * @example cy.dataCy('greeting')
        */
       login(): Chainable<Element>
+      checkLinks(): Chainable<Element>
     }
   }
 }
