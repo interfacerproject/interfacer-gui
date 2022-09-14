@@ -8,5 +8,9 @@
   "email": {
     "label": "Email address",
     "placeholder": "alice@email.com"
-  }
+  },
+     "register": {
+        "question": "✌️ yet regisetered?",
+        "answer": "Sign In"
+    }
 }

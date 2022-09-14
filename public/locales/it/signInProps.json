@@ -1,12 +1,16 @@
 {
-  "title": "Benvenuti!",
-  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-  "button1": "Accesso tramite passprhase",
-  "button2": "Accedi rispondendo ad alcune domande",
-  "button3": "Iscriviti",
-  "button4": "Avanti",
-  "email": {
-    "label": "Indirizzo e-mail",
-    "placeholder": "alice@email.com"
-  }
+    "title": "Benvenuti!",
+    "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+    "button1": "Accesso tramite passprhase",
+    "button2": "Accedi rispondendo ad alcune domande",
+    "button3": "Iscriviti",
+    "button4": "Avanti",
+    "email": {
+        "label": "Indirizzo e-mail",
+        "placeholder": "alice@email.com"
+    },
+    "register": {
+        "question": "✌️ Non ancora registrato?",
+        "answer": "Registrati"
+    }
 }
