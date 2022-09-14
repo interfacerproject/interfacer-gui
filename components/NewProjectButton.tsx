@@ -7,7 +7,7 @@ const CreateProjectButton = ({className, text}:{className?:string, text?:string}
     const createProjectText = text? text : 'Create a new asset'
 
     return (<>
-        <Link href="/create_project">
+        <Link href="/create_asset">
             <a className={`btn normal-case btn-accent ${className}`}>
                 {createProjectText}
             </a>

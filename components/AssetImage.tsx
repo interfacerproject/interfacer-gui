@@ -3,19 +3,13 @@ import { useEffect, useState } from "react";
 interface Image {
     hash: string;
     mimeType: string;
+    bin: string;
 }
 
-const AssetImage = ({image, className}: {image: Image, className: string}) => {
-    const [src, setSrc] = useState('');
-    useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL}/${image.hash}`, { method: 'get' }).then(async (r) => {
-            setSrc(`data:${image.mimeType};base64,${await r.text()}`)
-        }).catch((e) => {
-            console.error(e);
-        })
-    }, [])
-
-    return <img src={src} className={className} />;
+const AssetImage = ({ image, className }: { image: Image, className: string }) => {
+    return (<>
+        <img src={`data:${image.mimeType};base64,${image.bin}`} className={className} />
+    </>)
 }
 
 export default AssetImage;

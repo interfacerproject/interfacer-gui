@@ -42,5 +42,13 @@ Cypress.Commands.add('login', () => {
         cy.setLocalStorage(attr, Cypress.env(attr))
     }
 })
+
+Cypress.Commands.add('checkLinks', () => {
+    cy.get("a:not([href*='mailto:'])").each(($el) => {
+        const href = $el.prop('href')
+        cy.request(href).its('status').should('eq', 200)
+    })
+});
+
 // Prevent TypeScript from reading file as legacy script
 export { }

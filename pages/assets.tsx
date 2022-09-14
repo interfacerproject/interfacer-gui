@@ -10,7 +10,6 @@ import Link from "next/link";
 
 const Assets = () => {
     const {t} = useTranslation('lastUpdatedProps')
-
     return (<div className="p-8">
         <div className="mb-6 w-96">
             <h1>{t('title')}</h1>
