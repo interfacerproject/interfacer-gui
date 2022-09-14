@@ -1,10 +1,10 @@
 {
-  "home": "Home",
-  "createAsset": "Create asset",
-  "resources": "Economic Resources",
-  "myInventory": "My inventory",
-  "lastUpdated": "Last updated",
-  "seeAll": "See all",
-  "userGuide": "User guide",
-  "map": "Map"
+  "home": "Startseite",
+  "createAsset": "Anlage erstellen",
+  "resources": "Wirtschaftliche Ressourcen",
+  "myInventory": "Mein Inventar",
+  "lastUpdated": "Zuletzt aktualisiert",
+  "seeAll": "Alle sehen",
+  "userGuide": "Benutzerhandbuch",
+  "map": "Karte"
 }
