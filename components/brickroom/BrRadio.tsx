@@ -15,7 +15,7 @@ const BrRadio = (props: BrRadioProps) => {
     return (<>
         <div className="form-control">
             <label className="label">
-                <span className="label-text">{props.label}</span>
+                <h4 className="label-text capitalize">{props.label}</h4>
             </label>
             {props.array.map((unit: { id: string, name: string, value: string, label: string}) =>
             <label key={unit?.id} className={`label cursor-pointer flex ${props.value === unit.value? 'bg-green-100' : ''}`}>

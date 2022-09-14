@@ -3,22 +3,16 @@ import BrTable from "./brickroom/BrTable";
 import BrTags from "./brickroom/BrTags";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import AssetImage from "./AssetImage";
-import {decodeTime} from 'ulid';
-import dayjs from 'dayjs';
-var relativeTime = require('dayjs/plugin/relativeTime')
-dayjs.extend(relativeTime)
-var calendar = require('dayjs/plugin/calendar')
-dayjs.extend(calendar)
 
 const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead: Array<string> }) => {
 
     return (<>
         <BrTable headArray={assetsHead}>
-            {assets.map((e) =>
-                <tr key={e.cursor}>
+            {assets?.map((e) =><>
+                {e.node.primaryIntents.length > 0 && <tr key={e.cursor}>
                     <td>
                         <div className="grid grid-col-1 mx-auto md:mx-0 md:flex max-w-xs min-w-[10rem]">
-                           {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] && <div className="w-full md:w-2/5 flex-none">
+                           {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] && <div className="flex-none w-full md:w-2/5">
                                 <AssetImage
                                     image={{
                                         hash: e.node.primaryIntents[0].resourceInventoriedAs?.images[0]?.hash,
@@ -36,7 +30,7 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead: Arr
                         </div>
                     </td>
                     <td className="">
-                        {dayjs().calendar(dayjs(e.node.created))}
+                        {new Date(e.node.created).toISOString()}
                     </td>
                     <td>
                         <h3>{e.node.reciprocalIntents[0].resourceQuantity.hasNumericalValue}</h3>
@@ -49,7 +43,7 @@ const AssetsTable = ({assets, assetsHead}: { assets: Array<any>, assetsHead: Arr
                     <td className="max-w-[12rem]">
                         <BrTags tags={['this', 'tags', 'are', 'fakes']}/>
                     </td>
-                </tr>
+                </tr>}</>
             )}
         </BrTable>
     </>)

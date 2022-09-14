@@ -32,17 +32,17 @@
     "hint": "Refer to the standards we want to follow for this field"
   },
   "projectName": {
-    "label": "asset name:",
+    "label": "asset name:*",
     "placeholder": "E.g. Fabulaser",
     "hint": "Working name of the asset module"
   },
   "projectDescription": {
-    "label": "Short but concise description of this asset:",
+    "label": "Short but concise description of this asset:*",
     "placeholder": "E.g. An open source laser cutter within you reach",
     "hint": "Short description to be displayed inside the asset page"
   },
   "repositoryOrId": {
-    "label": "Repository link or Interfacer ID:",
+    "label": "Repository link or Interfacer ID:*",
     "placeholder": "E.g. github.com/my-repo",
     "hint": "Reference to repository in which the technical documentation is developed"
   },
@@ -63,13 +63,13 @@
       "hint": "Short name to refers to the location"
     },
     "address": {
-      "label": "Address:",
+      "label": "Address:*",
       "placeholder": "An d. Alsterschleife 3, 22399 - Hamburg, Germany",
       "hint": "Short description to be displayed inside the asset page"
     }
   },
   "price": {
-    "label": "Value in Fab Token:",
+    "label": "Value in Fab Token:*",
     "placeholder": "E.g. 1 Fab Token",
     "hint": "Short description to be displayed inside the asset page"
   },

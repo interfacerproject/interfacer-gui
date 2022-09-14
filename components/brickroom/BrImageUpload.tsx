@@ -127,7 +127,7 @@ const BrImageUpload = (props: BrImageUploadProps) => {
     return (<>
         <div className={`form-control ${props.className}`}>
             <label className="label">
-                <span className="label-text">{props.label}</span>
+                <h4 className="label-text capitalize">{props.label}</h4>
             </label>
             <div className="flex justify-center items-center w-full">
                 <label htmlFor="dropzone-file"

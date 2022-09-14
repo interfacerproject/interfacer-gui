@@ -33,7 +33,7 @@ const TagSelelector = (props: TagSelectorProps) => {
     return (<>
         <div className={`form-control ${props.className}`}>
              <label className="label mb-[-3px]">
-                <span className="label-text">{props.label}</span>
+                <h4 className="label-text capitalize">{props.label}</h4>
             </label>
             <BrTags onCancel={cancelTag} tags={tags}/>
             <BrTextField placeholder={props.placeholder} hint={props.hint} error={props.error} onChange={handleAdd}/>

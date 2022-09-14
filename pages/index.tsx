@@ -7,7 +7,6 @@ import Link from "next/link";
 import React from "react";
 import {LightningBoltIcon, ScaleIcon, GlobeAltIcon} from "@heroicons/react/outline";
 
-
 export async function getStaticProps({ locale }: any) {
     return {
         props: {

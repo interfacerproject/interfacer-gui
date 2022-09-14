@@ -8,7 +8,7 @@ interface Image {
 const AssetImage = ({image, className}: {image: Image, className: string}) => {
     const [src, setSrc] = useState('');
     useEffect(() => {
-        fetch(`${process.env.FILE}/${image.hash}`, { method: 'get' }).then(async (r) => {
+        fetch(`${process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL}/${image.hash}`, { method: 'get' }).then(async (r) => {
             setSrc(`data:${image.mimeType};base64,${await r.text()}`)
         }).catch((e) => {
             console.error(e);
