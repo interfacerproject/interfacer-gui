@@ -53,6 +53,7 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
               hash
               name
               mimeType
+              bin
             }
           }
         }
@@ -122,7 +123,7 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
                 {e.node.primaryIntents.length > 0 && <tr key={e.cursor}>
                     <td>
                         <div className="grid grid-col-1 mx-auto md:mx-0 md:flex max-w-xs min-w-[10rem]">
-                           {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] && 
+                           {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] &&
                               <div className="flex-none w-full md:w-2/5">
                                 <AssetImage
                                     image={e.node.primaryIntents[0].resourceInventoriedAs?.images[0]}
@@ -138,7 +139,7 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
                         </div>
                     </td>
                     <td className="">
-                        {e.node?.created && new Date(e.node.created).toISOString()}
+                        {e.node?.created && new Date(e.node.created).toLocaleString()}
                     </td>
                     <td>
                         <h3>{e.node.reciprocalIntents[0].resourceQuantity.hasNumericalValue}</h3>
@@ -149,7 +150,7 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
                             name={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.name} />
                     </td>
                     <td className="max-w-[12rem]">
-                        <BrTags tags={['this', 'tags', 'are', 'fakes']} />
+                        <BrTags tags={[]} />
                     </td>
                 </tr>
             }</>

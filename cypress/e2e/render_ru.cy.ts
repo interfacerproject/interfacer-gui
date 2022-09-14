@@ -39,7 +39,7 @@ describe("when user is logged in", () => {
 
     it('Should see /profile/my_profile', () => {
         cy.visit('/profile/my_profile')
-        cy.contains(Cypress.env('authEmail'))
+        cy.contains(Cypress.env('authName'))
     });
 
     it('Should see /resource/:id', () => {
