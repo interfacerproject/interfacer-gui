@@ -28,7 +28,7 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
                     <input id="my-drawer" type="checkbox" className="drawer-toggle"/>
                     <div className="drawer-content">
                         <Topbar/>
-                        <div className="container bg-[#F3F3F1] min-h-screen max-w-full">
+                        <div className="bg-[#F3F3F1] min-h-screen max-w-full">
                             {layoutProps?.children}
                         </div>
                     </div>
