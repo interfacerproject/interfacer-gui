@@ -67,7 +67,7 @@ const CreateProject: NextPageWithLayout = () => {
     }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price])
 
     const colors = ["error", "success", "warning", "info"];
-    const logsClass = (text: string) => colors.includes(text.split(':')[0]) ? `text-${text.split(':')[0]} uppercase my-2` : 'my-1'
+    const logsClass = (text: string) => colors.includes(text.split(':')[0]) ? `text-${text.split(':')[0]} uppercase my-3` : 'my-2'
     useEffect(() => {
         if (projectType === 'Product') {
             setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
@@ -282,8 +282,7 @@ const CreateProject: NextPageWithLayout = () => {
                         logsText = logsText.concat([`error:${error}`])
                         setLogs(logsText)
                     }).then((r: any) => {
-                        logsText = logs.concat([`success:Uploaded image ${index}`])
-                        setLogs(logsText)
+                        devLog('image upload response',r)
                     })
                 })
 
@@ -376,9 +375,9 @@ const CreateProject: NextPageWithLayout = () => {
         </div>
         <div className="w-full md:col-start-8 md:col-end-12">
             <div className="hidden text-error text-success text-warning text-info"/>
-            <div className="w-full px-2 pb-2 border-2">
-                <h4 className="text-primary">{t('control window')}</h4>
-                <div className="overflow-y-scroll font-mono border-2 max-h-80">
+            <div className="w-full px-2 pb-2 border-2 md:w-128 md:fixed bg-white">
+                <h4 className="text-primary my-2 capitalize">{t('control window')}</h4>
+                <div className="overflow-y-scroll font-mono border-2 max-h-80 bg-[#F7F7F7] p-2">
                     {logs.map((l, index) => <p key={index} className={logsClass(l)}>{l}</p>)}
                 </div>
             </div>

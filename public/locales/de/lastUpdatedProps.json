@@ -2,5 +2,11 @@
   "title": "Titel",
   "description": "Beschreibung",
   "Load more": "Mehr laden",
-  "tableHead": "tableHead"
+  "tableHead": [
+    "Asset",
+    "Letzte Aktualisierung",
+    "Wert",
+    "Owner",
+    "Tags"
+  ]
 }
