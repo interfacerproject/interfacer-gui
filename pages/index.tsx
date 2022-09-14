@@ -5,7 +5,7 @@ import { useTranslation } from "next-i18next";
 import { CheckCircleIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 import React from "react";
-import {LightningBoltIcon, ScaleIcon, GlobeAltIcon} from "@heroicons/react/outline";
+import { LightningBoltIcon, ScaleIcon, GlobeAltIcon } from "@heroicons/react/outline";
 
 export async function getStaticProps({ locale }: any) {
     return {
@@ -19,16 +19,12 @@ const Home: NextPage = () => {
     const { t } = useTranslation('homeProps')
     const { isSignedIn } = useAuth()
     const features = [
-        { icon: <LightningBoltIcon />, title: "Transfers are instant", description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione." },
-        { icon: <ScaleIcon />, title: "No hidden fees", description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione." },
-        {
-            icon: <GlobeAltIcon/>, title: "Competitive exchange rates", description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione."
-        },
-        { icon: <LightningBoltIcon />, title: "Transfers are instant", description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione." },
-        { icon: <ScaleIcon />, title: "No hidden fees", description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione." },
-        {
-            icon: <GlobeAltIcon/>, title: "Competitive exchange rates", description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis ratione."
-        },
+        { icon: <LightningBoltIcon />, },
+        { icon: <ScaleIcon /> },
+        { icon: <GlobeAltIcon /> },
+        { icon: <LightningBoltIcon />, },
+        { icon: <ScaleIcon /> },
+        { icon: <GlobeAltIcon /> },
     ]
 
     return (<>
@@ -43,27 +39,26 @@ const Home: NextPage = () => {
                     <CheckCircleIcon className="w-5 h-5 mr-2" />
                     {t('paragraph2')}</p>
 
-                <Link href="/sign_in"><a className={`btn btn-primary mt-6 ${isSignedIn() ? 'btn-disabled' : ''}`}>sign in</a></Link>
+                <Link href="/sign_in"><a className={`btn btn-primary mt-6 ${isSignedIn() ? 'btn-disabled' : ''}`}>{t('cta_1')}</a></Link>
                 <Link href="/about">
-                    <a className="ml-4 btn btn-outline btn-primary">Learn more</a>
+                    <a className="ml-4 btn btn-outline btn-primary">{t('cta_2')}</a>
                 </Link>
-                <h3 className="mt-36">Assets</h3>
             </div>
         </div>
         <div className="pl-32">
             <h2>{t('Sign-in to add your own assets')}</h2>
             <p className="mt-2">{t('Join the fast-growing community of FabcityOS. Lorem ipsum, dolor sit amet consectetur')} <br /> {t('adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor.')}</p>
-            <Link href="/sign_in"><a className={`btn btn-primary mt-6 ${isSignedIn() ? 'btn-disabled' : ''}`}>sign in</a></Link>
+            <Link href="/sign_in"><a className={`btn btn-primary mt-6 ${isSignedIn() ? 'btn-disabled' : ''}`}>{t('cta_1')}</a></Link>
             <Link href="/about">
-                <a className="ml-4 btn btn-outline btn-primary">Learn more</a>
+                <a className="ml-4 btn btn-outline btn-primary">{t('cta_2')}</a>
             </Link>
         </div>
         <div className="grid grid-cols-3 gap-16 pl-32 mt-44">
             {features.map((f, i) => {
                 return (<div key={i} className="flex flex-col">
                     <div className="w-12 h-12 p-3 mr-2 text-white rounded-lg bg-[#5DA091]">{f.icon}</div>
-                    <h3 className="mt-5 mb-2">{t(f.title)}</h3>
-                    <p className="text-[#8a8e96]">{t(f.description)}</p>
+                    <h3 className="mt-5 mb-2">{t(`feature_title_${i}`)}</h3>
+                    <p className="text-[#8a8e96]">{t(`feature_body_${i}`)}</p>
                 </div>)
             })}
         </div>
