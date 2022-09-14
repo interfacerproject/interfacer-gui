@@ -1,10 +1,10 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import dayjs from 'dayjs';
-import type { NextPage } from 'next';
+import Layout from "../components/CreateProjectLayout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useState } from "react";
+import {ChangeEvent, ReactElement, useEffect, useState} from "react";
 import BrImageUpload from "../components/brickroom/BrImageUpload";
 import BrInput from "../components/brickroom/BrInput";
 import BrRadio from "../components/brickroom/BrRadio";
@@ -13,6 +13,7 @@ import { useAuth } from "../lib/auth";
 import devLog from "../lib/devLog";
 import BrMdEditor from "../components/brickroom/BrMdEditor";
 import AddContributors from "../components/AddContributors";
+import type { NextPageWithLayout } from './_app'
 
 
 type Image = {
@@ -27,7 +28,7 @@ type Image = {
 type Images = Array<Image>
 
 
-const CreateProject: NextPage = () => {
+const CreateProject: NextPageWithLayout = () => {
     const [projectType, setAssetType] = useState('')
     const [projectName, setAssetName] = useState('')
     const [projectDescription, setAssetDescription] = useState('')
@@ -39,7 +40,6 @@ const CreateProject: NextPage = () => {
     const [price, setPrice] = useState('')
     const [resourceSpec, setResourceSpec] = useState('')
     const [resourceId, setResourceId] = useState('')
-    const [intentId, setIntentId] = useState('')
     const [images, setImages] = useState([] as Images)
     const [contributors, setContributors] = useState([] as string[])
     const [imagesFiles, setImagesFiles] = useState([] as Array<any>)
@@ -282,7 +282,7 @@ const CreateProject: NextPage = () => {
     }
 
     return (<div className="p-8">
-        <div className="w-128">
+        <div className="w-full md:w-3/5">
             <div className="w-80">
                 <h2 className="text-primary">{t('headline.title')} </h2>
                 <p>{t('headline.description')}</p>
@@ -331,6 +331,15 @@ export async function getStaticProps({ locale }: any) {
             ...(await serverSideTranslations(locale, ['createProjectProps', 'signInProps', 'SideBarProps', 'SideBarProps'])),
         },
     };
+}
+
+
+CreateProject.getLayout = function getLayout(page: ReactElement) {
+    return (
+    <Layout>
+      {page}
+    </Layout>
+  )
 }
 
 export default CreateProject
