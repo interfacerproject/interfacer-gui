@@ -25,6 +25,7 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
       node {
         id
         name
+        created
         primaryIntents {
           action {
             id
@@ -116,9 +117,9 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
     devLog(queryResult.data)
 
     return (<>
-        <BrTable headArray={t('tableHead', { returnObjects: true })}>
-            {assets?.map((e: any) => {
-                e.node.primaryIntents.length > 0 && <tr key={e.cursor}>
+        <BrTable headArray={t('tableHead', {returnObjects: true})}>
+            {assets?.map((e: any) => <>
+                {e.node.primaryIntents.length > 0 && <tr key={e.cursor}>
                     <td>
                         <div className="grid grid-col-1 mx-auto md:mx-0 md:flex max-w-xs min-w-[10rem]">
                             {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] &&
@@ -154,7 +155,7 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
                         <BrTags tags={['this', 'tags', 'are', 'fakes']} />
                     </td>
                 </tr>
-            }
+            }</>
             )}
         </BrTable>
         <div className="grid grid-cols-1 gap-4 mt-4 place-items-center">
