@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import AssetImage from '../../components/AssetImage';
 import BrDisplayUser from '../../components/brickroom/BrDisplayUser';
 import BrTags from '../../components/brickroom/BrTags';
-import devLog from "../../lib/devLog";
 import MdParser from "../../lib/MdParser";
 
 interface AssetIface {
