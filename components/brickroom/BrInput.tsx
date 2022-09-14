@@ -21,7 +21,7 @@ const BrInput = (props: BrInputProps) => {
 
         <div className={`form-control ${props.className}`}>
             <label className="label">
-                <span className="label-text">{props.label}</span>
+                <h4 className="label-text capitalize">{props.label}</h4>
             </label>
             <input type={props.type}
                    placeholder={props.placeholder}

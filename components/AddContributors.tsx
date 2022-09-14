@@ -55,7 +55,7 @@ const AddContributors = ({contributors, setContributors, label, hint, error}: Ad
     }
     return <div className="w-full">
         <label className="label">
-            <span className="label-text">{label}</span>
+            <h4 className="label-text capitalize">{label}</h4>
         </label>
         <label htmlFor="searchTerm" className="relative py-2 text-gray-400 focus-within:text-gray-600 block">
             <SearchIcon className="pointer-events-none w-8 h-8 absolute top-1/2 transform -translate-y-1/2 left-3"/>

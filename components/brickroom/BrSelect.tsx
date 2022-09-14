@@ -21,7 +21,7 @@ const BrSelect = (props: BrSelectProps) => {
     return (<>
         <div className={`form-control ${props.className}`}>
             <label className="label">
-                <span className="label-text">{props.label}</span>
+                <h4 className="label-text capitalize">{props.label}</h4>
             </label>
             <select onChange={(e: React.ChangeEvent<HTMLSelectElement>) => props.handleSelect(e)}
                     className={selectClass} value={props.value} multiple={props.multiple}>
