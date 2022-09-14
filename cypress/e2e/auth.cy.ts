@@ -129,13 +129,4 @@ describe('Authentication', () => {
         })
     })
 })
-describe('Asset details', () => {
-    it('Should render html in asset description', () => {
-        cy.login()
-        cy.visit('/asset/061J529YVK747JYSJFG3XQZFQG')
-        cy.contains('strong', 'bold')
-        cy.contains('em', 'italics')
-        cy.contains('ins', 'subbed')
-    })
-})
 
