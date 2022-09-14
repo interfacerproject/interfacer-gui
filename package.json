@@ -12,7 +12,8 @@
     "cypress:headless": "cypress run",
     "test:component": "cypress run-ct --record",
     "e2e": "start-server-and-test dev http://localhost:3000 cypress",
-    "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless"
+    "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless",
+    "translate": "pnpx json-autotranslate -s deepl-free -i public/locales -c YOUR_DEEPL_FREE_KEY"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",

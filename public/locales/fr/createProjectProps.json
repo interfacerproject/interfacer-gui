@@ -1,0 +1,84 @@
+{
+  "headline": {
+    "title": "Créer un nouvel actif",
+    "description": "Assurez-vous de lire les directives communautaires avant de créer une nouvelle ressource."
+  },
+  "generalInfo": {
+    "title": "Informations générales",
+    "description": "Aidez-nous à afficher correctement votre bien."
+  },
+  "projectType": {
+    "label": "Sélectionnez le type d'actif :",
+    "array": [
+      {
+        "id": "Design",
+        "name": "Design",
+        "value": "Design",
+        "label": "L'actif serait disponible pour toute personne ayant le lien."
+      },
+      {
+        "id": "Service",
+        "name": "Service",
+        "value": "Service",
+        "label": "Seuls les membres de ce groupe peuvent accéder à l'information."
+      },
+      {
+        "id": "Produit",
+        "name": "Produit",
+        "value": "Produit",
+        "label": "Vous êtes le seul à pouvoir accéder à cette ressource."
+      }
+    ],
+    "hint": "Se référer aux normes que nous voulons suivre pour ce domaine"
+  },
+  "projectName": {
+    "label": "le nom de l'actif :",
+    "placeholder": "Par exemple, Fabulaser",
+    "hint": "Nom de travail du module d'actif"
+  },
+  "projectDescription": {
+    "label": "Description courte mais concise de cet actif :",
+    "placeholder": "Par exemple, une découpeuse laser open source à votre portée.",
+    "hint": "Brève description à afficher dans la page de la ressource"
+  },
+  "repositoryOrId": {
+    "label": "Lien vers le référentiel ou ID Interfacer :",
+    "placeholder": "Par exemple : github.com/mon-repo",
+    "hint": "Référence au référentiel dans lequel la documentation technique est élaborée"
+  },
+  "imageUpload": {
+    "label": "Téléchargez jusqu'à 10 photos :",
+    "placeholder": "SVG, PNG, JPG ou GIF (MAX. 800x400px)",
+    "hint": "SVG, PNG, JPG ou GIF (MAX. 800x400px)"
+  },
+  "projectTags": {
+    "label": "Tags :",
+    "hint": "appuyez sur espace ou retour pour ajouter des balises",
+    "placeholder": "Par exemple, découpeur laser, source ouverte, impression 3d."
+  },
+  "location": {
+    "name": {
+      "label": "Nom de l'emplacement :",
+      "placeholder": "Par exemple, l'entrepôt d'Amburg",
+      "hint": "Nom court pour se référer à l'emplacement"
+    },
+    "address": {
+      "label": "Adresse :",
+      "placeholder": "An d. Alsterschleife 3, 22399 - Hambourg, Allemagne",
+      "hint": "Brève description à afficher dans la page de la ressource"
+    }
+  },
+  "price": {
+    "label": "Valeur du jeton Fab :",
+    "placeholder": "Par exemple, 1 jeton Fab",
+    "hint": "Brève description à afficher dans la page de la ressource"
+  },
+  "contributors": {
+    "label": "Contributeurs :",
+    "placeholder": "Recherche d'agents par nom",
+    "hint": "Les contributeurs doivent avoir un compte"
+  },
+  "button": "Sauvez",
+  "resourceSpec": "73u648QASpCtC80ihY0KLg",
+  "unitId": "82XqknZlTsGcFbQw8Gg6ow"
+}
