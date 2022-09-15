@@ -28,7 +28,7 @@ const VerifySeed = ({
         else { setError(t('error')) }
     }
     const completeSignIn = async () => {
-        await signIn({ email }).then(() => { window.location.replace('/logged_in') })
+        await signIn({ email }).then(() => { window.location.replace('/logged_in') }).catch((error:any)=>setError(t('error')))
     }
 
     const onSubmit = async (e: { preventDefault: () => void; }) => {
@@ -47,7 +47,7 @@ const VerifySeed = ({
             setItem('schnorr', res.keyring.schnorr, 'local')
             setItem('eddsa', res.keyring.eddsa, 'local')
             setItem('seed', res.seed, 'local')
-        }).catch(() => setError(t("error"))).then(() => completeSignIn())
+        }).catch(() => setError(t("error"))).then(() =>{ completeSignIn()})
     }
 
     return (
