@@ -1,18 +1,16 @@
-import { LinkIcon } from "@heroicons/react/solid";
-import { i18n, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import {LinkIcon} from "@heroicons/react/solid";
+import {useTranslation} from "next-i18next";
+import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { ChangeEvent, ReactElement, useState } from 'react';
+import {useRouter} from "next/router";
+import {ChangeEvent, ReactElement, useState} from 'react';
 import BrInput from "../components/brickroom/BrInput";
 import KeyringGeneration from "../components/KeyringGeneration";
 import Layout from "../components/SignInLayout";
-import { useAuth } from "../lib/auth";
-import { NextPageWithLayout } from "./_app";
+import {useAuth} from "../lib/auth";
+import {NextPageWithLayout} from "./_app";
 
-export async function getStaticProps({ locale }: any) {
-    await i18n?.reloadResources();
-
+export async function getStaticProps({locale}: any) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['signUpProps', 'signInProps'])),
@@ -28,18 +26,18 @@ const SignUp: NextPageWithLayout = () => {
     const [HMAC, setHMAC] = useState('')
     const [yetRegisteredEmail, setYetRegisteredEmail] = useState('')
     const [emailValid, setEmailValid] = useState('')
-    const { t } = useTranslation('signUpProps')
+    const {t} = useTranslation('signUpProps')
 
     const router = useRouter()
 
-    const { signUp, askKeypairoomServer } = useAuth()
+    const {signUp, askKeypairoomServer} = useAuth()
 
-    async function onSubmit(e: { preventDefault: () => void; }) {
+    async function onSubmit(e: {preventDefault: () => void;}) {
         e.preventDefault()
         setStep(1)
     }
 
-    async function verifyEmail({ email }: { email: string }) {
+    async function verifyEmail({email}: {email: string}) {
         const result = await askKeypairoomServer(email, true, name)
         if (result?.keypairoomServer) {
             setYetRegisteredEmail('')
@@ -71,7 +69,7 @@ const SignUp: NextPageWithLayout = () => {
                             placeholder={t('email.placeholder')}
                             label={t('email.label')}
                             help={t('email.help')}
-                            onBlur={(e: ChangeEvent<HTMLInputElement>) => verifyEmail({ email: e.target.value })}
+                            onBlur={(e: ChangeEvent<HTMLInputElement>) => verifyEmail({email: e.target.value})}
                         />
                         <BrInput type="text"
                             label={t('name.label')}
