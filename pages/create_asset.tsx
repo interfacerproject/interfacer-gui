@@ -58,11 +58,11 @@ const CreateProject: NextPageWithLayout = () => {
             price.length > 0
     }
     useEffect(() => {
-        setLogs(logs.concat(['warning: compile all mandatory camps']))
+        setLogs(logs.concat(['warning: compile all mandatory fields']))
 
     }, [])
     useEffect(() => {
-        isButtonEnabled() && setLogs(logs.concat(['info: mandatory camps compiled']))
+        isButtonEnabled() && setLogs(logs.concat(['info: mandatory fields compiled']))
 
     }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price])
 
