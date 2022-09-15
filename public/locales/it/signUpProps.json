@@ -1,21 +1,28 @@
 {
-  "title": "Benvenuti!",
-  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-  "name": {
-    "label": "nome",
-    "placeholder": "Digitare il proprio nome"
-  },
-  "user": {
-    "label": "Utente",
-    "placeholder": "Digitare il nome utente visibile"
-  },
-  "email": {
-    "label": "Email",
-    "placeholder": "alice@email.com"
-  },
-  "register": {
-    "question": "✌️ ancora registrato?",
-    "answer": "Accedi"
-  },
-  "button": "Passo successivo"
+    "title": "Benvenuti!",
+    "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+    "name": {
+        "label": "nome",
+        "placeholder": "Digitare il proprio nome"
+    },
+    "user": {
+        "label": "Utente",
+        "placeholder": "Digitare il nome utente visibile"
+    },
+    "email": {
+        "label": "Email",
+        "placeholder": "alice@email.com"
+    },
+    "register": {
+        "question": "✌️ ancora registrato?",
+        "answer": "Accedi"
+    },
+    "questions": [
+        "Dove si sono conosciuti i miei genitori?",
+        "Qual è il nome del tuo primo animale domestico?",
+        "Qual è la tua città natale?",
+        "Qual è il nome del tuo primo insegnante?",
+        "Qual è il cognome di tua madre prima del matrimonio?"
+    ],
+    "button": "Passo successivo"
 }

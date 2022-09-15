@@ -1,21 +1,28 @@
 {
-  "title": "Herzlich willkommen!",
-  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-  "name": {
-    "label": "Name",
-    "placeholder": "Geben Sie Ihren Namen ein"
-  },
-  "user": {
-    "label": "Benutzer",
-    "placeholder": "Geben Sie Ihren sichtbaren Benutzernamen ein"
-  },
-  "email": {
-    "label": "E-Mail",
-    "placeholder": "alice@email.com"
-  },
-  "register": {
-    "question": "✌️ schon registriert?",
-    "answer": "Eintragen"
-  },
-  "button": "Nächster Schritt"
+    "title": "Herzlich willkommen!",
+    "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+    "name": {
+        "label": "Name",
+        "placeholder": "Geben Sie Ihren Namen ein"
+    },
+    "user": {
+        "label": "Benutzer",
+        "placeholder": "Geben Sie Ihren sichtbaren Benutzernamen ein"
+    },
+    "email": {
+        "label": "E-Mail",
+        "placeholder": "alice@email.com"
+    },
+    "register": {
+        "question": "✌️ schon registriert?",
+        "answer": "Eintragen"
+    },
+    "questions": [
+        "Wo haben sich meine Eltern kennengelernt?",
+        "Wie lautet der Name deines ersten Haustiers?",
+        "Was ist deine Heimatstadt?",
+        "Wie lautet der Name Ihres ersten Lehrers?",
+        "Wie lautet der Nachname Ihrer Mutter vor der Hochzeit?"
+    ],
+    "button": "Next Step"
 }

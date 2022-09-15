@@ -14,13 +14,16 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
     const {isSignedIn} = useAuth()
     const router = useRouter()
     const path = router.asPath
-    const authentication = path === '/sign_out' || path === '/sign_up' || path === '/sign_in' || !isSignedIn() && path !== '/'
+    const isSignup = path === '/sign_up'
+    const isSignin = path === '/sign_in'
+    const isSignout = path === '/sign_out'
+    const authentication = isSignout || isSignup || isSignin || !isSignedIn() && path !== '/'
 
     return (
         <>
             {authentication && <>
-                {(!isSignedIn || path === '/sign_up') && layoutProps?.children}
-                {path !== '/sign_up' && <SignIn/>}
+                {(!isSignedIn || isSignup) && layoutProps?.children}
+                {!isSignup && <SignIn/>}
             </>}
             {!authentication && <>
                 {isSignedIn() ?
