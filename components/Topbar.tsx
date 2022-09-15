@@ -43,6 +43,12 @@ function Topbar({search=true, children, userMenu=true, cta}:topbarProps) {
                         <button className="btn btn-accent" onClick={() => router.push('/sign_up')}>Sign up</button>
                     </div>
                 }
+                {
+                    isSignup && <div className="flex mr-2 space-x-2">
+                        <button className="btn btn-primary" onClick={() => router.push('/sign_in')}>Login</button>
+                        <button className="btn btn-accent" onClick={() => router.push('/sign_up')}>Sign up</button>
+                    </div>
+                }
                 <LocationMenu/>
             </div>
         </div>
