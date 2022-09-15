@@ -15,8 +15,8 @@ const Assets = () => {
             <h1>{t('title')}</h1>
             <p className="my-2">{t('description')}</p>
             <NewProjectButton/>
-            <Link href="mailto:bugreport@dyne.org">
-                <a className="ml-2 normal-case btn btn-accent btn-outline btn-md">
+            <Link href="https://github.com/dyne/interfacer-gui/issues/new">
+                <a target="_blank" className="ml-2 normal-case btn btn-accent btn-outline btn-md">
                     {t('Report a bug')}
                 </a>
             </Link>

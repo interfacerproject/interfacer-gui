@@ -23,12 +23,10 @@ describe("when user is logged in", () => {
         cy.get('.pl-4 > :nth-child(2) > .ml-4 > .w-full > .flex').should('have.text', 'My assets');
         cy.get('.pl-4 > :nth-child(2) > .ml-4 > .w-full > .flex').should('be.visible');
         cy.get(':nth-child(3) > .w-64 > .ml-3').click();
-        cy.get(':nth-child(3) > .pl-4 > :nth-child(1) > .ml-4 > .w-full > .flex').should('be.visible');
-        cy.get(':nth-child(3) > .pl-4 > :nth-child(1) > .ml-4 > .w-full > .flex').should('have.text', 'All assets');
-        cy.get(':nth-child(3) > .pl-4 > :nth-child(2) > .ml-4 > .w-full > .flex').should('have.text', 'Latest assets');
-        cy.get('.pl-4 > :nth-child(3) > .ml-4 > .w-full > .flex').should('have.text', 'Imported from LOSH');
-        cy.get(':nth-child(4) > .ml-4 > .w-full > .flex').should('be.visible');
-        cy.get(':nth-child(4) > .ml-4 > .w-full > .flex').should('have.text', 'Report a bug');
+        cy.get(':nth-child(3) > .pl-4 > :nth-child(1) > .ml-4 > .w-full > .flex').should('have.text', 'Latest assets');
+        cy.get(':nth-child(3) > .pl-4 > :nth-child(1) > .ml-4').should('be.visible');
+        cy.get(':nth-child(3) > .pl-4 > :nth-child(2) > .ml-4 > .w-full').should('have.text', 'Imported from LOSHNEW');
+        cy.get(':nth-child(3) > .pl-4 > :nth-child(2) > .ml-4 > .w-full > .flex').should('be.visible');
         /* ==== End Cypress Studio ==== */
     });
 
@@ -72,6 +70,6 @@ describe("when user is logged in", () => {
 
     it('Should see /assets', () => {
         cy.visit('/assets')
-        cy.contains('All assets')
+        cy.contains('Latest assets')
     });
 });
