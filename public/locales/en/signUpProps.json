@@ -1,21 +1,26 @@
 {
     "title": "Sign up",
+    "keyring_title": "Answer to these questions to complete your signup 🧩",
     "presentation": "The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase.",
     "name": {
-        "label": "name",
-        "placeholder": "Type your name"
+        "label": "Your name",
+        "placeholder": "Type your name",
+        "help": "Your name is shown and visible to everyone"
     },
     "user": {
-        "label": "User",
-        "placeholder": "Type your visible username"
+        "label": "Choose a username",
+        "placeholder": "Type your visible username",
+        "help": "Your username is used to identify you in the system"
     },
     "email": {
-        "label": "Email",
-        "placeholder": "alice@email.com"
+        "label": "Your email",
+        "placeholder": "alice@email.com",
+        "help": "Your email address that will be used for your login",
+        "valid": "✅ your email free"
     },
     "register": {
-        "question": "✌️ already regisetered?",
-        "answer": "Sign In"
+        "question": "👌 You already have an account?",
+        "answer": "Login"
     },
     "questions": [
         "Where my parents met?",

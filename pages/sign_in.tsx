@@ -11,12 +11,8 @@ import VerifySeed from "../components/VerifySeed";
 import { useAuth } from "../lib/auth";
 import devLog from "../lib/devLog";
 import { NextPageWithLayout } from "./_app";
-import { i18n } from "next-i18next";
-
 
 export async function getStaticProps({ locale }: any) {
-    await i18n?.reloadResources();
-
     return {
         props: {
             ...(await serverSideTranslations(locale, ['signInProps', 'signUpProps'])),

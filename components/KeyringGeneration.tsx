@@ -1,10 +1,10 @@
-import BrInput from "./brickroom/BrInput";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import useStorage from "../lib/useStorage";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useAuth } from "../lib/auth";
 import devLog from "../lib/devLog";
-import { useTranslation } from "next-i18next";
+import useStorage from "../lib/useStorage";
+import BrInput from "./brickroom/BrInput";
 
 type Question = string;
 
@@ -13,7 +13,7 @@ const KeyringGeneration = ({
     email, name, user, HMAC, isSignUp
 }: { email: string, name?: string, user?: string, HMAC: string, isSignUp?: boolean }) => {
     const { signUp, generateKeys, signIn } = useAuth()
-    const { t } = useTranslation('signInProps', { keyPrefix: 'step_questions' })
+    const { t } = useTranslation(['signInProps'], { keyPrefix: 'step_questions' })
     const [eddsaPublicKey, setEddsaPublicKey] = useState('')
     const [seed, setSeed] = useState('')
     const [question1, setQuestion1] = React.useState('null')
@@ -89,7 +89,9 @@ const KeyringGeneration = ({
     return (
         <>
             {(step === 0) && <>
-                <p className="mt-4 mb-6">{t('subtitle')}</p>
+                {isSignUp && <h2>{t('keyring_title')}</h2>}
+                <p className="mt-4 mb-6">{isSignUp ? t('subtitle_signup') : t('subtitle')}</p>
+                {isSignUp && <p className="mb-4 font-semibold text-primary">{t('hint')}</p>}
                 <form onSubmit={onSubmit}>
                     {[].concat(t('questions', { returnObjects: true })).map((question: string, index: number) =>
                         <BrInput type="text"
@@ -99,15 +101,19 @@ const KeyringGeneration = ({
                             onChange={(e: ChangeEvent<HTMLInputElement>) => mapQuestions(index + 1)!.setQuestion(e.target.value)} />)}
                     <button className="mt-4 btn btn-block btn-accent" type="submit">{t('button')}</button>
                 </form>
-                </>}
+            </>}
             {(step === 1) && <>
+                {isSignUp && <>
+                    <h2>{t('passphrase_title')}</h2>
+                    <p className="mt-4 mb-6">{t('subtitle_passphrase')}</p>
+                </>}
                 <p className="mt-4 mb-6">
                     {t("reminder")}<br />
                     <span className="block p-4 mt-2 font-mono bg-white border rounded-md">{seed}</span>
                 </p>
                 <p className="text-[#8A8E96] mb-6">{t('help_text_2')}</p>
                 {isSignUp && <button className="btn btn-block btn-accent" type="button" onClick={onSignUp}>
-                    {keyringGenProps.button2}
+                    {t('button_2')}
                 </button>}
                 {!isSignUp && <p>
                     <button className="btn btn-block btn-accent" type="button" onClick={completeSignIn}>{t('continue_button')}</button>
