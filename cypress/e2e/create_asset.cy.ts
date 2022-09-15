@@ -9,7 +9,7 @@ describe("when user visits create asset", () => {
         cy.restoreLocalStorage();
     });
 
-    it('it should create tags', function () {
+    it.skip('it should create tags', function () {
         /* ==== Generated with Cypress Studio ==== */
         cy.visit('http://localhost:3000/create_asset');
         cy.get(':nth-child(6) > div.w-full.form-control > textarea').type('one two three');
