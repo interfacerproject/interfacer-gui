@@ -45,14 +45,7 @@ const Home: NextPage = () => {
                 </Link>
             </div>
         </div>
-        <div className="pl-32">
-            <h2>{t('Sign-in to add your own assets')}</h2>
-            <p className="mt-2">{t('Join the fast-growing community of FabcityOS. Lorem ipsum, dolor sit amet consectetur')} <br /> {t('adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor.')}</p>
-            <Link href="/sign_in"><a className={`btn btn-primary mt-6 ${isSignedIn() ? 'btn-disabled' : ''}`}>{t('cta_1')}</a></Link>
-            <Link href="/">
-                <a className="ml-4 btn btn-outline btn-primary">{t('cta_2')}</a>
-            </Link>
-        </div>
+
         <div className="grid grid-cols-3 gap-16 pl-32 mt-44">
             {features.map((f, i) => {
                 return (<div key={i} className="flex flex-col">

@@ -9,20 +9,7 @@ import { useTranslation } from "next-i18next";
 
 
 function Sidebar() {
-    const { t } = useTranslation('SideBarProps');
-    /**
-     *
-My stuff
-Create Asset
-My Assets
-Assets
-All assets
-Latest assets
-Imported from Losh
-
-     *
-     *
-     * **/
+    const { t } = useTranslation('SideBarProps', { useSuspense: false });
     const SideBarProps = {
         Home: { name: t('home'), link: "/", svg: <HomeIcon className="float-left w-5 h-5 mr-2" /> },
         createAsset: {
@@ -33,10 +20,6 @@ Imported from Losh
         myAsset: {
             name: t('my_assets'),
             link: '/profile/my_profile',
-        },
-        allAssets: {
-            name: t('all_assets'),
-            link: '/assets'
         },
         latestAssets: {
             name: t('latest_assets'),
@@ -123,9 +106,6 @@ Imported from Losh
                             </button>
                         </a>
                         {isAssetsMenuOpen && <ul className="pl-4">
-                            <li>
-                                <IfSideBarButton w="60" text={SideBarProps.allAssets.name} link={SideBarProps.allAssets.link} />
-                            </li>
                             <li>
                                 <IfSideBarButton w="60" text={SideBarProps.latestAssets.name} link={SideBarProps.latestAssets.link} />
                             </li>
