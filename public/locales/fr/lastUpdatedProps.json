@@ -2,7 +2,7 @@
   "title": "titre",
   "description": "description",
   "Load more": "Chargez plus",
-  "tableHead" : [
+  "tableHead": [
     "Asset",
     "Dernière mise à jour",
     "Valeur",

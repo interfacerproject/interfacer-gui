@@ -1,84 +1,84 @@
 {
-  "headline": {
-    "title": "Ein neues Asset erstellen",
-    "description": "Lesen Sie unbedingt die Gemeinschaftsrichtlinien, bevor Sie ein neues Asset erstellen."
-  },
-  "generalInfo": {
-    "title": "Allgemeine Informationen",
-    "description": "Helfen Sie uns, Ihr Asset korrekt anzuzeigen."
-  },
-  "projectType": {
-    "label": "Wählen Sie den Asset-Typ:",
-    "array": [
-      {
-        "id": "Gestaltung",
-        "name": "Gestaltung",
-        "value": "Gestaltung",
-        "label": "Das Asset wäre für jeden zugänglich, der den Link hat."
-      },
-      {
-        "id": "Dienst",
-        "name": "Dienst",
-        "value": "Dienst",
-        "label": "Nur Mitglieder dieser Anlage können auf folgende Informationen zugreifen"
-      },
-      {
-        "id": "Produkt",
-        "name": "Produkt",
-        "value": "Produkt",
-        "label": "Sie sind der Einzige, der auf dieses Asset zugreifen kann"
-      }
-    ],
-    "hint": "Verweisen Sie auf die Normen, die wir für dieses Feld befolgen wollen"
-  },
-  "projectName": {
-    "label": "Asset-Name:",
-    "placeholder": "z.B. Fabulaser",
-    "hint": "Arbeitsname des Anlagenmoduls"
-  },
-  "projectDescription": {
-    "label": "Kurze, aber prägnante Beschreibung dieser Anlage:",
-    "placeholder": "Z.B. Ein Open-Source-Laserschneider in Ihrer Reichweite",
-    "hint": "Kurze Beschreibung, die auf der Asset-Seite angezeigt werden soll"
-  },
-  "repositoryOrId": {
-    "label": "Repository-Link oder Interfacer-ID:",
-    "placeholder": "Z.B. github.com/mein-repo",
-    "hint": "Verweis auf das Repository, in dem die technische Dokumentation entwickelt wird"
-  },
-  "imageUpload": {
-    "label": "Laden Sie bis zu 10 Bilder hoch:",
-    "placeholder": "SVG, PNG, JPG oder GIF (MAX. 800x400px)",
-    "hint": "SVG, PNG, JPG oder GIF (MAX. 800x400px)"
-  },
-  "projectTags": {
-    "label": "Tags:",
-    "hint": "Drücken Sie die Leertaste oder die Eingabetaste, um Tags hinzuzufügen.",
-    "placeholder": "z.B. Laserschneider, Open Source, 3D-Druck"
-  },
-  "location": {
-    "name": {
-      "label": "Name des Ortes:",
-      "placeholder": "Z.B. Amburger Lagerhaus",
-      "hint": "Kurzer Name, der sich auf den Ort bezieht"
+    "headline": {
+        "title": "Ein neues Asset erstellen",
+        "description": "Lesen Sie unbedingt die Gemeinschaftsrichtlinien, bevor Sie ein neues Asset erstellen."
     },
-    "address": {
-      "label": "Adresse:",
-      "placeholder": "An d. Alsterschleife 3, 22399 - Hamburg, Deutschland",
-      "hint": "Kurze Beschreibung, die auf der Asset-Seite angezeigt werden soll"
-    }
-  },
-  "price": {
-    "label": "Wert in Fab Token:",
-    "placeholder": "Z.B. 1 Fab Token",
-    "hint": "Kurze Beschreibung, die auf der Asset-Seite angezeigt werden soll"
-  },
-  "contributors": {
-    "label": "Mitwirkende:",
-    "placeholder": "Agenten nach Namen suchen",
-    "hint": "Beitragende müssen ein Konto haben"
-  },
-  "button": "Speichern Sie",
-  "resourceSpec": "73u648QASpCtC80ihY0KLg",
-  "unitId": "82XqknZlTsGcFbQw8Gg6ow"
+    "generalInfo": {
+        "title": "Allgemeine Informationen",
+        "description": "Helfen Sie uns, Ihr Asset korrekt anzuzeigen."
+    },
+    "projectType": {
+        "label": "Wählen Sie den Asset-Typ:",
+
+        "array": [{
+                "id": "Design",
+                "name": "Design",
+                "value": "Design",
+                "label": "Das Asset wäre für jeden zugänglich, der den Link hat."
+            },
+            {
+                "id": "Service",
+                "name": "Service",
+                "value": "Service",
+                "label": "Nur Mitglieder dieser Anlage können auf folgende Informationen zugreifen"
+            },
+            {
+                "id": "Product",
+                "name": "Product",
+                "value": "Product",
+                "label": "Sie sind der Einzige, der auf dieses Asset zugreifen kann"
+            }
+        ],
+        "hint": "Verweisen Sie auf die Normen, die wir für dieses Feld befolgen wollen"
+    },
+    "projectName": {
+        "label": "Asset-Name:",
+        "placeholder": "z.B. Fabulaser",
+        "hint": "Arbeitsname des Anlagenmoduls"
+    },
+    "projectDescription": {
+        "label": "Kurze, aber prägnante Beschreibung dieser Anlage:",
+        "placeholder": "Z.B. Ein Open-Source-Laserschneider in Ihrer Reichweite",
+        "hint": "Kurze Beschreibung, die auf der Asset-Seite angezeigt werden soll"
+    },
+    "repositoryOrId": {
+        "label": "Repository-Link oder Interfacer-ID:",
+        "placeholder": "Z.B. github.com/mein-repo",
+        "hint": "Verweis auf das Repository, in dem die technische Dokumentation entwickelt wird"
+    },
+    "imageUpload": {
+        "label": "Laden Sie bis zu 10 Bilder hoch:",
+        "placeholder": "SVG, PNG, JPG oder GIF (MAX. 800x400px)",
+        "hint": "SVG, PNG, JPG oder GIF (MAX. 800x400px)"
+    },
+    "projectTags": {
+        "label": "Tags:",
+        "hint": "Drücken Sie die Leertaste oder die Eingabetaste, um Tags hinzuzufügen.",
+        "placeholder": "z.B. Laserschneider, Open Source, 3D-Druck"
+    },
+    "location": {
+        "name": {
+            "label": "Name des Ortes:",
+            "placeholder": "Z.B. Amburger Lagerhaus",
+            "hint": "Kurzer Name, der sich auf den Ort bezieht"
+        },
+        "address": {
+            "label": "Adresse:",
+            "placeholder": "An d. Alsterschleife 3, 22399 - Hamburg, Deutschland",
+            "hint": "Kurze Beschreibung, die auf der Asset-Seite angezeigt werden soll"
+        }
+    },
+    "price": {
+        "label": "Wert in Fab Token:",
+        "placeholder": "Z.B. 1 Fab Token",
+        "hint": "Kurze Beschreibung, die auf der Asset-Seite angezeigt werden soll"
+    },
+    "contributors": {
+        "label": "Mitwirkende:",
+        "placeholder": "Agenten nach Namen suchen",
+        "hint": "Beitragende müssen ein Konto haben"
+    },
+    "button": "Speichern Sie",
+    "resourceSpec": "73u648QASpCtC80ihY0KLg",
+    "unitId": "82XqknZlTsGcFbQw8Gg6ow"
 }

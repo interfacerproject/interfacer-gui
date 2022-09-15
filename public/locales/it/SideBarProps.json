@@ -6,5 +6,13 @@
   "lastUpdated": "Ultimo aggiornamento",
   "seeAll": "Vedi tutti",
   "userGuide": "Guida per l'utente",
-  "map": "Mappa"
+  "map": "Mappa",
+  "my_stuff": "Le mie cose",
+  "create_asset": "Crea attività",
+  "my_assets": "I miei beni",
+  "assets": "Attività",
+  "latest_assets": "Ultime attività",
+  "imported_losh": "Importato da LOSH",
+  "user_guide": "Guida per l'utente",
+  "report_bug": "Segnala un bug"
 }

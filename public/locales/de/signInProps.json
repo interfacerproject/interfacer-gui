@@ -1,16 +1,57 @@
 {
-    "title": "Herzlich willkommen!",
-    "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-    "button1": "Anmeldung über passprhase",
-    "button2": "Anmelden und einige Fragen beantworten",
-    "button3": "Anmeldung",
-    "button4": "Weiter",
-    "email": {
-        "label": "E-Mail Adresse",
-        "placeholder": "alice@email.com"
-    },
-    "register": {
-        "question": "✌️ schon registriert?",
-        "answer": "Sign In"
-    }
+  "title": "Herzlich willkommen!",
+  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "button1": "Anmeldung über passprhase",
+  "button2": "Anmelden und einige Fragen beantworten",
+  "button3": "Anmeldung",
+  "button4": "Weiter",
+  "email": {
+    "label": "E-Mail Adresse",
+    "placeholder": "alice@email.com"
+  },
+  "register": {
+    "question": "✌️ schon registriert?",
+    "answer": "Sign In"
+  },
+  "title_step_0": "Anmeldung",
+  "title_step_1": "Anmeldung",
+  "title_step_2": "Anmeldung mit Beantwortung der Anmeldefragen 💬.",
+  "title_step_3": "Anmeldung über passprhase 🔑.",
+  "presentation_step_2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "presentation_step_3": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "step_passphrase": {
+    "title": "Anmeldung über Passphrase 🔑.",
+    "subtitle": "Geben Sie die Passphrase ein, die Sie während des Anmeldevorgangs erstellt haben.",
+    "label": "Passphrase",
+    "placeholder": "Staat stolpern clever Falle Entschuldigung Schema Welt Mensch",
+    "button": "Anmeldung",
+    "help_text": "Achten Sie darauf, dass Sie alle 12 Wörter der Passphrase durch ein Leerzeichen getrennt eingeben",
+    "error": "Ungültige Passphrase"
+  },
+  "step_questions": {
+    "title": "Anmeldung mit Beantwortung der Anmeldefragen 💬.",
+    "subtitle": "Beantworten Sie die Fragen, die Sie während des Anmeldevorgangs beantwortet haben",
+    "subtitle_signup": "Sie müssen sich die Antworten merken und sie für später aufbewahren, da sie für die Anmeldung erforderlich sind.",
+    "subtitle_passphrase": "Sie können nun wählen, ob Sie sich mit den vorherigen Fragen oder mit dieser Passphrase anmelden möchten.",
+    "hint": "Antwort auf mindestens 3 Fragen.",
+    "label": "Antwort",
+    "placeholder": "Antwort",
+    "button": "Anmeldung",
+    "button_2": "Anmeldung",
+    "keyring_title": "Beantworten Sie diese Fragen, um Ihre Anmeldung abzuschließen 🧩",
+    "passphrase_title": "Hier ist dein Passierschein! 🔑",
+    "continue_button": "Anmeldung",
+    "help_text": "Achten Sie darauf, dass Sie alle 12 Wörter der Passphrase durch ein Leerzeichen getrennt eingeben",
+    "help_text_2": "Diese Passphrase wird generiert und ist nicht auf dem Server gespeichert. Bewahren Sie eine Kopie davon auf.",
+    "error": "Benutzer nicht gefunden: vielleicht auf die falschen Fragen geantwortet?",
+    "reminder": "Ihr Reisepass lautet:",
+    "questions": [
+      "Wo sich meine Eltern kennengelernt haben?",
+      "Wie lautet der Name Ihres ersten Haustiers?",
+      "Was ist Ihre Heimatstadt?",
+      "Wie lautet der Name Ihres ersten Lehrers?",
+      "Wie lautete der Nachname Ihrer Mutter vor der Hochzeit?"
+    ]
+  },
+  "help_text_step_1": "Geben Sie die E-Mail-Adresse ein, die Sie bei der Anmeldung angegeben haben."
 }

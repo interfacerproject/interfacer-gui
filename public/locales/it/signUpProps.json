@@ -1,28 +1,33 @@
 {
-    "title": "Benvenuti!",
-    "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-    "name": {
-        "label": "nome",
-        "placeholder": "Digitare il proprio nome"
-    },
-    "user": {
-        "label": "Utente",
-        "placeholder": "Digitare il nome utente visibile"
-    },
-    "email": {
-        "label": "Email",
-        "placeholder": "alice@email.com"
-    },
-    "register": {
-        "question": "✌️ ancora registrato?",
-        "answer": "Accedi"
-    },
-    "questions": [
-        "Dove si sono conosciuti i miei genitori?",
-        "Qual è il nome del tuo primo animale domestico?",
-        "Qual è la tua città natale?",
-        "Qual è il nome del tuo primo insegnante?",
-        "Qual è il cognome di tua madre prima del matrimonio?"
-    ],
-    "button": "Passo successivo"
+  "title": "Benvenuti!",
+  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "name": {
+    "label": "nome",
+    "placeholder": "Digitare il proprio nome",
+    "help": "Il vostro nome è mostrato e visibile a tutti"
+  },
+  "user": {
+    "label": "Utente",
+    "placeholder": "Digitare il nome utente visibile",
+    "help": "Il nome utente viene utilizzato per identificare l'utente nel sistema."
+  },
+  "email": {
+    "label": "Email",
+    "placeholder": "alice@email.com",
+    "help": "L'indirizzo e-mail che verrà utilizzato per il login",
+    "valid": "✅ la tua email gratis"
+  },
+  "register": {
+    "question": "✌️ ancora registrato?",
+    "answer": "Accedi"
+  },
+  "questions": [
+    "Dove si sono conosciuti i miei genitori?",
+    "Qual è il nome del tuo primo animale domestico?",
+    "Qual è la tua città natale?",
+    "Qual è il nome del tuo primo insegnante?",
+    "Qual è il cognome di tua madre prima del matrimonio?"
+  ],
+  "button": "Passo successivo",
+  "keyring_title": "Rispondete a queste domande per completare l'iscrizione 🧩"
 }
