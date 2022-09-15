@@ -30,6 +30,12 @@ const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: 
         id
         name
         note
+        metadata
+        okhv
+        repo
+        version
+        licensor
+        license
         primaryAccountable {id name note}
         custodian {id name note}
         accountingQuantity {hasUnit{id label symbol} hasNumericalValue}
