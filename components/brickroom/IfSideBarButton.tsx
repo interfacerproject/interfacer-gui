@@ -11,9 +11,10 @@ type IfSideBarButtonProps = {
     disabled?: boolean;
     w?: number | string;
     tag?: string | boolean;
+    target?: string;
 }
 
-const IfSideBarButton = ({ text, link, active = false, svg, disabled = false, w = 'full', tag=false }: IfSideBarButtonProps) => {
+const IfSideBarButton = ({ text, link, active = false, svg, disabled = false, w = 'full', tag=false, target="_self"}: IfSideBarButtonProps) => {
     const widthClass = `w-${w}`
     const linkClasses = classNames({
         'ml-4 gap-2 pl-0 btn btn-ghost font-medium normal-case rounded-lg border-2': true,
@@ -27,7 +28,7 @@ const IfSideBarButton = ({ text, link, active = false, svg, disabled = false, w 
         'flex items-center items-center w-full pl-3 text-left': true,
     })
 
-    const linkElement = (<a className={linkClasses}>
+    const linkElement = (<a className={linkClasses} target={target}>
         <button className={buttonClasses} disabled={disabled}>
             <>
                 <div className="flex items-center flex-1">
