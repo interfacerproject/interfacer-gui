@@ -62,7 +62,7 @@ const Profile: NextPage = () => {
                         </div>
                     </div>
                     <p>{t('description')} </p>
-                    <h4 className="mt-2">Lorem ipsum <span className="text-primary">Dolor sit amet</span></h4>
+                    <h4 className="mt-2">{t('lorem ipsum')} <span className="text-primary">{t('dolor sit amet')}</span></h4>
                 </div>
                 <div className="flex flex-col">
                     <div className="border-2 rounded h-60 w-full md:w-4/5 mx-auto p-4">
@@ -83,7 +83,7 @@ const Profile: NextPage = () => {
                 <div id="tabs" className="my-6 space-x-4">
                     <button className="px-12 text-black bg-gray-300 border-0 rounded-lg btn">{t('activity by the user')}
                     </button>
-                    <span className="rounded-lg btn btn-disabled invisible lg:visible">Saved list</span>
+                    <span className="rounded-lg btn btn-disabled invisible lg:visible">{t('saved list')}</span>
                 </div>
             </div>
             <div className="grid grid-cols-1 md:px-8 px-2 pt">
