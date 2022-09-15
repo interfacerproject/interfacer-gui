@@ -96,7 +96,7 @@ const AssetsTable = ({userid}: { userid?: string }) => {
         }
     }
     const assets = userid ?
-        queryResult.data?.proposals.edges.filter((edge: any) => edge.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id === userid) :
+        queryResult.data?.proposals.edges.filter((edge: any) => edge.node.primaryIntents[0]?.resourceInventoriedAs.primaryAccountable.id === userid) :
         queryResult.data?.proposals.edges
     // Poll interval that works with pagination
     useEffect(() => {
