@@ -50,5 +50,19 @@ describe("when user is logged in", () => {
     it('Should see /assets', () => {
         cy.visit('/assets')
         cy.contains('All assets')
+        /* ==== Generated with Cypress Studio ==== */
+        cy.get('.mb-6 > .undefined').should('have.text', 'Create a new asset');
+        cy.get('.ml-2').should('have.text', 'Report a bug');
+        cy.get('.table-header-group > tr > :nth-child(1)').should('be.visible');
+        cy.get('.table-header-group > tr > :nth-child(2)').should('have.text', 'Last update');
+        cy.get('.table-header-group > tr > :nth-child(3)').should('be.visible');
+        cy.get('.table-header-group > tr > :nth-child(4)').should('have.text', 'Owner');
+        cy.get('.table-header-group > tr > :nth-child(5)').should('be.visible');
+        cy.get('.grid-cols-1 > .btn').should('be.enabled');
+        /* ==== End Cypress Studio ==== */
+        /* ==== Generated with Cypress Studio ==== */
+        cy.get('.mb-6 > .undefined').should('have.attr', 'href', '/create_asset');
+        cy.get('.mb-6 > .undefined').should('be.visible');
+        /* ==== End Cypress Studio ==== */
     });
 });
