@@ -7,12 +7,12 @@ describe("When user is not logged in", () => {
 
     it('Should see /sign_in', () => {
         cy.visit('/sign_in')
-        cy.contains('Welcome')
+        cy.contains('Login')
         cy.checkLinks()
     })
 
     it('Should see /sign_up', () => {
         cy.visit('/sign_up')
-        cy.contains('Welcome!')
+        cy.contains('Sign up')
     })
 })

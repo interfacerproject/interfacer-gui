@@ -49,6 +49,6 @@ describe("when user is logged in", () => {
 
     it('Should see /assets', () => {
         cy.visit('/assets')
-        cy.contains('Welcome to Interfacer Alpha')
+        cy.contains('All assets')
     });
 });

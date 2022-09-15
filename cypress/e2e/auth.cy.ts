@@ -2,9 +2,9 @@ describe('Authentication', () => {
     it('At sign in Should render error if mail dosent exist', () => {
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
-        cy.get('button').first().should('be.visible').click()
+        cy.get('.w-full > div > :nth-child(3)').should('be.visible').click()
         cy.get('input:first').should('be.visible').type('mailmoltoimprobabilechenessunoregistramai@tt.ii')
-        cy.get('button').first().should('be.visible').click()
+        cy.get('.h-full > :nth-child(1) > .btn').should('be.visible').click()
         cy.contains('this email doesn\'t exist')
     })
     it('should get HMAC from the server at sign in', () => {
@@ -14,9 +14,9 @@ describe('Authentication', () => {
         }).as('api')
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
-        cy.get('button').first().should('be.visible').click()
+        cy.get('.w-full > div > :nth-child(3)').should('be.visible').click()
         cy.get('input:first').should('be.visible').type(Cypress.env('authEmail'))
-        cy.get('button').first().should('be.visible').click()
+        cy.get('.h-full > :nth-child(1) > .btn').should('be.visible').click()
         cy.wait('@api').its('response.body.data.keypairoomServer').should('include', Cypress.env('HMAC'))
     })
 
@@ -27,12 +27,12 @@ describe('Authentication', () => {
         }).as('api')
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
-        cy.get('button').first().should('be.visible').click()
+        cy.get('.w-full > div > :nth-child(3)').should('be.visible').click()
         cy.get('input:first').should('be.visible').type(Cypress.env('authEmail'))
-        cy.get('button').first().should('be.visible').click()
+        cy.get('.h-full > :nth-child(1) > .btn').should('be.visible').click()
         cy.wait('@api')
         cy.get('input').eq(0).should('be.visible').type('pupu pi')
-        cy.contains('Invalid pass phrase')
+        cy.contains('Invalid passphrase')
     })
 
     it('Should render error if user answer less than 3 question', () => {
@@ -42,12 +42,12 @@ describe('Authentication', () => {
         }).as('api')
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
-        cy.get('button').eq(1).should('be.visible').click()
+        cy.get('.mt-4').should('be.visible').click()
         cy.get('input:first').should('be.visible').type(Cypress.env('authEmail'))
-        cy.get('button').first().should('be.visible').click()
+        cy.get('.h-full > :nth-child(1) > .btn').should('be.visible').click()
         cy.wait('@api')
         cy.get('input').eq(0).should('be.visible').type('pupu pi')
-        cy.get('button').first().should('be.visible').click()
+        cy.get('form > .mt-4').should('be.visible').click()
         cy.contains('Fill at least 2 more answer')
         cy.get('input').eq(1).should('be.visible').type('pupu pi')
         cy.contains('Fill at least 1 more answer')
@@ -60,16 +60,16 @@ describe('Authentication', () => {
         }).as('api')
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
-        cy.get('button').eq(1).should('be.visible').click()
+        cy.get('.mt-4').should('be.visible').click()
         cy.get('input:first').should('be.visible').type(Cypress.env('authEmail'))
-        cy.get('button').first().should('be.visible').click()
+        cy.get('.h-full > :nth-child(1) > .btn').should('be.visible').click()
         cy.wait('@api')
         cy.get('input').eq(0).should('be.visible').type(Cypress.env('answer1'))
         cy.get('input').eq(1).should('be.visible').type(Cypress.env('answer2'))
         cy.get('input').eq(2).should('be.visible').type(Cypress.env('answer3'))
         cy.get('input').eq(3).should('be.visible').type(Cypress.env('answer4'))
         cy.get('input').eq(4).should('be.visible').type(Cypress.env('answer5'))
-        cy.get('button').first().click().should(() => {
+        cy.get('form > .mt-4').click().should(() => {
             expect(localStorage.getItem('reflow')).to.eq(Cypress.env('reflow'))
             expect(localStorage.getItem('eddsa_public_key')).to.eq(Cypress.env('eddsa_public_key'))
             expect(localStorage.getItem('eddsa_key')).to.eq(Cypress.env('eddsa_key'))
@@ -87,11 +87,11 @@ describe('Authentication', () => {
         }).as('api')
         cy.viewport('macbook-13')
         cy.visit('/sign_in')
-        cy.get('button').first().should('be.visible').click()
+        cy.get('.w-full > div > :nth-child(3)').should('be.visible').click()
         cy.get('input:first').should('be.visible').type(Cypress.env('authEmail'))
-        cy.get('button').first().should('be.visible').click()
+        cy.get('.h-full > :nth-child(1) > .btn').should('be.visible').click()
         cy.wait('@api').get('input').eq(0).should('be.visible').type(Cypress.env('seed'))
-        cy.get('button').first().click().should(() => {
+        cy.get('form > .btn').click().should(() => {
             expect(localStorage.getItem('reflow')).to.eq(Cypress.env('reflow'))
             expect(localStorage.getItem('eddsa_public_key')).to.eq(Cypress.env('eddsa_public_key'))
             expect(localStorage.getItem('eddsa_key')).to.eq(Cypress.env('eddsa_key'))
@@ -103,21 +103,21 @@ describe('Authentication', () => {
         cy.contains('Hello')
     })
     it('Should save in local storage keys at sign up', () => {
+        localStorage.clear();
         cy.intercept({
             method: 'POST',
             url: Cypress.env('ZENFLOWS_URL'),
         }).as('api')
         cy.viewport('macbook-13')
-        cy.visit('/sign_in')
-        cy.get('a').eq(0).should('be.visible').click()
-        cy.get('input:first').should('be.visible').type('o@d.otg')
-        cy.get('input').eq(1).should('be.visible').type('name')
-        cy.get('input').eq(2).should('be.visible').type('user')
-        cy.get('button').first().should('be.visible').click()
+        cy.visit('/sign_up')
+        cy.get('form > :nth-child(1) > .w-full').should('be.visible').type(new Date().getTime() + '@d.otg')
+        cy.get(':nth-child(2) > .w-full').should('be.visible').type('name')
+        cy.get(':nth-child(3) > .w-full').should('be.visible').type('user')
+        cy.get('.my-6').should('be.visible').click()
         cy.get('input').eq(0).should('be.visible').type('risposta1')
         cy.get('input').eq(1).should('be.visible').type('risposta2')
         cy.get('input').eq(2).should('be.visible').type('risposta3')
-        cy.get('button').first().should('be.visible').click().should(() => {
+        cy.get('form > .mt-4').should('be.visible').click().should(() => {
             expect(localStorage.getItem('reflow')).to.be.not.null
             expect(localStorage.getItem('eddsa_public_key')).to.be.not.null
             expect(localStorage.getItem('eddsa_key')).to.be.not.null
