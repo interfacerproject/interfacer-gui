@@ -1,16 +1,16 @@
-import {NextPage} from "next";
+import { NextPage } from "next";
 import React from "react";
-import {useAuth} from "../lib/auth";
-import {gql, useQuery} from "@apollo/client";
+import { useAuth } from "../lib/auth";
+import { gql, useQuery } from "@apollo/client";
 import ResourceTable from "../components/ResourceTable";
-import {serverSideTranslations} from "next-i18next/serverSideTranslations";
-import {useTranslation} from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
 import devLog from "../lib/devLog";
 import BrLoadMore from "../components/brickroom/BrLoadMore";
 
 
-const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: ID) {
-  economicResources(first: $first, after: $after, before: $before, last: $last) {
+const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: ID, $filter: EconomicResourceFilterParams) {
+  economicResources(first: $first after: $after before: $before last: $last filter: $filter) {
     pageInfo {
       startCursor
       endCursor
@@ -48,10 +48,12 @@ const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: 
 
 
 const Resources: NextPage = () => {
-    const {t} = useTranslation('resourcesProps')
-    const {authId} = useAuth()
-    const {loading, data, error, fetchMore} = useQuery(FETCH_INVENTORY, {variables: {last: 10}})
-    const updateQuery = (previousResult: any, {fetchMoreResult}: any) => {
+    const { t } = useTranslation('resourcesProps')
+    const { authId } = useAuth()
+    const { loading, data, error, fetchMore } = useQuery(FETCH_INVENTORY, { variables: { last: 10, filter: { primaryAccountable: ["061KRW2CH14V04V0KB1VCKPHF4"] } } })
+    console.error(error);
+    devLog(data)
+    const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
         if (!fetchMoreResult) {
             return previousResult;
         }
@@ -61,7 +63,7 @@ const Resources: NextPage = () => {
 
         fetchMoreResult.economicResources.edges = [...previousEdges, ...fetchMoreEdges];
 
-        return {...fetchMoreResult}
+        return { ...fetchMoreResult }
     }
     const getHasNextPage = data?.economicResources.pageInfo.hasNextPage;
     const loadMore = () => {
@@ -70,7 +72,7 @@ const Resources: NextPage = () => {
             const before = data.economicResources.pageInfo.endCursor;
 
             if (nextPage && before !== null) {
-                fetchMore({updateQuery, variables: {before}});
+                fetchMore({ updateQuery, variables: { before } });
             }
         }
     }
@@ -80,12 +82,12 @@ const Resources: NextPage = () => {
             <h1>{t('title')}</h1>
             <p>{t('description')}</p>
         </div>
-        {data && <ResourceTable resources={data?.economicResources.edges}/>}
-        <BrLoadMore handleClick={loadMore} disabled={!getHasNextPage} text={t('Load more')}/>
+        {data && <ResourceTable resources={data?.economicResources.edges} />}
+        <BrLoadMore handleClick={loadMore} disabled={!getHasNextPage} text={t('Load more')} />
     </div>
 };
 
-export async function getStaticProps({locale}: any) {
+export async function getStaticProps({ locale }: any) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['resourcesProps', 'signInProps', 'SideBarProps'])),
