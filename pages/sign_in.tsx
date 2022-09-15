@@ -1,19 +1,22 @@
-import React, {ChangeEvent, ReactElement, useState} from 'react';
-import {useAuth} from "../lib/auth";
-import {useRouter} from "next/router";
-import BrInput from "../components/brickroom/BrInput";
+import { LinkIcon } from "@heroicons/react/solid";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { ChangeEvent, ReactElement, useState } from 'react';
+import BrInput from "../components/brickroom/BrInput";
 import KeyringGeneration from "../components/KeyringGeneration";
-import VerifySeed from "../components/VerifySeed";
-import devLog from "../lib/devLog";
-import {useTranslation} from "next-i18next";
-import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import Layout from "../components/SignInLayout";
-import {NextPageWithLayout} from "./_app";
-import {LinkIcon} from "@heroicons/react/solid";
+import VerifySeed from "../components/VerifySeed";
+import { useAuth } from "../lib/auth";
+import devLog from "../lib/devLog";
+import { NextPageWithLayout } from "./_app";
+import { i18n } from "next-i18next";
 
 
-export async function getStaticProps({locale}: any) {
+export async function getStaticProps({ locale }: any) {
+    await i18n?.reloadResources();
+
     return {
         props: {
             ...(await serverSideTranslations(locale, ['signInProps', 'signUpProps'])),
@@ -29,7 +32,7 @@ const Sign_in: NextPageWithLayout = () => {
     const [pdfk, setPdfk] = useState('')
     const [isMailExisting, setIsMailExising] = useState(true)
 
-    const {askKeypairoomServer, signIn} = useAuth()
+    const { askKeypairoomServer, signIn } = useAuth()
 
     const errorMail = isMailExisting ? undefined : 'this email doesn\'t exists'
     const viaPassphrase = () => {
@@ -55,7 +58,7 @@ const Sign_in: NextPageWithLayout = () => {
     }
 
     const router = useRouter()
-    const {t} = useTranslation('signInProps')
+    const { t } = useTranslation('signInProps')
 
 
     async function onSubmit(e: { preventDefault: () => void; }) {
@@ -63,51 +66,55 @@ const Sign_in: NextPageWithLayout = () => {
     }
 
     return (
-        <div className="h-full grid grid-cols-6 md:mt-40 mt-2">
+        <div className="grid h-full grid-cols-6">
             <div className="col-span-6 p-2 md:col-span-4 md:col-start-2 md:col-end-6">
-                <h2>{t('title')}</h2>
-                <div className="w-full border-y-2 h-2 my-2"/>
-                {step === 0 && <><p>{t('presentation')}</p>
-                    <div className="w-full border-y-2 h-2 my-2"/>
+                <div className="w-full h-full pt-56">
+                    {(step === 0 || step === 1) && <div>
+                        <h2>{t('title_step_0')}</h2>
+                        <p className="mt-2 mb-6">{t('presentation')}</p>
 
-                    <div className="w-full border-y-2 h-2 my-2"/>
-                    <button className="btn btn-block btn-primary" type="button"
-                            onClick={() => viaPassphrase()}>{t('button1')}</button>
-                    <button className="btn btn-block my-4 btn-primary" type="button"
-                            onClick={() => viaQuestions()}>{t('button2')}</button>
-                    <p className="flex flex-row items-center justify-between">
-                        <span className="flex-auto"> {t('register.question')}</span>
-                        <Link href={'/sign_up'}>
-                            <a className="flex flex-row">
-                            <LinkIcon className='h-5 w-5'/>
-                            {t('register.answer')}</a>
-                        </Link>
+                        {step === 0 &&
+                            <>
+                                <button className="btn btn-block btn-primary" type="button"
+                                    onClick={() => viaPassphrase()}>{t('button1')}</button>
+                                <button className="mt-4 btn btn-block btn-primary" type="button"
+                                    onClick={() => viaQuestions()}>{t('button2')}</button>
+                            </>
+                        }
 
-                    </p>
-                </>}
-                {step === 1 && <>
-                    <BrInput type="email" label={t('email.label')}
-                             error={errorMail}
-                             className={"w-full"}
-                             placeholder={t('email.placeholder')}
-                             onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}/>
-                    {!isPassprhase && <>
-                        <button className="btn btn-block btn-primary" type="button" onClick={() => toNextStep(2)}>
-                            {t('button4')}
-                        </button>
+                        {step === 1 &&
+                            <>
+                                <BrInput type="email" label={t('email.label')}
+                                    error={errorMail}
+                                    className={"w-full"}
+                                    placeholder={t('email.placeholder')}
+                                    onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} />
+                                <p className="text-[#8A8E96] mb-6">{t('help_text_step_1')}</p>
+                                <button className="btn btn-block btn-primary" type="button" onClick={() => toNextStep(isPassprhase ? 3 : 2)}>
+                                    {t('button4')}
+                                </button>
+                            </>
+                        }
+
+                        <p className="flex flex-row items-center mt-6">
+                            <span>{t('register.question')}</span>
+                            <Link href={'/sign_up'}>
+                                <a className="flex flex-row font-semibold">
+                                    <LinkIcon className='w-5 h-5 mx-2' />
+                                    {t('register.answer')}</a>
+                            </Link>
+                        </p>
+                    </div>}
+
+                    {step === 2 && <>
+                        <h2>{t('step_questions.title')}</h2>
+                        <KeyringGeneration email={email} HMAC={pdfk} />
                     </>}
-                    {isPassprhase && <>
-                        <button className="btn btn-block btn-primary" type="button" onClick={() => toNextStep(3)}>
-                            {t('button4')}
-                        </button>
+                    {step === 3 && <>
+                        <h2>{t('step_passphrase.title')}</h2>
+                        <VerifySeed email={email} HMAC={pdfk} />
                     </>}
-                </>}
-                {step === 3 && <>
-                    <VerifySeed email={email} HMAC={pdfk}/>
-                </>}
-                {step === 2 && <>
-                    <KeyringGeneration email={email} HMAC={pdfk}/>
-                </>}
+                </div>
             </div>
         </div>
     )

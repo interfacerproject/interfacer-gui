@@ -21,13 +21,13 @@ const BrInput = (props: BrInputProps) => {
 
         <div className={`form-control ${props.className}`}>
             <label className="label">
-                <h4 className="label-text capitalize">{props.label}</h4>
+                <h4 className="label-text">{props.label}</h4>
             </label>
             <input type={props.type}
                    placeholder={props.placeholder}
                    onChange={props.onChange}
                    onBlur={props.onBlur}
-                   className="w-full input input-bordered focus:input-primary"
+                   className="w-full rounded-md input input-bordered focus:input-primary"
                    value={props.value}
                    ref={props.ref}
             />

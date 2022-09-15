@@ -1,37 +1,19 @@
 import BrInput from "./brickroom/BrInput";
-import React, {ChangeEvent, useEffect, useState} from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import useStorage from "../lib/useStorage";
-import {useRouter} from "next/router";
-import {useAuth} from "../lib/auth";
+import { useRouter } from "next/router";
+import { useAuth } from "../lib/auth";
 import devLog from "../lib/devLog";
-import {useTranslation} from "next-i18next";
+import { useTranslation } from "next-i18next";
 
 type Question = string;
 
 
 const KeyringGeneration = ({
-                               email,
-                               name,
-                               user,
-                               HMAC,
-                               isSignUp
-                           }: { email: string, name?: string, user?: string, HMAC: string, isSignUp?: boolean }) => {
-    const {signUp, generateKeys, signIn} = useAuth()
-    const {t} = useTranslation('signUpProps')
-    const keyringGenProps: any = {
-        title: "Welcome!",
-        presentation: "Answer at least three question",
-        email: {
-            label: "Email",
-            placeholder: "alice@email.com"
-        },
-        register: {
-            question: "",
-            answer: ""
-        },
-        button: "Check",
-        button2: "Sign Up",
-    }
+    email, name, user, HMAC, isSignUp
+}: { email: string, name?: string, user?: string, HMAC: string, isSignUp?: boolean }) => {
+    const { signUp, generateKeys, signIn } = useAuth()
+    const { t } = useTranslation('signInProps', { keyPrefix: 'step_questions' })
     const [eddsaPublicKey, setEddsaPublicKey] = useState('')
     const [seed, setSeed] = useState('')
     const [question1, setQuestion1] = React.useState('null')
@@ -42,21 +24,21 @@ const KeyringGeneration = ({
     const [step, setStep] = useState(0)
     const [error, setError] = useState('')
     const [notEnoughtAnswers, setNotEnoughtAnswers] = React.useState(false)
-    const {getItem, setItem} = useStorage()
+    const { getItem, setItem } = useStorage()
     const router = useRouter()
 
-    const mapQuestions: (question:number)=>{question:string, setQuestion:Function} | undefined = (question) => {
+    const mapQuestions: (question: number) => { question: string, setQuestion: Function } | undefined = (question) => {
         switch (question) {
             case 1:
-                return {question:question1, setQuestion:setQuestion1}
+                return { question: question1, setQuestion: setQuestion1 }
             case 2:
-                return {question:question2, setQuestion:setQuestion2}
+                return { question: question2, setQuestion: setQuestion2 }
             case 3:
-                return {question:question3, setQuestion:setQuestion3}
+                return { question: question3, setQuestion: setQuestion3 }
             case 4:
-                return {question:question4, setQuestion:setQuestion4}
+                return { question: question4, setQuestion: setQuestion4 }
             case 5:
-                return {question:question5, setQuestion:setQuestion5}
+                return { question: question5, setQuestion: setQuestion5 }
         }
     }
 
@@ -87,7 +69,7 @@ const KeyringGeneration = ({
         if (nullAnswers > 2) {
             setNotEnoughtAnswers(true)
         } else {
-            generateKeys({question1, question2, question3, question4, question5, email, HMAC}).then(() => {
+            generateKeys({ question1, question2, question3, question4, question5, email, HMAC }).then(() => {
                 setEddsaPublicKey(getItem('eddsa_public_key', 'local'))
                 setSeed(getItem('seed', 'local'))
                 setStep(1)
@@ -98,7 +80,7 @@ const KeyringGeneration = ({
     const completeSignIn = async (e: { preventDefault: () => void; }) => {
         e.preventDefault()
 
-        await signIn({email}).then(() => {
+        await signIn({ email }).then(() => {
             window.location.replace('/logged_in')
         }).catch((e: any) => setError(e))
     }
@@ -106,32 +88,32 @@ const KeyringGeneration = ({
 
     return (
         <>
-            {(step === 0) && <>  <p>{keyringGenProps.presentation}</p>
+            {(step === 0) && <>
+                <p className="mt-4 mb-6">{t('subtitle')}</p>
                 <form onSubmit={onSubmit}>
-                    {[].concat(t('questions', {returnObjects: true})).map((question: string, index: number) =>
+                    {[].concat(t('questions', { returnObjects: true })).map((question: string, index: number) =>
                         <BrInput type="text"
-                                 key={index}
-                                 error={fillMoreAnswer(mapQuestions(index + 1)!.question)}
-                                 label={question}
-                                 onChange={(e: ChangeEvent<HTMLInputElement>) => mapQuestions(index + 1)!.setQuestion(e.target.value)}/>)}
-                    <button className="btn btn-block btn-primary" type="submit">{keyringGenProps.button}</button>
+                            key={index}
+                            error={fillMoreAnswer(mapQuestions(index + 1)!.question)}
+                            label={question}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => mapQuestions(index + 1)!.setQuestion(e.target.value)} />)}
+                    <button className="mt-4 btn btn-block btn-accent" type="submit">{t('button')}</button>
                 </form>
-                <p className="flex flex-row items-center justify-between">
-                    {keyringGenProps.register.question}
-                    {keyringGenProps.register.answer}
-                </p></>}
+                </>}
             {(step === 1) && <>
-                <p>
-                    <b>passphrase:</b> {seed}
+                <p className="mt-4 mb-6">
+                    {t("reminder")}<br />
+                    <span className="block p-4 mt-2 font-mono bg-white border rounded-md">{seed}</span>
                 </p>
+                <p className="text-[#8A8E96] mb-6">{t('help_text_2')}</p>
                 {isSignUp && <button className="btn btn-block btn-accent" type="button" onClick={onSignUp}>
                     {keyringGenProps.button2}
                 </button>}
                 {!isSignUp && <p>
-                    <button className="btn btn-block btn-accent" type="button" onClick={completeSignIn}>complete signin</button>
+                    <button className="btn btn-block btn-accent" type="button" onClick={completeSignIn}>{t('continue_button')}</button>
                 </p>}
             </>}
-            {error !== '' && <h5 className="text-warning">user not found: maybe wrong answers?</h5>}
+            {error !== '' && <h5 className="text-warning">{t('error')}</h5>}
         </>
     )
 }

@@ -42,6 +42,7 @@ p, .paragraph {
   height: 20px;
   background-image: url('/logo.svg');
   @apply bg-cover;
+  cursor: pointer;
 }
 table {
   @apply table;
