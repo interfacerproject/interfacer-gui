@@ -4,7 +4,17 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+## Set up the submodules and install
+
+```bash
+git submodule update --init
+# then
+npm 
+# or
+yarn 
+```
+
+## Run the development server:
 
 ```bash
 npm run dev
@@ -12,7 +22,10 @@ npm run dev
 yarn dev
 ```
 
+## Open
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Editing
 
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
