@@ -1,43 +1,47 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import BrTable from "./brickroom/BrTable";
 import QrCodeButton from "./brickroom/QrCodeButton";
 
-const ResourceTable = ({resources}: { resources: Array<any> }) => {
-    const resourcesHead = ['Resource', 'Name', 'Quantity', 'Location', 'Passport', 'Owner', 'Notes']
+const truncate = (input: string, max: number) => input.length > max ? `${input.substring(0, max)}...` : input;
+
+
+const ResourceTable = ({ resources }: { resources: Array<any> }) => {
+    const resourcesHead = ['Resource', 'Source', 'License', 'Version']
     return (<>
         <BrTable headArray={resourcesHead}>
             {(resources?.length !== 0) && <>{resources?.map((e) =>
                 <tr key={e.node.id}>
-                    <td>{e.node.conformsTo?.name}</td>
-                    <td><Link href={`/resource/${e.node.id}`}><a>{e.node.name}</a></Link></td>
-                    <td>{e.node.onhandQuantity?.hasNumericalValue || e.node.accountingQuantity?.hasNumericalValue}</td>
-                    <td className="whitespace-normal">{e.node.currentLocation?.mappableAddress}</td>
-                    <td><QrCodeButton id={e.node.id} outlined={true}/></td>
-                    <td className="p-1">
-                        <Link href={`/profile/${e.node.primaryAccountable?.id}`}>
-                            <a className="pl-0 grid grid-cols-1 items-center">
-                                {e.node.primaryAccountable?.name}
+                    <td>
+                        <Link href={`/resource/${e.node.id}`}>
+                            <a className="flex items-center space-x-4">
+                                <img src={e.node.metadata?.image} className="w-20 h-20" />
+                                <div className="flex flex-col h-20 h-24 space-y-1 w-60">
+                                    <h4 className="truncate w-60">{e.node.name}</h4>
+                                    <p className="h-16 overflow-hidden text-sm whitespace-normal text-thin">{truncate(e.node.note, 100)}</p>
+                                </div>
                             </a>
                         </Link>
                     </td>
-                    <td className="whitespace-normal">{e.node.note}</td>
+                    <td className="align-top">
+                        <span className="font-semibold">{e.node.metadata?.__meta?.source || ''}</span><br />
+                        <Link href={e.node?.repo || ''}><a className="text-sm" target="_blank">{truncate(e.node.repo || '', 40)}</a></Link>
+                    </td>
+                    <td className="align-top">
+                        <div className="whitespace-normal">
+                            <p>
+                                <span className="font-semibold">{e.node.license}</span><br />
+                                <span className="italic">{('by')} {e.node.licensor}</span>
+                            </p>
+                        </div>
+                    </td>
+                    <td className="text-sm align-top">
+                        Version: {e.node.version}<br />
+                        {e.node.okhv}
+                    </td>
                 </tr>
             )}</>}
             {(resources?.length === 0) && <>
-                <tr className="disabled">
-                    <td>xxxxxxx</td>
-                    <td>xxxxxx xxxx</td>
-                    <td>xxxxxxxxxxxx xxx xxxxx</td>
-                    <td className="whitespace-normal">xxxxx, xxxxxx xx</td>
-                    <td><QrCodeButton id='' outlined={true}/></td>
-                    <td className="p-1">
-                        xxxxxxx
-                    </td>
-                    <td className="whitespace-normal">xxxxxxxxx xxxxxxxx xxxxxxxxxxxx xxxxxxxx xxxxxxxxxx xxxxxx xxxx
-                    </td>
-
-                </tr>
                 <tr>
                     <td colSpan={resourcesHead.length}>
                         <h4>There’s nothing to display here.</h4>
