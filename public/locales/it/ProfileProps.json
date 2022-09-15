@@ -1,10 +1,10 @@
 {
-    "hi": "Ciao",
-    "description": "en: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque pellentesque hendrerit ultrices mauris et non pellentesque suspendisse est.",
-    "activity by the user": "activity by the user",
-    "saved list": "Saved list",
-    "your stats": "Your stats",
-    "statText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    "goals": "Goals",
-    "strength": "Strength"
+  "hi": "Ciao",
+  "description": "en: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque pellentesque hendrerit ultrices mauris et non pellentesque suspendisse est.",
+  "activity by the user": "activity by the user",
+  "saved list": "Saved list",
+  "your stats": "Your stats",
+  "statText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  "goals": "Goals",
+  "strength": "Strength"
 }

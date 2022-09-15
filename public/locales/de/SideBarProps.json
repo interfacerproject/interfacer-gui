@@ -6,5 +6,13 @@
   "lastUpdated": "Zuletzt aktualisiert",
   "seeAll": "Alle sehen",
   "userGuide": "Benutzerhandbuch",
-  "map": "Karte"
+  "map": "Karte",
+  "my_stuff": "Meine Sachen",
+  "create_asset": "Anlage erstellen",
+  "my_assets": "Mein Vermögen",
+  "assets": "Vermögenswerte",
+  "latest_assets": "Letzte Vermögenswerte",
+  "imported_losh": "Eingeführt von LOSH",
+  "user_guide": "Benutzerhandbuch",
+  "report_bug": "Einen Fehler melden"
 }
