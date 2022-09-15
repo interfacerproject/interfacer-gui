@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import Link from "next/link";
 import BrTable from "./brickroom/BrTable";
 import BrTags from "./brickroom/BrTags";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import AssetImage from "./AssetImage";
-import { useTranslation } from "next-i18next";
-import { gql, useQuery } from "@apollo/client";
+import {useTranslation} from "next-i18next";
+import {gql, useQuery} from "@apollo/client";
 import devLog from "../lib/devLog";
 
-const AssetsTable = ({ userid }: { userid?: string }) => {
-    const { t } = useTranslation('lastUpdatedProps')
+const AssetsTable = ({userid}: { userid?: string }) => {
+    const {t} = useTranslation('lastUpdatedProps')
     const QUERY_ASSETS = gql`query ($first: Int, $after: ID, $last: Int, $before: ID) {
   proposals(first: $first, after: $after, before: $before, last: $last) {
     pageInfo {
@@ -71,8 +71,8 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
   }
 }
 `
-    const queryResult = useQuery(QUERY_ASSETS, { variables: { last: 10 } })
-    const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
+    const queryResult = useQuery(QUERY_ASSETS, {variables: {last: 10}})
+    const updateQuery = (previousResult: any, {fetchMoreResult}: any) => {
         if (!fetchMoreResult) {
             return previousResult;
         }
@@ -82,7 +82,7 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
 
         fetchMoreResult.proposals.edges = [...previousEdges, ...fetchMoreEdges];
 
-        return { ...fetchMoreResult }
+        return {...fetchMoreResult}
     }
     const getHasNextPage = queryResult.data?.proposals.pageInfo.hasNextPage;
     const loadMore = () => {
@@ -91,7 +91,7 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
             const before = queryResult.data.proposals.pageInfo.endCursor;
 
             if (nextPage && before !== null) {
-                queryResult.fetchMore({ updateQuery, variables: { before } });
+                queryResult.fetchMore({updateQuery, variables: {before}});
             }
         }
     }
@@ -100,20 +100,24 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
         queryResult.data?.proposals.edges
     // Poll interval that works with pagination
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            const total =
-                ((queryResult.data?.proposals.edges.length * 2) - assets.length || 0)
+        if (!userid) {
+            const intervalId = setInterval(() => {
+                const total =
+                    (queryResult.data?.proposals.edges.length || 0)
 
-            queryResult?.refetch({
-                ...queryResult.variables,
-                last: total
-            });
-        }, 10000);
+                queryResult?.refetch({
+                    ...queryResult.variables,
+                    last: total
+                });
+            }, 10000);
 
-        return () => clearInterval(intervalId);
+            return () => clearInterval(intervalId);
+
+        }
     }, [
         ...Object.values(queryResult.variables!).flat(),
         queryResult.data?.proposals.pageInfo.startCursor
+
     ]);
     devLog(queryResult.data)
 
@@ -123,8 +127,8 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
                 {e.node.primaryIntents.length > 0 && <tr key={e.cursor}>
                     <td>
                         <div className="grid grid-col-1 mx-auto md:mx-0 md:flex max-w-xs min-w-[10rem]">
-                           {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] &&
-                              <div className="flex-none w-full md:w-2/5">
+                            {e.node.primaryIntents[0].resourceInventoriedAs?.images[0] &&
+                            <div className="flex-none w-full md:w-2/5">
                                 <AssetImage
                                     image={e.node.primaryIntents[0].resourceInventoriedAs?.images[0]}
                                     className="mr-1 max-h-20"/>
@@ -147,13 +151,13 @@ const AssetsTable = ({ userid }: { userid?: string }) => {
                     </td>
                     <td>
                         <BrDisplayUser id={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id}
-                            name={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.name} />
+                                       name={e.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.name}/>
                     </td>
                     <td className="max-w-[12rem]">
-                        <BrTags tags={[]} />
+                        <BrTags tags={[]}/>
                     </td>
                 </tr>
-            }</>
+                }</>
             )}
         </BrTable>
         <div className="grid grid-cols-1 gap-4 mt-4 place-items-center">
