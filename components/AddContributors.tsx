@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {gql, useQuery} from "@apollo/client";
-import BrSelect from "./brickroom/BrSelect";
 import devLog from "../lib/devLog";
 import {SearchIcon} from "@heroicons/react/outline";
 import {ExclamationIcon} from "@heroicons/react/solid";
