@@ -62,8 +62,7 @@ const GeoCoderInput = ({onSelect, value, label, placeholder, hint, error, classN
                             hint={hint}
                             error={error}
                             help={help}
-
-        />)
+    />)
 }
 
 export default GeoCoderInput

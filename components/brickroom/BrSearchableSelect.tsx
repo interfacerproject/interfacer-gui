@@ -34,10 +34,19 @@ const BrSearchableSelect = ({
     const customStyles = {
         control: (provided: any, state: any) => ({
             ...provided,
-            height: 48,
-            border: state.isFocused ? '2px solid green' : 'blue',
+            '&:hover':{borderColor: 'green'},
+            height: 49,
+            border: state.isFocused ? '2px solid' : provided.border,
         }),
     }
+    const customTheme = ((theme:any) => ({
+          ...theme,
+          borderRadius: 6,
+          colors: {
+            ...theme.colors,
+            primary25: "#F1BD4D",
+            primary: "#02604B"
+          }}))
 
     return (<div className={`form-control ${className}`}>
         <label className="label">
@@ -55,6 +64,7 @@ const BrSearchableSelect = ({
             className="border-primary"
             styles={customStyles}
             isMulti={multiple}
+            theme={customTheme}
         />
         <label className="flex-col items-start label">
             {error &&
