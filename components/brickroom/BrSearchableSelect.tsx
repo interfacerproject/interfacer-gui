@@ -14,11 +14,25 @@ type AsyncSelectProps = {
     className?: string,
     inputValue?: string,
     help?: string,
+    multiple?: boolean
 }
 
-const BrSearchableSelect = ({onChange, options, onInputChange,inputValue, value, label, placeholder, hint, error, className, help}:AsyncSelectProps) => {
+const BrSearchableSelect = ({
+                                onChange,
+                                options,
+                                onInputChange,
+                                multiple=false,
+                                inputValue,
+                                value,
+                                label,
+                                placeholder,
+                                hint,
+                                error,
+                                className,
+                                help
+                            }: AsyncSelectProps) => {
     const customStyles = {
-        control: (provided:any, state:any) => ({
+        control: (provided: any, state: any) => ({
             ...provided,
             height: 48,
             border: state.isFocused ? '2px solid green' : 'blue',
@@ -30,6 +44,7 @@ const BrSearchableSelect = ({onChange, options, onInputChange,inputValue, value,
             <h4 className="label-text">{label}</h4>
         </label>
         <AsyncSelect
+            closeMenuOnSelect={!multiple}
             value={value}
             options={options}
             onChange={onChange}
@@ -39,7 +54,7 @@ const BrSearchableSelect = ({onChange, options, onInputChange,inputValue, value,
             isSearchable
             className="border-primary"
             styles={customStyles}
-
+            isMulti={multiple}
         />
         <label className="flex-col items-start label">
             {error &&
