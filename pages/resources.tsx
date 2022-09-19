@@ -1,16 +1,18 @@
-import { NextPage } from "next";
-import React from "react";
-import { useAuth } from "../lib/auth";
-import { gql, useQuery } from "@apollo/client";
+import {NextPage} from "next";
+import React, {useEffect} from "react";
+import {useAuth} from "../lib/auth";
+import {gql, useQuery} from "@apollo/client";
 import ResourceTable from "../components/ResourceTable";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useTranslation } from "next-i18next";
+import {serverSideTranslations} from "next-i18next/serverSideTranslations";
+import {useTranslation} from "next-i18next";
 import devLog from "../lib/devLog";
 import BrLoadMore from "../components/brickroom/BrLoadMore";
+import {useRouter} from "next/router";
+import {conformsTo} from "cypress/types/lodash";
 
 
-const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: ID, $filter: EconomicResourceFilterParams) {
-  economicResources(first: $first after: $after before: $before last: $last filter: $filter) {
+const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: ID, $filters:EconomicResourceFilterParams ) {
+  economicResources(first: $first after: $after before: $before last: $last filter: $filters) {
     pageInfo {
       startCursor
       endCursor
@@ -30,12 +32,6 @@ const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: 
         id
         name
         note
-        metadata
-        okhv
-        repo
-        version
-        licensor
-        license
         primaryAccountable {id name note}
         custodian {id name note}
         accountingQuantity {hasUnit{id label symbol} hasNumericalValue}
@@ -48,46 +44,81 @@ const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: 
 
 
 const Resources: NextPage = () => {
-    const { t } = useTranslation('resourcesProps')
-    const { authId } = useAuth()
-    const { loading, data, error, fetchMore } = useQuery(FETCH_INVENTORY, { variables: { last: 10, filter: { primaryAccountable: ["061KRW2CH14V04V0KB1VCKPHF4"] } } })
+    const {type, ids} = useRouter().query;
+    const filter: { conformsTo?: string[], primaryAccountable?: string[] } = {};
+    // @ts-ignore
+    type && (filter['conformsTo'] = [].concat(type));
+    // @ts-ignore
+    ids && (filter['primaryAccountable'] = [].concat(ids));
+    devLog('filters', filter)
+
+    const {t} = useTranslation('resourcesProps')
+    const {authId} = useAuth()
+    // @ts-ignore
+    const {loading, data, error, fetchMore, variables, refetch} = useQuery(FETCH_INVENTORY, {
+        variables: {
+            last: 10,
+            filters: filter
+        }
+    })
     console.error(error);
-    devLog(data)
-    const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
+    devLog('loading', loading)
+    !loading && devLog(data)
+
+    const updateQuery = (previousResult: any, {fetchMoreResult}: any) => {
         if (!fetchMoreResult) {
             return previousResult;
         }
-
         const previousEdges = previousResult.economicResources.edges;
         const fetchMoreEdges = fetchMoreResult.economicResources.edges;
-
         fetchMoreResult.economicResources.edges = [...previousEdges, ...fetchMoreEdges];
-
-        return { ...fetchMoreResult }
+        return {...fetchMoreResult}
     }
+
     const getHasNextPage = data?.economicResources.pageInfo.hasNextPage;
+
     const loadMore = () => {
         if (data && fetchMore) {
             const nextPage = getHasNextPage;
             const before = data.economicResources.pageInfo.endCursor;
 
             if (nextPage && before !== null) {
-                fetchMore({ updateQuery, variables: { before } });
+                // @ts-ignore
+                fetchMore({updateQuery, variables: {before}});
             }
         }
     }
-    devLog(data?.economicResources.edges)
+
+    //this is to refetch the data
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const total =
+                data?.economicResources.edges.length || 0
+
+            refetch({
+                ...variables,
+                last: total
+            });
+        }, 5000);
+
+        return () => clearInterval(intervalId);
+    }, [
+        ...Object.values(variables!).flat(),
+        data?.economicResources.pageInfo.startCursor
+    ]);
+
+    devLog('economic resources', data?.economicResources.edges)
     return <div className="p-8">
         <div className="mb-6 w-80">
             <h1>{t('title')}</h1>
             <p>{t('description')}</p>
         </div>
-        {data && <ResourceTable resources={data?.economicResources.edges} />}
-        <BrLoadMore handleClick={loadMore} disabled={!getHasNextPage} text={t('Load more')} />
+        {data && <ResourceTable resources={data?.economicResources.edges}/>}
+        <BrLoadMore handleClick={loadMore} disabled={!getHasNextPage} text={t('Load more')}/>
     </div>
 };
 
-export async function getStaticProps({ locale }: any) {
+export async function getStaticProps({locale}: any) {
     return {
         props: {
             ...(await serverSideTranslations(locale, ['resourcesProps', 'signInProps', 'SideBarProps'])),
