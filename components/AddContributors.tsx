@@ -37,10 +37,8 @@ const AddContributors = ({contributors, setContributors, label, hint, error}: Ad
         return contributor.name.toLowerCase().includes(searchTerm.toLowerCase())
     })
     const handleSelect = (values: any) => {
-        const updatedOptions = [...values]
-            .filter(option => option.selected)
-            .map(x => x.value);
-        devLog("contributors", updatedOptions);
+        const updatedOptions = values.map((x:any) => x.value);
+        devLog("contributors", updatedOptions, values);
         setContributors(updatedOptions);
     }
     return <BrSearchableSelect multiple

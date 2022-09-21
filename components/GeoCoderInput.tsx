@@ -21,30 +21,23 @@ type GeocoderInputProps = {
 }
 
 const GeoCoderInput = ({onSelect, value, label, placeholder, hint, error, className, help}: GeocoderInputProps) => {
-    const [address] = useState(value.address)
+    const [address] = useState(value?.address)
     const [options, setOptions] = useState([] as any[])
     const [searchTerm, setSearchTerm] = useState('')
 
     const fetchResults = async () => {
         await fetch(`https://autocomplete.search.hereapi.com/v1/autocomplete?q=${encodeURI(searchTerm)}&apiKey=${process.env.NEXT_PUBLIC_HERE_API_KEY}`,
-            {method: 'get'}).then(async (r) => setOptions(JSON.parse(await r.text()).items))
+            {method: "get"}).then(async (r) => setOptions(JSON.parse(await r.text()).items))
     }
     const fetchLocation = async (id: string) => {
         const data = await fetch(`https://lookup.search.hereapi.com/v1/lookup?id=${encodeURI(id)}&apiKey=${process.env.NEXT_PUBLIC_HERE_API_KEY}`)
             .then(async (r) => JSON.parse(await r.text()))
+        devLog("data", data)
         return {lat: data.position.lat, lng: data.position.lng}
     }
     useEffect(() => {
         Promise.resolve(fetchResults())
     }, [searchTerm])
-
-    const customStyles = {
-        control: (provided: any, state: any) => ({
-            ...provided,
-            height: 48,
-            border: state.isFocused ? '2px solid green' : 'blue',
-        }),
-    }
 
     const handleSelectAddress = async (value: any) => {
         devLog('address chosen', value.label)
