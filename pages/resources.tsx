@@ -8,7 +8,6 @@ import {useTranslation} from "next-i18next";
 import devLog from "../lib/devLog";
 import BrLoadMore from "../components/brickroom/BrLoadMore";
 import {useRouter} from "next/router";
-import {conformsTo} from "cypress/types/lodash";
 
 
 const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: ID, $filters:EconomicResourceFilterParams ) {
@@ -32,6 +31,12 @@ const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: 
         id
         name
         note
+        metadata
+        okhv
+        repo
+        version
+        licensor
+        license
         primaryAccountable {id name note}
         custodian {id name note}
         accountingQuantity {hasUnit{id label symbol} hasNumericalValue}
@@ -49,7 +54,7 @@ const Resources: NextPage = () => {
     // @ts-ignore
     type && (filter['conformsTo'] = [].concat(type));
     // @ts-ignore
-    ids && (filter['primaryAccountable'] = [].concat(ids));
+    ids && (filter['primaryAccountable'] = ["061KRW2CH14V04V0KB1VCKPHF4"].concat(ids));
     devLog('filters', filter)
 
     const {t} = useTranslation('resourcesProps')
@@ -105,7 +110,7 @@ const Resources: NextPage = () => {
     }, [
         ...Object.values(variables!).flat(),
         data?.economicResources.pageInfo.startCursor
-    ]);
+    ])
 
     devLog('economic resources', data?.economicResources.edges)
     return <div className="p-8">
