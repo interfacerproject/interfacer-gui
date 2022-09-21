@@ -6,6 +6,7 @@ import devLog from "../lib/devLog";
 import BrLoadMore from "./brickroom/BrLoadMore";
 import Spinner from "./brickroom/Spinner";
 
+
 const truncate = (input: string, max: number) => input.length > max ? `${input.substring(0, max)}...` : input;
 
 const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: ID, $filter:EconomicResourceFilterParams ) {
@@ -132,7 +133,7 @@ const ResourceTable = ({filter}: { filter?: any }) => {
                         <div className="whitespace-normal">
                             <p>
                                 <span className="font-semibold">{e.node.license}</span><br/>
-                                <span className="italic">{('by')} {e.node.licensor}</span>
+                                <span className="italic">{("by")} {e.node.licensor}</span>
                             </p>
                         </div>
                     </td>
