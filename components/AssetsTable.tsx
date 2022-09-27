@@ -8,10 +8,10 @@ import {useTranslation} from "next-i18next";
 import {gql, useQuery} from "@apollo/client";
 import devLog from "../lib/devLog";
 
-const AssetsTable = ({userid}: { userid?: string }) => {
+const AssetsTable = ({userid, filters}: { userid?: string, filters?:any }) => {
     const {t} = useTranslation('lastUpdatedProps')
-    const QUERY_ASSETS = gql`query ($first: Int, $after: ID, $last: Int, $before: ID) {
-  proposals(first: $first, after: $after, before: $before, last: $last) {
+    const QUERY_ASSETS = gql`query ($first: Int, $after: ID, $last: Int, $before: ID, $fil:ProposalFilterParams) {
+  proposals(first: $first, after: $after, before: $before, last: $last, filter: $fil) {
     pageInfo {
       startCursor
       endCursor
@@ -71,7 +71,7 @@ const AssetsTable = ({userid}: { userid?: string }) => {
   }
 }
 `
-    const queryResult = useQuery(QUERY_ASSETS, {variables: {last: 10}})
+    const queryResult = useQuery(QUERY_ASSETS, {variables: {last: 10, fil: filters}})
     const updateQuery = (previousResult: any, {fetchMoreResult}: any) => {
         if (!fetchMoreResult) {
             return previousResult;

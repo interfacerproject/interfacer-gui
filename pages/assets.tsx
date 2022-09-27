@@ -6,9 +6,18 @@ import {useTranslation} from "next-i18next";
 import React, {useEffect} from "react";
 import NewProjectButton from "../components/NewProjectButton";
 import Link from "next/link";
+import {useRouter} from "next/router";
 
 
 const Assets = () => {
+    const {conformTo, primaryAccountable} = useRouter().query;
+    const filter: { primaryIntentsResourceInventoriedAsConformsTo?: string[],
+        primaryIntentsResourceInventoriedAsPrimaryAccountable?: string[] } = {};
+    // @ts-ignore
+    conformTo && (filter['primaryIntentsResourceInventoriedAsConformsTo'] = [].concat(conformTo));
+    // @ts-ignore
+    primaryAccountable && (filter['primaryIntentsResourceInventoriedAsPrimaryAccountable'] = [].concat(primaryAccountable));
+    devLog('filters', filter)
     const {t} = useTranslation('lastUpdatedProps')
     return (<div className="p-8">
         <div className="mb-6 w-96">
@@ -21,7 +30,7 @@ const Assets = () => {
                 </a>
             </Link>
         </div>
-        <AssetsTable/>
+        <AssetsTable filters={filter}/>
     </div>)
 }
 
