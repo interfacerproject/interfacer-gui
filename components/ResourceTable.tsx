@@ -8,8 +8,8 @@ import Spinner from "./brickroom/Spinner";
 
 const truncate = (input: string, max: number) => input.length > max ? `${input.substring(0, max)}...` : input;
 
-const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: ID, $filters:EconomicResourceFilterParams ) {
-  economicResources(first: $first after: $after before: $before last: $last filter: $filters) {
+const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: ID, $filter:EconomicResourceFilterParams ) {
+  economicResources(first: $first after: $after before: $before last: $last filter: $filter) {
     pageInfo {
       startCursor
       endCursor
@@ -49,14 +49,14 @@ const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: 
 const ResourceTable = ({filter}: { filter: any }) => {
     const resourcesHead = ['Resource', 'Source', 'License', 'Version']
 
-    // @ts-ignore
+    devLog('filter', filter)
     const {loading, data, error, fetchMore, variables, refetch} = useQuery(FETCH_INVENTORY, {
         variables: {
             last: 10,
-            filters: filter
+            filter: filter
         }
     })
-    console.error(error);
+    devLog(error);
     devLog('loading', loading)
     !loading && devLog(data)
 
