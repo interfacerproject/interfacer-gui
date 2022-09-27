@@ -113,6 +113,12 @@ const ResourceTable = ({filter}: { filter: any }) => {
                                 <div className="flex flex-col h-20 h-24 space-y-1 w-60">
                                     <h4 className="truncate w-60">{e.node.name}</h4>
                                     <p className="h-16 overflow-hidden text-sm whitespace-normal text-thin">{truncate(e.node.note, 100)}</p>
+                                    <p className="h-16 overflow-hidden text-sm whitespace-normal text-thin">
+                                        {e.node.conformsTo.name}
+                                    </p>
+                                    <p className="h-16 overflow-hidden text-sm whitespace-normal text-thin">
+                                        {e.node.primaryAccountable.name}
+                                    </p>
                                 </div>
                             </a>
                         </Link>
