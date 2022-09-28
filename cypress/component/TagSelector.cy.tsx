@@ -2,8 +2,10 @@ import React = require("react");
 import TagSelector from "../../components/brickroom/TagSelector";
 import "../../styles/globals.scss";
 
-describe("AddContributors.cy.tsx", () => {
-    it("something", () => {
+//
+
+describe("TagSelector.cy.tsx", () => {
+    it("should display the tag selector, input some tags and remove one", () => {
         /**
          * Setup
          */
