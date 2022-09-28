@@ -1,14 +1,22 @@
 describe("BrDisplayUser component", () => {
-    it("should click the component and check if navigation works", () => {
-        cy.visit("/");
-        // // Mounting component
-        // const name = "Mino";
-        // const location = "Bari";
-        // cy.mount(<BrDisplayUser id="1" name={name} location={location} />);
+    before(() => {
+        cy.login();
+        cy.saveLocalStorage();
+    });
 
-        // // Visibility check
-        // cy.contains(name).should("be.visible");
-        // cy.contains(location).should("be.visible");
-        // cy.get("svg").should("be.visible");
+    beforeEach(() => {
+        cy.visit("/assets");
+        cy.restoreLocalStorage();
+    });
+
+    it("should click the component and go to user page", () => {
+        // Getting the first instance
+        const comp = cy.get("tr > td > a").first().should("be.visible");
+        // // Getting the text inside the istance (the username)
+        // let text = "";
+        // comp.then(function ($elem) {
+        //     text = $elem.text();
+        // });
+        // cy.log(text);
     });
 });
