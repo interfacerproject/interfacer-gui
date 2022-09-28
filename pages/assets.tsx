@@ -30,7 +30,7 @@ const Assets = () => {
                 </a>
             </Link>
         </div>
-        <AssetsTable filters={filter}/>
+        <AssetsTable filter={filter}/>
     </div>)
 }
 
