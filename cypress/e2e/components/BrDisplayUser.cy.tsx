@@ -10,13 +10,19 @@ describe("BrDisplayUser component", () => {
     });
 
     it("should click the component and go to user page", () => {
-        // Getting the first instance
-        const comp = cy.get("tr > td > a").first().should("be.visible");
-        // // Getting the text inside the istance (the username)
-        // let text = "";
-        // comp.then(function ($elem) {
-        //     text = $elem.text();
-        // });
-        // cy.log(text);
+        // Waiting for data
+        const name = "dataGetFirst";
+        cy.intercept("http://65.109.11.42:9000/api").as(name);
+        cy.wait(`@${name}`);
+
+        // Getting the first instance of the component
+        const comp = cy.get("tr > td > a").first();
+        // Checking if it's visible
+        comp.should("be.visible");
+        // Clicking to navigate
+        comp.click().then((a) => {
+            // Checking if url is correct
+            cy.location("href").should("eq", a.prop("href"));
+        });
     });
 });
