@@ -1,12 +1,17 @@
 {
-  "title": "titolo",
-  "description": "descrizione",
-  "Load more": "Per saperne di più",
-  "tableHead": [
-    "Asset",
-    "Ultimo aggiornamento",
-    "Valore",
-    "Proprietario",
-    "tag"
-  ]
+    "title": "titolo",
+    "description": "descrizione",
+    "Load more": "Per saperne di più",
+    "tableHead": [
+        "Asset",
+        "Ultimo aggiornamento",
+        "Valore",
+        "Proprietario",
+        "tag"
+    ],
+    "filters": {
+        "filter for": "Filtra per",
+        "contributos": "collaboratori",
+        "type": "Tipo"
+    }
 }

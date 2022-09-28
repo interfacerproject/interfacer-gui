@@ -186,20 +186,19 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
             </div>
         </div>
         <div className="col-span-2">
-            <div className="border rounded-lg shadow-lg p-4">
-                <h4 className="text-2xl font-bold mb-4">Filter for:</h4>
-                <h4>owner</h4>
-                <AddContributors contributors={contributors} setContributors={setContributors}/>
-                <SelectAssetType onChange={setConformsTo}/>
+            <div className="border rounded-lg shadow p-4">
+                <h4 className="text-2xl font-bold mb-4">{t('filters.filter for')}:</h4>
+                <AddContributors contributors={contributors} setContributors={setContributors} label={t('filters.contributors')}/>
+                <SelectAssetType onChange={setConformsTo} label={t('filters.type')}/>
                 <div className="grid grid-cols-2 gap-2 mt-4">
                     <div>
                         <button className="btn btn-outline btn-error btn-block" onClick={() => {
                             setContributors([])
-                        }}>Reset All x
+                        }}>{t('filters.reset')}
                         </button>
                     </div>
                     <div>
-                        <button onClick={applyFilters} className="btn btn-accent btn-block">Apply filter</button>
+                        <button onClick={applyFilters} className="btn btn-accent btn-block">{t('filters.apply')}</button>
                     </div>
                 </div>
             </div>

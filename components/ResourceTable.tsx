@@ -46,7 +46,7 @@ const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: 
 `
 
 
-const ResourceTable = ({filter}: { filter: any }) => {
+const ResourceTable = ({filter}: { filter?: any }) => {
     const resourcesHead = ['Resource', 'Source', 'License', 'Version']
 
     devLog('filter', filter)

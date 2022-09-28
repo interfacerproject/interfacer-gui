@@ -21,13 +21,27 @@ const QUERY_VARIABLES = gql`query {
   }
 }`
 
-const SelectAssetType = ({onChange}:{onChange:Dispatch<SetStateAction<string[]>>}) => {
+type SelectAssetTypeProps = {
+    onChange: Dispatch<SetStateAction<string[]>>,
+    label?: string,
+    hint?: string,
+    error?: string
+}
+
+const SelectAssetType = ({onChange, label, hint, error}: SelectAssetTypeProps) => {
     const [inputValue, setInputValue] = useState('')
     const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables.specs
-    const options = instanceVariables && Object.keys(instanceVariables).map((key)=>({value:instanceVariables[key].id, label:instanceVariables[key].name}) )
+    const options = instanceVariables && Object.keys(instanceVariables).map((key) => ({
+        value: instanceVariables[key].id,
+        label: instanceVariables[key].name
+    }))
 
-    return (
-        <BrSearchableSelect options={options} onChange={onChange} onInputChange={setInputValue} inputValue={inputValue} multiple/>
+    return (<>
+            <BrSearchableSelect options={options} onChange={onChange} onInputChange={setInputValue}
+                                label={label} hint={hint} error={error}
+                                inputValue={inputValue} multiple/>
+
+        </>
     )
 }
 
