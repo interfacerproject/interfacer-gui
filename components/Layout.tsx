@@ -27,7 +27,7 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
             </>}
             {!authentication && <>
                 {isSignedIn() ?
-                <div className="drawer drawer-mobile">
+                <div className="drawer">
                     <input id="my-drawer" type="checkbox" className="drawer-toggle"/>
                     <div className="drawer-content">
                         <Topbar/>

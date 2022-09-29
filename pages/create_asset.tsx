@@ -44,7 +44,7 @@ const CreateProject: NextPageWithLayout = () => {
     const [resourceSpec, setResourceSpec] = useState('')
     const [resourceId, setResourceId] = useState('')
     const [images, setImages] = useState([] as Images)
-    const [contributors, setContributors] = useState([] as string[])
+    const [contributors, setContributors] = useState([] as { value:string, label:string }[])
     const [imagesFiles, setImagesFiles] = useState([] as Array<any>)
     const [logs, setLogs] = useState([`info: user ${authId}`] as string[])
     const [assetCreatedId, setAssetCreatedId] = useState(undefined as string | undefined)

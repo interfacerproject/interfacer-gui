@@ -12,8 +12,8 @@ import SelectAssetType from "./SelectAssetType";
 import {useRouter} from "next/router";
 
 const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
-    const [contributors, setContributors] = useState<Array<string>>([]);
-    const [conformsTo, setConformsTo] = useState<Array<string>>([]);
+    const [contributors, setContributors] = useState<Array<{ value:string, label:string }>>([]);
+    const [conformsTo, setConformsTo] = useState<Array<{ value:string, label:string }>>([]);
     const {t} = useTranslation('lastUpdatedProps')
     const QUERY_ASSETS = gql`query ($first: Int, $after: ID, $last: Int, $before: ID, $filter:ProposalFilterParams) {
   proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
@@ -126,16 +126,25 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
     ]);
     const router = useRouter()
     const applyFilters = () => {
-        const primaryAccountable: string = contributors.join(',')
-        const conforms = conformsTo.map((c: any) => c.value).join(',')
-        const query:any = {}
+        const query: any = {}
         if (contributors.length > 0) {
-        query.primaryAccountable = primaryAccountable}
+            const primaryAccountable: string = contributors.map((c: any) => c.value).join(',')
+            query.primaryAccountable = primaryAccountable
+        }
         if (conformsTo.length > 0) {
-            query.conformTo = conforms}
+            const conforms = conformsTo.map((c: any) => c.value).join(',')
+            query.conformTo = conforms
+        }
         router.push({
             pathname: '/assets',
             query,
+        })
+    }
+    const clearFilters = () => {
+        setContributors([])
+        setConformsTo([])
+        router.push({
+            pathname: '/assets',
         })
     }
     devLog(queryResult.data)
@@ -186,19 +195,20 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
             </div>
         </div>
         <div className="col-span-2">
-            <div className="border rounded-lg shadow p-4">
+            <div className="border rounded-lg shadow p-4 bg-white">
                 <h4 className="text-2xl font-bold mb-4">{t('filters.filter for')}:</h4>
-                <AddContributors contributors={contributors} setContributors={setContributors} label={t('filters.contributors')}/>
-                <SelectAssetType onChange={setConformsTo} label={t('filters.type')}/>
+                <AddContributors contributors={contributors} setContributors={setContributors}
+                                 label={t('filters.contributors')}/>
+                <SelectAssetType onChange={setConformsTo} label={t('filters.type')} assetType={conformsTo}/>
                 <div className="grid grid-cols-2 gap-2 mt-4">
                     <div>
-                        <button className="btn btn-outline btn-error btn-block" onClick={() => {
-                            setContributors([])
-                        }}>{t('filters.reset')}
+                        <button className="btn btn-outline btn-error btn-block"
+                                onClick={clearFilters}>{t('filters.reset')}
                         </button>
                     </div>
                     <div>
-                        <button onClick={applyFilters} className="btn btn-accent btn-block">{t('filters.apply')}</button>
+                        <button onClick={applyFilters}
+                                className="btn btn-accent btn-block">{t('filters.apply')}</button>
                     </div>
                 </div>
             </div>

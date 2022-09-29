@@ -35,7 +35,7 @@ const BrSearchableSelect = ({
         control: (provided: any, state: any) => ({
             ...provided,
             height: 48,
-            border: state.isFocused ? '2px solid green' : 'blue',
+            border: state.isFocused ? '2px solid green' : 'gray-300',
         }),
     }
 
@@ -52,7 +52,7 @@ const BrSearchableSelect = ({
             placeholder={placeholder}
             inputValue={inputValue}
             isSearchable
-            className="border-primary"
+            className="border border-gray-300 rounded-md"
             styles={customStyles}
             isMulti={multiple}
         />
