@@ -1,9 +1,8 @@
-import {gql, useQuery} from "@apollo/client";
 import AssetsTable from "../components/AssetsTable";
 import devLog from "../lib/devLog";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import {useTranslation} from "next-i18next";
-import React, {useEffect} from "react";
+import React from "react";
 import NewProjectButton from "../components/NewProjectButton";
 import Link from "next/link";
 import {useRouter} from "next/router";
@@ -14,9 +13,9 @@ const Assets = () => {
     const filter: { primaryIntentsResourceInventoriedAsConformsTo?: string[],
         primaryIntentsResourceInventoriedAsPrimaryAccountable?: string[] } = {};
     // @ts-ignore
-    conformTo && (filter['primaryIntentsResourceInventoriedAsConformsTo'] = [].concat(conformTo));
+    conformTo && (filter['primaryIntentsResourceInventoriedAsConformsTo'] = [].concat(conformTo.split(',')));
     // @ts-ignore
-    primaryAccountable && (filter['primaryIntentsResourceInventoriedAsPrimaryAccountable'] = [].concat(primaryAccountable));
+    primaryAccountable && (filter['primaryIntentsResourceInventoriedAsPrimaryAccountable'] = [].concat(primaryAccountable.split(',')));
     devLog('filters', filter)
     const {t} = useTranslation('lastUpdatedProps')
     return (<div className="p-8">
