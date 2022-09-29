@@ -37,7 +37,6 @@ const AddContributors = ({contributors, setContributors, label, hint, error}: Ad
         return contributor.name.toLowerCase().includes(searchTerm.toLowerCase())
     })
     const handleSelect = (values: any) => {
-        devLog("contributors", values);
         const updatedOptions = [...values]
         devLog("contributors", updatedOptions);
         setContributors(updatedOptions);

@@ -34,8 +34,9 @@ const BrSearchableSelect = ({
     const customStyles = {
         control: (provided: any, state: any) => ({
             ...provided,
-            height: 48,
-            border: state.isFocused ? "2px solid green" : "gray-300",
+            '&:hover':{borderColor: 'green'},
+            height: 49,
+            border: state.isFocused ? '2px solid' : provided.border,
         }),
         valueContainer: (provided: any, state: any) => ({
             ...provided,
@@ -43,6 +44,14 @@ const BrSearchableSelect = ({
             "flex-flow" : "nowrap"
         })
     }
+    const customTheme = ((theme:any) => ({
+          ...theme,
+          borderRadius: 6,
+          colors: {
+            ...theme.colors,
+            primary25: "#F1BD4D",
+            primary: "#02604B"
+          }}))
 
     return (<div className={`form-control ${className}`}>
         <label className="label">
@@ -60,6 +69,7 @@ const BrSearchableSelect = ({
             className="border border-gray-300 rounded-md"
             styles={customStyles}
             isMulti={multiple}
+            theme={customTheme}
         />
         <label className="flex-col items-start label">
             {error &&

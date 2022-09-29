@@ -65,7 +65,7 @@
     "address": {
       "label": "Indirizzo:",
       "placeholder": "An d. Alsterschleife 3, 22399 - Amburgo, Germania",
-      "hint": "Breve descrizione da visualizzare nella pagina della risorsa"
+      "hint": "indirizzo"
     }
   },
   "price": {
