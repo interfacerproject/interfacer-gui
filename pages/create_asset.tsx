@@ -15,6 +15,7 @@ import BrMdEditor from "../components/brickroom/BrMdEditor";
 import AddContributors from "../components/AddContributors";
 import type {NextPageWithLayout} from './_app'
 import Link from "next/link";
+import GeoCoderInput from "../components/GeoCoderInput";
 
 
 type Image = {
@@ -36,8 +37,8 @@ const CreateProject: NextPageWithLayout = () => {
     const [projectDescription, setAssetDescription] = useState('')
     const [repositoryOrId, setRepositoryOrId] = useState('')
     const [assetTags, setAssetTags] = useState([] as string[])
-    const [locationAddress, setLocationAddress] = useState('')
     const [locationId, setLocationId] = useState('')
+    const [location, setLocation] = useState({} as any)
     const [locationName, setLocationName] = useState('')
     const [price, setPrice] = useState('')
     const [resourceSpec, setResourceSpec] = useState('')
@@ -179,10 +180,12 @@ const CreateProject: NextPageWithLayout = () => {
 `
 
 
-    const CREATE_LOCATION = gql`mutation ($name: String!, $addr: String!) {
-  createSpatialThing(spatialThing: { name: $name, mappableAddress: $addr }) {
+    const CREATE_LOCATION = gql`mutation ($name: String!, $addr: String!, $lat: Float!, $lng: Float!) {
+  createSpatialThing(spatialThing: { name: $name, mappableAddress: $addr, lat:$lat, long:$lng }) {
     spatialThing {
       id
+      lat
+      long
     }
   }
 }
@@ -238,10 +241,26 @@ const CreateProject: NextPageWithLayout = () => {
 
     const [linkProposalAndIntent, {data: link}] = useMutation(LINK_PROPOSAL_AND_INTENT)
 
-    const handleCreateLocation = async () => {
+    const handleCreateLocation = async (loc: any) => {
+        devLog('handleCreateLocation', loc)
+        setLocation(loc)
         const name = locationName === '' ? '*untitled*' : locationName
-        await createLocation({variables: {name: name, addr: locationAddress}}).then((r) => {
+        await createLocation({
+            variables: {
+                name: name,
+                addr: loc.address.label,
+                lat: loc.lat,
+                lng: loc.lng
+            }
+        }).then((r) => {
             setLocationId(r.data.createSpatialThing.spatialThing.id)
+            setLogs(logs.concat(['info: location created'])
+                .concat([`    id: ${r.data.createSpatialThing.spatialThing.id}`])
+                .concat([`    latitude: ${r.data.createSpatialThing.spatialThing.lat}`])
+                .concat([`    longitude: ${r.data.createSpatialThing.spatialThing.long}`]))
+        }).catch((e) => {
+            setLogs(logs.concat(['error: location creation failed'])
+                .concat([e.message]))
         })
     }
     const router = useRouter()
@@ -265,10 +284,10 @@ const CreateProject: NextPageWithLayout = () => {
             variables: variables
         }).catch((error) => {
             logsText = logsText.concat('error:'.concat(error.message))
-            setLogs(logsText.concat(logsText))
+            setLogs(logsText)
         })
             .then((re: any) => {
-                logsText = logsText.concat(logsText.concat([`success: Resource with id ${re.data.createEconomicEvent.economicEvent.resourceInventoriedAs.id} created`]))
+                logsText = logsText.concat(logsText.concat([`success: Resource with id ${re?.data.createEconomicEvent.economicEvent.resourceInventoriedAs.id} created`]))
                 setLogs(logsText)
                 images.forEach((i, index) => {
                     logsText = logsText.concat(`info:Uploading image ${index + 1} of ${images.length}`)
@@ -282,14 +301,14 @@ const CreateProject: NextPageWithLayout = () => {
                         logsText = logsText.concat([`error:${error}`])
                         setLogs(logsText)
                     }).then((r: any) => {
-                        devLog('image upload response',r)
+                        devLog('image upload response', r)
                     })
                 })
 
-                setResourceId(re.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id)
-                logsText = logsText.concat([`success: Created resource inventoried with iD: ${re.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id}`, 'info: Creating proposal'])
+                setResourceId(re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id)
+                logsText = logsText.concat([`success: Created resource inventoried with iD: ${re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id}`, 'info: Creating proposal'])
                 setLogs(logsText)
-                devLog('2', re.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id)
+                devLog('2', re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id)
                 createProposal()
                     .then((proposal) => {
                         logsText = logsText.concat([`success: Created proposal with id: ${proposal.data?.createProposal.proposal.id}`, 'info: Creating intents'])
@@ -298,7 +317,7 @@ const CreateProject: NextPageWithLayout = () => {
                         createIntent({
                             variables: {
                                 agent: authId,
-                                resource: re.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id,
+                                resource: re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id,
                                 oneUnit: instanceVariables?.units.unitOne.id,
                                 howMuch: parseFloat(price),
                                 currency: instanceVariables?.specs.specCurrency.id
@@ -332,6 +351,7 @@ const CreateProject: NextPageWithLayout = () => {
             <br/>
 
             <form onSubmit={onSubmit} className="w-full">
+
                 <BrInput label={t('projectName.label')} hint={t('projectName.hint')} value={projectName}
                          onChange={(e: ChangeEvent<HTMLInputElement>) => setAssetName(e.target.value)}
                          placeholder={t('projectName.placeholder')}/>
@@ -352,11 +372,10 @@ const CreateProject: NextPageWithLayout = () => {
                     <BrInput label={t('location.name.label')} hint={t('location.name.hint')}
                              value={locationName} placeholder={t('location.name.placeholder')}
                              onChange={(e: ChangeEvent<HTMLInputElement>) => setLocationName(e.target.value)}/>
-                    <BrInput label={t('location.address.label')} hint={t('location.address.hint')}
-                             value={locationAddress}
-                             placeholder={t('location.address.placeholder')}
-                             onChange={(e: ChangeEvent<HTMLInputElement>) => setLocationAddress(e.target.value)}
-                             onBlur={handleCreateLocation}/>
+                    <GeoCoderInput onSelect={handleCreateLocation} value={location}
+                                   label={t('location.address.label')}
+                                   hint={t('location.address.hint')}
+                                   placeholder={t('location.address.placeholder')}/>
                 </div>
                 <AddContributors label={t('contributors.label')} hint={t('contributors.hint')}
                                  setContributors={(c) => setContributors(c)} contributors={contributors}/>
