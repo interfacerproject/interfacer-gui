@@ -1,4 +1,4 @@
-import AsyncSelect from 'react-select';
+import AsyncSelect from "react-select";
 import {ExclamationIcon} from "@heroicons/react/solid";
 import React from "react";
 
@@ -35,8 +35,13 @@ const BrSearchableSelect = ({
         control: (provided: any, state: any) => ({
             ...provided,
             height: 48,
-            border: state.isFocused ? '2px solid green' : 'gray-300',
+            border: state.isFocused ? "2px solid green" : "gray-300",
         }),
+        valueContainer: (provided: any, state: any) => ({
+            ...provided,
+            display:"flex",
+            "flex-flow" : "nowrap"
+        })
     }
 
     return (<div className={`form-control ${className}`}>
@@ -59,7 +64,7 @@ const BrSearchableSelect = ({
         <label className="flex-col items-start label">
             {error &&
             <span className="flex flex-row items-center justify-between label-text-alt text-warning">
-                        <ExclamationIcon className='w-5 h-5'/>
+                        <ExclamationIcon className="w-5 h-5"/>
                 {error}
                     </span>
             }
