@@ -6,7 +6,7 @@ import {useRouter} from "next/router";
 import {ChangeEvent, ReactElement, useState} from 'react';
 import BrInput from "../components/brickroom/BrInput";
 import KeyringGeneration from "../components/KeyringGeneration";
-import Layout from "../components/SignInLayout";
+import Layout from "../components/layout/SignInLayout";
 import {useAuth} from "../lib/auth";
 import {NextPageWithLayout} from "./_app";
 

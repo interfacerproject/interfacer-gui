@@ -1,7 +1,7 @@
 import React, {ReactNode} from 'react';
-import Topbar from "./Topbar";
-import {useAuth} from "../lib/auth";
-import SignIn from "../pages/sign_in";
+import Topbar from "../Topbar";
+import {useAuth} from "../../lib/auth";
+import SignIn from "../../pages/sign_in";
 import {useRouter} from 'next/router'
 import {ArrowLeftIcon} from "@heroicons/react/outline";
 

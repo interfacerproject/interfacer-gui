@@ -2,7 +2,7 @@ import Head from 'next/head'
 import '../styles/globals.scss'
 import type {AppProps} from 'next/app'
 import {AuthProvider} from '../lib/auth'
-import Layout from "../components/Layout";
+import Layout from "../components/layout/Layout";
 import {appWithTranslation} from 'next-i18next';
 import {NextPage} from "next";
 import {ReactElement, ReactNode} from "react";
