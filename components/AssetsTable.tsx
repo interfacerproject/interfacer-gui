@@ -43,6 +43,34 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
             conformsTo {
               name
             }
+            primaryAccountable{
+              name
+              id
+            }
+            name
+            id
+            note
+            onhandQuantity {
+              hasUnit {
+                label
+              }
+            }
+            images {
+              hash
+              name
+              mimeType
+              bin
+            }
+          }
+        }
+        reciprocalIntents {
+          resourceQuantity {
+            hasNumericalValue
+            hasUnit {
+              label
+              symbol
+            }
+          }
         }
       }
     }
@@ -123,7 +151,7 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
     }
     devLog(queryResult.data)
 
-    return (<div className="grid grid-cols-1 md:grid-cols-8 gap-2">
+    return (<div className="grid grid-cols-1 gap-2 md:grid-cols-8">
         <div className="col-span-6">
             <BrTable headArray={t('tableHead', {returnObjects: true})}>
                 {assets?.map((e: any) =>
@@ -136,8 +164,8 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
             </div>
         </div>
         <div className="col-span-2">
-            <div className="border rounded-lg shadow p-4 bg-white">
-                <h4 className="text-2xl font-bold mb-4">{t('filters.filter for')}:</h4>
+            <div className="p-4 bg-white border rounded-lg shadow">
+                <h4 className="mb-4 text-2xl font-bold">{t('filters.filter for')}:</h4>
                 <AddContributors contributors={contributors} setContributors={setContributors}
                                  label={t('filters.contributors')}/>
                 <SelectAssetType onChange={setConformsTo} label={t('filters.type')} assetType={conformsTo}/>
