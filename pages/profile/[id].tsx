@@ -40,7 +40,7 @@ const Profile: NextPage = () => {
         // {title: 'Activity', component: <EventTable economicEvents={user?.economicEvents}/>},
         {
             title: 'Inventory',
-            component: <ResourceTable resources={user?.inventoriedEconomicResources}/>
+            component: <ResourceTable/>
         }
     ]
     return (<>

@@ -4,8 +4,8 @@ import devLog from "../lib/devLog";
 import BrSearchableSelect from "./brickroom/BrSearchableSelect";
 
 type AddContributorsProps = {
-    contributors: Array<string>,
-    setContributors: (contributors: Array<string>) => void,
+    contributors: Array<{ value:string, label:string }>,
+    setContributors: (contributors: Array<any>) => void,
     label?: string,
     hint?: string,
     error?: string
@@ -37,8 +37,8 @@ const AddContributors = ({contributors, setContributors, label, hint, error}: Ad
         return contributor.name.toLowerCase().includes(searchTerm.toLowerCase())
     })
     const handleSelect = (values: any) => {
-        const updatedOptions = values.map((x:any) => x.value);
-        devLog("contributors", updatedOptions, values);
+        const updatedOptions = [...values]
+        devLog("contributors", updatedOptions);
         setContributors(updatedOptions);
     }
     return <BrSearchableSelect multiple
@@ -50,6 +50,7 @@ const AddContributors = ({contributors, setContributors, label, hint, error}: Ad
                                onInputChange={setSearchTerm}
                                inputValue={searchTerm}
                                label={label}
+                               value={contributors}
                                hint={hint}
                                error={error}/>
 }

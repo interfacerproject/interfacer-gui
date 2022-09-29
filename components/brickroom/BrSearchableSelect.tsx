@@ -1,4 +1,4 @@
-import AsyncSelect from 'react-select';
+import AsyncSelect from "react-select";
 import {ExclamationIcon} from "@heroicons/react/solid";
 import React from "react";
 
@@ -38,6 +38,11 @@ const BrSearchableSelect = ({
             height: 49,
             border: state.isFocused ? '2px solid' : provided.border,
         }),
+        valueContainer: (provided: any, state: any) => ({
+            ...provided,
+            display:"flex",
+            "flex-flow" : "nowrap"
+        })
     }
     const customTheme = ((theme:any) => ({
           ...theme,
@@ -61,7 +66,7 @@ const BrSearchableSelect = ({
             placeholder={placeholder}
             inputValue={inputValue}
             isSearchable
-            className="border-primary"
+            className="border border-gray-300 rounded-md"
             styles={customStyles}
             isMulti={multiple}
             theme={customTheme}
@@ -69,7 +74,7 @@ const BrSearchableSelect = ({
         <label className="flex-col items-start label">
             {error &&
             <span className="flex flex-row items-center justify-between label-text-alt text-warning">
-                        <ExclamationIcon className='w-5 h-5'/>
+                        <ExclamationIcon className="w-5 h-5"/>
                 {error}
                     </span>
             }
