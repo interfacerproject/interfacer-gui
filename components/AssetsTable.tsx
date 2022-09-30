@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import BrTable from "./brickroom/BrTable";
-import BrTags from "./brickroom/BrTags";
-import BrDisplayUser from "./brickroom/BrDisplayUser";
-import AssetImage from "./AssetImage";
 import AssetsTableRow from "./AssetsTableRow";
 import { useTranslation } from "next-i18next";
 import { gql, useQuery } from "@apollo/client";
@@ -33,6 +29,7 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
         name
         created
         primaryIntents {
+          resourceClassifiedAs
           action {
             id
           }
