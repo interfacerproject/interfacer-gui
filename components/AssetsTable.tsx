@@ -1,16 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import BrTable from "./brickroom/BrTable";
 import AssetsTableRow from "./AssetsTableRow";
 import { useTranslation } from "next-i18next";
 import { gql, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
-import AddContributors from "./AddContributors";
-import SelectAssetType from "./SelectAssetType";
-import {useRouter} from "next/router";
+import Filters from "./Filters";
 
 const AssetsTable = ({filter, noPrimaryAccountableFilter = false}: { filter?: any, noPrimaryAccountableFilter?: boolean}) => {
-    const [contributors, setContributors] = useState<Array<{ value:string, label:string }>>([]);
-    const [conformsTo, setConformsTo] = useState<Array<{ value:string, label:string }>>([]);
     const {t} = useTranslation('lastUpdatedProps')
     const QUERY_ASSETS = gql`query ($first: Int, $after: ID, $last: Int, $before: ID, $filter:ProposalFilterParams) {
   proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
@@ -114,33 +110,7 @@ const AssetsTable = ({filter, noPrimaryAccountableFilter = false}: { filter?: an
         ...Object.values(queryResult.variables!).flat(),
         queryResult.data?.proposals.pageInfo.startCursor,
     ]);
-    const router = useRouter()
-    const applyFilters = () => {
-        const query = router.query
-        if (contributors.length > 0) {
-            const primaryAccountable: string = contributors.map((c: any) => c.value).join(',')
-            query.primaryAccountable = primaryAccountable
-        }
-        if (conformsTo.length > 0) {
-            const conforms = conformsTo.map((c: any) => c.value).join(',')
-            query.conformTo = conforms
-        }
-        router.push({
-            pathname: router.pathname,
-            query,
-        })
-    }
-    const clearFilters = () => {
-        const query = router.query
-        delete query.primaryAccountable
-        delete query.conformTo
-        setContributors([])
-        setConformsTo([])
-        router.push({
-            pathname: router.pathname,
-            query,
-        })
-    }
+
     devLog(queryResult.data)
 
     return (<div className="grid grid-cols-1 gap-2 md:grid-cols-8">
@@ -156,24 +126,7 @@ const AssetsTable = ({filter, noPrimaryAccountableFilter = false}: { filter?: an
             </div>
         </div>
         <div className="col-span-2">
-            <div className="p-4 bg-white border rounded-lg shadow">
-                <h4 className="mb-4 text-2xl font-bold">{t('filters.filter for')}:</h4>
-                {!noPrimaryAccountableFilter && <AddContributors contributors={contributors}
-                                                                 setContributors={setContributors}
-                                                                 label={t('filters.contributors')}/>}
-                <SelectAssetType onChange={setConformsTo} label={t('filters.type')} assetType={conformsTo}/>
-                <div className="grid grid-cols-2 gap-2 mt-4">
-                    <div>
-                        <button className="btn btn-outline btn-error btn-block"
-                                onClick={clearFilters}>{t('filters.reset')}
-                        </button>
-                    </div>
-                    <div>
-                        <button onClick={applyFilters}
-                                className="btn btn-accent btn-block">{t('filters.apply')}</button>
-                    </div>
-                </div>
-            </div>
+            <Filters noPrimaryAccountableFilter={noPrimaryAccountableFilter}/>
         </div>
     </div>)
 }
