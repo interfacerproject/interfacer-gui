@@ -8,7 +8,7 @@ import AddContributors from "./AddContributors";
 import SelectAssetType from "./SelectAssetType";
 import {useRouter} from "next/router";
 
-const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
+const AssetsTable = ({filter, noPrimaryAccountableFilter = false}: { filter?: any, noPrimaryAccountableFilter?: boolean}) => {
     const [contributors, setContributors] = useState<Array<{ value:string, label:string }>>([]);
     const [conformsTo, setConformsTo] = useState<Array<{ value:string, label:string }>>([]);
     const {t} = useTranslation('lastUpdatedProps')
@@ -98,16 +98,9 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
             }
         }
     };
-    const assets = userid
-        ? queryResult.data?.proposals.edges.filter(
-              (edge: any) =>
-                  edge.node.primaryIntents[0]?.resourceInventoriedAs
-                      .primaryAccountable.id === userid
-          )
-        : queryResult.data?.proposals.edges;
+    const assets = queryResult.data?.proposals.edges;
     // Poll interval that works with pagination
     useEffect(() => {
-        if (!userid) {
             const intervalId = setInterval(() => {
                 const total = queryResult.data?.proposals.edges.length || 0;
 
@@ -116,16 +109,14 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
                     last: total,
                 });
             }, 10000);
-
             return () => clearInterval(intervalId);
-        }
     }, [
         ...Object.values(queryResult.variables!).flat(),
         queryResult.data?.proposals.pageInfo.startCursor,
     ]);
     const router = useRouter()
     const applyFilters = () => {
-        const query: any = {}
+        const query = router.query
         if (contributors.length > 0) {
             const primaryAccountable: string = contributors.map((c: any) => c.value).join(',')
             query.primaryAccountable = primaryAccountable
@@ -135,15 +126,19 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
             query.conformTo = conforms
         }
         router.push({
-            pathname: '/assets',
+            pathname: router.pathname,
             query,
         })
     }
     const clearFilters = () => {
+        const query = router.query
+        delete query.primaryAccountable
+        delete query.conformTo
         setContributors([])
         setConformsTo([])
         router.push({
-            pathname: '/assets',
+            pathname: router.pathname,
+            query,
         })
     }
     devLog(queryResult.data)
@@ -163,8 +158,9 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
         <div className="col-span-2">
             <div className="p-4 bg-white border rounded-lg shadow">
                 <h4 className="mb-4 text-2xl font-bold">{t('filters.filter for')}:</h4>
-                <AddContributors contributors={contributors} setContributors={setContributors}
-                                 label={t('filters.contributors')}/>
+                {!noPrimaryAccountableFilter && <AddContributors contributors={contributors}
+                                                                 setContributors={setContributors}
+                                                                 label={t('filters.contributors')}/>}
                 <SelectAssetType onChange={setConformsTo} label={t('filters.type')} assetType={conformsTo}/>
                 <div className="grid grid-cols-2 gap-2 mt-4">
                     <div>
