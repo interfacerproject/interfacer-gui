@@ -118,18 +118,26 @@ const KeyringGeneration = ({
 
     return (
         <>
+            {/* Step 0 – Asking questions */}
             {step === 0 && (
                 <>
+                    {/* Presentation text */}
+
                     {isSignUp && <h2>{t("keyring_title")}</h2>}
+
                     <p className="mt-4 mb-6">
                         {isSignUp ? t("subtitle_signup") : t("subtitle")}
                     </p>
+
                     {isSignUp && (
                         <p className="mb-4 font-semibold text-primary">
                             {t("hint")}
                         </p>
                     )}
+
+                    {/* The form with the questions */}
                     <form onSubmit={onSubmit}>
+                        {/* Iterating over "questions" to display fields */}
                         {[]
                             .concat(t("questions", { returnObjects: true }))
                             .map((question: string, index: number) => (
@@ -149,6 +157,8 @@ const KeyringGeneration = ({
                                     }
                                 />
                             ))}
+
+                        {/* Submit button */}
                         <button
                             className="mt-4 btn btn-block btn-accent"
                             type="submit"
@@ -158,8 +168,11 @@ const KeyringGeneration = ({
                     </form>
                 </>
             )}
+
+            {/* Step 1 – Showing passphrase */}
             {step === 1 && (
                 <>
+                    {/* Section text */}
                     {isSignUp && (
                         <>
                             <h2>{t("passphrase_title")}</h2>
@@ -168,6 +181,8 @@ const KeyringGeneration = ({
                             </p>
                         </>
                     )}
+
+                    {/* The seed – List of words */}
                     <p className="mt-4 mb-6">
                         {t("reminder")}
                         <br />
@@ -175,6 +190,10 @@ const KeyringGeneration = ({
                             {seed}
                         </span>
                     </p>
+
+                    {/* ↓ SignUp / SignIn – Buttons ↓ */}
+
+                    {/* SignUp-register button */}
                     <p className="text-[#8A8E96] mb-6">{t("help_text_2")}</p>
                     {isSignUp && (
                         <button
@@ -185,6 +204,7 @@ const KeyringGeneration = ({
                             {t("button_2")}
                         </button>
                     )}
+                    {/* LoginButton */}
                     {!isSignUp && (
                         <p>
                             <button
@@ -198,6 +218,8 @@ const KeyringGeneration = ({
                     )}
                 </>
             )}
+
+            {/* Error message */}
             {error !== "" && <h5 className="text-warning">{t("error")}</h5>}
         </>
     );
