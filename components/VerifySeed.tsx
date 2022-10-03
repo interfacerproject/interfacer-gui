@@ -27,6 +27,7 @@ const VerifySeed = ({ email, HMAC }: { email: string; HMAC: string }) => {
             setError(t("error"));
         }
     };
+
     const completeSignIn = async () => {
         await signIn({ email })
             .then(() => {
@@ -37,11 +38,13 @@ const VerifySeed = ({ email, HMAC }: { email: string; HMAC: string }) => {
 
     const onSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
+
         const zenData = `
             {
                 "seed": "${seed}",
                 "seedServerSideShard.HMAC": "${HMAC}"
             }`;
+
         await zencode_exec(keypairoomClientRecreateKeys, { data: zenData })
             .then(({ result }) => {
                 const res = JSON.parse(result);
