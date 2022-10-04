@@ -21,7 +21,7 @@ const BrSearchableSelect = ({
                                 onChange,
                                 options,
                                 onInputChange,
-                                multiple=false,
+                                multiple = false,
                                 inputValue,
                                 value,
                                 label,
@@ -34,24 +34,32 @@ const BrSearchableSelect = ({
     const customStyles = {
         control: (provided: any, state: any) => ({
             ...provided,
-            '&:hover':{borderColor: 'green'},
+            "&:hover": {borderColor: "green"},
             height: 49,
-            border: state.isFocused ? '2px solid' : provided.border,
+            border: state.isFocused ? "2px solid" : provided.border,
         }),
-        valueContainer: (provided: any, state: any) => ({
+        valueContainer: (provided: any) => ({
             ...provided,
-            display:"flex",
-            "flex-flow" : "nowrap"
+            display: "flex",
+            "flex-flow": "nowrap"
+        }),
+        placeholder: (provided: any) => ({
+            ...provided,
+            width: "100%",
+            "white-space": "nowrap",
+            overflow: "hidden",
+            "text-overflow": "ellipsis"
         })
     }
-    const customTheme = ((theme:any) => ({
-          ...theme,
-          borderRadius: 6,
-          colors: {
+    const customTheme = ((theme: any) => ({
+        ...theme,
+        borderRadius: 6,
+        colors: {
             ...theme.colors,
             primary25: "#F1BD4D",
             primary: "#02604B"
-          }}))
+        }
+    }))
 
     return (<div className={`form-control ${className}`}>
         <label className="label">

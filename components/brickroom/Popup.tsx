@@ -1,4 +1,4 @@
-import React, {ReactEventHandler} from 'react';
+import React, {ReactEventHandler} from "react";
 
 type PopupPops = {
     name: string,
@@ -13,9 +13,9 @@ type PopupPops = {
 }
 
 function Popup({ name, action1, action2, buttons, children, svg, disabled, outlined, XL }: PopupPops) {
-    const larger = XL? 'w-156 max-w-5xl' : ''
-    const disabledClass = disabled ? 'btn-disabled' : ''
-    const outlinedClass = outlined ? 'btn-outline' : ''
+    const larger = XL? "w-156 max-w-5xl" : ""
+    const disabledClass = disabled ? "btn-disabled" : ""
+    const outlinedClass = outlined ? "btn-outline" : ""
     return (<>
         <label htmlFor={name} className={`btn modal-button text-normal font-medium normal-case ${disabledClass} ${outlinedClass}`} onClick={action2}>{action1}{svg}</label>
         <input type="checkbox" id={name} className="modal-toggle" />
