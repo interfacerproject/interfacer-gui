@@ -1,12 +1,17 @@
 {
-  "title": "titre",
-  "description": "description",
-  "Load more": "Chargez plus",
-  "tableHead" : [
-    "Asset",
-    "Dernière mise à jour",
-    "Valeur",
-    "Propriétaire",
-    "tags"
-  ]
+    "title": "titre",
+    "description": "description",
+    "Load more": "Chargez plus",
+    "tableHead": [
+        "Asset",
+        "Dernière mise à jour",
+        "Valeur",
+        "Propriétaire",
+        "tags"
+    ],
+    "filters": {
+        "filter for": "Filtrer par",
+        "contributors": "Contributeurs",
+        "type": "Type"
+    }
 }

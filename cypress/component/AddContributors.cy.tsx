@@ -39,9 +39,8 @@ describe('AddContributors.cy.tsx', () => {
             <AddContributors contributors={[]} setContributors={setContributors}/></MockedProvider>)
         // Act
         cy.get('input').type("test")
-        cy.get('select').should('exist')
-        cy.get('select').select('test1')
+        cy.get('#react-select-2-option-0').should('exist').click()
         // Assert
-        cy.get('@setContributors').should('have.been.calledWith', ['061F65P3N9DKA1GQVYQE5N7E3W'])
+        cy.get('@setContributors').should('have.been.calledWith', [{label: "test1", value: "061F65P3N9DKA1GQVYQE5N7E3W"}])
     })
 })

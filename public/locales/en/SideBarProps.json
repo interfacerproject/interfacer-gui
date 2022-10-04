@@ -1,10 +1,12 @@
 {
   "home": "Home",
-  "createAsset": "Create asset",
-  "resources": "Resources",
-  "myInventory": "My inventory",
-  "lastUpdated": "Latest assets",
-  "seeAll": "All assets",
-  "userGuide": "User guide",
-  "map": "Map"
+  "my_stuff": "My Stuff",
+  "create_asset": "Create asset",
+  "my_assets": "My assets",
+  "assets": "Assets",
+  "latest_assets": "Latest assets",
+  "imported_losh": "Imported from LOSH",
+  "user_guide": "User guide",
+  "map": "Map",
+  "report_bug": "Report a bug"
 }

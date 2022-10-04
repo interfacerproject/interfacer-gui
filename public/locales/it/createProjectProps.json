@@ -65,7 +65,7 @@
     "address": {
       "label": "Indirizzo:",
       "placeholder": "An d. Alsterschleife 3, 22399 - Amburgo, Germania",
-      "hint": "Breve descrizione da visualizzare nella pagina della risorsa"
+      "hint": "indirizzo"
     }
   },
   "price": {
@@ -78,7 +78,8 @@
     "placeholder": "Ricerca agenti per nome",
     "hint": "I collaboratori devono avere un account"
   },
-  "button": "Risparmiare",
+  "button": "Salva",
+  "go to the asset": "Vai alla risposta",
   "resourceSpec": "73u648QASpCtC80ihY0KLg",
   "unitId": "82XqknZlTsGcFbQw8Gg6ow"
 }

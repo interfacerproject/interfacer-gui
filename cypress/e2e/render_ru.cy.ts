@@ -9,6 +9,27 @@ describe("when user is logged in", () => {
         cy.restoreLocalStorage();
     });
 
+    it("should render the sidebar correctly", () => {
+        cy.visit('/');
+        /* ==== Generated with Cypress Studio ==== */
+        cy.get('.btn > .inline-block').click();
+        cy.get('#my-drawer').check({force: true});
+        cy.get('[tabindex="0"] > .w-64 > .ml-3 > .flex > .whitespace-nowrap').should('have.text', 'My Stuff');
+        cy.get(':nth-child(3) > .w-64 > .ml-3').should('be.visible');
+        cy.get(':nth-child(3) > .w-64 > .ml-3').should('have.text', 'Assets');
+        cy.get('[tabindex="0"] > .w-64 > .ml-3 > :nth-child(2)').click();
+        cy.get('.pl-4 > :nth-child(1) > .ml-4 > .w-full > .flex').should('have.text', 'Create asset');
+        cy.get('.pl-4 > :nth-child(1) > .ml-4 > .w-full > .flex').should('be.visible');
+        cy.get('.pl-4 > :nth-child(2) > .ml-4 > .w-full > .flex').should('have.text', 'My assets');
+        cy.get('.pl-4 > :nth-child(2) > .ml-4 > .w-full > .flex').should('be.visible');
+        cy.get(':nth-child(3) > .w-64 > .ml-3').click();
+        cy.get(':nth-child(3) > .pl-4 > :nth-child(1) > .ml-4 > .w-full > .flex').should('have.text', 'Latest assets');
+        cy.get(':nth-child(3) > .pl-4 > :nth-child(1) > .ml-4').should('be.visible');
+        cy.get(':nth-child(3) > .pl-4 > :nth-child(2) > .ml-4 > .w-full').should('have.text', 'Imported from LOSHNEW');
+        cy.get(':nth-child(3) > .pl-4 > :nth-child(2) > .ml-4 > .w-full > .flex').should('be.visible');
+        /* ==== End Cypress Studio ==== */
+    });
+
     it('Should see /logged_in', () => {
         cy.visit('/logged_in')
         cy.contains('How did you arrived here? This app is still under construction!')
@@ -49,20 +70,6 @@ describe("when user is logged in", () => {
 
     it('Should see /assets', () => {
         cy.visit('/assets')
-        cy.contains('All assets')
-        /* ==== Generated with Cypress Studio ==== */
-        cy.get('.mb-6 > .undefined').should('have.text', 'Create a new asset');
-        cy.get('.ml-2').should('have.text', 'Report a bug');
-        cy.get('.table-header-group > tr > :nth-child(1)').should('be.visible');
-        cy.get('.table-header-group > tr > :nth-child(2)').should('have.text', 'Last update');
-        cy.get('.table-header-group > tr > :nth-child(3)').should('be.visible');
-        cy.get('.table-header-group > tr > :nth-child(4)').should('have.text', 'Owner');
-        cy.get('.table-header-group > tr > :nth-child(5)').should('be.visible');
-        cy.get('.grid-cols-1 > .btn').should('be.enabled');
-        /* ==== End Cypress Studio ==== */
-        /* ==== Generated with Cypress Studio ==== */
-        cy.get('.mb-6 > .undefined').should('have.attr', 'href', '/create_asset');
-        cy.get('.mb-6 > .undefined').should('be.visible');
-        /* ==== End Cypress Studio ==== */
+        cy.contains('Latest assets')
     });
 });

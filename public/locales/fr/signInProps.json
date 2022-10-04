@@ -1,16 +1,57 @@
 {
-    "title": "Bienvenue !",
-    "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-    "button1": "Se connecter via passprhase",
-    "button2": "Se connecter en répondant à quelques questions",
-    "button3": "S'inscrire",
-    "button4": "Suivant",
-    "email": {
-        "label": "Adresse électronique",
-        "placeholder": "alice@email.com"
-    },
-    "register": {
-        "question": "✌️ déjà enregistré ?",
-        "answer": "Sign In"
-    }
+  "title": "Bienvenue !",
+  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "button1": "Se connecter via passprhase",
+  "button2": "Se connecter en répondant à quelques questions",
+  "button3": "S'inscrire",
+  "button4": "Suivant",
+  "email": {
+    "label": "Adresse électronique",
+    "placeholder": "alice@email.com"
+  },
+  "register": {
+    "question": "✌️ déjà enregistré ?",
+    "answer": "Sign In"
+  },
+  "title_step_0": "Connexion",
+  "title_step_1": "Connexion",
+  "title_step_2": "Connexion en répondant aux questions de l'inscription 💬",
+  "title_step_3": "Connexion via passprhase 🔑",
+  "presentation_step_2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "presentation_step_3": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "step_passphrase": {
+    "title": "Connexion via phrase de passe 🔑",
+    "subtitle": "Saisissez la phrase de passe que vous avez conservée, générée pendant le processus d'inscription.",
+    "label": "Phrase de passe",
+    "placeholder": "état trébucher intelligente piège excuse schéma monde humain",
+    "button": "Connexion",
+    "help_text": "Veillez à insérer les 12 mots de la phrase de passe, séparés par un espace.",
+    "error": "Phrase de passe invalide"
+  },
+  "step_questions": {
+    "title": "Se connecter en répondant aux questions de l'inscription 💬",
+    "subtitle": "Répondez aux questions auxquelles vous avez répondu pendant le processus d'inscription.",
+    "subtitle_signup": "Vous devrez vous souvenir des réponses et les conserver pour plus tard, car elles sont nécessaires pour la connexion.",
+    "subtitle_passphrase": "Vous pouvez maintenant choisir de vous connecter en répondant aux questions précédentes ou en utilisant cette phrase de passe.",
+    "hint": "Répondez à au moins 3 questions.",
+    "label": "Réponse :",
+    "placeholder": "Réponse :",
+    "button": "Connexion",
+    "button_2": "Connexion",
+    "keyring_title": "Répondez à ces questions pour compléter votre inscription 🧩",
+    "passphrase_title": "Voici votre passprhase ! 🔑",
+    "continue_button": "Connexion",
+    "help_text": "Veillez à insérer les 12 mots de la phrase de passe, séparés par un espace.",
+    "help_text_2": "Cette phrase de passe est générée et n'est pas stockée sur le serveur. Conservez-en une copie.",
+    "error": "Utilisateur non trouvé : peut-être avez-vous répondu aux mauvaises questions ?",
+    "reminder": "Votre passprhase est :",
+    "questions": [
+      "Où mes parents se sont rencontrés ?",
+      "Quel est le nom de votre premier animal de compagnie ?",
+      "Quelle est votre ville natale ?",
+      "Quel est le nom de votre premier professeur ?",
+      "Quel est le nom de famille de votre mère avant le mariage ?"
+    ]
+  },
+  "help_text_step_1": "Saisissez l'adresse électronique fournie lors de la procédure d'inscription."
 }

@@ -1,8 +1,8 @@
 import React, {ReactNode} from 'react';
-import Sidebar from "./Sidebar"
-import Topbar from "./Topbar";
-import {useAuth} from "../lib/auth";
-import SignIn from "../pages/sign_in";
+import Sidebar from "../Sidebar"
+import Topbar from "../Topbar";
+import {useAuth} from "../../lib/auth";
+import SignIn from "../../pages/sign_in";
 import {useRouter} from 'next/router'
 
 type layoutProps = {
@@ -27,7 +27,7 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
             </>}
             {!authentication && <>
                 {isSignedIn() ?
-                <div className="drawer drawer-mobile">
+                <div className="drawer">
                     <input id="my-drawer" type="checkbox" className="drawer-toggle"/>
                     <div className="drawer-content">
                         <Topbar/>

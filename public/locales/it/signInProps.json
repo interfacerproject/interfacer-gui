@@ -1,16 +1,57 @@
 {
-    "title": "Benvenuti!",
-    "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-    "button1": "Accesso tramite passprhase",
-    "button2": "Accedi rispondendo ad alcune domande",
-    "button3": "Iscriviti",
-    "button4": "Avanti",
-    "email": {
-        "label": "Indirizzo e-mail",
-        "placeholder": "alice@email.com"
-    },
-    "register": {
-        "question": "✌️ Non ancora registrato?",
-        "answer": "Registrati"
-    }
+  "title": "Benvenuti!",
+  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "button1": "Accesso tramite passprhase",
+  "button2": "Accedi rispondendo ad alcune domande",
+  "button3": "Iscriviti",
+  "button4": "Avanti",
+  "email": {
+    "label": "Indirizzo e-mail",
+    "placeholder": "alice@email.com"
+  },
+  "register": {
+    "question": "✌️ Non ancora registrato?",
+    "answer": "Registrati"
+  },
+  "title_step_0": "Accesso",
+  "title_step_1": "Accesso",
+  "title_step_2": "Effettuare il login rispondendo alle domande di iscrizione 💬",
+  "title_step_3": "Accesso tramite passphase 🔑",
+  "presentation_step_2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "presentation_step_3": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "step_passphrase": {
+    "title": "Accesso tramite passphrase 🔑",
+    "subtitle": "Inserite la passphrase che avete conservato, generata durante il processo di registrazione.",
+    "label": "Passphrase",
+    "placeholder": "stato inciampare intelligente trappola scusa schema mondo umano",
+    "button": "Accesso",
+    "help_text": "Assicuratevi di inserire tutte e 12 le parole della passphrase, separate da uno spazio.",
+    "error": "Passphrase non valida"
+  },
+  "step_questions": {
+    "title": "Effettuare il login rispondendo alle domande di iscrizione 💬",
+    "subtitle": "Rispondere alle domande a cui si è risposto durante la procedura di iscrizione",
+    "subtitle_signup": "Dovrete ricordarvi le risposte e conservarle per un secondo momento, poiché sono necessarie per l'accesso.",
+    "subtitle_passphrase": "A questo punto si può scegliere di accedere rispondendo alle domande precedenti o utilizzando questa passphrase.",
+    "hint": "Rispondere ad almeno 3 domande.",
+    "label": "Risposta",
+    "placeholder": "Risposta",
+    "button": "Accesso",
+    "button_2": "Accesso",
+    "keyring_title": "Rispondete a queste domande per completare l'iscrizione 🧩",
+    "passphrase_title": "Ecco il vostro passaporto! 🔑",
+    "continue_button": "Accesso",
+    "help_text": "Assicuratevi di inserire tutte e 12 le parole della passphrase, separate da uno spazio.",
+    "help_text_2": "Questa passphrase viene generata e non viene memorizzata sul server. Conservatene una copia.",
+    "error": "Utente non trovato: forse ha risposto alle domande sbagliate?",
+    "reminder": "Il tuo passaporto è:",
+    "questions": [
+      "Dove si sono conosciuti i miei genitori?",
+      "Come si chiama il suo primo animale domestico?",
+      "Qual è la sua città natale?",
+      "Come si chiama il suo primo insegnante?",
+      "Qual è il cognome di sua madre prima del matrimonio?"
+    ]
+  },
+  "help_text_step_1": "Inserite l'indirizzo e-mail fornito durante il processo di registrazione."
 }

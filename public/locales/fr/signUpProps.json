@@ -1,28 +1,33 @@
 {
-    "title": "Bienvenue !",
-    "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-    "name": {
-        "label": "nom",
-        "placeholder": "Tapez votre nom"
-    },
-    "user": {
-        "label": "Utilisateur",
-        "placeholder": "Tapez votre nom d'utilisateur visible"
-    },
-    "email": {
-        "label": "Courriel :",
-        "placeholder": "alice@email.com"
-    },
-    "register": {
-        "question": "✌️ encore enregistré ?",
-        "answer": "S'inscrire"
-    },
-    "questions": [
-        "Où mes parents se sont rencontrés ?",
-        "Quel est le nom de votre premier animal domestique ?",
-        "Quelle est votre ville natale ?",
-        "Quel est le nom de votre premier professeur ?",
-        "Quel est le nom de famille de votre mère avant le mariage ?"
-    ],
-    "button": "Étape suivante"
+  "title": "Bienvenue !",
+  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "name": {
+    "label": "nom",
+    "placeholder": "Tapez votre nom",
+    "help": "Votre nom est affiché et visible par tous"
+  },
+  "user": {
+    "label": "Utilisateur",
+    "placeholder": "Tapez votre nom d'utilisateur visible",
+    "help": "Votre nom d'utilisateur est utilisé pour vous identifier dans le système."
+  },
+  "email": {
+    "label": "Courriel :",
+    "placeholder": "alice@email.com",
+    "help": "Votre adresse électronique qui sera utilisée pour votre connexion",
+    "valid": "✅ votre e-mail gratuit"
+  },
+  "register": {
+    "question": "✌️ encore enregistré ?",
+    "answer": "S'inscrire"
+  },
+  "questions": [
+    "Où mes parents se sont rencontrés ?",
+    "Quel est le nom de votre premier animal domestique ?",
+    "Quelle est votre ville natale ?",
+    "Quel est le nom de votre premier professeur ?",
+    "Quel est le nom de famille de votre mère avant le mariage ?"
+  ],
+  "button": "Étape suivante",
+  "keyring_title": "Répondez à ces questions pour compléter votre inscription 🧩"
 }

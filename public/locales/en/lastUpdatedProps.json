@@ -1,12 +1,19 @@
 {
-  "title": "All assets",
-  "description": "Find here all the assets, the latest ones are on top.",
-  "Load more": "Load more...",
-  "tableHead": [
-    "Asset",
-    "Last update",
-    "Value",
-    "Owner",
-    "tags"
-  ]
+    "title": "Latest assets",
+    "description": "Find here all the assets, the latest ones are on top.",
+    "Load more": "Load more...",
+    "tableHead": [
+        "Asset",
+        "Last update",
+        "Value",
+        "Owner",
+        "tags"
+    ],
+    "filters": {
+        "filter for": "Filter for",
+        "contributors": "Contributors",
+        "type": "Type",
+        "apply": "Apply",
+        "reset": "Reset All"
+    }
 }

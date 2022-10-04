@@ -1,28 +1,33 @@
 {
-    "title": "Herzlich willkommen!",
-    "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-    "name": {
-        "label": "Name",
-        "placeholder": "Geben Sie Ihren Namen ein"
-    },
-    "user": {
-        "label": "Benutzer",
-        "placeholder": "Geben Sie Ihren sichtbaren Benutzernamen ein"
-    },
-    "email": {
-        "label": "E-Mail",
-        "placeholder": "alice@email.com"
-    },
-    "register": {
-        "question": "✌️ schon registriert?",
-        "answer": "Eintragen"
-    },
-    "questions": [
-        "Wo haben sich meine Eltern kennengelernt?",
-        "Wie lautet der Name deines ersten Haustiers?",
-        "Was ist deine Heimatstadt?",
-        "Wie lautet der Name Ihres ersten Lehrers?",
-        "Wie lautet der Nachname Ihrer Mutter vor der Hochzeit?"
-    ],
-    "button": "Next Step"
+  "title": "Herzlich willkommen!",
+  "presentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "name": {
+    "label": "Name",
+    "placeholder": "Geben Sie Ihren Namen ein",
+    "help": "Ihr Name wird angezeigt und ist für alle sichtbar"
+  },
+  "user": {
+    "label": "Benutzer",
+    "placeholder": "Geben Sie Ihren sichtbaren Benutzernamen ein",
+    "help": "Ihr Benutzername wird verwendet, um Sie im System zu identifizieren"
+  },
+  "email": {
+    "label": "E-Mail",
+    "placeholder": "alice@email.com",
+    "help": "Ihre E-Mail-Adresse, die für Ihr Login verwendet wird",
+    "valid": "✅ Ihre E-Mail kostenlos"
+  },
+  "register": {
+    "question": "✌️ schon registriert?",
+    "answer": "Eintragen"
+  },
+  "questions": [
+    "Wo haben sich meine Eltern kennengelernt?",
+    "Wie lautet der Name deines ersten Haustiers?",
+    "Was ist deine Heimatstadt?",
+    "Wie lautet der Name Ihres ersten Lehrers?",
+    "Wie lautet der Nachname Ihrer Mutter vor der Hochzeit?"
+  ],
+  "button": "Next Step",
+  "keyring_title": "Beantworten Sie diese Fragen, um Ihre Anmeldung abzuschließen 🧩"
 }
