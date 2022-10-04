@@ -124,7 +124,8 @@ const CreateProject: NextPageWithLayout = () => {
   $resource: ID!,
   $oneUnit: ID!,
   $currency: ID!,
-  $howMuch: Float!
+  $howMuch: Float!,
+  $tags: [ID!]
 ) {
   item: createIntent(
     intent: {
@@ -132,6 +133,7 @@ const CreateProject: NextPageWithLayout = () => {
       action: "transfer",
       provider: $agent,
       resourceInventoriedAs: $resource,
+        resourceClassifiedAs: $tags,
       resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
     }
   ) {
@@ -320,7 +322,8 @@ const CreateProject: NextPageWithLayout = () => {
                                 resource: re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id,
                                 oneUnit: instanceVariables?.units.unitOne.id,
                                 howMuch: parseFloat(price),
-                                currency: instanceVariables?.specs.specCurrency.id
+                                currency: instanceVariables?.specs.specCurrency.id,
+                                tags: assetTags?.map((t) => encodeURI(t))
                             }
                         }).then((intent) => {
                             logsText = logsText.concat([`success: Created intent with id: ${intent.data?.item.intent.id}`, 'info: Linking proposal and intent'])
