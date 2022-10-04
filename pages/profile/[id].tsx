@@ -15,7 +15,7 @@ import {useTranslation} from "next-i18next";
 
 const Profile: NextPage = () => {
     const router = useRouter()
-    const {id} = router.query
+    const {id, conformTo} = router.query
     const {t} = useTranslation('ProfileProps')
     const FETCH_USER = gql(`query($id:ID!) {
   person(id:$id) {
@@ -30,17 +30,21 @@ const Profile: NextPage = () => {
     }
   }
 }`)
-
     const {authId, authUsername, authName, authEmail} = useAuth()
     const isUser: boolean = (id === 'my_profile' || id === authId)
     const idToBeFetch = isUser ? authId : id
     const user = useQuery(FETCH_USER, {variables: {id: idToBeFetch}}).data?.person
+    const filter = {primaryIntentsResourceInventoriedAsPrimaryAccountable: idToBeFetch}
+    if (conformTo) {
+        // @ts-ignore
+        filter['primaryIntentsResourceInventoriedAsConformsTo'] = conformTo.split(',')
+    }
     devLog(user)
     const tabsArray = [
         // {title: 'Activity', component: <EventTable economicEvents={user?.economicEvents}/>},
         {
             title: 'Inventory',
-            component: <ResourceTable resources={user?.inventoriedEconomicResources}/>
+            component: <ResourceTable/>
         }
     ]
     return (<>
@@ -87,7 +91,7 @@ const Profile: NextPage = () => {
                 </div>
             </div>
             <div className="grid grid-cols-1 md:px-8 px-2 pt">
-                <AssetsTable userid={idToBeFetch}/>
+                <AssetsTable filter={filter} noPrimaryAccountableFilter/>
             </div>
         </>}
     </>)
