@@ -8,11 +8,13 @@ import AssetImage from '../../components/AssetImage';
 import BrDisplayUser from '../../components/brickroom/BrDisplayUser';
 import BrTags from '../../components/brickroom/BrTags';
 import MdParser from "../../lib/MdParser";
+import Link from "next/link";
 
 interface AssetIface {
     name: string;
     conformsTo: {
         name: string;
+        id:string;
     };
     images: [{
         hash: string;
@@ -42,6 +44,7 @@ const Asset = () => {
       resourceInventoriedAs {
         conformsTo {
           name
+          id
         }
         currentLocation {
           name
@@ -96,14 +99,23 @@ const Asset = () => {
                 <div className="absolute top-0 w-full p-2 md:p-8 h-72 backdrop-grayscale bg-white/70">
                     <div className="text-primary breadcrumbs">
                         <ul>
-                            <li><a><h4>{asset.conformsTo.name}</h4></a></li>
+                            <li>
+                                <Link href={`/assets?conformTo=${asset.conformsTo.id}`}>
+                                    <a><h4>{asset.conformsTo.name}</h4></a>
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                 </div>
                 <div className="absolute w-full p-2 bottom-8 md:p-0 md:bottom-12 h-100">
                     <div className="flex flex-col content-end h-full md:mx-32 md:w-1/2">
                         <h2>{asset.name}</h2>
-                        <p>{t('This is a')} <span className="font-bold text-primary">{asset.conformsTo.name}</span></p>
+                        <p>
+                            {t('This is a')}
+                            <Link href={`/assets?conformTo=${asset.conformsTo.id}`}>
+                                <a className="font-bold text-primary ml-1 hover:underline">{asset.conformsTo.name}</a>
+                            </Link>
+                        </p>
                     </div>
                 </div>
             </div>

@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
+import React, { useEffect } from "react";
 import BrTable from "./brickroom/BrTable";
-import BrTags from "./brickroom/BrTags";
-import BrDisplayUser from "./brickroom/BrDisplayUser";
-import AssetImage from "./AssetImage";
 import AssetsTableRow from "./AssetsTableRow";
 import { useTranslation } from "next-i18next";
 import { gql, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
-import AddContributors from "./AddContributors";
-import SelectAssetType from "./SelectAssetType";
-import {useRouter} from "next/router";
+import Filters from "./Filters";
 
-const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
-    const [contributors, setContributors] = useState<Array<{ value:string, label:string }>>([]);
-    const [conformsTo, setConformsTo] = useState<Array<{ value:string, label:string }>>([]);
+const AssetsTable = ({filter, noPrimaryAccountableFilter = false}: { filter?: any, noPrimaryAccountableFilter?: boolean}) => {
     const {t} = useTranslation('lastUpdatedProps')
     const QUERY_ASSETS = gql`query ($first: Int, $after: ID, $last: Int, $before: ID, $filter:ProposalFilterParams) {
   proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
@@ -33,6 +25,7 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
         name
         created
         primaryIntents {
+          resourceClassifiedAs
           action {
             id
           }
@@ -101,16 +94,9 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
             }
         }
     };
-    const assets = userid
-        ? queryResult.data?.proposals.edges.filter(
-              (edge: any) =>
-                  edge.node.primaryIntents[0]?.resourceInventoriedAs
-                      .primaryAccountable.id === userid
-          )
-        : queryResult.data?.proposals.edges;
+    const assets = queryResult.data?.proposals.edges;
     // Poll interval that works with pagination
     useEffect(() => {
-        if (!userid) {
             const intervalId = setInterval(() => {
                 const total = queryResult.data?.proposals.edges.length || 0;
 
@@ -119,36 +105,12 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
                     last: total,
                 });
             }, 10000);
-
             return () => clearInterval(intervalId);
-        }
     }, [
         ...Object.values(queryResult.variables!).flat(),
         queryResult.data?.proposals.pageInfo.startCursor,
     ]);
-    const router = useRouter()
-    const applyFilters = () => {
-        const query: any = {}
-        if (contributors.length > 0) {
-            const primaryAccountable: string = contributors.map((c: any) => c.value).join(',')
-            query.primaryAccountable = primaryAccountable
-        }
-        if (conformsTo.length > 0) {
-            const conforms = conformsTo.map((c: any) => c.value).join(',')
-            query.conformTo = conforms
-        }
-        router.push({
-            pathname: '/assets',
-            query,
-        })
-    }
-    const clearFilters = () => {
-        setContributors([])
-        setConformsTo([])
-        router.push({
-            pathname: '/assets',
-        })
-    }
+
     devLog(queryResult.data)
 
     return (<div className="grid grid-cols-1 gap-2 md:grid-cols-8">
@@ -164,23 +126,7 @@ const AssetsTable = ({userid, filter}: { userid?: string, filter?: any }) => {
             </div>
         </div>
         <div className="col-span-2">
-            <div className="p-4 bg-white border rounded-lg shadow">
-                <h4 className="mb-4 text-2xl font-bold">{t('filters.filter for')}:</h4>
-                <AddContributors contributors={contributors} setContributors={setContributors}
-                                 label={t('filters.contributors')}/>
-                <SelectAssetType onChange={setConformsTo} label={t('filters.type')} assetType={conformsTo}/>
-                <div className="grid grid-cols-2 gap-2 mt-4">
-                    <div>
-                        <button className="btn btn-outline btn-error btn-block"
-                                onClick={clearFilters}>{t('filters.reset')}
-                        </button>
-                    </div>
-                    <div>
-                        <button onClick={applyFilters}
-                                className="btn btn-accent btn-block">{t('filters.apply')}</button>
-                    </div>
-                </div>
-            </div>
+            <Filters noPrimaryAccountableFilter={noPrimaryAccountableFilter}/>
         </div>
     </div>)
 }

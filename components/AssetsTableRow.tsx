@@ -3,12 +3,12 @@ import Link from "next/link";
 import BrTags from "./brickroom/BrTags";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import AssetImage from "./AssetImage";
+import devLog from "../lib/devLog";
 
 const AssetsTableRow = (props: any) => {
     const e = props.asset;
     const primaryIntent = e.node.primaryIntents[0];
     const reciprocalIntent = e.node.reciprocalIntents[0];
-
     return (
         <>
             {e && primaryIntent && (
@@ -67,7 +67,7 @@ const AssetsTableRow = (props: any) => {
                         />
                     </td>
                     <td className="max-w-[12rem]">
-                        <BrTags tags={[]} />
+                        <BrTags tags={primaryIntent?.resourceClassifiedAs} />
                     </td>
                 </tr>
             )}
