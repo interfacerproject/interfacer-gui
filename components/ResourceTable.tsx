@@ -5,9 +5,10 @@ import {gql, useQuery} from "@apollo/client";
 import devLog from "../lib/devLog";
 import BrLoadMore from "./brickroom/BrLoadMore";
 import Spinner from "./brickroom/Spinner";
+import {useTranslation} from "next-i18next";
 
 
-const truncate = (input: string, max: number) => input.length > max ? `${input.substring(0, max)}...` : input;
+const truncate = (input: string, max: number) => input?.length > max ? `${input.substring(0, max)}...` : input;
 
 const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: ID, $filter:EconomicResourceFilterParams ) {
   economicResources(first: $first after: $after before: $before last: $last filter: $filter) {
@@ -48,9 +49,9 @@ const FETCH_INVENTORY = gql`query($first: Int, $after: ID, $last: Int, $before: 
 
 
 const ResourceTable = ({filter}: { filter?: any }) => {
-    const resourcesHead = ['Resource', 'Source', 'License', 'Version']
+    const {t} = useTranslation("resourcesProps")
 
-    devLog('filter', filter)
+    devLog("filter", filter)
     const {loading, data, error, fetchMore, variables, refetch} = useQuery(FETCH_INVENTORY, {
         variables: {
             last: 10,
@@ -58,7 +59,7 @@ const ResourceTable = ({filter}: { filter?: any }) => {
         }
     })
     devLog(error);
-    devLog('loading', loading)
+    devLog("loading", loading)
     !loading && devLog(data)
 
     const updateQuery = (previousResult: any, {fetchMoreResult}: any) => {
@@ -104,7 +105,7 @@ const ResourceTable = ({filter}: { filter?: any }) => {
     ])
 
     return (<>
-        {data ? <><BrTable headArray={resourcesHead}>
+        {data ? <><BrTable headArray={t("resourceHead", {returnObjects: true})}>
             {(data?.economicResources.edges.length !== 0) && <>{data?.economicResources.edges.map((e: any) =>
                 <tr key={e.node.id}>
                     <td>
@@ -125,15 +126,15 @@ const ResourceTable = ({filter}: { filter?: any }) => {
                         </Link>
                     </td>
                     <td className="align-top">
-                        <span className="font-semibold">{e.node.metadata?.__meta?.source || ''}</span><br/>
-                        <Link href={e.node?.repo || ''}><a className="text-sm"
-                                                           target="_blank">{truncate(e.node.repo || '', 40)}</a></Link>
+                        <span className="font-semibold">{e.node.metadata?.__meta?.source || ""}</span><br/>
+                        <Link href={e.node?.repo || ""}><a className="text-sm"
+                                                           target="_blank">{truncate(e.node.repo || "", 40)}</a></Link>
                     </td>
                     <td className="align-top">
                         <div className="whitespace-normal">
                             <p>
                                 <span className="font-semibold">{e.node.license}</span><br/>
-                                <span className="italic">{("by")} {e.node.licensor}</span>
+                                <span className="italic">{t("by")} {e.node.licensor}</span>
                             </p>
                         </div>
                     </td>
@@ -157,7 +158,7 @@ const ResourceTable = ({filter}: { filter?: any }) => {
 
 
         </BrTable>
-            <BrLoadMore handleClick={loadMore} disabled={!getHasNextPage} text={'Load more'}/></> : <Spinner/>}
+            <BrLoadMore handleClick={loadMore} disabled={!getHasNextPage} text={"Load more"}/></> : <Spinner/>}
     </>)
 }
 

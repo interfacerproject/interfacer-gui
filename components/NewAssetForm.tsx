@@ -380,7 +380,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
 
                 {/*todo:gestire meglio la fine del processo*/}
                 {assetCreatedId ? <Link href={assetCreatedId}>
-                        <a className="btn btn-accent">Go to the asset</a>
+                        <a className="btn btn-accent">{t("go to the asset")}</a>
                     </Link> :
                     <button type="submit" className="btn btn-accent"
                             disabled={!isButtonEnabled()}>{t('button')}</button>
