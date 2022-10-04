@@ -57,29 +57,17 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
             price.length > 0
     }
     useEffect(() => {
-        setLogs(logs.concat(['warning: compile all mandatory fields']))
-
-    }, [])
-    useEffect(() => {
-        isButtonEnabled() && setLogs(logs.concat(['info: mandatory fields compiled']))
-
+        isButtonEnabled() ?
+            setLogs(logs.concat(['info: mandatory fields compiled'])) :
+            setLogs(logs.concat(['warning: compile all mandatory fields']))
+        projectType === "Product" && setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
+        projectType === "Service" && setResourceSpec(instanceVariables?.specs?.specProjectService.id)
+        projectType === "Process" && setResourceSpec(instanceVariables?.specs?.specProjectProcess.id)
     }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price])
 
     const colors = ["error", "success", "warning", "info"];
-    const logsClass = (text: string) => colors.includes(text.split(':')[0]) ? `text-${text.split(':')[0]} uppercase my-3` : 'my-2'
-    useEffect(() => {
-        if (projectType === 'Product') {
-            setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
-        }
-        if (projectType === 'Service') {
-            setResourceSpec(instanceVariables?.specs?.specProjectService.id)
-        }
-        if (projectType === 'Design') {
-            setResourceSpec(instanceVariables?.specs?.specProjectDesign.id)
-        }
-    }, [projectType])
-
-
+    const logsClass = (text: string) => colors.includes(text.split(':')[0]) ?
+        `text-${text.split(':')[0]} uppercase my-3` : 'my-2'
     const QUERY_VARIABLES = gql`query {
   instanceVariables{
     specs{
