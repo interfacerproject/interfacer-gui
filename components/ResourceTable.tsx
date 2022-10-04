@@ -146,7 +146,7 @@ const ResourceTable = ({filter}: { filter?: any }) => {
             )}</>}
             {(data?.economicResources.edges.length === 0) && <>
                 <tr>
-                    <td colSpan={resourcesHead.length}>
+                    <td colSpan={t("resourceHead", {returnObjects: true}).length}>
                         <h4>There’s nothing to display here.</h4>
                         <p>
                             This table will display the resources that you will have in inventory.
