@@ -1,9 +1,9 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import { useAuth } from "../lib/auth";
 import SignIn from "../pages/sign_in";
-import { useRouter, Router } from "next/router";
+import { useRouter } from "next/router";
 
 type layoutProps = {
     children: ReactNode;
@@ -21,9 +21,12 @@ const Layout: React.FunctionComponent<layoutProps> = (
     const authentication =
         isSignout || isSignup || isSignin || (!isSignedIn() && path !== "/");
 
-    Router.events.on("routeChangeStart", () => {
-        console.log(document.getElementById("my-drawer"));
-        // document.getElementById("my-drawer")?.click();
+    // Closes sidebar automatically when route changes
+    useEffect(() => {
+        router.events.on("routeChangeComplete", () => {
+            (document.getElementById("my-drawer") as HTMLInputElement).checked =
+                false;
+        });
     });
 
     return (
