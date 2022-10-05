@@ -60,6 +60,7 @@ const Layout: React.FunctionComponent<layoutProps> = (
                                 </div>
                                 <button
                                     className="btn btn-primary btn-outline"
+                                    data-test="back"
                                     onClick={() => router.back()}
                                 >
                                     <ArrowLeftIcon className="w-5 h-5" />
