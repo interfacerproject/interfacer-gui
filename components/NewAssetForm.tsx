@@ -530,6 +530,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                     type="submit"
                     className="btn btn-accent"
                     disabled={!isButtonEnabled()}
+                    data-test="submit"
                 >
                     {t("button")}
                 </button>
