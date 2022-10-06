@@ -43,7 +43,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
     const [resourceSpec, setResourceSpec] = useState('')
     const [resourceId, setResourceId] = useState('')
     const [images, setImages] = useState([] as Images)
-    const [contributors, setContributors] = useState([] as { value: string, label: string }[])
+    const [contributors, setContributors] = useState([] as { name: string, id: string }[])
     const [imagesFiles, setImagesFiles] = useState([] as Array<any>)
     const [assetCreatedId, setAssetCreatedId] = useState(undefined as string | undefined)
     const {t} = useTranslation('createProjectProps')
@@ -60,16 +60,17 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
         isButtonEnabled() ?
             setLogs(logs.concat(['info: mandatory fields compiled'])) : setLogs(logs.concat(['warning: compile all mandatory fields']))
         switch (projectType) {
-            case t('projectType.array[0]'):
+            case 'Design':
                 setResourceSpec(instanceVariables?.specs?.specProjectDesign.id)
                 break
-            case t('projectType.array[1]'):
+            case 'Service':
                 setResourceSpec(instanceVariables?.specs?.specProjectService.id)
                 break
-            case t('projectType.array[2]'):
+            case 'Product':
                 setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
                 break
         }
+        devLog('typeId',resourceSpec)
     }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price])
 
     const colors = ["error", "success", "warning", "info"];
