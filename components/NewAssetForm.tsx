@@ -436,6 +436,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                     setAssetName(e.target.value)
                 }
                 placeholder={t("projectName.placeholder")}
+                testID="projectName"
             />
             <BrMdEditor
                 onChange={handleEditorChange}
@@ -443,6 +444,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                 editorClass="h-60"
                 label={t("projectDescription.label")}
                 hint={t("projectDescription.hint")}
+                testID="projectDescription"
             />
             <BrRadio
                 array={t("projectType.array", { returnObjects: true })}
@@ -450,6 +452,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                 hint={t("projectType.hint")}
                 onChange={setAssetType}
                 value={projectType}
+                testID="projectType"
             />
             <BrImageUpload
                 onChange={setImages}
@@ -458,6 +461,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                 placeholder={t("imageUpload.placeholder")}
                 value={imagesFiles}
                 hint={t("imageUpload.hint")}
+                testID="imageUpload"
             />
             <BrInput
                 label={t("repositoryOrId.label")}
@@ -467,12 +471,15 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setRepositoryOrId(e.target.value)
                 }
+                testID="repositoryOrId"
             />
             <TagSelector
                 label={t("projectTags.label")}
                 hint={t("projectTags.hint")}
                 onSelect={(tags) => setAssetTags(tags)}
                 placeholder={t("projectTags.placeholder")}
+                textTestID="tagsText"
+                tagsTestID="tagsList"
             />
             <div className="grid grid-cols-2 gap-2">
                 <BrInput
@@ -483,6 +490,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                         setLocationName(e.target.value)
                     }
+                    testID="location.name"
                 />
                 <GeoCoderInput
                     onSelect={handleCreateLocation}
@@ -490,6 +498,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                     label={t("location.address.label")}
                     hint={t("location.address.hint")}
                     placeholder={t("location.address.placeholder")}
+                    testID="location.address"
                 />
             </div>
             <AddContributors
@@ -497,6 +506,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                 hint={t("contributors.hint")}
                 setContributors={(c) => setContributors(c)}
                 contributors={contributors}
+                testID="contributors"
             />
             <BrInput
                 type={"number"}
@@ -507,6 +517,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setPrice(e.target.value)
                 }
+                testID="price"
             />
 
             {/*todo:gestire meglio la fine del processo*/}
