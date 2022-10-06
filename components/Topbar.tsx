@@ -1,5 +1,4 @@
 import React from 'react';
-import {BellIcon} from "@heroicons/react/outline";
 import LocationMenu from "./LocationMenu";
 import { useRouter } from 'next/router';
 import NotificationBell from "./NotificationBell";

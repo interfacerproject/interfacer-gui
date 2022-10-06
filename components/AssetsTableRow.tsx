@@ -3,7 +3,6 @@ import Link from "next/link";
 import BrTags from "./brickroom/BrTags";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import AssetImage from "./AssetImage";
-import devLog from "../lib/devLog";
 import AvatarUsers from "./AvatarUsers";
 
 const AssetsTableRow = (props: any) => {
