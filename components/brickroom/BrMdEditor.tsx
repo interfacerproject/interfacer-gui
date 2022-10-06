@@ -1,6 +1,6 @@
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import MdParser from "../../lib/MdParser";
-import 'react-markdown-editor-lite/lib/index.css';
+import "react-markdown-editor-lite/lib/index.css";
 import {ExclamationIcon} from "@heroicons/react/solid";
 import React from "react";
 
@@ -14,7 +14,7 @@ type BrMdEditorProps = {
 }
 
 
-const MdEditor = dynamic(async () => await import('react-markdown-editor-lite'), {
+const MdEditor = dynamic(async () => await import("react-markdown-editor-lite"), {
     ssr: false,
     suspense: true,
 });
@@ -28,7 +28,7 @@ const BrMdEditor = ({className, onChange, error, hint, label, editorClass}: BrMd
         <label className="label">
             {error &&
             <span className="flex flex-row items-center justify-between label-text-alt text-warning">
-                    <ExclamationIcon className='w-5 h-5'/>
+                    <ExclamationIcon className="w-5 h-5"/>
                 {error}</span>}
             {hint && <span className="label-text-alt">{hint}</span>}
         </label>

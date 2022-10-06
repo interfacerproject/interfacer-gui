@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 
 import { useAuth } from "../lib/auth";
@@ -88,11 +87,11 @@ function Sidebar() {
 
     return (
         <div className="overflow-y-auto bg-white border-r title w-72 text-primary-content border-primary">
-            <div className="flex flex-col flex-nowrap justify-between items-stretch">
+            <div className="flex flex-col items-stretch justify-between flex-nowrap">
                 {/* Top logo */}
-                <div className="px-4 py-2 h-16 border-b border-primary flex flex-row items-stretch justify-center">
+                <div className="flex flex-row items-stretch justify-center h-16 px-4 py-2 border-b border-primary">
                     <Link href="/">
-                        <a className="grow rounded-lg hover:bg-amber-200 flex flex-row items-center justify-center">
+                        <a className="flex flex-row items-center justify-center rounded-lg grow hover:bg-amber-200">
                             <div className="logo" />
                         </a>
                     </Link>

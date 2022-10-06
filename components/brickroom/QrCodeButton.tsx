@@ -21,10 +21,10 @@ const QrCodeButton = ({id, outlined}: { id: string, outlined?: boolean}) => {
         }
 
         const options = {
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify(data),
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             }
         }
         const url = "https://apiroom.net/api/ReflowDPP/Reflow-create-DPP-and-store-in-sawroom.chain";
@@ -40,7 +40,7 @@ const QrCodeButton = ({id, outlined}: { id: string, outlined?: boolean}) => {
 
     return (
         <>
-            <Popup name='fetchQr' action1="Generate" action2={fetchQr} outlined={outlined}>
+            <Popup name="fetchQr" action1="Generate" action2={fetchQr} outlined={outlined}>
                 {result&&<div><QRCode value={result} className="mx-auto"/></div>}
                 {!result&&<Spinner/>}
             </Popup>

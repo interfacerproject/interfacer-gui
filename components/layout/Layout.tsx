@@ -1,9 +1,10 @@
 import React, { ReactNode, useEffect } from "react";
-import Sidebar from "./Sidebar";
-import Topbar from "./Topbar";
-import { useAuth } from "../lib/auth";
-import SignIn from "../pages/sign_in";
+import Sidebar from "../Sidebar";
+import Topbar from "../Topbar";
+import { useAuth } from "../../lib/auth";
+import SignIn from "../../pages/sign_in";
 import { useRouter } from "next/router";
+
 
 type layoutProps = {
     children: ReactNode;
