@@ -1,3 +1,5 @@
+import { waitForData } from "../../utils";
+
 describe("BrDisplayUser component", () => {
     before(() => {
         cy.login();
@@ -10,10 +12,7 @@ describe("BrDisplayUser component", () => {
     });
 
     it("should click the component and go to user page", () => {
-        // Waiting for data
-        const name = "dataGetFirst";
-        cy.intercept("http://65.109.11.42:9000/api").as(name);
-        cy.wait(`@${name}`);
+        waitForData();
 
         // Getting the first instance of the component
         const comp = cy.get("tr > td > a").first();

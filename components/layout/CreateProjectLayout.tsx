@@ -1,10 +1,9 @@
-import React, { ReactNode } from "react";
-import Topbar from "./Topbar";
-import { useAuth } from "../lib/auth";
-import SignIn from "../pages/sign_in";
-import { useRouter } from "next/router";
-import { ArrowLeftIcon } from "@heroicons/react/outline";
-import devLog from "../lib/devLog";
+import React, {ReactNode} from 'react';
+import Topbar from "../Topbar";
+import {useAuth} from "../../lib/auth";
+import SignIn from "../../pages/sign_in";
+import {useRouter} from 'next/router'
+import {ArrowLeftIcon} from "@heroicons/react/outline";
 
 type layoutProps = {
     children: ReactNode;
@@ -55,8 +54,8 @@ const Layout: React.FunctionComponent<layoutProps> = (
                                 userMenu={false}
                                 cta={layoutProps.cta}
                             >
-                                <div className="w-auto h-16 p-4 border-r mx-2 hidden md:block">
-                                    <div className="logo mx-auto" />
+                                <div className="hidden w-auto h-16 p-4 mx-2 border-r md:block">
+                                    <div className="mx-auto logo" />
                                 </div>
                                 <button
                                     className="btn btn-primary btn-outline"

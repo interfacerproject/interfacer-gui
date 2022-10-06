@@ -1,4 +1,6 @@
 {
   "title": "Resources",
-  "description": "Use this page to generate digital product passports of resources"
+  "description": "Use this page to generate digital product passports of resources",
+  "by": "by",
+  "resourceHead": ["Resource", "Source", "License", "Version"]
 }
