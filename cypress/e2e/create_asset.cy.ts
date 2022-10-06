@@ -21,6 +21,8 @@ describe("when user visits create asset", () => {
     //     /* ==== End Cypress Studio ==== */
     // });
 
+    // it("should go to /create_asset page", () => {});
+
     it("should edit some fields", () => {
         cy.visit("/create_asset");
 
@@ -34,6 +36,26 @@ describe("when user visits create asset", () => {
 
         // Multiselect
         cy.get(`[data-test="projectType"]`).eq(1).click();
+    });
+
+    it("should display a non-clickable submit button", () => {
+        cy.get(`[data-test="submit"]`).should("be.disabled");
+    });
+
+    it("should edit some other fields", () => {
+        // Price
+        cy.get(`[data-test="price"]`).type("11");
+
+        // Repo link
+        cy.get(`[data-test="repositoryOrId"]`).type("11");
+
+        // // Description
+        // cy.get(`[data-test="projectDescription"]`)
+        //     .find("textarea")
+        //     .type(randomString(15));
+
+        // // Multiselect
+        // cy.get(`[data-test="projectType"]`).eq(1).click();
     });
 
     // it('Should see contributors', () => {
