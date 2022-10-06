@@ -1,4 +1,4 @@
-import { generateRandomString as rndStr } from "../utils";
+import { randomString } from "../utils";
 
 describe("when user visits create asset", () => {
     before(() => {
@@ -25,12 +25,12 @@ describe("when user visits create asset", () => {
         cy.visit("/create_asset");
 
         // Title
-        cy.get(`[data-test="projectName"]`).type("Asset " + rndStr(5));
+        cy.get(`[data-test="projectName"]`).type("Asset " + randomString(5));
 
         // Description
         cy.get(`[data-test="projectDescription"]`)
             .find("textarea")
-            .type(rndStr(15));
+            .type(randomString(15));
 
         // Multiselect
         cy.get(`[data-test="projectType"]`).eq(1).click();
