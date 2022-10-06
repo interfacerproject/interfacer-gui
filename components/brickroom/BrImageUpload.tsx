@@ -143,7 +143,7 @@ const BrImageUpload = (props: BrImageUploadProps) => {
                     <label
                         htmlFor="dropzone-file"
                         className="flex flex-col justify-center items-center w-full h-64 bg-gray-50 rounded-lg border-2 border-gray-300 border-dashed cursor-pointer hover:bg-gray-100"
-                        data-testID={props.testID}
+                        data-test={props.testID}
                     >
                         <>
                             {isNotImageSelected && (

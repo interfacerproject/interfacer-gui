@@ -36,7 +36,7 @@ const BrMdEditor = ({
             <label className="label">
                 <h4 className="label-text capitalize">{label}</h4>
             </label>
-            <div data-testID={testID}>
+            <div data-test={testID}>
                 <MdEditor
                     className={editorClass}
                     renderHTML={(text) => MdParser.render(text)}

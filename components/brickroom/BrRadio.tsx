@@ -43,7 +43,7 @@ const BrRadio = (props: BrRadioProps) => {
                                     props.onChange(e.target.value)
                                 }
                                 checked={props.value === unit.value}
-                                data-testID={props.testID}
+                                data-test={props.testID}
                             />
                             <div className="flex-auto ml-5">
                                 <h4

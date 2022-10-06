@@ -31,7 +31,7 @@ const BrInput = (props: BrInputProps) => {
                     className="w-full rounded-md input input-bordered focus:input-primary"
                     value={props.value}
                     ref={props.ref}
-                    data-testID={props.testID}
+                    data-test={props.testID}
                 />
                 <label className="flex-col items-start label">
                     {props.error && (
