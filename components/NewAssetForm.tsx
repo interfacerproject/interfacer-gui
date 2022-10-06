@@ -58,11 +58,18 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
     }
     useEffect(() => {
         isButtonEnabled() ?
-            setLogs(logs.concat(['info: mandatory fields compiled'])) :
-            setLogs(logs.concat(['warning: compile all mandatory fields']))
-        projectType === "Product" && setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
-        projectType === "Service" && setResourceSpec(instanceVariables?.specs?.specProjectService.id)
-        projectType === "Process" && setResourceSpec(instanceVariables?.specs?.specProjectProcess.id)
+            setLogs(logs.concat(['info: mandatory fields compiled'])) : setLogs(logs.concat(['warning: compile all mandatory fields']))
+        switch (projectType) {
+            case t('projectType.array[0]'):
+                setResourceSpec(instanceVariables?.specs?.specProjectDesign.id)
+                break
+            case t('projectType.array[1]'):
+                setResourceSpec(instanceVariables?.specs?.specProjectService.id)
+                break
+            case t('projectType.array[2]'):
+                setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
+                break
+        }
     }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price])
 
     const colors = ["error", "success", "warning", "info"];
@@ -179,7 +186,8 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
 
     const CREATE_ASSET = gql`mutation (
   $name: String!,
-  $metadata: String!,
+  $note: String!,
+  $metadata: JSON,
   $agent: ID!,
   $creationTime: DateTime!,
   $location: ID!,
@@ -199,7 +207,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
       resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit },
       toLocation: $location
     }
-    newInventoriedResource: { name: $name, note: $metadata, images: $images }
+    newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata }
   ) {
     economicEvent {
       id
@@ -249,14 +257,15 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
                 .concat([e.message]))
         })
     }
-
     async function onSubmit(e: any) {
         e.preventDefault()
+
         const variables = {
             resourceSpec: resourceSpec,
             agent: authId,
             name: projectName,
-            metadata: `description: ${projectDescription}, repositoryOrId: ${repositoryOrId}`,
+            note: `description: ${projectDescription}, repositoryOrId: ${repositoryOrId}`,
+            metadata: JSON.stringify({repositoryOrId: repositoryOrId, contributors: contributors}),
             location: locationId,
             oneUnit: instanceVariables?.units?.unitOne.id,
             creationTime: dayjs().toISOString(),
@@ -334,7 +343,6 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
     }
     return (
         <form onSubmit={onSubmit} className="w-full">
-
                 <BrInput label={t('projectName.label')} hint={t('projectName.hint')} value={projectName}
                          onChange={(e: ChangeEvent<HTMLInputElement>) => setAssetName(e.target.value)}
                          placeholder={t('projectName.placeholder')}/>
@@ -365,8 +373,6 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
                 <BrInput type={'number'} label={t('price.label')} hint={t('price.hint')} value={price}
                          placeholder={t('price.placeholder')}
                          onChange={(e: ChangeEvent<HTMLInputElement>) => setPrice(e.target.value)}/>
-
-                {/*todo:gestire meglio la fine del processo*/}
                 {assetCreatedId ? <Link href={assetCreatedId}>
                         <a className="btn btn-accent">{t("go to the asset")}</a>
                     </Link> :

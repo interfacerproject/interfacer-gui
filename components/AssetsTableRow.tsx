@@ -4,6 +4,7 @@ import BrTags from "./brickroom/BrTags";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import AssetImage from "./AssetImage";
 import devLog from "../lib/devLog";
+import AvatarUsers from "./AvatarUsers";
 
 const AssetsTableRow = (props: any) => {
     const e = props.asset;
@@ -65,6 +66,7 @@ const AssetsTableRow = (props: any) => {
                                     .primaryAccountable.name
                             }
                         />
+                        <AvatarUsers users={primaryIntent.resourceInventoriedAs.metadata?.contributors}/>
                     </td>
                     <td className="max-w-[12rem]">
                         <BrTags tags={primaryIntent?.resourceClassifiedAs} />

@@ -43,6 +43,7 @@ const AssetsTable = ({filter, noPrimaryAccountableFilter = false}: { filter?: an
             name
             id
             note
+            metadata
             onhandQuantity {
               hasUnit {
                 label
