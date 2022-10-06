@@ -1,10 +1,7 @@
 import {gql, useQuery} from "@apollo/client";
 import {useAuth} from "../lib/auth";
-import dayjs from "dayjs";
+import dayjs from "../lib/dayjs";
 import Link from "next/link";
-
-const relativeTime = require('dayjs/plugin/relativeTime')
-dayjs.extend(relativeTime)
 
 const QUERY_ASSETS = gql`query ($first: Int, $after: ID, $last: Int, $before: ID, $filter:ProposalFilterParams) {
   proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
