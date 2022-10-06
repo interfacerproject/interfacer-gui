@@ -13,7 +13,8 @@ type TagSelectorProps = {
     error?: string;
     label?: string;
     placeholder?: string;
-    testID?: string;
+    textTestID?: string;
+    tagsTestID?: string;
 };
 
 const TagSelelector = (props: TagSelectorProps) => {
@@ -41,12 +42,17 @@ const TagSelelector = (props: TagSelectorProps) => {
                 <label className="label mb-[-3px]">
                     <h4 className="label-text capitalize">{props.label}</h4>
                 </label>
-                <BrTags onCancel={cancelTag} tags={tags} />
+                <BrTags
+                    onCancel={cancelTag}
+                    tags={tags}
+                    testID={props.textTestID}
+                />
                 <BrTextField
                     placeholder={props.placeholder}
                     hint={props.hint}
                     error={props.error}
                     onChange={handleAdd}
+                    testID={props.textTestID}
                 />
             </div>
         </>

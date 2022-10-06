@@ -3,9 +3,11 @@ import React from "react";
 const BrTags = ({
     tags,
     onCancel,
+    testID,
 }: {
     tags?: Array<string>;
     onCancel?: (tag: string) => void;
+    testID?: string;
 }) => {
     const colors = (i: number) => {
         switch ((i + 1) % 6) {
@@ -42,6 +44,7 @@ const BrTags = ({
                                         onClick={() => {
                                             onCancel(tag);
                                         }}
+                                        data-test={testID}
                                     >
                                         x
                                     </button>
