@@ -1,3 +1,5 @@
+import { generateRandomString as rndStr } from "../utils";
+
 describe("when user visits create asset", () => {
     before(() => {
         cy.login();
@@ -19,41 +21,19 @@ describe("when user visits create asset", () => {
     //     /* ==== End Cypress Studio ==== */
     // });
 
-    it("sad", () => {
+    it("should edit some fields", () => {
         cy.visit("/create_asset");
-        /* ==== Generated with Cypress Studio ==== */
-        cy.get('form.w-full > :nth-child(1) > .w-full').clear('F');
-        cy.get('form.w-full > :nth-child(1) > .w-full').type('Fabulaser');
-        cy.get('.sec-md > .section-container').click();
-        cy.get(':nth-child(3) > .flex-auto > span.label-text').click();
-        cy.get(':nth-child(3) > .radio').check();
-        cy.get('.mb-3').click();
-        cy.get('#dropzone-file').click();
-        cy.get(':nth-child(6) > .form-control > .w-full').click();
-        cy.get('.badge-primary > .btn').click();
-        cy.get(':nth-child(6) > .form-control > .w-full').click();
-        cy.get('#react-select-13-placeholder').click();
-        cy.get('#react-select-13-option-1').click();
-        cy.get('.md\\:col-start-8').click();
-        cy.get(':nth-child(9) > .w-full').clear('12');
-        cy.get(':nth-child(9) > .w-full').type('12');
-        cy.get('.gap-2 > :nth-child(1) > .w-full').clear('F');
-        cy.get('.gap-2 > :nth-child(1) > .w-full').type('Fatto');
-        cy.get('#react-select-11-placeholder').click();
-        cy.get('#react-select-11-input').clear();
-        cy.get('#react-select-11-input').type('online{enter}');
-        cy.get(':nth-child(5) > .w-full').clear('gi');
-        cy.get(':nth-child(5) > .w-full').type('git.com/miao');
-        cy.get('.css-qc6sy-singleValue').click();
-        cy.get('.gap-2 > :nth-child(1) > .w-full').clear('Fatto');
-        cy.get(':nth-child(9) > .w-full').clear('12');
-        cy.get(':nth-child(9) > .w-full').type('12');
-        cy.get(':nth-child(2) > .border > .css-v2jqz2-control').click();
-        cy.get('#react-select-11-input').clear();
-        cy.get('.md\\:col-start-8').click();
-        cy.get(':nth-child(2) > .border > .css-v2jqz2-control > .css-etm973-ValueContainer').click();
-        cy.get('.md\\:col-start-8').click();
-        /* ==== End Cypress Studio ==== */
+
+        // Title
+        cy.get(`[data-test="projectName"]`).type("Asset " + rndStr(5));
+
+        // Description
+        cy.get(`[data-test="projectDescription"]`)
+            .find("textarea")
+            .type(rndStr(15));
+
+        // Multiselect
+        cy.get(`[data-test="projectType"]`).eq(1).click();
     });
 
     // it('Should see contributors', () => {
