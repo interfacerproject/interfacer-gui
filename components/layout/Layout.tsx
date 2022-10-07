@@ -5,7 +5,6 @@ import { useAuth } from "../../lib/auth";
 import SignIn from "../../pages/sign_in";
 import { useRouter } from "next/router";
 
-
 type layoutProps = {
     children: ReactNode;
 };
@@ -25,8 +24,10 @@ const Layout: React.FunctionComponent<layoutProps> = (
     // Closes sidebar automatically when route changes
     useEffect(() => {
         router.events.on("routeChangeComplete", () => {
-            (document.getElementById("my-drawer") as HTMLInputElement).checked =
-                false;
+            let drawer = document.getElementById("my-drawer");
+            if (drawer) {
+                (drawer as HTMLInputElement).checked = false;
+            }
         });
     });
 
