@@ -17,6 +17,7 @@ describe("LocationMenu component", () => {
     it("should check that text between two languages is different", () => {
         // Getting text from a button
         const item = ".ml-4.btn.btn-outline.btn-primary";
+
         cy.get(item).then((el) => {
             // Saving text from an item, in order to check its change
             const text = el.text();
