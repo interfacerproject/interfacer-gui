@@ -60,9 +60,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
         isButtonEnabled() ?
             setLogs(logs.concat(['info: mandatory fields compiled'])) :
             setLogs(logs.concat(['warning: compile all mandatory fields']))
-        projectType === "Product" && setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
-        projectType === "Service" && setResourceSpec(instanceVariables?.specs?.specProjectService.id)
-        projectType === "Process" && setResourceSpec(instanceVariables?.specs?.specProjectProcess.id)
+        setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
     }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price])
 
     const colors = ["error", "success", "warning", "info"];
@@ -199,7 +197,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
       resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit },
       toLocation: $location
     }
-    newInventoriedResource: { name: $name, note: $metadata, images: $images }
+    newInventoriedResource: { name: $name, note: $metadata, images: $images, classifiedAs: $tags }
   ) {
     economicEvent {
       id

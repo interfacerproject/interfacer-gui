@@ -36,6 +36,7 @@ const AssetsTable = ({filter, noPrimaryAccountableFilter = false}: { filter?: an
             conformsTo {
               name
             }
+            classifiedAs
             primaryAccountable{
               name
               id
