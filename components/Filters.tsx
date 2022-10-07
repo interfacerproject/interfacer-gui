@@ -8,6 +8,7 @@ import SelectTags from "./SelectTags";
 const Filters = ({noPrimaryAccountableFilter=false}) => {
     const [contributors, setContributors] = useState<Array<{ value:string, label:string }>>([]);
     const [conformsTo, setConformsTo] = useState<Array<{ value:string, label:string }>>([]);
+    const [tags, setTags] = useState<Array<string>>([]);
     const {t} = useTranslation('lastUpdatedProps')
     const router = useRouter()
     const applyFilters = () => {
@@ -43,7 +44,7 @@ const Filters = ({noPrimaryAccountableFilter=false}) => {
                                                                  setContributors={setContributors}
                                                                  label={t('filters.contributors')}/>}
                 <SelectAssetType onChange={setConformsTo} label={t('filters.type')} assetType={conformsTo}/>
-                <SelectTags />
+                <SelectTags label={t('filters.tags')} onChange={setTags}/>
                 <div className="grid grid-cols-2 gap-2 mt-4">
                     <div>
                         <button className="btn btn-outline btn-error btn-block"

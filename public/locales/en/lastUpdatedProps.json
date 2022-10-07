@@ -14,6 +14,7 @@
         "contributors": "Contributors",
         "type": "Type",
         "apply": "Apply",
-        "reset": "Reset All"
+        "reset": "Reset All",
+        "tags": "Tags"
     }
 }

@@ -12,6 +12,7 @@ import {useTranslation} from "next-i18next";
 import {gql, useMutation, useQuery} from "@apollo/client";
 import devLog from "../lib/devLog";
 import dayjs from "dayjs";
+import SelectTags from "./SelectTags";
 
 type Image = {
     description: string,
@@ -31,7 +32,7 @@ type NewAssetFormProps = {
 
 const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
     const {authId} = useAuth()
-    const [projectType, setAssetType] = useState('')
+    const [assetType, setAssetType] = useState('')
     const [projectName, setAssetName] = useState('')
     const [projectDescription, setAssetDescription] = useState('')
     const [repositoryOrId, setRepositoryOrId] = useState('')
@@ -49,7 +50,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
     const {t} = useTranslation('createProjectProps')
 
     const isButtonEnabled = () => {
-        return projectType.length > 0 &&
+        return assetType.length > 0 &&
             projectName.length > 0 &&
             projectDescription.length > 0 &&
             repositoryOrId.length > 0 &&
@@ -61,7 +62,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
             setLogs(logs.concat(['info: mandatory fields compiled'])) :
             setLogs(logs.concat(['warning: compile all mandatory fields']))
         setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
-    }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price])
+    }, [assetType, projectName, projectDescription, repositoryOrId, locationId, locationName, price])
 
     const colors = ["error", "success", "warning", "info"];
     const logsClass = (text: string) => colors.includes(text.split(':')[0]) ?
@@ -197,7 +198,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
       resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit },
       toLocation: $location
     }
-    newInventoriedResource: { name: $name, note: $metadata, images: $images, classifiedAs: $tags }
+    newInventoriedResource: { name: $name, note: $metadata, images: $images }
   ) {
     economicEvent {
       id
@@ -340,15 +341,15 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
                             label={t('projectDescription.label')}
                             hint={t('projectDescription.hint')}/>
                 <BrRadio array={t('projectType.array', {returnObjects: true})} label={t('projectType.label')}
-                         hint={t('projectType.hint')} onChange={setAssetType} value={projectType}/>
+                         hint={t('projectType.hint')} onChange={setAssetType} value={assetType}/>
                 <BrImageUpload onChange={setImages} setImagesFiles={setImagesFiles} label={t('imageUpload.label')}
                                placeholder={t('imageUpload.placeholder')} value={imagesFiles}
                                hint={t('imageUpload.hint')}/>
                 <BrInput label={t('repositoryOrId.label')} hint={t('repositoryOrId.hint')}
                          value={repositoryOrId} placeholder={t('repositoryOrId.placeholder')}
                          onChange={(e: ChangeEvent<HTMLInputElement>) => setRepositoryOrId(e.target.value)}/>
-                <TagSelector label={t('projectTags.label')} hint={t('projectTags.hint')}
-                             onSelect={(tags) => setAssetTags(tags)} placeholder={t('projectTags.placeholder')}/>
+            <SelectTags label={t('projectTags.label')} hint={t('projectTags.hint')} canCreateTags
+                        onChange={setAssetTags}placeholder={t('projectTags.placeholder')}/>
                 <div className="grid grid-cols-2 gap-2">
                     <BrInput label={t('location.name.label')} hint={t('location.name.hint')}
                              value={locationName} placeholder={t('location.name.placeholder')}
