@@ -13,6 +13,7 @@ import {gql, useMutation, useQuery} from "@apollo/client";
 import devLog from "../lib/devLog";
 import dayjs from "dayjs";
 import SelectTags from "./SelectTags";
+import SelectAssetTypeRadio from "./SelectAssetTypeRadio";
 
 type Image = {
     description: string,
@@ -32,7 +33,6 @@ type NewAssetFormProps = {
 
 const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
     const {authId} = useAuth()
-    const [assetType, setAssetType] = useState('')
     const [projectName, setAssetName] = useState('')
     const [projectDescription, setAssetDescription] = useState('')
     const [repositoryOrId, setRepositoryOrId] = useState('')
@@ -50,7 +50,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
     const {t} = useTranslation('createProjectProps')
 
     const isButtonEnabled = () => {
-        return assetType.length > 0 &&
+        return resourceSpec.length > 0 &&
             projectName.length > 0 &&
             projectDescription.length > 0 &&
             repositoryOrId.length > 0 &&
@@ -61,8 +61,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
         isButtonEnabled() ?
             setLogs(logs.concat(['info: mandatory fields compiled'])) :
             setLogs(logs.concat(['warning: compile all mandatory fields']))
-        setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
-    }, [assetType, projectName, projectDescription, repositoryOrId, locationId, locationName, price])
+    }, [projectName, projectDescription, repositoryOrId, locationId, locationName, price, resourceSpec])
 
     const colors = ["error", "success", "warning", "info"];
     const logsClass = (text: string) => colors.includes(text.split(':')[0]) ?
@@ -340,8 +339,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
                 <BrMdEditor onChange={handleEditorChange} className="my-2" editorClass="h-60"
                             label={t('projectDescription.label')}
                             hint={t('projectDescription.hint')}/>
-                <BrRadio array={t('projectType.array', {returnObjects: true})} label={t('projectType.label')}
-                         hint={t('projectType.hint')} onChange={setAssetType} value={assetType}/>
+                <SelectAssetTypeRadio setConformsTo={setResourceSpec} />
                 <BrImageUpload onChange={setImages} setImagesFiles={setImagesFiles} label={t('imageUpload.label')}
                                placeholder={t('imageUpload.placeholder')} value={imagesFiles}
                                hint={t('imageUpload.hint')}/>
