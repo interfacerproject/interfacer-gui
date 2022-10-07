@@ -1,5 +1,18 @@
 import { RouteMatcher } from "cypress/types/net-stubbing";
 
+export function randomString(length = 5) {
+    let result = "";
+    const characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(
+            Math.floor(Math.random() * charactersLength)
+        );
+    }
+    return result;
+}
+
 export function waitForData(
     requestUrl: RouteMatcher = "http://65.109.11.42:9000/api",
     name = "waitForData"
@@ -8,10 +21,6 @@ export function waitForData(
     cy.intercept(requestUrl).as(name);
     // Waiting for the request
     cy.wait(`@${name}`);
-}
-
-export function randomString() {
-    return Math.random().toString(32).substring(2);
 }
 
 export function randomEmail() {

@@ -1,172 +1,130 @@
-import React, {useState} from "react";
 import Link from "next/link";
+
+import { useAuth } from "../lib/auth";
+import { useTranslation } from "next-i18next";
+
+import LoginBtn from "./LoginMenu";
+import { IfSidebarItemProps } from "./brickroom/IfSidebarItem";
+import IfSideBarLink, { IfSideBarLinkProps } from "./brickroom/IfSideBarLink";
+import IfSidebarDropdown from "./brickroom/IfSidebarDropdown";
+
 import {
     BriefcaseIcon,
     ChatIcon,
     CubeIcon,
     HomeIcon,
     GlobeIcon,
-    ChevronUpIcon,
-    ChevronDownIcon,
     SupportIcon,
 } from "@heroicons/react/outline";
-import LoginBtn from "./LoginMenu";
-import {useRouter} from "next/router";
-import IfSideBarButton from "./brickroom/IfSideBarButton";
-import {useAuth} from "../lib/auth";
-import {useTranslation} from "next-i18next";
 
+//
 
 function Sidebar() {
-    const {t} = useTranslation("SideBarProps");
-    const SideBarProps = {
-        Home: {name: t("home"), link: "/", svg: <HomeIcon className="float-left w-5 h-5 mr-2"/>},
-        createAsset: {
-            name: t("create_asset"),
-            link: "/create_asset",
-            tag: "NEW"
+    const { t } = useTranslation("SideBarProps");
+
+    // Links
+    const items: Record<string, IfSideBarLinkProps> = {
+        home: {
+            text: t("home"),
+            link: "/",
+            leftIcon: <HomeIcon className="w-5 h-5" />,
         },
-        myAsset: {
-            name: t("my_assets"),
+        // Dropdown -> My stuff
+        createAsset: {
+            text: t("create_asset"),
+            link: "/create_asset",
+            tag: "NEW",
+        },
+        myAssets: {
+            text: t("my_assets"),
             link: "/profile/my_profile",
         },
+        // Dropdown -> Assets
         latestAssets: {
-            name: t("latest_assets"),
+            text: t("latest_assets"),
             link: "/assets",
         },
         resources: {
-            name: t("imported_losh"),
+            text: t("imported_losh"),
             link: "/resources",
-            tag: "NEW"
+            tag: "NEW",
         },
         reportBug: {
-            name: t("report_bug"),
+            text: t("report_bug"),
             link: "https://github.com/dyne/interfacer-gui/issues/new",
-            svg: <SupportIcon className="float-left w-5 h-5 mr-2"/>,
-            target: "_blank"
+            leftIcon: <SupportIcon className="w-5 h-5" />,
+            target: "_blank",
         },
         userGuide: {
-            name: t("user_guide"),
+            text: t("user_guide"),
             link: "/",
-            svg: <ChatIcon className="float-left w-5 h-5 mr-2"/>,
+            leftIcon: <ChatIcon className="w-5 h-5" />,
             disabled: true,
         },
         map: {
-            name: t("map"),
+            text: t("map"),
             link: "/",
-            svg: <GlobeIcon className="float-left w-5 h-5 mr-2"/>,
+            leftIcon: <GlobeIcon className="w-5 h-5" />,
             disabled: true,
         },
-    }
-    const [isAssetsMenuOpen, setIsAssetsMenuOpen] = useState(false)
-    const [isMyStuffMenuOpen, setIsMyStuffMenuOpen] = useState(false)
-    const router = useRouter()
-    const isActive = (path: string) => path === router.asPath
-    const isNewProcess = router.asPath === "/new_process"
-    const {isSignedIn} = useAuth()
-    return (<>
-            <div className="overflow-y-auto bg-white border-r title w-72 text-primary-content border-primary">
-                {!isNewProcess && <>
-                    <div className="w-auto h-16 pt-4 mb-4 border-b border-primary">
-                        <Link href="/">
-                            <a>
-                                <div className="mx-auto logo"/>
-                            </a>
-                        </Link>
-                    </div>
-                    <ul className="p-0">
-                        <li>
-                            <IfSideBarButton text={"Home"} link={"/"}
-                                             svg={<HomeIcon className="float-left w-5 h-5 mr-2"/>}
-                                             active={isActive("/")} w={64}/>
-                        </li>
-                        <li tabIndex={0}>
-                            <button className="w-64 gap-2 pl-0 ml-4 font-medium normal-case border-0 btn btn-ghost text-primary hover:bg-amber-200"
-                               onClick={() => setIsMyStuffMenuOpen(!isMyStuffMenuOpen)}
-                            >
-                                <span className={`ml-3 flex justify-between w-full`}>
-                                    <div className="flex items-center space-x-2">
-                                        <BriefcaseIcon className="w-5 h-5"/>
-                                        <span className="whitespace-nowrap">{t("my_stuff")}</span>
-                                    </div>
-                                    {isMyStuffMenuOpen ? <ChevronUpIcon className="w-5 h-5"/> :
-                                        <ChevronDownIcon className="w-5 h-5"/>}
-                                </span>
-                            </button>
-                            {isMyStuffMenuOpen && <ul className="pl-4">
-                                <li>
-                                    <IfSideBarButton w="60" text={t("create_asset")}
-                                                     link={SideBarProps.createAsset.link}
-                                                     active={isActive(SideBarProps.createAsset.link)}
-                                                     tag={SideBarProps.createAsset.tag}/>
-                                </li>
-                                <li>
-                                    <IfSideBarButton w="60" text={SideBarProps.myAsset.name}
-                                                     active={isActive(SideBarProps.myAsset.link)}
-                                                     link={SideBarProps.myAsset.link}/>
-                                </li>
-                            </ul>}
-                        </li>
-                        <li>
-                            <button className="w-64 gap-2 pl-0 ml-4 font-medium normal-case border-0 btn btn-ghost text-primary hover:bg-amber-200"
-                                    onClick={() => setIsAssetsMenuOpen(!isAssetsMenuOpen)}
-                            >
-                                <span className={`ml-3 flex justify-between w-full`}
-                                        >
-                                    <div className="flex items-center space-x-2">
-                                        <CubeIcon className="w-5 h-5"/>
-                                        <span className="whitespace-nowrap">{t("assets")}</span>
-                                    </div>
-                                    {isAssetsMenuOpen ? <ChevronUpIcon className="w-5 h-5"/> :
-                                        <ChevronDownIcon className="w-5 h-5"/>}
-                                </span>
-                            </button>
-                            {isAssetsMenuOpen && <ul className="pl-4">
-                                <li>
-                                    <IfSideBarButton w="60" text={SideBarProps.latestAssets.name}
-                                                     active={isActive(SideBarProps.latestAssets.link)}
-                                                     link={SideBarProps.latestAssets.link}/>
-                                </li>
-                                <li>
-                                    <IfSideBarButton w="60" text={SideBarProps.resources.name}
-                                                     active={isActive(SideBarProps.resources.link)}
-                                                     tag={SideBarProps.resources.tag}
-                                                     link={SideBarProps.resources.link}/>
-                                </li>
-                            </ul>}
-                        </li>
-                        <li>
-                            <IfSideBarButton w={64} target="_blank"
-                                             text={SideBarProps.reportBug.name}
-                                             link={SideBarProps.reportBug.link}
-                                             svg={SideBarProps.reportBug.svg}
-                                             active={isActive(SideBarProps.reportBug.link)}
-                            />
-                        </li>
-                        <li>
-                            <IfSideBarButton disabled={true} w={64}
-                                             text={SideBarProps.userGuide.name}
-                                             link={SideBarProps.userGuide.link}
-                                             svg={SideBarProps.userGuide.svg}
-                                             active={isActive(SideBarProps.userGuide.link)}
-                            />
-                        </li>
-                        <li>
-                            <IfSideBarButton disabled={true} w={64}
-                                             text={SideBarProps.map.name}
-                                             link={SideBarProps.map.link}
-                                             svg={SideBarProps.map.svg}
-                                             active={isActive(SideBarProps.map.link)}
-                            />
-                        </li>
-                    </ul>
-                    {isSignedIn() && <span className="inline-block align-bottom">
-                    <LoginBtn/>
-                </span>}
-                </>}
+    };
+
+    // Dropdown items
+    const drItems: Record<string, IfSidebarItemProps> = {
+        assets: {
+            text: t("assets"),
+            leftIcon: <CubeIcon className="w-5 h-5" />,
+        },
+        myStuff: {
+            text: t("create_asset"),
+            leftIcon: <BriefcaseIcon className="w-5 h-5" />,
+        },
+    };
+
+    const { isSignedIn } = useAuth();
+
+    //
+
+    return (
+        <div className="overflow-y-auto bg-white border-r title w-72 text-primary-content border-primary">
+            <div className="flex flex-col items-stretch justify-between flex-nowrap">
+                {/* Top logo */}
+                <div className="flex flex-row items-stretch justify-center h-16 px-4 py-2 border-b border-primary">
+                    <Link href="/">
+                        <a className="flex flex-row items-center justify-center rounded-lg grow hover:bg-amber-200">
+                            <div className="logo" />
+                        </a>
+                    </Link>
+                </div>
+
+                {/* The links */}
+                <ul className="p-4 space-y-1">
+                    <IfSideBarLink {...items.home} />
+
+                    <IfSidebarDropdown {...drItems.myStuff}>
+                        <IfSideBarLink {...items.createAsset} />
+                        <IfSideBarLink {...items.myAssets} />
+                    </IfSidebarDropdown>
+
+                    <IfSidebarDropdown {...drItems.assets}>
+                        <IfSideBarLink {...items.latestAssets} />
+                        <IfSideBarLink {...items.resources} />
+                    </IfSidebarDropdown>
+
+                    <IfSideBarLink {...items.reportBug} />
+                    <IfSideBarLink {...items.userGuide} />
+                    <IfSideBarLink {...items.map} />
+                </ul>
             </div>
-        </>
-    )
+
+            {/* Logout button if signed in */}
+            {isSignedIn() && (
+                <span className="inline-block align-bottom">
+                    <LoginBtn />
+                </span>
+            )}
+        </div>
+    );
 }
 
 export default Sidebar;
