@@ -4,5 +4,10 @@
   "trailingComma": "es5",
   "semi": true,
   "singleQuote": false,
-  "printWidth": 120
+  "printWidth": 120,
+  "arrowParens": "avoid",
+  "proseWrap": "preserve",
+  "quoteProps": "as-needed",
+  "bracketSameLine": false,
+  "bracketSpacing": true,
 }
