@@ -17,30 +17,35 @@ a {
   box-sizing: border-box;
 }
 
-h1, .heading1 {
+h1,
+.heading1 {
   @apply text-4xl font-bold leading-11 font-display;
 }
 
-h2, .heading2 {
+h2,
+.heading2 {
   @apply text-2xl font-bold leading-8 font-display;
 }
 
-h3, .heading3 {
+h3,
+.heading3 {
   @apply text-xl font-bold leading-6 font-display;
 }
 
-h4, .heading4 {
+h4,
+.heading4 {
   @apply text-base font-semibold font-display;
 }
 
-p, .paragraph {
+p,
+.paragraph {
   @apply text-sm;
 }
 
 .logo {
   width: 169px;
   height: 20px;
-  background-image: url('/logo.svg');
+  background-image: url("/logo.svg");
   @apply bg-cover;
   cursor: pointer;
 }

@@ -5,54 +5,54 @@ import "../../styles/globals.scss";
 //
 
 describe("TagSelector.cy.tsx", () => {
-    it("should display the tag selector, input some tags and remove one", () => {
-        /**
-         * Setup
-         */
+  it("should display the tag selector, input some tags and remove one", () => {
+    /**
+     * Setup
+     */
 
-        // Mounting component
-        cy.mount(<TagSelector></TagSelector>);
+    // Mounting component
+    cy.mount(<TagSelector></TagSelector>);
 
-        // Getting textarea
-        const input = cy.get("textarea");
+    // Getting textarea
+    const input = cy.get("textarea");
 
-        // Function to select badges
-        const getBadgeByText = (text: string) => {
-            return cy.contains(text).filter(".badge");
-        };
+    // Function to select badges
+    const getBadgeByText = (text: string) => {
+      return cy.contains(text).filter(".badge");
+    };
 
-        /**
-         * Checking if badge gets created
-         */
+    /**
+     * Checking if badge gets created
+     */
 
-        // Variables
-        const word1 = "test";
-        // Typing in input
-        input.type(word1);
-        // Getting badge
-        const badge1 = getBadgeByText(word1);
-        // Exists?
-        badge1.should("exist");
-        // Has text?
-        badge1.should("include.text", word1);
+    // Variables
+    const word1 = "test";
+    // Typing in input
+    input.type(word1);
+    // Getting badge
+    const badge1 = getBadgeByText(word1);
+    // Exists?
+    badge1.should("exist");
+    // Has text?
+    badge1.should("include.text", word1);
 
-        /**
-         * Checking if other badges get created
-         */
+    /**
+     * Checking if other badges get created
+     */
 
-        for (let s of ["mario", "naso"]) {
-            input.type(" ");
-            input.type(s);
-            getBadgeByText(s).should("exist");
-        }
+    for (const s of ["mario", "naso"]) {
+      input.type(" ");
+      input.type(s);
+      getBadgeByText(s).should("exist");
+    }
 
-        /**
-         * Deleting first badge
-         */
+    /**
+     * Deleting first badge
+     */
 
-        // Clicking the button
-        badge1.children("button").click();
-        // Checking that badge isn't visible anymore
-        badge1.should("not.exist");
-    });
+    // Clicking the button
+    badge1.children("button").click();
+    // Checking that badge isn't visible anymore
+    badge1.should("not.exist");
+  });
 });

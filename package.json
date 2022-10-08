@@ -7,14 +7,22 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "fix-lint": "eslint . --ext ts --ext tsx --ext js --fix",
+    "format": "prettier --write .",
+    "check-types": "tsc --pretty --noEmit",
+    "check-format": "prettier --check .",
+    "check-lint": "eslint . --ext ts --ext tsx --ext js",
+    "commit": "cz",
     "reload": "pm2 startOrGracefulReload ecosystem.config.js",
     "cypress": "cypress open",
     "cypress:headless": "cypress run",
     "test:component": "cypress run-ct --record",
     "e2e": "start-server-and-test dev http://localhost:3000 cypress",
     "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless",
-    "test": "start-server-and-test dev http://localhost:3000 cypress:headless",
-    "translate": "pnpx json-autotranslate -s deepl-free -i public/locales -c YOUR_DEEPL_FREE_KEY"
+    "test": "pnpm run check-types && pnpm run check-format && pnpm run check-lint && http://localhost:3000 cypress:headless",
+    "translate": "pnpx json-autotranslate -s deepl-free -i public/locales -c YOUR_DEEPL_FREE_KEY",
+    "prepare": "husky install",
+    "release": "HUSKY=0 standard-version --no-verify"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
@@ -64,10 +72,29 @@
     "zenroom": "2.2.3-f0193d51"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "commitizen": "^4.2.5",
+    "commitlint": "^17.1.2",
     "cypress": "^10.7.0",
     "cypress-fail-fast": "^5.0.1",
-    "eslint": "8.23.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.23.0",
     "eslint-config-next": "12.2.5",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-react": "^7.31.8",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
     "start-server-and-test": "^1.14.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }

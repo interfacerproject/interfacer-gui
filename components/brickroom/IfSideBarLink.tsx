@@ -7,26 +7,28 @@ import IfSidebarItem, { IfSidebarItemProps } from "./IfSidebarItem";
 //
 
 export interface IfSideBarLinkProps extends IfSidebarItemProps {
-    link: string;
-    target?: string;
+  link: string;
+  target?: string;
 }
 
-export default (props: IfSideBarLinkProps) => {
-    const { link, target, disabled } = props;
+const IfSideBarLink = (props: IfSideBarLinkProps) => {
+  const { link, target, disabled } = props;
 
-    // Adding active state
-    const router = useRouter();
-    const active = link === router.asPath;
+  // Adding active state
+  const router = useRouter();
+  const active = link === router.asPath;
 
-    // The core item
-    const item = <IfSidebarItem {...props} active={active} />;
+  // The core item
+  const item = <IfSidebarItem {...props} active={active} />;
 
-    // The item with the link
-    const wrappedItem = (
-        <Link href={link} passHref>
-            <a target={target}>{item}</a>
-        </Link>
-    );
+  // The item with the link
+  const wrappedItem = (
+    <Link href={link} passHref>
+      <a target={target}>{item}</a>
+    </Link>
+  );
 
-    return <li>{disabled ? item : wrappedItem}</li>;
+  return <li>{disabled ? item : wrappedItem}</li>;
 };
+
+export default IfSideBarLink;

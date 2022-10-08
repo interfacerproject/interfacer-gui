@@ -1,49 +1,49 @@
 import { randomEmail, randomString, getTextInput } from "../../utils";
 
 describe("KeyringGeneration component", () => {
-    it("should go to /sign_up and register a user (in order to go to keyring)", () => {
-        // Signing up before viewing keyring
-        cy.visit("/sign_up");
-        // Typing email
-        cy.get("input[type=email]").type(randomEmail());
-        // Name
-        getTextInput().eq(0).type(randomString());
-        // Username
-        getTextInput().eq(1).type(randomString());
-        // Clicking the button
-        cy.get("form > button.btn-primary").click();
-    });
+  it("should go to /sign_up and register a user (in order to go to keyring)", () => {
+    // Signing up before viewing keyring
+    cy.visit("/sign_up");
+    // Typing email
+    cy.get("input[type=email]").type(randomEmail());
+    // Name
+    getTextInput().eq(0).type(randomString());
+    // Username
+    getTextInput().eq(1).type(randomString());
+    // Clicking the button
+    cy.get("form > button.btn-primary").click();
+  });
 
-    // Now the Keyring (step 1) should be visible
+  // Now the Keyring (step 1) should be visible
 
-    it("should render the keyring", () => {
-        // There should be five questions
-        getTextInput().should("have.length", 5);
-    });
+  it("should render the keyring", () => {
+    // There should be five questions
+    getTextInput().should("have.length", 5);
+  });
 
-    it("should type two questions, submit, then get an error", () => {
-        // Inputting two
-        getTextInput().eq(2).type(randomString());
-        getTextInput().eq(4).type(randomString());
-        // Submitting
-        cy.get("form > button").click();
-        // Alerts should be visible
-        cy.get("span.text-warning").should("be.visible");
-    });
+  it("should type two questions, submit, then get an error", () => {
+    // Inputting two
+    getTextInput().eq(2).type(randomString());
+    getTextInput().eq(4).type(randomString());
+    // Submitting
+    cy.get("form > button").click();
+    // Alerts should be visible
+    cy.get("span.text-warning").should("be.visible");
+  });
 
-    it("should type another question, submit, then proceed", () => {
-        // Answering
-        getTextInput().eq(0).type(randomString());
-        // Submitting
-        cy.get("form > button").click();
-    });
+  it("should type another question, submit, then proceed", () => {
+    // Answering
+    getTextInput().eq(0).type(randomString());
+    // Submitting
+    cy.get("form > button").click();
+  });
 
-    it("should display the passphrase, then log in", () => {
-        // Selecting the passphrase block by the font (may change in the future)
-        cy.get("span.font-mono").should("be.visible");
-        // Selecting "Login" button
-        cy.get(".btn.btn-block.btn-accent").click();
-        // The url should be now "/logged_in"
-        cy.url().should("include", "/logged_in");
-    });
+  it("should display the passphrase, then log in", () => {
+    // Selecting the passphrase block by the font (may change in the future)
+    cy.get("span.font-mono").should("be.visible");
+    // Selecting "Login" button
+    cy.get(".btn.btn-block.btn-accent").click();
+    // The url should be now "/logged_in"
+    cy.url().should("include", "/logged_in");
+  });
 });

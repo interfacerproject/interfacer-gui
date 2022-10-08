@@ -13,11 +13,9 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-
 // Import commands.js using ES2015 syntax:
-import './commands'
+import "./commands";
 import "cypress-localstorage-commands";
-
 
 declare global {
   namespace Cypress {
@@ -26,12 +24,11 @@ declare global {
        * Custom command to select DOM element by data-cy attribute.
        * @example cy.dataCy('greeting')
        */
-      login(): Chainable<Element>
-      checkLinks(): Chainable<Element>
+      login(): Chainable<Element>;
+      checkLinks(): Chainable<Element>;
     }
   }
 }
-
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

@@ -1,17 +1,11 @@
 {
-    "title": "Titel",
-    "description": "Beschreibung",
-    "Load more": "Mehr laden",
-    "tableHead": [
-        "Asset",
-        "Letzte Aktualisierung",
-        "Wert",
-        "Owner",
-        "Tags"
-    ],
-    "filters": {
-        "filter for": "Filtern nach",
-        "contributors": "Mitwirkende",
-        "type": "Typ"
-    }
+  "title": "Titel",
+  "description": "Beschreibung",
+  "Load more": "Mehr laden",
+  "tableHead": ["Asset", "Letzte Aktualisierung", "Wert", "Owner", "Tags"],
+  "filters": {
+    "filter for": "Filtern nach",
+    "contributors": "Mitwirkende",
+    "type": "Typ"
+  }
 }
