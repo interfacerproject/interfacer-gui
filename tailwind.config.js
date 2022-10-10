@@ -32,10 +32,19 @@ module.exports = {
                 "error-content": "#300502",
                 "--rounded-btn": "2px",
             },
-        }, ],
+        },],
     },
     theme: {
         extend: {
+            keyframes: {
+                'swing': {
+                    '0%,100%': {transform: 'rotate(15deg)'},
+                    '50%': {transform: 'rotate(-15deg)'},
+                }
+            },
+            animation: {
+                'swing': 'swing 1s infinite'
+            },
             lineHeight: {
                 '11': '3rem',
             },

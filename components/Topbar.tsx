@@ -1,7 +1,7 @@
 import React from 'react';
-import {BellIcon} from "@heroicons/react/outline";
 import LocationMenu from "./LocationMenu";
 import { useRouter } from 'next/router';
+import NotificationBell from "./NotificationBell";
 
 type topbarProps = {
     userMenu?: boolean,
@@ -33,10 +33,8 @@ function Topbar({search=true, children, userMenu=true, cta}:topbarProps) {
             </div>
             <div className="navbar-end">
                 {cta}
-                {userMenu &&
-                 <button className="mr-4 bg-white btn btn-circle btn-accent" disabled>
-                     <BellIcon className="w-5 h-5"/>
-                </button>}
+                {userMenu && <NotificationBell />}
+
                 {
                     isSignin && <div className="flex mr-2 space-x-2">
                         <button className="btn btn-primary" onClick={() => router.push('/sign_in')}>Login</button>

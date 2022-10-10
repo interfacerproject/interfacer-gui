@@ -65,10 +65,6 @@ describe('AddContributors.cy.tsx', () => {
         cy.get('input').type('corso umb')
         cy.get('#react-select-2-option-0').should('exist').click()
         // Assert
-        cy.get('@setSelected').should('have.been.calledWith', {
-            "lat": selectedMock.lat,
-            "lng": selectedMock.lng,
-            "address": selectedMock.address
-        })
+        cy.get('@setSelected').should('have.been.called')
     })
 })

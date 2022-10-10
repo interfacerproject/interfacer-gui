@@ -1,6 +1,6 @@
 {
     "title": "Latest assets",
-    "description": "Find here all the assets, the latest ones are on top.",
+    "description": "Most recently updated assets",
     "Load more": "Load more...",
     "tableHead": [
         "Asset",
@@ -14,6 +14,7 @@
         "contributors": "Contributors",
         "type": "Type",
         "apply": "Apply",
-        "reset": "Reset All"
+        "reset": "Reset All",
+        "tags": "Tags"
     }
 }

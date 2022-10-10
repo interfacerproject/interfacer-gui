@@ -3,10 +3,12 @@ import AddContributors from "./AddContributors";
 import SelectAssetType from "./SelectAssetType";
 import {useTranslation} from "next-i18next";
 import {useRouter} from "next/router";
+import SelectTags from "./SelectTags";
 
 const Filters = ({noPrimaryAccountableFilter=false}) => {
     const [contributors, setContributors] = useState<Array<{ value:string, label:string }>>([]);
     const [conformsTo, setConformsTo] = useState<Array<{ value:string, label:string }>>([]);
+    const [tags, setTags] = useState<Array<string>>([]);
     const {t} = useTranslation('lastUpdatedProps')
     const router = useRouter()
     const applyFilters = () => {
@@ -38,10 +40,11 @@ const Filters = ({noPrimaryAccountableFilter=false}) => {
     return(
         <div className="p-4 bg-white border rounded-lg shadow">
                 <h4 className="mb-4 text-2xl font-bold">{t('filters.filter for')}:</h4>
-                {!noPrimaryAccountableFilter && <AddContributors contributors={contributors}
+                {!noPrimaryAccountableFilter && <AddContributors contributors={contributors.map((c: any) => ({name:c.label, id:c.value}))}
                                                                  setContributors={setContributors}
                                                                  label={t('filters.contributors')}/>}
                 <SelectAssetType onChange={setConformsTo} label={t('filters.type')} assetType={conformsTo}/>
+                <SelectTags label={t('filters.tags')} onChange={setTags}/>
                 <div className="grid grid-cols-2 gap-2 mt-4">
                     <div>
                         <button className="btn btn-outline btn-error btn-block"

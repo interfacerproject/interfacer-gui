@@ -18,6 +18,8 @@ import { useTranslation } from "next-i18next";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
 import dayjs from "dayjs";
+import SelectTags from "./SelectTags";
+import SelectAssetTypeRadio from "./SelectAssetTypeRadio";
 
 type Image = {
     description: string;
@@ -35,32 +37,27 @@ type NewAssetFormProps = {
     setLogs: Dispatch<SetStateAction<Array<string>>>;
 };
 
-const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
-    const { authId } = useAuth();
+const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
+    const {authId} = useAuth()
     const [projectType, setAssetType] = useState("");
-    const [projectName, setAssetName] = useState("");
-    const [projectDescription, setAssetDescription] = useState("");
-    const [repositoryOrId, setRepositoryOrId] = useState("");
-    const [assetTags, setAssetTags] = useState([] as string[]);
-    const [locationId, setLocationId] = useState("");
-    const [location, setLocation] = useState({} as any);
-    const [locationName, setLocationName] = useState("");
-    const [price, setPrice] = useState("");
-    const [resourceSpec, setResourceSpec] = useState("");
-    const [resourceId, setResourceId] = useState("");
-    const [images, setImages] = useState([] as Images);
-    const [contributors, setContributors] = useState(
-        [] as { value: string; label: string }[]
-    );
-    const [imagesFiles, setImagesFiles] = useState([] as Array<any>);
-    const [assetCreatedId, setAssetCreatedId] = useState(
-        undefined as string | undefined
-    );
-    const { t } = useTranslation("createProjectProps");
+    const [projectName, setAssetName] = useState('')
+    const [projectDescription, setAssetDescription] = useState('')
+    const [repositoryOrId, setRepositoryOrId] = useState('')
+    const [assetTags, setAssetTags] = useState([] as string[])
+    const [locationId, setLocationId] = useState('')
+    const [location, setLocation] = useState({} as any)
+    const [locationName, setLocationName] = useState('')
+    const [price, setPrice] = useState('')
+    const [resourceSpec, setResourceSpec] = useState('')
+    const [resourceId, setResourceId] = useState('')
+    const [images, setImages] = useState([] as Images)
+    const [contributors, setContributors] = useState([] as { value: string, label: string }[])
+    const [imagesFiles, setImagesFiles] = useState([] as Array<any>)
+    const [assetCreatedId, setAssetCreatedId] = useState(undefined as string | undefined)
+    const {t} = useTranslation('createProjectProps')
 
     const isButtonEnabled = () => {
-        return (
-            projectType.length > 0 &&
+        return resourceSpec.length > 0 &&
             projectName.length > 0 &&
             projectDescription.length > 0 &&
             repositoryOrId.length > 0 &&
@@ -70,15 +67,20 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     };
 
     useEffect(() => {
-        isButtonEnabled()
-            ? setLogs(logs.concat(["info: mandatory fields compiled"]))
-            : setLogs(logs.concat(["warning: compile all mandatory fields"]));
-        projectType === "Product" &&
-            setResourceSpec(instanceVariables?.specs?.specProjectProduct.id);
-        projectType === "Service" &&
-            setResourceSpec(instanceVariables?.specs?.specProjectService.id);
-        projectType === "Process" &&
-            setResourceSpec(instanceVariables?.specs?.specProjectProcess.id);
+        isButtonEnabled() ?
+            setLogs(logs.concat(['info: mandatory fields compiled'])) : setLogs(logs.concat(['warning: compile all mandatory fields']))
+        switch (projectType) {
+            case 'Design':
+                setResourceSpec(instanceVariables?.specs?.specProjectDesign.id)
+                break
+            case 'Service':
+                setResourceSpec(instanceVariables?.specs?.specProjectService.id)
+                break
+            case 'Product':
+                setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
+                break
+        }
+        devLog('typeId',resourceSpec)
     }, [
         projectType,
         projectName,
@@ -216,51 +218,44 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         }
     `;
 
-    const CREATE_ASSET = gql`
-        mutation (
-            $name: String!
-            $metadata: String!
-            $agent: ID!
-            $creationTime: DateTime!
-            $location: ID!
-            $tags: [URI!]
-            $resourceSpec: ID!
-            $oneUnit: ID!
-            $images: [IFile!]
-        ) {
-            createEconomicEvent(
-                event: {
-                    action: "raise"
-                    provider: $agent
-                    receiver: $agent
-                    hasPointInTime: $creationTime
-                    resourceClassifiedAs: $tags
-                    resourceConformsTo: $resourceSpec
-                    resourceQuantity: {
-                        hasNumericalValue: 1
-                        hasUnit: $oneUnit
-                    }
-                    toLocation: $location
-                }
-                newInventoriedResource: {
-                    name: $name
-                    note: $metadata
-                    images: $images
-                }
-            ) {
-                economicEvent {
-                    id
-                    resourceInventoriedAs {
-                        id
-                    }
-                }
-            }
-        }
-    `;
-    const handleEditorChange = ({ html, text }: any) => {
-        devLog("handleEditorChange", html, text);
-        setAssetDescription(text);
-    };
+    const CREATE_ASSET = gql`mutation (
+  $name: String!,
+  $note: String!,
+  $metadata: JSON,
+  $agent: ID!,
+  $creationTime: DateTime!,
+  $location: ID!,
+  $tags: [URI!],
+  $resourceSpec: ID!,
+  $oneUnit: ID!,
+  $images: [IFile!]
+) {
+  createEconomicEvent(
+    event: {
+      action: "raise",
+      provider: $agent,
+      receiver: $agent,
+      hasPointInTime: $creationTime,
+      resourceClassifiedAs: $tags,
+      resourceConformsTo: $resourceSpec,
+      resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit },
+      toLocation: $location
+    }
+    newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata }
+  ) {
+    economicEvent {
+      id
+      resourceInventoriedAs {
+        id
+      }
+    }
+  }
+}
+`
+    const handleEditorChange = ({html, text}: any) => {
+        devLog('handleEditorChange', html, text);
+        setAssetDescription(text)
+    }
 
     const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables;
 
@@ -320,7 +315,8 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
             resourceSpec: resourceSpec,
             agent: authId,
             name: projectName,
-            metadata: `description: ${projectDescription}, repositoryOrId: ${repositoryOrId}`,
+            note: `description: ${projectDescription}, repositoryOrId: ${repositoryOrId}`,
+            metadata: JSON.stringify({repositoryOrId: repositoryOrId, contributors: contributors}),
             location: locationId,
             oneUnit: instanceVariables?.units?.unitOne.id,
             creationTime: dayjs().toISOString(),
@@ -473,11 +469,12 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                 }
                 testID="repositoryOrId"
             />
-            <TagSelector
-                label={t("projectTags.label")}
-                hint={t("projectTags.hint")}
-                onSelect={(tags) => setAssetTags(tags)}
-                placeholder={t("projectTags.placeholder")}
+            <SelectTags 
+                label={t('projectTags.label')}
+                hint={t('projectTags.hint')}
+                canCreateTags
+                onChange={setAssetTags}
+                placeholder={t('projectTags.placeholder')} 
                 textTestID="tagsText"
                 tagsTestID="tagsList"
             />
