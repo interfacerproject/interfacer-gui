@@ -52,10 +52,10 @@ describe('AddContributors.cy.tsx', () => {
 
 
     it('It should search for a location and select it', () => {
-        cy.intercept('GET', process.env.NEXT_PUBLIC_LOCATION_AUTOCOMPLETE, {
+        cy.intercept('GET', `${process.env.NEXT_PUBLIC_LOCATION_AUTOCOMPLETE}?q=*`, {
             fixture: 'addresses.json'
         }).as('autocomplete')
-        cy.intercept('GET', process.env.NEXT_PUBLIC_LOCATION_LOOKUP, {
+        cy.intercept('GET', `${process.env.NEXT_PUBLIC_LOCATION_LOOKUP}?id=*`, {
             statusCode: 200,
             body: {position: {lat: 40.84778, lng: 14.26187}}
         }).as('geoCode')
