@@ -5,7 +5,7 @@ import BrSearchableSelect from "./brickroom/BrSearchableSelect";
 
 type AddContributorsProps = {
     contributors: Array<{ id:string, name:string }>,
-    setContributors: (contributors: Array<any>) => void;
+    setContributors: (contributors: Array<{ id:string, name:string }>) => void;
     label?: string;
     hint?: string;
     error?: string;

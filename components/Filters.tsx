@@ -6,7 +6,7 @@ import {useRouter} from "next/router";
 import SelectTags from "./SelectTags";
 
 const Filters = ({noPrimaryAccountableFilter=false}) => {
-    const [contributors, setContributors] = useState<Array<{ value:string, label:string }>>([]);
+    const [contributors, setContributors] = useState<Array<{ id:string, name:string }>>([]);
     const [conformsTo, setConformsTo] = useState<Array<{ value:string, label:string }>>([]);
     const [tags, setTags] = useState<Array<string>>([]);
     const {t} = useTranslation('lastUpdatedProps')
@@ -14,7 +14,7 @@ const Filters = ({noPrimaryAccountableFilter=false}) => {
     const applyFilters = () => {
         const query = router.query
         if (contributors.length > 0) {
-            const primaryAccountable: string = contributors.map((c: any) => c.value).join(',')
+            const primaryAccountable: string = contributors.map((c) => c.id).join(',')
             query.primaryAccountable = primaryAccountable
         }
         if (conformsTo.length > 0) {
@@ -40,7 +40,7 @@ const Filters = ({noPrimaryAccountableFilter=false}) => {
     return(
         <div className="p-4 bg-white border rounded-lg shadow">
                 <h4 className="mb-4 text-2xl font-bold">{t('filters.filter for')}:</h4>
-                {!noPrimaryAccountableFilter && <AddContributors contributors={contributors.map((c: any) => ({name:c.label, id:c.value}))}
+                {!noPrimaryAccountableFilter && <AddContributors contributors={contributors}
                                                                  setContributors={setContributors}
                                                                  label={t('filters.contributors')}/>}
                 <SelectAssetType onChange={setConformsTo} label={t('filters.type')} assetType={conformsTo}/>

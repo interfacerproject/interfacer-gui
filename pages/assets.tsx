@@ -16,7 +16,6 @@ const Assets = () => {
     conformTo && (filter['primaryIntentsResourceInventoriedAsConformsTo'] = [].concat(conformTo.split(',')));
     // @ts-ignore
     primaryAccountable && (filter['primaryIntentsResourceInventoriedAsPrimaryAccountable'] = [].concat(primaryAccountable.split(',')));
-    devLog('filters', filter)
     const {t} = useTranslation('lastUpdatedProps')
     return (<div className="p-8">
         <div className="mb-6 w-96">
