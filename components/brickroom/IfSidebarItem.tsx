@@ -10,7 +10,7 @@ export interface IfSidebarItemProps {
     rightIcon?: JSX.Element;
 }
 
-export default ({
+const IfSidebarItem = ({
     text,
     tag,
     leftIcon,
@@ -33,15 +33,17 @@ export default ({
     return (
         <div className={classes}>
             {/* Left side */}
-            <div className="flex flex-row justify-start items-center space-x-2">
+            <div className="flex flex-row items-center justify-start space-x-2">
                 {leftIcon}
                 <p>{text}</p>
             </div>
             {/* Right side */}
-            <div className="flex flex-row justify-end items-center space-x-2">
+            <div className="flex flex-row items-center justify-end space-x-2">
                 {tag && <IfSidebarTag text={tag} />}
                 <p>{rightIcon}</p>
             </div>
         </div>
     );
 };
+
+export default IfSidebarItem;

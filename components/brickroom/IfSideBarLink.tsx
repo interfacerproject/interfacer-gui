@@ -11,7 +11,7 @@ export interface IfSideBarLinkProps extends IfSidebarItemProps {
     target?: string;
 }
 
-export default (props: IfSideBarLinkProps) => {
+const IfSideBarLink = (props: IfSideBarLinkProps) => {
     const { link, target, disabled } = props;
 
     // Adding active state
@@ -30,3 +30,5 @@ export default (props: IfSideBarLinkProps) => {
 
     return <li>{disabled ? item : wrappedItem}</li>;
 };
+
+export default IfSideBarLink;
