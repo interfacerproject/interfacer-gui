@@ -40,18 +40,9 @@ const GeoCoderInput = ({onSelect, value, label, placeholder, hint, error, classN
         Promise.resolve(fetchResults())
     }, [searchTerm])
 
-    const customStyles = {
-        control: (provided: any, state: any) => ({
-            ...provided,
-            height: 48,
-            border: state.isFocused ? '2px solid green' : 'blue',
-        }),
-    }
 
     const handleSelectAddress = async (value: any) => {
-        devLog('address chosen', value.label)
         const location = await fetchLocation(value.value.id).then((r) => r)
-        devLog('location', location)
         onSelect({lat: location.lat, lng: location.lng, address: value})
     }
     return (<BrSearchableSelect value={address}
