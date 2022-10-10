@@ -4,6 +4,7 @@ import dayjs from "../lib/dayjs";
 import Link from "next/link";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import {useTranslation} from "next-i18next";
+import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 
 const QUERY_ASSETS = gql`query ($first: Int, $after: ID, $last: Int, $before: ID, $filter:ProposalFilterParams) {
   proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
@@ -45,17 +46,22 @@ const Notification = () => {
     startPolling(4000)
     const notifications = data?.proposals.edges.filter((proposal: any) => proposal.node.primaryIntents[0]?.
     resourceInventoriedAs?.metadata?.contributors.some((c: {id:string, name:string}) => c.id === authId))
-    return <div className="grid grid-cols-1 justify-items-center p-12">
-        {notifications?.map((n: any) => <div key={n.node.id} className="my-6">
-            <b className="mr-1 p-8">{dayjs(n.node.created).fromNow()}</b>
-            <Link href={`/profile/${n.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id}`}>
-                <a className="text-primary hover:underline">
-                    {n.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.name}
-                </a>
-            </Link> {t("added")}
-            <Link href={`/asset/${n.node.id}`}>
-                <a className="text-primary hover:underline"> {n.node.primaryIntents[0].resourceInventoriedAs.name}</a>
-            </Link>
+    return <div className="grid grid-cols-1 p-12">
+        {notifications?.map((n: any) => <div key={n.node.id} className="my-2 border-b-2 pb-2">
+            <b className="mr-1">{dayjs(n.node.created).fromNow()}</b><br/>
+            <b className="text-xs">{dayjs(n.node.created).format('HH:mm DD/MM/YYYY')}</b><br/>
+            <div className="flex flex-row my-2 center">
+                <div className="mr-2">
+                    <BrDisplayUser id={n.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id}
+                                   name={n.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.name}/>
+                </div>
+                <div className="pt-3">
+                    <span className="mr-1">{t("added")}</span>
+                    <Link href={`/asset/${n.node.id}`}>
+                        <a className="text-primary hover:underline">{n.node.primaryIntents[0].resourceInventoriedAs.name}</a>
+                    </Link>
+                </div>
+            </div>
         </div>)}
     </div>
 }

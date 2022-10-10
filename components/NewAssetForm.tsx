@@ -43,7 +43,7 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
     const [resourceSpec, setResourceSpec] = useState('')
     const [resourceId, setResourceId] = useState('')
     const [images, setImages] = useState([] as Images)
-    const [contributors, setContributors] = useState([] as { name: string, id: string }[])
+    const [contributors, setContributors] = useState([] as { value: string, label: string }[])
     const [imagesFiles, setImagesFiles] = useState([] as Array<any>)
     const [assetCreatedId, setAssetCreatedId] = useState(undefined as string | undefined)
     const {t} = useTranslation('createProjectProps')
