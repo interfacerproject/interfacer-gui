@@ -39,10 +39,10 @@ const GeoCoderInput = ({
         await fetch(`${process.env.NEXT_PUBLIC_LOCATION_AUTOCOMPLETE}?q=${encodeURI(searchTerm)}`,
             {method: "get"}).then(async (r) => setOptions(JSON.parse(await r.text()).items))
     }
+
     const fetchLocation = async (id: string) => {
         const data = await fetch(`${process.env.NEXT_PUBLIC_LOCATION_LOOKUP}?id=${encodeURI(id)}`)
             .then(async (r) => JSON.parse(await r.text()))
-
         devLog("data", data);
         return { lat: data.position.lat, lng: data.position.lng };
     };

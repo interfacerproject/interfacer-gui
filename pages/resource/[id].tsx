@@ -6,10 +6,14 @@ import QrCodeButton from "../../components/brickroom/QrCodeButton";
 import {ArrowNarrowLeftIcon} from "@heroicons/react/solid";
 import Card from "../../components/brickroom/Card";
 import devLog from "../../lib/devLog";
+import {GetStaticPaths} from "next";
+import {serverSideTranslations} from "next-i18next/serverSideTranslations";
+import {useTranslation} from "next-i18next";
 
 const Resource: NextPage = () => {
     const router = useRouter()
     const {id} = router.query
+    const { t } = useTranslation('ResourceProps')
 
     const QUERY_RESOURCE = gql`
              query($id: ID!) {
@@ -68,11 +72,11 @@ const Resource: NextPage = () => {
 
                 <div className="md:col-start-8 md:col-end-13">
                     <div>
-                        <h4>Assigned to:</h4>
+                        <h4>{t('assigned to:')}</h4>
                         <p className="text-gray-500">{resource?.primaryAccountable?.name}</p>
                     </div>
                     <div>
-                        <h4>Current Location:</h4>
+                        <h4>{t('current location:')}</h4>
                         <p className="text-gray-500">{resource?.currentLocation?.name}</p>
                     </div>
                 </div>
@@ -84,9 +88,7 @@ const Resource: NextPage = () => {
                     <Card className="w-128">
                         <h2>Material passport</h2>
                         <p className="text-gray-500">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque pellentesque hendrerit
-                            ultrices
-                            mauris et non pellentesque.
+                            {t('description')}
                         </p>
                         <div className="w-40 mt-2">
                             <QrCodeButton id={String(id)}/>
@@ -97,5 +99,22 @@ const Resource: NextPage = () => {
         </div>
     )
 };
+
+export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
+
+    return {
+        paths: [], //indicates that no page needs be created at build time
+        fallback: 'blocking' //indicates the type of fallback
+    }
+}
+
+
+export async function getStaticProps({ locale }: any) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['ResourceProps'])),
+        },
+    };
+}
 
 export default Resource
