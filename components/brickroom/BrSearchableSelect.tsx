@@ -17,52 +17,53 @@ type AsyncSelectProps = {
     help?: string,
     multiple?: boolean
     isCreatable?: boolean
+    testID?: string;
 }
 
-const BrSearchableSelect = ({
-                                onChange,
-                                options,
-                                onInputChange,
-                                multiple = false,
-                                inputValue,
-                                value,
-                                label,
-                                placeholder,
-                                hint,
-                                error,
-                                className,
-                                help,
-                                isCreatable = false
-                            }: AsyncSelectProps) => {
+const BrSearchableSelect = ({ onChange,
+    options,
+    onInputChange,
+    multiple = false,
+    inputValue,
+    value,
+    label,
+    placeholder,
+    hint,
+    error,
+    className,
+    help,
+    isCreatable = false
+    testID,
+  }: AsyncSelectProps) => {
     const customStyles = {
         control: (provided: any, state: any) => ({
             ...provided,
-            "&:hover": {borderColor: "green"},
+            "&:hover": { borderColor: "green" },
             height: 49,
             border: state.isFocused ? "2px solid" : provided.border,
         }),
         valueContainer: (provided: any) => ({
             ...provided,
             display: "flex",
-            "flex-flow": "nowrap"
+            "flex-flow": "nowrap",
         }),
         placeholder: (provided: any) => ({
             ...provided,
             width: "100%",
             "white-space": "nowrap",
             overflow: "hidden",
-            "text-overflow": "ellipsis"
-        })
-    }
-    const customTheme = ((theme: any) => ({
+            "text-overflow": "ellipsis",
+        }),
+    };
+    const customTheme = (theme: any) => ({
         ...theme,
         borderRadius: 6,
         colors: {
             ...theme.colors,
             primary25: "#F1BD4D",
-            primary: "#02604B"
-        }
-    }))
+            primary: "#02604B",
+        },
+    });
 
     const selectProps = {
         closeMenuOnSelect:!multiple,
@@ -78,7 +79,7 @@ const BrSearchableSelect = ({
             theme:customTheme
     }
 
-    return (<div className={`form-control ${className}`}>
+    return (<div className={`form-control ${className}`} data-test={testID}>
         <label className="label">
             <h4 className="label-text">{label}</h4>
         </label>
@@ -88,13 +89,13 @@ const BrSearchableSelect = ({
             <span className="flex flex-row items-center justify-between label-text-alt text-warning">
                         <ExclamationIcon className="w-5 h-5"/>
                 {error}
-                    </span>
-            }
-            {hint && <span className="label-text-alt">{hint}</span>}
-            {help && <p className="text-[#8A8E96]">{help}</p>}
-        </label>
-    </div>)
+            </span>
+                )}
+                {hint && <span className="label-text-alt">{hint}</span>}
+                {help && <p className="text-[#8A8E96]">{help}</p>}
+            </label>
+        </div>
+    );
+};
 
-}
-
-export default BrSearchableSelect
+export default BrSearchableSelect;
