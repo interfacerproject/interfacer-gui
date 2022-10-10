@@ -40,7 +40,7 @@ const Filters = ({noPrimaryAccountableFilter=false}) => {
     return(
         <div className="p-4 bg-white border rounded-lg shadow">
                 <h4 className="mb-4 text-2xl font-bold">{t('filters.filter for')}:</h4>
-                {!noPrimaryAccountableFilter && <AddContributors contributors={contributors}
+                {!noPrimaryAccountableFilter && <AddContributors contributors={contributors.map((c: any) => ({name:c.label, id:c.value}))}
                                                                  setContributors={setContributors}
                                                                  label={t('filters.contributors')}/>}
                 <SelectAssetType onChange={setConformsTo} label={t('filters.type')} assetType={conformsTo}/>

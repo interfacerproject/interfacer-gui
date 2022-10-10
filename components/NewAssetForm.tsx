@@ -67,15 +67,20 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
     };
 
     useEffect(() => {
-        isButtonEnabled()
-            ? setLogs(logs.concat(["info: mandatory fields compiled"]))
-            : setLogs(logs.concat(["warning: compile all mandatory fields"]));
-        projectType === "Product" &&
-            setResourceSpec(instanceVariables?.specs?.specProjectProduct.id);
-        projectType === "Service" &&
-            setResourceSpec(instanceVariables?.specs?.specProjectService.id);
-        projectType === "Process" &&
-            setResourceSpec(instanceVariables?.specs?.specProjectProcess.id);
+        isButtonEnabled() ?
+            setLogs(logs.concat(['info: mandatory fields compiled'])) : setLogs(logs.concat(['warning: compile all mandatory fields']))
+        switch (projectType) {
+            case 'Design':
+                setResourceSpec(instanceVariables?.specs?.specProjectDesign.id)
+                break
+            case 'Service':
+                setResourceSpec(instanceVariables?.specs?.specProjectService.id)
+                break
+            case 'Product':
+                setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
+                break
+        }
+        devLog('typeId',resourceSpec)
     }, [
         projectType,
         projectName,
@@ -213,51 +218,44 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
         }
     `;
 
-    const CREATE_ASSET = gql`
-        mutation (
-            $name: String!
-            $metadata: String!
-            $agent: ID!
-            $creationTime: DateTime!
-            $location: ID!
-            $tags: [URI!]
-            $resourceSpec: ID!
-            $oneUnit: ID!
-            $images: [IFile!]
-        ) {
-            createEconomicEvent(
-                event: {
-                    action: "raise"
-                    provider: $agent
-                    receiver: $agent
-                    hasPointInTime: $creationTime
-                    resourceClassifiedAs: $tags
-                    resourceConformsTo: $resourceSpec
-                    resourceQuantity: {
-                        hasNumericalValue: 1
-                        hasUnit: $oneUnit
-                    }
-                    toLocation: $location
-                }
-                newInventoriedResource: {
-                    name: $name
-                    note: $metadata
-                    images: $images
-                }
-            ) {
-                economicEvent {
-                    id
-                    resourceInventoriedAs {
-                        id
-                    }
-                }
-            }
-        }
-    `;
-    const handleEditorChange = ({ html, text }: any) => {
-        devLog("handleEditorChange", html, text);
-        setAssetDescription(text);
-    };
+    const CREATE_ASSET = gql`mutation (
+  $name: String!,
+  $note: String!,
+  $metadata: JSON,
+  $agent: ID!,
+  $creationTime: DateTime!,
+  $location: ID!,
+  $tags: [URI!],
+  $resourceSpec: ID!,
+  $oneUnit: ID!,
+  $images: [IFile!]
+) {
+  createEconomicEvent(
+    event: {
+      action: "raise",
+      provider: $agent,
+      receiver: $agent,
+      hasPointInTime: $creationTime,
+      resourceClassifiedAs: $tags,
+      resourceConformsTo: $resourceSpec,
+      resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit },
+      toLocation: $location
+    }
+    newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata }
+  ) {
+    economicEvent {
+      id
+      resourceInventoriedAs {
+        id
+      }
+    }
+  }
+}
+`
+    const handleEditorChange = ({html, text}: any) => {
+        devLog('handleEditorChange', html, text);
+        setAssetDescription(text)
+    }
 
     const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables;
 
@@ -317,7 +315,8 @@ const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
             resourceSpec: resourceSpec,
             agent: authId,
             name: projectName,
-            metadata: `description: ${projectDescription}, repositoryOrId: ${repositoryOrId}`,
+            note: `description: ${projectDescription}, repositoryOrId: ${repositoryOrId}`,
+            metadata: JSON.stringify({repositoryOrId: repositoryOrId, contributors: contributors}),
             location: locationId,
             oneUnit: instanceVariables?.units?.unitOne.id,
             creationTime: dayjs().toISOString(),
