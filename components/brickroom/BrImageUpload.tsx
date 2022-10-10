@@ -37,7 +37,7 @@ const BrImageUpload = (props: BrImageUploadProps) => {
     const zenKeys = `
         {
             "keyring": {
-                "eddsa": "${getItem("eddsa_key", "local")}"
+                "eddsa": "${getItem("eddsa_key")}"
             }
         }
     `;
@@ -137,21 +137,21 @@ const BrImageUpload = (props: BrImageUploadProps) => {
         <>
             <div className={`form-control ${props.className}`}>
                 <label className="label">
-                    <h4 className="label-text capitalize">{props.label}</h4>
+                    <h4 className="capitalize label-text">{props.label}</h4>
                 </label>
-                <div className="flex justify-center items-center w-full">
+                <div className="flex items-center justify-center w-full">
                     <label
                         htmlFor="dropzone-file"
-                        className="flex flex-col justify-center items-center w-full h-64 bg-gray-50 rounded-lg border-2 border-gray-300 border-dashed cursor-pointer hover:bg-gray-100"
+                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
                         data-test={props.testID}
                     >
                         <>
                             {isNotImageSelected && (
                                 <>
-                                    <div className="flex flex-col justify-center items-center pt-5 pb-6">
+                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                         <svg
                                             aria-hidden="true"
-                                            className="mb-3 w-10 h-10 text-gray-400"
+                                            className="w-10 h-10 mb-3 text-gray-400"
                                             fill="none"
                                             stroke="currentColor"
                                             viewBox="0 0 24 24"
@@ -176,7 +176,7 @@ const BrImageUpload = (props: BrImageUploadProps) => {
                                     </div>
                                 </>
                             )}
-                            <div className="hidden grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4 grid-cols-5 object-contain" />
+                            <div className="hidden object-contain grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4 grid-cols-5" />
                             {!isNotImageSelected && (
                                 <div
                                     className={`grid grid-cols-${

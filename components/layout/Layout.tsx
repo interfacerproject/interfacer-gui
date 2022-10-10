@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import Sidebar from "../Sidebar";
 import Topbar from "../Topbar";
 import { useAuth } from "../../lib/auth";
@@ -13,30 +13,34 @@ const Layout: React.FunctionComponent<layoutProps> = (
     layoutProps: layoutProps
 ) => {
     const { isSignedIn } = useAuth();
+    const [isSignUp, setSignUp] = useState(false);
+    const [isSignOut, setSignOut] = useState(false);
+    const [isSignIn, setSignIn] = useState(false);
+    const [authentication, setAuthentication] = useState(false);
+
     const router = useRouter();
-    const path = router.asPath;
-    const isSignup = path === "/sign_up";
-    const isSignin = path === "/sign_in";
-    const isSignout = path === "/sign_out";
-    const authentication =
-        isSignout || isSignup || isSignin || (!isSignedIn() && path !== "/");
 
     // Closes sidebar automatically when route changes
     useEffect(() => {
+        const path = router.asPath;
+        setSignUp(path === "/sign_up");
+        setSignIn(path === "/sign_in");
+        setSignOut(path === "/sign_out");
+        setAuthentication(isSignOut || isSignUp || isSignIn || (!isSignedIn() && path !== "/"));
         router.events.on("routeChangeComplete", () => {
             let drawer = document.getElementById("my-drawer");
             if (drawer) {
                 (drawer as HTMLInputElement).checked = false;
             }
         });
-    });
+    }, [ isSignedIn ]);
 
     return (
         <>
             {authentication && (
                 <>
-                    {(!isSignedIn || isSignup) && layoutProps?.children}
-                    {!isSignup && <SignIn />}
+                    {(!isSignedIn || isSignUp) && layoutProps?.children}
+                    {!isSignUp && <SignIn />}
                 </>
             )}
             {!authentication && (

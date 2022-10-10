@@ -18,7 +18,7 @@ const KeyringGeneration = ({
     HMAC: string;
     isSignUp?: boolean;
 }) => {
-    const { signUp, generateKeys, signIn } = useAuth();
+    const { signUp, generateKeys, login } = useAuth();
     const { t } = useTranslation(["signInProps"], {
         keyPrefix: "step_questions",
     });
@@ -99,8 +99,8 @@ const KeyringGeneration = ({
                 email,
                 HMAC,
             }).then(() => {
-                setEddsaPublicKey(getItem("eddsa_public_key", "local"));
-                setSeed(getItem("seed", "local"));
+                setEddsaPublicKey(getItem("eddsa_public_key"));
+                setSeed(getItem("seed"));
                 setStep(1);
             });
         }
@@ -109,7 +109,7 @@ const KeyringGeneration = ({
     const completeSignIn = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
 
-        await signIn({ email })
+        await login({ email })
             .then(() => {
                 window.location.replace("/logged_in");
             })

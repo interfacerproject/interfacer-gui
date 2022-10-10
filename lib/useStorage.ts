@@ -1,31 +1,30 @@
 
-type StorageType = 'session' | 'local';
-
 type UseStorageReturnValue = {
-  getItem: (key: string, type?: StorageType) => string;
-  setItem: (key: string, value: string, type?: StorageType) => boolean;
+  getItem: (key: string) => string;
+  setItem: (key: string, value: string) => void;
+  clear: () => void;
 };
 
   const useStorage = (): UseStorageReturnValue => {
+  // TODO: fix the prerendering by enforce client side rendering
   const isBrowser: boolean = ((): boolean => typeof window !== 'undefined')();
-  const storageType = (type?: StorageType): 'localStorage' | 'sessionStorage' => `${type ?? 'session'}Storage`;
-
-  const getItem = (key: string, type?: StorageType): string => {
-    return isBrowser ? window[storageType(type)][key] : '';
+  const getItem = (key: string): string => {
+    return isBrowser ? window["localStorage"][key] : undefined;
   };
 
-  const setItem = (key: string, value: string, type?: StorageType): boolean => {
-    if (isBrowser) {
-        window[storageType(type)].setItem(key, value);
-        return true;
-    }
-
-    return false;
+  const setItem = (key: string, value: string): void => {
+       return isBrowser ? window["localStorage"].setItem(key, value) : undefined;
   };
+
+  const clear = () => {
+    if (isBrowser)
+        window["localStorage"].clear();
+  }
 
   return {
     getItem,
-    setItem
+    setItem,
+    clear
   };
 };
 

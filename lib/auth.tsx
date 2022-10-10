@@ -47,7 +47,7 @@ const headersMiddleware = setContext(async (operation, {headers}) => {
         return {
             ...headers,
             'zenflows-sign': JSON.parse(result).eddsa_signature,
-            'zenflows-user': getItem('authUsername', 'local'),
+            'zenflows-user': getItem('authUsername'),
             'zenflows-hash': JSON.parse(result).hash
         }
     })
@@ -56,31 +56,25 @@ const headersMiddleware = setContext(async (operation, {headers}) => {
 );
 
 function useProvideAuth() {
-    const {getItem, setItem} = useStorage()
+    const {getItem, setItem, clear} = useStorage()
     const [authToken, setAuthToken] = useState(null as string | null)
-    const storedEddsaKey = getItem('eddsa_key', 'local') !== '' ? getItem('eddsa_key', 'local') : null
+    const storedEddsaKey = getItem('eddsa_key') !== '' ? getItem('eddsa_key') : null
     useEffect(() => setAuthToken(storedEddsaKey), [])
     const [authId, setAuthId] = useState(null as string | null)
-    const storedAuthId = getItem('authId', 'local') !== '' ? getItem('authId', 'local') : null
+    const storedAuthId = getItem('authId') !== '' ? getItem('authId') : null
     useEffect(() => setAuthId(storedAuthId), [])
     const [authUsername, setAuthUsername] = useState(null as string | null)
-    const storedAuthUsername = getItem('authUsername', 'local') !== '' ? getItem('authUsername', 'local') : null
+    const storedAuthUsername = getItem('authUsername') !== '' ? getItem('authUsername') : null
     useEffect(() => setAuthUsername(storedAuthUsername), [])
     const [authEmail, setAuthEmail] = useState(null as string | null)
-    const storedAuthEmail = getItem('authEmail', 'local') !== '' ? getItem('authEmail', 'local') : null
+    const storedAuthEmail = getItem('authEmail') !== '' ? getItem('authEmail') : null
     useEffect(() => setAuthEmail(storedAuthEmail), [])
     const [authName, setAuthName] = useState(null as string | null)
-    const storedAuthName = getItem('authName', 'local') !== '' ? getItem('authName', 'local') : null
+    const storedAuthName = getItem('authName') !== '' ? getItem('authName') : null
     useEffect(() => setAuthName(storedAuthName), [])
 
 
-    const isSignedIn = () => {
-        if (authId) {
-            return true
-        } else {
-            return false
-        }
-    }
+    const isSignedIn = () => !!authId;
 
     const getAuthHeaders = () => {
         return null
@@ -146,18 +140,18 @@ function useProvideAuth() {
         return await zencode_exec(keypairoomClient, {data: zenData})
             .then(({result}) => {
                 const res = JSON.parse(result)
-                setItem('eddsa_public_key', res.eddsa_public_key, 'local')
-                setItem('eddsa_key', res.keyring.eddsa, 'local')
-                setItem('ethereum_address', res.keyring.ethereum, 'local')
-                setItem('reflow', res.keyring.reflow, 'local')
-                setItem('schnorr', res.keyring.schnorr, 'local')
-                setItem('eddsa', res.keyring.eddsa, 'local')
-                setItem('seed', res.seed, 'local')
+                setItem('eddsa_public_key', res.eddsa_public_key)
+                setItem('eddsa_key', res.keyring.eddsa)
+                setItem('ethereum_address', res.keyring.ethereum)
+                setItem('reflow', res.keyring.reflow)
+                setItem('schnorr', res.keyring.schnorr)
+                setItem('eddsa', res.keyring.eddsa)
+                setItem('seed', res.seed)
             })
     }
 
 
-    const signIn = async ({email}: {email: string}) => {
+    const login = async ({email}: {email: string}) => {
         const client = createApolloClient()
         const SignInMutation = gql`query ($email: String!  $pubkey: String!) {
                                       personExists(email: $email, eddsaPublicKey: $pubkey) {
@@ -169,13 +163,13 @@ function useProvideAuth() {
                                     }`
         const result = await client.query({
             query: SignInMutation,
-            variables: {email, pubkey: getItem('eddsa_public_key', 'local')}
+            variables: {email, pubkey: getItem('eddsa_public_key')}
         })
             .then(({data}) => {
-                setItem('authId', data?.personExists.id, 'local')
-                setItem('authName', data?.personExists.name, 'local')
-                setItem('authUsername', data?.personExists.user, 'local')
-                setItem('authEmail', data?.personExists.email, 'local')
+                setItem('authId', data?.personExists.id)
+                setItem('authName', data?.personExists.name)
+                setItem('authUsername', data?.personExists.user)
+                setItem('authEmail', data?.personExists.email)
             })
     }
 
@@ -207,38 +201,27 @@ function useProvideAuth() {
             mutation: SignUpMutation,
             context: {headers: {'zenflows-admin': 'b4a7a8b0a87a8df133ceded44a5c624f1dae19024d72f931b65122a8463a69e6be7ae8bbd51a330182fde04e3e441371a051c7c800147837f31dff27c78cf246'}}
         }).then(({data}) => {
-            setItem('authId', data?.createPerson.agent.id, 'local')
-            setItem('authName', data?.createPerson.agent.name, 'local')
-            setItem('authUsername', data?.createPerson.agent.user, 'local')
-            setItem('authEmail', data?.createPerson.agent.email, 'local')
+            setItem('authId', data?.createPerson.agent.id)
+            setItem('authName', data?.createPerson.agent.name)
+            setItem('authUsername', data?.createPerson.agent.user)
+            setItem('authEmail', data?.createPerson.agent.email)
         })
     }
 
     const signOut = () => {
         setAuthToken(null)
-        setItem('eddsa_public_key', '', 'local')
-        setItem('eddsa_key', '', 'local')
-        setItem('ethereum_address', '', 'local')
-        setItem('reflow', '', 'local')
-        setItem('schnorr', '', 'local')
-        setItem('eddsa', '', 'local')
-        setItem('seed', '', 'local')
-        setItem('authId', '', 'local')
-        setItem('authName', '', 'local')
-        setItem('authEmail', '', 'local')
-        setItem('authUsername', '', 'local')
+        clear();
         window.location.replace('/')
     }
 
     return {
-        setAuthToken,
+        createApolloClient,
         isSignedIn,
         generateKeys,
         signUp,
         signOut,
-        createApolloClient,
         askKeypairoomServer,
-        signIn,
+        login,
         authId,
         authUsername,
         authEmail,

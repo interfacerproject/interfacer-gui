@@ -1,14 +1,12 @@
-import type {NextPage} from 'next'
-import {gql, useQuery} from "@apollo/client";
-import React from "react";
-import {useRouter} from 'next/router'
-import QrCodeButton from "../../components/brickroom/QrCodeButton";
-import {ArrowNarrowLeftIcon} from "@heroicons/react/solid";
+import { gql, useQuery } from "@apollo/client";
+import type { NextPage } from 'next';
+import { GetStaticPaths } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from 'next/router';
 import Card from "../../components/brickroom/Card";
+import QrCodeButton from "../../components/brickroom/QrCodeButton";
 import devLog from "../../lib/devLog";
-import {GetStaticPaths} from "next";
-import {serverSideTranslations} from "next-i18next/serverSideTranslations";
-import {useTranslation} from "next-i18next";
 
 const Resource: NextPage = () => {
     const router = useRouter()
@@ -59,7 +57,7 @@ const Resource: NextPage = () => {
 
     return (
         <div>
-            <div className="grid md:grid-cols-12 grid-cols-1 gap-2 pt-14">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-12 pt-14">
                 <div className="md:col-start-2 md:col-end-7">
                     <h2>{resource?.name}</h2>
                     <p className="mb-1 text-gray-500">{resource?.note}</p>
@@ -84,16 +82,16 @@ const Resource: NextPage = () => {
                 {/* <div className="my-3">
                 <ActionsBlock resourceId={String(id)}/>
             </div> */}
-                <div className="md:col-start-2 md:col-end-7 my-3">
+                <div className="my-3 md:col-start-2 md:col-end-7">
                     <Card className="w-128">
                         <h2>Material passport</h2>
                         <p className="text-gray-500">
                             {t('description')}
                         </p>
-                        <div className="w-40 mt-2">
+                        {/* <div className="w-40 mt-2">
                             <QrCodeButton id={String(id)}/>
-                        </div>
-                    </Card>
+                        </div> */}
+                    </Card> 
                 </div>
             </div>
         </div>

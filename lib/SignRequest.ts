@@ -7,11 +7,11 @@ import devLog from './devLog';
 const SignRequest = async ({query, variables}:{query:string, variables?:any}) => {
     const body = `{"variables":${JSON.stringify(variables)},"query":"${query}"}`
 
-    const {getItem, setItem } = useStorage()
+    const {getItem } = useStorage()
     const zenKeys = `
         {
             "keyring": {
-                            "eddsa": "${getItem('eddsa_key', 'local')}"
+                            "eddsa": "${getItem('eddsa_key')}"
                         }
         }
     `

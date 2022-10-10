@@ -11,7 +11,7 @@ type layoutProps = {
 }
 
 
-const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
+const NRULayout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
     const { isSignedIn } = useAuth()
 
     return (
@@ -37,4 +37,4 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
     )
 }
 
-export default Layout;
+export default NRULayout;

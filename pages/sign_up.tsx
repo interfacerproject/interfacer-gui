@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { ChangeEvent, ReactElement, useState } from "react";
 import BrInput from "../components/brickroom/BrInput";
 import KeyringGeneration from "../components/KeyringGeneration";
-import Layout from "../components/layout/SignInLayout";
+import NRULayout from "../components/layout/NRULayout";
 import {useAuth} from "../lib/auth";
 import {NextPageWithLayout} from "./_app";
 
@@ -129,6 +129,6 @@ const SignUp: NextPageWithLayout = () => {
     );
 };
 SignUp.getLayout = function getLayout(page: ReactElement) {
-    return <Layout>{page}</Layout>;
+    return <NRULayout>{page}</NRULayout>;
 };
 export default SignUp;
