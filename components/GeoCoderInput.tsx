@@ -36,20 +36,13 @@ const GeoCoderInput = ({
     const [searchTerm, setSearchTerm] = useState("");
 
     const fetchResults = async () => {
-        await fetch(
-            `https://autocomplete.search.hereapi.com/v1/autocomplete?q=${encodeURI(
-                searchTerm
-            )}&apiKey=${process.env.NEXT_PUBLIC_HERE_API_KEY}`,
-            { method: "get" }
-        ).then(async (r) => setOptions(JSON.parse(await r.text()).items));
-    };
+        await fetch(`${process.env.NEXT_PUBLIC_LOCATION_AUTOCOMPLETE}?q=${encodeURI(searchTerm)}`,
+            {method: "get"}).then(async (r) => setOptions(JSON.parse(await r.text()).items))
+    }
+    
     const fetchLocation = async (id: string) => {
-        const data = await fetch(
-            `https://lookup.search.hereapi.com/v1/lookup?id=${encodeURI(
-                id
-            )}&apiKey=${process.env.NEXT_PUBLIC_HERE_API_KEY}`
-        ).then(async (r) => JSON.parse(await r.text()));
-
+        const data = await fetch(`${process.env.NEXT_PUBLIC_LOCATION_LOOKUP}?id=${encodeURI(id)}`)
+            .then(async (r) => JSON.parse(await r.text()))
         devLog("data", data);
         return { lat: data.position.lat, lng: data.position.lng };
     };
