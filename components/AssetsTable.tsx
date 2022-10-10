@@ -36,6 +36,7 @@ const AssetsTable = ({filter, noPrimaryAccountableFilter = false}: { filter?: an
             conformsTo {
               name
             }
+            classifiedAs
             primaryAccountable{
               name
               id
@@ -96,6 +97,7 @@ const AssetsTable = ({filter, noPrimaryAccountableFilter = false}: { filter?: an
         }
     };
     const assets = queryResult.data?.proposals.edges;
+
     // Poll interval that works with pagination
     useEffect(() => {
             const intervalId = setInterval(() => {

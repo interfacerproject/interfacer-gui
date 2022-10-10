@@ -68,7 +68,7 @@ const AssetsTableRow = (props: any) => {
                         <AvatarUsers users={primaryIntent.resourceInventoriedAs.metadata?.contributors}/>
                     </td>
                     <td className="max-w-[12rem]">
-                        <BrTags tags={primaryIntent?.resourceClassifiedAs} />
+                        <BrTags tags={primaryIntent?.resourceInventoriedAs.classifiedAs} />
                     </td>
                 </tr>
             )}

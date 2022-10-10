@@ -1,4 +1,5 @@
-import AsyncSelect from "react-select";
+import CreatableSelect from "react-select/creatable";
+import Select from "react-select/";
 import {ExclamationIcon} from "@heroicons/react/solid";
 import React from "react";
 
@@ -15,82 +16,86 @@ type AsyncSelectProps = {
     inputValue?: string,
     help?: string,
     multiple?: boolean
+    isCreatable?: boolean
+    testID?: string;
 }
 
-const BrSearchableSelect = ({
-                                onChange,
-                                options,
-                                onInputChange,
-                                multiple = false,
-                                inputValue,
-                                value,
-                                label,
-                                placeholder,
-                                hint,
-                                error,
-                                className,
-                                help
-                            }: AsyncSelectProps) => {
+const BrSearchableSelect = ({ onChange,
+    options,
+    onInputChange,
+    multiple = false,
+    inputValue,
+    value,
+    label,
+    placeholder,
+    hint,
+    error,
+    className,
+    help,
+    isCreatable = false
+    testID,
+  }: AsyncSelectProps) => {
     const customStyles = {
         control: (provided: any, state: any) => ({
             ...provided,
-            "&:hover": {borderColor: "green"},
+            "&:hover": { borderColor: "green" },
             height: 49,
             border: state.isFocused ? "2px solid" : provided.border,
         }),
         valueContainer: (provided: any) => ({
             ...provided,
             display: "flex",
-            "flex-flow": "nowrap"
+            "flex-flow": "nowrap",
         }),
         placeholder: (provided: any) => ({
             ...provided,
             width: "100%",
             "white-space": "nowrap",
             overflow: "hidden",
-            "text-overflow": "ellipsis"
-        })
-    }
-    const customTheme = ((theme: any) => ({
+            "text-overflow": "ellipsis",
+        }),
+    };
+    const customTheme = (theme: any) => ({
         ...theme,
         borderRadius: 6,
         colors: {
             ...theme.colors,
             primary25: "#F1BD4D",
-            primary: "#02604B"
-        }
-    }))
+            primary: "#02604B",
+        },
+    });
 
-    return (<div className={`form-control ${className}`}>
+    const selectProps = {
+        closeMenuOnSelect:!multiple,
+            value:value,
+            options: options,
+            onChange:onChange,
+            onInputChange:onInputChange,
+            placeholder:placeholder,
+            inputValue:inputValue,
+            isMulti:multiple,
+            className:"border border-gray-300 rounded-md",
+            styles:customStyles,
+            theme:customTheme
+    }
+
+    return (<div className={`form-control ${className}`} data-test={testID}>
         <label className="label">
             <h4 className="label-text">{label}</h4>
         </label>
-        <AsyncSelect
-            closeMenuOnSelect={!multiple}
-            value={value}
-            options={options}
-            onChange={onChange}
-            onInputChange={onInputChange}
-            placeholder={placeholder}
-            inputValue={inputValue}
-            isSearchable
-            className="border border-gray-300 rounded-md"
-            styles={customStyles}
-            isMulti={multiple}
-            theme={customTheme}
-        />
+        {isCreatable? <CreatableSelect {...selectProps} /> : <Select {...selectProps} />}
         <label className="flex-col items-start label">
             {error &&
             <span className="flex flex-row items-center justify-between label-text-alt text-warning">
                         <ExclamationIcon className="w-5 h-5"/>
                 {error}
-                    </span>
-            }
-            {hint && <span className="label-text-alt">{hint}</span>}
-            {help && <p className="text-[#8A8E96]">{help}</p>}
-        </label>
-    </div>)
+            </span>
+                )}
+                {hint && <span className="label-text-alt">{hint}</span>}
+                {help && <p className="text-[#8A8E96]">{help}</p>}
+            </label>
+        </div>
+    );
+};
 
-}
-
-export default BrSearchableSelect
+export default BrSearchableSelect;
