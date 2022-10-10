@@ -52,10 +52,10 @@ describe('AddContributors.cy.tsx', () => {
 
 
     it('It should search for a location and select it', () => {
-        cy.intercept('GET', 'https://autocomplete.search.hereapi.com/v1/autocomplete?q=*&apiKey=*', {
+        cy.intercept('GET', `${process.env.NEXT_PUBLIC_LOCATION_AUTOCOMPLETE}?q=*`, {
             fixture: 'addresses.json'
         }).as('autocomplete')
-        cy.intercept('GET', 'https://lookup.search.hereapi.com/v1/lookup?id=*&apiKey=*', {
+        cy.intercept('GET', `${process.env.NEXT_PUBLIC_LOCATION_LOOKUP}?id=*`, {
             statusCode: 200,
             body: {position: {lat: 40.84778, lng: 14.26187}}
         }).as('geoCode')
