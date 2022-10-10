@@ -32,8 +32,8 @@ const BrSearchableSelect = ({ onChange,
     error,
     className,
     help,
-    isCreatable = false
-    testID,
+    isCreatable = false,
+    testID
   }: AsyncSelectProps) => {
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -89,8 +89,7 @@ const BrSearchableSelect = ({ onChange,
             <span className="flex flex-row items-center justify-between label-text-alt text-warning">
                         <ExclamationIcon className="w-5 h-5"/>
                 {error}
-            </span>
-                )}
+            </span>}
                 {hint && <span className="label-text-alt">{hint}</span>}
                 {help && <p className="text-[#8A8E96]">{help}</p>}
             </label>
