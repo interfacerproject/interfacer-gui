@@ -1,25 +1,26 @@
-import AsyncSelect from "react-select";
-import { ExclamationIcon } from "@heroicons/react/solid";
+import CreatableSelect from "react-select/creatable";
+import Select from "react-select/";
+import {ExclamationIcon} from "@heroicons/react/solid";
 import React from "react";
 
 type AsyncSelectProps = {
-    options: any[];
-    onChange: (value: any) => void;
-    onInputChange: (value: any) => void;
-    value?: any;
-    label?: string;
-    placeholder?: string;
-    hint?: string;
-    error?: string;
-    className?: string;
-    inputValue?: string;
-    help?: string;
-    multiple?: boolean;
+    options: any[],
+    onChange: (value: any) => void,
+    onInputChange: (value: any) => void,
+    value?: any,
+    label?: string,
+    placeholder?: string,
+    hint?: string,
+    error?: string,
+    className?: string,
+    inputValue?: string,
+    help?: string,
+    multiple?: boolean
+    isCreatable?: boolean
     testID?: string;
-};
+}
 
-const BrSearchableSelect = ({
-    onChange,
+const BrSearchableSelect = ({ onChange,
     options,
     onInputChange,
     multiple = false,
@@ -31,8 +32,9 @@ const BrSearchableSelect = ({
     error,
     className,
     help,
+    isCreatable = false
     testID,
-}: AsyncSelectProps) => {
+  }: AsyncSelectProps) => {
     const customStyles = {
         control: (provided: any, state: any) => ({
             ...provided,
@@ -63,31 +65,31 @@ const BrSearchableSelect = ({
         },
     });
 
-    return (
-        <div className={`form-control ${className}`} data-test={testID}>
-            <label className="label">
-                <h4 className="label-text">{label}</h4>
-            </label>
-            <AsyncSelect
-                closeMenuOnSelect={!multiple}
-                value={value}
-                options={options}
-                onChange={onChange}
-                onInputChange={onInputChange}
-                placeholder={placeholder}
-                inputValue={inputValue}
-                isSearchable
-                className="border border-gray-300 rounded-md"
-                styles={customStyles}
-                isMulti={multiple}
-                theme={customTheme}
-            />
-            <label className="flex-col items-start label">
-                {error && (
-                    <span className="flex flex-row items-center justify-between label-text-alt text-warning">
-                        <ExclamationIcon className="w-5 h-5" />
-                        {error}
-                    </span>
+    const selectProps = {
+        closeMenuOnSelect:!multiple,
+            value:value,
+            options: options,
+            onChange:onChange,
+            onInputChange:onInputChange,
+            placeholder:placeholder,
+            inputValue:inputValue,
+            isMulti:multiple,
+            className:"border border-gray-300 rounded-md",
+            styles:customStyles,
+            theme:customTheme
+    }
+
+    return (<div className={`form-control ${className}`} data-test={testID}>
+        <label className="label">
+            <h4 className="label-text">{label}</h4>
+        </label>
+        {isCreatable? <CreatableSelect {...selectProps} /> : <Select {...selectProps} />}
+        <label className="flex-col items-start label">
+            {error &&
+            <span className="flex flex-row items-center justify-between label-text-alt text-warning">
+                        <ExclamationIcon className="w-5 h-5"/>
+                {error}
+            </span>
                 )}
                 {hint && <span className="label-text-alt">{hint}</span>}
                 {help && <p className="text-[#8A8E96]">{help}</p>}

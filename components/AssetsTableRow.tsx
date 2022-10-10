@@ -67,7 +67,7 @@ const AssetsTableRow = (props: any) => {
                         />
                     </td>
                     <td className="max-w-[12rem]">
-                        <BrTags tags={primaryIntent?.resourceClassifiedAs} />
+                        <BrTags tags={primaryIntent?.resourceInventoriedAs.classifiedAs} />
                     </td>
                 </tr>
             )}

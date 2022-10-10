@@ -18,6 +18,8 @@ import { useTranslation } from "next-i18next";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
 import dayjs from "dayjs";
+import SelectTags from "./SelectTags";
+import SelectAssetTypeRadio from "./SelectAssetTypeRadio";
 
 type Image = {
     description: string;
@@ -35,32 +37,27 @@ type NewAssetFormProps = {
     setLogs: Dispatch<SetStateAction<Array<string>>>;
 };
 
-const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
-    const { authId } = useAuth();
+const NewAssetForm = ({logs, setLogs}:NewAssetFormProps) => {
+    const {authId} = useAuth()
     const [projectType, setAssetType] = useState("");
-    const [projectName, setAssetName] = useState("");
-    const [projectDescription, setAssetDescription] = useState("");
-    const [repositoryOrId, setRepositoryOrId] = useState("");
-    const [assetTags, setAssetTags] = useState([] as string[]);
-    const [locationId, setLocationId] = useState("");
-    const [location, setLocation] = useState({} as any);
-    const [locationName, setLocationName] = useState("");
-    const [price, setPrice] = useState("");
-    const [resourceSpec, setResourceSpec] = useState("");
-    const [resourceId, setResourceId] = useState("");
-    const [images, setImages] = useState([] as Images);
-    const [contributors, setContributors] = useState(
-        [] as { value: string; label: string }[]
-    );
-    const [imagesFiles, setImagesFiles] = useState([] as Array<any>);
-    const [assetCreatedId, setAssetCreatedId] = useState(
-        undefined as string | undefined
-    );
-    const { t } = useTranslation("createProjectProps");
+    const [projectName, setAssetName] = useState('')
+    const [projectDescription, setAssetDescription] = useState('')
+    const [repositoryOrId, setRepositoryOrId] = useState('')
+    const [assetTags, setAssetTags] = useState([] as string[])
+    const [locationId, setLocationId] = useState('')
+    const [location, setLocation] = useState({} as any)
+    const [locationName, setLocationName] = useState('')
+    const [price, setPrice] = useState('')
+    const [resourceSpec, setResourceSpec] = useState('')
+    const [resourceId, setResourceId] = useState('')
+    const [images, setImages] = useState([] as Images)
+    const [contributors, setContributors] = useState([] as { value: string, label: string }[])
+    const [imagesFiles, setImagesFiles] = useState([] as Array<any>)
+    const [assetCreatedId, setAssetCreatedId] = useState(undefined as string | undefined)
+    const {t} = useTranslation('createProjectProps')
 
     const isButtonEnabled = () => {
-        return (
-            projectType.length > 0 &&
+        return resourceSpec.length > 0 &&
             projectName.length > 0 &&
             projectDescription.length > 0 &&
             repositoryOrId.length > 0 &&
@@ -473,11 +470,12 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
                 }
                 testID="repositoryOrId"
             />
-            <TagSelector
-                label={t("projectTags.label")}
-                hint={t("projectTags.hint")}
-                onSelect={(tags) => setAssetTags(tags)}
-                placeholder={t("projectTags.placeholder")}
+            <SelectTags 
+                label={t('projectTags.label')}
+                hint={t('projectTags.hint')}
+                canCreateTags
+                onChange={setAssetTags}
+                placeholder={t('projectTags.placeholder')} 
                 textTestID="tagsText"
                 tagsTestID="tagsList"
             />
