@@ -1,8 +1,9 @@
+import React from "react";
 import Link from "next/link";
+import BrTags from "./brickroom/BrTags";
+import BrDisplayUser from "./brickroom/BrDisplayUser";
 import AssetImage from "./AssetImage";
 import AvatarUsers from "./AvatarUsers";
-import BrDisplayUser from "./brickroom/BrDisplayUser";
-import BrTags from "./brickroom/BrTags";
 
 const AssetsTableRow = (props: any) => {
   const e = props.asset;
