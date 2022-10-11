@@ -8,10 +8,10 @@ import Spinner from "./brickroom/Spinner";
 import { useTranslation } from "next-i18next";
 
 const truncate = (input: string, max: number) => (input?.length > max ? `${input.substring(0, max)}...` : input);
-
+// prettier-ignore
 const FETCH_INVENTORY = gql`
   query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: EconomicResourceFilterParams) {
-    economicResources(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
+    economicResources(first: $first after: $after before: $before last: $last filter: $filter) {
       pageInfo {
         startCursor
         endCursor

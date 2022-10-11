@@ -40,7 +40,7 @@ describe("When user visit Assets", () => {
     dropdown.click();
 
     // Clicking the option
-    cy.get("#react-select-2-option-1").click();
+    cy.get("#react-select-3-option-1").click();
     // cy.get('#react-select-2-placeholder')
 
     // Outside click to close the panel

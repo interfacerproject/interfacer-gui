@@ -14,8 +14,6 @@ const Resources: NextPage = () => {
   conformTo && (filter["conformsTo"] = [].concat(conformTo));
   // @ts-ignore
   primaryAccountable && (filter["primaryAccountable"] = [].concat(primaryAccountable));
-  devLog("filters", filter);
-
   const { t } = useTranslation("resourcesProps");
   return (
     <div className="p-8">
