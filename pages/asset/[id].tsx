@@ -24,7 +24,7 @@ interface AssetIface {
     }
   ];
   note: string;
-  tags: string[];
+  classifiedAs:string[];
   primaryAccountable: {
     id: string;
     name: string;
@@ -55,6 +55,7 @@ const Asset = () => {
             name
             id
             note
+            classifiedAs
             primaryAccountable {
               name
               id
@@ -137,7 +138,7 @@ const Asset = () => {
               </div>
               <div dangerouslySetInnerHTML={{ __html: MdParser.render(asset.note.split(":")[1].split(",")[0]) }} />
               <div id="tags">
-                <BrTags tags={asset?.tags || ["lasercutter", "lasercut", "DIY", "kit"]} />
+                <BrTags tags={asset?.classifiedAs} />
               </div>
               <div id="images">
                 {asset?.images.map((image, i) => (
