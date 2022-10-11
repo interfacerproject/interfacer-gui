@@ -1,14 +1,14 @@
 import { useTranslation } from "next-i18next";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { useAuth } from "../lib/auth";
+import { useAuth } from "../hooks/useAuth";
 import devLog from "../lib/devLog";
-import useStorage from "../lib/useStorage";
+import useStorage from "../hooks/useStorage";
 import BrInput from "./brickroom/BrInput";
 
 const KeyringGeneration = ({
   email,
-  name,
-  user,
+  name = "",
+  user = "",
   HMAC,
   isSignUp,
 }: {
@@ -18,7 +18,7 @@ const KeyringGeneration = ({
   HMAC: string;
   isSignUp?: boolean;
 }) => {
-  const { signUp, generateKeys, signIn } = useAuth();
+  const { signup, keypair, login } = useAuth();
   const { t } = useTranslation(["signInProps"], {
     keyPrefix: "step_questions",
   });
@@ -34,7 +34,7 @@ const KeyringGeneration = ({
   const [notEnoughtAnswers, setNotEnoughtAnswers] = React.useState(false);
   const { getItem } = useStorage();
 
-  const mapQuestions: (question: number) => { question: string; setQuestion: Function } | undefined = (question) => {
+  const mapQuestions: (question: number) => { question: string; setQuestion: Function } | undefined = question => {
     switch (question) {
       case 1:
         return { question: question1, setQuestion: setQuestion1 };
@@ -47,7 +47,6 @@ const KeyringGeneration = ({
       case 5:
         return { question: question5, setQuestion: setQuestion5 };
     }
-    return undefined;
   };
 
   useEffect(() => {
@@ -56,7 +55,7 @@ const KeyringGeneration = ({
 
   const onSignUp = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    signUp({
+    signup({
       name,
       user,
       email,
@@ -79,7 +78,7 @@ const KeyringGeneration = ({
     if (nullAnswers > 2) {
       setNotEnoughtAnswers(true);
     } else {
-      generateKeys({
+      keypair({
         question1,
         question2,
         question3,
@@ -88,8 +87,8 @@ const KeyringGeneration = ({
         email,
         HMAC,
       }).then(() => {
-        setEddsaPublicKey(getItem("eddsa_public_key", "local"));
-        setSeed(getItem("seed", "local"));
+        setEddsaPublicKey(getItem("eddsa_public_key"));
+        setSeed(getItem("seed"));
         setStep(1);
       });
     }
@@ -98,7 +97,7 @@ const KeyringGeneration = ({
   const completeSignIn = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    await signIn({ email })
+    await login({ email })
       .then(() => {
         window.location.replace("/logged_in");
       })

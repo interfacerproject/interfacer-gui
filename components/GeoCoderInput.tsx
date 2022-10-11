@@ -35,38 +35,25 @@ const GeoCoderInput = ({
   const [options, setOptions] = useState([] as any[]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchLocation = async (id: string) => {
-    const data = await fetch(
-      `https://lookup.search.hereapi.com/v1/lookup?id=${encodeURI(id)}&apiKey=${process.env.NEXT_PUBLIC_HERE_API_KEY}`
-    ).then(async (r) => JSON.parse(await r.text()));
+  const fetchResults = async () => {
+    await fetch(`${process.env.NEXT_PUBLIC_LOCATION_AUTOCOMPLETE}?q=${encodeURI(searchTerm)}`, { method: "get" }).then(
+      async r => setOptions(JSON.parse(await r.text()).items)
+    );
+  };
 
+  const fetchLocation = async (id: string) => {
+    const data = await fetch(`${process.env.NEXT_PUBLIC_LOCATION_LOOKUP}?id=${encodeURI(id)}`).then(async r =>
+      JSON.parse(await r.text())
+    );
     devLog("data", data);
     return { lat: data.position.lat, lng: data.position.lng };
   };
   useEffect(() => {
-    const fetchResults = async () => {
-      await fetch(
-        `https://autocomplete.search.hereapi.com/v1/autocomplete?q=${encodeURI(searchTerm)}&apiKey=${
-          process.env.NEXT_PUBLIC_HERE_API_KEY
-        }`,
-        { method: "get" }
-      ).then(async (r) => setOptions(JSON.parse(await r.text()).items));
-    };
     Promise.resolve(fetchResults());
   }, [searchTerm]);
 
-  const customStyles = {
-    control: (provided: any, state: any) => ({
-      ...provided,
-      height: 48,
-      border: state.isFocused ? "2px solid green" : "blue",
-    }),
-  };
-
   const handleSelectAddress = async (value: any) => {
-    devLog("address chosen", value.label);
-    const location = await fetchLocation(value.value.id).then((r) => r);
-    devLog("location", location);
+    const location = await fetchLocation(value.value.id).then(r => r);
     onSelect({ lat: location.lat, lng: location.lng, address: value });
   };
   return (

@@ -1,4 +1,5 @@
-import AsyncSelect from "react-select";
+import CreatableSelect from "react-select/creatable";
+import Select from "react-select/";
 import { ExclamationIcon } from "@heroicons/react/solid";
 import React from "react";
 
@@ -15,6 +16,7 @@ type AsyncSelectProps = {
   inputValue?: string;
   help?: string;
   multiple?: boolean;
+  isCreatable?: boolean;
   testID?: string;
 };
 
@@ -31,6 +33,7 @@ const BrSearchableSelect = ({
   error,
   className,
   help,
+  isCreatable = false,
   testID,
 }: AsyncSelectProps) => {
   const customStyles = {
@@ -63,25 +66,26 @@ const BrSearchableSelect = ({
     },
   });
 
+  const selectProps = {
+    closeMenuOnSelect: !multiple,
+    value: value,
+    options: options,
+    onChange: onChange,
+    onInputChange: onInputChange,
+    placeholder: placeholder,
+    inputValue: inputValue,
+    isMulti: multiple,
+    className: "border border-gray-300 rounded-md",
+    styles: customStyles,
+    theme: customTheme,
+  };
+
   return (
     <div className={`form-control ${className}`} data-test={testID}>
       <label className="label">
         <h4 className="label-text">{label}</h4>
       </label>
-      <AsyncSelect
-        closeMenuOnSelect={!multiple}
-        value={value}
-        options={options}
-        onChange={onChange}
-        onInputChange={onInputChange}
-        placeholder={placeholder}
-        inputValue={inputValue}
-        isSearchable
-        className="border border-gray-300 rounded-md"
-        styles={customStyles}
-        isMulti={multiple}
-        theme={customTheme}
-      />
+      {isCreatable ? <CreatableSelect {...selectProps} /> : <Select {...selectProps} />}
       <label className="flex-col items-start label">
         {error && (
           <span className="flex flex-row items-center justify-between label-text-alt text-warning">

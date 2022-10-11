@@ -29,6 +29,7 @@ type SelectAssetTypeProps = {
   hint?: string;
   error?: string;
   assetType: Array<{ value: string; label: string }>;
+  testID?: string;
 };
 
 const SelectAssetType = ({ onChange, label, hint, error, assetType }: SelectAssetTypeProps) => {
@@ -36,7 +37,7 @@ const SelectAssetType = ({ onChange, label, hint, error, assetType }: SelectAsse
   const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables.specs;
   const options =
     instanceVariables &&
-    Object.keys(instanceVariables).map((key) => ({
+    Object.keys(instanceVariables).map(key => ({
       value: instanceVariables[key].id,
       label: instanceVariables[key].name,
     }));

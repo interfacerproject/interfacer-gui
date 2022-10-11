@@ -84,9 +84,7 @@ const Asset = () => {
       }
     }
   `;
-  const { loading, error, data, startPolling } = useQuery(QUERY_ASSET, {
-    variables: { id },
-  });
+  const { loading, error, data, startPolling } = useQuery(QUERY_ASSET, { variables: { id } });
   startPolling(2000);
 
   useEffect(() => {
@@ -103,10 +101,7 @@ const Asset = () => {
           <div className="relative">
             <div
               className="w-full bg-center bg-cover backdrop-grayscale-0 h-72"
-              style={{
-                backgroundImage: `url(${mainImage})`,
-                filter: "blur(1px)",
-              }}
+              style={{ backgroundImage: `url(${mainImage})`, filter: "blur(1px)" }}
             />
             <div className="absolute top-0 w-full p-2 md:p-8 h-72 backdrop-grayscale bg-white/70">
               <div className="text-primary breadcrumbs">
@@ -127,7 +122,7 @@ const Asset = () => {
                 <p>
                   {t("This is a")}
                   <Link href={`/assets?conformTo=${asset.conformsTo.id}`}>
-                    <a className="ml-1 font-bold text-primary hover:underline">{asset.conformsTo.name}</a>
+                    <a className="font-bold text-primary ml-1 hover:underline">{asset.conformsTo.name}</a>
                   </Link>
                 </p>
               </div>
@@ -140,13 +135,8 @@ const Asset = () => {
                 <span className="rounded-lg btn btn-disabled">{t("Contributions")}</span>
                 <span className="rounded-lg btn btn-disabled">{t("DPP")}</span>
               </div>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: MdParser.render(asset.note.split(":")[1].split(",")[0]),
-                }}
-              />
+              <div dangerouslySetInnerHTML={{ __html: MdParser.render(asset.note.split(":")[1].split(",")[0]) }} />
               <div id="tags">
-                {/* TODO: display real tags here */}
                 <BrTags tags={asset?.tags || ["lasercutter", "lasercut", "DIY", "kit"]} />
               </div>
               <div id="images">

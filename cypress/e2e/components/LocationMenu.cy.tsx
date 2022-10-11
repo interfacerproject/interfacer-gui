@@ -18,7 +18,7 @@ describe("LocationMenu component", () => {
     // Getting text from a button
     const item = ".ml-4.btn.btn-outline.btn-primary";
 
-    cy.get(item).then((el) => {
+    cy.get(item).then(el => {
       // Saving text from an item, in order to check its change
       const text = el.text();
 
@@ -28,7 +28,7 @@ describe("LocationMenu component", () => {
       cy.url().should("include", "/de");
 
       // Getting text again from the same item
-      cy.get(item).then((el) => {
+      cy.get(item).then(el => {
         // Checking that they're different
         expect(el.text()).not.to.eq(text);
       });

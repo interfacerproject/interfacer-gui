@@ -26,7 +26,7 @@ const BrMdEditor = ({ className, onChange, error, hint, label, editorClass, test
         <h4 className="label-text capitalize">{label}</h4>
       </label>
       <div data-test={testID}>
-        <MdEditor className={editorClass} renderHTML={(text) => MdParser.render(text)} onChange={onChange} />
+        <MdEditor className={editorClass} renderHTML={text => MdParser.render(text)} onChange={onChange} />
       </div>
       <label className="label">
         {error && (

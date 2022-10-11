@@ -1,10 +1,11 @@
-import { useTranslation } from "next-i18next";
+import AssetsTable from "../components/AssetsTable";
+import devLog from "../lib/devLog";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
+import React from "react";
+import NewProjectButton from "../components/NewProjectButton";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import AssetsTable from "../components/AssetsTable";
-import NewProjectButton from "../components/NewProjectButton";
-import devLog from "../lib/devLog";
 
 const Assets = () => {
   const { conformTo, primaryAccountable } = useRouter().query;
@@ -12,16 +13,13 @@ const Assets = () => {
     primaryIntentsResourceInventoriedAsConformsTo?: string[];
     primaryIntentsResourceInventoriedAsPrimaryAccountable?: string[];
   } = {};
-  conformTo &&
-    (filter["primaryIntentsResourceInventoriedAsConformsTo"] = [].concat(
-      // @ts-ignore
-      conformTo.split(",")
-    ));
+  // @ts-ignore
+  conformTo && (filter["primaryIntentsResourceInventoriedAsConformsTo"] = [].concat(conformTo.split(",")));
+  // @ts-ignore
   primaryAccountable &&
     (filter["primaryIntentsResourceInventoriedAsPrimaryAccountable"] =
       // @ts-ignore
       [].concat(primaryAccountable.split(",")));
-  devLog("filters", filter);
   const { t } = useTranslation("lastUpdatedProps");
   return (
     <div className="p-8">

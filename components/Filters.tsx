@@ -3,16 +3,18 @@ import AddContributors from "./AddContributors";
 import SelectAssetType from "./SelectAssetType";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import SelectTags from "./SelectTags";
 
 const Filters = ({ noPrimaryAccountableFilter = false }) => {
-  const [contributors, setContributors] = useState<Array<{ value: string; label: string }>>([]);
+  const [contributors, setContributors] = useState<Array<{ id: string; name: string }>>([]);
   const [conformsTo, setConformsTo] = useState<Array<{ value: string; label: string }>>([]);
+  const [tags, setTags] = useState<Array<string>>([]);
   const { t } = useTranslation("lastUpdatedProps");
   const router = useRouter();
   const applyFilters = () => {
     const query = router.query;
     if (contributors.length > 0) {
-      const primaryAccountable: string = contributors.map((c: any) => c.value).join(",");
+      const primaryAccountable: string = contributors.map(c => c.id).join(",");
       query.primaryAccountable = primaryAccountable;
     }
     if (conformsTo.length > 0) {
@@ -46,6 +48,7 @@ const Filters = ({ noPrimaryAccountableFilter = false }) => {
         />
       )}
       <SelectAssetType onChange={setConformsTo} label={t("filters.type")} assetType={conformsTo} />
+      <SelectTags label={t("filters.tags")} onChange={setTags} />
       <div className="grid grid-cols-2 gap-2 mt-4">
         <div>
           <button className="btn btn-outline btn-error btn-block" onClick={clearFilters}>

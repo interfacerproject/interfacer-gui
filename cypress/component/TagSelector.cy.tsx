@@ -40,7 +40,7 @@ describe("TagSelector.cy.tsx", () => {
      * Checking if other badges get created
      */
 
-    for (const s of ["mario", "naso"]) {
+    for (let s of ["mario", "naso"]) {
       input.type(" ");
       input.type(s);
       getBadgeByText(s).should("exist");

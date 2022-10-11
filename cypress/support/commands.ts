@@ -1,4 +1,4 @@
-// / <reference types="cypress" />
+/// <reference types="cypress" />
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -44,7 +44,7 @@ Cypress.Commands.add("login", () => {
 });
 
 Cypress.Commands.add("checkLinks", () => {
-  cy.get("a:not([href*='mailto:'])").each(($el) => {
+  cy.get("a:not([href*='mailto:'])").each($el => {
     const href = $el.prop("href");
     cy.request(href).its("status").should("eq", 200);
   });

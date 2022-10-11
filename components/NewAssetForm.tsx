@@ -3,15 +3,15 @@ import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "reac
 import BrMdEditor from "./brickroom/BrMdEditor";
 import BrRadio from "./brickroom/BrRadio";
 import BrImageUpload from "./brickroom/BrImageUpload";
-import TagSelector from "./brickroom/TagSelector";
 import GeoCoderInput from "./GeoCoderInput";
 import AddContributors from "./AddContributors";
 import Link from "next/link";
-import { useAuth } from "../lib/auth";
+import { useAuth } from "../hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
 import dayjs from "dayjs";
+import SelectTags from "./SelectTags";
 
 type Image = {
   description: string;
@@ -30,7 +30,7 @@ type NewAssetFormProps = {
 };
 
 const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
-  const { authId } = useAuth();
+  const { user } = useAuth();
   const [projectType, setAssetType] = useState("");
   const [projectName, setAssetName] = useState("");
   const [projectDescription, setAssetDescription] = useState("");
@@ -43,14 +43,14 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   const [resourceSpec, setResourceSpec] = useState("");
   const [resourceId, setResourceId] = useState("");
   const [images, setImages] = useState([] as Images);
-  const [contributors, setContributors] = useState([] as { value: string; label: string }[]);
+  const [contributors, setContributors] = useState([] as { id: string; name: string }[]);
   const [imagesFiles, setImagesFiles] = useState([] as Array<any>);
   const [assetCreatedId, setAssetCreatedId] = useState(undefined as string | undefined);
   const { t } = useTranslation("createProjectProps");
 
   const isButtonEnabled = () => {
     return (
-      projectType.length > 0 &&
+      resourceSpec.length > 0 &&
       projectName.length > 0 &&
       projectDescription.length > 0 &&
       repositoryOrId.length > 0 &&
@@ -63,10 +63,18 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     isButtonEnabled()
       ? setLogs(logs.concat(["info: mandatory fields compiled"]))
       : setLogs(logs.concat(["warning: compile all mandatory fields"]));
-    projectType === "Product" && setResourceSpec(instanceVariables?.specs?.specProjectProduct.id);
-    projectType === "Service" && setResourceSpec(instanceVariables?.specs?.specProjectService.id);
-    projectType === "Process" && setResourceSpec(instanceVariables?.specs?.specProjectProcess.id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    switch (projectType) {
+      case "Design":
+        setResourceSpec(instanceVariables?.specs?.specProjectDesign.id);
+        break;
+      case "Service":
+        setResourceSpec(instanceVariables?.specs?.specProjectService.id);
+        break;
+      case "Product":
+        setResourceSpec(instanceVariables?.specs?.specProjectProduct.id);
+        break;
+    }
+    devLog("typeId", resourceSpec);
   }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price]);
 
   const colors = ["error", "success", "warning", "info"];
@@ -170,7 +178,8 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   const CREATE_ASSET = gql`
     mutation (
       $name: String!
-      $metadata: String!
+      $note: String!
+      $metadata: JSON
       $agent: ID!
       $creationTime: DateTime!
       $location: ID!
@@ -190,7 +199,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
           resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
           toLocation: $location
         }
-        newInventoriedResource: { name: $name, note: $metadata, images: $images }
+        newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata }
       ) {
         economicEvent {
           id
@@ -230,7 +239,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         lng: loc.lng,
       },
     })
-      .then((r) => {
+      .then(r => {
         setLocationId(r.data.createSpatialThing.spatialThing.id);
         setLogs(
           logs
@@ -240,7 +249,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
             .concat([`    longitude: ${r.data.createSpatialThing.spatialThing.long}`])
         );
       })
-      .catch((e) => {
+      .catch(e => {
         setLogs(logs.concat(["error: location creation failed"]).concat([e.message]));
       });
   };
@@ -249,21 +258,22 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     e.preventDefault();
     const variables = {
       resourceSpec: resourceSpec,
-      agent: authId,
+      agent: user?.ulid,
       name: projectName,
-      metadata: `description: ${projectDescription}, repositoryOrId: ${repositoryOrId}`,
+      note: `description: ${projectDescription}, repositoryOrId: ${repositoryOrId}`,
+      metadata: JSON.stringify({ repositoryOrId: repositoryOrId, contributors: contributors }),
       location: locationId,
       oneUnit: instanceVariables?.units?.unitOne.id,
       creationTime: dayjs().toISOString(),
       images: images,
-      tags: assetTags?.map((t) => encodeURI(t)),
+      tags: assetTags?.map(t => encodeURI(t)),
     };
     let logsText = logs.concat("info:Creating raise resource economicEvent").concat(JSON.stringify(variables, null, 2));
 
     const asset = await createAsset({
       variables: variables,
     })
-      .catch((error) => {
+      .catch(error => {
         logsText = logsText.concat("error:".concat(error.message));
         setLogs(logsText);
       })
@@ -293,7 +303,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         method: "post",
         body: filesArray,
       })
-        .catch((error) => {
+        .catch(error => {
           logsText = logsText.concat([`error:${error}`]);
           setLogs(logsText);
         })
@@ -302,7 +312,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         });
     });
 
-    const proposal = await createProposal().then((proposal) => {
+    const proposal = await createProposal().then(proposal => {
       logsText = logsText.concat([
         `success: Created proposal with id: ${proposal.data?.createProposal.proposal.id}`,
         "info: Creating intents",
@@ -314,13 +324,13 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
 
     const intent = await createIntent({
       variables: {
-        agent: authId,
+        agent: user?.ulid,
         resource: asset?.createEconomicEvent.economicEvent.resourceInventoriedAs.id,
         oneUnit: instanceVariables?.units.unitOne.id,
         howMuch: parseFloat(price),
         currency: instanceVariables?.specs.specCurrency.id,
       },
-    }).then((intent) => {
+    }).then(intent => {
       logsText = logsText.concat([
         `success: Created intent with id: ${intent.data?.item.intent.id}`,
         "info: Linking proposal and intent",
@@ -337,7 +347,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         payment: intent?.payment.intent.id,
       },
     }).then(() => {
-      logsText = logsText.concat(["success: Asset successfully created!!!"]);
+      logsText = logsText.concat(["success: Asset succesfull created!!!"]);
       setLogs(logsText);
       setAssetCreatedId(`/asset/${proposal?.createProposal.proposal.id}`);
     });
@@ -385,13 +395,13 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         onChange={(e: ChangeEvent<HTMLInputElement>) => setRepositoryOrId(e.target.value)}
         testID="repositoryOrId"
       />
-      <TagSelector
+      <SelectTags
         label={t("projectTags.label")}
         hint={t("projectTags.hint")}
-        onSelect={(tags) => setAssetTags(tags)}
+        canCreateTags
+        onChange={setAssetTags}
         placeholder={t("projectTags.placeholder")}
-        textTestID="tagsText"
-        tagsTestID="tagsList"
+        testID="tagsList"
       />
       <div className="grid grid-cols-2 gap-2">
         <BrInput
@@ -414,7 +424,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
       <AddContributors
         label={t("contributors.label")}
         hint={t("contributors.hint")}
-        setContributors={(c) => setContributors(c)}
+        setContributors={c => setContributors(c)}
         contributors={contributors}
         testID="contributors"
       />
@@ -428,7 +438,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         testID="price"
       />
 
-      {/* TODO manage better the assets creation, the end of the process */}
+      {/*todo:gestire meglio la fine del processo*/}
       {assetCreatedId ? (
         <Link href={assetCreatedId}>
           <a className="btn btn-accent">{t("go to the asset")}</a>

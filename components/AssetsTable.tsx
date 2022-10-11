@@ -5,6 +5,7 @@ import { useTranslation } from "next-i18next";
 import { gql, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
 import Filters from "./Filters";
+import Spinner from "./brickroom/Spinner";
 
 const AssetsTable = ({
   filter,
@@ -43,6 +44,7 @@ const AssetsTable = ({
                 conformsTo {
                   name
                 }
+                classifiedAs
                 primaryAccountable {
                   name
                   id
@@ -50,6 +52,7 @@ const AssetsTable = ({
                 name
                 id
                 note
+                metadata
                 onhandQuantity {
                   hasUnit {
                     label
@@ -77,7 +80,7 @@ const AssetsTable = ({
       }
     }
   `;
-  const queryResult = useQuery(QUERY_ASSETS, {
+  const { loading, data, fetchMore, refetch, variables } = useQuery(QUERY_ASSETS, {
     variables: { last: 10, filter: filter },
   });
   const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
@@ -92,50 +95,59 @@ const AssetsTable = ({
 
     return { ...fetchMoreResult };
   };
-  const getHasNextPage = queryResult.data?.proposals.pageInfo.hasNextPage;
+  const getHasNextPage = data?.proposals.pageInfo.hasNextPage;
   const loadMore = () => {
-    if (queryResult.data && queryResult.fetchMore) {
+    if (data && fetchMore) {
       const nextPage = getHasNextPage;
-      const before = queryResult.data.proposals.pageInfo.endCursor;
-
+      const before = data.proposals.pageInfo.endCursor;
       if (nextPage && before !== null) {
-        queryResult.fetchMore({ updateQuery, variables: { before } });
+        fetchMore({ updateQuery, variables: { before } });
       }
     }
   };
-  const assets = queryResult.data?.proposals.edges;
+  const assets = data?.proposals.edges;
+
   // Poll interval that works with pagination
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const total = queryResult.data?.proposals.edges.length || 0;
+      const total = data?.proposals.edges.length || 0;
 
-      queryResult?.refetch({
-        ...queryResult.variables,
+      refetch({
+        ...variables,
         last: total,
       });
     }, 10000);
     return () => clearInterval(intervalId);
-  }, [queryResult, queryResult.data?.proposals.pageInfo.startCursor]);
+  }, [...Object.values(variables!).flat(), data?.proposals.pageInfo.startCursor]);
 
-  devLog(queryResult.data);
+  devLog(data);
 
   return (
     <div className="grid grid-cols-1 gap-2 md:grid-cols-8">
-      <div className="col-span-6">
-        <BrTable headArray={t("tableHead", { returnObjects: true })}>
-          {assets?.map((e: any) => (
-            <AssetsTableRow asset={e} key={e.cursor} />
-          ))}
-        </BrTable>
-        <div className="grid grid-cols-1 gap-4 mt-4 place-items-center">
-          <button className="btn btn-primary" onClick={loadMore} disabled={!getHasNextPage}>
-            {t("Load more")}
-          </button>
+      {loading && (
+        <div className="col-span-8">
+          <Spinner />
         </div>
-      </div>
-      <div className="col-span-2">
-        <Filters noPrimaryAccountableFilter={noPrimaryAccountableFilter} />
-      </div>
+      )}
+      {!loading && (
+        <>
+          <div className="col-span-6">
+            <BrTable headArray={t("tableHead", { returnObjects: true })}>
+              {assets?.map((e: any) => (
+                <AssetsTableRow asset={e} key={e.cursor} />
+              ))}
+            </BrTable>
+            <div className="grid grid-cols-1 gap-4 mt-4 place-items-center">
+              <button className="btn btn-primary" onClick={loadMore} disabled={!getHasNextPage}>
+                {t("Load more")}
+              </button>
+            </div>
+          </div>
+          <div className="col-span-2">
+            <Filters noPrimaryAccountableFilter={noPrimaryAccountableFilter} />
+          </div>
+        </>
+      )}
     </div>
   );
 };

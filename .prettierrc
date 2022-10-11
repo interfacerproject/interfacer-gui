@@ -9,5 +9,5 @@
   "proseWrap": "preserve",
   "quoteProps": "as-needed",
   "bracketSameLine": false,
-  "bracketSpacing": true,
+  "bracketSpacing": true
 }

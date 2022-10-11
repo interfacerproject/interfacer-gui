@@ -1,15 +1,16 @@
-import type { NextPage } from "next";
 import { gql, useQuery } from "@apollo/client";
-import React from "react";
+import type { NextPage } from "next";
+import { GetStaticPaths } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import QrCodeButton from "../../components/brickroom/QrCodeButton";
-import { ArrowNarrowLeftIcon } from "@heroicons/react/solid";
 import Card from "../../components/brickroom/Card";
-import devLog from "../../lib/devLog";
+import Spinner from "../../components/brickroom/Spinner";
 
 const Resource: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
+  const { t } = useTranslation("ResourceProps");
 
   const QUERY_RESOURCE = gql`
     query ($id: ID!) {
@@ -51,50 +52,66 @@ const Resource: NextPage = () => {
       }
     }
   `;
-  const resource = useQuery(QUERY_RESOURCE, { variables: { id: id } }).data?.economicResource;
-  devLog("resource", resource);
+  const { loading, data } = useQuery(QUERY_RESOURCE, { variables: { id: id } });
 
   return (
     <div>
-      <div className="grid md:grid-cols-12 grid-cols-1 gap-2 pt-14">
-        <div className="md:col-start-2 md:col-end-7">
-          <h2>{resource?.name}</h2>
-          <p className="mb-1 text-gray-500">{resource?.note}</p>
-          <p className="text-gray-500">
-            This is a{/* {mapUnit(resource?.onhandQuantity?.hasUnit.label)} */}
-            <span className="text-primary">{resource?.conformsTo && `${resource.conformsTo.name}`}</span>
-          </p>
-        </div>
-
-        <div className="md:col-start-8 md:col-end-13">
-          <div>
-            <h4>Assigned to:</h4>
-            <p className="text-gray-500">{resource?.primaryAccountable?.name}</p>
+      {loading && <Spinner />}
+      {!loading && (
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-12 pt-14">
+          <div className="md:col-start-2 md:col-end-7">
+            <h2>{data?.economicResource.name}</h2>
+            <p className="mb-1 text-gray-500">{data?.economicResource.note}</p>
+            <p className="text-gray-500">
+              This is a{/* {mapUnit(data?.economicResource.onhandQuantity?.hasUnit.label)} */}
+              <span className="text-primary">
+                {data?.economicResource.conformsTo && `${data?.economicResource.conformsTo.name}`}
+              </span>
+            </p>
           </div>
-          <div>
-            <h4>Current Location:</h4>
-            <p className="text-gray-500">{resource?.currentLocation?.name}</p>
-          </div>
-        </div>
 
-        {/* <div className="my-3">
+          <div className="md:col-start-8 md:col-end-13">
+            <div>
+              <h4>{t("assigned to:")}</h4>
+              <p className="text-gray-500">{data?.economicResource.primaryAccountable?.name}</p>
+            </div>
+            <div>
+              <h4>{t("current location:")}</h4>
+              <p className="text-gray-500">{data?.economicResource.currentLocation?.name}</p>
+            </div>
+          </div>
+
+          {/* <div className="my-3">
                 <ActionsBlock resourceId={String(id)}/>
             </div> */}
-        <div className="md:col-start-2 md:col-end-7 my-3">
-          <Card className="w-128">
-            <h2>Material passport</h2>
-            <p className="text-gray-500">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque pellentesque hendrerit ultrices mauris et
-              non pellentesque.
-            </p>
-            <div className="w-40 mt-2">
-              <QrCodeButton id={String(id)} />
-            </div>
-          </Card>
+          <div className="my-3 md:col-start-2 md:col-end-7">
+            <Card className="w-128">
+              <h2>Material passport</h2>
+              <p className="text-gray-500">{t("description")}</p>
+              {/* <div className="w-40 mt-2">
+                            <QrCodeButton id={String(id)}/>
+                        </div> */}
+            </Card>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
+
+export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
+  return {
+    paths: [], //indicates that no page needs be created at build time
+    fallback: "blocking", //indicates the type of fallback
+  };
+};
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["ResourceProps"])),
+    },
+  };
+}
 
 export default Resource;

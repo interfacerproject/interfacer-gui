@@ -123,7 +123,7 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
     }, 5000);
 
     return () => clearInterval(intervalId);
-  }, [data?.economicResources.edges.length, data?.economicResources.pageInfo.startCursor, refetch, variables]);
+  }, [...Object.values(variables!).flat(), data?.economicResources.pageInfo.startCursor]);
 
   return (
     <>
@@ -137,8 +137,8 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
                     <td>
                       <Link href={`/resource/${e.node.id}`}>
                         <a className="flex items-center space-x-4">
-                          <img src={e.node.metadata?.image} className="w-20 h-20" alt={e.node.name} />
-                          <div className="flex flex-col h-24 space-y-1 w-60">
+                          <img src={e.node.metadata?.image} className="w-20 h-20" />
+                          <div className="flex flex-col h-20 h-24 space-y-1 w-60">
                             <h4 className="truncate w-60">{e.node.name}</h4>
                             <p className="h-16 overflow-hidden text-sm whitespace-normal text-thin">
                               {truncate(e.node.note, 100)}
@@ -185,13 +185,7 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
             {data?.economicResources.edges.length === 0 && (
               <>
                 <tr>
-                  <td
-                    colSpan={
-                      t("resourceHead", {
-                        returnObjects: true,
-                      }).length
-                    }
-                  >
+                  <td colSpan={t("resourceHead", { returnObjects: true }).length}>
                     <h4>There’s nothing to display here.</h4>
                     <p>
                       This table will display the resources that you will have in inventory. Raise, transfer or Produce

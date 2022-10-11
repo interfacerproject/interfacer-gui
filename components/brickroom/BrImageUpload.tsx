@@ -1,14 +1,13 @@
-/* eslint-disable jsx-a11y/alt-text */
 import { ExclamationIcon } from "@heroicons/react/solid";
 import React, { useState } from "react";
 import devLog from "../../lib/devLog";
-import useStorage from "../../lib/useStorage";
+import useStorage from "../../hooks/useStorage";
 import { zencode_exec } from "zenroom";
 import signFile from "../../zenflows-crypto/src/sign_file";
 
-const SHA512 = require("crypto-js/sha512");
-const BASE64URL = require("crypto-js/enc-base64url");
-const CryptoJS = require("crypto-js/");
+var SHA512 = require("crypto-js/sha512");
+var BASE64URL = require("crypto-js/enc-base64url");
+var CryptoJS = require("crypto-js/");
 
 type BrImageUploadProps = {
   onChange: (i: Images) => void;
@@ -38,16 +37,16 @@ const BrImageUpload = (props: BrImageUploadProps) => {
   const zenKeys = `
         {
             "keyring": {
-                "eddsa": "${getItem("eddsa_key", "local")}"
+                "eddsa": "${getItem("eddsa_key")}"
             }
         }
     `;
   const isNotImageSelected = props.value?.length === 0;
 
   function arrayBufferToWordArray(ab: any) {
-    const i8a = new Uint8Array(ab);
-    const a = [];
-    for (let i = 0; i < i8a.length; i += 4) {
+    var i8a = new Uint8Array(ab);
+    var a = [];
+    for (var i = 0; i < i8a.length; i += 4) {
       a.push((i8a[i] << 24) | (i8a[i + 1] << 16) | (i8a[i + 2] << 8) | i8a[i + 3]);
     }
     return CryptoJS.lib.WordArray.create(a, i8a.length);
@@ -62,17 +61,17 @@ const BrImageUpload = (props: BrImageUploadProps) => {
         resolve(fileReader.result);
       };
 
-      fileReader.onerror = (error) => {
+      fileReader.onerror = error => {
         reject(error);
       };
     });
   };
 
   const populatePreviews = async (files: Array<any>) => {
-    const generatedResponse: Array<any> = [];
+    let generatedResponse: Array<any> = [];
     await Promise.all(
       files!.map(async (f: any) => {
-        await convertBase64(f).then((res) => generatedResponse.push(res));
+        await convertBase64(f).then(res => generatedResponse.push(res));
       })
     );
     setImagesPreview(generatedResponse);
@@ -163,7 +162,7 @@ const BrImageUpload = (props: BrImageUploadProps) => {
                   </div>
                 </>
               )}
-              {/* <div className="hidden object-contain grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4 grid-cols-5" /> */}
+              <div className="hidden object-contain grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4 grid-cols-5" />
               {!isNotImageSelected && (
                 <div className={`grid grid-cols-${imagesPreview.length < 5 ? imagesPreview.length % 5 : 5} gap-1`}>
                   {imagesPreview?.map((i: any) => (
@@ -177,7 +176,7 @@ const BrImageUpload = (props: BrImageUploadProps) => {
                 id="dropzone-file"
                 type="file"
                 className="hidden"
-                onChange={(e) => {
+                onChange={e => {
                   handleUpload(e.target.files);
                 }}
                 multiple

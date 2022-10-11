@@ -16,7 +16,7 @@ const BrPagination = (props: BrPaginationProps) => {
     <div className="grid grid-cols-1 gap-4 place-items-center">
       <div className="btn-group ">
         {props.max &&
-          Array.from(Array(props.max).keys()).map((a) => (
+          Array.from(Array(props.max).keys()).map(a => (
             <>
               {isNearCurrent(a) && (
                 <button

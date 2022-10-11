@@ -12,7 +12,7 @@ const BrTable = ({ headArray, children }: BrTableProps) => {
         <div className="table w-full rounded-box">
           <div className="table-header-group bg-white">
             <tr>
-              {headArray.map((p) => (
+              {headArray.map(p => (
                 <th key={p}>{p}</th>
               ))}
             </tr>

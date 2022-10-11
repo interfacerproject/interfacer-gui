@@ -4,7 +4,7 @@ const nextConfig = {
   i18n,
   reactStrictMode: true,
   swcMinify: true,
-  webpack: (config) => {
+  webpack: config => {
     config.resolve.fallback = {
       fs: false,
       process: false,
