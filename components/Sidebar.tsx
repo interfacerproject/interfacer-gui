@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { useAuth } from "../lib/auth";
+import { useAuth } from "../hooks/useAuth";
 import { useTranslation } from "next-i18next";
 
 import LoginBtn from "./LoginMenu";
@@ -81,9 +81,8 @@ function Sidebar() {
         },
     };
 
-    const { isSignedIn } = useAuth();
+    const { authenticated } = useAuth();
 
-    //
 
     return (
         <div className="overflow-y-auto bg-white border-r title w-72 text-primary-content border-primary">
@@ -118,7 +117,7 @@ function Sidebar() {
             </div>
 
             {/* Logout button if signed in */}
-            {isSignedIn() && (
+            {authenticated && (
                 <span className="inline-block align-bottom">
                     <LoginBtn />
                 </span>

@@ -1,8 +1,5 @@
 import React, { ReactNode } from 'react';
 import Topbar from "../Topbar";
-import { useAuth } from "../../lib/auth";
-import SignIn from "../../pages/sign_in";
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 type layoutProps = {
@@ -11,9 +8,7 @@ type layoutProps = {
 }
 
 
-const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
-    const { isSignedIn } = useAuth()
-
+const NRULayout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
     return (
         <>
             <Topbar search={false} userMenu={false} cta={layoutProps.cta}>
@@ -37,4 +32,4 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
     )
 }
 
-export default Layout;
+export default NRULayout;

@@ -6,9 +6,9 @@ import { useRouter } from "next/router";
 import { ChangeEvent, ReactElement, useState } from "react";
 import BrInput from "../components/brickroom/BrInput";
 import KeyringGeneration from "../components/KeyringGeneration";
-import Layout from "../components/layout/SignInLayout";
+import NRULayout from "../components/layout/NRULayout";
 import VerifySeed from "../components/VerifySeed";
-import { useAuth } from "../lib/auth";
+import { useAuth } from "../hooks/useAuth";
 import devLog from "../lib/devLog";
 import { NextPageWithLayout } from "./_app";
 
@@ -30,7 +30,7 @@ const Sign_in: NextPageWithLayout = () => {
     const [pdfk, setPdfk] = useState("");
     const [isMailExisting, setIsMailExising] = useState(true);
 
-    const { askKeypairoomServer, signIn } = useAuth();
+    const { register, login } = useAuth();
 
     const errorMail = isMailExisting ? undefined : "this email doesn't exists";
     const viaPassphrase = () => {
@@ -43,9 +43,9 @@ const Sign_in: NextPageWithLayout = () => {
         setStep(1);
     };
     const toNextStep = async (step: number) => {
-        const result = await askKeypairoomServer(email, false);
-        if (await result?.keypairoomServer) {
-            setPdfk(result?.keypairoomServer);
+        const result = await register(email, false);
+        if (result["keypairoomServer"]) {
+            setPdfk(result["keypairoomServer"]);
             setStep(step);
             devLog(result);
         } else {
@@ -147,6 +147,7 @@ const Sign_in: NextPageWithLayout = () => {
     );
 };
 Sign_in.getLayout = function getLayout(page: ReactElement) {
-    return <Layout>{page}</Layout>;
+    return <NRULayout>{page}</NRULayout>;
 };
+Sign_in.publicPage = true;
 export default Sign_in;

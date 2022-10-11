@@ -67,6 +67,7 @@ describe("when user is logged in", () => {
 
     it("Should see /resource/:id", () => {
         cy.visit("/resource/" + Cypress.env("resource_id"));
+        cy.wait(2000);
         cy.contains("Material passport");
     });
 

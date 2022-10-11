@@ -8,7 +8,7 @@ export interface IfSidebarDropdownProps extends IfSidebarItemProps {
     children: Array<JSX.Element>;
 }
 
-export default (props: IfSidebarDropdownProps) => {
+const IfSidebarDropdown = (props: IfSidebarDropdownProps) => {
     const [open, setOpen] = useState(false);
 
     const upIcon = <ChevronUpIcon className="w-5 h-5" />;
@@ -26,10 +26,12 @@ export default (props: IfSidebarDropdownProps) => {
 
             {/* The space that opens up */}
             {open && (
-                <ul className="pl-7 space-y-1 mt-1">
+                <ul className="mt-1 space-y-1 pl-7">
                     <>{props.children}</>
                 </ul>
             )}
         </li>
     );
 };
+
+export default IfSidebarDropdown;

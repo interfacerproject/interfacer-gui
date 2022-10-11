@@ -1,5 +1,4 @@
 import {NextPage} from "next";
-import React, {useEffect} from "react";
 import ResourceTable from "../components/ResourceTable";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import {useTranslation} from "next-i18next";
