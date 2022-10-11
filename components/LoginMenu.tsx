@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { useAuth } from "../lib/auth";
+import { useAuth } from "../hooks/useAuth";
 import React from "react";
 import Avatar from "boring-avatars";
 
 export default function LoginBtn() {
-    const { signOut, authUsername } = useAuth()
+    const { logout, user } = useAuth()
 
     return (
         <>
@@ -17,7 +17,7 @@ export default function LoginBtn() {
                                     <a>
                                         <Avatar
                                             size={'full'}
-                                            name={authUsername}
+                                            name={user?.username}
                                             variant="beam"
                                             colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
                                         />;
@@ -26,8 +26,8 @@ export default function LoginBtn() {
                             </div>
                         </label>
                         <div className="grid grid-cols-1 ml-1 text-xs font-normal normal-case gap-y-1">
-                            <Link href="/profile/my_profile"><a><p className="text-base-400 whitespace-nowrap test-2xs">{authUsername}</p></a></Link>
-                            <button className="text-left hover:text-accent" onClick={() => signOut()}>Sign Out</button>
+                            <Link href="/profile/my_profile"><a><p className="text-base-400 whitespace-nowrap test-2xs">{user?.username}</p></a></Link>
+                            <button className="text-left hover:text-accent" onClick={() => logout()}>Sign Out</button>
                         </div>
 
                     </div>

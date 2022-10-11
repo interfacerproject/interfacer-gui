@@ -7,7 +7,7 @@ import { ChangeEvent, ReactElement, useState } from "react";
 import BrInput from "../components/brickroom/BrInput";
 import KeyringGeneration from "../components/KeyringGeneration";
 import NRULayout from "../components/layout/NRULayout";
-import {useAuth} from "../lib/auth";
+import {useAuth} from "../hooks/useAuth";
 import {NextPageWithLayout} from "./_app";
 
 
@@ -34,7 +34,7 @@ const SignUp: NextPageWithLayout = () => {
 
     const router = useRouter();
 
-    const { signUp, askKeypairoomServer } = useAuth();
+    const { register } = useAuth();
 
     async function onSubmit(e: { preventDefault: () => void }) {
         e.preventDefault();
@@ -42,7 +42,7 @@ const SignUp: NextPageWithLayout = () => {
     }
 
     async function verifyEmail({ email }: { email: string }) {
-        const result = await askKeypairoomServer(email, true, name);
+        const result = await register(email, true);
         if (result?.keypairoomServer) {
             setYetRegisteredEmail("");
             if (email.includes("@")) {
@@ -131,4 +131,5 @@ const SignUp: NextPageWithLayout = () => {
 SignUp.getLayout = function getLayout(page: ReactElement) {
     return <NRULayout>{page}</NRULayout>;
 };
+SignUp.publicPage = true;
 export default SignUp;

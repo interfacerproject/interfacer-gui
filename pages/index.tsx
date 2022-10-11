@@ -1,23 +1,23 @@
-import type { NextPage } from 'next'
-import { useAuth } from "../lib/auth";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { CheckCircleIcon, GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
+import Layout from "components/layout/Layout";
 import { useTranslation } from "next-i18next";
-import { CheckCircleIcon } from "@heroicons/react/outline";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
-import React from "react";
-import { LightningBoltIcon, ScaleIcon, GlobeAltIcon } from "@heroicons/react/outline";
+import { useAuth } from "../hooks/useAuth";
+import { NextPageWithLayout } from './_app';
 
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
+      publicPage: true,
       ...(await serverSideTranslations(locale, ['signInProps', 'homeProps', 'SideBarProps'])),
     },
   };
 }
 
-const Home: NextPage = () => {
+const Home: NextPageWithLayout = () => {
   const { t } = useTranslation('homeProps')
-  const { isSignedIn } = useAuth()
+  const { authenticated } = useAuth()
   const features = [
     { icon: <LightningBoltIcon />, },
     { icon: <ScaleIcon /> },
@@ -39,7 +39,7 @@ const Home: NextPage = () => {
           <CheckCircleIcon className="w-5 h-5 mr-2" />
           {t('paragraph2')}</p>
 
-        <Link href="/sign_in"><a className={`btn btn-primary mt-6 ${isSignedIn() ? 'btn-disabled' : ''}`}>{t('cta_1')}</a></Link>
+        <Link href="/sign_in"><a className={`btn btn-primary mt-6 ${authenticated ? 'btn-disabled' : ''}`}>{t('cta_1')}</a></Link>
         <Link href="/">
           <a className="ml-4 btn btn-outline btn-primary">{t('cta_2')}</a>
         </Link>
@@ -58,6 +58,9 @@ const Home: NextPage = () => {
   </>
   )
 };
+
+Home.publicPage = true;
+Home.getLayout = (page) => <Layout>{page}</Layout>;
 
 export default Home
 

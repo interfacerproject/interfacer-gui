@@ -1,8 +1,8 @@
 import { useTranslation } from "next-i18next";
 import { ChangeEvent, useState } from "react";
 import { zencode_exec } from "zenroom";
-import { useAuth } from "../lib/auth";
-import useStorage from "../lib/useStorage";
+import { useAuth } from "../hooks/useAuth";
+import useStorage from "../hooks/useStorage";
 import keypairoomClientRecreateKeys from "../zenflows-crypto/src/keypairoomClientRecreateKeys";
 import BrInput from "./brickroom/BrInput";
 

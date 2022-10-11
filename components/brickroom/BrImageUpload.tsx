@@ -1,7 +1,7 @@
 import { ExclamationIcon } from "@heroicons/react/solid";
 import React, { useState } from "react";
 import devLog from "../../lib/devLog";
-import useStorage from "../../lib/useStorage";
+import useStorage from "../../hooks/useStorage";
 import { zencode_exec } from "zenroom";
 import signFile from "../../zenflows-crypto/src/sign_file";
 

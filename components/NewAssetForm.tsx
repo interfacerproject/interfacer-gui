@@ -9,17 +9,15 @@ import {
 import BrMdEditor from "./brickroom/BrMdEditor";
 import BrRadio from "./brickroom/BrRadio";
 import BrImageUpload from "./brickroom/BrImageUpload";
-import TagSelector from "./brickroom/TagSelector";
 import GeoCoderInput from "./GeoCoderInput";
 import AddContributors from "./AddContributors";
 import Link from "next/link";
-import { useAuth } from "../lib/auth";
+import { useAuth } from "../hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
 import dayjs from "dayjs";
 import SelectTags from "./SelectTags";
-import SelectAssetTypeRadio from "./SelectAssetTypeRadio";
 
 type Image = {
   description: string;
@@ -38,7 +36,7 @@ type NewAssetFormProps = {
 };
 
 const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
-  const { authId } = useAuth()
+  const { user } = useAuth()
   const [projectType, setAssetType] = useState("");
   const [projectName, setAssetName] = useState('')
   const [projectDescription, setAssetDescription] = useState('')
@@ -291,7 +289,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     e.preventDefault();
     const variables = {
       resourceSpec: resourceSpec,
-      agent: authId,
+      agent: user?.ulid,
       name: projectName,
       note: `description: ${projectDescription}, repositoryOrId: ${repositoryOrId}`,
       metadata: JSON.stringify({ repositoryOrId: repositoryOrId, contributors: contributors }),
@@ -368,7 +366,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
 
     const intent = await createIntent({
       variables: {
-        agent: authId,
+        agent: user?.ulid,
         resource:
           asset?.createEconomicEvent.economicEvent
             .resourceInventoriedAs.id,
