@@ -9,10 +9,10 @@ describe("When user visit resources", () => {
     cy.restoreLocalStorage();
   });
 
-  it("should Filter resources by the url query string", () => {
-    cy.visit("/resources?primaryAccountable=061KPJM661MN6S3QA3PPQ6AQDR&conformTo=061KFDE93ARR3Q67J2PMBS0JGC");
+  it("should have items with a source url", () => {
+    cy.visit("/resources");
     cy.get("tr").each($tr => {
-      cy.wrap($tr).get("td").eq(0).should("contain", "nenno").and("contain", "Design");
+      cy.wrap($tr).get('td').eq(1).should("not.be.empty");
     });
   });
 });

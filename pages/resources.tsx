@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 
 const Resources: NextPage = () => {
   const { conformTo, primaryAccountable } = useRouter().query;
-  const filter: { conformsTo?: string[]; primaryAccountable?: string[] } = {};
+  const filter: { conformsTo?: string[]; primaryAccountable?: string[] } = {primaryAccountable:[process.env.NEXT_PUBLIC_LOASH_ID!]};
   // @ts-ignore
   conformTo && (filter["conformsTo"] = [].concat(conformTo));
   // @ts-ignore

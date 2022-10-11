@@ -143,12 +143,6 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
                             <p className="h-16 overflow-hidden text-sm whitespace-normal text-thin">
                               {truncate(e.node.note, 100)}
                             </p>
-                            <p className="h-16 overflow-hidden text-sm whitespace-normal text-thin">
-                              {e.node.conformsTo.name}
-                            </p>
-                            <p className="h-16 overflow-hidden text-sm whitespace-normal text-thin">
-                              {e.node.primaryAccountable.name}
-                            </p>
                           </div>
                         </a>
                       </Link>
