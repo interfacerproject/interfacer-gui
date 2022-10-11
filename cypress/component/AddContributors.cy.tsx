@@ -45,8 +45,6 @@ describe("AddContributors.cy.tsx", () => {
     cy.get("input").type("test");
     cy.get("#react-select-2-option-0").should("exist").click();
     // Assert
-    cy.get("@setContributors").should("have.been.calledWith", [
-      { label: "test1", value: "061F65P3N9DKA1GQVYQE5N7E3W" },
-    ]);
+    cy.get("@setContributors").should("have.been.calledWith", [{ name: "test1", id: "061F65P3N9DKA1GQVYQE5N7E3W" }]);
   });
 });
