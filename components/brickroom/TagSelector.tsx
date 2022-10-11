@@ -20,16 +20,10 @@ const TagSelelector = (props: TagSelectorProps) => {
   const [tags, setTags] = React.useState(props.tags && [...props.tags]);
 
   const handleAdd = async (e: ChangeEvent<HTMLInputElement>) => {
-    setTags(
-      Array.from(
-        new Set(
-          e.target.value.split(/\s/).filter((tag) => tag.length > 0)
-        )
-      )
-    );
+    setTags(Array.from(new Set(e.target.value.split(/\s/).filter(tag => tag.length > 0))));
   };
   const cancelTag = (tag: string) => {
-    setTags([...tags!.filter((t) => t !== tag)]);
+    setTags([...tags!.filter(t => t !== tag)]);
   };
   useEffect(() => {
     props.onSelect && props.onSelect(tags!);
@@ -41,11 +35,7 @@ const TagSelelector = (props: TagSelectorProps) => {
         <label className="label mb-[-3px]">
           <h4 className="label-text capitalize">{props.label}</h4>
         </label>
-        <BrTags
-          onCancel={cancelTag}
-          tags={tags}
-          testID={props.testID}
-        />
+        <BrTags onCancel={cancelTag} tags={tags} testID={props.testID} />
         <BrTextField
           placeholder={props.placeholder}
           hint={props.hint}

@@ -1,56 +1,56 @@
 {
-    "title_step_0": "Login",
-    "title_step_1": "Login",
-    "title_step_2": "Login answering the signup questions 💬",
-    "title_step_3": "Login via passprhase 🔑",
-    "presentation": "Login by providing your generated passphrase or by answering the questions during your Signup proccess",
-    "presentation_step_2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-    "presentation_step_3": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-    "step_passphrase": {
-        "title": "Login via passphrase 🔑",
-        "subtitle": "Input the passphrase that you kept, generated during the signup process",
-        "label": "Passphrase",
-        "placeholder": "state stumble clever trap excuse scheme world human",
-        "button": "Login",
-        "help_text": "Make sure to insert all the 12 words of the passphrase, separated by a space",
-        "error": "Invalid passphrase"
-    },
-    "step_questions": {
-        "title": "Login answering the signup questions 💬",
-        "subtitle": "Answer the questions that you answered during the signup process",
-        "subtitle_signup": "You will have to remember the answers and keep them for later, as they are necessary for the log in.",
-        "subtitle_passphrase": "You can now choose to log in answering the previous questions or using this passphrase.",
-        "hint": "Answer to at least 3 questions.",
-        "label": "Answer",
-        "placeholder": "Answer",
-        "button": "Login",
-        "button_2": "Login",
-        "keyring_title": "Answer to these questions to complete your signup 🧩",
-        "passphrase_title": "Here’s your passprhase! 🔑",
-        "continue_button": "Login",
-        "help_text": "Make sure to insert all the 12 words of the passphrase, separated by a space",
-        "help_text_2": "This passphrase is generated and are not stored on the server. Keep a copy of it.",
-        "error": "User not found: maybe answered to the wrong questions?",
-        "reminder": "Your passprhase is: ",
-        "questions": [
-            "Where my parents met?",
-            "What is the name of your first pet?",
-            "What is your home town?",
-            "What is the name of your first teacher?",
-            "What is the surname of your mother before wedding?"
-        ]
-    },
-    "button1": "Login: passprhase",
-    "button2": "Login: answer questions",
-    "button3": "Sign up",
-    "button4": "Continue",
-    "help_text_step_1": "Input the email address provided during the signup process.",
-    "email": {
-        "label": "Your email:",
-        "placeholder": "alice@email.com"
-    },
-    "register": {
-        "question": "✌️  You don't have an account yet?",
-        "answer": "Sign up"
-    }
+  "title_step_0": "Login",
+  "title_step_1": "Login",
+  "title_step_2": "Login answering the signup questions 💬",
+  "title_step_3": "Login via passprhase 🔑",
+  "presentation": "Login by providing your generated passphrase or by answering the questions during your Signup proccess",
+  "presentation_step_2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "presentation_step_3": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
+  "step_passphrase": {
+    "title": "Login via passphrase 🔑",
+    "subtitle": "Input the passphrase that you kept, generated during the signup process",
+    "label": "Passphrase",
+    "placeholder": "state stumble clever trap excuse scheme world human",
+    "button": "Login",
+    "help_text": "Make sure to insert all the 12 words of the passphrase, separated by a space",
+    "error": "Invalid passphrase"
+  },
+  "step_questions": {
+    "title": "Login answering the signup questions 💬",
+    "subtitle": "Answer the questions that you answered during the signup process",
+    "subtitle_signup": "You will have to remember the answers and keep them for later, as they are necessary for the log in.",
+    "subtitle_passphrase": "You can now choose to log in answering the previous questions or using this passphrase.",
+    "hint": "Answer to at least 3 questions.",
+    "label": "Answer",
+    "placeholder": "Answer",
+    "button": "Login",
+    "button_2": "Login",
+    "keyring_title": "Answer to these questions to complete your signup 🧩",
+    "passphrase_title": "Here’s your passprhase! 🔑",
+    "continue_button": "Login",
+    "help_text": "Make sure to insert all the 12 words of the passphrase, separated by a space",
+    "help_text_2": "This passphrase is generated and are not stored on the server. Keep a copy of it.",
+    "error": "User not found: maybe answered to the wrong questions?",
+    "reminder": "Your passprhase is: ",
+    "questions": [
+      "Where my parents met?",
+      "What is the name of your first pet?",
+      "What is your home town?",
+      "What is the name of your first teacher?",
+      "What is the surname of your mother before wedding?"
+    ]
+  },
+  "button1": "Login: passprhase",
+  "button2": "Login: answer questions",
+  "button3": "Sign up",
+  "button4": "Continue",
+  "help_text_step_1": "Input the email address provided during the signup process.",
+  "email": {
+    "label": "Your email:",
+    "placeholder": "alice@email.com"
+  },
+  "register": {
+    "question": "✌️  You don't have an account yet?",
+    "answer": "Sign up"
+  }
 }

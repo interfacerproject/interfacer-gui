@@ -1,11 +1,5 @@
 import BrInput from "./brickroom/BrInput";
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
 import BrMdEditor from "./brickroom/BrMdEditor";
 import BrRadio from "./brickroom/BrRadio";
 import BrImageUpload from "./brickroom/BrImageUpload";
@@ -36,217 +30,202 @@ type NewAssetFormProps = {
 };
 
 const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const [projectType, setAssetType] = useState("");
-  const [projectName, setAssetName] = useState('')
-  const [projectDescription, setAssetDescription] = useState('')
-  const [repositoryOrId, setRepositoryOrId] = useState('')
-  const [assetTags, setAssetTags] = useState([] as string[])
-  const [locationId, setLocationId] = useState('')
-  const [location, setLocation] = useState({} as any)
-  const [locationName, setLocationName] = useState('')
-  const [price, setPrice] = useState('')
-  const [resourceSpec, setResourceSpec] = useState('')
-  const [resourceId, setResourceId] = useState('')
-  const [images, setImages] = useState([] as Images)
-  const [contributors, setContributors] = useState([] as { id: string, name: string }[])
-  const [imagesFiles, setImagesFiles] = useState([] as Array<any>)
-  const [assetCreatedId, setAssetCreatedId] = useState(undefined as string | undefined)
-  const { t } = useTranslation('createProjectProps')
+  const [projectName, setAssetName] = useState("");
+  const [projectDescription, setAssetDescription] = useState("");
+  const [repositoryOrId, setRepositoryOrId] = useState("");
+  const [assetTags, setAssetTags] = useState([] as string[]);
+  const [locationId, setLocationId] = useState("");
+  const [location, setLocation] = useState({} as any);
+  const [locationName, setLocationName] = useState("");
+  const [price, setPrice] = useState("");
+  const [resourceSpec, setResourceSpec] = useState("");
+  const [resourceId, setResourceId] = useState("");
+  const [images, setImages] = useState([] as Images);
+  const [contributors, setContributors] = useState([] as { id: string; name: string }[]);
+  const [imagesFiles, setImagesFiles] = useState([] as Array<any>);
+  const [assetCreatedId, setAssetCreatedId] = useState(undefined as string | undefined);
+  const { t } = useTranslation("createProjectProps");
 
   const isButtonEnabled = () => {
-    return resourceSpec.length > 0 &&
+    return (
+      resourceSpec.length > 0 &&
       projectName.length > 0 &&
       projectDescription.length > 0 &&
       repositoryOrId.length > 0 &&
       locationId.length > 0 &&
       price.length > 0
+    );
   };
 
   useEffect(() => {
-    isButtonEnabled() ?
-      setLogs(logs.concat(['info: mandatory fields compiled'])) : setLogs(logs.concat(['warning: compile all mandatory fields']))
+    isButtonEnabled()
+      ? setLogs(logs.concat(["info: mandatory fields compiled"]))
+      : setLogs(logs.concat(["warning: compile all mandatory fields"]));
     switch (projectType) {
-      case 'Design':
-        setResourceSpec(instanceVariables?.specs?.specProjectDesign.id)
-        break
-      case 'Service':
-        setResourceSpec(instanceVariables?.specs?.specProjectService.id)
-        break
-      case 'Product':
-        setResourceSpec(instanceVariables?.specs?.specProjectProduct.id)
-        break
+      case "Design":
+        setResourceSpec(instanceVariables?.specs?.specProjectDesign.id);
+        break;
+      case "Service":
+        setResourceSpec(instanceVariables?.specs?.specProjectService.id);
+        break;
+      case "Product":
+        setResourceSpec(instanceVariables?.specs?.specProjectProduct.id);
+        break;
     }
-    devLog('typeId', resourceSpec)
-  }, [
-    projectType,
-    projectName,
-    projectDescription,
-    repositoryOrId,
-    locationId,
-    locationName,
-    price,
-  ]);
+    devLog("typeId", resourceSpec);
+  }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price]);
 
   const colors = ["error", "success", "warning", "info"];
   const logsClass = (text: string) =>
-    colors.includes(text.split(":")[0])
-      ? `text-${text.split(":")[0]} uppercase my-3`
-      : "my-2";
-  const QUERY_VARIABLES = gql`query {
-    instanceVariables {
+    colors.includes(text.split(":")[0]) ? `text-${text.split(":")[0]} uppercase my-3` : "my-2";
+  const QUERY_VARIABLES = gql`
+    query {
+      instanceVariables {
         specs {
-            specCurrency {
-                id
-            }
-            specProjectDesign {
-                id
-            }
-            specProjectProduct {
-                id
-            }
-            specProjectService {
-                id
-            }
+          specCurrency {
+            id
+          }
+          specProjectDesign {
+            id
+          }
+          specProjectProduct {
+            id
+          }
+          specProjectService {
+            id
+          }
         }
         units {
-            unitOne {
-                id
-            }
-        }
-    }
-}`;
-
-  const CREATE_PROPOSAL = gql`mutation {
-            createProposal(proposal: { name: "price tag", unitBased: true }) {
-                proposal {
-                    id
-                }
-            }
-        }
-    `;
-  const CREATE_INTENT = gql`mutation ( $agent: ID!, $resource: ID!, $oneUnit: ID!, $currency: ID!, $howMuch: Float!) {
-    item: createIntent(
-        intent: {
-            name: "project",
-            action: "transfer",
-            provider: $agent,
-            resourceInventoriedAs: $resource,
-            resourceQuantity: {
-                hasNumericalValue: 1,
-                hasUnit: $oneUnit
-            }
-        }
-    ) {
-        intent {
+          unitOne {
             id
+          }
         }
-    }
-
-    payment: createIntent(
-        intent: {
-            name: "payment",
-            action: "transfer",
-            receiver: $agent,
-            resourceConformsTo: $currency,
-            resourceQuantity: {
-                hasNumericalValue: $howMuch,
-                hasUnit: $oneUnit
-            }
-        }
-    ) {
-        intent {
-            id
-        }
-    }
-}`;
-
-  const LINK_PROPOSAL_AND_INTENT = gql`mutation ($proposal: ID!, $item: ID!, $payment: ID!) {
-    linkItem: proposeIntent(
-        publishedIn: $proposal
-        publishes: $item
-        reciprocal: false
-    ) {
-        proposedIntent {
-            id
-        }
-    }
-
-    linkPayment: proposeIntent(
-        publishedIn: $proposal
-        publishes: $payment
-        reciprocal: true
-    ) {
-        proposedIntent {
-            id
-        }
-    }
-}`;
-
-  const CREATE_LOCATION = gql`mutation ($name: String!, $addr: String!, $lat: Float!, $lng: Float!) {
-  createSpatialThing(
-    spatialThing: { name: $name, mappableAddress: $addr, lat: $lat, long: $lng }
-  ) {
-    spatialThing {
-      id
-      lat
-      long
-    }
-  }
-}`;
-
-  const CREATE_ASSET = gql`mutation (
-  $name: String!,
-  $note: String!,
-  $metadata: JSON,
-  $agent: ID!,
-  $creationTime: DateTime!,
-  $location: ID!,
-  $tags: [URI!],
-  $resourceSpec: ID!,
-  $oneUnit: ID!,
-  $images: [IFile!]
-) {
-  createEconomicEvent(
-    event: {
-      action: "raise",
-      provider: $agent,
-      receiver: $agent,
-      hasPointInTime: $creationTime,
-      resourceClassifiedAs: $tags,
-      resourceConformsTo: $resourceSpec,
-      resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit },
-      toLocation: $location
-    }
-    newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata }
-  ) {
-    economicEvent {
-      id
-      resourceInventoriedAs {
-        id
       }
     }
-  }
-}`
+  `;
+
+  const CREATE_PROPOSAL = gql`
+    mutation {
+      createProposal(proposal: { name: "price tag", unitBased: true }) {
+        proposal {
+          id
+        }
+      }
+    }
+  `;
+  const CREATE_INTENT = gql`
+    mutation ($agent: ID!, $resource: ID!, $oneUnit: ID!, $currency: ID!, $howMuch: Float!) {
+      item: createIntent(
+        intent: {
+          name: "project"
+          action: "transfer"
+          provider: $agent
+          resourceInventoriedAs: $resource
+          resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
+        }
+      ) {
+        intent {
+          id
+        }
+      }
+
+      payment: createIntent(
+        intent: {
+          name: "payment"
+          action: "transfer"
+          receiver: $agent
+          resourceConformsTo: $currency
+          resourceQuantity: { hasNumericalValue: $howMuch, hasUnit: $oneUnit }
+        }
+      ) {
+        intent {
+          id
+        }
+      }
+    }
+  `;
+
+  const LINK_PROPOSAL_AND_INTENT = gql`
+    mutation ($proposal: ID!, $item: ID!, $payment: ID!) {
+      linkItem: proposeIntent(publishedIn: $proposal, publishes: $item, reciprocal: false) {
+        proposedIntent {
+          id
+        }
+      }
+
+      linkPayment: proposeIntent(publishedIn: $proposal, publishes: $payment, reciprocal: true) {
+        proposedIntent {
+          id
+        }
+      }
+    }
+  `;
+
+  const CREATE_LOCATION = gql`
+    mutation ($name: String!, $addr: String!, $lat: Float!, $lng: Float!) {
+      createSpatialThing(spatialThing: { name: $name, mappableAddress: $addr, lat: $lat, long: $lng }) {
+        spatialThing {
+          id
+          lat
+          long
+        }
+      }
+    }
+  `;
+
+  const CREATE_ASSET = gql`
+    mutation (
+      $name: String!
+      $note: String!
+      $metadata: JSON
+      $agent: ID!
+      $creationTime: DateTime!
+      $location: ID!
+      $tags: [URI!]
+      $resourceSpec: ID!
+      $oneUnit: ID!
+      $images: [IFile!]
+    ) {
+      createEconomicEvent(
+        event: {
+          action: "raise"
+          provider: $agent
+          receiver: $agent
+          hasPointInTime: $creationTime
+          resourceClassifiedAs: $tags
+          resourceConformsTo: $resourceSpec
+          resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
+          toLocation: $location
+        }
+        newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata }
+      ) {
+        economicEvent {
+          id
+          resourceInventoriedAs {
+            id
+          }
+        }
+      }
+    }
+  `;
   const handleEditorChange = ({ html, text }: any) => {
-    devLog('handleEditorChange', html, text);
-    setAssetDescription(text)
-  }
+    devLog("handleEditorChange", html, text);
+    setAssetDescription(text);
+  };
 
   const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables;
 
   const [createAsset, { data, error }] = useMutation(CREATE_ASSET);
 
-  const [createLocation, { data: spatialThing }] =
-    useMutation(CREATE_LOCATION);
+  const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
 
   const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);
 
   const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
 
-  const [linkProposalAndIntent, { data: link }] = useMutation(
-    LINK_PROPOSAL_AND_INTENT
-  );
+  const [linkProposalAndIntent, { data: link }] = useMutation(LINK_PROPOSAL_AND_INTENT);
 
   const handleCreateLocation = async (loc: any) => {
     devLog("handleCreateLocation", loc);
@@ -260,28 +239,18 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         lng: loc.lng,
       },
     })
-      .then((r) => {
+      .then(r => {
         setLocationId(r.data.createSpatialThing.spatialThing.id);
         setLogs(
           logs
             .concat(["info: location created"])
-            .concat([
-              `    id: ${r.data.createSpatialThing.spatialThing.id}`,
-            ])
-            .concat([
-              `    latitude: ${r.data.createSpatialThing.spatialThing.lat}`,
-            ])
-            .concat([
-              `    longitude: ${r.data.createSpatialThing.spatialThing.long}`,
-            ])
+            .concat([`    id: ${r.data.createSpatialThing.spatialThing.id}`])
+            .concat([`    latitude: ${r.data.createSpatialThing.spatialThing.lat}`])
+            .concat([`    longitude: ${r.data.createSpatialThing.spatialThing.long}`])
         );
       })
-      .catch((e) => {
-        setLogs(
-          logs
-            .concat(["error: location creation failed"])
-            .concat([e.message])
-        );
+      .catch(e => {
+        setLogs(logs.concat(["error: location creation failed"]).concat([e.message]));
       });
   };
 
@@ -297,16 +266,14 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
       oneUnit: instanceVariables?.units?.unitOne.id,
       creationTime: dayjs().toISOString(),
       images: images,
-      tags: assetTags?.map((t) => encodeURI(t)),
+      tags: assetTags?.map(t => encodeURI(t)),
     };
-    let logsText = logs
-      .concat("info:Creating raise resource economicEvent")
-      .concat(JSON.stringify(variables, null, 2));
+    let logsText = logs.concat("info:Creating raise resource economicEvent").concat(JSON.stringify(variables, null, 2));
 
     const asset = await createAsset({
       variables: variables,
     })
-      .catch((error) => {
+      .catch(error => {
         logsText = logsText.concat("error:".concat(error.message));
         setLogs(logsText);
       })
@@ -317,27 +284,18 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
           ])
         );
         setLogs(logsText);
-        setResourceId(
-          re?.data?.createEconomicEvent.economicEvent
-            .resourceInventoriedAs.id
-        );
+        setResourceId(re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id);
         logsText = logsText.concat([
           `success: Created resource inventoried with iD: ${re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id}`,
           "info: Creating proposal",
         ]);
         setLogs(logsText);
-        devLog(
-          "2",
-          re?.data?.createEconomicEvent.economicEvent
-            .resourceInventoriedAs.id
-        );
+        devLog("2", re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id);
         return re?.data;
       });
 
     images.forEach((i, index) => {
-      logsText = logsText.concat(
-        `info:Uploading image ${index + 1} of ${images.length}`
-      );
+      logsText = logsText.concat(`info:Uploading image ${index + 1} of ${images.length}`);
       setLogs(logsText);
       const filesArray = new FormData();
       filesArray.append(i.hash, imagesFiles[index]);
@@ -345,7 +303,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         method: "post",
         body: filesArray,
       })
-        .catch((error) => {
+        .catch(error => {
           logsText = logsText.concat([`error:${error}`]);
           setLogs(logsText);
         })
@@ -354,7 +312,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         });
     });
 
-    const proposal = await createProposal().then((proposal) => {
+    const proposal = await createProposal().then(proposal => {
       logsText = logsText.concat([
         `success: Created proposal with id: ${proposal.data?.createProposal.proposal.id}`,
         "info: Creating intents",
@@ -367,14 +325,12 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     const intent = await createIntent({
       variables: {
         agent: user?.ulid,
-        resource:
-          asset?.createEconomicEvent.economicEvent
-            .resourceInventoriedAs.id,
+        resource: asset?.createEconomicEvent.economicEvent.resourceInventoriedAs.id,
         oneUnit: instanceVariables?.units.unitOne.id,
         howMuch: parseFloat(price),
         currency: instanceVariables?.specs.specCurrency.id,
       },
-    }).then((intent) => {
+    }).then(intent => {
       logsText = logsText.concat([
         `success: Created intent with id: ${intent.data?.item.intent.id}`,
         "info: Linking proposal and intent",
@@ -391,9 +347,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         payment: intent?.payment.intent.id,
       },
     }).then(() => {
-      logsText = logsText.concat([
-        "success: Asset succesfull created!!!",
-      ]);
+      logsText = logsText.concat(["success: Asset succesfull created!!!"]);
       setLogs(logsText);
       setAssetCreatedId(`/asset/${proposal?.createProposal.proposal.id}`);
     });
@@ -404,9 +358,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         label={t("projectName.label")}
         hint={t("projectName.hint")}
         value={projectName}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setAssetName(e.target.value)
-        }
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setAssetName(e.target.value)}
         placeholder={t("projectName.placeholder")}
         testID="projectName"
       />
@@ -440,17 +392,15 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         hint={t("repositoryOrId.hint")}
         value={repositoryOrId}
         placeholder={t("repositoryOrId.placeholder")}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setRepositoryOrId(e.target.value)
-        }
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setRepositoryOrId(e.target.value)}
         testID="repositoryOrId"
       />
       <SelectTags
-        label={t('projectTags.label')}
-        hint={t('projectTags.hint')}
+        label={t("projectTags.label")}
+        hint={t("projectTags.hint")}
         canCreateTags
         onChange={setAssetTags}
-        placeholder={t('projectTags.placeholder')}
+        placeholder={t("projectTags.placeholder")}
         testID="tagsList"
       />
       <div className="grid grid-cols-2 gap-2">
@@ -459,9 +409,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
           hint={t("location.name.hint")}
           value={locationName}
           placeholder={t("location.name.placeholder")}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setLocationName(e.target.value)
-          }
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setLocationName(e.target.value)}
           testID="location.name"
         />
         <GeoCoderInput
@@ -476,7 +424,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
       <AddContributors
         label={t("contributors.label")}
         hint={t("contributors.hint")}
-        setContributors={(c) => setContributors(c)}
+        setContributors={c => setContributors(c)}
         contributors={contributors}
         testID="contributors"
       />
@@ -486,9 +434,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         hint={t("price.hint")}
         value={price}
         placeholder={t("price.placeholder")}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setPrice(e.target.value)
-        }
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setPrice(e.target.value)}
         testID="price"
       />
 
@@ -498,12 +444,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
           <a className="btn btn-accent">{t("go to the asset")}</a>
         </Link>
       ) : (
-        <button
-          type="submit"
-          className="btn btn-accent"
-          disabled={!isButtonEnabled()}
-          data-test="submit"
-        >
+        <button type="submit" className="btn btn-accent" disabled={!isButtonEnabled()} data-test="submit">
           {t("button")}
         </button>
       )}

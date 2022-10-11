@@ -45,13 +45,13 @@ const VerifySeed = ({ email, HMAC }: { email: string; HMAC: string }) => {
     await zencode_exec(keypairoomClientRecreateKeys, { data: zenData })
       .then(({ result }) => {
         const res = JSON.parse(result);
-        setItem("eddsa_public_key", res.eddsa_public_key)
-        setItem("eddsa_key", res.keyring.eddsa)
-        setItem("ethereum_address", res.keyring.ethereum)
-        setItem("reflow", res.keyring.reflow)
-        setItem("schnorr", res.keyring.schnorr)
-        setItem("eddsa", res.keyring.eddsa)
-        setItem("seed", res.seed)
+        setItem("eddsa_public_key", res.eddsa_public_key);
+        setItem("eddsa_key", res.keyring.eddsa);
+        setItem("ethereum_address", res.keyring.ethereum);
+        setItem("reflow", res.keyring.reflow);
+        setItem("schnorr", res.keyring.schnorr);
+        setItem("eddsa", res.keyring.eddsa);
+        setItem("seed", res.seed);
       })
       .catch(() => setError(t("error")))
       .then(() => {
@@ -68,16 +68,10 @@ const VerifySeed = ({ email, HMAC }: { email: string; HMAC: string }) => {
           error={error}
           label={t("label")}
           placeholder={t("placeholder")}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            validateSeed(e.target.value)
-          }
+          onChange={(e: ChangeEvent<HTMLInputElement>) => validateSeed(e.target.value)}
         />
         <p className="text-[#8A8E96] mb-6">{t("help_text")}</p>
-        <button
-          className="btn btn-block btn-accent"
-          type="submit"
-          onClick={onSubmit}
-        >
+        <button className="btn btn-block btn-accent" type="submit" onClick={onSubmit}>
           {t("button")}
         </button>
       </form>

@@ -73,7 +73,7 @@
     "placeholder": "E.g. 1 Fab Token",
     "hint": "Value of the asset in Fab Token"
   },
-    "contributors": {
+  "contributors": {
     "label": "Contributors:",
     "placeholder": "Search agents by name",
     "hint": "Contributors must have an account"
