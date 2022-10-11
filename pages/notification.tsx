@@ -1,10 +1,10 @@
 import { gql, useQuery } from "@apollo/client";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Link from "next/link";
+import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 import { useAuth } from "../hooks/useAuth";
 import dayjs from "../lib/dayjs";
-import Link from "next/link";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useTranslation } from "next-i18next";
-import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 
 const QUERY_ASSETS = gql`
   query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {

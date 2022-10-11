@@ -1,6 +1,6 @@
 import React = require("react");
-import "../../styles/globals.scss";
 import GeoCoderInput from "../../components/GeoCoderInput";
+import "../../styles/globals.scss";
 
 describe("AddContributors.cy.tsx", () => {
   const selectedMock = {

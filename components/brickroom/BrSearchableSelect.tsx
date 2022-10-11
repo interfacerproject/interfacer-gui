@@ -1,7 +1,6 @@
-import CreatableSelect from "react-select/creatable";
-import Select from "react-select/";
 import { ExclamationIcon } from "@heroicons/react/solid";
-import React from "react";
+import Select from "react-select/";
+import CreatableSelect from "react-select/creatable";
 
 type AsyncSelectProps = {
   options: any[];

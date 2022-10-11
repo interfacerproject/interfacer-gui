@@ -1,6 +1,6 @@
 {
   "title": "Sign up",
-  "keyring_title": "Answer to these questions to complete your signup 🧩",
+  "keyring_title": "Answer security questions to complete your signup 🧩",
   "presentation": "The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase.",
   "name": {
     "label": "Your name",
@@ -23,11 +23,11 @@
     "answer": "Login"
   },
   "questions": [
-    "Where my parents met?",
+    "Where did your parents meet?",
     "What is the name of your first pet?",
     "What is your home town?",
     "What is the name of your first teacher?",
-    "What is the surname of your mother before wedding?"
+    "What is your mother's maiden name?"
   ],
   "button": "Next step"
 }

@@ -35,6 +35,15 @@ module.exports = {
   },
   theme: {
     extend: {
+      keyframes: {
+        swing: {
+          "0%,100%": { transform: "rotate(15deg)" },
+          "50%": { transform: "rotate(-15deg)" },
+        },
+      },
+      animation: {
+        swing: "swing 1s infinite",
+      },
       lineHeight: {
         11: "3rem",
       },

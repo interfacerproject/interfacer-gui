@@ -1,17 +1,16 @@
-import type { NextPage } from "next";
-import { useAuth } from "../../hooks/useAuth";
 import { gql, useQuery } from "@apollo/client";
-import { useRouter } from "next/router";
-import Spinner from "../../components/brickroom/Spinner";
-import ResourceTable from "../../components/ResourceTable";
-import devLog from "../../lib/devLog";
+import { ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
-import React from "react";
-import AssetsTable from "../../components/AssetsTable";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
-import { ArrowSmUpIcon } from "@heroicons/react/solid";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
+import AssetsTable from "../../components/AssetsTable";
+import Spinner from "../../components/brickroom/Spinner";
+import ResourceTable from "../../components/ResourceTable";
+import { useAuth } from "../../hooks/useAuth";
+import devLog from "../../lib/devLog";
 
 const Profile: NextPage = () => {
   const router = useRouter();
