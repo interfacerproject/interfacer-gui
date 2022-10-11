@@ -24,7 +24,7 @@ interface AssetIface {
     }
   ];
   note: string;
-  classifiedAs:string[];
+  classifiedAs: string[];
   primaryAccountable: {
     id: string;
     name: string;

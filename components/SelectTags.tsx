@@ -17,11 +17,27 @@ type SelectAssetTypeProps = {
   onChange: (values: string[]) => void;
   canCreateTags?: boolean;
   testID?: string;
+  initialTags?: string[];
+  selectedTags?: string[];
 };
 
-const SelectTags = ({ label, hint, error, placeholder, onChange, canCreateTags = false }: SelectAssetTypeProps) => {
+const SelectTags = ({
+  label,
+  hint,
+  error,
+  placeholder,
+  onChange,
+  canCreateTags = false,
+  initialTags,
+  selectedTags,
+}: SelectAssetTypeProps) => {
   const [inputValue, setInputValue] = useState("");
+  const [hasChanged, setHasChanged] = useState(false);
   const tags = useQuery(QUERY).data?.economicResourceClassifications;
+  const value = hasChanged
+    ? selectedTags?.map(tag => ({ value: tag, label: tag }))
+    : initialTags?.map(tag => ({ value: tag, label: tag }));
+
   const options =
     tags &&
     tags.map((tag: string) => ({
@@ -30,12 +46,14 @@ const SelectTags = ({ label, hint, error, placeholder, onChange, canCreateTags =
     }));
   const getTags = (tags: { value: string; label: string; __isNew__?: boolean }[]) => {
     onChange(tags.map(tag => tag.value));
+    setHasChanged(true);
   };
 
   return (
     <>
       <BrSearchableSelect
         options={options}
+        value={value}
         onInputChange={setInputValue}
         onChange={getTags}
         label={label}

@@ -4,6 +4,7 @@ import devLog from "../lib/devLog";
 import BrSearchableSelect from "./brickroom/BrSearchableSelect";
 
 type AddContributorsProps = {
+  initialContributors?: string[];
   contributors: Array<{ id: string; name: string }>;
   setContributors: (contributors: Array<{ id: string; name: string }>) => void;
   label?: string;
@@ -33,12 +34,30 @@ export const QUERY_AGENTS = gql`
   }
 `;
 
-const AddContributors = ({ contributors, setContributors, label, hint, error, testID }: AddContributorsProps) => {
+const AddContributors = ({
+  contributors,
+  setContributors,
+  label,
+  hint,
+  error,
+  testID,
+  initialContributors,
+}: AddContributorsProps) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [hasChanged, setHasChanged] = useState<boolean>(false);
   const agents = useQuery(QUERY_AGENTS).data?.agents.edges.map((agent: any) => agent.node);
-  const filteredContributors = agents?.filter((contributor: { id: string; name: string }) => {
-    return contributor.name.toLowerCase().includes(searchTerm.toLowerCase());
-  });
+  const value =
+    contributors.length > 0 || hasChanged
+      ? contributors.map((contributor: { id: string; name: string }) => ({
+          value: contributor.id,
+          label: contributor.name,
+        }))
+      : agents
+          ?.filter((agent: { id: string }) => initialContributors?.includes(agent.id))
+          .map((contributor: { id: string; name: string }) => ({ value: contributor.id, label: contributor.name }));
+  const filteredContributors = agents?.filter((contributor: { id: string; name: string }) =>
+    contributor.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const handleSelect = (values: { value: string; label: string }[]) => {
     const updatedOptions = [...values].map((value: { value: string; label: string }) => ({
       id: value.value,
@@ -46,6 +65,7 @@ const AddContributors = ({ contributors, setContributors, label, hint, error, te
     }));
     devLog("contributors", updatedOptions);
     setContributors(updatedOptions);
+    setHasChanged(true);
   };
   return (
     <BrSearchableSelect
@@ -58,7 +78,7 @@ const AddContributors = ({ contributors, setContributors, label, hint, error, te
       onInputChange={setSearchTerm}
       inputValue={searchTerm}
       label={label}
-      value={contributors.map(contributor => ({ label: contributor.name, value: contributor.id }))}
+      value={value}
       hint={hint}
       error={error}
       testID={testID}

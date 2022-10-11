@@ -144,7 +144,7 @@ const AssetsTable = ({
             </div>
           </div>
           <div className="col-span-2">
-            <Filters noPrimaryAccountableFilter={noPrimaryAccountableFilter} />
+            <Filters noPrimaryAccountableFilter={noPrimaryAccountableFilter} filter={filter} />
           </div>
         </>
       )}

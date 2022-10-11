@@ -352,6 +352,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
       setAssetCreatedId(`/asset/${proposal?.createProposal.proposal.id}`);
     });
   }
+
   return (
     <form onSubmit={onSubmit} className="w-full">
       <BrInput
