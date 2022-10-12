@@ -225,10 +225,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
       .mutate({
         mutation: SignUpMutation,
         context: {
-          headers: {
-            "zenflows-admin":
-              "b4a7a8b0a87a8df133ceded44a5c624f1dae19024d72f931b65122a8463a69e6be7ae8bbd51a330182fde04e3e441371a051c7c800147837f31dff27c78cf246",
-          },
+          headers: { "zenflows-admin": process.env.NEXT_PUBLIC_ZENFLOWS_ADMIN },
         },
       })
       .then(({ data }) => {
