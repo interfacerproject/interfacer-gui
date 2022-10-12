@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
 import BrSearchableSelect from "./brickroom/BrSearchableSelect";
@@ -46,15 +46,16 @@ const AddContributors = ({
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [hasChanged, setHasChanged] = useState<boolean>(false);
   const agents = useQuery(QUERY_AGENTS).data?.agents.edges.map((agent: any) => agent.node);
-  const value =
-    contributors.length > 0 || hasChanged
-      ? contributors.map((contributor: { id: string; name: string }) => ({
-          value: contributor.id,
-          label: contributor.name,
-        }))
-      : agents
-          ?.filter((agent: { id: string }) => initialContributors?.includes(agent.id))
-          .map((contributor: { id: string; name: string }) => ({ value: contributor.id, label: contributor.name }));
+  useEffect(() => {
+    if (agents && !hasChanged && initialContributors) {
+      setContributors(
+        agents
+          .filter((agent: any) => initialContributors?.includes(agent.id))
+          .map((agent: any) => ({ id: agent.id, name: agent.name }))
+      );
+      setHasChanged(true);
+    }
+  }, [agents]);
   const filteredContributors = agents?.filter((contributor: { id: string; name: string }) =>
     contributor.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -78,7 +79,10 @@ const AddContributors = ({
       onInputChange={setSearchTerm}
       inputValue={searchTerm}
       label={label}
-      value={value}
+      value={contributors?.map((contributor: { id: string; name: string }) => ({
+        value: contributor.id,
+        label: contributor.name,
+      }))}
       hint={hint}
       error={error}
       testID={testID}

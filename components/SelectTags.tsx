@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import BrSearchableSelect from "./brickroom/BrSearchableSelect";
 import { gql, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
@@ -34,9 +34,11 @@ const SelectTags = ({
   const [inputValue, setInputValue] = useState("");
   const [hasChanged, setHasChanged] = useState(false);
   const tags = useQuery(QUERY).data?.economicResourceClassifications;
-  const value = hasChanged
-    ? selectedTags?.map(tag => ({ value: tag, label: tag }))
-    : initialTags?.map(tag => ({ value: tag, label: tag }));
+  useEffect(() => {
+    if (tags && !hasChanged && initialTags) {
+      onChange(initialTags);
+    }
+  }, [tags]);
 
   const options =
     tags &&
@@ -53,7 +55,7 @@ const SelectTags = ({
     <>
       <BrSearchableSelect
         options={options}
-        value={value}
+        value={selectedTags?.map(tag => ({ value: tag, label: tag }))}
         onInputChange={setInputValue}
         onChange={getTags}
         label={label}
