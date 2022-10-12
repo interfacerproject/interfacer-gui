@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import BrTable from "./brickroom/BrTable";
 import { gql, useQuery } from "@apollo/client";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { useEffect } from "react";
 import devLog from "../lib/devLog";
 import BrLoadMore from "./brickroom/BrLoadMore";
+import BrTable from "./brickroom/BrTable";
 import Spinner from "./brickroom/Spinner";
-import { useTranslation } from "next-i18next";
 
 const truncate = (input: string, max: number) => (input?.length > max ? `${input.substring(0, max)}...` : input);
+
 // prettier-ignore
 const FETCH_INVENTORY = gql`
   query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: EconomicResourceFilterParams) {
@@ -138,7 +139,7 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
                       <Link href={`/resource/${e.node.id}`}>
                         <a className="flex items-center space-x-4">
                           <img src={e.node.metadata?.image} className="w-20 h-20" />
-                          <div className="flex flex-col h-20 h-24 space-y-1 w-60">
+                          <div className="flex flex-col h-24 space-y-1 w-60">
                             <h4 className="truncate w-60">{e.node.name}</h4>
                             <p className="h-16 overflow-hidden text-sm whitespace-normal text-thin">
                               {truncate(e.node.note, 100)}
