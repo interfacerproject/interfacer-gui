@@ -387,6 +387,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         value={imagesFiles}
         hint={t("imageUpload.hint")}
         testID="imageUpload"
+        clickToUpload={t("imageUpload.clickToUpload")}
       />
       <BrInput
         label={t("repositoryOrId.label")}

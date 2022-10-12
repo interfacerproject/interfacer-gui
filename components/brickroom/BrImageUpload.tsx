@@ -1,5 +1,5 @@
 import { ExclamationIcon } from "@heroicons/react/solid";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import devLog from "../../lib/devLog";
 import useStorage from "../../hooks/useStorage";
 import { zencode_exec } from "zenroom";
@@ -18,6 +18,7 @@ type BrImageUploadProps = {
   className?: string;
   value?: Array<{ file: any; base64: string }>;
   testID?: string;
+  clickToUpload?: string;
 };
 type Image = {
   description: string;
@@ -30,7 +31,17 @@ type Image = {
 };
 type Images = Array<Image>;
 
-const BrImageUpload = (props: BrImageUploadProps) => {
+const BrImageUpload = ({
+  onChange,
+  setImagesFiles,
+  label,
+  placeholder,
+  hint,
+  className,
+  value,
+  testID,
+  clickToUpload = "click to upload",
+}: BrImageUploadProps) => {
   const [imagesPreview, setImagesPreview] = useState([] as Array<string>);
   const [error, setError] = useState("");
   const { getItem } = useStorage();
@@ -41,7 +52,7 @@ const BrImageUpload = (props: BrImageUploadProps) => {
             }
         }
     `;
-  const isNotImageSelected = props.value?.length === 0;
+  const isNotImageSelected = value?.length === 0;
 
   function arrayBufferToWordArray(ab: any) {
     var i8a = new Uint8Array(ab);
@@ -114,8 +125,8 @@ const BrImageUpload = (props: BrImageUploadProps) => {
       }
     });
     if (error === "") {
-      props.onChange(images);
-      props.setImagesFiles(Array.from(elements));
+      onChange(images);
+      setImagesFiles(Array.from(elements));
       populatePreviews(Array.from(elements));
     } else {
       setError(error);
@@ -126,15 +137,15 @@ const BrImageUpload = (props: BrImageUploadProps) => {
 
   return (
     <>
-      <div className={`form-control ${props.className}`}>
+      <div className={`form-control ${className}`}>
         <label className="label">
-          <h4 className="capitalize label-text">{props.label}</h4>
+          <h4 className="capitalize label-text">{label}</h4>
         </label>
         <div className="flex items-center justify-center w-full">
           <label
             htmlFor="dropzone-file"
             className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-            data-test={props.testID}
+            data-test={testID}
           >
             <>
               {isNotImageSelected && (
@@ -156,9 +167,9 @@ const BrImageUpload = (props: BrImageUploadProps) => {
                       />
                     </svg>
                     <p className="mb-2 text-sm text-gray-500">
-                      <span className="font-semibold">Click to upload</span> or drag and drop
+                      <span className="font-semibold">{clickToUpload}</span>
                     </p>
-                    <p className="text-xs text-gray-500">{props.placeholder}</p>
+                    <p className="text-xs text-gray-500">{placeholder}</p>
                   </div>
                 </>
               )}
@@ -173,9 +184,14 @@ const BrImageUpload = (props: BrImageUploadProps) => {
                 </div>
               )}
               <input
+                onDragStart={e => devLog("drag start", e)}
                 id="dropzone-file"
+                onDragEnter={e => devLog("drag enter", e)}
                 type="file"
                 className="hidden"
+                onDrop={e => {
+                  handleUpload(e.dataTransfer.files);
+                }}
                 onChange={e => {
                   handleUpload(e.target.files);
                 }}
@@ -191,7 +207,7 @@ const BrImageUpload = (props: BrImageUploadProps) => {
               {error}
             </span>
           )}
-          {props.hint && <span className="label-text-alt">{props.hint}</span>}
+          {hint && <span className="label-text-alt">{hint}</span>}
         </label>
       </div>
     </>
