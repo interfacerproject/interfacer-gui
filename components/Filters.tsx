@@ -36,15 +36,12 @@ const Filters = ({
   };
   const clearFilters = () => {
     const query = router.query;
-    delete query.primaryAccountable;
-    delete query.conformTo;
-    delete query.tags;
     setContributors([]);
     setConformsTo([]);
     setTags([]);
     router.push({
       pathname: router.pathname,
-      query,
+      query: {},
     });
   };
   return (
