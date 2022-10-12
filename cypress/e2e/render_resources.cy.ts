@@ -1,18 +1,16 @@
+import { waitForData } from "../utils";
+
 describe("When user visit resources", () => {
   before(() => {
     cy.login();
     cy.saveLocalStorage();
   });
 
-  beforeEach(() => {
-    cy.visit("");
-    cy.restoreLocalStorage();
-  });
-
   it("should have items with a source url", () => {
     cy.visit("/resources");
-    cy.get("tr").each($tr => {
-      cy.wrap($tr).get('td').eq(1).should("not.be.empty");
+    waitForData();
+    cy.get(`[data-test="resource-item"]`).each($item => {
+      cy.wrap($item).children(".table-cell").eq(1).should("not.be.empty");
     });
   });
 });

@@ -1,7 +1,6 @@
 import React = require("react");
-import AddContributors from "../../components/AddContributors";
 import { MockedProvider } from "@apollo/client/testing";
-import { QUERY_AGENTS } from "../../components/AddContributors";
+import AddContributors, { QUERY_AGENTS } from "../../components/AddContributors";
 import "../../styles/globals.scss";
 
 describe("AddContributors.cy.tsx", () => {
@@ -34,6 +33,7 @@ describe("AddContributors.cy.tsx", () => {
       },
     },
   ];
+
   it("should select an id by typing some search string and selecting from the list", () => {
     const setContributors = cy.spy().as("setContributors");
     cy.mount(
@@ -41,10 +41,14 @@ describe("AddContributors.cy.tsx", () => {
         <AddContributors contributors={[]} setContributors={setContributors} />
       </MockedProvider>
     );
+
     // Act
     cy.get("input").type("test");
-    cy.get("#react-select-2-option-0").should("exist").click();
+
+    // Clicking the option
+    cy.get(`[id$="listbox"]`).children("div").children("div").should("exist").eq(0).click();
+
     // Assert
-    cy.get("@setContributors").should("have.been.calledWith", [{ name: "test1", id: "061F65P3N9DKA1GQVYQE5N7E3W" }]);
+    cy.get("@setContributors").should("have.been.calledWith", [mocks[0].result.data.agents.edges[0].node]);
   });
 });

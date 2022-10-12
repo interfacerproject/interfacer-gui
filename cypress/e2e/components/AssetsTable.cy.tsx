@@ -36,12 +36,10 @@ describe("When user visit Assets", () => {
     // waitForData();
 
     // Clicking "Contributors" the multiselect dropdown
-    const dropdown = cy.contains("Contributors").parent().children("div");
-    dropdown.click();
+    cy.get(`[data-test="add-contributors"]`).click();
 
     // Clicking the option
-    cy.get("#react-select-3-option-1").click();
-    // cy.get('#react-select-2-placeholder')
+    cy.get(`[id$="listbox"]`).children("div").children("div").eq(1).click();
 
     // Outside click to close the panel
     cy.contains("Filter for:").click();
@@ -49,7 +47,7 @@ describe("When user visit Assets", () => {
     // Applying filter
     // Even though in the GUI the button text is "APPLY" (Capitalized)
     // In the DOM the node text is "Apply"
-    cy.get("button").contains("Apply").click();
+    cy.get(`[data-test="btn-apply"]`).click();
 
     /**
      * After the last one, the test breaks the table

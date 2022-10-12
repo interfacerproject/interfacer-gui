@@ -10,13 +10,17 @@ const BrTable = ({ headArray, children }: BrTableProps) => {
     <>
       <div className="overflow-x-auto shadow-lg rounded-box">
         <div className="table w-full rounded-box">
+          {/* The header */}
           <div className="table-header-group bg-white">
-            <tr>
+            <div className="table-row">
               {headArray.map(p => (
-                <th key={p}>{p}</th>
+                <div className="table-cell" key={p}>
+                  {p}
+                </div>
               ))}
-            </tr>
+            </div>
           </div>
+          {/* The children */}
           <div className="bg-['#F9F9F7'] table-row-group">{children}</div>
         </div>
       </div>
