@@ -134,7 +134,7 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
             {data?.economicResources.edges.length !== 0 && (
               <>
                 {data?.economicResources.edges.map((e: any) => (
-                  <div className="table-row" key={e.node.id}>
+                  <div className="table-row" key={e.node.id} data-test="resource-item">
                     {/* Cell 1 */}
                     <div className="table-cell">
                       <Link href={`/resource/${e.node.id}`}>
