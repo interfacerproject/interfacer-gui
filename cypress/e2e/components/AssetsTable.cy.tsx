@@ -3,6 +3,19 @@ import { waitForData } from "../../utils";
 //
 
 function checkTableAndContent() {
+  //Clicking 10 times load more button  due to inconsistent data in testing instance db
+  cy.get(".place-items-center > button")
+    .eq(0)
+    .click()
+    .click()
+    .click()
+    .click()
+    .click()
+    .click()
+    .click()
+    .click()
+    .click()
+    .click();
   // Rows of table should be visible
   const rows = cy.get("tr");
   rows.should("be.visible");
