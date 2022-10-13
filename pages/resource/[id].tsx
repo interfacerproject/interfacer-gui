@@ -13,7 +13,7 @@ const Resource: NextPage = () => {
   const { t } = useTranslation("ResourceProps");
 
   const QUERY_RESOURCE = gql`
-    query ($id: ID!) {
+    query getResourceTable($id: ID!) {
       economicResource(id: $id) {
         id
         name
