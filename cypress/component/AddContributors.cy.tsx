@@ -44,11 +44,9 @@ describe("AddContributors.cy.tsx", () => {
 
     // Act
     cy.get("input").type("test");
-    cy.screenshot();
 
     // Clicking the option
     cy.get(`[id$="listbox"]`).children("div").children("div").should("exist").eq(0).click();
-    cy.screenshot();
 
     // Assert
     cy.get("@setContributors").should("have.been.calledWith", [mocks[0].result.data.agents.edges[0].node]);

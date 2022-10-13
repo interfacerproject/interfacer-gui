@@ -32,26 +32,22 @@ describe("when user is logged in", () => {
 
   it("Should see /logged_in", () => {
     cy.visit("/logged_in");
-    cy.screenshot();
     cy.contains("How did you arrived here? This app is still under construction!");
   });
 
   it("Should see /resources", () => {
     cy.visit("/resources");
-    cy.screenshot();
     cy.contains("Resources");
   });
 
   it("Should see /asset/:id", () => {
     cy.visit("/asset/" + Cypress.env("asset_id"));
-    cy.screenshot();
     cy.contains("Asset");
   });
 
   it.skip("Should render html in /asset/:id", () => {
     cy.login();
     cy.visit("/asset/" + Cypress.env("asset_id"));
-    cy.screenshot();
     cy.contains("strong", "bold");
     cy.contains("em", "italics");
     cy.contains("ins", "subbed");
@@ -59,26 +55,22 @@ describe("when user is logged in", () => {
 
   it("Should see /create_asset", () => {
     cy.visit("/create_asset");
-    cy.screenshot();
     cy.contains("Create a new asset");
   });
 
   it("Should see /profile/my_profile", () => {
     cy.visit("/profile/my_profile");
-    cy.screenshot();
     cy.contains(Cypress.env("authName"));
   });
 
   it("Should see /resource/:id", () => {
     cy.visit("/resource/" + Cypress.env("resource_id"));
     cy.wait(2000);
-    cy.screenshot();
     cy.contains("Material passport");
   });
 
   it("Should see /assets", () => {
     cy.visit("/assets");
-    cy.screenshot();
     cy.contains("Latest assets");
   });
 });

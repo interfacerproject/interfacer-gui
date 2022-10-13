@@ -44,7 +44,6 @@ describe("TagSelector.cy.tsx", () => {
       input.type(" ");
       input.type(s);
       getBadgeByText(s).should("exist");
-      cy.screenshot();
     }
 
     /**

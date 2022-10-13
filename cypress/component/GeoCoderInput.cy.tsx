@@ -61,7 +61,6 @@ describe("AddContributors.cy.tsx", () => {
     cy.mount(<GeoCoderInput onSelect={setSelected} />);
     // Act
     cy.get("input").type("corso umb");
-    cy.screenshot();
     cy.get("#react-select-2-option-0").should("exist").click();
     // Assert
     cy.get("@setSelected").should("have.been.called");
