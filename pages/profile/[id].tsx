@@ -63,12 +63,12 @@ const Profile: NextPage = () => {
                 <div className="flex flex-col">
                   <div className="flex flex-row">
                     <h2 className="pt-5 mb-6 mr-2">
-                      {t("hi")}, <span className="text-primary">{user?.name}</span>
+                      {t("hi")}, <span className="text-primary">{person?.name}</span>
                     </h2>
                     <div className="w-10 rounded-full">
                       <Avatar
                         size={"full"}
-                        name={user?.name}
+                        name={person?.name}
                         variant="beam"
                         colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
                       />
