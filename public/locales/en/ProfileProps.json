@@ -7,5 +7,5 @@
   "goals": "Goals",
   "strength": "Strength",
   "user id title": "Your user id is: ",
-  "user id value": "(fill this programmatically with user value)"
+  "other user id title": "The user id is: "
 }
