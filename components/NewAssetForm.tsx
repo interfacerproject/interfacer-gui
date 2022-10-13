@@ -352,6 +352,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
       setAssetCreatedId(`/asset/${proposal?.createProposal.proposal.id}`);
     });
   }
+
   return (
     <form onSubmit={onSubmit} className="w-full">
       <BrInput
@@ -386,6 +387,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         value={imagesFiles}
         hint={t("imageUpload.hint")}
         testID="imageUpload"
+        clickToUpload={t("imageUpload.clickToUpload")}
       />
       <BrInput
         label={t("repositoryOrId.label")}

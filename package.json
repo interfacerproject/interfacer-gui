@@ -12,7 +12,7 @@
     "check-types": "tsc --pretty --noEmit",
     "check-format": "prettier --check .",
     "check-lint": "eslint . --ext ts --ext tsx --ext js",
-    "reload": "pm2 startOrGracefulReload ecosgcaystem.config.js",
+    "reload": "pm2 startOrGracefulReload ecosystem.config.js",
     "cypress": "cypress open",
     "cypress:headless": "cypress run",
     "test:component": "cypress run-ct --record",
@@ -21,7 +21,8 @@
     "test": "pnpm build && start-server-and-test start http://localhost:3000 cypress:headless",
     "translate": "pnpx json-autotranslate -s deepl-free -i public/locales -c YOUR_DEEPL_FREE_KEY",
     "prepare": "husky install",
-    "release": "HUSKY=0 standard-version --no-verify"
+    "release": "HUSKY=0 standard-version --no-verify",
+    "types:generate": "graphql-codegen"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
@@ -71,6 +72,9 @@
     "zenroom": "2.2.3-f0193d51"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^2.13.6",
+    "@graphql-codegen/typescript": "^2.7.4",
+    "@graphql-codegen/typescript-operations": "^2.5.4",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "cypress": "^10.7.0",
     "cypress-fail-fast": "^5.0.1",

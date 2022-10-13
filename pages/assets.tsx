@@ -1,5 +1,4 @@
 import AssetsTable from "../components/AssetsTable";
-import devLog from "../lib/devLog";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import React from "react";
@@ -8,17 +7,19 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const Assets = () => {
-  const { conformTo, primaryAccountable } = useRouter().query;
+  const { conformTo, primaryAccountable, tags } = useRouter().query;
   const filter: {
     primaryIntentsResourceInventoriedAsConformsTo?: string[];
     primaryIntentsResourceInventoriedAsPrimaryAccountable?: string[];
+    primaryIntentsResourceInventoriedAsClassifiedAs?: string[];
   } = {};
-  // @ts-ignore
-  conformTo && (filter["primaryIntentsResourceInventoriedAsConformsTo"] = [].concat(conformTo.split(",")));
-  primaryAccountable &&
-    (filter["primaryIntentsResourceInventoriedAsPrimaryAccountable"] = [
-      // @ts-ignore
-    ].concat(primaryAccountable.split(",")));
+  const primaryAccountableList =
+    typeof primaryAccountable === "string" ? primaryAccountable.split(",") : primaryAccountable;
+  const tagsList = typeof tags === "string" ? tags.split(",") : tags;
+  const conformToList = typeof conformTo === "string" ? conformTo.split(",") : conformTo;
+  conformTo && (filter["primaryIntentsResourceInventoriedAsConformsTo"] = conformToList);
+  primaryAccountable && (filter["primaryIntentsResourceInventoriedAsPrimaryAccountable"] = primaryAccountableList);
+  tags && (filter["primaryIntentsResourceInventoriedAsClassifiedAs"] = tagsList);
   const { t } = useTranslation("lastUpdatedProps");
   return (
     <div className="p-8">

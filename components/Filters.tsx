@@ -5,22 +5,30 @@ import AddContributors from "./AddContributors";
 import SelectAssetType from "./SelectAssetType";
 import SelectTags from "./SelectTags";
 
-const Filters = ({ noPrimaryAccountableFilter = false }) => {
-  const [contributors, setContributors] = useState<Array<{ id: string; name: string }>>([]);
+type Filter = {
+  primaryIntentsResourceInventoriedAsConformsTo: string[];
+  primaryIntentsResourceInventoriedAsPrimaryAccountable: string[];
+  primaryIntentsResourceInventoriedAsClassifiedAs: string[];
+};
+
+const Filters = ({
+  noPrimaryAccountableFilter = false,
+  filter,
+}: {
+  noPrimaryAccountableFilter: boolean;
+  filter: Filter;
+}) => {
+  const [contributors, setContributors] = useState<Array<{ name: string; id: string }>>([]);
   const [conformsTo, setConformsTo] = useState<Array<{ value: string; label: string }>>([]);
   const [tags, setTags] = useState<Array<string>>([]);
   const { t } = useTranslation("lastUpdatedProps");
   const router = useRouter();
   const applyFilters = () => {
     const query = router.query;
-    if (contributors.length > 0) {
-      const primaryAccountable: string = contributors.map(c => c.id).join(",");
-      query.primaryAccountable = primaryAccountable;
-    }
-    if (conformsTo.length > 0) {
-      const conforms = conformsTo.map((c: any) => c.value).join(",");
-      query.conformTo = conforms;
-    }
+    query.primaryAccountable = contributors.map(c => c.id).join(",");
+    query.conformTo = conformsTo.map((c: any) => c.value).join(",");
+    const tagString = tags.join(",");
+    query.tags = tagString;
     router.push({
       pathname: router.pathname,
       query,
@@ -28,13 +36,12 @@ const Filters = ({ noPrimaryAccountableFilter = false }) => {
   };
   const clearFilters = () => {
     const query = router.query;
-    delete query.primaryAccountable;
-    delete query.conformTo;
     setContributors([]);
     setConformsTo([]);
+    setTags([]);
     router.push({
       pathname: router.pathname,
-      query,
+      query: {},
     });
   };
   return (
@@ -42,14 +49,25 @@ const Filters = ({ noPrimaryAccountableFilter = false }) => {
       <h4 className="mb-4 text-2xl font-bold">{t("filters.filter for")}:</h4>
       {!noPrimaryAccountableFilter && (
         <AddContributors
+          initialContributors={filter?.primaryIntentsResourceInventoriedAsPrimaryAccountable}
           contributors={contributors}
           setContributors={setContributors}
           label={t("filters.contributors")}
           testID="add-contributors"
         />
       )}
-      <SelectAssetType onChange={setConformsTo} label={t("filters.type")} assetType={conformsTo} />
-      <SelectTags label={t("filters.tags")} onChange={setTags} />
+      <SelectAssetType
+        onChange={setConformsTo}
+        label={t("filters.type")}
+        assetType={conformsTo}
+        initialTypes={filter?.primaryIntentsResourceInventoriedAsConformsTo}
+      />
+      <SelectTags
+        label={t("filters.tags")}
+        onChange={setTags}
+        selectedTags={tags}
+        initialTags={filter?.primaryIntentsResourceInventoriedAsClassifiedAs}
+      />
       <div className="grid grid-cols-2 gap-2 mt-4">
         <div>
           <button data-test="btn-reset" className="btn btn-outline btn-error btn-block" onClick={clearFilters}>

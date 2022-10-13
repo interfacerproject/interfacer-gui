@@ -50,7 +50,8 @@
   "imageUpload": {
     "label": "Laden Sie bis zu 10 Bilder hoch:",
     "placeholder": "SVG, PNG, JPG oder GIF (MAX. 800x400px)",
-    "hint": "SVG, PNG, JPG oder GIF (MAX. 800x400px)"
+    "hint": "SVG, PNG, JPG oder GIF (MAX. 800x400px)",
+    "clickToUpload": "zum Hochladen klicken"
   },
   "projectTags": {
     "label": "Tags:",

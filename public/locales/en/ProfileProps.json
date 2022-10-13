@@ -1,12 +1,11 @@
 {
   "hi": "Hi",
-  "description": "en: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque pellentesque hendrerit ultrices mauris et non pellentesque suspendisse est.",
+  "description": "Welcome to your FCOS profile",
   "activity by the user": "activity by the user",
   "saved list": "Saved list",
   "your stats": "Your statistics",
-  "statText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   "goals": "Goals",
   "strength": "Strength",
-  "lorem ipsum": "lorem ipsum",
-  "dolor sit amet": "dolor sit amet"
+  "user id title": "Your user id is: ",
+  "other user id title": "The user id is: "
 }

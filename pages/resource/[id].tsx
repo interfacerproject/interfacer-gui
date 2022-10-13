@@ -13,7 +13,7 @@ const Resource: NextPage = () => {
   const { t } = useTranslation("ResourceProps");
 
   const QUERY_RESOURCE = gql`
-    query ($id: ID!) {
+    query getResourceTable($id: ID!) {
       economicResource(id: $id) {
         id
         name
@@ -87,7 +87,7 @@ const Resource: NextPage = () => {
           <div className="my-3 md:col-start-2 md:col-end-7">
             <Card className="w-128">
               <h2>Material passport</h2>
-              <p className="text-gray-500">{t("description")}</p>
+              <p className="text-gray-500">{t("description:")}</p>
               {/* <div className="w-40 mt-2">
                             <QrCodeButton id={String(id)}/>
                         </div> */}
