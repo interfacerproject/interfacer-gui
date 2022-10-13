@@ -14,6 +14,7 @@ describe("BrDisplayUser component", () => {
     cy.contains(name).should("be.visible");
     cy.contains(location).should("be.visible");
     cy.get("svg").should("be.visible");
+    cy.screenshot();
   });
 
   // Functionality is tested here:

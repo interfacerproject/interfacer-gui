@@ -6,6 +6,7 @@ describe("Authentication", () => {
     cy.get("input:first").should("be.visible").type("mailmoltoimprobabilechenessunoregistramai@tt.ii");
     cy.get(".h-full > :nth-child(1) > .btn").should("be.visible").click();
     cy.contains("this email doesn't exist");
+    cy.screenshot();
   });
   it("should get HMAC from the server at sign in", () => {
     cy.intercept({
@@ -18,6 +19,7 @@ describe("Authentication", () => {
     cy.get("input:first").should("be.visible").type(Cypress.env("authEmail"));
     cy.get(".h-full > :nth-child(1) > .btn").should("be.visible").click();
     cy.wait("@api").its("response.body.data.keypairoomServer").should("include", Cypress.env("HMAC"));
+    cy.screenshot();
   });
 
   it("At sign in Should render error if passhprase is != 12 words", () => {
@@ -33,6 +35,7 @@ describe("Authentication", () => {
     cy.wait("@api");
     cy.get("input").eq(0).should("be.visible").type("pupu pi");
     cy.contains("Invalid passphrase");
+    cy.screenshot();
   });
 
   it("Should render error if user answer less than 3 question", () => {
@@ -51,6 +54,7 @@ describe("Authentication", () => {
     cy.contains("Fill at least 2 more answer");
     cy.get("input").eq(1).should("be.visible").type("pupu pi");
     cy.contains("Fill at least 1 more answer");
+    cy.screenshot();
   });
 
   it("Should save in local storage keys at sign in via question", () => {
@@ -69,6 +73,7 @@ describe("Authentication", () => {
     cy.get("input").eq(2).should("be.visible").type(Cypress.env("answer3"));
     cy.get("input").eq(3).should("be.visible").type(Cypress.env("answer4"));
     cy.get("input").eq(4).should("be.visible").type(Cypress.env("answer5"));
+    cy.screenshot();
     cy.get("form > .mt-4")
       .click()
       .should(() => {
@@ -105,6 +110,7 @@ describe("Authentication", () => {
         expect(localStorage.getItem("eddsa")).to.eq(Cypress.env("eddsa"));
       });
     cy.contains("Hello");
+    cy.screenshot();
   });
   it("Should save in local storage keys at sign up", () => {
     localStorage.clear();
@@ -117,12 +123,14 @@ describe("Authentication", () => {
     cy.get("form > :nth-child(1) > .w-full")
       .should("be.visible")
       .type(new Date().getTime() + "@d.otg");
+    cy.screenshot();
     cy.get(":nth-child(2) > .w-full").should("be.visible").type("name");
     cy.get(":nth-child(3) > .w-full").should("be.visible").type("user");
     cy.get(".my-6").should("be.visible").click();
     cy.get("input").eq(0).should("be.visible").type("risposta1");
     cy.get("input").eq(1).should("be.visible").type("risposta2");
     cy.get("input").eq(2).should("be.visible").type("risposta3");
+    cy.screenshot();
     cy.get("form > .mt-4")
       .should("be.visible")
       .click()

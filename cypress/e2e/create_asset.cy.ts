@@ -25,16 +25,20 @@ describe("when user visits create asset", () => {
 
   it("should edit some fields", () => {
     cy.visit("/create_asset");
+    cy.screenshot();
 
     // Title
     cy.get(`[data-test="projectName"]`).type("Asset " + randomString(5));
+    cy.screenshot();
 
     // Description
     cy.get(`[data-test="projectDescription"]`).find("textarea").type(randomString(15));
+    cy.screenshot();
 
     // Multiselect
     cy.get(`[data-test="projectType"]`).eq(1).click();
   });
+  cy.screenshot();
 
   it("should display a non-clickable submit button", () => {
     cy.get(`[data-test="submit"]`).should("be.disabled");
@@ -43,9 +47,11 @@ describe("when user visits create asset", () => {
   it("should edit some other fields", () => {
     // Price
     cy.get(`[data-test="price"]`).type("11");
+    cy.screenshot();
 
     // Repo link
     cy.get(`[data-test="repositoryOrId"]`).type("11");
+    cy.screenshot();
 
     // // Description
     // cy.get(`[data-test="projectDescription"]`)

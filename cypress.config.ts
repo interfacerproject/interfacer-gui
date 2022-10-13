@@ -11,6 +11,7 @@ export default defineConfig({
       return config;
     },
   },
+  screenshotsFolder: "cypress/screenshots",
   projectId: "nqct2i",
   component: {
     devServer: {
