@@ -12,7 +12,7 @@
     "check-types": "tsc --pretty --noEmit",
     "check-format": "prettier --check .",
     "check-lint": "eslint . --ext ts --ext tsx --ext js",
-    "reload": "pm2 startOrGracefulReload ecosgcaystem.config.js",
+    "reload": "pm2 startOrGracefulReload ecosystem.config.js",
     "cypress": "cypress open",
     "cypress:headless": "cypress run",
     "test:component": "cypress run-ct --record",
