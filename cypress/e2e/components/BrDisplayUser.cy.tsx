@@ -32,7 +32,7 @@ describe("BrDisplayUser component", () => {
     // Checking if it's visible
     // comp.should("be.visible");
     // Clicking to navigate
-    comp.click().then(a => {
+    comp.click({ force: true }).then(a => {
       // Checking if url is correct
       cy.location("href").should("eq", a.prop("href"));
     });
