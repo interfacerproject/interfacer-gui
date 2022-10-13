@@ -76,7 +76,8 @@ const Profile: NextPage = () => {
                   </div>
                   <p>{t("description")} </p>
                   <h4 className="mt-2">
-                    {t("lorem ipsum")} <span className="text-primary">{t("dolor sit amet")}</span>
+                    {isUser ? t("user id title") : t("other user id title")}{" "}
+                    <span className="text-primary">{person?.id}</span>
                   </h4>
                 </div>
                 <div className="flex flex-col">
