@@ -37,8 +37,8 @@ describe("when user visits create asset", () => {
 
     // Multiselect
     cy.get(`[data-test="projectType"]`).eq(1).click();
+    cy.screenshot();
   });
-  cy.screenshot();
 
   it("should display a non-clickable submit button", () => {
     cy.get(`[data-test="submit"]`).should("be.disabled");
