@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { FetchInventoryQuery, FetchInventoryQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
+import { useEffect } from "react";
 import BrTable from "./brickroom/BrTable";
 import Spinner from "./brickroom/Spinner";
 import ResourceTableRow from "./ResourceTableRow";
@@ -85,10 +86,10 @@ export default function ResourceTable(props: ResourceTableProps) {
   const { t } = useTranslation("resourcesProps");
 
   // Fetching data
-  const { loading, data, error, fetchMore, refetch } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(
-    FETCH_INVENTORY,
-    { variables: props }
-  );
+  const { loading, data, error, variables, fetchMore, refetch } = useQuery<
+    FetchInventoryQuery,
+    FetchInventoryQueryVariables
+  >(FETCH_INVENTORY, { variables: props });
 
   // Checking if data has length, in order to display it
   const dataLength = data?.economicResources?.edges.length;
@@ -98,46 +99,53 @@ export default function ResourceTable(props: ResourceTableProps) {
   // Getting last id as cursor
   const before = data?.economicResources?.pageInfo.endCursor;
 
-  // const updateQuery = (
-  //   previousResult: FetchInventoryQuery,
-  //   { fetchMoreResult }: { fetchMoreResult: FetchInventoryQuery }
-  // ) => {
-  //   if (!fetchMoreResult) {
-  //     return previousResult;
-  //   }
-  //   if (fetchMoreResult && fetchMoreResult.economicResources) {
-  //     const previousEdges = previousResult?.economicResources?.edges;
-  //     const fetchMoreEdges = fetchMoreResult?.economicResources?.edges;
-  //     if (previousEdges && fetchMoreEdges) {
-  //       fetchMoreResult.economicResources.edges = [...previousEdges, ...fetchMoreEdges];
-  //       return { ...fetchMoreResult };
-  //     }
-  //   }
-  // };
+  /**
+   * Query update functions
+   */
 
-  // const loadMore = () => {
-  //   if (data && fetchMore && hasNextPage && before) {
-  //     // fetchMore({ updateQuery, variables: { before } });
-  //     fetchMore({
-  //       variables: {
-  //       offset: data.economicResources.
-  //     }});
-  //   }
-  // };
+  const updateQuery = (
+    previousResult: FetchInventoryQuery,
+    { fetchMoreResult }: { fetchMoreResult: FetchInventoryQuery }
+  ) => {
+    if (!fetchMoreResult) {
+      return previousResult;
+    }
 
-  //this is to refetch the data
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     const total = data?.economicResources?.edges.length || 0;
+    const previousEdges = previousResult?.economicResources?.edges;
+    const fetchMoreEdges = fetchMoreResult?.economicResources?.edges;
 
-  //     refetch({
-  //       ...variables,
-  //       last: total,
-  //     });
-  //   }, 5000);
+    if (previousEdges && fetchMoreEdges && fetchMoreResult.economicResources) {
+      fetchMoreResult.economicResources.edges = [...previousEdges, ...fetchMoreEdges];
+      return { ...fetchMoreResult };
+    }
+  };
 
-  //   return () => clearInterval(intervalId);
-  // }, [...Object.values(variables!).flat(), data?.economicResources?.pageInfo.startCursor]);
+  const loadMore = () => {
+    if (data && fetchMore) {
+      if (hasNextPage && before !== null) {
+        // @ts-ignore
+        fetchMore({ updateQuery, variables: { before } });
+      }
+    }
+  };
+
+  // This is to refetch the data
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const total = data?.economicResources?.edges.length || 0;
+
+      refetch({
+        ...variables,
+        last: total,
+      });
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [...Object.values(variables!).flat(), data?.economicResources?.pageInfo.startCursor]);
+
+  /**
+   * Rendering
+   */
 
   // Displaying loading
   if (loading) {
@@ -156,6 +164,7 @@ export default function ResourceTable(props: ResourceTableProps) {
   // Otherwise, displaying table
   return (
     <>
+      {/* Resources table */}
       <BrTable headArray={t("resourceHead", { returnObjects: true })}>
         {/* If there's data, show the rows */}
         {data && dataLength && (
@@ -179,8 +188,11 @@ export default function ResourceTable(props: ResourceTableProps) {
           </div>
         )}
       </BrTable>
-      {/* <button className="">Load more</button>
-      <BrLoadMore handleClick={loadMore} disabled={!getHasNextPage} text={"Load more"} /> */}
+
+      {/* Load more button */}
+      <button onClick={loadMore} className="btn">
+        Load more
+      </button>
     </>
   );
 }
