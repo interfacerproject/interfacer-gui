@@ -5,6 +5,8 @@ import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import BrDisplayUser from "../components/brickroom/BrDisplayUser";
+import useStorage from "../hooks/useStorage";
+import { useEffect } from "react";
 
 const QUERY_ASSETS = gql`
   query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
@@ -43,6 +45,7 @@ const QUERY_ASSETS = gql`
 const Notification = () => {
   const { user } = useAuth();
   const { t } = useTranslation("notificationProps");
+  const { getItem, setItem } = useStorage();
   const { data, startPolling } = useQuery(QUERY_ASSETS, { variables: { last: 50 } });
   startPolling(4000);
   const notifications = data?.proposals.edges.filter((proposal: any) =>
@@ -50,14 +53,18 @@ const Notification = () => {
       (c: { id: string; name: string }) => c.id === user?.ulid
     )
   );
+  useEffect(() => {
+    setInterval(() => {
+      notifications?.map((n: any) => setItem(n.node.id, "read"));
+    }, 2000);
+  }, [notifications]);
+
   return (
     <div className="grid grid-cols-1 p-12">
       {notifications?.map((n: any) => (
         <div key={n.node.id} className="pb-2 my-2 border-b-2">
-          <b className="mr-1">{dayjs(n.node.created).fromNow()}</b>
-          <br />
-          <b className="text-xs">{dayjs(n.node.created).format("HH:mm DD/MM/YYYY")}</b>
-          <br />
+          <p className="mr-1">{dayjs(n.node.created).fromNow()}</p>
+          <p className="text-xs">{dayjs(n.node.created).format("HH:mm DD/MM/YYYY")}</p>
           <div className="flex flex-row my-2 center">
             <div className="mr-2">
               <BrDisplayUser
