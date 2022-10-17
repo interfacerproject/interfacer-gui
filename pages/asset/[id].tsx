@@ -4,41 +4,13 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import AssetImage from "../../components/AssetImage";
 import BrDisplayUser from "../../components/brickroom/BrDisplayUser";
-import BrTags from "../../components/brickroom/BrTags";
-import MdParser from "../../lib/MdParser";
 import Link from "next/link";
-import BrThumbinailsGallery from "../../components/brickroom/BrThumbinailsGallery";
 import devLog from "../../lib/devLog";
 import Tabs from "../../components/Tabs";
 import AssetDetailOverview from "../../components/AssetDetailOverview";
 import Spinner from "../../components/brickroom/Spinner";
-import { EconomicResource, Proposal } from "../../lib/types";
-
-interface AssetIface {
-  name: string;
-  conformsTo: {
-    name: string;
-    id: string;
-  };
-  images: [
-    {
-      hash: string;
-      mimeType: string;
-      bin: string;
-    }
-  ];
-  note: string;
-  classifiedAs: string[];
-  primaryAccountable: {
-    id: string;
-    name: string;
-  };
-  currentLocation: {
-    name: string;
-  };
-}
+import { EconomicResource } from "../../lib/types";
 
 const Asset = () => {
   const router = useRouter();
@@ -91,7 +63,7 @@ const Asset = () => {
       }
     }
   `;
-  const { loading, error, data, startPolling } = useQuery(QUERY_ASSET, { variables: { id } });
+  const { data, startPolling } = useQuery(QUERY_ASSET, { variables: { id } });
   startPolling(2000);
 
   useEffect(() => {
@@ -131,7 +103,7 @@ const Asset = () => {
                 <p>
                   {t("This is a")}
                   <Link href={`/assets?conformTo=${asset.conformsTo.id}`}>
-                    <a className="font-bold text-primary ml-1 hover:underline">{asset.conformsTo.name}</a>
+                    <a className="ml-1 font-bold text-primary hover:underline">{asset.conformsTo.name}</a>
                   </Link>
                 </p>
                 <h2 className="my-2">{asset.name}</h2>
