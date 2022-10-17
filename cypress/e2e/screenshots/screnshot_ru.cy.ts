@@ -1,63 +1,38 @@
-import { waitForData } from "../../utils";
+const pages =
+  "/ /logged_in /resources /asset/061P0XBBP4CXZ3A9T57QA3ZJ9M /create_asset /profile/my_profile /resource/:id /assets".split(
+    " "
+  );
+
+const user = {
+  reflow: "olflWYKP85ucCbgFETXjhNjb2ZAQtfg+m0EJjHScCzg=",
+  schnorr: "HEwrd8/AjOwrBd1cg6HGpD59F1KV1T8mu0Xc8EhOuug=",
+  eddsa_key: "83Yy6g7krwP6BVvkyG4hR1xKcXUQrFnSLTAyjM57CxF5",
+  authId: "061KHHMYHB55KDPH94Y10VNP3M",
+  authEmail: "en@dyne.org",
+  eddsa: "83Yy6g7krwP6BVvkyG4hR1xKcXUQrFnSLTAyjM57CxF5",
+  authName: "nenno",
+  authUsername: "nenno",
+};
 
 describe("Screenshot ru", () => {
   before(() => {
-    cy.login(true);
+    Object.keys(user).forEach(key => {
+      cy.setLocalStorage(key, user[key]);
+    });
     cy.saveLocalStorage();
   });
 
   beforeEach(() => {
-    cy.visit("");
+    cy.visit("https://interfacer-gui-staging.dyne.org/");
     cy.restoreLocalStorage();
     cy.viewport("macbook-13");
   });
 
-  it("/logged_in", () => {
-    cy.visit("/logged_in");
-    waitForData(Cypress.env("STAGING_ZENFLOWS_URL"));
-    cy.screenshot("logged_in");
-  });
-
-  it.skip("/resources", () => {
-    cy.visit("/resources");
-    waitForData(Cypress.env("STAGING_ZENFLOWS_URL"));
-    cy.screenshot("imported from losh");
-  });
-
-  it("/asset/:id", () => {
-    cy.visit("/asset/" + Cypress.env("asset_id"));
-    waitForData(Cypress.env("STAGING_ZENFLOWS_URL"));
-    cy.screenshot("asset detail");
-  });
-
-  it("/create_asset", () => {
-    cy.visit("/create_asset");
-    waitForData(Cypress.env("STAGING_ZENFLOWS_URL"));
-    cy.screenshot("create asset");
-    // Title
-    const title = cy.get(`[data-test="projectName"]`);
-    title.type("3d laser cutter");
-    // Description
-    cy.get(`[data-test="projectDescription"]`).find("textarea").type("++3d printed laser cutter++");
-    cy.get(".container").scrollTo("top", { ensureScrollable: false });
-    cy.screenshot("create asset 2");
-  });
-
-  it("/profile/my_profile", () => {
-    cy.visit("/profile/my_profile");
-    waitForData(Cypress.env("STAGING_ZENFLOWS_URL"));
-    cy.screenshot("profile page");
-  });
-
-  it("/resource/:id", () => {
-    cy.visit("/resource/" + Cypress.env("resource_id"));
-    waitForData(Cypress.env("STAGING_ZENFLOWS_URL"));
-    cy.screenshot("losh detail");
-  });
-
-  it("/assets", () => {
-    cy.visit("/assets");
-    waitForData(Cypress.env("STAGING_ZENFLOWS_URL"));
-    cy.screenshot("assets");
+  it("should takes a screenshot every page", () => {
+    pages.forEach(page => {
+      cy.visit(`https://interfacer-gui-staging.dyne.org${page}`);
+      cy.wait(5000);
+      cy.screenshot(page);
+    });
   });
 });

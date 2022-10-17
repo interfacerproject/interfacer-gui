@@ -36,14 +36,10 @@
 //   }
 // }
 // @ts-ignore
-Cypress.Commands.add("login", (staging = false) => {
+Cypress.Commands.add("login", () => {
   const attrs = "authName authId eddsa_public_key eddsa_key authUsername seed authEmail eddsa".split(" ");
   for (const attr of attrs) {
-    if (!staging) {
-      cy.setLocalStorage(attr, Cypress.env(attr));
-    } else {
-      cy.setLocalStorage(attr, Cypress.env(attr + "_staging"));
-    }
+    cy.setLocalStorage(attr, Cypress.env(attr));
   }
 });
 
