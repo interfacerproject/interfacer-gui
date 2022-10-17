@@ -2,13 +2,13 @@ import { gql, useQuery } from "@apollo/client";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import AssetImage from "../../components/AssetImage";
 import BrDisplayUser from "../../components/brickroom/BrDisplayUser";
 import BrTags from "../../components/brickroom/BrTags";
 import MdParser from "../../lib/MdParser";
-import Link from "next/link";
 
 interface AssetIface {
   name: string;
@@ -85,7 +85,7 @@ const Asset = () => {
       }
     }
   `;
-  const { loading, error, data, startPolling } = useQuery(QUERY_ASSET, { variables: { id } });
+  const { data, startPolling } = useQuery(QUERY_ASSET, { variables: { id } });
   startPolling(2000);
 
   useEffect(() => {
@@ -123,7 +123,7 @@ const Asset = () => {
                 <p>
                   {t("This is a")}
                   <Link href={`/assets?conformTo=${asset.conformsTo.id}`}>
-                    <a className="font-bold text-primary ml-1 hover:underline">{asset.conformsTo.name}</a>
+                    <a className="ml-1 font-bold text-primary hover:underline">{asset.conformsTo.name}</a>
                   </Link>
                 </p>
               </div>

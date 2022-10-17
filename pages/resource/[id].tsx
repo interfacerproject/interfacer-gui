@@ -1,10 +1,10 @@
 import { gql, useQuery } from "@apollo/client";
-import type { NextPage } from "next";
-import { GetStaticPaths } from "next";
+import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
+import { EconomicResource } from "lib/types";
+import type { GetStaticPaths, NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import Card from "../../components/brickroom/Card";
 import Spinner from "../../components/brickroom/Spinner";
 
 const Resource: NextPage = () => {
@@ -49,51 +49,61 @@ const Resource: NextPage = () => {
           id
           name
         }
+        images {
+          hash
+          name
+          mimeType
+          bin
+        }
       }
     }
   `;
-  const { loading, data } = useQuery(QUERY_RESOURCE, { variables: { id: id } });
+  const { loading, data } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
+    variables: { id: id },
+  });
+  const e = data?.economicResource;
 
   return (
     <div>
       {loading && <Spinner />}
-      {!loading && (
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-12 pt-14">
-          <div className="md:col-start-2 md:col-end-7">
-            <h2>{data?.economicResource.name}</h2>
-            <p className="mb-1 text-gray-500">{data?.economicResource.note}</p>
-            <p className="text-gray-500">
-              This is a{/* {mapUnit(data?.economicResource.onhandQuantity?.hasUnit.label)} */}
-              <span className="text-primary">
-                {data?.economicResource.conformsTo && `${data?.economicResource.conformsTo.name}`}
-              </span>
-            </p>
-          </div>
-
-          <div className="md:col-start-8 md:col-end-13">
-            <div>
-              <h4>{t("assigned to:")}</h4>
-              <p className="text-gray-500">{data?.economicResource.primaryAccountable?.name}</p>
-            </div>
-            <div>
-              <h4>{t("current location:")}</h4>
-              <p className="text-gray-500">{data?.economicResource.currentLocation?.name}</p>
+      {!loading && e && (
+        <>
+          <div className="">
+            <div className="w-full p-2 md:p-8">
+              <BrBreadcrumb
+                crumbs={[
+                  { name: t("Assets"), href: "/assets" },
+                  { name: e.conformsTo.name, href: `/assets?conformTo=${e.conformsTo.id}` },
+                  { name: t("Imported from Losh"), href: `/resources` },
+                ]}
+              />
             </div>
           </div>
 
-          {/* <div className="my-3">
-                <ActionsBlock resourceId={String(id)}/>
-            </div> */}
-          <div className="my-3 md:col-start-2 md:col-end-7">
-            <Card className="w-128">
-              <h2>Material passport</h2>
-              <p className="text-gray-500">{t("description:")}</p>
-              {/* <div className="w-40 mt-2">
-                            <QrCodeButton id={String(id)}/>
-                        </div> */}
-            </Card>
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-12 pt-14">
+            <div className="md:col-start-2 md:col-end-7">
+              <h2>{data?.economicResource.name}</h2>
+              <p className="mb-1 text-gray-500">{data?.economicResource.note}</p>
+              <p className="text-gray-500">
+                This is a{/* {mapUnit(data?.economicResource.onhandQuantity?.hasUnit.label)} */}
+                <span className="text-primary">
+                  {data?.economicResource.conformsTo && `${data?.economicResource.conformsTo.name}`}
+                </span>
+              </p>
+            </div>
+
+            <div className="md:col-start-8 md:col-end-13">
+              <div>
+                <h4>{t("assigned to:")}</h4>
+                <p className="text-gray-500">{data?.economicResource.primaryAccountable?.name}</p>
+              </div>
+              <div>
+                <h4>{t("current location:")}</h4>
+                <p className="text-gray-500">{data?.economicResource.currentLocation?.name}</p>
+              </div>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
