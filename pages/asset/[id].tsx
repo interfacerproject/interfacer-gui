@@ -11,6 +11,8 @@ import Tabs from "../../components/Tabs";
 import AssetDetailOverview from "../../components/AssetDetailOverview";
 import Spinner from "../../components/brickroom/Spinner";
 import { EconomicResource } from "../../lib/types";
+import BrBreadcrumb from "../../components/brickroom/BrBreadcrumb";
+import BrThumbinailsGallery from "../../components/brickroom/BrThumbinailsGallery";
 
 const Asset = () => {
   const router = useRouter();
@@ -80,26 +82,17 @@ const Asset = () => {
     <>
       {asset && (
         <>
-          <div className="relative">
-            <div
-              className="w-full bg-center bg-cover backdrop-grayscale-0 h-72"
-              style={{ backgroundImage: `url(${mainImage})`, filter: "blur(1px)" }}
+          <div className="w-full p-2 md:p-8">
+            <BrBreadcrumb
+              crumbs={[
+                { name: t("assets"), href: "/assets" },
+                { name: asset.conformsTo.name, href: `/assets?conformTo=${asset.conformsTo.id}` },
+              ]}
             />
-            <div className="absolute top-0 w-full p-2 md:p-8 h-72 backdrop-grayscale bg-white/70">
-              <div className="text-primary breadcrumbs">
-                <ul>
-                  <li>
-                    <Link href={`/assets?conformTo=${asset.conformsTo.id}`}>
-                      <a>
-                        <h4>{asset.conformsTo.name}</h4>
-                      </a>
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="absolute w-full p-2 bottom-8 md:p-0 md:bottom-12 h-100">
-              <div className="flex flex-col content-end h-full md:mx-32 md:w-1/2">
+          </div>
+          <div className="grid grid-cols-1 px-2 md:grid-cols-3 md:gap-4 md:px-0 md:mx-32">
+            <div id="left-col" className="flex flex-col col-span-2">
+              <div className="flex flex-col content-end mb-4">
                 <p>
                   {t("This is a")}
                   <Link href={`/assets?conformTo=${asset.conformsTo.id}`}>
@@ -109,11 +102,12 @@ const Asset = () => {
                 <h2 className="my-2">{asset.name}</h2>
                 <p className="text-primary">ID: {asset.id}</p>
               </div>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 px-2 md:grid-cols-3 md:gap-4 md:px-0 md:mx-32">
-            <div id="left-col" className="flex flex-col col-span-2 space-y-14">
-              <div id="tabs" className="hidden my-6 space-x-8 md:block">
+              <BrThumbinailsGallery
+                images={asset?.images
+                  ?.filter(image => !!image.bin)
+                  .map(image => `data:${image.mimeType};base64,${image.bin}`)}
+              />
+              <div id="tabs" className="my-6">
                 <Tabs
                   tabsArray={[
                     { title: t("Overview"), component: <AssetDetailOverview asset={asset} /> },

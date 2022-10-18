@@ -6,13 +6,13 @@ import MdParser from "../lib/MdParser";
 const AssetDetailOverview = ({ asset }: { asset: EconomicResource }) => {
   return (
     <>
-      <div dangerouslySetInnerHTML={{ __html: MdParser.render(asset.note!.split(":")[1].split(",")[0]) }} />
-      <div id="tags">
+      <div
+        className="my-2"
+        dangerouslySetInnerHTML={{ __html: MdParser.render(asset.note!.split(":")[1].split(",")[0]) }}
+      />
+      <div className="mb-16">
         <BrTags tags={asset?.classifiedAs!} />
       </div>
-      <BrThumbinailsGallery
-        images={asset?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)}
-      />
     </>
   );
 };
