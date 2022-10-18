@@ -27,6 +27,9 @@ describe("Screenshot ru", () => {
     cy.restoreLocalStorage();
     cy.viewport("macbook-13");
   });
+  after(() => {
+    cy.exec("mv cypress/screenshots/ci/screenshot_ru.cy.ts cypress/screenshots/ci/screenshot_ru");
+  });
 
   it("should takes a screenshot every page", () => {
     pages.forEach(page => {
