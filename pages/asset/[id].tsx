@@ -13,8 +13,10 @@ import Spinner from "../../components/brickroom/Spinner";
 import ContributorsTable from "../../components/ContributorsTable";
 import Tabs from "../../components/Tabs";
 import { EconomicResource } from "../../lib/types";
+import useStorage from "../../hooks/useStorage";
 
 const Asset = () => {
+  const { getItem, setItem } = useStorage();
   const router = useRouter();
   const { id } = router.query;
   const { t } = useTranslation("common");
@@ -72,6 +74,19 @@ const Asset = () => {
     setImages(_images);
   }, [data]);
 
+  const handleWatch = () => {
+    const _watchedList = getItem("watchedList");
+    const _watchedListParsed = _watchedList ? JSON.parse(_watchedList) : [];
+    const _watchedListParsedUpdated = [..._watchedListParsed, asset?.id];
+    setItem("watchedList", JSON.stringify(_watchedListParsedUpdated));
+  };
+  const handleCollect = () => {
+    const _list = getItem("assetsCollected");
+    const _listParsed = _list ? JSON.parse(_list) : [];
+    const _listParsedUpdated = [..._listParsed, asset?.id];
+    setItem("assetsCollected", JSON.stringify(_listParsedUpdated));
+  };
+
   return (
     <>
       {asset && (
@@ -118,9 +133,17 @@ const Asset = () => {
               </div>
             </div>
             <div id="right-col" className="flex flex-col mt-16">
-              <button className="px-20 mb-4 btn btn-accent btn-block">{t("Buy this asset")}</button>
-              <button className="btn btn-accent btn-outline btn-block" tabIndex={-1} role="button" aria-disabled="true">
-                {t("Add to list +")}
+              <button className="px-20 mb-4 btn btn-accent btn-block" onClick={handleCollect}>
+                {t("add to list")}
+              </button>
+              <button
+                className="btn btn-accent btn-outline btn-block"
+                tabIndex={-1}
+                role="button"
+                aria-disabled={true}
+                onClick={handleWatch}
+              >
+                {t("watch")}
               </button>
               <p className="mt-8 mb-2">{t("Owner")}:</p>
               <BrDisplayUser

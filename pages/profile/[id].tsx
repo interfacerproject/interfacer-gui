@@ -35,7 +35,6 @@ const Profile: NextPage = () => {
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
   const idToBeFetch = isUser ? user?.ulid : id;
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
-  devLog("person", person);
   const filter = { primaryIntentsResourceInventoriedAsPrimaryAccountable: idToBeFetch };
   if (conformTo) {
     // @ts-ignore
@@ -102,12 +101,7 @@ const Profile: NextPage = () => {
                       {t("Lists")}
                     </span>
                   ),
-                  component: (
-                    <div>
-                      <h3 className="py-5">Lists</h3>
-                      {t("Coming soon")}
-                    </div>
-                  ),
+                  component: <AssetsTable filter={filter} />,
                 },
               ]}
             />
