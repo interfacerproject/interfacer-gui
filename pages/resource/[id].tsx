@@ -1,6 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
 import { LinkIcon } from "@heroicons/react/solid";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
+import BrDisplayUser from "components/brickroom/BrDisplayUser";
+import BrTags from "components/brickroom/BrTags";
 import { EconomicResource } from "lib/types";
 import type { GetStaticPaths, NextPage } from "next";
 import { useTranslation } from "next-i18next";
@@ -93,6 +95,7 @@ const Resource: NextPage = () => {
                   <a className="text-primary">{t("Losh asset")}</a>
                 </Link>
               </p>
+              <span className="pt-4 text-primary">ID: {e.id}</span>
               <div className="pt-12 text-primary">
                 <Link href={e.metadata.repo}>
                   <a target="_blank" className="flex items-center">
@@ -101,6 +104,8 @@ const Resource: NextPage = () => {
                 </Link>
               </div>
               <div className="pt-12 prose" dangerouslySetInnerHTML={{ __html: MdParser.render(e.metadata.function) }} />
+              <img src={e.metadata?.image} className="w-full py-10" />
+              <BrTags tags={e.metadata.tags} />
             </div>
 
             <div className="md:col-start-8 md:col-end-13">
@@ -114,13 +119,19 @@ const Resource: NextPage = () => {
                   {t("Version")}: {e.metadata.version}
                 </span>
                 {e.metadata.okhv}
-                <h4>{t("assigned to:")}</h4>
-                <p className="text-gray-500">{data?.economicResource.primaryAccountable?.name}</p>
-              </div>
 
-              <div>
-                <h4>{t("current location:")}</h4>
-                <p className="text-gray-500">{data?.economicResource.currentLocation?.name}</p>
+                <button type="button" className="mt-16 mr-8 w-72 btn btn-accent">
+                  {t("CLAIM OWNERSHIP")}
+                </button>
+                <button type="button" className="mt-3 mr-8 w-72 btn btn-outline">
+                  {t("add to list +")}
+                </button>
+                <span className="pt-9">{t("Owner")}</span>
+                <BrDisplayUser
+                  id={e.primaryAccountable.id}
+                  name={e.primaryAccountable.name}
+                  location={e.currentLocation?.name}
+                />
               </div>
             </div>
           </div>
