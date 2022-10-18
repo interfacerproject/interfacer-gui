@@ -13,8 +13,10 @@ import AssetsTable from "../../components/AssetsTable";
 import Spinner from "../../components/brickroom/Spinner";
 import { useAuth } from "../../hooks/useAuth";
 import devLog from "../../lib/devLog";
+import useStorage from "../../hooks/useStorage";
 
 const Profile: NextPage = () => {
+  const { getItem } = useStorage();
   const router = useRouter();
   const { id, conformTo, tags } = router.query;
   const { t } = useTranslation("ProfileProps");
@@ -36,6 +38,10 @@ const Profile: NextPage = () => {
   const idToBeFetch = isUser ? user?.ulid : id;
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
   const filter = { primaryIntentsResourceInventoriedAsPrimaryAccountable: idToBeFetch };
+  const hasCollectedAssets = isUser && !!getItem("assetsCollected");
+  let collectedAssets: { primaryIntentsResourceInventoriedAsId: string[] } = {
+    primaryIntentsResourceInventoriedAsId: [],
+  };
   if (conformTo) {
     // @ts-ignore
     filter["primaryIntentsResourceInventoriedAsConformsTo"] = conformTo.split(",");
@@ -45,13 +51,19 @@ const Profile: NextPage = () => {
     filter["primaryIntentsResourceInventoriedAsClassifiedAs"] = tags.split(",");
   }
   devLog(user);
+  if (hasCollectedAssets) {
+    collectedAssets["primaryIntentsResourceInventoriedAsId"] = JSON.parse(getItem("assetsCollected"));
+  }
   return (
     <>
       {!person && <Spinner />}
       {person && (
         <>
-          <div className="relative">
-            <div className="w-full bg-center bg-cover h-72" />
+          <div className="relative h-128 md:h-72">
+            <div
+              className="w-full bg-center bg-cover h-128 md:h-72"
+              style={{ backgroundImage: "url('/profile_bg.jpeg')", filter: "blur(1px)" }}
+            />
             <div className="absolute w-full p-2 bottom-8 top-2 md:p-0 md:bottom-12 md:h-100">
               <div className="grid grid-cols-1 px-2 md:pt-8 md:grid-cols-2 md:pl-8">
                 <div className="flex flex-col">
@@ -101,7 +113,8 @@ const Profile: NextPage = () => {
                       {t("Lists")}
                     </span>
                   ),
-                  component: <AssetsTable filter={filter} />,
+                  component: <AssetsTable filter={collectedAssets} />,
+                  disabled: hasCollectedAssets,
                 },
               ]}
             />

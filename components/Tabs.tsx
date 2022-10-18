@@ -3,11 +3,11 @@ import { ReactElement, useState } from "react";
 type TabsProps = Array<{
   title: ReactElement | string;
   component: ReactElement<any, any>;
+  disabled?: boolean;
 }>;
 
 const Tabs = ({ tabsArray }: { tabsArray: TabsProps }) => {
   const [tab, setTab] = useState(0);
-
   return (
     <>
       <div className="tabs">
