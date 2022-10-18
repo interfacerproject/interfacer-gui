@@ -6,5 +6,7 @@
   "This is a": "This is a",
   "Value of this asset": "Value of this asset",
   "Load more": "Load more...",
-  "assets": "Assets"
+  "assets": "Assets",
+  "contributorsHead": ["UserName", "Date"],
+  "contributors": "Contributors"
 }

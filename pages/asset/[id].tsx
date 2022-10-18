@@ -13,17 +13,19 @@ import Spinner from "../../components/brickroom/Spinner";
 import { EconomicResource } from "../../lib/types";
 import BrBreadcrumb from "../../components/brickroom/BrBreadcrumb";
 import BrThumbinailsGallery from "../../components/brickroom/BrThumbinailsGallery";
+import ContributorsTable from "../../components/ContributorsTable";
 
 const Asset = () => {
   const router = useRouter();
   const { id } = router.query;
   const { t } = useTranslation("common");
-  const [mainImage, setMainImage] = useState("");
   const [asset, setAsset] = useState<EconomicResource | undefined>();
   const QUERY_ASSET = gql`
     query ($id: ID!) {
       proposal(id: $id) {
+        created
         primaryIntents {
+          hasPointInTime
           resourceInventoriedAs {
             conformsTo {
               name
@@ -36,6 +38,7 @@ const Asset = () => {
             id
             note
             classifiedAs
+            metadata
             primaryAccountable {
               name
               id
@@ -53,15 +56,6 @@ const Asset = () => {
             }
           }
         }
-        reciprocalIntents {
-          resourceQuantity {
-            hasNumericalValue
-            hasUnit {
-              label
-              symbol
-            }
-          }
-        }
       }
     }
   `;
@@ -70,13 +64,8 @@ const Asset = () => {
 
   useEffect(() => {
     const _asset: EconomicResource = data?.proposal.primaryIntents[0].resourceInventoriedAs;
-    // @ts-ignore
-    const _image = _asset?.images[0];
-    setMainImage(`data:${_image?.mimeType};base64,${_image?.bin}`);
     setAsset(_asset);
   }, [data]);
-
-  devLog("images", asset?.images);
 
   return (
     <>
@@ -111,7 +100,17 @@ const Asset = () => {
                 <Tabs
                   tabsArray={[
                     { title: t("Overview"), component: <AssetDetailOverview asset={asset} /> },
-                    { title: t("Contributions"), component: <Spinner /> },
+                    {
+                      title: t("Contributions"),
+                      component: (
+                        <ContributorsTable
+                          contributors={asset.metadata.contributors}
+                          date={data?.proposal.created}
+                          head={t("contributorsHead", { returnObjects: true })}
+                          title={t("contributors")}
+                        />
+                      ),
+                    },
                     { title: t("DPP"), component: <Spinner /> },
                   ]}
                 />
