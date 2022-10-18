@@ -1,23 +1,14 @@
-import { waitForData } from "../../utils";
+const Nru_pages = "/ /sign_up /sign_in".split(" ");
 
 describe("Screenshot nru", () => {
   beforeEach(() => {
     cy.viewport("macbook-13");
   });
-  afterEach(() => {
-    cy.wait(5000);
-    cy.screenshot();
-  });
-
-  it("index", () => {
-    cy.visit("/");
-  });
-
-  it("/sign_in", () => {
-    cy.visit("/sign_in");
-  });
-
-  it("/sign_up", () => {
-    cy.visit("/sign_up");
+  Nru_pages.forEach(page => {
+    it(`should take a screenshot of ${page}`, () => {
+      cy.visit(`https://interfacer-gui-staging.dyne.org${page}`);
+      cy.wait(5000);
+      cy.screenshot(`nru_${page}`);
+    });
   });
 });
