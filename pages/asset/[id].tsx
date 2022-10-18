@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import BrDisplayUser from "../../components/brickroom/BrDisplayUser";
 import Link from "next/link";
-import devLog from "../../lib/devLog";
 import Tabs from "../../components/Tabs";
 import AssetDetailOverview from "../../components/AssetDetailOverview";
 import Spinner from "../../components/brickroom/Spinner";
