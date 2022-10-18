@@ -147,16 +147,6 @@ const Asset = () => {
               </div>
             </div>
             <div id="right-col" className="flex flex-col mt-16">
-              <p>{t("Value of this asset")}:</p>
-              <div className="mt-2 mb-6 space-x-2 font-bold font-display">
-                <span className="text-2xl">
-                  {data?.proposal.reciprocalIntents[0].resourceQuantity.hasNumericalValue}
-                </span>
-                <span className="text-xl">{t("Fab Token")}</span>
-                <span className="font-sans font-normal">
-                  /{data?.proposal.primaryIntents[0].resourceInventoriedAs.onhandQuantity.hasUnit.label}
-                </span>
-              </div>
               <button className="px-20 mb-4 btn btn-accent btn-block">{t("Buy this asset")}</button>
               <button className="btn btn-accent btn-outline btn-block" tabIndex={-1} role="button" aria-disabled="true">
                 {t("Add to list +")}
