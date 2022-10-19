@@ -63,6 +63,8 @@ const Resource: NextPage = () => {
   });
   const e = data?.economicResource;
 
+  const handleClaim = () => {};
+
   return (
     <div>
       {loading && <Spinner />}
@@ -100,6 +102,11 @@ const Resource: NextPage = () => {
               <div>
                 <h4>{t("current location:")}</h4>
                 <p className="text-gray-500">{data?.economicResource.currentLocation?.name}</p>
+              </div>
+              <div className="md:w-3/5 px-0.5 md:px-0">
+                <button className="px-20 mb-4 btn btn-accent btn-block" onClick={handleClaim}>
+                  {t("Claim Ownership")}
+                </button>
               </div>
             </div>
           </div>

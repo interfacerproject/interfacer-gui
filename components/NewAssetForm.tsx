@@ -8,10 +8,19 @@ import AddContributors from "./AddContributors";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import { useTranslation } from "next-i18next";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
 import dayjs from "dayjs";
 import SelectTags from "./SelectTags";
+import {
+  QUERY_VARIABLES,
+  CREATE_PROPOSAL,
+  CREATE_ASSET,
+  CREATE_INTENT,
+  LINK_PROPOSAL_AND_INTENT,
+  CREATE_LOCATION,
+} from "../lib/QueryAndMutation";
+import { EconomicEventCreateParams } from "../lib/types";
 
 type Image = {
   description: string;
@@ -80,151 +89,17 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   const colors = ["error", "success", "warning", "info"];
   const logsClass = (text: string) =>
     colors.includes(text.split(":")[0]) ? `text-${text.split(":")[0]} uppercase my-3` : "my-2";
-  const QUERY_VARIABLES = gql`
-    query {
-      instanceVariables {
-        specs {
-          specCurrency {
-            id
-          }
-          specProjectDesign {
-            id
-          }
-          specProjectProduct {
-            id
-          }
-          specProjectService {
-            id
-          }
-        }
-        units {
-          unitOne {
-            id
-          }
-        }
-      }
-    }
-  `;
 
-  const CREATE_PROPOSAL = gql`
-    mutation {
-      createProposal(proposal: { name: "price tag", unitBased: true }) {
-        proposal {
-          id
-        }
-      }
-    }
-  `;
-  const CREATE_INTENT = gql`
-    mutation ($agent: ID!, $resource: ID!, $oneUnit: ID!, $currency: ID!, $howMuch: Float!) {
-      item: createIntent(
-        intent: {
-          name: "project"
-          action: "transfer"
-          provider: $agent
-          resourceInventoriedAs: $resource
-          resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
-        }
-      ) {
-        intent {
-          id
-        }
-      }
-
-      payment: createIntent(
-        intent: {
-          name: "payment"
-          action: "transfer"
-          receiver: $agent
-          resourceConformsTo: $currency
-          resourceQuantity: { hasNumericalValue: $howMuch, hasUnit: $oneUnit }
-        }
-      ) {
-        intent {
-          id
-        }
-      }
-    }
-  `;
-
-  const LINK_PROPOSAL_AND_INTENT = gql`
-    mutation ($proposal: ID!, $item: ID!, $payment: ID!) {
-      linkItem: proposeIntent(publishedIn: $proposal, publishes: $item, reciprocal: false) {
-        proposedIntent {
-          id
-        }
-      }
-
-      linkPayment: proposeIntent(publishedIn: $proposal, publishes: $payment, reciprocal: true) {
-        proposedIntent {
-          id
-        }
-      }
-    }
-  `;
-
-  const CREATE_LOCATION = gql`
-    mutation ($name: String!, $addr: String!, $lat: Float!, $lng: Float!) {
-      createSpatialThing(spatialThing: { name: $name, mappableAddress: $addr, lat: $lat, long: $lng }) {
-        spatialThing {
-          id
-          lat
-          long
-        }
-      }
-    }
-  `;
-
-  const CREATE_ASSET = gql`
-    mutation (
-      $name: String!
-      $note: String!
-      $metadata: JSON
-      $agent: ID!
-      $creationTime: DateTime!
-      $location: ID!
-      $tags: [URI!]
-      $resourceSpec: ID!
-      $oneUnit: ID!
-      $images: [IFile!]
-    ) {
-      createEconomicEvent(
-        event: {
-          action: "raise"
-          provider: $agent
-          receiver: $agent
-          hasPointInTime: $creationTime
-          resourceClassifiedAs: $tags
-          resourceConformsTo: $resourceSpec
-          resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
-          toLocation: $location
-        }
-        newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata }
-      ) {
-        economicEvent {
-          id
-          resourceInventoriedAs {
-            id
-          }
-        }
-      }
-    }
-  `;
   const handleEditorChange = ({ html, text }: any) => {
     devLog("handleEditorChange", html, text);
     setAssetDescription(text);
   };
 
-  const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables;
-
-  const [createAsset, { data, error }] = useMutation(CREATE_ASSET);
-
+  const instanceVariables = useQuery(QUERY_VARIABLES(true)).data?.instanceVariables;
+  const [createAsset, { data, error }] = useMutation(CREATE_ASSET("raise"));
   const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
-
   const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);
-
   const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
-
   const [linkProposalAndIntent, { data: link }] = useMutation(LINK_PROPOSAL_AND_INTENT);
 
   const handleCreateLocation = async (loc: any) => {
@@ -430,8 +305,6 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         contributors={contributors}
         testID="contributors"
       />
-
-      {/*todo:gestire meglio la fine del processo*/}
       {assetCreatedId ? (
         <Link href={assetCreatedId}>
           <a className="btn btn-accent">{t("go to the asset")}</a>
