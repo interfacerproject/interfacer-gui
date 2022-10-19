@@ -29,5 +29,10 @@
     "Wie lautet der Nachname Ihrer Mutter vor der Hochzeit?"
   ],
   "button": "Next Step",
-  "keyring_title": "Beantworten Sie diese Fragen, um Ihre Anmeldung abzuschließen 🧩"
+  "keyring_title": "Beantworten Sie diese Fragen, um Ihre Anmeldung abzuschließen 🧩",
+  "invitationTitle": "Haben Sie Ihre Schlüssel?",
+  "invitationPresentation": "Sie benötigen eine Einladungsphrase, um mit Ihrer Anmeldung fortzufahren!",
+  "invitationButton": "Fortfahren",
+  "invitationKey": "Einladungsschlüssel:*",
+  "invitationKeyError": "Bitte geben Sie einen gültigen Einladungsschlüssel ein"
 }

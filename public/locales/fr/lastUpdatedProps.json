@@ -2,7 +2,7 @@
   "title": "titre",
   "description": "description",
   "Load more": "Chargez plus",
-  "tableHead": ["Asset", "Dernière mise à jour", "Valeur", "Propriétaire", "tags"],
+  "tableHead": ["Asset", "Dernière mise à jour", "Propriétaire", "tags"],
   "filters": {
     "filter for": "Filtrer par",
     "contributors": "Contributeurs",
