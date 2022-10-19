@@ -114,6 +114,8 @@ describe("Authentication", () => {
     }).as("api");
     cy.viewport("macbook-13");
     cy.visit("/sign_up");
+    cy.get("form > :nth-child(1) > .w-full").should("be.visible").type(Cypress.env("NEXT_PUBLIC_INVITATION_KEY"));
+    cy.get("form > :nth-child(2)").should("be.visible").click();
     cy.get("form > :nth-child(1) > .w-full")
       .should("be.visible")
       .type(new Date().getTime() + "@d.otg");
