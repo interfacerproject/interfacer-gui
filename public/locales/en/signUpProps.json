@@ -29,5 +29,10 @@
     "What is the name of your first teacher?",
     "What is your mother's maiden name?"
   ],
-  "button": "Next step"
+  "button": "Next step",
+  "invitationTitle": "Got your keys?",
+  "invitationPresentation": "You need an invitation phrase to proceed with your signup!",
+  "invitationButton": "Continue",
+  "invitationKey": "invitation key:*",
+  "invitationKeyError": "Please enter a valid invitation key"
 }
