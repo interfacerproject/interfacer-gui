@@ -4,6 +4,8 @@ describe("KeyringGeneration component", () => {
   it("should go to /sign_up and register a user (in order to go to keyring)", () => {
     // Signing up before viewing keyring
     cy.visit("/sign_up");
+    cy.get("form > :nth-child(1) > .w-full").should("be.visible").type(Cypress.env("NEXT_PUBLIC_INVITATION_KEY"));
+    cy.get("form > :nth-child(2)").should("be.visible").click();
     // Typing email
     cy.get("input[type=email]").type(randomEmail());
     // Name

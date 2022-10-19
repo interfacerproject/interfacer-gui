@@ -3639,5 +3639,6 @@ export type GetResourceTableQuery = {
       | { __typename?: "Organization"; id: string; name: string }
       | { __typename?: "Person"; id: string; name: string };
     currentLocation?: { __typename?: "SpatialThing"; name: string; mappableAddress?: string | null } | null;
+    images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
   } | null;
 };

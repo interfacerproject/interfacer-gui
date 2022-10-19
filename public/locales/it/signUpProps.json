@@ -29,5 +29,10 @@
     "Qual è il cognome di tua madre prima del matrimonio?"
   ],
   "button": "Passo successivo",
-  "keyring_title": "Rispondete a queste domande per completare l'iscrizione 🧩"
+  "keyring_title": "Rispondete a queste domande per completare l'iscrizione 🧩",
+  "invitationTitle": "Hai le chiavi?",
+  "invitationPresentation": "Per procedere con l'iscrizione è necessaria una frase di invito!",
+  "invitationButton": "Continua",
+  "invitationKey": "chiave d'invito:*",
+  "invitationKeyError": "Inserire una chiave di invito valida"
 }

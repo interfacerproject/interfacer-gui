@@ -29,10 +29,6 @@ const AssetsTableRow = (props: any) => {
           </td>
           <td className="">{e.node?.created && new Date(e.node.created).toLocaleString()}</td>
           <td>
-            <h3>{reciprocalIntent.resourceQuantity.hasNumericalValue}</h3>
-            <p className="text-primary">Fab Tokens</p>
-          </td>
-          <td>
             <BrDisplayUser
               id={primaryIntent.resourceInventoriedAs.primaryAccountable.id}
               name={primaryIntent.resourceInventoriedAs.primaryAccountable.name}
