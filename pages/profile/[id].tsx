@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
+import Tabs from "components/Tabs";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
@@ -8,7 +9,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import AssetsTable from "../../components/AssetsTable";
 import Spinner from "../../components/brickroom/Spinner";
-import ResourceTable from "../../components/ResourceTable";
 import { useAuth } from "../../hooks/useAuth";
 import devLog from "../../lib/devLog";
 
@@ -40,13 +40,6 @@ const Profile: NextPage = () => {
     filter["primaryIntentsResourceInventoriedAsConformsTo"] = conformTo.split(",");
   }
   devLog(user);
-  const tabsArray = [
-    // {title: 'Activity', component: <EventTable economicEvents={user?.economicEvents}/>},
-    {
-      title: "Inventory",
-      component: <ResourceTable />,
-    },
-  ];
   return (
     <>
       {!person && <Spinner />}
@@ -102,16 +95,20 @@ const Profile: NextPage = () => {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 px-2 pt-8 md:grid-cols-2 md:pl-8">
-            <div id="tabs" className="my-6 space-x-4">
-              <button className="px-12 text-black bg-gray-300 border-0 rounded-lg btn">
-                {t("activity by the user")}
-              </button>
-              <span className="invisible rounded-lg btn btn-disabled lg:visible">{t("saved list")}</span>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 px-2 md:px-8 pt">
-            <AssetsTable filter={filter} noPrimaryAccountableFilter />
+          <div className="px-10 mr-12">
+            <Tabs
+              tabsArray={[
+                {
+                  title: t("Assets"),
+                  component: (
+                    <div className="pt-4">
+                      <AssetsTable filter={filter} noPrimaryAccountableFilter />
+                    </div>
+                  ),
+                },
+                { title: t("Lists"), component: <div>lists</div> },
+              ]}
+            />
           </div>
         </>
       )}

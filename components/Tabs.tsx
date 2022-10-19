@@ -1,6 +1,5 @@
-import { useState } from "react";
-import React, { ReactElement } from "react";
-
+import cn from "classnames";
+import { ReactElement, useState } from "react";
 type TabsProps = Array<{
   title: string;
   component: ReactElement<any, any>;
@@ -8,13 +7,18 @@ type TabsProps = Array<{
 
 const Tabs = ({ tabsArray }: { tabsArray: TabsProps }) => {
   const [tab, setTab] = useState(0);
-  const tabClass = (i: number) => (i === tab ? "tab tab-bordered tab-active" : "tab tab-bordered");
 
   return (
     <>
       <div className="tabs">
         {tabsArray.map((t, i) => (
-          <a key={i} className={tabClass(i)} onClick={() => setTab(i)}>
+          <a
+            key={i}
+            className={cn("tab tab-bordered", {
+              "tab-active": i === tab,
+            })}
+            onClick={() => setTab(i)}
+          >
             {t.title}
           </a>
         ))}
