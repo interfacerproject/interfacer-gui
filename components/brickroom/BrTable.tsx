@@ -14,7 +14,7 @@ const BrTable = ({ headArray, children }: BrTableProps) => {
           <div className="table-header-group bg-white-100">
             <div className="table-row">
               {headArray.map(p => (
-                <div className="table-cell p-4 font-medium text-neutral" key={p}>
+                <div className="table-cell p-4 text-sm font-normal text-neutral" key={p}>
                   {p}
                 </div>
               ))}

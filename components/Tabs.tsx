@@ -1,7 +1,7 @@
 import cn from "classnames";
 import { ReactElement, useState } from "react";
 type TabsProps = Array<{
-  title: string;
+  title: ReactElement | string;
   component: ReactElement<any, any>;
 }>;
 
@@ -14,8 +14,8 @@ const Tabs = ({ tabsArray }: { tabsArray: TabsProps }) => {
         {tabsArray.map((t, i) => (
           <a
             key={i}
-            className={cn("tab tab-bordered", {
-              "tab-active": i === tab,
+            className={cn("tab tab-bordered pb-4", {
+              "tab-active text-primary": i === tab,
             })}
             onClick={() => setTab(i)}
           >
