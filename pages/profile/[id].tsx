@@ -53,10 +53,7 @@ const Profile: NextPage = () => {
       {person && (
         <>
           <div className="relative">
-            <div
-              className="w-full bg-center bg-cover h-72"
-              style={{ backgroundImage: "url('/profile_bg.jpeg')", filter: "blur(1px)" }}
-            />
+            <div className="w-full bg-center bg-cover h-72" />
             <div className="absolute w-full p-2 bottom-8 top-2 md:p-0 md:bottom-12 md:h-100">
               <div className="grid grid-cols-1 px-2 pt-8 md:grid-cols-2 md:pl-8">
                 <div className="flex flex-col">
