@@ -51,6 +51,8 @@ const Home: NextPageWithLayout = () => {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 px-2 md:px-8 pt">{/* <AssetsTable /> */}</div>
+
       <div className="grid grid-cols-3 gap-16 pl-32 mt-44">
         {features.map((f, i) => {
           return (

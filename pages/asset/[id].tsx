@@ -2,17 +2,17 @@ import { gql, useQuery } from "@apollo/client";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import BrDisplayUser from "../../components/brickroom/BrDisplayUser";
-import Link from "next/link";
-import Tabs from "../../components/Tabs";
 import AssetDetailOverview from "../../components/AssetDetailOverview";
-import Spinner from "../../components/brickroom/Spinner";
-import { EconomicResource } from "../../lib/types";
 import BrBreadcrumb from "../../components/brickroom/BrBreadcrumb";
+import BrDisplayUser from "../../components/brickroom/BrDisplayUser";
 import BrThumbinailsGallery from "../../components/brickroom/BrThumbinailsGallery";
+import Spinner from "../../components/brickroom/Spinner";
 import ContributorsTable from "../../components/ContributorsTable";
+import Tabs from "../../components/Tabs";
+import { EconomicResource } from "../../lib/types";
 
 const Asset = () => {
   const router = useRouter();
