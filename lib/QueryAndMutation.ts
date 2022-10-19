@@ -155,3 +155,50 @@ export const CREATE_ASSET = (action: "raise" | "transfer" = "raise") => gql`
     }
   }
 `;
+
+export const QUERY_RESOURCE = gql`
+  query getResourceTable($id: ID!) {
+    economicResource(id: $id) {
+      id
+      name
+      note
+      conformsTo {
+        id
+        name
+      }
+      onhandQuantity {
+        hasUnit {
+          id
+          symbol
+          label
+        }
+        hasNumericalValue
+      }
+      accountingQuantity {
+        hasUnit {
+          label
+          symbol
+        }
+        hasNumericalValue
+      }
+      primaryAccountable {
+        id
+        name
+      }
+      currentLocation {
+        name
+        mappableAddress
+      }
+      primaryAccountable {
+        id
+        name
+      }
+      images {
+        hash
+        name
+        mimeType
+        bin
+      }
+    }
+  }
+`;

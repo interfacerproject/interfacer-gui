@@ -1,17 +1,13 @@
 import BrInput from "./brickroom/BrInput";
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
 import BrMdEditor from "./brickroom/BrMdEditor";
-import BrRadio from "./brickroom/BrRadio";
 import BrImageUpload from "./brickroom/BrImageUpload";
-import GeoCoderInput from "./GeoCoderInput";
-import AddContributors from "./AddContributors";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import { useMutation, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
 import dayjs from "dayjs";
-import SelectTags from "./SelectTags";
 import {
   QUERY_VARIABLES,
   CREATE_PROPOSAL,
@@ -19,8 +15,8 @@ import {
   CREATE_INTENT,
   LINK_PROPOSAL_AND_INTENT,
   CREATE_LOCATION,
-} from "../lib/QueryAndMutation";
-import { EconomicEventCreateParams } from "../lib/types";
+} from "lib/QueryAndMutation";
+import TypeTagsGeoContributors from "./TypeTagsGeoContributors";
 
 type Image = {
   description: string;
@@ -85,10 +81,6 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     }
     devLog("typeId", resourceSpec);
   }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price]);
-
-  const colors = ["error", "success", "warning", "info"];
-  const logsClass = (text: string) =>
-    colors.includes(text.split(":")[0]) ? `text-${text.split(":")[0]} uppercase my-3` : "my-2";
 
   const handleEditorChange = ({ html, text }: any) => {
     devLog("handleEditorChange", html, text);
@@ -246,14 +238,6 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         hint={t("projectDescription.hint")}
         testID="projectDescription"
       />
-      <BrRadio
-        array={t("projectType.array", { returnObjects: true })}
-        label={t("projectType.label")}
-        hint={t("projectType.hint")}
-        onChange={setAssetType}
-        value={projectType}
-        testID="projectType"
-      />
       <BrImageUpload
         onChange={setImages}
         setImagesFiles={setImagesFiles}
@@ -272,38 +256,15 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         onChange={(e: ChangeEvent<HTMLInputElement>) => setRepositoryOrId(e.target.value)}
         testID="repositoryOrId"
       />
-      <SelectTags
-        label={t("projectTags.label")}
-        hint={t("projectTags.hint")}
-        canCreateTags
-        onChange={setAssetTags}
-        placeholder={t("projectTags.placeholder")}
-        testID="tagsList"
-      />
-      <div className="grid grid-cols-2 gap-2">
-        <BrInput
-          label={t("location.name.label")}
-          hint={t("location.name.hint")}
-          value={locationName}
-          placeholder={t("location.name.placeholder")}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setLocationName(e.target.value)}
-          testID="location.name"
-        />
-        <GeoCoderInput
-          onSelect={handleCreateLocation}
-          value={location}
-          label={t("location.address.label")}
-          hint={t("location.address.hint")}
-          placeholder={t("location.address.placeholder")}
-          testID="location.address"
-        />
-      </div>
-      <AddContributors
-        label={t("contributors.label")}
-        hint={t("contributors.hint")}
-        setContributors={c => setContributors(c)}
+      <TypeTagsGeoContributors
+        setAssetTags={setAssetTags}
+        setLocationName={setLocationName}
+        handleCreateLocation={handleCreateLocation}
+        locationName={locationName}
+        setContributors={setContributors}
         contributors={contributors}
-        testID="contributors"
+        setAssetType={setAssetType}
+        projectType={projectType}
       />
       {assetCreatedId ? (
         <Link href={assetCreatedId}>
