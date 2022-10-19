@@ -3,7 +3,6 @@ import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
 import cn from "classnames";
-import Tabs from "components/Tabs";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
@@ -13,6 +12,7 @@ import AssetsTable from "../../components/AssetsTable";
 import Spinner from "../../components/brickroom/Spinner";
 import { useAuth } from "../../hooks/useAuth";
 import devLog from "../../lib/devLog";
+import BrTabs from "../../components/brickroom/BrTabs";
 import useStorage from "../../hooks/useStorage";
 
 const Profile: NextPage = () => {
@@ -95,7 +95,7 @@ const Profile: NextPage = () => {
             </div>
           </div>
           <div className="px-4 pt-32 md:mr-12 md:px-10 md:pt-0">
-            <Tabs
+            <BrTabs
               tabsArray={[
                 {
                   title: (

@@ -5,13 +5,13 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import BrTabs from "../../components/brickroom/BrTabs";
 import AssetDetailOverview from "../../components/AssetDetailOverview";
 import BrBreadcrumb from "../../components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "../../components/brickroom/BrDisplayUser";
 import BrThumbinailsGallery from "../../components/brickroom/BrThumbinailsGallery";
 import Spinner from "../../components/brickroom/Spinner";
 import ContributorsTable from "../../components/ContributorsTable";
-import Tabs from "../../components/Tabs";
 import { EconomicResource } from "../../lib/types";
 import useStorage from "../../hooks/useStorage";
 
@@ -113,7 +113,7 @@ const Asset = () => {
               </div>
               <BrThumbinailsGallery images={images} />
               <div id="tabs" className="my-6">
-                <Tabs
+                <BrTabs
                   tabsArray={[
                     { title: t("Overview"), component: <AssetDetailOverview asset={asset} /> },
                     {
