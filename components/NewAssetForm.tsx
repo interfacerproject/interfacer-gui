@@ -39,7 +39,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   const [locationId, setLocationId] = useState("");
   const [location, setLocation] = useState({} as any);
   const [locationName, setLocationName] = useState("");
-  const [price, setPrice] = useState("");
+  const [price] = useState("1");
   const [resourceSpec, setResourceSpec] = useState("");
   const [resourceId, setResourceId] = useState("");
   const [images, setImages] = useState([] as Images);
@@ -387,6 +387,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         value={imagesFiles}
         hint={t("imageUpload.hint")}
         testID="imageUpload"
+        clickToUpload={t("imageUpload.clickToUpload")}
       />
       <BrInput
         label={t("repositoryOrId.label")}
@@ -428,15 +429,6 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         setContributors={c => setContributors(c)}
         contributors={contributors}
         testID="contributors"
-      />
-      <BrInput
-        type={"number"}
-        label={t("price.label")}
-        hint={t("price.hint")}
-        value={price}
-        placeholder={t("price.placeholder")}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => setPrice(e.target.value)}
-        testID="price"
       />
 
       {/*todo:gestire meglio la fine del processo*/}

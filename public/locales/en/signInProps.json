@@ -4,8 +4,6 @@
   "title_step_2": "Login answering the signup questions 💬",
   "title_step_3": "Login via passprhase 🔑",
   "presentation": "Login by providing your generated passphrase or by answering the questions during your Signup proccess",
-  "presentation_step_2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
-  "presentation_step_3": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam semper felis volutpat mauris libero feugiat ornare aliquet urna.",
   "step_passphrase": {
     "title": "Login via passphrase 🔑",
     "subtitle": "Input the passphrase that you kept, generated during the signup process",

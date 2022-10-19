@@ -21,10 +21,12 @@
     "test": "pnpm build && start-server-and-test start http://localhost:3000 cypress:headless",
     "translate": "pnpx json-autotranslate -s deepl-free -i public/locales -c YOUR_DEEPL_FREE_KEY",
     "prepare": "husky install",
-    "release": "HUSKY=0 standard-version --no-verify"
+    "release": "HUSKY=0 standard-version --no-verify",
+    "types:generate": "graphql-codegen"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
+    "@babel/core": "^7.19.3",
     "@heroicons/react": "^1.0.6",
     "@tailwindcss/typography": "^0.5.7",
     "@testing-library/cypress": "^8.0.3",
@@ -33,6 +35,7 @@
     "@types/node": "18.7.15",
     "@types/react": "18.0.18",
     "@types/react-dom": "18.0.6",
+    "@typescript-eslint/parser": "^5.40.1",
     "@uiw/react-markdown-preview": "^4.1.0",
     "apollo-client": "^2.6.10",
     "apollo-utilities": "^1.3.4",
@@ -66,11 +69,16 @@
     "react-qr-code": "^2.0.7",
     "react-select": "^5.4.0",
     "sass": "^1.54.8",
+    "swiper": "^8.4.4",
     "tailwindcss": "^3.1.8",
+    "ts-node": "^10.9.1",
     "typescript": "^4.8.2",
     "zenroom": "2.2.3-f0193d51"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^2.13.6",
+    "@graphql-codegen/typescript": "^2.7.4",
+    "@graphql-codegen/typescript-operations": "^2.5.4",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "cypress": "^10.7.0",
     "cypress-fail-fast": "^5.0.1",
