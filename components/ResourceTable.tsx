@@ -76,8 +76,6 @@ const FETCH_INVENTORY = gql`
 
 const ResourceTable = ({ filter }: { filter?: any }) => {
   const { t } = useTranslation("resourcesProps");
-
-  devLog("filter", filter);
   const { loading, data, error, fetchMore, variables, refetch } = useQuery(FETCH_INVENTORY, {
     variables: {
       last: 10,
@@ -85,8 +83,6 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
     },
   });
   devLog(error);
-  devLog("loading", loading);
-  !loading && devLog(data);
 
   const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
     if (!fetchMoreResult) {
