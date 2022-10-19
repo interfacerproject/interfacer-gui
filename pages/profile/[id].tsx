@@ -71,10 +71,10 @@ const Profile: NextPage = () => {
                   </h4>
                 </div>
                 <div className="flex flex-col">
-                  <div className="grid w-full p-4 mx-auto bg-white border-2 rounded h-60 md:w-4/5 gid-cols-1">
+                  <div className="grid w-full p-4 mx-auto border-2 rounded bg-white-100 h-60 md:w-4/5 gid-cols-1">
                     <div className="border-b-2">
                       <h2 className="mb-2">{t("goals")}</h2>
-                      <span className="text-2xl text-primary">20,897</span>
+                      <span className="text-2xl font-semibold text-primary font-display">20,897</span>
                       <span className="text-slate-300"> from 12,946</span>
                       <span className="grid float-right grid-cols-2 px-2 py-1 pl-4 mt-1 bg-green-100 rounded-full text-primary">
                         <ArrowSmUpIcon className="w-5 h-5 text-green-500" />
@@ -83,7 +83,7 @@ const Profile: NextPage = () => {
                     </div>
                     <div>
                       <h2 className="my-2">{t("strength")}</h2>
-                      <span className="text-2xl text-primary">71,897</span>
+                      <span className="text-2xl font-semibold text-primary font-display">71,897</span>
                       <span className="text-slate-300"> from 70,946</span>
                       <span className="grid float-right grid-cols-2 px-2 py-1 pl-4 mt-1 bg-green-100 rounded-full text-primary">
                         <ArrowSmUpIcon className="w-5 h-5 text-green-500" />
