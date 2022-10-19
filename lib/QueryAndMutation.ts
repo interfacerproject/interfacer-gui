@@ -120,7 +120,7 @@ export const CREATE_LOCATION = gql`
   }
 `;
 
-export const CREATE_ASSET = (action: "raise" | "transfer" = "raise") => gql`
+export const CREATE_ASSET = gql`
   mutation (
     $name: String!
     $note: String!
@@ -135,7 +135,7 @@ export const CREATE_ASSET = (action: "raise" | "transfer" = "raise") => gql`
   ) {
     createEconomicEvent(
       event: {
-        action: "${action}"
+        action: "raise"
         provider: $agent
         receiver: $agent
         hasPointInTime: $creationTime
@@ -145,6 +145,43 @@ export const CREATE_ASSET = (action: "raise" | "transfer" = "raise") => gql`
         toLocation: $location
       }
       newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata }
+    ) {
+      economicEvent {
+        id
+        resourceInventoriedAs {
+          id
+        }
+      }
+    }
+  }
+`;
+
+export const TRANSFER_ASSET = gql`
+  mutation (
+    $resource: ID!
+    $name: String!
+    $note: String!
+    $metadata: JSON
+    $agent: ID!
+    $creationTime: DateTime!
+    $location: ID!
+    $tags: [URI!]
+    $resourceSpec: ID!
+    $oneUnit: ID!
+  ) {
+    createEconomicEvent(
+      event: {
+        resourceInventoriedAs: $resource
+        action: "transfer"
+        provider: "${process.env.NEXT_PUBLIC_LOASH_ID}"
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceClassifiedAs: $tags
+        resourceConformsTo: $resourceSpec
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
+        toLocation: $location
+      }
+      newInventoriedResource: { name: $name, note: $note, metadata: $metadata}
     ) {
       economicEvent {
         id

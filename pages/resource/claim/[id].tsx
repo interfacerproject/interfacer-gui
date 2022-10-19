@@ -5,18 +5,28 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import Spinner from "components/brickroom/Spinner";
-import { CREATE_LOCATION, QUERY_RESOURCE } from "lib/QueryAndMutation";
+import {
+  TRANSFER_ASSET,
+  CREATE_INTENT,
+  CREATE_LOCATION,
+  CREATE_PROPOSAL,
+  LINK_PROPOSAL_AND_INTENT,
+  QUERY_RESOURCE,
+  QUERY_VARIABLES,
+} from "lib/QueryAndMutation";
 import { ReactElement, useState } from "react";
 import Layout from "components/layout/CreateAssetLayout";
 import { NextPageWithLayout } from "../../_app";
-import LoshPresentation from "../../../components/LoshPresentation";
-import TypeTagsGeoContributors from "../../../components/TypeTagsGeoContributors";
-import devLog from "../../../lib/devLog";
+import LoshPresentation from "components/LoshPresentation";
+import TypeTagsGeoContributors from "components/TypeTagsGeoContributors";
+import devLog from "lib/devLog";
+import dayjs from "dayjs";
+import { useAuth } from "hooks/useAuth";
 
 const ClaimAsset: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [projectName, setAssetName] = useState("");
+  const { user } = useAuth();
   const [assetTags, setAssetTags] = useState([] as string[]);
   const [locationName, setLocationName] = useState("");
   const [contributors, setContributors] = useState([] as { id: string; name: string }[]);
@@ -29,7 +39,12 @@ const ClaimAsset: NextPageWithLayout = () => {
   });
   const e = data?.economicResource;
 
+  const instanceVariables = useQuery(QUERY_VARIABLES(true)).data?.instanceVariables;
   const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
+  const [transferAsset, { data: economicResource, error }] = useMutation(TRANSFER_ASSET);
+  const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);
+  const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
+  const [linkProposalAndIntent, { data: link }] = useMutation(LINK_PROPOSAL_AND_INTENT);
 
   const handleCreateLocation = async (loc: any) => {
     const name = locationName === "" ? "*untitled*" : locationName;
@@ -49,8 +64,60 @@ const ClaimAsset: NextPageWithLayout = () => {
       });
   };
 
+  const handleClaim = async () => {
+    const variables = {
+      resource: e!.id,
+      resourceSpec: e!.conformsTo.id,
+      agent: user?.ulid,
+      name: e!.name,
+      note: e!.note,
+      metadata: JSON.stringify({ repositoryOrId: e!.currentLocation?.name, contributors: contributors }),
+      location: locationId,
+      oneUnit: e!.onhandQuantity.hasUnit?.id,
+      creationTime: dayjs().toISOString(),
+      tags: assetTags?.map(t => encodeURI(t)),
+    };
+    const asset = await transferAsset({
+      variables: variables,
+    })
+      .catch(error => {})
+      .then((re: any) => {
+        devLog("2", re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id);
+        return re?.data;
+      });
+
+    const proposal = await createProposal().then(proposal => {
+      devLog("3", proposal);
+      return proposal.data;
+    });
+
+    const intent = await createIntent({
+      variables: {
+        agent: user?.ulid,
+        resource: asset?.createEconomicEvent.economicEvent.resourceInventoriedAs.id,
+        oneUnit: instanceVariables?.units.unitOne.id,
+        howMuch: 1,
+        currency: instanceVariables?.specs.specCurrency.id,
+      },
+    }).then(intent => {
+      devLog("4", intent);
+      return intent.data;
+    });
+
+    linkProposalAndIntent({
+      variables: {
+        proposal: proposal?.createProposal.proposal.id,
+        item: intent?.item.intent.id,
+        payment: intent?.payment.intent.id,
+      },
+    }).then(() => {
+      // router.push(`/asset/${proposal?.createProposal.proposal.id}`);
+      devLog("fatto");
+    });
+  };
+
   return (
-    <div>
+    <div className="pb-6">
       <div className="grid grid-cols-1 gap-2 md:grid-cols-12 pt-14">
         <div className="md:col-start-2 md:col-end-7">
           <h2>{t("claim your ownership over this asset")}</h2>
@@ -74,6 +141,9 @@ const ClaimAsset: NextPageWithLayout = () => {
             setAssetType={setAssetType}
             projectType={projectType}
           />
+          <button className="btn btn-accent my-4" onClick={handleClaim}>
+            {t("Claim Ownership")}
+          </button>
         </div>
       </div>
     </div>

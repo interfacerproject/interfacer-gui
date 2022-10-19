@@ -88,7 +88,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   };
 
   const instanceVariables = useQuery(QUERY_VARIABLES(true)).data?.instanceVariables;
-  const [createAsset, { data, error }] = useMutation(CREATE_ASSET("raise"));
+  const [createAsset, { data, error }] = useMutation(CREATE_ASSET);
   const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
   const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);
   const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
