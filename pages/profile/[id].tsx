@@ -1,17 +1,16 @@
-import type { NextPage } from "next";
-import { useAuth } from "../../hooks/useAuth";
 import { gql, useQuery } from "@apollo/client";
-import { useRouter } from "next/router";
-import Spinner from "../../components/brickroom/Spinner";
-import ResourceTable from "../../components/ResourceTable";
-import devLog from "../../lib/devLog";
+import { ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
-import React from "react";
-import AssetsTable from "../../components/AssetsTable";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
-import { ArrowSmUpIcon } from "@heroicons/react/solid";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
+import AssetsTable from "../../components/AssetsTable";
+import Spinner from "../../components/brickroom/Spinner";
+import ResourceTable from "../../components/ResourceTable";
+import { useAuth } from "../../hooks/useAuth";
+import devLog from "../../lib/devLog";
 
 const Profile: NextPage = () => {
   const router = useRouter();
@@ -63,7 +62,8 @@ const Profile: NextPage = () => {
                 <div className="flex flex-col">
                   <div className="flex flex-row">
                     <h2 className="pt-5 mb-6 mr-2">
-                      {t("hi")}, <span className="text-primary">{person?.name}</span>
+                      {isUser ? <>{t("hi")},</> : <> </>}
+                      <span className="text-primary">{person?.name}</span>
                     </h2>
                     <div className="w-10 rounded-full">
                       <Avatar
@@ -74,7 +74,7 @@ const Profile: NextPage = () => {
                       />
                     </div>
                   </div>
-                  <p>{t("description")} </p>
+                  <p>{isUser ? t("description") : t("")} </p>
                   <h4 className="mt-2">
                     {isUser ? t("user id title") : t("other user id title")}{" "}
                     <span className="text-primary">{person?.id}</span>
