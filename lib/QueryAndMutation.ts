@@ -166,7 +166,6 @@ export const TRANSFER_ASSET = gql`
     $creationTime: DateTime!
     $location: ID!
     $tags: [URI!]
-    $resourceSpec: ID!
     $oneUnit: ID!
   ) {
     createEconomicEvent(
@@ -177,7 +176,6 @@ export const TRANSFER_ASSET = gql`
         receiver: $agent
         hasPointInTime: $creationTime
         resourceClassifiedAs: $tags
-        resourceConformsTo: $resourceSpec
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
         toLocation: $location
       }
@@ -185,7 +183,7 @@ export const TRANSFER_ASSET = gql`
     ) {
       economicEvent {
         id
-        resourceInventoriedAs {
+        toResourceInventoriedAs {
           id
         }
       }

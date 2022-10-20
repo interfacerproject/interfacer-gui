@@ -67,7 +67,6 @@ const ClaimAsset: NextPageWithLayout = () => {
   const handleClaim = async () => {
     const variables = {
       resource: e!.id,
-      resourceSpec: e!.conformsTo.id,
       agent: user?.ulid,
       name: e!.name,
       note: e!.note,
@@ -82,7 +81,7 @@ const ClaimAsset: NextPageWithLayout = () => {
     })
       .catch(error => {})
       .then((re: any) => {
-        devLog("2", re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id);
+        devLog("2", re?.data?.createEconomicEvent.economicEvent.toResourceInventoriedAs.id);
         return re?.data;
       });
 
@@ -94,7 +93,7 @@ const ClaimAsset: NextPageWithLayout = () => {
     const intent = await createIntent({
       variables: {
         agent: user?.ulid,
-        resource: asset?.createEconomicEvent.economicEvent.resourceInventoriedAs.id,
+        resource: asset?.createEconomicEvent.economicEvent.toResourceInventoriedAs.id,
         oneUnit: instanceVariables?.units.unitOne.id,
         howMuch: 1,
         currency: instanceVariables?.specs.specCurrency.id,
