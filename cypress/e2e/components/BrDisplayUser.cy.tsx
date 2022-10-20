@@ -13,19 +13,6 @@ describe("BrDisplayUser component", () => {
 
   it("should click the component and go to user page", () => {
     waitForData();
-    //Clicking 10 times load more button  due to inconsistent data in testing instance db
-    cy.get(".place-items-center > button")
-      .eq(0)
-      .click()
-      .click()
-      .click()
-      .click()
-      .click()
-      .click()
-      .click()
-      .click()
-      .click()
-      .click();
 
     // Getting the first instance of the component
     const comp = cy.get("tr > td > a").first();

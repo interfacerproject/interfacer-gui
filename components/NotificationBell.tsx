@@ -1,9 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
 import { BellIcon } from "@heroicons/react/outline";
-import { useAuth } from "../hooks/useAuth";
 import Link from "next/link";
-import dayjs from "../lib/dayjs";
+import { useAuth } from "../hooks/useAuth";
 import useStorage from "../hooks/useStorage";
+import dayjs from "../lib/dayjs";
 const QUERY_ASSETS = gql`
   query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
     proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {

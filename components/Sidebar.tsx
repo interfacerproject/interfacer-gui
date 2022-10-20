@@ -1,14 +1,14 @@
 import Link from "next/link";
 
-import { useAuth } from "../hooks/useAuth";
 import { useTranslation } from "next-i18next";
+import { useAuth } from "../hooks/useAuth";
 
-import LoginBtn from "./LoginMenu";
+import IfSidebarDropdown from "./brickroom/IfSidebarDropdown";
 import { IfSidebarItemProps } from "./brickroom/IfSidebarItem";
 import IfSideBarLink, { IfSideBarLinkProps } from "./brickroom/IfSideBarLink";
-import IfSidebarDropdown from "./brickroom/IfSidebarDropdown";
+import LoginBtn from "./LoginMenu";
 
-import { BriefcaseIcon, ChatIcon, CubeIcon, HomeIcon, GlobeIcon, SupportIcon } from "@heroicons/react/outline";
+import { BriefcaseIcon, ChatIcon, CubeIcon, GlobeIcon, HomeIcon, SupportIcon } from "@heroicons/react/outline";
 
 //
 
@@ -49,10 +49,10 @@ function Sidebar() {
       target: "_blank",
     },
     userGuide: {
-      text: t("user_guide"),
-      link: "/",
+      text: t("user_manual"),
+      link: "https://new.dyne.org/interfacer-docs/#/pages/user-manual/quickstart",
       leftIcon: <ChatIcon className="w-5 h-5" />,
-      disabled: true,
+      target: "_blank",
     },
     map: {
       text: t("map"),

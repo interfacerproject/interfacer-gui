@@ -1,3 +1,5 @@
+const colors = require("tailwindcss/colors");
+
 module.exports = {
   content: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   daisyui: {
@@ -57,6 +59,25 @@ module.exports = {
       fontFamily: {
         display: ['"Space Grotesk"', "sans-serif"],
         sans: ['"IBM Plex Sans"', "sans-serif"],
+      },
+      colors: {
+        transparent: "transparent",
+        secondary: colors.turquoise,
+        ternary: colors.bronze,
+        quaternary: colors.amber,
+        black: colors.ebony,
+        white: {
+          DEFAULT: "#fcfbfa",
+          100: "#fcfbfa",
+          200: "#f9f7f4",
+          300: "#f5f2ef",
+          400: "#f2eee9",
+          500: "#efeae4",
+          600: "#bfbbb6",
+          700: "#8f8c89",
+          800: "#605e58",
+          900: "#302f2e",
+        },
       },
     },
   },

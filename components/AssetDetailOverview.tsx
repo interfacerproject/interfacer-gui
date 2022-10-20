@@ -1,6 +1,6 @@
-import BrTags from "./brickroom/BrTags";
-import { EconomicResource } from "../lib/types";
 import MdParser from "../lib/MdParser";
+import { EconomicResource } from "../lib/types";
+import BrTags from "./brickroom/BrTags";
 
 const AssetDetailOverview = ({ asset }: { asset: EconomicResource }) => {
   return (
