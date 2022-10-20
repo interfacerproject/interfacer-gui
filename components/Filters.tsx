@@ -38,9 +38,9 @@ const Filters = ({
     setContributors([]);
     setConformsTo([]);
     setTags([]);
-    router.push({
+    router.replace({
       pathname: router.pathname,
-      query: {},
+      query: router.query.id ? { id: router.query.id } : {},
     });
   };
   return (
