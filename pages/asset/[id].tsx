@@ -103,7 +103,7 @@ const Asset = () => {
                       title: t("Contributions"),
                       component: (
                         <ContributorsTable
-                          contributors={asset.metadata.contributors}
+                          contributors={asset.metadata?.contributors}
                           date={data?.proposal.created}
                           head={t("contributorsHead", { returnObjects: true })}
                           title={t("contributors")}
