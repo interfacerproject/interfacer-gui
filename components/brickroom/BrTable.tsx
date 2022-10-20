@@ -3,9 +3,10 @@ import React from "react";
 type BrTableProps = {
   headArray: Array<string>;
   children: React.ReactNode;
+  emptyState?: string | React.ReactNode;
 };
 
-const BrTable = ({ headArray, children }: BrTableProps) => {
+const BrTable = ({ headArray, children, emptyState = "0 results" }: BrTableProps) => {
   return (
     <>
       <div className="overflow-x-auto shadow-lg rounded-box">
@@ -21,7 +22,9 @@ const BrTable = ({ headArray, children }: BrTableProps) => {
             </div>
           </div>
           {/* The children */}
-          <div className="bg-['#F9F9F7'] table-row-group">{children}</div>
+          <div className="bg-['#F9F9F7'] table-row-group">
+            {children ? children : <div className="p-5">{emptyState}</div>}
+          </div>
         </div>
       </div>
     </>

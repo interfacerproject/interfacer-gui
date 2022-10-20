@@ -14,7 +14,7 @@ const Tabs = ({ tabsArray }: { tabsArray: TabsProps }) => {
         {tabsArray.map((t, i) => (
           <a
             key={i}
-            className={cn("tab tab-bordered pb-4", {
+            className={cn("tab tab-bordered pb-9", {
               "tab-active text-primary": i === tab,
             })}
             onClick={() => setTab(i)}

@@ -16,7 +16,7 @@ import devLog from "../../lib/devLog";
 
 const Profile: NextPage = () => {
   const router = useRouter();
-  const { id, conformTo } = router.query;
+  const { id, conformTo, tags } = router.query;
   const { t } = useTranslation("ProfileProps");
   const FETCH_USER = gql(`query($id:ID!) {
   person(id:$id) {
@@ -40,6 +40,10 @@ const Profile: NextPage = () => {
   if (conformTo) {
     // @ts-ignore
     filter["primaryIntentsResourceInventoriedAsConformsTo"] = conformTo.split(",");
+  }
+  if (tags) {
+    // @ts-ignore
+    filter["primaryIntentsResourceInventoriedAsClassifiedAs"] = tags.split(",");
   }
   devLog(user);
   return (
