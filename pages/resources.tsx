@@ -6,13 +6,16 @@ import { useRouter } from "next/router";
 
 const Resources: NextPage = () => {
   const { conformTo, primaryAccountable } = useRouter().query;
-  const filter: { conformsTo?: string[]; primaryAccountable?: string[] } = {
+  const filter: {
+    conformsTo?: string[];
+    primaryAccountable?: string[];
+    gt_onhand_quantity_has_numerical_value: number;
+  } = {
     primaryAccountable: [process.env.NEXT_PUBLIC_LOASH_ID!],
+    gt_onhand_quantity_has_numerical_value: 0,
   };
   // @ts-ignore
   conformTo && (filter["conformsTo"] = [].concat(conformTo));
-  // @ts-ignore
-  primaryAccountable && (filter["primaryAccountable"] = [].concat(primaryAccountable));
   const { t } = useTranslation("resourcesProps");
   return (
     <div className="p-8">
