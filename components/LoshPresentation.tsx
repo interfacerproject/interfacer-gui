@@ -5,7 +5,6 @@ import { LinkIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 import BrTags from "./brickroom/BrTags";
 import MdParser from "../lib/MdParser";
-import { router } from "next/client";
 
 const LoshPresentation = ({
   economicResource,
