@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import Spinner from "../../components/brickroom/Spinner";
 import { QUERY_RESOURCE } from "lib/QueryAndMutation";
 import LoshPresentation from "../../components/LoshPresentation";
+import devLog from "../../lib/devLog";
 
 const Resource: NextPage = () => {
   const router = useRouter();
@@ -17,6 +18,7 @@ const Resource: NextPage = () => {
   const { loading, data } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id: id },
   });
+  devLog("data", data);
   const e = data?.economicResource;
 
   const handleClaim = () => router.push(`/resource/claim/${id}`);

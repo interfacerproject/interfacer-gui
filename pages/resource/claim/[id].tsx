@@ -65,12 +65,14 @@ const ClaimAsset: NextPageWithLayout = () => {
   };
 
   const handleClaim = async () => {
+    const metadata = { ...e!.metadata, repositoryOrId: e!.metadata.repo, contributors: contributors };
+
     const variables = {
       resource: e!.id,
       agent: user?.ulid,
       name: e!.name,
       note: e!.note,
-      metadata: JSON.stringify({ repositoryOrId: e!.currentLocation?.name, contributors: contributors }),
+      metadata: JSON.stringify(metadata),
       location: locationId,
       oneUnit: e!.onhandQuantity.hasUnit?.id,
       creationTime: dayjs().toISOString(),

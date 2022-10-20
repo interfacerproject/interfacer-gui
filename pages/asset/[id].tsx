@@ -13,12 +13,14 @@ import { EconomicResource } from "../../lib/types";
 import BrBreadcrumb from "../../components/brickroom/BrBreadcrumb";
 import BrThumbinailsGallery from "../../components/brickroom/BrThumbinailsGallery";
 import ContributorsTable from "../../components/ContributorsTable";
+import devLog from "../../lib/devLog";
 
 const Asset = () => {
   const router = useRouter();
   const { id } = router.query;
   const { t } = useTranslation("common");
   const [asset, setAsset] = useState<EconomicResource | undefined>();
+  const [images, setImages] = useState<string[]>([]);
   const QUERY_ASSET = gql`
     query ($id: ID!) {
       proposal(id: $id) {
@@ -64,6 +66,12 @@ const Asset = () => {
   useEffect(() => {
     const _asset: EconomicResource = data?.proposal.primaryIntents[0].resourceInventoriedAs;
     setAsset(_asset);
+    const _images =
+      _asset && _asset.images!.length > 0
+        ? _asset?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
+        : _asset?.metadata?.image || [];
+    setImages(_images);
+    devLog("asset", data);
   }, [data]);
 
   return (
@@ -90,11 +98,7 @@ const Asset = () => {
                 <h2 className="my-2">{asset.name}</h2>
                 <p className="text-primary">ID: {asset.id}</p>
               </div>
-              <BrThumbinailsGallery
-                images={asset?.images
-                  ?.filter(image => !!image.bin)
-                  .map(image => `data:${image.mimeType};base64,${image.bin}`)}
-              />
+              <BrThumbinailsGallery images={images} />
               <div id="tabs" className="my-6">
                 <Tabs
                   tabsArray={[

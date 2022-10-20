@@ -197,6 +197,7 @@ export const QUERY_RESOURCE = gql`
       id
       name
       note
+      metadata
       conformsTo {
         id
         name
