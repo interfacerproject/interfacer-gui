@@ -33,7 +33,7 @@ describe("When user visit Assets", () => {
     cy.get(`[data-test="add-contributors"]`).click();
 
     // Clicking the option
-    cy.get(`[id$="listbox"]`).children("div").children("div").eq(1).click();
+    cy.get(`[id$="listbox"]`).children("div").children("div").click();
 
     // Outside click to close the panel
     cy.contains("Filter for:").click();
