@@ -18,7 +18,7 @@ import { ReactElement, useState } from "react";
 import Layout from "components/layout/CreateAssetLayout";
 import { NextPageWithLayout } from "../../_app";
 import LoshPresentation from "components/LoshPresentation";
-import TypeTagsGeoContributors from "components/TypeTagsGeoContributors";
+import TagsGeoContributors from "components/TagsGeoContributors";
 import devLog from "lib/devLog";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
@@ -130,15 +130,13 @@ const ClaimAsset: NextPageWithLayout = () => {
       )}
       <div className="grid grid-cols-1 gap-2 md:grid-cols-12 pt-14">
         <div className="md:col-start-2 md:col-end-7">
-          <TypeTagsGeoContributors
+          <TagsGeoContributors
             setAssetTags={setAssetTags}
             setLocationName={setLocationName}
             handleCreateLocation={handleCreateLocation}
             locationName={locationName}
             setContributors={setContributors}
             contributors={contributors}
-            setAssetType={setAssetType}
-            projectType={projectType}
           />
           <button className="btn btn-accent my-4" onClick={handleClaim}>
             {t("Claim Ownership")}

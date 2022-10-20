@@ -13,31 +13,19 @@ type TypeTagsGeoContributorsProps = {
   locationName: string;
   setContributors: (contributors: { id: string; name: string }[]) => void;
   contributors: { id: string; name: string }[];
-  setAssetType: (type: string) => void;
-  projectType: string;
 };
 
-const TypeTagsGeoContributors = ({
+const TagsGeoContributors = ({
   setAssetTags,
   setLocationName,
   handleCreateLocation,
   locationName,
   setContributors,
   contributors,
-  setAssetType,
-  projectType,
 }: TypeTagsGeoContributorsProps) => {
   const { t } = useTranslation("createProjectProps");
   return (
     <>
-      <BrRadio
-        array={t("projectType.array", { returnObjects: true })}
-        label={t("projectType.label")}
-        hint={t("projectType.hint")}
-        onChange={setAssetType}
-        value={projectType}
-        testID="projectType"
-      />
       <SelectTags
         label={t("projectTags.label")}
         hint={t("projectTags.hint")}
@@ -75,4 +63,4 @@ const TypeTagsGeoContributors = ({
   );
 };
 
-export default TypeTagsGeoContributors;
+export default TagsGeoContributors;

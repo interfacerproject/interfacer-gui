@@ -16,7 +16,8 @@ import {
   LINK_PROPOSAL_AND_INTENT,
   CREATE_LOCATION,
 } from "lib/QueryAndMutation";
-import TypeTagsGeoContributors from "./TypeTagsGeoContributors";
+import TagsGeoContributors from "./TagsGeoContributors";
+import BrRadio from "./brickroom/BrRadio";
 
 type Image = {
   description: string;
@@ -256,15 +257,21 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         onChange={(e: ChangeEvent<HTMLInputElement>) => setRepositoryOrId(e.target.value)}
         testID="repositoryOrId"
       />
-      <TypeTagsGeoContributors
+      <BrRadio
+        array={t("projectType.array", { returnObjects: true })}
+        label={t("projectType.label")}
+        hint={t("projectType.hint")}
+        onChange={setAssetType}
+        value={projectType}
+        testID="projectType"
+      />
+      <TagsGeoContributors
         setAssetTags={setAssetTags}
         setLocationName={setLocationName}
         handleCreateLocation={handleCreateLocation}
         locationName={locationName}
         setContributors={setContributors}
         contributors={contributors}
-        setAssetType={setAssetType}
-        projectType={projectType}
       />
       {assetCreatedId ? (
         <Link href={assetCreatedId}>
