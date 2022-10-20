@@ -127,7 +127,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
       resourceSpec: resourceSpec,
       agent: user?.ulid,
       name: projectName,
-      note: `description: ${projectDescription}, repositoryOrId: ${repositoryOrId}`,
+      note: projectDescription,
       metadata: JSON.stringify({ repositoryOrId: repositoryOrId, contributors: contributors }),
       location: locationId,
       oneUnit: instanceVariables?.units?.unitOne.id,
