@@ -76,7 +76,7 @@ const ClaimAsset: NextPageWithLayout = () => {
       location: locationId,
       oneUnit: e!.onhandQuantity.hasUnit?.id,
       creationTime: dayjs().toISOString(),
-      tags: assetTags?.map(t => encodeURI(t)),
+      tags: assetTags?.map(encodeURI),
     };
     const asset = await transferAsset({
       variables: variables,
