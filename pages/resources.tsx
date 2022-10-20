@@ -9,10 +9,10 @@ const Resources: NextPage = () => {
   const filter: {
     conformsTo?: string[];
     primaryAccountable?: string[];
-    gt_onhand_quantity_has_numerical_value: number;
+    gtOnhandQuantityHasNumericalValue: number;
   } = {
     primaryAccountable: [process.env.NEXT_PUBLIC_LOASH_ID!],
-    gt_onhand_quantity_has_numerical_value: 0,
+    gtOnhandQuantityHasNumericalValue: 0,
   };
   // @ts-ignore
   conformTo && (filter["conformsTo"] = [].concat(conformTo));

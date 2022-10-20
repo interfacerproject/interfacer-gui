@@ -112,8 +112,7 @@ const ClaimAsset: NextPageWithLayout = () => {
         payment: intent?.payment.intent.id,
       },
     }).then(() => {
-      // router.push(`/asset/${proposal?.createProposal.proposal.id}`);
-      devLog("fatto");
+      router.push(`/asset/${proposal?.createProposal.proposal.id}`);
     });
   };
 
