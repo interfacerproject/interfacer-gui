@@ -49,9 +49,10 @@ function Sidebar() {
       target: "_blank",
     },
     userGuide: {
-      text: t("User manual"),
+      text: t("user_manual"),
       link: "https://new.dyne.org/interfacer-docs/#/pages/user-manual/quickstart",
       leftIcon: <ChatIcon className="w-5 h-5" />,
+      target: "_blank",
     },
     map: {
       text: t("map"),
