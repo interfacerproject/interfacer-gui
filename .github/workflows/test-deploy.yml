@@ -62,8 +62,7 @@ jobs:
       - name: Cypress E2E tests 🧪
         uses: cypress-io/github-action@v4
         with:
-          install: false
-          start: pnpm run start
+          start: npm run start
           wait-on: "http://localhost:3000"
           wait-on-timeout: 130
           record: true
@@ -92,8 +91,7 @@ jobs:
       - name: Cypress Component tests 🧪
         uses: cypress-io/github-action@v4
         with:
-          install: false
-          command: pnpm run test:component
+          command: npm run test:component
           wait-on: "http://localhost:3000"
           wait-on-timeout: 130
           record: true
