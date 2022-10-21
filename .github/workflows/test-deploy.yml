@@ -52,6 +52,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+      - name: Download the built folders ⏬
+        uses: actions/download-artifact@v3
+        with:
+          name: built
+          path: .next
       - name: Write the cypress.env.json file 📝
         run: |
           echo '${{ secrets.CYPRESS_ENV_CI }}' > cypress.env.json
@@ -75,6 +82,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+      - name: Download the built folders ⏬
+        uses: actions/download-artifact@v3
+        with:
+          name: built
+          path: .next
       - name: Write the cypress.env.json file 📝
         run: |
           echo '${{ secrets.CYPRESS_ENV_CI }}' > cypress.env.json
