@@ -35,10 +35,12 @@ const QUERY_ASSETS = gql`
 const NotificationBell = () => {
   const { user } = useAuth();
   const { data, startPolling } = useQuery(QUERY_ASSETS, { variables: { last: 50 } });
-  startPolling(4000);
+  startPolling(1200000);
   const { getItem } = useStorage();
   const notifications = data?.proposals.edges.filter((proposal: any) =>
-    proposal.node.primaryIntents[0]?.resourceInventoriedAs?.metadata?.contributors.some((c: any) => c.id === user?.ulid)
+    proposal.node.primaryIntents[0]?.resourceInventoriedAs?.metadata?.contributors?.some(
+      (c: any) => c.id === user?.ulid
+    )
   );
   const hasIncomingNotification =
     notifications?.length > 0 && dayjs(notifications[0].node.created).fromNow().includes("seconds");
