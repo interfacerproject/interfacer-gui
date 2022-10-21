@@ -65,7 +65,7 @@
     },
     "address": {
       "label": "Address:",
-      "placeholder": "An d. Alsterschleife 3, 22399 - Hamburg, Germany",
+      "placeholder": "E.g. Hamburg",
       "hint": "Address of the asset location"
     }
   },

@@ -2,6 +2,7 @@ import CreatableSelect from "react-select/creatable";
 import Select from "react-select/";
 import { ExclamationIcon } from "@heroicons/react/solid";
 import React from "react";
+import devLog from "../../lib/devLog";
 
 type AsyncSelectProps = {
   options: any[];
@@ -43,9 +44,9 @@ const BrSearchableSelect = ({
       height: 49,
       border: state.isFocused ? "2px solid" : provided.border,
     }),
-    valueContainer: (provided: any) => ({
+    valueContainer: (provided: any, state: any) => ({
       ...provided,
-      display: "flex",
+      display: state.isMulti && state.hasValue ? "flex" : provided.display,
       "flex-flow": "nowrap",
     }),
     placeholder: (provided: any) => ({
