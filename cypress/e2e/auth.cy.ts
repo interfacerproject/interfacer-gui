@@ -43,13 +43,13 @@ describe("Authentication", () => {
     cy.viewport("macbook-13");
     cy.visit("/sign_in");
     cy.get(".mt-4").should("be.visible").click();
-    cy.get("input:first").should("be.visible").type(Cypress.env("authEmail"), { delay: 100 });
+    cy.get("input:first").should("be.visible").type(Cypress.env("authEmail"), { force: true });
     cy.get(".h-full > :nth-child(1) > .btn").should("be.visible").click();
     cy.wait("@api");
-    cy.get("input").eq(0).should("be.visible").type("pupu pi", { delay: 100 });
+    cy.get("input").eq(0).should("be.visible").type("pupu pi", { force: true });
     cy.get("form > .mt-4").should("be.visible").click();
     cy.contains("Fill at least 2 more answer");
-    cy.get("input").eq(1).should("be.visible").type("pupu pi", { delay: 100 });
+    cy.get("input").eq(1).should("be.visible").type("pupu pi", { force: true });
     cy.contains("Fill at least 1 more answer");
   });
 
@@ -61,14 +61,14 @@ describe("Authentication", () => {
     cy.viewport("macbook-13");
     cy.visit("/sign_in");
     cy.get(".mt-4").should("be.visible").click();
-    cy.get("input:first").should("be.visible").type(Cypress.env("authEmail"), { delay: 100 });
+    cy.get("input:first").should("be.visible").type(Cypress.env("authEmail"), { force: true });
     cy.get(".h-full > :nth-child(1) > .btn").should("be.visible").click();
     cy.wait("@api");
-    cy.get("input").eq(0).should("be.visible").type(Cypress.env("answer1"), { delay: 100 });
-    cy.get("input").eq(1).should("be.visible").type(Cypress.env("answer2"), { delay: 100 });
-    cy.get("input").eq(2).should("be.visible").type(Cypress.env("answer3"), { delay: 100 });
-    cy.get("input").eq(3).should("be.visible").type(Cypress.env("answer4"), { delay: 100 });
-    cy.get("input").eq(4).should("be.visible").type(Cypress.env("answer5"), { delay: 100 });
+    cy.get("input").eq(0).should("be.visible").type(Cypress.env("answer1"), { force: true });
+    cy.get("input").eq(1).should("be.visible").type(Cypress.env("answer2"), { force: true });
+    cy.get("input").eq(2).should("be.visible").type(Cypress.env("answer3"), { force: true });
+    cy.get("input").eq(3).should("be.visible").type(Cypress.env("answer4"), { force: true });
+    cy.get("input").eq(4).should("be.visible").type(Cypress.env("answer5"), { force: true });
     cy.get("form > .mt-4")
       .click()
       .should(() => {
@@ -90,9 +90,9 @@ describe("Authentication", () => {
     cy.viewport("macbook-13");
     cy.visit("/sign_in");
     cy.get(".w-full > div > :nth-child(3)").should("be.visible").click();
-    cy.get("input:first").should("be.visible").type(Cypress.env("authEmail"), { delay: 100 });
+    cy.get("input:first").should("be.visible").type(Cypress.env("authEmail"), { force: true });
     cy.get(".h-full > :nth-child(1) > .btn").should("be.visible").click();
-    cy.wait("@api").get("input").eq(0).should("be.visible").type(Cypress.env("seed"), { delay: 100 });
+    cy.wait("@api").get("input").eq(0).should("be.visible").type(Cypress.env("seed"), { force: true });
     cy.get("form > .btn")
       .click()
       .should(() => {
