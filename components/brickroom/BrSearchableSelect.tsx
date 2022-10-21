@@ -2,13 +2,12 @@ import CreatableSelect from "react-select/creatable";
 import Select from "react-select/";
 import { ExclamationIcon } from "@heroicons/react/solid";
 import React from "react";
-import devLog from "../../lib/devLog";
 
 type AsyncSelectProps = {
   options: any[];
   onChange: (value: any) => void;
   onInputChange: (value: any) => void;
-  value?: any;
+  value?: { value: string; label: string } | string | { value: string; label: string }[];
   label?: string;
   placeholder?: string;
   hint?: string;

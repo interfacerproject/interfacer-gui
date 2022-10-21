@@ -43,11 +43,10 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   const [repositoryOrId, setRepositoryOrId] = useState("");
   const [assetTags, setAssetTags] = useState([] as string[]);
   const [locationId, setLocationId] = useState("");
-  const [location, setLocation] = useState({} as any);
+  const [location, setLocation] = useState("");
   const [locationName, setLocationName] = useState("");
   const [price] = useState("1");
   const [resourceSpec, setResourceSpec] = useState("");
-  const [resourceId, setResourceId] = useState("");
   const [images, setImages] = useState([] as Images);
   const [contributors, setContributors] = useState([] as { id: string; name: string }[]);
   const [imagesFiles, setImagesFiles] = useState([] as Array<any>);
@@ -95,31 +94,38 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
   const [linkProposalAndIntent, { data: link }] = useMutation(LINK_PROPOSAL_AND_INTENT);
 
-  const handleCreateLocation = async (loc: any) => {
+  const handleCreateLocation = async (loc?: any) => {
     devLog("handleCreateLocation", loc);
-    setLocation(loc);
+
     const name = locationName === "" ? "*untitled*" : locationName;
-    await createLocation({
-      variables: {
-        name: name,
-        addr: loc.address.label,
-        lat: loc.lat,
-        lng: loc.lng,
-      },
-    })
-      .then(r => {
-        setLocationId(r.data.createSpatialThing.spatialThing.id);
-        setLogs(
-          logs
-            .concat(["info: location created"])
-            .concat([`    id: ${r.data.createSpatialThing.spatialThing.id}`])
-            .concat([`    latitude: ${r.data.createSpatialThing.spatialThing.lat}`])
-            .concat([`    longitude: ${r.data.createSpatialThing.spatialThing.long}`])
-        );
+    if (loc) {
+      setLocation(loc.address.label);
+      createLocation({
+        variables: {
+          name: name,
+          addr: loc.address.label,
+          lat: loc.lat,
+          lng: loc.lng,
+        },
       })
-      .catch(e => {
-        setLogs(logs.concat(["error: location creation failed"]).concat([e.message]));
-      });
+        .then(r => {
+          setLocationId(r.data.createSpatialThing.spatialThing.id);
+          setLogs(
+            logs
+              .concat(["info: location created"])
+              .concat([`    id: ${r.data.createSpatialThing.spatialThing.id}`])
+              .concat([`    latitude: ${r.data.createSpatialThing.spatialThing.lat}`])
+              .concat([`    longitude: ${r.data.createSpatialThing.spatialThing.long}`])
+          );
+        })
+        .catch(e => {
+          setLogs(logs.concat(["error: location creation failed"]).concat([e.message]));
+        });
+    } else {
+      setLocationId("");
+      setLocation("");
+      setLogs(logs.concat(["info: no location provided"]));
+    }
   };
 
   async function onSubmit(e: any) {
@@ -152,7 +158,6 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
           ])
         );
         setLogs(logsText);
-        setResourceId(re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id);
         logsText = logsText.concat([
           `success: Created resource inventoried with iD: ${re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id}`,
           "info: Creating proposal",
@@ -270,6 +275,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         setLocationName={setLocationName}
         handleCreateLocation={handleCreateLocation}
         locationName={locationName}
+        locationAddress={location}
         setContributors={setContributors}
         contributors={contributors}
       />

@@ -4,13 +4,13 @@ import { ChangeEvent } from "react";
 import GeoCoderInput from "./GeoCoderInput";
 import AddContributors from "./AddContributors";
 import { useTranslation } from "next-i18next";
-import BrRadio from "./brickroom/BrRadio";
 
-type TypeTagsGeoContributorsProps = {
+type TagsGeoContributorsProps = {
   setAssetTags: (tags: string[]) => void;
   setLocationName: (locationName: string) => void;
   handleCreateLocation: (location: any) => void;
   locationName: string;
+  locationAddress: string;
   setContributors: (contributors: { id: string; name: string }[]) => void;
   contributors: { id: string; name: string }[];
 };
@@ -21,8 +21,9 @@ const TagsGeoContributors = ({
   handleCreateLocation,
   locationName,
   setContributors,
+  locationAddress,
   contributors,
-}: TypeTagsGeoContributorsProps) => {
+}: TagsGeoContributorsProps) => {
   const { t } = useTranslation("createProjectProps");
   return (
     <>
@@ -45,7 +46,7 @@ const TagsGeoContributors = ({
         />
         <GeoCoderInput
           onSelect={handleCreateLocation}
-          value={location}
+          selectedAddress={locationAddress}
           label={t("location.address.label")}
           hint={t("location.address.hint")}
           placeholder={t("location.address.placeholder")}

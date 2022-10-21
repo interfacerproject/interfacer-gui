@@ -29,8 +29,8 @@ const ClaimAsset: NextPageWithLayout = () => {
   const { user } = useAuth();
   const [assetTags, setAssetTags] = useState([] as string[]);
   const [locationName, setLocationName] = useState("");
+  const [locationAddress, setLocationAddress] = useState("");
   const [contributors, setContributors] = useState([] as { id: string; name: string }[]);
-  const [projectType, setAssetType] = useState("");
   const [locationId, setLocationId] = useState("");
 
   const { t } = useTranslation("ResourceProps");
@@ -46,22 +46,28 @@ const ClaimAsset: NextPageWithLayout = () => {
   const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
   const [linkProposalAndIntent, { data: link }] = useMutation(LINK_PROPOSAL_AND_INTENT);
 
-  const handleCreateLocation = async (loc: any) => {
+  const handleCreateLocation = async (loc?: any) => {
     const name = locationName === "" ? "*untitled*" : locationName;
-    await createLocation({
-      variables: {
-        name: name,
-        addr: loc.address.label,
-        lat: loc.lat,
-        lng: loc.lng,
-      },
-    })
-      .then(r => {
-        setLocationId(r.data.createSpatialThing.spatialThing.id);
+    if (loc) {
+      createLocation({
+        variables: {
+          name: name,
+          addr: loc.address.label,
+          lat: loc.lat,
+          lng: loc.lng,
+        },
       })
-      .catch(e => {
-        devLog("createLocation error", e);
-      });
+        .then(r => {
+          setLocationId(r.data.createSpatialThing.spatialThing.id);
+          setLocationAddress(loc.address.label);
+        })
+        .catch(e => {
+          devLog("createLocation error", e);
+        });
+    } else {
+      setLocationId("");
+      setLocationAddress("");
+    }
   };
 
   const handleClaim = async () => {
@@ -136,6 +142,7 @@ const ClaimAsset: NextPageWithLayout = () => {
             setLocationName={setLocationName}
             handleCreateLocation={handleCreateLocation}
             locationName={locationName}
+            locationAddress={locationAddress}
             setContributors={setContributors}
             contributors={contributors}
           />
