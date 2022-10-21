@@ -46,10 +46,10 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           install: false
-          start: pnpm run dev
+          start: pnpm run build && pnpm run start 
           wait-on: "http://localhost:3000"
           wait-on-timeout: 130
-          record: true
+          record: false
           tag: node-${{ matrix.node }}
           browser: chrome
           config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
@@ -61,11 +61,11 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           install: false
-          start: pnpm run dev
+          start: pnpm run build && pnpm run start 
           command: pnpm run test:component
           wait-on: "http://localhost:3000"
           wait-on-timeout: 130
-          record: true
+          record: false
           tag: node-${{ matrix.node }}
           browser: chrome
           config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
