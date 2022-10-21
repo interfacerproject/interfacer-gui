@@ -243,6 +243,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         label={t("projectDescription.label")}
         hint={t("projectDescription.hint")}
         testID="projectDescription"
+        subTitle={t("projectDescription.md-editor-explainer")}
       />
       <BrImageUpload
         onChange={setImages}

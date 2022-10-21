@@ -67,6 +67,25 @@ const BrSearchableSelect = ({
       primary: "#02604B",
     },
   });
+  const onKeyDown = (e: any) => {
+    if (e.keyCode === 8 && !inputValue && onBackspace) {
+      e.preventDefault();
+      e.stopPropagation();
+      onBackspace();
+    }
+    if (e.keyCode === 188 && isCreatable && inputValue && Array.isArray(value)) {
+      e.preventDefault();
+      e.stopPropagation();
+      onChange([...value, { value: inputValue, label: inputValue }]);
+      onInputChange("");
+    }
+    if (e.keyCode === 32 && isCreatable && inputValue && Array.isArray(value)) {
+      e.preventDefault();
+      e.stopPropagation();
+      onChange([...value, { value: inputValue, label: inputValue }]);
+      onInputChange("");
+    }
+  };
 
   const selectProps = {
     closeMenuOnSelect: !multiple,
@@ -80,27 +99,7 @@ const BrSearchableSelect = ({
     className: "border border-gray-300 rounded-md",
     styles: customStyles,
     theme: customTheme,
-    onKeyDown: (e: any) => {
-      if (e.keyCode === 8 && !inputValue) {
-        e.preventDefault();
-        e.stopPropagation();
-        onBackspace && onBackspace();
-      }
-      if (e.keyCode === 188 && isCreatable && inputValue) {
-        e.preventDefault();
-        e.stopPropagation();
-        // @ts-ignore
-        onChange([...value, { value: inputValue, label: inputValue }]);
-        onInputChange("");
-      }
-      if (e.keyCode === 32 && isCreatable && inputValue) {
-        e.preventDefault();
-        e.stopPropagation();
-        // @ts-ignore
-        onChange([...value, { value: inputValue, label: inputValue }]);
-        onInputChange("");
-      }
-    },
+    onKeyDown: onKeyDown,
   };
 
   return (
