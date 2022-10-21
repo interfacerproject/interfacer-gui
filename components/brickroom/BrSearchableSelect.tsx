@@ -18,6 +18,7 @@ type AsyncSelectProps = {
   multiple?: boolean;
   isCreatable?: boolean;
   testID?: string;
+  onBackspace?: () => void;
 };
 
 const BrSearchableSelect = ({
@@ -35,6 +36,7 @@ const BrSearchableSelect = ({
   help,
   isCreatable = false,
   testID,
+  onBackspace,
 }: AsyncSelectProps) => {
   const customStyles = {
     control: (provided: any, state: any) => ({
@@ -78,6 +80,27 @@ const BrSearchableSelect = ({
     className: "border border-gray-300 rounded-md",
     styles: customStyles,
     theme: customTheme,
+    onKeyDown: (e: any) => {
+      if (e.keyCode === 8 && !inputValue) {
+        e.preventDefault();
+        e.stopPropagation();
+        onBackspace && onBackspace();
+      }
+      if (e.keyCode === 188 && isCreatable && inputValue) {
+        e.preventDefault();
+        e.stopPropagation();
+        // @ts-ignore
+        onChange([...value, { value: inputValue, label: inputValue }]);
+        onInputChange("");
+      }
+      if (e.keyCode === 32 && isCreatable && inputValue) {
+        e.preventDefault();
+        e.stopPropagation();
+        // @ts-ignore
+        onChange([...value, { value: inputValue, label: inputValue }]);
+        onInputChange("");
+      }
+    },
   };
 
   return (

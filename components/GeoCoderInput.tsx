@@ -75,6 +75,7 @@ const GeoCoderInput = ({
       hint={hint}
       error={error}
       help={help}
+      onBackspace={() => handleSelectAddress()}
       testID={testID}
     />
   );

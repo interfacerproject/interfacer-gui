@@ -278,6 +278,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         locationAddress={location}
         setContributors={setContributors}
         contributors={contributors}
+        assetTags={assetTags}
       />
       {assetCreatedId ? (
         <Link href={assetCreatedId}>

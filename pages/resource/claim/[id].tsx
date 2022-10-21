@@ -145,6 +145,7 @@ const ClaimAsset: NextPageWithLayout = () => {
             locationAddress={locationAddress}
             setContributors={setContributors}
             contributors={contributors}
+            assetTags={assetTags}
           />
           <button className="btn btn-accent my-4" onClick={handleClaim}>
             {t("Claim Ownership")}

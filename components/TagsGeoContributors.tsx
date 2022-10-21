@@ -13,6 +13,7 @@ type TagsGeoContributorsProps = {
   locationAddress: string;
   setContributors: (contributors: { id: string; name: string }[]) => void;
   contributors: { id: string; name: string }[];
+  assetTags: string[];
 };
 
 const TagsGeoContributors = ({
@@ -23,6 +24,7 @@ const TagsGeoContributors = ({
   setContributors,
   locationAddress,
   contributors,
+  assetTags,
 }: TagsGeoContributorsProps) => {
   const { t } = useTranslation("createProjectProps");
   return (
@@ -34,6 +36,7 @@ const TagsGeoContributors = ({
         onChange={setAssetTags}
         placeholder={t("projectTags.placeholder")}
         testID="tagsList"
+        selectedTags={assetTags}
       />
       <div className="grid grid-cols-2 gap-2">
         <BrInput

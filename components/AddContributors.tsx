@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 import BrSearchableSelect from "./brickroom/BrSearchableSelect";
 import { useAuth } from "../hooks/useAuth";
-import devLog from "../lib/devLog";
 
 type AddContributorsProps = {
   initialContributors?: string[];
@@ -47,7 +46,6 @@ const AddContributors = ({
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [hasChanged, setHasChanged] = useState<boolean>(false);
   const { user } = useAuth();
-  devLog("user", user);
   const agents = useQuery(QUERY_AGENTS).data?.agents.edges.map((agent: any) => agent.node);
   useEffect(() => {
     if (agents && !hasChanged && initialContributors) {
