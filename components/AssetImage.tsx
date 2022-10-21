@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
-
 interface Image {
   hash: string;
   mimeType: string;
   bin: string;
 }
 
-const AssetImage = ({ image, className }: { image: Image; className: string }) => {
+const AssetImage = ({ image, className }: { image: Image | string; className?: string }) => {
+  const src = typeof image === "string" ? image : `data:${image.mimeType};base64,${image.bin}`;
   return (
     <>
-      <img src={`data:${image.mimeType};base64,${image.bin}`} className={className} />
+      <img src={src} className={className} />
     </>
   );
 };
