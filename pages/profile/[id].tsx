@@ -77,8 +77,8 @@ const Profile: NextPage = () => {
                   </h4>
                 </div>
                 <div className="my-4 shadow md:mr-20 stats stats-vertical">
-                  <StatValue title={t("Goals")} value={71.897} totals={70.946} trend={12} />
-                  <StatValue title={t("Strength")} value={10} totals={2.02} trend={-2.02} />
+                  <StatValue title={t("Goals")} value={42} trend={12} />
+                  <StatValue title={t("Strength")} value="58%" trend={2.02} />
                 </div>
               </div>
             </div>
@@ -118,17 +118,7 @@ const Profile: NextPage = () => {
   );
 };
 
-const StatValue = ({
-  title,
-  value,
-  totals,
-  trend,
-}: {
-  title: string;
-  value: number;
-  totals: number;
-  trend: number;
-}) => {
+const StatValue = ({ title, value, trend }: { title: string; value: number | string; trend: number }) => {
   const { t } = useTranslation("ProfileProps");
   const positive = trend > 0;
 
@@ -150,12 +140,7 @@ const StatValue = ({
         </span>
       </div>
       <div className="stat-title">{title}</div>
-      <div className="text-2xl font-semibold stat-value text-primary font-display">
-        {value}&nbsp;
-        <span className="text-sm font-normal text-slate-300">
-          {t("from")}&nbsp;{totals}
-        </span>
-      </div>
+      <div className="text-2xl font-semibold stat-value text-primary font-display">{value}&nbsp;</div>
     </div>
   );
 };
