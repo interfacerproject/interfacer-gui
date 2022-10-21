@@ -10,5 +10,6 @@
   "contributorsHead": ["UserName", "Date"],
   "contributors": "Contributors",
   "watch": "Watch",
-  "add to list": "Add to list"
+  "add to list": "Add to list",
+  "unwatch": "unwatch"
 }
