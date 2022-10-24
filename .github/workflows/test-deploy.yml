@@ -131,7 +131,8 @@ jobs:
 
   deploy:
     name: 🚀 Deploy on staging server
-    needs: [e2e, components]
+    # needs: [e2e, components]
+    needs: [e2e]
     if: github.ref == 'refs/heads/main'
     uses: dyne/workflows/.github/workflows/node-staging-deploy.yml@main
     secrets: inherit
