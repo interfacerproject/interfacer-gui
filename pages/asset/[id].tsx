@@ -85,10 +85,12 @@ const Asset = () => {
   useEffect(() => {
     const _asset: EconomicResource = data?.proposal.primaryIntents[0].resourceInventoriedAs;
     setAsset(_asset);
+    const singleImage = typeof _asset?.metadata?.image === "string";
+    const metadataImage = singleImage ? [_asset?.metadata?.image] : _asset?.metadata?.image || [];
     const _images =
       _asset && _asset.images!.length > 0
         ? _asset?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
-        : _asset?.metadata?.image || [];
+        : metadataImage;
     setImages(_images);
   }, [data]);
 
@@ -153,7 +155,7 @@ const Asset = () => {
                 <h2 className="my-2">{asset.name}</h2>
                 <p className="text-primary">ID: {asset.id}</p>
               </div>
-              <BrThumbinailsGallery images={images} />
+              {images && <BrThumbinailsGallery images={images} />}
               <div id="tabs" className="my-6">
                 <BrTabs
                   tabsArray={[
