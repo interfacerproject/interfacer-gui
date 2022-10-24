@@ -5,7 +5,7 @@
   "no_assets_found_title": "No assets found",
   "no_assets_found_content": "No asset was found as result of your search.",
   "empty_state_assets": "It looks like you haven't created an asset yet. Proceed by pressing the button below to create a new one",
-  "tableHead": ["Asset", "Last update", "Owner", "tags"],
+  "table_head": ["Asset", "Last update", "Owner", "tags"],
   "filters": {
     "filter for": "Filter for",
     "contributors": "Contributors",
