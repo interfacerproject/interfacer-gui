@@ -2,10 +2,7 @@
   "title": "titolo",
   "description": "descrizione",
   "Load more": "Per saperne di più",
-  "tableHead": ["Asset", "Ultimo aggiornamento", "Proprietario", "tag"],
-  "filters": {
-    "filter for": "Filtra per",
-    "contributors": "collaboratori",
-    "type": "Tipo"
-  }
+  "filters": "filtri",
+  "empty_state_assets": "stato_vuoto_patrimonio",
+  "table_head": ["Attività", "Ultimo aggiornamento", "Proprietario", "Tag"]
 }
