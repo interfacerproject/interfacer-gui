@@ -1,14 +1,24 @@
-import { LinkIcon } from "@heroicons/react/solid";
+// Functionality
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
 import { ChangeEvent, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
+
+// Form imports
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+
+// Components
+import { LinkIcon } from "@heroicons/react/solid";
+import Link from "next/link";
 import BrInput from "./brickroom/BrInput";
+
+//
 
 type SignUpProps = {
   HMAC: string;
   setHMAC: (HMAC: string) => void;
-  onSubmit?: (e: { preventDefault: () => void }) => void;
+  onSubmit: Function;
   email: string;
   setEmail: (email: string) => void;
   name: string;
@@ -17,30 +27,69 @@ type SignUpProps = {
   setUser: (user: string) => void;
 };
 
-const EmailVerificationForm = ({ HMAC, setHMAC, onSubmit, setEmail, setName, setUser }: SignUpProps) => {
+const EmailVerificationForm = (props: SignUpProps) => {
+  const { HMAC, setHMAC, onSubmit, setEmail, setName, setUser } = props;
+
   const [yetRegisteredEmail, setYetRegisteredEmail] = useState("");
   const [emailValid, setEmailValid] = useState("");
   const { t } = useTranslation("signUpProps");
 
   const { register } = useAuth();
 
-  async function verifyEmail({ email }: { email: string }) {
-    const result = await register(email, true);
-    if (result?.keypairoomServer) {
-      setYetRegisteredEmail("");
-      if (email.includes("@")) {
-        setEmailValid(t("✅ your email free"));
-      } else {
-        setEmailValid("");
-      }
-      setEmail(email);
-      setHMAC(result.keypairoomServer);
-    } else {
-      setEmailValid("");
-      setYetRegisteredEmail(result);
-    }
-  }
+  // async function verifyEmail({ email }: { email: string }) {
+  //   const result = await register(email, true);
+  //   if (result?.keypairoomServer) {
+  //     setYetRegisteredEmail("");
+  //     if (email.includes("@")) {
+  //       setEmailValid(t("email.valid"));
+  //     } else {  //     }
+  //     setHMAC(result.keypairoomServer);
+  //   } else {
+  //     setYetRegisteredEmail(result);
+  //   }
+  // }
+
   const isButtonEnabled = HMAC === "" ? "btn-disabled" : "";
+
+  interface FormValues {
+    email: string;
+    name: string;
+    user: string;
+  }
+
+  const defaultValues: FormValues = {
+    email: "",
+    name: "",
+    user: "",
+  };
+
+  const schema = yup
+    .object({
+      email: yup.string().email().required(),
+      name: yup.string().required(),
+      user: yup.string().required(),
+    })
+    .required();
+
+  const form = useForm<FormValues>({
+    mode: "all",
+    resolver: yupResolver(schema),
+    defaultValues,
+  });
+
+  const {
+    formState: { errors, isValid },
+  } = form;
+
+  const onValid = (data: FormValues) => {
+    console.log(data);
+    setEmail(data.email);
+    setName(data.name);
+    setUser(data.user);
+    props.onSubmit();
+  };
+
+  console.log(isValid);
 
   return (
     <>
@@ -50,37 +99,45 @@ const EmailVerificationForm = ({ HMAC, setHMAC, onSubmit, setEmail, setName, set
           "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46"
         )}
       </p>
-      <form onSubmit={onSubmit}>
+      {/* The form */}
+      <form onSubmit={form.handleSubmit(onValid)} className="space-y-8">
+        {/* Email */}
         <BrInput
-          name="email"
+          {...form.register("email")}
           type="email"
-          error={yetRegisteredEmail}
           hint={emailValid}
           placeholder={t("alice@email&#46com")}
           label={t("Your email")}
           help={t("Your email address that will be used for your login")}
-          onBlur={(e: ChangeEvent<HTMLInputElement>) => verifyEmail({ email: e.target.value })}
+          error={errors.email?.message}
         />
+        {/* Name */}
         <BrInput
-          name="name"
+          {...form.register("name")}
           type="text"
           label={t("Your name")}
           help={t("Your name is shown and visible to everyone")}
           placeholder={t("Type your name")}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+          error={errors.name?.message}
         />
+        {/* Username */}
         <BrInput
-          name="username"
+          {...form.register("user")}
           type="text"
           placeholder={t("Type your visible username")}
           label={t("Choose a username")}
           help={t("Your username is used to identify you in the system")}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setUser(e.target.value)}
+          error={errors.user?.message}
         />
+        {/* Submit button */}
         <button className={`my-6 btn btn-block btn-primary ${isButtonEnabled}`} type="submit">
           {t("Next step")}
         </button>
       </form>
+
+      {/* Link alla registrazione */}
       <p className="flex flex-row items-center">
         <span>{t("👌 You already have an account?")}</span>
         <Link href={"/sign_in"}>
