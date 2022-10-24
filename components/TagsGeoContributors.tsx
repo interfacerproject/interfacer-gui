@@ -43,6 +43,7 @@ const TagsGeoContributors = ({
           name="Location Name"
           label={t("Location name:")}
           hint={t("Name of the location where the asset can be found")}
+          type="text"
           value={locationName}
           placeholder={t("E&#46g&#46 Hamburg Warehouse")}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setLocationName(e.target.value)}

@@ -18,7 +18,7 @@ import BrInput from "./brickroom/BrInput";
 import BrMdEditor from "./brickroom/BrMdEditor";
 import BrRadio from "./brickroom/BrRadio";
 import TagsGeoContributors from "./TagsGeoContributors";
-import { EconomicEvent, Intent, Proposal, Unnamed_5_Mutation } from "../lib/types";
+import { EconomicEvent, Intent, Proposal } from "../lib/types";
 import useInBox from "../hooks/useInBox";
 
 type Image = {
