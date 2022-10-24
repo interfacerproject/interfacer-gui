@@ -5,8 +5,8 @@ type TabsProps = Array<{
   component: ReactElement<any, any>;
 }>;
 
-const Tabs = ({ tabsArray }: { tabsArray: TabsProps }) => {
-  const [tab, setTab] = useState(0);
+const Tabs = ({ tabsArray, initialTab }: { tabsArray: TabsProps; initialTab?: number }) => {
+  const [tab, setTab] = useState(initialTab || 0);
 
   return (
     <>

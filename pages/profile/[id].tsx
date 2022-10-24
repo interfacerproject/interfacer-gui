@@ -13,10 +13,11 @@ import AssetsTable from "../../components/AssetsTable";
 import Spinner from "../../components/brickroom/Spinner";
 import { useAuth } from "../../hooks/useAuth";
 import devLog from "../../lib/devLog";
+import { useState } from "react";
 
 const Profile: NextPage = () => {
   const router = useRouter();
-  const { id, conformTo, tags } = router.query;
+  const { id, conformTo, tags, tab } = router.query;
   const { t } = useTranslation("ProfileProps");
   const FETCH_USER = gql(`query($id:ID!) {
   person(id:$id) {
@@ -32,6 +33,7 @@ const Profile: NextPage = () => {
   }
 }`);
   const { user } = useAuth();
+
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
   const idToBeFetch = isUser ? user?.ulid : id;
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
@@ -85,6 +87,7 @@ const Profile: NextPage = () => {
           </div>
           <div className="px-4 pt-32 md:mr-12 md:px-10 md:pt-0">
             <Tabs
+              initialTab={(typeof tab === "string" && parseInt(tab)) || undefined}
               tabsArray={[
                 {
                   title: (
