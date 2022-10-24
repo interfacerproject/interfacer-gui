@@ -2,7 +2,6 @@ import { gql, useQuery } from "@apollo/client";
 import { AdjustmentsIcon } from "@heroicons/react/outline";
 import cn from "classnames";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import AssetsTableRow from "./AssetsTableRow";
 import BrTable from "./brickroom/BrTable";
@@ -161,12 +160,14 @@ const AssetsTable = ({
                 ))}
               </BrTable>
               {showEmptyState ? (
-                <div className="p-4 pt-6">
-                  <h4>{t("Create a new asset")}</h4>
+                <div className="mt-3 p-12 flex flex-col items-center justify-center bg-white rounded-md">
+                  <h4>{t("no_assets_found_title")}</h4>
+                  <p className="font-light text-white-700">{t("no_assets_found_content")}</p>
+                  {/* <h4>{t("Create a new asset")}</h4>
                   <p className="pt-2 pb-5 font-light text-white-700">{t("empty_state_assets")}</p>
                   <Link href="/create_asset">
                     <a className="btn btn-accent btn-md">{t("Create asset")}</a>
-                  </Link>
+                  </Link> */}
                 </div>
               ) : (
                 !hidePagination && (
