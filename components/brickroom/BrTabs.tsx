@@ -6,8 +6,9 @@ type TabsProps = Array<{
   disabled?: boolean;
 }>;
 
-const BrTabs = ({ tabsArray }: { tabsArray: TabsProps }) => {
-  const [tab, setTab] = useState(0);
+const BrTabs = ({ tabsArray, initialTab = 0 }: { tabsArray: TabsProps; initialTab?: number }) => {
+  const [tab, setTab] = useState(initialTab);
+
   return (
     <>
       <div className="tabs text-primary">

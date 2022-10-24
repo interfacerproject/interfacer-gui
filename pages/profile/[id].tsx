@@ -9,16 +9,16 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import AssetsTable from "../../components/AssetsTable";
+import BrTabs from "../../components/brickroom/BrTabs";
 import Spinner from "../../components/brickroom/Spinner";
 import { useAuth } from "../../hooks/useAuth";
-import devLog from "../../lib/devLog";
-import BrTabs from "../../components/brickroom/BrTabs";
 import useStorage from "../../hooks/useStorage";
+import devLog from "../../lib/devLog";
 
 const Profile: NextPage = () => {
   const { getItem } = useStorage();
   const router = useRouter();
-  const { id, conformTo, tags } = router.query;
+  const { id, conformTo, tags, tab } = router.query;
   const { t } = useTranslation("ProfileProps");
   const FETCH_USER = gql(`query($id:ID!) {
   person(id:$id) {
@@ -34,6 +34,7 @@ const Profile: NextPage = () => {
   }
 }`);
   const { user } = useAuth();
+
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
   const idToBeFetch = isUser ? user?.ulid : id;
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
@@ -96,6 +97,7 @@ const Profile: NextPage = () => {
           </div>
           <div className="px-4 pt-32 md:mr-12 md:px-10 md:pt-0">
             <BrTabs
+              initialTab={(typeof tab === "string" && parseInt(tab)) || undefined}
               tabsArray={[
                 {
                   title: (
@@ -104,7 +106,12 @@ const Profile: NextPage = () => {
                       {t("Assets")}
                     </span>
                   ),
-                  component: <AssetsTable filter={filter} noPrimaryAccountableFilter />,
+                  component: (
+                    <div>
+                      <h3 className="my-8">{t("My Assets")}</h3>
+                      <AssetsTable filter={filter} noPrimaryAccountableFilter hideHeader={true} />
+                    </div>
+                  ),
                 },
                 {
                   title: (
@@ -113,7 +120,12 @@ const Profile: NextPage = () => {
                       {t("Lists")}
                     </span>
                   ),
-                  component: <AssetsTable filter={collectedAssets} />,
+                  component: (
+                    <div>
+                      <h3 className="my-8">{t("My Lists")}</h3>
+                      <AssetsTable filter={collectedAssets} hideHeader={true} />
+                    </div>
+                  ),
                   disabled: hasCollectedAssets,
                 },
               ]}
