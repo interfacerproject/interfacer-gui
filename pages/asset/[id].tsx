@@ -1,20 +1,21 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
+import cn from "classnames";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import BrTabs from "../../components/brickroom/BrTabs";
 import AssetDetailOverview from "../../components/AssetDetailOverview";
 import BrBreadcrumb from "../../components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "../../components/brickroom/BrDisplayUser";
+import BrTabs from "../../components/brickroom/BrTabs";
 import BrThumbinailsGallery from "../../components/brickroom/BrThumbinailsGallery";
 import Spinner from "../../components/brickroom/Spinner";
 import ContributorsTable from "../../components/ContributorsTable";
-import { EconomicResource } from "../../lib/types";
-import useStorage from "../../hooks/useStorage";
 import { useAuth } from "../../hooks/useAuth";
+import useStorage from "../../hooks/useStorage";
+import { EconomicResource } from "../../lib/types";
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -23,6 +24,7 @@ const Asset = () => {
   const { id } = router.query;
   const { t } = useTranslation("common");
   const [asset, setAsset] = useState<EconomicResource | undefined>();
+  const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
   const [isWatching, setIsWatching] = useState(asset?.metadata?.watchers?.some((w: any) => w.id === user?.ulid));
   const QUERY_ASSET = gql`
@@ -111,9 +113,21 @@ const Asset = () => {
   const handleCollect = () => {
     const _list = getItem("assetsCollected");
     const _listParsed = _list ? JSON.parse(_list) : [];
-    const _listParsedUpdated = [..._listParsed, asset?.id];
-    setItem("assetsCollected", JSON.stringify(_listParsedUpdated));
+    if (_listParsed.includes(asset!.id)) {
+      setItem("assetsCollected", JSON.stringify(_listParsed.filter((a: string) => a !== asset!.id)));
+      setInList(false);
+    } else {
+      const _listParsedUpdated = [..._listParsed, asset?.id];
+      setItem("assetsCollected", JSON.stringify(_listParsedUpdated));
+      setInList(true);
+    }
   };
+
+  useEffect(() => {
+    const _list = getItem("assetsCollected");
+    const _listParsed = _list ? JSON.parse(_list) : [];
+    setInList(_listParsed.includes(asset?.id));
+  }, [asset, getItem]);
 
   return (
     <>
@@ -161,8 +175,14 @@ const Asset = () => {
               </div>
             </div>
             <div id="right-col" className="flex flex-col mt-16">
-              <button className="px-20 mb-4 btn btn-accent btn-block" onClick={handleCollect}>
-                {t("add to list")}
+              <button
+                className={cn("px-20 mb-4 btn btn-block", {
+                  "btn-accent": !inList,
+                  "btn-outline": inList,
+                })}
+                onClick={handleCollect}
+              >
+                {t(inList ? "remove from list" : "add to list")}
               </button>
               <button
                 className="btn btn-accent btn-outline btn-block"
