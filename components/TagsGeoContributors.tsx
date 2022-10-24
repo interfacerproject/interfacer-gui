@@ -4,15 +4,16 @@ import { ChangeEvent } from "react";
 import GeoCoderInput from "./GeoCoderInput";
 import AddContributors from "./AddContributors";
 import { useTranslation } from "next-i18next";
-import BrRadio from "./brickroom/BrRadio";
 
-type TypeTagsGeoContributorsProps = {
+type TagsGeoContributorsProps = {
   setAssetTags: (tags: string[]) => void;
   setLocationName: (locationName: string) => void;
   handleCreateLocation: (location: any) => void;
   locationName: string;
+  locationAddress: string;
   setContributors: (contributors: { id: string; name: string }[]) => void;
   contributors: { id: string; name: string }[];
+  assetTags: string[];
 };
 
 const TagsGeoContributors = ({
@@ -21,8 +22,10 @@ const TagsGeoContributors = ({
   handleCreateLocation,
   locationName,
   setContributors,
+  locationAddress,
   contributors,
-}: TypeTagsGeoContributorsProps) => {
+  assetTags,
+}: TagsGeoContributorsProps) => {
   const { t } = useTranslation("createProjectProps");
   return (
     <>
@@ -33,6 +36,7 @@ const TagsGeoContributors = ({
         onChange={setAssetTags}
         placeholder={t("projectTags.placeholder")}
         testID="tagsList"
+        selectedTags={assetTags}
       />
       <div className="grid grid-cols-2 gap-2">
         <BrInput
@@ -45,7 +49,7 @@ const TagsGeoContributors = ({
         />
         <GeoCoderInput
           onSelect={handleCreateLocation}
-          value={location}
+          selectedAddress={locationAddress}
           label={t("location.address.label")}
           hint={t("location.address.hint")}
           placeholder={t("location.address.placeholder")}
