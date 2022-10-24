@@ -71,7 +71,7 @@ export default {
   // Whether to ignore default values
   // You may also specify a function accepting the locale and namespace as arguments
 
-  useKeysAsDefaultValue: false,
+  useKeysAsDefaultValue: true,
   // Whether to use the keys as the default value; ex. "Hello": "Hello", "World": "World"
   // This option takes precedence over the `defaultValue` and `skipDefaultValues` options
   // You may also specify a function accepting the locale and namespace as arguments
@@ -79,7 +79,7 @@ export default {
   verbose: false,
   // Display info about the parsing including some stats
 
-  failOnWarnings: false,
+  failOnWarnings: true,
   // Exit with an exit code of 1 on warnings
 
   failOnUpdate: false,
