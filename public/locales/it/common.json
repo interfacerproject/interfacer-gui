@@ -7,7 +7,7 @@
   "Value of this asset": "Valore di questa attività",
   "Load more": "Per saperne di più",
   "assets": "patrimonio",
-  "contributorsHead": "collaboratoriCapo",
+  "contributorsHead": ["UserName", "Date"],
   "contributors": "collaboratori",
   "watch": "orologio",
   "add to list": "Aggiungi all'elenco",

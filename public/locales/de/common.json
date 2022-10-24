@@ -7,7 +7,7 @@
   "Value of this asset": "Wert dieses Vermögenswerts",
   "Load more": "Mehr laden",
   "assets": "Vermögenswerte",
-  "contributorsHead": "MitwirkendeKopf",
+  "contributorsHead": ["Nutzername", "Datum"],
   "contributors": "Beitragszahler",
   "watch": "Uhr",
   "add to list": "zur Liste hinzufügen",

@@ -7,7 +7,7 @@
   "Value of this asset": "Valeur de cet actif",
   "Load more": "Chargez plus",
   "assets": "actifs",
-  "contributorsHead": "contributeursResponsable",
+  "contributorsHead": ["Nom d'utilisateur", "Date"],
   "contributors": "contributeurs",
   "watch": "regarder",
   "add to list": "ajouter à la liste",
