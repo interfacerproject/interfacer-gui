@@ -1,13 +1,12 @@
-import { LinkIcon } from "@heroicons/react/solid";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Link from "next/link";
 import { ReactElement, useState } from "react";
+import EmailVerificationForm from "../components/EmailVerificationForm";
+import InvitationKey from "../components/InvitationKey";
 import KeyringGeneration from "../components/KeyringGeneration";
 import NRULayout from "../components/layout/NRULayout";
 import { NextPageWithLayout } from "./_app";
-import EmailVerificationForm from "../components/EmailVerificationForm";
-import InvitationKey from "../components/InvitationKey";
+
+//
 
 export async function getStaticProps({ locale }: any) {
   return {
@@ -23,10 +22,8 @@ const SignUp: NextPageWithLayout = () => {
   const [user, setUser] = useState("");
   const [step, setStep] = useState(0);
   const [HMAC, setHMAC] = useState("");
-  const { t } = useTranslation("signUpProps");
 
-  async function onSubmit(e: { preventDefault: () => void }) {
-    e.preventDefault();
+  async function onSubmit() {
     setStep(2);
   }
 
