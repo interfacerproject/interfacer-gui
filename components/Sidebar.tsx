@@ -19,13 +19,14 @@ function Sidebar() {
   const items: Record<string, IfSideBarLinkProps> = {
     home: {
       text: t("home"),
-      link: "/",
+      link: "/profile/my_profile",
       leftIcon: <HomeIcon className="w-5 h-5" />,
     },
     // Dropdown -> My stuff
     createAsset: {
       text: t("create_asset"),
       link: "/create_asset",
+      leftIcon: <CubeIcon className="w-5 h-5" />,
       tag: "NEW",
     },
     myAssets: {
@@ -41,6 +42,10 @@ function Sidebar() {
       text: t("imported_losh"),
       link: "/resources",
       tag: "NEW",
+    },
+    my_list: {
+      text: t("my_list"),
+      link: "/profile/my_profile?tab=1",
     },
     reportBug: {
       text: t("report_bug"),
@@ -69,7 +74,7 @@ function Sidebar() {
       leftIcon: <CubeIcon className="w-5 h-5" />,
     },
     myStuff: {
-      text: t("create_asset"),
+      text: t("assets"),
       leftIcon: <BriefcaseIcon className="w-5 h-5" />,
     },
   };
@@ -91,20 +96,18 @@ function Sidebar() {
         {/* The links */}
         <ul className="p-4 space-y-1">
           <IfSideBarLink {...items.home} />
+          <IfSideBarLink {...items.createAsset} />
 
           <IfSidebarDropdown {...drItems.myStuff}>
-            <IfSideBarLink {...items.createAsset} />
             <IfSideBarLink {...items.myAssets} />
-          </IfSidebarDropdown>
-
-          <IfSidebarDropdown {...drItems.assets}>
             <IfSideBarLink {...items.latestAssets} />
+            <IfSideBarLink {...items.my_list} />
             <IfSideBarLink {...items.resources} />
           </IfSidebarDropdown>
 
           <IfSideBarLink {...items.reportBug} />
           <IfSideBarLink {...items.userGuide} />
-          <IfSideBarLink {...items.map} />
+          {/*<IfSideBarLink {...items.map} />*/}
         </ul>
       </div>
 

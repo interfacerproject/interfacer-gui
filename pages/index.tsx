@@ -1,4 +1,5 @@
 import { CheckCircleIcon, GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
+import AssetsTable from "components/AssetsTable";
 import Layout from "components/layout/Layout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -10,7 +11,7 @@ export async function getStaticProps({ locale }: any) {
   return {
     props: {
       publicPage: true,
-      ...(await serverSideTranslations(locale, ["signInProps", "homeProps", "SideBarProps"])),
+      ...(await serverSideTranslations(locale, ["signInProps", "homeProps", "SideBarProps", "lastUpdatedProps"])),
     },
   };
 }
@@ -29,8 +30,8 @@ const Home: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className="pl-32 flex items-center bg-[#f8f7f4] w-full bg-right bg-no-repeat bg-contain h-[596px] bg-[url('/bg_nru_md.svg')]">
-        <div className="mt-40">
+      <div className="p-4 md:pl-32 flex items-center bg-[#f8f7f4] w-full bg-right bg-no-repeat bg-contain md:h-[596px] bg-[url('/bg_nru_md.svg')]">
+        <div className="md:mt-40">
           <div className="mb-6 logo" />
           <h2 className="text-3xl">{t("title")}</h2>
           <p className="flex items-center mt-8">
@@ -51,12 +52,12 @@ const Home: NextPageWithLayout = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 px-2 md:px-8 pt">{/* <AssetsTable /> */}</div>
+      <div className="grid grid-cols-1 px-2 md:px-8 pt">{<AssetsTable hideHeader={true} hidePagination={true} />}</div>
 
-      <div className="grid grid-cols-3 gap-16 pl-32 mt-44">
+      <div className="grid gap-16 md:pl-32 md:grid-cols-3 mt-44">
         {features.map((f, i) => {
           return (
-            <div key={i} className="flex flex-col">
+            <div key={i} className="flex md:flex-col">
               <div className="w-12 h-12 p-3 mr-2 text-white rounded-lg bg-[#5DA091]">{f.icon}</div>
               <h3 className="mt-5 mb-2">{t(`feature_title_${i}`)}</h3>
               <p className="text-[#8a8e96]">{t(`feature_body_${i}`)}</p>
