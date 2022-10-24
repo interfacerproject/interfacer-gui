@@ -29,7 +29,7 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: latest
-          install: false
+          run_install: true
       - name: Get pnpm store directory
         id: pnpm-cache
         shell: bash
@@ -65,7 +65,6 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: latest
-          install: false
       - name: Download the built folders ⏬
         uses: actions/download-artifact@v3
         with:
@@ -91,7 +90,7 @@ jobs:
 
   components:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build, e2e
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
