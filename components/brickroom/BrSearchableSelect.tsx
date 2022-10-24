@@ -7,7 +7,7 @@ type AsyncSelectProps = {
   options: any[];
   onChange: (value: any) => void;
   onInputChange: (value: any) => void;
-  value?: any;
+  value?: { value: string; label: string } | string | { value: string; label: string }[];
   label?: string;
   placeholder?: string;
   hint?: string;
@@ -18,6 +18,7 @@ type AsyncSelectProps = {
   multiple?: boolean;
   isCreatable?: boolean;
   testID?: string;
+  onBackspace?: () => void;
 };
 
 const BrSearchableSelect = ({
@@ -35,6 +36,7 @@ const BrSearchableSelect = ({
   help,
   isCreatable = false,
   testID,
+  onBackspace,
 }: AsyncSelectProps) => {
   const customStyles = {
     control: (provided: any, state: any) => ({
@@ -43,9 +45,9 @@ const BrSearchableSelect = ({
       height: 49,
       border: state.isFocused ? "2px solid" : provided.border,
     }),
-    valueContainer: (provided: any) => ({
+    valueContainer: (provided: any, state: any) => ({
       ...provided,
-      display: "flex",
+      display: state.isMulti && state.hasValue ? "flex" : provided.display,
       "flex-flow": "nowrap",
     }),
     placeholder: (provided: any) => ({
@@ -65,6 +67,25 @@ const BrSearchableSelect = ({
       primary: "#02604B",
     },
   });
+  const onKeyDown = (e: any) => {
+    if (e.keyCode === 8 && !inputValue && onBackspace) {
+      e.preventDefault();
+      e.stopPropagation();
+      onBackspace();
+    }
+    if (e.keyCode === 188 && isCreatable && inputValue && Array.isArray(value)) {
+      e.preventDefault();
+      e.stopPropagation();
+      onChange([...value, { value: inputValue, label: inputValue }]);
+      onInputChange("");
+    }
+    if (e.keyCode === 32 && isCreatable && inputValue && Array.isArray(value)) {
+      e.preventDefault();
+      e.stopPropagation();
+      onChange([...value, { value: inputValue, label: inputValue }]);
+      onInputChange("");
+    }
+  };
 
   const selectProps = {
     closeMenuOnSelect: !multiple,
@@ -78,6 +99,7 @@ const BrSearchableSelect = ({
     className: "border border-gray-300 rounded-md",
     styles: customStyles,
     theme: customTheme,
+    onKeyDown: onKeyDown,
   };
 
   return (
