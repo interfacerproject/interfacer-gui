@@ -17,31 +17,25 @@ describe("When user visit Assets", () => {
   });
 
   it("should wait to load the table and display some items", () => {
-    cy.visit("/assets");
     cy.restoreLocalStorage();
+    cy.visit("/assets");
     waitForData();
     checkTableAndContent();
   });
 
   it("should filter the table by contributor", () => {
-    cy.visit("/assets");
     cy.restoreLocalStorage();
-    waitForData();
-    // waitForData();
+    cy.visit("/assets");
     cy.get(".justify-between > .gap-2").click();
+
     // Clicking "Contributors" the multiselect dropdown
     cy.get(`[data-test="add-contributors"]`).click();
 
     // Clicking the option
-    cy.get(`[id$="listbox"]`).children("div").children("div").click();
-
-    // Outside click to close the panel
-    cy.contains("Filter for:").click();
+    cy.get(`[id$="option-0"]`).should("be.visible").click({ force: true, timeout: 1000 });
 
     // Applying filter
-    // Even though in the GUI the button text is "APPLY" (Capitalized)
-    // In the DOM the node text is "Apply"
-    cy.get(`[data-test="btn-apply"]`).click();
+    cy.get(`[data-test="btn-apply"]`).click({ force: true, timeout: 1000 });
 
     /**
      * After the last one, the test breaks the table

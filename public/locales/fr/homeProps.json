@@ -1,7 +1,5 @@
 {
   "title": "Construire l'infrastructure numérique des Fab Cities",
-  "paragraph1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  "paragraph2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   "feature_title_0": "Créer",
   "feature_body_0": "Créer des actifs ou importants ou importants de LOSH",
   "feature_title_1": "Partager",
@@ -15,5 +13,7 @@
   "feature_title_5": "Fonction 5",
   "feature_body_5": "Prochainement",
   "cta_1": "Se connecter",
-  "cta_2": "En savoir plus"
+  "cta_2": "En savoir plus",
+  "paragraph1": "Bienvenue à la Fabcity OS alpha staging d'Interfacer 😎",
+  "paragraph2": "Créez ou importez des actifs et collaborez avec d'autres personnes dans le cadre de conceptions numériques ou de la fabrication de produits physiques."
 }

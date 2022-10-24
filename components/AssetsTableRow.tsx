@@ -8,8 +8,10 @@ import AvatarUsers from "./AvatarUsers";
 const AssetsTableRow = (props: any) => {
   const e = props.asset;
   const primaryIntent = e.node.primaryIntents[0];
-  const hasImage =
-    primaryIntent?.resourceInventoriedAs?.images[0] || primaryIntent?.resourceInventoriedAs.metadata?.image;
+  const metadata = primaryIntent?.resourceInventoriedAs.metadata;
+  const hasImage = primaryIntent?.resourceInventoriedAs?.images[0] || metadata?.image;
+  const isMetadataImageString = typeof metadata?.image === "string";
+  const metadataImage = metadata?.image && (isMetadataImageString ? metadata?.image : metadata?.image[0]);
   return (
     <>
       {e && primaryIntent && (
@@ -19,10 +21,7 @@ const AssetsTableRow = (props: any) => {
               {hasImage && (
                 <div className="flex-none w-full md:w-2/5">
                   <AssetImage
-                    image={
-                      primaryIntent.resourceInventoriedAs?.images[0] ||
-                      primaryIntent.resourceInventoriedAs.metadata?.image[0]
-                    }
+                    image={primaryIntent.resourceInventoriedAs?.images[0] || metadataImage || ""}
                     className="mr-1 max-h-20"
                   />
                 </div>
