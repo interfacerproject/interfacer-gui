@@ -26,6 +26,7 @@ function Sidebar() {
     createAsset: {
       text: t("create_asset"),
       link: "/create_asset",
+      leftIcon: <CubeIcon className="w-5 h-5" />,
       tag: "NEW",
     },
     myAssets: {
