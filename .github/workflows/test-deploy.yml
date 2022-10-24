@@ -66,11 +66,6 @@ jobs:
         with:
           version: latest
           install: false
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
       - name: Download the built folders ⏬
         uses: actions/download-artifact@v3
         with:
@@ -121,6 +116,7 @@ jobs:
       - name: Cypress Component tests 🧪
         uses: cypress-io/github-action@v4
         with:
+          start: npm run start
           command: npm run test:component
           wait-on: "http://localhost:3000"
           wait-on-timeout: 130
