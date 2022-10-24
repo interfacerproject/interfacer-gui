@@ -80,7 +80,7 @@ jobs:
           start: npm run start
           wait-on: "http://localhost:3000"
           wait-on-timeout: 130
-          record: true
+          record: true 
           tag: node-${{ matrix.node }}
           browser: chrome
           config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
