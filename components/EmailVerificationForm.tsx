@@ -49,8 +49,6 @@ const EmailVerificationForm = (props: SignUpProps) => {
   //   }
   // }
 
-  const isButtonEnabled = HMAC === "" ? "btn-disabled" : "";
-
   interface FormValues {
     email: string;
     name: string;
@@ -63,11 +61,22 @@ const EmailVerificationForm = (props: SignUpProps) => {
     user: "",
   };
 
+  async function testEmail(email: string) {
+    const result = await register(email, true);
+    return result?.keypairoomServer ? true : false;
+  }
+
   const schema = yup
     .object({
-      email: yup.string().email().required(),
       name: yup.string().required(),
       user: yup.string().required(),
+      email: yup
+        .string()
+        .email()
+        .required()
+        .test("email-exists", "Provided e-mail already exists", async (value, testContext) => {
+          return await testEmail(value!);
+        }),
     })
     .required();
 
@@ -81,15 +90,20 @@ const EmailVerificationForm = (props: SignUpProps) => {
     formState: { errors, isValid },
   } = form;
 
-  const onValid = (data: FormValues) => {
+  const onValid = async (data: FormValues) => {
     console.log(data);
+
     setEmail(data.email);
     setName(data.name);
     setUser(data.user);
+
+    const result = await register(data.email, true);
+    setHMAC(result.keypairoomServer);
+
     props.onSubmit();
   };
 
-  console.log(isValid);
+  const isButtonEnabled = !isValid ? "btn-disabled" : "";
 
   return (
     <>
