@@ -57,6 +57,9 @@ const Notification = () => {
     setInterval(() => {
       notifications?.map((n: any) => setItem(n.node.id, "read"));
     }, 2000);
+    if (getItem("watchedList")) {
+      const _watchedList = JSON.parse(getItem("watchedList"));
+    }
   }, [notifications]);
 
   return (
