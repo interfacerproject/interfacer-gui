@@ -21,8 +21,12 @@ const AddStar = ({ id, metadata }: { id: string; metadata: { starred?: string[] 
     }
   };
   return (
-    <button className={"btn btn-outline btn-neutral px-2 btn-active"} onClick={handleClick} disabled={disabled}>
-      {hasAlreadyStarred ? <StarIconSolid className={"w-5 h-5"} /> : <StarIcon className={"w-5 h-5"} />}
+    <button
+      className={"btn btn-outline btn-neutral px-4 btn-active border-gray-300"}
+      onClick={handleClick}
+      disabled={disabled}
+    >
+      {hasAlreadyStarred ? <StarIconSolid className="w-6 h-6" /> : <StarIcon className="w-6 h-6" />}
       <span className="mx-2 capitalize">{t("stars")}</span>
       <span className="bg-[#CDE4DF] text-[#5DA091] border-[#5DA091] border border-1 rounded-[4px] text-xs mr-1 px-0.5">
         {metadata?.starred?.length}
