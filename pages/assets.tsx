@@ -1,10 +1,9 @@
-import AssetsTable from "../components/AssetsTable";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import React from "react";
-import NewProjectButton from "../components/NewProjectButton";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import AssetsTable from "../components/AssetsTable";
+import NewProjectButton from "../components/NewProjectButton";
 
 const Assets = () => {
   const { conformTo, primaryAccountable, tags } = useRouter().query;

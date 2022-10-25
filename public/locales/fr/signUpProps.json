@@ -29,5 +29,10 @@
     "Quel est le nom de famille de votre mère avant le mariage ?"
   ],
   "button": "Étape suivante",
-  "keyring_title": "Répondez à ces questions pour compléter votre inscription 🧩"
+  "keyring_title": "Répondez à ces questions pour compléter votre inscription 🧩",
+  "invitationTitle": "Vous avez vos clés ?",
+  "invitationPresentation": "Vous avez besoin d'une phrase d'invitation pour procéder à votre inscription !",
+  "invitationButton": "Continuer",
+  "invitationKey": "clé d'invitation:*",
+  "invitationKeyError": "Veuillez entrer une clé d'invitation valide"
 }

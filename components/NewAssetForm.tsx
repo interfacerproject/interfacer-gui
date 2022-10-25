@@ -1,17 +1,23 @@
 import BrInput from "./brickroom/BrInput";
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
 import BrMdEditor from "./brickroom/BrMdEditor";
-import BrRadio from "./brickroom/BrRadio";
 import BrImageUpload from "./brickroom/BrImageUpload";
-import GeoCoderInput from "./GeoCoderInput";
-import AddContributors from "./AddContributors";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import { useTranslation } from "next-i18next";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import devLog from "../lib/devLog";
 import dayjs from "dayjs";
-import SelectTags from "./SelectTags";
+import {
+  QUERY_VARIABLES,
+  CREATE_PROPOSAL,
+  CREATE_ASSET,
+  CREATE_INTENT,
+  LINK_PROPOSAL_AND_INTENT,
+  CREATE_LOCATION,
+} from "lib/QueryAndMutation";
+import TagsGeoContributors from "./TagsGeoContributors";
+import BrRadio from "./brickroom/BrRadio";
 
 type Image = {
   description: string;
@@ -37,11 +43,10 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   const [repositoryOrId, setRepositoryOrId] = useState("");
   const [assetTags, setAssetTags] = useState([] as string[]);
   const [locationId, setLocationId] = useState("");
-  const [location, setLocation] = useState({} as any);
+  const [location, setLocation] = useState("");
   const [locationName, setLocationName] = useState("");
-  const [price, setPrice] = useState("");
+  const [price] = useState("1");
   const [resourceSpec, setResourceSpec] = useState("");
-  const [resourceId, setResourceId] = useState("");
   const [images, setImages] = useState([] as Images);
   const [contributors, setContributors] = useState([] as { id: string; name: string }[]);
   const [imagesFiles, setImagesFiles] = useState([] as Array<any>);
@@ -77,181 +82,50 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     devLog("typeId", resourceSpec);
   }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price]);
 
-  const colors = ["error", "success", "warning", "info"];
-  const logsClass = (text: string) =>
-    colors.includes(text.split(":")[0]) ? `text-${text.split(":")[0]} uppercase my-3` : "my-2";
-  const QUERY_VARIABLES = gql`
-    query {
-      instanceVariables {
-        specs {
-          specCurrency {
-            id
-          }
-          specProjectDesign {
-            id
-          }
-          specProjectProduct {
-            id
-          }
-          specProjectService {
-            id
-          }
-        }
-        units {
-          unitOne {
-            id
-          }
-        }
-      }
-    }
-  `;
-
-  const CREATE_PROPOSAL = gql`
-    mutation {
-      createProposal(proposal: { name: "price tag", unitBased: true }) {
-        proposal {
-          id
-        }
-      }
-    }
-  `;
-  const CREATE_INTENT = gql`
-    mutation ($agent: ID!, $resource: ID!, $oneUnit: ID!, $currency: ID!, $howMuch: Float!) {
-      item: createIntent(
-        intent: {
-          name: "project"
-          action: "transfer"
-          provider: $agent
-          resourceInventoriedAs: $resource
-          resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
-        }
-      ) {
-        intent {
-          id
-        }
-      }
-
-      payment: createIntent(
-        intent: {
-          name: "payment"
-          action: "transfer"
-          receiver: $agent
-          resourceConformsTo: $currency
-          resourceQuantity: { hasNumericalValue: $howMuch, hasUnit: $oneUnit }
-        }
-      ) {
-        intent {
-          id
-        }
-      }
-    }
-  `;
-
-  const LINK_PROPOSAL_AND_INTENT = gql`
-    mutation ($proposal: ID!, $item: ID!, $payment: ID!) {
-      linkItem: proposeIntent(publishedIn: $proposal, publishes: $item, reciprocal: false) {
-        proposedIntent {
-          id
-        }
-      }
-
-      linkPayment: proposeIntent(publishedIn: $proposal, publishes: $payment, reciprocal: true) {
-        proposedIntent {
-          id
-        }
-      }
-    }
-  `;
-
-  const CREATE_LOCATION = gql`
-    mutation ($name: String!, $addr: String!, $lat: Float!, $lng: Float!) {
-      createSpatialThing(spatialThing: { name: $name, mappableAddress: $addr, lat: $lat, long: $lng }) {
-        spatialThing {
-          id
-          lat
-          long
-        }
-      }
-    }
-  `;
-
-  const CREATE_ASSET = gql`
-    mutation (
-      $name: String!
-      $note: String!
-      $metadata: JSON
-      $agent: ID!
-      $creationTime: DateTime!
-      $location: ID!
-      $tags: [URI!]
-      $resourceSpec: ID!
-      $oneUnit: ID!
-      $images: [IFile!]
-    ) {
-      createEconomicEvent(
-        event: {
-          action: "raise"
-          provider: $agent
-          receiver: $agent
-          hasPointInTime: $creationTime
-          resourceClassifiedAs: $tags
-          resourceConformsTo: $resourceSpec
-          resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
-          toLocation: $location
-        }
-        newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata }
-      ) {
-        economicEvent {
-          id
-          resourceInventoriedAs {
-            id
-          }
-        }
-      }
-    }
-  `;
   const handleEditorChange = ({ html, text }: any) => {
     devLog("handleEditorChange", html, text);
     setAssetDescription(text);
   };
 
-  const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables;
-
+  const instanceVariables = useQuery(QUERY_VARIABLES(true)).data?.instanceVariables;
   const [createAsset, { data, error }] = useMutation(CREATE_ASSET);
-
   const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
-
   const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);
-
   const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
-
   const [linkProposalAndIntent, { data: link }] = useMutation(LINK_PROPOSAL_AND_INTENT);
 
-  const handleCreateLocation = async (loc: any) => {
+  const handleCreateLocation = async (loc?: any) => {
     devLog("handleCreateLocation", loc);
-    setLocation(loc);
+
     const name = locationName === "" ? "*untitled*" : locationName;
-    await createLocation({
-      variables: {
-        name: name,
-        addr: loc.address.label,
-        lat: loc.lat,
-        lng: loc.lng,
-      },
-    })
-      .then(r => {
-        setLocationId(r.data.createSpatialThing.spatialThing.id);
-        setLogs(
-          logs
-            .concat(["info: location created"])
-            .concat([`    id: ${r.data.createSpatialThing.spatialThing.id}`])
-            .concat([`    latitude: ${r.data.createSpatialThing.spatialThing.lat}`])
-            .concat([`    longitude: ${r.data.createSpatialThing.spatialThing.long}`])
-        );
+    if (loc) {
+      setLocation(loc.address.label);
+      createLocation({
+        variables: {
+          name: name,
+          addr: loc.address.label,
+          lat: loc.lat,
+          lng: loc.lng,
+        },
       })
-      .catch(e => {
-        setLogs(logs.concat(["error: location creation failed"]).concat([e.message]));
-      });
+        .then(r => {
+          setLocationId(r.data.createSpatialThing.spatialThing.id);
+          setLogs(
+            logs
+              .concat(["info: location created"])
+              .concat([`    id: ${r.data.createSpatialThing.spatialThing.id}`])
+              .concat([`    latitude: ${r.data.createSpatialThing.spatialThing.lat}`])
+              .concat([`    longitude: ${r.data.createSpatialThing.spatialThing.long}`])
+          );
+        })
+        .catch(e => {
+          setLogs(logs.concat(["error: location creation failed"]).concat([e.message]));
+        });
+    } else {
+      setLocationId("");
+      setLocation("");
+      setLogs(logs.concat(["info: no location provided"]));
+    }
   };
 
   async function onSubmit(e: any) {
@@ -260,7 +134,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
       resourceSpec: resourceSpec,
       agent: user?.ulid,
       name: projectName,
-      note: `description: ${projectDescription}, repositoryOrId: ${repositoryOrId}`,
+      note: projectDescription,
       metadata: JSON.stringify({ repositoryOrId: repositoryOrId, contributors: contributors }),
       location: locationId,
       oneUnit: instanceVariables?.units?.unitOne.id,
@@ -284,7 +158,6 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
           ])
         );
         setLogs(logsText);
-        setResourceId(re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id);
         logsText = logsText.concat([
           `success: Created resource inventoried with iD: ${re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id}`,
           "info: Creating proposal",
@@ -370,14 +243,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         label={t("projectDescription.label")}
         hint={t("projectDescription.hint")}
         testID="projectDescription"
-      />
-      <BrRadio
-        array={t("projectType.array", { returnObjects: true })}
-        label={t("projectType.label")}
-        hint={t("projectType.hint")}
-        onChange={setAssetType}
-        value={projectType}
-        testID="projectType"
+        subTitle={t("projectDescription.md-editor-explainer")}
       />
       <BrImageUpload
         onChange={setImages}
@@ -397,50 +263,24 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         onChange={(e: ChangeEvent<HTMLInputElement>) => setRepositoryOrId(e.target.value)}
         testID="repositoryOrId"
       />
-      <SelectTags
-        label={t("projectTags.label")}
-        hint={t("projectTags.hint")}
-        canCreateTags
-        onChange={setAssetTags}
-        placeholder={t("projectTags.placeholder")}
-        testID="tagsList"
+      <BrRadio
+        array={t("projectType.array", { returnObjects: true })}
+        label={t("projectType.label")}
+        hint={t("projectType.hint")}
+        onChange={setAssetType}
+        value={projectType}
+        testID="projectType"
       />
-      <div className="grid grid-cols-2 gap-2">
-        <BrInput
-          label={t("location.name.label")}
-          hint={t("location.name.hint")}
-          value={locationName}
-          placeholder={t("location.name.placeholder")}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setLocationName(e.target.value)}
-          testID="location.name"
-        />
-        <GeoCoderInput
-          onSelect={handleCreateLocation}
-          value={location}
-          label={t("location.address.label")}
-          hint={t("location.address.hint")}
-          placeholder={t("location.address.placeholder")}
-          testID="location.address"
-        />
-      </div>
-      <AddContributors
-        label={t("contributors.label")}
-        hint={t("contributors.hint")}
-        setContributors={c => setContributors(c)}
+      <TagsGeoContributors
+        setAssetTags={setAssetTags}
+        setLocationName={setLocationName}
+        handleCreateLocation={handleCreateLocation}
+        locationName={locationName}
+        locationAddress={location}
+        setContributors={setContributors}
         contributors={contributors}
-        testID="contributors"
+        assetTags={assetTags}
       />
-      <BrInput
-        type={"number"}
-        label={t("price.label")}
-        hint={t("price.hint")}
-        value={price}
-        placeholder={t("price.placeholder")}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => setPrice(e.target.value)}
-        testID="price"
-      />
-
-      {/*todo:gestire meglio la fine del processo*/}
       {assetCreatedId ? (
         <Link href={assetCreatedId}>
           <a className="btn btn-accent">{t("go to the asset")}</a>

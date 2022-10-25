@@ -67,6 +67,7 @@ module.exports = {
         quaternary: colors.amber,
         black: colors.ebony,
         white: {
+          DEFAULT: "#fcfbfa",
           100: "#fcfbfa",
           200: "#f9f7f4",
           300: "#f5f2ef",

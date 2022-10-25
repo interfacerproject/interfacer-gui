@@ -1,51 +1,20 @@
-import React from "react";
+import Link from "next/link";
 
-const BrTags = ({
-  tags,
-  onCancel,
-  testID,
-}: {
-  tags?: Array<string>;
-  onCancel?: (tag: string) => void;
-  testID?: string;
-}) => {
-  const colors = (i: number) => {
-    switch ((i + 1) % 6) {
-      case 1:
-        return "primary";
-      case 2:
-        return "error";
-      case 3:
-        return "accent";
-      case 4:
-        return "warning";
-      case 5:
-        return "success";
-      case 0:
-        return "neutral";
-    }
-  };
+const BrTags = ({ tags }: { tags?: Array<string>; onCancel?: (tag: string) => void; testID?: string }) => {
   return (
     <>
-      <div className="hidden badge-neutral badge-error badge-accent badge-primary badge-succes badge-warning" />
       <div className="w-full">
         {tags && tags.length > 0 && (
           <>
             {tags?.map((tag: string, index) => (
-              <span key={tag} className={`badge badge-${colors(index)} rounded-md float-left mb-1 mr-1 p-3`}>
-                {onCancel && (
-                  <button
-                    className={"btn btn-ghost btn-xs ml-0"}
-                    onClick={() => {
-                      onCancel(tag);
-                    }}
-                    data-test={testID}
-                  >
-                    x
-                  </button>
-                )}
-                {tag}
-              </span>
+              <Link href={`/assets?tags=${tag}`} key={index}>
+                <a
+                  key={tag}
+                  className={`bg-[#CDE4DF] text-[#5DA091] border-[#5DA091] border border-1 rounded-[4px] text-sm float-left mb-1 mr-1 px-0.5`}
+                >
+                  {tag}
+                </a>
+              </Link>
             ))}
           </>
         )}

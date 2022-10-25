@@ -2,10 +2,8 @@
   "title": "titre",
   "description": "description",
   "Load more": "Chargez plus",
-  "tableHead": ["Asset", "Dernière mise à jour", "Valeur", "Propriétaire", "tags"],
-  "filters": {
-    "filter for": "Filtrer par",
-    "contributors": "Contributeurs",
-    "type": "Type"
-  }
+  "filters": "filtres",
+  "empty_state_assets": "Actifs de l'État vide",
+  "tableHead": "tableHead",
+  "table_head": ["Actif", "Dernière mise à jour", "Propriétaire", "Balises"]
 }

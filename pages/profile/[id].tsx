@@ -1,21 +1,24 @@
-import type { NextPage } from "next";
-import { useAuth } from "../../hooks/useAuth";
 import { gql, useQuery } from "@apollo/client";
-import { useRouter } from "next/router";
-import Spinner from "../../components/brickroom/Spinner";
-import ResourceTable from "../../components/ResourceTable";
-import devLog from "../../lib/devLog";
+import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
+import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
-import React from "react";
-import AssetsTable from "../../components/AssetsTable";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import cn from "classnames";
+import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
-import { ArrowSmUpIcon } from "@heroicons/react/solid";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
+import AssetsTable from "../../components/AssetsTable";
+import BrTabs from "../../components/brickroom/BrTabs";
+import Spinner from "../../components/brickroom/Spinner";
+import { useAuth } from "../../hooks/useAuth";
+import useStorage from "../../hooks/useStorage";
+import devLog from "../../lib/devLog";
 
 const Profile: NextPage = () => {
+  const { getItem } = useStorage();
   const router = useRouter();
-  const { id, conformTo } = router.query;
+  const { id, conformTo, tags, tab } = router.query;
   const { t } = useTranslation("ProfileProps");
   const FETCH_USER = gql(`query($id:ID!) {
   person(id:$id) {
@@ -31,39 +34,44 @@ const Profile: NextPage = () => {
   }
 }`);
   const { user } = useAuth();
+
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
   const idToBeFetch = isUser ? user?.ulid : id;
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
-  devLog("person", person);
   const filter = { primaryIntentsResourceInventoriedAsPrimaryAccountable: idToBeFetch };
+  const hasCollectedAssets = isUser && !!getItem("assetsCollected");
+  let collectedAssets: { primaryIntentsResourceInventoriedAsId: string[] } = {
+    primaryIntentsResourceInventoriedAsId: [],
+  };
   if (conformTo) {
     // @ts-ignore
     filter["primaryIntentsResourceInventoriedAsConformsTo"] = conformTo.split(",");
   }
+  if (tags) {
+    // @ts-ignore
+    filter["primaryIntentsResourceInventoriedAsClassifiedAs"] = tags.split(",");
+  }
   devLog(user);
-  const tabsArray = [
-    // {title: 'Activity', component: <EventTable economicEvents={user?.economicEvents}/>},
-    {
-      title: "Inventory",
-      component: <ResourceTable />,
-    },
-  ];
+  if (hasCollectedAssets) {
+    collectedAssets["primaryIntentsResourceInventoriedAsId"] = JSON.parse(getItem("assetsCollected"));
+  }
   return (
     <>
       {!person && <Spinner />}
       {person && (
         <>
-          <div className="relative">
+          <div className="relative h-128 md:h-72">
             <div
-              className="w-full bg-center bg-cover h-72"
+              className="w-full bg-center bg-cover h-128 md:h-72"
               style={{ backgroundImage: "url('/profile_bg.jpeg')", filter: "blur(1px)" }}
             />
             <div className="absolute w-full p-2 bottom-8 top-2 md:p-0 md:bottom-12 md:h-100">
-              <div className="grid grid-cols-1 px-2 pt-8 md:grid-cols-2 md:pl-8">
+              <div className="grid grid-cols-1 px-2 md:pt-8 md:grid-cols-2 md:pl-8">
                 <div className="flex flex-col">
                   <div className="flex flex-row">
                     <h2 className="pt-5 mb-6 mr-2">
-                      {t("hi")}, <span className="text-primary">{person?.name}</span>
+                      {isUser ? <>{t("hi")},&nbsp;</> : <> </>}
+                      <span className="text-primary">{person?.name}</span>
                     </h2>
                     <div className="w-10 rounded-full">
                       <Avatar
@@ -74,53 +82,88 @@ const Profile: NextPage = () => {
                       />
                     </div>
                   </div>
-                  <p>{t("description")} </p>
+                  <p>{isUser ? t("description") : t("")} </p>
                   <h4 className="mt-2">
                     {isUser ? t("user id title") : t("other user id title")}{" "}
                     <span className="text-primary">{person?.id}</span>
                   </h4>
                 </div>
-                <div className="flex flex-col">
-                  <div className="grid w-full p-4 mx-auto bg-white border-2 rounded h-60 md:w-4/5 gid-cols-1">
-                    <div className="border-b-2">
-                      <h2 className="mb-2">{t("goals")}</h2>
-                      <span className="text-2xl text-primary">20,897</span>
-                      <span className="text-slate-300"> from 12,946</span>
-                      <span className="grid float-right grid-cols-2 px-2 py-1 pl-4 mt-1 bg-green-100 rounded-full text-primary">
-                        <ArrowSmUpIcon className="w-5 h-5 text-green-500" />
-                        <span>12%</span>
-                      </span>
-                    </div>
-                    <div>
-                      <h2 className="my-2">{t("strength")}</h2>
-                      <span className="text-2xl text-primary">71,897</span>
-                      <span className="text-slate-300"> from 70,946</span>
-                      <span className="grid float-right grid-cols-2 px-2 py-1 pl-4 mt-1 bg-green-100 rounded-full text-primary">
-                        <ArrowSmUpIcon className="w-5 h-5 text-green-500" />
-                        <span>40%</span>
-                      </span>
-                    </div>
-                  </div>
+                <div className="my-4 shadow md:mr-20 stats stats-vertical">
+                  <StatValue title={t("Goals")} value={42} trend={12} />
+                  <StatValue title={t("Strength")} value="58%" trend={2.02} />
                 </div>
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 px-2 pt-8 md:grid-cols-2 md:pl-8">
-            <div id="tabs" className="my-6 space-x-4">
-              <button className="px-12 text-black bg-gray-300 border-0 rounded-lg btn">
-                {t("activity by the user")}
-              </button>
-              <span className="invisible rounded-lg btn btn-disabled lg:visible">{t("saved list")}</span>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 px-2 md:px-8 pt">
-            <AssetsTable filter={filter} noPrimaryAccountableFilter />
+          <div className="px-4 pt-32 md:mr-12 md:px-10 md:pt-0">
+            <BrTabs
+              initialTab={(typeof tab === "string" && parseInt(tab)) || undefined}
+              tabsArray={[
+                {
+                  title: (
+                    <span className="flex items-center space-x-4">
+                      <CubeIcon className="w-5 h-5 mr-1" />
+                      {t("Assets")}
+                    </span>
+                  ),
+                  component: (
+                    <div>
+                      <h3 className="my-8">{t("My Assets")}</h3>
+                      <AssetsTable filter={filter} noPrimaryAccountableFilter hideHeader={true} />
+                    </div>
+                  ),
+                },
+                {
+                  title: (
+                    <span className="flex items-center space-x-4">
+                      <ClipboardListIcon className="w-5 h-5 mr-1" />
+                      {t("Lists")}
+                    </span>
+                  ),
+                  component: (
+                    <div>
+                      <h3 className="my-8">{t("My Lists")}</h3>
+                      <AssetsTable filter={collectedAssets} hideHeader={true} />
+                    </div>
+                  ),
+                  disabled: hasCollectedAssets,
+                },
+              ]}
+            />
           </div>
         </>
       )}
     </>
   );
 };
+
+const StatValue = ({ title, value, trend }: { title: string; value: number | string; trend: number }) => {
+  const { t } = useTranslation("ProfileProps");
+  const positive = trend > 0;
+
+  return (
+    <div className="stat">
+      <div className="stat-figure">
+        <span
+          className={cn("flex rounded-full space-x-2 py-1 px-2 items-center", {
+            "bg-green-100": positive,
+            "bg-red-100": !positive,
+          })}
+        >
+          {positive ? (
+            <ArrowSmUpIcon className="w-5 h-5 text-green-500" />
+          ) : (
+            <ArrowSmDownIcon className="w-5 h-5 text-red-500" />
+          )}
+          <span>{trend}%</span>
+        </span>
+      </div>
+      <div className="stat-title">{title}</div>
+      <div className="text-2xl font-semibold stat-value text-primary font-display">{value}&nbsp;</div>
+    </div>
+  );
+};
+
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   return {
     paths: [], //indicates that no page needs be created at build time

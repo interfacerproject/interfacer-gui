@@ -41,9 +41,6 @@ describe("when user visits create asset", () => {
   });
 
   it("should edit some other fields", () => {
-    // Price
-    cy.get(`[data-test="price"]`).type("11");
-
     // Repo link
     cy.get(`[data-test="repositoryOrId"]`).type("11");
 

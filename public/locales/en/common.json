@@ -5,5 +5,11 @@
   "Go to inventory": "Go to inventory",
   "This is a": "This is a",
   "Value of this asset": "Value of this asset",
-  "Load more": "Load more..."
+  "Load more": "Load more...",
+  "assets": "Assets",
+  "contributorsHead": ["UserName", "Date"],
+  "contributors": "Contributors",
+  "watch": "Watch",
+  "add to list": "Add to list",
+  "unwatch": "unwatch"
 }

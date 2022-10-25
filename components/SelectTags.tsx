@@ -1,7 +1,6 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import BrSearchableSelect from "./brickroom/BrSearchableSelect";
 import { gql, useQuery } from "@apollo/client";
-import devLog from "../lib/devLog";
+import { useEffect, useState } from "react";
+import BrSearchableSelect from "./brickroom/BrSearchableSelect";
 
 const QUERY = gql`
   {
@@ -38,7 +37,7 @@ const SelectTags = ({
     if (tags && !hasChanged && initialTags) {
       onChange(initialTags);
     }
-  }, [tags]);
+  }, [hasChanged, initialTags, onChange, tags]);
 
   const options =
     tags &&
