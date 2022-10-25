@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEvent, ReactElement, useState } from "react";
 import BrInput from "../components/brickroom/BrInput";
-import KeyringGeneration from "../components/KeyringGeneration";
+// import KeyringGeneration from "../components/KeyringGeneration";
 import NRULayout from "../components/layout/NRULayout";
 import VerifySeed from "../components/VerifySeed";
 import { useAuth } from "../hooks/useAuth";
@@ -120,7 +120,7 @@ const Sign_in: NextPageWithLayout = () => {
                   "Login by providing your generated passphrase or by answering the questions during your Signup proccess"
                 )}
               </h2>
-              <KeyringGeneration email={email} HMAC={pdfk} />
+              {/* <KeyringGeneration email={email} HMAC={pdfk} /> */}
             </>
           )}
 

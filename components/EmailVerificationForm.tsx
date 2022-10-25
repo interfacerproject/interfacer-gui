@@ -15,28 +15,28 @@ import BrInput from "./brickroom/BrInput";
 
 //
 
-type SignUpProps = {
-  onSubmit: Function;
-  setEmail: (email: string) => void;
-  setName: (name: string) => void;
-  setUser: (user: string) => void;
-  setHMAC: (HMAC: string) => void;
-};
-
 export interface SignUpFormValues {
   email: string;
   name: string;
   user: string;
 }
 
+type SignUpProps = {
+  onSubmit: (data: SignUpFormValues) => void;
+  // setEmail: (email: string) => void;
+  // setName: (name: string) => void;
+  // setUser: (user: string) => void;
+  // setHMAC: (HMAC: string) => void;
+};
+
 //
 
-const EmailVerificationForm = (props: SignUpProps) => {
+const EmailVerificationForm = ({ onSubmit }: SignUpProps) => {
   // Loading translations
   const { t } = useTranslation("signUpProps");
 
   // Unpacking props
-  const { onSubmit, setEmail, setName, setUser, setHMAC } = props;
+  // const { onSubmit, setEmail, setName, setUser, setHMAC } = props;
 
   // Getting function that checks for email
   const { register } = useAuth();
@@ -76,18 +76,18 @@ const EmailVerificationForm = (props: SignUpProps) => {
     defaultValues,
   });
 
-  // Submit function
-  const onValid = async (data: SignUpFormValues) => {
-    setEmail(data.email);
-    setName(data.name);
-    setUser(data.user);
+  // // Submit function
+  // const onValid = async (data: SignUpFormValues) => {
+  //   setEmail(data.email);
+  //   setName(data.name);
+  //   setUser(data.user);
 
-    const result = await register(data.email, true);
-    setHMAC(result.keypairoomServer);
+  //   const result = await register(data.email, true);
+  //   setHMAC(result.keypairoomServer);
 
-    // Running the provided "onSubmit"
-    onSubmit();
-  };
+  //   // Running the provided "onSubmit"
+  //   onSubmit();
+  // };
 
   // Getting data from the form
   const { formState, handleSubmit } = form;
@@ -106,7 +106,7 @@ const EmailVerificationForm = (props: SignUpProps) => {
         )}
       </p>
       {/* The form */}
-      <form onSubmit={handleSubmit(onValid)} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {/* Email */}
         <BrInput
           {...form.register("email")}
