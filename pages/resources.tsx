@@ -20,8 +20,8 @@ const Resources: NextPage = () => {
   return (
     <div className="p-8">
       <div className="mb-6 w-80">
-        <h1>{t("title")}</h1>
-        <p>{t("description")}</p>
+        <h1>{t("Resources")}</h1>
+        <p>{t("Use this page to generate digital product passports of resources")}</p>
       </div>
       <ResourceTable filter={filter} />
     </div>

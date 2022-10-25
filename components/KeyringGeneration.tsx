@@ -19,9 +19,7 @@ const KeyringGeneration = ({
   isSignUp?: boolean;
 }) => {
   const { signup, keypair, login } = useAuth();
-  const { t } = useTranslation(["signInProps"], {
-    keyPrefix: "step_questions",
-  });
+  const { t } = useTranslation("signInProps");
   const [eddsaPublicKey, setEddsaPublicKey] = useState("");
   const [seed, setSeed] = useState("");
   const [question1, setQuestion1] = React.useState("null");
@@ -103,6 +101,13 @@ const KeyringGeneration = ({
       })
       .catch((e: any) => setError(e));
   };
+  const questionsArray = [
+    t("Where my parents met?"),
+    t("What is the name of your first pet?"),
+    t("What is your home town?"),
+    t("What is the name of your first teacher?"),
+    t("What is the surname of your mother before wedding?"),
+  ];
 
   return (
     <>
@@ -111,16 +116,22 @@ const KeyringGeneration = ({
         <>
           {/* Presentation text */}
 
-          {isSignUp && <h2>{t("keyring_title")}</h2>}
+          {isSignUp && <h2>{t("Answer to these questions to complete your signup 🧩")}</h2>}
 
-          <p className="mt-4 mb-6">{isSignUp ? t("subtitle_signup") : t("subtitle")}</p>
+          <p className="mt-4 mb-6">
+            {isSignUp
+              ? t(
+                  "You will have to remember the answers and keep them for later as they are necessary for the log in&#46;"
+                )
+              : t("Answer the questions that you answered during the signup process")}
+          </p>
 
-          {isSignUp && <p className="mb-4 font-semibold text-primary">{t("hint")}</p>}
+          {isSignUp && <p className="mb-4 font-semibold text-primary">{t("Answer to at least 3 questions&#46;")}</p>}
 
           {/* The form with the questions */}
           <form onSubmit={onSubmit}>
             {/* Iterating over "questions" to display fields */}
-            {[].concat(t("questions", { returnObjects: true })).map((question: string, index: number) => (
+            {questionsArray.map((question: string, index: number) => (
               <BrInput
                 name={question}
                 type="text"
@@ -133,7 +144,7 @@ const KeyringGeneration = ({
 
             {/* Submit button */}
             <button className="mt-4 btn btn-block btn-accent" type="submit">
-              {t("button")}
+              {t("Login")}
             </button>
           </form>
         </>
@@ -145,14 +156,14 @@ const KeyringGeneration = ({
           {/* Section text */}
           {isSignUp && (
             <>
-              <h2>{t("passphrase_title")}</h2>
-              <p className="mt-4 mb-6">{t("subtitle_passphrase")}</p>
+              <h2>{t("")}</h2>
+              <p className="mt-4 mb-6">{t("")}</p>
             </>
           )}
 
           {/* The seed – List of words */}
           <p className="mt-4 mb-6">
-            {t("reminder")}
+            {t("Your passprhase is: ")}
             <br />
             <span className="block p-4 mt-2 font-mono bg-white border rounded-md">{seed}</span>
           </p>
@@ -160,17 +171,19 @@ const KeyringGeneration = ({
           {/* ↓ SignUp / SignIn – Buttons ↓ */}
 
           {/* SignUp-register button */}
-          <p className="text-[#8A8E96] mb-6">{t("help_text_2")}</p>
+          <p className="text-[#8A8E96] mb-6">
+            {t("This passphrase is generated and are not stored on the server&#46; Keep a copy of it&#46;")}
+          </p>
           {isSignUp && (
             <button className="btn btn-block btn-accent" type="button" onClick={onSignUp}>
-              {t("button_2")}
+              {t("Login")}
             </button>
           )}
           {/* LoginButton */}
           {!isSignUp && (
             <p>
               <button className="btn btn-block btn-accent" type="button" onClick={completeSignIn}>
-                {t("continue_button")}
+                {t("Login")}
               </button>
             </p>
           )}
@@ -178,7 +191,7 @@ const KeyringGeneration = ({
       )}
 
       {/* Error message */}
-      {error !== "" && <h5 className="text-warning">{t("error")}</h5>}
+      {error !== "" && <h5 className="text-warning">{t("User not found")}</h5>}
     </>
   );
 };

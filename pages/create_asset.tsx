@@ -20,8 +20,8 @@ const CreateProject: NextPageWithLayout = () => {
         <div className="grid grid-cols-1 gap-4 p-8 md:grid-cols-12">
           <div className="w-full md:col-start-2 md:col-end-8">
             <div className="w-80">
-              <h2 className="text-primary">{t("headline.title")} </h2>
-              <p>{t("headline.description")}</p>
+              <h2 className="text-primary">{t("Create a new asset")} </h2>
+              <p>{t("Make sure you read the Comunity Guidelines before you create a new asset")}</p>
             </div>
             <br />
             <NewAssetForm logs={logs} setLogs={setLogs} />

@@ -30,37 +30,36 @@ const TagsGeoContributors = ({
   return (
     <>
       <SelectTags
-        label={t("projectTags.label")}
-        hint={t("projectTags.hint")}
+        label={t("Tags:")}
+        hint={t("Press space to add a new tag")}
         canCreateTags
         onChange={setAssetTags}
-        placeholder={t("projectTags.placeholder")}
+        placeholder={t("chair laser-cutter open-source 3d-printing")}
         testID="tagsList"
         selectedTags={assetTags}
       />
       <div className="grid grid-cols-2 gap-2">
         <BrInput
-          type="text"
-          name="location"
-          label={t("location.name.label")}
-          hint={t("location.name.hint")}
+          name="Location Name"
+          label={t("Location name:")}
+          hint={t("Name of the location where the asset can be found")}
           value={locationName}
-          placeholder={t("location.name.placeholder")}
+          placeholder={t("E&#46g&#46 Hamburg Warehouse")}
           onChange={(e: ChangeEvent<HTMLInputElement>) => setLocationName(e.target.value)}
           testID="location.name"
         />
         <GeoCoderInput
           onSelect={handleCreateLocation}
           selectedAddress={locationAddress}
-          label={t("location.address.label")}
-          hint={t("location.address.hint")}
-          placeholder={t("location.address.placeholder")}
+          label={t("Address:")}
+          hint={t("Address of the asset location")}
+          placeholder={t("E&#46g&#46 Hamburg")}
           testID="location.address"
         />
       </div>
       <AddContributors
-        label={t("contributors.label")}
-        hint={t("contributors.hint")}
+        label={t("Contributors:")}
+        hint={t("Contributors must have an account")}
         setContributors={c => setContributors(c)}
         contributors={contributors}
         testID="contributors"

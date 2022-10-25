@@ -160,7 +160,6 @@ const Asset = () => {
                         <ContributorsTable
                           contributors={asset.metadata?.contributors}
                           date={data?.proposal.created}
-                          head={t("contributorsHead", { returnObjects: true })}
                           title={t("Contributors")}
                         />
                       ),
@@ -187,7 +186,7 @@ const Asset = () => {
                 aria-disabled={true}
                 onClick={isWatching ? handleUnwatch : handleWatch}
               >
-                {isWatching ? t("unwatch") : t("watch")}
+                {isWatching ? t("unwatch") : t("Watch")}
               </button>
               <p className="mt-8 mb-2">{t("Owner")}:</p>
               <BrDisplayUser

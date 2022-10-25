@@ -154,7 +154,7 @@ const AssetsTable = ({
           )}
           <div className="flex flex-col flex-col-reverse md:space-x-2 md:flex-row">
             <div className="pt-5 grow md:pt-0">
-              <BrTable headArray={t("table_head", { returnObjects: true })}>
+              <BrTable headArray={[t("Asset"), t("Last update"), t("Owner"), t("tags")]}>
                 {assets?.map((e: any) => (
                   <AssetsTableRow asset={e} key={e.cursor} />
                 ))}

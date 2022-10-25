@@ -9,7 +9,6 @@ module.exports = {
     // "plugin:@typescript-eslint/eslint-recommended",
     // "plugin:@typescript-eslint/recommended",
     "prettier",
-    "plugin:i18next/recommended",
   ],
   overrides: [],
   parserOptions: {
@@ -22,6 +21,7 @@ module.exports = {
   //   parser: "@typescript-eslint/parser",
   plugins: ["react", "prettier", "i18next"],
   rules: {
+    "i18next/no-literal-string": 2,
     "@next/next/no-img-element": "off",
     // Disable prop-types as we use TypeScript for type checking
     // "react/prop-types": "off",

@@ -64,16 +64,16 @@ const Sign_in: NextPageWithLayout = () => {
         <div className="w-full h-full pt-56">
           {(step === 0 || step === 1) && (
             <div>
-              <h2>{t("title_step_0")}</h2>
-              <p className="mt-2 mb-6">{t("presentation")}</p>
+              <h2>{t("Login")}</h2>
+              <p className="mt-2 mb-6">{t("")}</p>
 
               {step === 0 && (
                 <>
                   <button className="btn btn-block btn-primary" type="button" onClick={() => viaPassphrase()}>
-                    {t("button1")}
+                    {t("Login answering the signup questions 💬")}
                   </button>
                   <button className="mt-4 btn btn-block btn-primary" type="button" onClick={() => viaQuestions()}>
-                    {t("button2")}
+                    {t("Login via passphrase 🔑")}
                   </button>
                 </>
               )}
@@ -83,9 +83,9 @@ const Sign_in: NextPageWithLayout = () => {
                   <BrInput
                     name="email"
                     type="email"
-                    label={t("email.label")}
+                    label={t("Your email:")}
                     error={errorMail}
-                    placeholder={t("email.placeholder")}
+                    placeholder={t("alice@email&#46;com")}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                   />
                   <p className="text-[#8A8E96] mb-6">{t("help_text_step_1")}</p>
@@ -100,11 +100,11 @@ const Sign_in: NextPageWithLayout = () => {
               )}
 
               <p className="flex flex-row items-center mt-6">
-                <span>{t("register.question")}</span>
+                <span>{t("✌️  You don't have an account yet?")}</span>
                 <Link href={"/sign_up"}>
                   <a className="flex flex-row font-semibold">
                     <LinkIcon className="w-5 h-5 mx-2" />
-                    {t("register.answer")}
+                    {t("Sign up")}
                   </a>
                 </Link>
               </p>
@@ -113,14 +113,18 @@ const Sign_in: NextPageWithLayout = () => {
 
           {step === 2 && (
             <>
-              <h2>{t("step_questions.title")}</h2>
+              <h2>
+                {t(
+                  "Login by providing your generated passphrase or by answering the questions during your Signup proccess"
+                )}
+              </h2>
               <KeyringGeneration email={email} HMAC={pdfk} />
             </>
           )}
 
           {step === 3 && (
             <>
-              <h2>{t("step_passphrase.title")}</h2>
+              <h2>{t("Input the passphrase that you kept generated during the signup process")}</h2>
               <VerifySeed email={email} HMAC={pdfk} />
             </>
           )}
