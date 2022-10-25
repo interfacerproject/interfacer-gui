@@ -31,15 +31,11 @@ const SignUp: NextPageWithLayout = () => {
         {step === 0 && <InvitationKey setStep={setStep} />}
         {step === 1 && (
           <EmailVerificationForm
-            HMAC={HMAC}
-            setHMAC={setHMAC}
-            email={email}
-            setEmail={setEmail}
-            name={name}
-            setName={setName}
-            user={user}
-            setUser={setUser}
             onSubmit={onSubmit}
+            setEmail={setEmail}
+            setName={setName}
+            setUser={setUser}
+            setHMAC={setHMAC}
           />
         )}
         {step === 2 && <KeyringGeneration email={email} user={user} name={name} HMAC={HMAC} isSignUp={true} />}
