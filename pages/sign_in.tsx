@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ChangeEvent, ReactElement, useState } from "react";
 import BrInput from "../components/brickroom/BrInput";
-import KeyringGeneration from "../components/KeyringGeneration";
+// import KeyringGeneration from "../components/KeyringGeneration";
 import NRULayout from "../components/layout/NRULayout";
 import VerifySeed from "../components/VerifySeed";
 import { useAuth } from "../hooks/useAuth";
@@ -114,7 +114,7 @@ const Sign_in: NextPageWithLayout = () => {
           {step === 2 && (
             <>
               <h2>{t("step_questions.title")}</h2>
-              <KeyringGeneration email={email} HMAC={pdfk} />
+              {/* <KeyringGeneration email={email} HMAC={pdfk} /> */}
             </>
           )}
 
