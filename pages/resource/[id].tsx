@@ -19,7 +19,6 @@ const Resource: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const { t } = useTranslation("ResourceProps");
-
   const { loading, data } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id: id },
   });
