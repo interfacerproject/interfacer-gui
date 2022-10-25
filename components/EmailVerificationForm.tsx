@@ -1,6 +1,5 @@
 // Functionality
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 
 // Form imports
@@ -16,55 +15,38 @@ import BrInput from "./brickroom/BrInput";
 //
 
 type SignUpProps = {
-  HMAC: string;
-  setHMAC: (HMAC: string) => void;
   onSubmit: Function;
-  email: string;
   setEmail: (email: string) => void;
-  name: string;
   setName: (name: string) => void;
-  user: string;
   setUser: (user: string) => void;
+  setHMAC: (HMAC: string) => void;
 };
 
-const EmailVerificationForm = (props: SignUpProps) => {
-  const { HMAC, setHMAC, onSubmit, setEmail, setName, setUser } = props;
+export interface SignUpFormValues {
+  email: string;
+  name: string;
+  user: string;
+}
 
-  const [yetRegisteredEmail, setYetRegisteredEmail] = useState("");
-  const [emailValid, setEmailValid] = useState("");
+//
+
+const EmailVerificationForm = (props: SignUpProps) => {
+  // Loading translations
   const { t } = useTranslation("signUpProps");
 
+  // Unpacking props
+  const { onSubmit, setEmail, setName, setUser, setHMAC } = props;
+
+  // Getting function that checks for email
   const { register } = useAuth();
 
-  // async function verifyEmail({ email }: { email: string }) {
-  //   const result = await register(email, true);
-  //   if (result?.keypairoomServer) {
-  //     setYetRegisteredEmail("");
-  //     if (email.includes("@")) {
-  //       setEmailValid(t("email.valid"));
-  //     } else {  //     }
-  //     setHMAC(result.keypairoomServer);
-  //   } else {
-  //     setYetRegisteredEmail(result);
-  //   }
-  // }
+  /* Form setup */
 
-  interface FormValues {
-    email: string;
-    name: string;
-    user: string;
-  }
-
-  const defaultValues: FormValues = {
+  const defaultValues: SignUpFormValues = {
     email: "",
     name: "",
     user: "",
   };
-
-  async function testEmail(email: string) {
-    const result = await register(email, true);
-    return result?.keypairoomServer ? true : false;
-  }
 
   const schema = yup
     .object({
@@ -80,19 +62,21 @@ const EmailVerificationForm = (props: SignUpProps) => {
     })
     .required();
 
-  const form = useForm<FormValues>({
+  // This function checks if the provided email exists
+  async function testEmail(email: string) {
+    const result = await register(email, true);
+    return result?.keypairoomServer ? true : false;
+  }
+
+  // Creating form
+  const form = useForm<SignUpFormValues>({
     mode: "all",
     resolver: yupResolver(schema),
     defaultValues,
   });
 
-  const {
-    formState: { errors, isValid },
-  } = form;
-
-  const onValid = async (data: FormValues) => {
-    console.log(data);
-
+  // Submit function
+  const onValid = async (data: SignUpFormValues) => {
     setEmail(data.email);
     setName(data.name);
     setUser(data.user);
@@ -100,10 +84,17 @@ const EmailVerificationForm = (props: SignUpProps) => {
     const result = await register(data.email, true);
     setHMAC(result.keypairoomServer);
 
-    props.onSubmit();
+    // Running the provided "onSubmit"
+    onSubmit();
   };
 
+  // Getting data to display from the form
+  const { formState } = form;
+  const { errors, isValid } = formState;
+
   const isButtonEnabled = !isValid ? "btn-disabled" : "";
+
+  /* */
 
   return (
     <>
@@ -139,7 +130,7 @@ const EmailVerificationForm = (props: SignUpProps) => {
           error={errors.user?.message}
         />
         {/* Submit button */}
-        <button className={`my-6 btn btn-block btn-primary ${isButtonEnabled}`} type="submit">
+        <button className={`my-6 btn btn-block btn-primary ${isButtonEnabled}`} type="submit" disabled={!isValid}>
           {t("button")}
         </button>
       </form>
