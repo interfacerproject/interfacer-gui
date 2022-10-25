@@ -16,6 +16,8 @@ import ContributorsTable from "../../components/ContributorsTable";
 import { useAuth } from "../../hooks/useAuth";
 import useStorage from "../../hooks/useStorage";
 import { EconomicResource } from "../../lib/types";
+import { UPDATE_METADATA } from "../../lib/QueryAndMutation";
+import AddStar from "../../components/AddStar";
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -62,17 +64,6 @@ const Asset = () => {
               bin
             }
           }
-        }
-      }
-    }
-  `;
-
-  const UPDATE_METADATA = gql`
-    mutation ($metadata: JSON!, $id: ID!) {
-      updateEconomicResource(resource: { id: $id, metadata: $metadata }) {
-        economicResource {
-          id
-          metadata
         }
       }
     }
@@ -135,13 +126,16 @@ const Asset = () => {
     <>
       {asset && (
         <>
-          <div className="w-full p-2 md:p-8">
-            <BrBreadcrumb
-              crumbs={[
-                { name: t("assets"), href: "/assets" },
-                { name: asset.conformsTo.name, href: `/assets?conformTo=${asset.conformsTo.id}` },
-              ]}
-            />
+          <div className="w-full p-2 md:p-8 flex flex-row">
+            <div className="flex-grow">
+              <BrBreadcrumb
+                crumbs={[
+                  { name: t("assets"), href: "/assets" },
+                  { name: asset.conformsTo.name, href: `/assets?conformTo=${asset.conformsTo.id}` },
+                ]}
+              />
+            </div>
+            <AddStar id={asset.id} metadata={asset.metadata} />
           </div>
           <div className="grid grid-cols-1 px-2 md:grid-cols-3 md:gap-4 md:px-0 md:mx-32">
             <div id="left-col" className="flex flex-col col-span-2">
