@@ -1,42 +1,51 @@
 import { KeyIcon, LinkIcon } from "@heroicons/react/solid";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
 import BrInput from "./brickroom/BrInput";
 
-const InvitationKey = ({ setStep }: { setStep: Dispatch<SetStateAction<number>> }) => {
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [invitationKey, setInvitationKey] = useState("");
-  const [error, setError] = useState("");
+//
+
+export interface FormValues {
+  invitationKey: string;
+}
+
+export interface InvitationKeyProps {
+  onSubmit: (data: FormValues) => void;
+}
+
+const InvitationKey = ({ onSubmit }: InvitationKeyProps) => {
   const { t } = useTranslation("signUpProps");
 
-  useEffect(() => {
-    if (invitationKey === process.env.NEXT_PUBLIC_INVITATION_KEY) {
-      setIsDisabled(false);
-      setError("");
-    } else {
-      setIsDisabled(true);
-    }
-  }, [invitationKey]);
+  /* Form setup */
 
-  const handleBlur = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    if (invitationKey === process.env.NEXT_PUBLIC_INVITATION_KEY) {
-      setError("");
-    } else {
-      setError(t("Please enter a valid invitation key"));
-    }
+  const defaultValues: FormValues = {
+    invitationKey: "",
   };
 
-  const onSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    if (invitationKey === process.env.NEXT_PUBLIC_INVITATION_KEY) {
-      setStep(1);
-    }
-  };
+  const schema = yup
+    .object({
+      invitationKey: yup.string().required().oneOf([process.env.NEXT_PUBLIC_INVITATION_KEY], "keyNotMatching"),
+    })
+    .required();
+
+  const form = useForm<FormValues>({
+    mode: "all",
+    resolver: yupResolver(schema),
+    defaultValues,
+  });
+
+  // Getting data from the form
+  const { formState, handleSubmit, register } = form;
+  const { errors, isValid } = formState;
+
+  //
 
   return (
     <>
+      {/* Info */}
       <div className="flex flex-row">
         <h2>{t("Got your keys?")}</h2>
         <KeyIcon className="w-8 h-8" />
@@ -51,16 +60,16 @@ const InvitationKey = ({ setStep }: { setStep: Dispatch<SetStateAction<number>> 
           </a>
         </Link>
       </p>
-      <form onSubmit={onSubmit} className="mt-2">
+
+      {/* The form */}
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-2">
         <BrInput
+          {...register("invitationKey")}
           type="text"
-          name="invitationKey"
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setInvitationKey(e.target.value)}
           label={t("invitation key&#58;*")}
-          onBlur={handleBlur}
-          error={error}
+          error={errors.invitationKey?.message}
         />
-        <button className="mt-4 btn btn-block btn-accent" type="submit" disabled={isDisabled}>
+        <button className="mt-4 btn btn-block btn-accent" type="submit" disabled={!isValid}>
           {t("Continue")}
         </button>
       </form>

@@ -89,8 +89,8 @@ const EmailVerificationForm = (props: SignUpProps) => {
     onSubmit();
   };
 
-  // Getting data to display from the form
-  const { formState } = form;
+  // Getting data from the form
+  const { formState, handleSubmit } = form;
   const { errors, isValid } = formState;
 
   const isButtonEnabled = !isValid ? "btn-disabled" : "";
@@ -106,7 +106,7 @@ const EmailVerificationForm = (props: SignUpProps) => {
         )}
       </p>
       {/* The form */}
-      <form onSubmit={form.handleSubmit(onValid)} className="space-y-8">
+      <form onSubmit={handleSubmit(onValid)} className="space-y-8">
         {/* Email */}
         <BrInput
           {...form.register("email")}
