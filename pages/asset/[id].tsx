@@ -135,7 +135,7 @@ const Asset = () => {
                 ]}
               />
             </div>
-            <AddStar id={asset.id} metadata={asset.metadata} />
+            <AddStar id={asset.id} metadata={asset.metadata} userId={user?.ulid} />
           </div>
           <div className="grid grid-cols-1 px-2 md:grid-cols-3 md:gap-4 md:px-0 md:mx-32">
             <div id="left-col" className="flex flex-col col-span-2">

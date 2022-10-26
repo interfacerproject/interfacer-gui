@@ -12,5 +12,6 @@
   "watch": "Watch",
   "add to list": "Add to list",
   "unwatch": "unwatch",
-  "stars": "Stars"
+  "star": "Star",
+  "unstar": "Unstar"
 }
