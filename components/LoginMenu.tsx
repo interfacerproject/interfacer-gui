@@ -1,7 +1,6 @@
+import Avatar from "boring-avatars";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
-import React from "react";
-import Avatar from "boring-avatars";
 
 export default function LoginBtn() {
   const { logout, user } = useAuth();
@@ -32,7 +31,7 @@ export default function LoginBtn() {
                   <p className="text-base-400 whitespace-nowrap test-2xs">{user?.username}</p>
                 </a>
               </Link>
-              <button className="text-left hover:text-accent" onClick={() => logout()}>
+              <button className="text-left hover:text-accent" onClick={() => logout()} data-test="signOut">
                 Sign Out
               </button>
             </div>

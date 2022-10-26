@@ -24,3 +24,7 @@ export function randomEmail() {
 export function getTextInput() {
   return cy.get("input[type=text]");
 }
+
+export function get(id: string) {
+  return cy.get(`[data-test="${id}"]`);
+}

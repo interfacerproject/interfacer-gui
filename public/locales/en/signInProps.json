@@ -1,4 +1,51 @@
 {
+  "enterEmail": {
+    "title": "Login",
+    "description": "Input the email address provided during the signup process.",
+    "label": "Your email:",
+    "placeholder": "alice@email.com",
+    "notRegistered": "Your email is not registered",
+    "button": "Next"
+  },
+  "chooseMode": {
+    "title": "Login",
+    "description": "Choose the login mode.",
+    "buttons": {
+      "passphrase": "Login via Passphrase",
+      "questions": "Login answering the signup questions"
+    }
+  },
+  "viaPassphrase": {
+    "title": "Login via passprhase 🔑",
+    "description": "Type in the passphrase generated during sign up.",
+    "field": {
+      "label": "Passphrase",
+      "questions": "Login answering the signup questions",
+      "placeholder": "state stumble clever trap excuse scheme world human ...",
+      "error": "The number of words has to be 12."
+    }
+  },
+  "viaQuestions": {
+    "title": "Login answering the signup questions 💬",
+    "description": "Please provide the answers given to the questions during signup"
+  },
+  "questions": {
+    "missingQuestions": "{{missingQuestions}} questions are missing!",
+    "questions": [
+      "Where my parents met?",
+      "What is the name of your first pet?",
+      "What is your home town?",
+      "What is the name of your first teacher?",
+      "What is the surname of your mother before wedding?"
+    ],
+    "next": "Next"
+  },
+  "buttons": {
+    "login": "Login",
+    "next": "Next"
+  },
+  "minQuestions": "Answer at least {{minQuestions}} questions",
+  "loginButton": "Login!",
   "title_step_0": "Login",
   "title_step_1": "Login",
   "title_step_2": "Login answering the signup questions 💬",

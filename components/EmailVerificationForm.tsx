@@ -34,9 +34,6 @@ const EmailVerificationForm = ({ onSubmit }: SignUpProps) => {
   // Loading translations
   const { t } = useTranslation("signUpProps");
 
-  // Unpacking props
-  // const { onSubmit, setEmail, setName, setUser, setHMAC } = props;
-
   // Getting function that checks for email
   const { register } = useAuth();
 
@@ -75,19 +72,6 @@ const EmailVerificationForm = ({ onSubmit }: SignUpProps) => {
     defaultValues,
   });
 
-  // // Submit function
-  // const onValid = async (data: SignUpFormValues) => {
-  //   setEmail(data.email);
-  //   setName(data.name);
-  //   setUser(data.user);
-
-  //   const result = await register(data.email, true);
-  //   setHMAC(result.keypairoomServer);
-
-  //   // Running the provided "onSubmit"
-  //   onSubmit();
-  // };
-
   // Getting data from the form
   const { formState, handleSubmit } = form;
   const { errors, isValid } = formState;
@@ -110,6 +94,7 @@ const EmailVerificationForm = ({ onSubmit }: SignUpProps) => {
           placeholder={t("email.placeholder")}
           help={t("email.help")}
           error={errors.email?.message}
+          testID="email"
         />
         {/* Name */}
         <BrInput
@@ -119,6 +104,7 @@ const EmailVerificationForm = ({ onSubmit }: SignUpProps) => {
           placeholder={t("name.placeholder")}
           help={t("name.help")}
           error={errors.name?.message}
+          testID="name"
         />
         {/* Username */}
         <BrInput
@@ -128,9 +114,15 @@ const EmailVerificationForm = ({ onSubmit }: SignUpProps) => {
           placeholder={t("user.placeholder")}
           help={t("user.help")}
           error={errors.user?.message}
+          testID="user"
         />
         {/* Submit button */}
-        <button className={`my-6 btn btn-block btn-primary ${isButtonEnabled}`} type="submit" disabled={!isValid}>
+        <button
+          className={`my-6 btn btn-block btn-primary ${isButtonEnabled}`}
+          type="submit"
+          disabled={!isValid}
+          data-test="submit"
+        >
           {t("button")}
         </button>
       </form>

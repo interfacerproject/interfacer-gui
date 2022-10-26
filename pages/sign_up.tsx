@@ -3,14 +3,16 @@ import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
 import { NextPageWithLayout } from "./_app";
 
 // Components
+// import { doLogin } from "lib/doLogIn";
+import Questions, { QuestionsNS } from "components/partials/auth/Questions";
 import EmailVerificationForm, { SignUpFormValues } from "../components/EmailVerificationForm";
 import InvitationKey from "../components/InvitationKey";
 import NRULayout from "../components/layout/NRULayout";
-import Questions, { QuestionsFormValues } from "../components/Questions";
 
 //
 
@@ -23,7 +25,9 @@ export async function getStaticProps({ locale }: any) {
 }
 
 const SignUp: NextPageWithLayout = () => {
-  const { t } = useTranslation(["signInProps"]);
+  const { t } = useTranslation(["signInProps"], {
+    keyPrefix: "step_questions",
+  });
 
   const { signup, keypair, login, register } = useAuth();
 
@@ -33,22 +37,18 @@ const SignUp: NextPageWithLayout = () => {
     user: "",
     HMAC: "",
     eddsaPublicKey: "",
-    question1: "",
-    question2: "",
-    question3: "",
-    question4: "",
-    question5: "",
     seed: "",
   });
 
   const [step, setStep] = useState(0);
-  const [signUpError, setSignUpError] = useState("");
+  const [error, setError] = useState("");
 
   function nextStep() {
     setStep(step + 1);
   }
 
-  const { getItem } = useStorage();
+  const { getItem, setItem } = useStorage();
+  const router = useRouter();
 
   async function submit1(data: SignUpFormValues) {
     // Registering email for HMAC
@@ -64,22 +64,10 @@ const SignUp: NextPageWithLayout = () => {
     nextStep();
   }
 
-  async function submit2(data: QuestionsFormValues) {
-    // Replacing empty fields from "null"
-    for (let key in data) {
-      // @ts-ignore
-      data[key] = data[key] === "" ? "null" : data[key];
-    }
-    // Creating keypair
-    await keypair({
-      ...data,
-      email: signUpData.email,
-      HMAC: signUpData.HMAC,
-    });
+  async function submit2(data: QuestionsNS.FormValues) {
     // Adding data
     setSignUpData({
       ...signUpData,
-      ...data,
       eddsaPublicKey: getItem("eddsa_public_key"),
       seed: getItem("seed"),
     });
@@ -95,17 +83,16 @@ const SignUp: NextPageWithLayout = () => {
         email: signUpData.email,
         eddsaPublicKey: signUpData.eddsaPublicKey,
       });
-      window.location.replace("/");
+
+      // await doLogin(signUpData.email, signUpData.seed, signUpData.HMAC, router, login, setItem);
     } catch (err) {
-      setSignUpError(err as string);
+      setError(err as string);
     }
   };
 
   return (
     <div className="grid h-full grid-cols-6 mt-2 md:mt-40">
       <div className="col-span-6 p-2 md:col-span-4 md:col-start-2 md:col-end-6">
-        <pre>{JSON.stringify(signUpData, null, 2)}</pre>
-
         {/* Step 0: invitation key */}
         {step === 0 && <InvitationKey onSubmit={nextStep} />}
 
@@ -113,21 +100,30 @@ const SignUp: NextPageWithLayout = () => {
         {step === 1 && <EmailVerificationForm onSubmit={submit1} />}
 
         {/* Step 2: User questions */}
-        {step === 2 && <Questions onSubmit={submit2} />}
+        {step === 2 && (
+          <>
+            <h2>{t("keyring_title")}</h2>
+            <p className="mt-4 mb-6">{t("subtitle_signup")}</p>
+            <p className="mb-4 font-semibold text-primary">{t("hint")}</p>
+            <Questions email={signUpData.email} HMAC={signUpData.HMAC} onSubmit={submit2} />
+          </>
+        )}
 
         {/* Step 3: User creation */}
         {step === 3 && (
           <div>
             {/* The seed – List of words */}
-            <p className="mt-4 mb-6">
+            <div className="mt-4 mb-6">
               <p>{t("reminder")}</p>
-              <span className="block p-4 mt-2 font-mono bg-white border rounded-md">{signUpData.seed}</span>
-            </p>
+              <span className="block p-4 mt-2 font-mono bg-white border rounded-md" data-test="passphrase">
+                {signUpData.seed}
+              </span>
+            </div>
 
-            {signUpError && <p>{signUpError}</p>}
+            {error && <p>{JSON.stringify(error)}</p>}
 
             {/* Submit button */}
-            <button className="btn btn-block btn-accent" onClick={signUp}>
+            <button className="btn btn-block btn-accent" onClick={signUp} data-test="signUpBtn">
               Sign up!
             </button>
           </div>

@@ -69,9 +69,10 @@ const VerifySeed = ({ email, HMAC }: { email: string; HMAC: string }) => {
           label={t("label")}
           placeholder={t("placeholder")}
           onChange={(e: ChangeEvent<HTMLInputElement>) => validateSeed(e.target.value)}
+          testID="seed"
         />
         <p className="text-[#8A8E96] mb-6">{t("help_text")}</p>
-        <button className="btn btn-block btn-accent" type="submit" onClick={onSubmit}>
+        <button className="btn btn-block btn-accent" type="submit" onClick={onSubmit} data-test="seedBtn">
           {t("button")}
         </button>
       </form>

@@ -70,8 +70,14 @@ const InvitationKey = ({ onSubmit }: InvitationKeyProps) => {
           type="text"
           label={t("invitationKey")}
           error={errors.invitationKey?.message}
+          testID="invitationKey"
         />
-        <button className="mt-4 btn btn-block btn-accent" type="submit" disabled={!isValid}>
+        <button
+          className="mt-4 btn btn-block btn-accent"
+          type="submit"
+          disabled={!isValid}
+          data-test="invitationButton"
+        >
           {t("invitationButton")}
         </button>
       </form>
