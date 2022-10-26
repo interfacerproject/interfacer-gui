@@ -1,14 +1,16 @@
 import React from "react";
 import Link from "next/link";
 import Avatar from "boring-avatars";
+import { useAuth } from "../hooks/useAuth";
 
 const AvatarUsers = ({ users }: { users: Array<{ name: string; id: string }> }) => {
+  const { user } = useAuth();
   return (
     <div className="avatar-group -space-x-6 h-20 w-32">
       {users?.map((u, i) => (
         <>
           {i < 4 && (
-            <Link key={u?.id} href={`/profile/${u?.id}`}>
+            <Link key={u?.id} href={!!user ? `/profile/${u?.id}` : "/sign_in"}>
               <a>
                 <div className="avatar">
                   <div className="w-9 hover:w-14">

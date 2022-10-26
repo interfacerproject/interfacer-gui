@@ -1,6 +1,7 @@
 import Avatar from "boring-avatars";
 import Link from "next/link";
 import { LocationMarkerIcon } from "@heroicons/react/solid";
+import { useAuth } from "../../hooks/useAuth";
 
 type BrDisplayUserProps = {
   id: string;
@@ -9,8 +10,9 @@ type BrDisplayUserProps = {
 };
 
 const BrDisplayUser = (props: BrDisplayUserProps) => {
+  const { user } = useAuth();
   return (
-    <Link href={`/profile/${props.id}`}>
+    <Link href={!!user ? `/profile/${props.id}` : "/sign_in"}>
       <a className="flex items-center pl-0">
         <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
           <div className="w-12 rounded-full">

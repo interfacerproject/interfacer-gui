@@ -4,8 +4,10 @@ import BrTags from "./brickroom/BrTags";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import AssetImage from "./AssetImage";
 import AvatarUsers from "./AvatarUsers";
+import { useAuth } from "../hooks/useAuth";
 
 const AssetsTableRow = (props: any) => {
+  const { user } = useAuth();
   const e = props.asset;
   const primaryIntent = e.node.primaryIntents[0];
   const metadata = primaryIntent?.resourceInventoriedAs.metadata;
@@ -26,7 +28,7 @@ const AssetsTableRow = (props: any) => {
                   />
                 </div>
               )}
-              <Link href={`/asset/${e.node.id}`} className="flex-auto">
+              <Link href={!!user ? `/asset/${e.node.id}` : "/sign_in"} className="flex-auto">
                 <a className="ml-1">
                   <h3 className="break-words whitespace-normal">{primaryIntent.resourceInventoriedAs?.name}</h3>
                 </a>
