@@ -1,5 +1,4 @@
 // Functionality
-import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
 
 // Form imports
@@ -9,6 +8,7 @@ import * as yup from "yup";
 
 // Components
 import BrInput from "components/brickroom/BrInput";
+import { ChildrenComponent as CC } from "components/brickroom/utils";
 
 //
 
@@ -24,10 +24,9 @@ export namespace EnterEmailNS {
 
 //
 
-export default function EnterEmail(props: EnterEmailNS.Props) {
+export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
   const { onSubmit } = props;
   const { t } = useTranslation("signInProps", { keyPrefix: "enterEmail" });
-  const { register } = useAuth();
 
   /* Form setup */
 
@@ -37,21 +36,9 @@ export default function EnterEmail(props: EnterEmailNS.Props) {
 
   const schema = yup
     .object({
-      email: yup
-        .string()
-        .email()
-        .required()
-        .test("email-exists", t("notRegistered"), async (value, testContext) => {
-          return await testEmail(value!);
-        }),
+      email: yup.string().email().required(),
     })
     .required();
-
-  // This function checks if the provided email exists
-  async function testEmail(email: string) {
-    const result = await register(email, false);
-    return result?.keypairoomServer ? true : false;
-  }
 
   // Creating form
   const form = useForm<EnterEmailNS.FormValues>({
@@ -83,6 +70,9 @@ export default function EnterEmail(props: EnterEmailNS.Props) {
           placeholder={t("placeholder")}
           testID="email"
         />
+
+        {/* Slot for errors */}
+        {props.children}
 
         {/* Submit button */}
         <button className="btn btn-block btn-primary" type="submit" data-test="submit" disabled={!isValid}>

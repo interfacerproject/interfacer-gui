@@ -1,5 +1,3 @@
-import { RouteMatcher } from "cypress/types/net-stubbing";
-
 export function randomString(length = 5) {
   let result = "";
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -10,13 +8,6 @@ export function randomString(length = 5) {
   return result;
 }
 
-export function waitForData(requestUrl: RouteMatcher = Cypress.env("NEXT_PUBLIC_ZENFLOWS_URL"), name = "waitForData") {
-  // Intercepting request and naming it
-  cy.intercept(requestUrl).as(name);
-  // Waiting for the request
-  cy.wait(`@${name}`);
-}
-
 export function randomEmail() {
   return `${randomString()}@${randomString()}.com`;
 }
@@ -25,6 +16,33 @@ export function getTextInput() {
   return cy.get("input[type=text]");
 }
 
+//
+
 export function get(id: string) {
   return cy.get(`[data-test="${id}"]`);
+}
+
+//
+
+const request = "request";
+
+export interface InterceptArgs {
+  url?: string;
+  name?: string;
+  method?: string;
+}
+
+export function intercept(args: InterceptArgs) {
+  const { url = Cypress.env("NEXT_PUBLIC_ZENFLOWS_URL") as string, name = request, method = "GET" } = args;
+
+  return cy
+    .intercept({
+      url,
+      method,
+    })
+    .as(name);
+}
+
+export function waitForData(name = request) {
+  return cy.wait(`@${name}`);
 }

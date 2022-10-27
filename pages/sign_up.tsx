@@ -5,52 +5,59 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
-import { NextPageWithLayout } from "./_app";
+import type { NextPageWithLayout } from "./_app";
+
+// Layout
+import NRULayout from "../components/layout/NRULayout";
+
+// Partials
+import Passphrase from "components/partials/auth/Passphrase";
+import Questions, { QuestionsNS } from "components/partials/auth/Questions";
+import AnswerQuestions from "components/partials/sign_up/AnswerQuestions";
+import InvitationKey from "components/partials/sign_up/InvitationKey";
+import UserData, { UserDataNS } from "components/partials/sign_up/UserData";
 
 // Components
-// import { doLogin } from "lib/doLogIn";
-import Questions, { QuestionsNS } from "components/partials/auth/Questions";
-import EmailVerificationForm, { SignUpFormValues } from "../components/EmailVerificationForm";
-import InvitationKey from "../components/InvitationKey";
-import NRULayout from "../components/layout/NRULayout";
+import BrAuthSuggestion from "components/brickroom/BrAuthSuggestion";
+import BrError from "components/brickroom/BrError";
 
 //
 
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["signUpProps", "signInProps"])),
+      ...(await serverSideTranslations(locale, ["signUpProps", "authProps"])),
     },
   };
 }
 
-const SignUp: NextPageWithLayout = () => {
-  const { t } = useTranslation(["signInProps"], {
-    keyPrefix: "step_questions",
-  });
+//
 
-  const { signup, keypair, login, register } = useAuth();
+const SignUp: NextPageWithLayout = () => {
+  const { signup, login, register } = useAuth();
+  const { getItem } = useStorage();
+  const router = useRouter();
+  const { t } = useTranslation("signUpProps");
+
+  //
 
   const [signUpData, setSignUpData] = useState({
     name: "",
     email: "",
     user: "",
     HMAC: "",
-    eddsaPublicKey: "",
-    seed: "",
   });
 
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
 
+  //
+
   function nextStep() {
     setStep(step + 1);
   }
 
-  const { getItem, setItem } = useStorage();
-  const router = useRouter();
-
-  async function submit1(data: SignUpFormValues) {
+  async function userDataSubmit(data: UserDataNS.FormValues) {
     // Registering email for HMAC
     const result = await register(data.email, true);
     const HMAC = result.keypairoomServer;
@@ -64,31 +71,24 @@ const SignUp: NextPageWithLayout = () => {
     nextStep();
   }
 
-  async function submit2(data: QuestionsNS.FormValues) {
-    // Adding data
-    setSignUpData({
-      ...signUpData,
-      eddsaPublicKey: getItem("eddsa_public_key"),
-      seed: getItem("seed"),
-    });
-    // Advancing
+  async function questionsSubmit(data: QuestionsNS.FormValues) {
     nextStep();
   }
 
   const signUp = async () => {
     try {
       await signup({
-        name: signUpData.name,
-        user: signUpData.user,
-        email: signUpData.email,
-        eddsaPublicKey: signUpData.eddsaPublicKey,
+        ...signUpData,
+        eddsaPublicKey: getItem("eddsa_public_key"),
       });
-
-      // await doLogin(signUpData.email, signUpData.seed, signUpData.HMAC, router, login, setItem);
+      await login({ email: signUpData.email });
+      router.push("/");
     } catch (err) {
-      setError(err as string);
+      setError(JSON.stringify(err));
     }
   };
+
+  //
 
   return (
     <div className="grid h-full grid-cols-6 mt-2 md:mt-40">
@@ -97,35 +97,32 @@ const SignUp: NextPageWithLayout = () => {
         {step === 0 && <InvitationKey onSubmit={nextStep} />}
 
         {/* Step 1: Collecting user data */}
-        {step === 1 && <EmailVerificationForm onSubmit={submit1} />}
+        {step === 1 && <UserData onSubmit={userDataSubmit} />}
 
         {/* Step 2: User questions */}
         {step === 2 && (
-          <>
-            <h2>{t("keyring_title")}</h2>
-            <p className="mt-4 mb-6">{t("subtitle_signup")}</p>
-            <p className="mb-4 font-semibold text-primary">{t("hint")}</p>
-            <Questions email={signUpData.email} HMAC={signUpData.HMAC} onSubmit={submit2} />
-          </>
+          <AnswerQuestions>
+            <Questions email={signUpData.email} HMAC={signUpData.HMAC} onSubmit={questionsSubmit} />
+          </AnswerQuestions>
         )}
 
         {/* Step 3: User creation */}
         {step === 3 && (
-          <div>
-            {/* The seed – List of words */}
-            <div className="mt-4 mb-6">
-              <p>{t("reminder")}</p>
-              <span className="block p-4 mt-2 font-mono bg-white border rounded-md" data-test="passphrase">
-                {signUpData.seed}
-              </span>
-            </div>
-
-            {error && <p>{JSON.stringify(error)}</p>}
+          <Passphrase>
+            {/* Displays eventual sign_up error */}
+            {error && <BrError>{error}</BrError>}
 
             {/* Submit button */}
             <button className="btn btn-block btn-accent" onClick={signUp} data-test="signUpBtn">
-              Sign up!
+              {t("EndButton")}
             </button>
+          </Passphrase>
+        )}
+
+        {/* Invitation to login */}
+        {(step == 0 || step == 1) && (
+          <div className="mt-8">
+            <BrAuthSuggestion linkText={t("Login.action")} baseText={t("Login.question")} url="/sign_in" />
           </div>
         )}
       </div>

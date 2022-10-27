@@ -74,7 +74,7 @@ export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
 
         {/* Submit button */}
         <button className="btn btn-block btn-primary" type="submit" data-test="submit" disabled={!isValid}>
-          {t("loginButton")}
+          {t("button")}
         </button>
       </form>
     </div>

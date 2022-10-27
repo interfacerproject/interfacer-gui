@@ -33,7 +33,7 @@ const Questions = (props: QuestionsNS.Props) => {
    * Texts and translations
    */
 
-  const { t } = useTranslation(["signInProps"], { keyPrefix: "questions" });
+  const { t } = useTranslation(["authProps"], { keyPrefix: "Questions" });
   const questions = Object.values(t("questions", { returnObjects: true }));
 
   /**
@@ -133,22 +133,28 @@ const Questions = (props: QuestionsNS.Props) => {
   return (
     <>
       {/* Hint */}
-      {!isValid && <p className="text-amber-500 font-bold">{t("missingQuestions", { missingQuestions })}</p>}
+      {!isValid && (
+        <p className="text-amber-500 font-bold" data-test="missingQuestions">
+          {t("missingQuestions", { missingQuestions })}
+        </p>
+      )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-8">
         {/* Iterating over "questions" to display fields */}
-        {questions.map((question, index) => (
-          <div key={index}>
-            <p className="font-bold">{question}</p>
-            <BrInput
-              type="text"
-              // @ts-ignore
-              {...register("question" + (index + 1))}
-              testID={"question" + (index + 1)}
-            />
-          </div>
-        ))}
+        <div className="space-y-4">
+          {questions.map((question, index) => (
+            <div key={index}>
+              <p className="font-bold">{question}</p>
+              <BrInput
+                type="text"
+                // @ts-ignore
+                {...register("question" + (index + 1))}
+                testID={"question" + (index + 1)}
+              />
+            </div>
+          ))}
+        </div>
 
         {/* Submit button */}
         <button className="btn btn-block btn-accent" type="submit" disabled={!isValid} data-test="submit">

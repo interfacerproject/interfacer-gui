@@ -1,6 +1,6 @@
 // Functionality
+import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
-import { useAuth } from "../hooks/useAuth";
 
 // Form imports
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,44 +8,40 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import { LinkIcon } from "@heroicons/react/solid";
-import Link from "next/link";
-import BrInput from "./brickroom/BrInput";
+import BrInput from "components/brickroom/BrInput";
 
 //
 
-export interface SignUpFormValues {
-  email: string;
-  name: string;
-  user: string;
+export namespace UserDataNS {
+  export interface FormValues {
+    email: string;
+    name: string;
+    user: string;
+  }
+
+  export interface Props {
+    onSubmit: (data: FormValues) => void;
+  }
 }
 
-type SignUpProps = {
-  onSubmit: (data: SignUpFormValues) => void;
-  // setEmail: (email: string) => void;
-  // setName: (name: string) => void;
-  // setUser: (user: string) => void;
-  // setHMAC: (HMAC: string) => void;
-};
-
 //
 
-const EmailVerificationForm = ({ onSubmit }: SignUpProps) => {
+export default function UserData({ onSubmit }: UserDataNS.Props) {
   // Loading translations
-  const { t } = useTranslation("signUpProps");
+  const { t } = useTranslation("signUpProps", { keyPrefix: "UserData" });
 
   // Getting function that checks for email
   const { register } = useAuth();
 
   /* Form setup */
 
-  const defaultValues: SignUpFormValues = {
+  const defaultValues: UserDataNS.FormValues = {
     email: "",
     name: "",
     user: "",
   };
 
-  const schema = yup
+  const schema: yup.AnyObjectSchema = yup
     .object({
       name: yup.string().required(),
       user: yup.string().required(),
@@ -53,7 +49,7 @@ const EmailVerificationForm = ({ onSubmit }: SignUpProps) => {
         .string()
         .email()
         .required()
-        .test("email-exists", "Provided e-mail already exists", async (value, testContext) => {
+        .test("email-exists", t("email.invalid"), async (value, testContext) => {
           return await testEmail(value!);
         }),
     })
@@ -66,7 +62,7 @@ const EmailVerificationForm = ({ onSubmit }: SignUpProps) => {
   }
 
   // Creating form
-  const form = useForm<SignUpFormValues>({
+  const form = useForm<UserDataNS.FormValues>({
     mode: "all",
     resolver: yupResolver(schema),
     defaultValues,
@@ -76,16 +72,16 @@ const EmailVerificationForm = ({ onSubmit }: SignUpProps) => {
   const { formState, handleSubmit } = form;
   const { errors, isValid } = formState;
 
-  const isButtonEnabled = !isValid ? "btn-disabled" : "";
-
-  /* */
+  //
 
   return (
-    <>
+    <div>
+      {/* Info */}
       <h2>{t("title")}</h2>
-      <p className="mt-4 mb-6">{t("presentation")}</p>
+      <p>{t("description")}</p>
+
       {/* The form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-8">
         {/* Email */}
         <BrInput
           {...form.register("email")}
@@ -117,28 +113,10 @@ const EmailVerificationForm = ({ onSubmit }: SignUpProps) => {
           testID="user"
         />
         {/* Submit button */}
-        <button
-          className={`my-6 btn btn-block btn-primary ${isButtonEnabled}`}
-          type="submit"
-          disabled={!isValid}
-          data-test="submit"
-        >
+        <button className="btn btn-block btn-primary" type="submit" disabled={!isValid} data-test="submit">
           {t("button")}
         </button>
       </form>
-
-      {/* Link alla registrazione */}
-      <p className="flex flex-row items-center">
-        <span>{t("register.question")}</span>
-        <Link href={"/sign_in"}>
-          <a className="flex flex-row font-semibold">
-            <LinkIcon className="w-5 h-5 mx-2" />
-            {t("register.answer")}
-          </a>
-        </Link>
-      </p>
-    </>
+    </div>
   );
-};
-
-export default EmailVerificationForm;
+}

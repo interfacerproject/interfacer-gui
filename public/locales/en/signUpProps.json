@@ -1,38 +1,43 @@
 {
-  "title": "Sign up",
-  "keyring_title": "Answer security questions to complete your signup 🧩",
-  "presentation": "The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase.",
-  "name": {
-    "label": "Your name",
-    "placeholder": "Type your name",
-    "help": "Your name is shown and visible to everyone"
+  "InvitationKey": {
+    "title": "Got your keys? 🔑",
+    "description": "You need an invitation phrase to proceed with your signup!",
+    "field": {
+      "label": "Invitation Key",
+      "placeholder": "124JHGL2K54236JKH"
+    },
+    "formError": "Please enter a valid invitation key",
+    "button": "Next"
   },
-  "user": {
-    "label": "Choose a username",
-    "placeholder": "Type your visible username",
-    "help": "Your username is used to identify you in the system"
+  "UserData": {
+    "title": "Sign up",
+    "description": "Please enter the required data.",
+    "email": {
+      "label": "Your email",
+      "placeholder": "alice@email.com",
+      "help": "The email address that will be used for your login",
+      "invalid": "This email has already been taken"
+    },
+    "name": {
+      "label": "Your name",
+      "placeholder": "Alice Armstrong",
+      "help": "This name is visible to all the users"
+    },
+    "user": {
+      "label": "Choose a username",
+      "placeholder": "Type your visible username",
+      "help": "The username is used to identify you in the system"
+    },
+    "button": "Next"
   },
-  "email": {
-    "label": "Your email",
-    "placeholder": "alice@email.com",
-    "help": "Your email address that will be used for your login",
-    "valid": "✅ your email free"
+  "AnswerQuestions": {
+    "title": "Answer these security questions to complete your signup 💬",
+    "description": "Remember the answers and keep them for later, as they are necessary for the log in.",
+    "hint": "Answer to at least 3 questions."
   },
-  "register": {
-    "question": "👌 You already have an account?",
-    "answer": "Login"
+  "Login": {
+    "question": "Already have an account? 👌",
+    "action": "Login"
   },
-  "questions": [
-    "Where did your parents meet?",
-    "What is the name of your first pet?",
-    "What is your home town?",
-    "What is the name of your first teacher?",
-    "What is your mother's maiden name?"
-  ],
-  "button": "Next step",
-  "invitationTitle": "Got your keys?",
-  "invitationPresentation": "You need an invitation phrase to proceed with your signup!",
-  "invitationButton": "Continue",
-  "invitationKey": "invitation key:*",
-  "invitationKeyError": "Please enter a valid invitation key"
+  "EndButton": "Register and login!"
 }
