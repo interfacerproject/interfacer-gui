@@ -266,7 +266,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
       />
       <BrRadio
         array={typeArray}
-        label={t("projectType.label")}
+        label={t("project_type_label")}
         hint={t("projectType.hint")}
         onChange={setAssetType}
         value={projectType}
