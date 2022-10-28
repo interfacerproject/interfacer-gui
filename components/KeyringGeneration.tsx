@@ -62,7 +62,7 @@ const KeyringGeneration = ({
       eddsaPublicKey,
     })
       .catch((err: string) => setError(err))
-      .then(() => window.location.replace("/logged_in"));
+      .then(() => window.location.replace("/"));
   };
   const nullAnswers = [question1, question2, question3, question4, question5].reduce((nullOccs, question) => {
     return question === "null" ? nullOccs + 1 : nullOccs;
@@ -99,7 +99,7 @@ const KeyringGeneration = ({
 
     await login({ email })
       .then(() => {
-        window.location.replace("/logged_in");
+        window.location.replace("/");
       })
       .catch((e: any) => setError(e));
   };

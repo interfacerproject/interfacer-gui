@@ -1,12 +1,12 @@
 import { gql, useQuery } from "@apollo/client";
-import { useAuth } from "../hooks/useAuth";
-import dayjs from "../lib/dayjs";
-import Link from "next/link";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import BrDisplayUser from "../components/brickroom/BrDisplayUser";
-import useStorage from "../hooks/useStorage";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Link from "next/link";
 import { useEffect } from "react";
+import BrDisplayUser from "../components/brickroom/BrDisplayUser";
+import { useAuth } from "../hooks/useAuth";
+import useStorage from "../hooks/useStorage";
+import dayjs from "../lib/dayjs";
 
 const QUERY_ASSETS = gql`
   query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
@@ -49,7 +49,7 @@ const Notification = () => {
   const { data, startPolling } = useQuery(QUERY_ASSETS, { variables: { last: 50 } });
   startPolling(4000);
   const notifications = data?.proposals.edges.filter((proposal: any) =>
-    proposal.node.primaryIntents[0]?.resourceInventoriedAs?.metadata?.contributors.some(
+    proposal.node.primaryIntents[0]?.resourceInventoriedAs?.metadata?.contributors?.some(
       (c: { id: string; name: string }) => c.id === user?.ulid
     )
   );
@@ -57,6 +57,9 @@ const Notification = () => {
     setInterval(() => {
       notifications?.map((n: any) => setItem(n.node.id, "read"));
     }, 2000);
+    if (getItem("watchedList")) {
+      const _watchedList = JSON.parse(getItem("watchedList"));
+    }
   }, [notifications]);
 
   return (

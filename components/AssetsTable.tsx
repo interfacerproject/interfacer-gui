@@ -1,7 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
+import { AdjustmentsIcon } from "@heroicons/react/outline";
+import cn from "classnames";
 import { useTranslation } from "next-i18next";
-import { useEffect } from "react";
-import devLog from "../lib/devLog";
+import { useEffect, useState } from "react";
 import AssetsTableRow from "./AssetsTableRow";
 import BrTable from "./brickroom/BrTable";
 import Spinner from "./brickroom/Spinner";
@@ -10,9 +11,13 @@ import Filters from "./Filters";
 const AssetsTable = ({
   filter,
   noPrimaryAccountableFilter = false,
+  hideHeader = false,
+  hidePagination = false,
 }: {
   filter?: any;
   noPrimaryAccountableFilter?: boolean;
+  hidePagination?: boolean;
+  hideHeader?: boolean;
 }) => {
   const { t } = useTranslation("lastUpdatedProps");
   const QUERY_ASSETS = gql`
@@ -106,6 +111,7 @@ const AssetsTable = ({
     }
   };
   const assets = data?.proposals.edges;
+  const showEmptyState = assets?.length === 0;
 
   // Poll interval that works with pagination
   useEffect(() => {
@@ -120,35 +126,64 @@ const AssetsTable = ({
     return () => clearInterval(intervalId);
   }, [...Object.values(variables!).flat(), data?.proposals.pageInfo.startCursor]);
 
-  devLog(data);
+  const [showFilter, setShowFilter] = useState(false);
+  const toggleFilter = () => setShowFilter(!showFilter);
 
   return (
-    <div className="grid grid-cols-1 gap-2 md:grid-cols-8">
+    <>
       {loading && (
-        <div className="col-span-8">
+        <div className="w-full">
           <Spinner />
         </div>
       )}
       {!loading && (
-        <>
-          <div className="col-span-6">
-            <BrTable headArray={t("tableHead", { returnObjects: true })}>
-              {assets?.map((e: any) => (
-                <AssetsTableRow asset={e} key={e.cursor} />
-              ))}
-            </BrTable>
-            <div className="grid grid-cols-1 gap-4 mt-4 place-items-center">
-              <button className="btn btn-primary" onClick={loadMore} disabled={!getHasNextPage}>
-                {t("Load more")}
+        <div className="flex flex-col">
+          {!hideHeader && (
+            <div className="flex items-center justify-between py-5">
+              <h3>{t("Assets")}</h3>
+              <button
+                onClick={toggleFilter}
+                className={cn(
+                  "gap-2 text-white-700 font-normal normal-case rounded-[4px] border-1 btn btn-sm btn-outline border-white-600 bg-white-100 hover:text-accent hover:bg-white-100",
+                  { "bg-accent text-white-100": showFilter }
+                )}
+              >
+                <AdjustmentsIcon className="w-5 h-5" /> {t("Filter by")}
               </button>
             </div>
+          )}
+          <div className="flex flex-col flex-col-reverse md:space-x-2 md:flex-row">
+            <div className="pt-5 grow md:pt-0">
+              <BrTable headArray={t("table_head", { returnObjects: true })}>
+                {assets?.map((e: any) => (
+                  <AssetsTableRow asset={e} key={e.cursor} />
+                ))}
+              </BrTable>
+              {showEmptyState ? (
+                <div className="mt-3 p-12 flex flex-col items-center justify-center bg-white rounded-md">
+                  <h4>{t("no_assets_found_title")}</h4>
+                  <p className="font-light text-white-700">{t("no_assets_found_content")}</p>
+                  {/* <h4>{t("Create a new asset")}</h4>
+                  <p className="pt-2 pb-5 font-light text-white-700">{t("empty_state_assets")}</p>
+                  <Link href="/create_asset">
+                    <a className="btn btn-accent btn-md">{t("Create asset")}</a>
+                  </Link> */}
+                </div>
+              ) : (
+                !hidePagination && (
+                  <div className="w-full pt-4 text-center">
+                    <button className="text-center btn btn-primary" onClick={loadMore} disabled={!getHasNextPage}>
+                      {t("Load more")}
+                    </button>
+                  </div>
+                )
+              )}
+            </div>
+            {showFilter && <Filters noPrimaryAccountableFilter={noPrimaryAccountableFilter} filter={filter} />}
           </div>
-          <div className="col-span-2">
-            <Filters noPrimaryAccountableFilter={noPrimaryAccountableFilter} filter={filter} />
-          </div>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

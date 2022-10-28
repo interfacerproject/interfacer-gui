@@ -1,14 +1,14 @@
 import Link from "next/link";
 
-import { useAuth } from "../hooks/useAuth";
 import { useTranslation } from "next-i18next";
+import { useAuth } from "../hooks/useAuth";
 
-import LoginBtn from "./LoginMenu";
+import IfSidebarDropdown from "./brickroom/IfSidebarDropdown";
 import { IfSidebarItemProps } from "./brickroom/IfSidebarItem";
 import IfSideBarLink, { IfSideBarLinkProps } from "./brickroom/IfSideBarLink";
-import IfSidebarDropdown from "./brickroom/IfSidebarDropdown";
+import LoginBtn from "./LoginMenu";
 
-import { BriefcaseIcon, ChatIcon, CubeIcon, HomeIcon, GlobeIcon, SupportIcon } from "@heroicons/react/outline";
+import { BriefcaseIcon, ChatIcon, CubeIcon, GlobeIcon, HomeIcon, SupportIcon } from "@heroicons/react/outline";
 
 //
 
@@ -19,13 +19,14 @@ function Sidebar() {
   const items: Record<string, IfSideBarLinkProps> = {
     home: {
       text: t("home"),
-      link: "/",
+      link: "/profile/my_profile",
       leftIcon: <HomeIcon className="w-5 h-5" />,
     },
     // Dropdown -> My stuff
     createAsset: {
       text: t("create_asset"),
       link: "/create_asset",
+      leftIcon: <CubeIcon className="w-5 h-5" />,
       tag: "NEW",
     },
     myAssets: {
@@ -42,6 +43,10 @@ function Sidebar() {
       link: "/resources",
       tag: "NEW",
     },
+    my_list: {
+      text: t("my_list"),
+      link: "/profile/my_profile?tab=1",
+    },
     reportBug: {
       text: t("report_bug"),
       link: "https://github.com/dyne/interfacer-gui/issues/new",
@@ -49,10 +54,10 @@ function Sidebar() {
       target: "_blank",
     },
     userGuide: {
-      text: t("user_guide"),
-      link: "/",
+      text: t("user_manual"),
+      link: "https://new.dyne.org/interfacer-docs/#/pages/user-manual/quickstart",
       leftIcon: <ChatIcon className="w-5 h-5" />,
-      disabled: true,
+      target: "_blank",
     },
     map: {
       text: t("map"),
@@ -69,7 +74,7 @@ function Sidebar() {
       leftIcon: <CubeIcon className="w-5 h-5" />,
     },
     myStuff: {
-      text: t("create_asset"),
+      text: t("assets"),
       leftIcon: <BriefcaseIcon className="w-5 h-5" />,
     },
   };
@@ -91,20 +96,18 @@ function Sidebar() {
         {/* The links */}
         <ul className="p-4 space-y-1">
           <IfSideBarLink {...items.home} />
+          <IfSideBarLink {...items.createAsset} />
 
           <IfSidebarDropdown {...drItems.myStuff}>
-            <IfSideBarLink {...items.createAsset} />
             <IfSideBarLink {...items.myAssets} />
-          </IfSidebarDropdown>
-
-          <IfSidebarDropdown {...drItems.assets}>
             <IfSideBarLink {...items.latestAssets} />
+            <IfSideBarLink {...items.my_list} />
             <IfSideBarLink {...items.resources} />
           </IfSidebarDropdown>
 
           <IfSideBarLink {...items.reportBug} />
           <IfSideBarLink {...items.userGuide} />
-          <IfSideBarLink {...items.map} />
+          {/*<IfSideBarLink {...items.map} />*/}
         </ul>
       </div>
 
