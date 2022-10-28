@@ -19,7 +19,7 @@ module.exports = {
     sourceType: "module",
   },
   //   parser: "@typescript-eslint/parser",
-  plugins: ["react", "prettier", "i18next"],
+  plugins: ["react", "prettier"],
   rules: {
     "i18next/no-literal-string": 2,
     "@next/next/no-img-element": "off",

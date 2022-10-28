@@ -7,6 +7,5 @@ module.exports = {
   },
   nonExplicitSupportedLngs: true,
   nsSeparator: false,
-  namespaceSeparator: false,
   keySeparator: false,
 };

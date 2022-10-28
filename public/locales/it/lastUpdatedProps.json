@@ -2,7 +2,7 @@
   "Latest assets": "Ultime attività",
   "Most recently updated assets": "Attività aggiornate più di recente",
   "Load more...": "Per saperne di più...",
-  "It looks like you haven't created an asset yet. Proceed by pressing the button below to create a new one": "Sembra che non abbiate ancora creato una risorsa. Procedete premendo il pulsante qui sotto per crearne una nuova.",
+  "It looks like you haven't created an asset yet&#46; Proceed by pressing the button below to create a new one": "Sembra che non abbiate ancora creato una risorsa&#46; Procedete premendo il pulsante sottostante per crearne una nuova.",
   "Asset": "Patrimonio",
   "Assets": "Attività",
   "Last update": "Ultimo aggiornamento",
@@ -16,6 +16,5 @@
   "Filter by": "Filtrare per",
   "Create a new asset": "Creare una nuova risorsa",
   "Create asset": "Creare una risorsa",
-  "Report a bug": "Segnala un bug",
-  "It looks like you haven't created an asset yet&#46; Proceed by pressing the button below to create a new one": "Sembra che non abbiate ancora creato una risorsa&#46; Procedete premendo il pulsante qui sotto per crearne una nuova."
+  "Report a bug": "Segnala un bug"
 }

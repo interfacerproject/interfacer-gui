@@ -2,7 +2,7 @@
   "Latest assets": "Derniers actifs",
   "Most recently updated assets": "Les actifs les plus récemment mis à jour",
   "Load more...": "Chargez plus...",
-  "It looks like you haven't created an asset yet. Proceed by pressing the button below to create a new one": "Il semble que vous n'ayez pas encore créé de ressource. Procédez en appuyant sur le bouton ci-dessous pour en créer un nouveau",
+  "It looks like you haven't created an asset yet&#46; Proceed by pressing the button below to create a new one": "Il semble que vous n'ayez pas encore créé d'actif&#46 ; Procédez en cliquant sur le bouton ci-dessous pour en créer un nouveau.",
   "Asset": "Actif",
   "Assets": "Actifs",
   "Last update": "Dernière mise à jour",
@@ -16,6 +16,5 @@
   "Filter by": "Filtrer par",
   "Create a new asset": "Créer un nouvel actif",
   "Create asset": "Créer un actif",
-  "Report a bug": "Signaler un bogue",
-  "It looks like you haven't created an asset yet&#46; Proceed by pressing the button below to create a new one": "Il semble que vous n'ayez pas encore créé d'actif&#46 ; Procédez en cliquant sur le bouton ci-dessous pour en créer un nouveau."
+  "Report a bug": "Signaler un bogue"
 }

@@ -1,4 +1,5 @@
 {
+  "Sign Out": "Esci",
   "Login": "Accesso",
   "Login answering the signup questions 💬": "Effettuare il login rispondendo alle domande di iscrizione 💬",
   "Login by providing your generated passphrase or by answering the questions during your Signup proccess": "Effettuare il login fornendo la passphrase generata o rispondendo alle domande durante il processo di registrazione.",
@@ -13,7 +14,7 @@
   "You can now choose to log in answering the previous questions or using this passphrase&#46;": "A questo punto si può scegliere di accedere rispondendo alle domande precedenti o utilizzando questa passphrase&#46;",
   "Answer to at least 3 questions&#46;": "Rispondere ad almeno 3 domande&#46;",
   "Answer": "Risposta",
-  "Answer to these questions to complete your signup 🧩": "Rispondere a queste domande per completare l'iscrizione 🧩",
+  "Answer to these questions to complete your signup 🧩": "Rispondete a queste domande per completare l'iscrizione 🧩",
   "Here’s your passprhase! 🔑": "Ecco il vostro passaporto! 🔑",
   "This passphrase is generated and are not stored on the server&#46; Keep a copy of it&#46;": "Questa passphrase viene generata e non viene memorizzata sul server&#46; Conservarne una copia&#46;",
   "User not found": "Utente non trovato",
@@ -28,8 +29,7 @@
   "Sign up": "Iscriviti",
   "Continue": "Continua",
   "Input the email address provided during the signup process&#46;": "Inserire l'indirizzo e-mail fornito durante la procedura di iscrizione&#46;",
-  "Your email:": "Il tuo indirizzo e-mail:",
+  "Your email&#x3a;": "La tua email&#x3a;",
   "alice@email&#46;com": "alice@email&#46;com",
-  "✌️  You don't have an account yet?": "✌️ Non hai ancora un account?",
-  "Your email&#x3a;": "La tua email&#x3a;"
+  "✌️  You don't have an account yet?": "✌️ Non hai ancora un account?"
 }

@@ -10,7 +10,7 @@
   "The user id is: {{id}}": "L'id utente è: {{id}}.",
   "Assets": "Attività",
   "My Assets": "I miei beni",
-  "Lists": "Elenchi",
-  "My Lists": "I miei elenchi",
+  "List": "Elenco",
+  "My List": "Il mio elenco",
   "Hi,&nbsp;": "Salve,&nbsp;"
 }

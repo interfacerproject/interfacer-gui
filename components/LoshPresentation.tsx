@@ -1,10 +1,10 @@
-import { LinkIcon } from "@heroicons/react/outline";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
-import MdParser from "../lib/MdParser";
 import { EconomicResource } from "../lib/types";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
+import { LinkIcon } from "@heroicons/react/outline";
+import Link from "next/link";
 import BrTags from "./brickroom/BrTags";
+import MdParser from "../lib/MdParser";
 
 const LoshPresentation = ({
   economicResource,
@@ -27,7 +27,7 @@ const LoshPresentation = ({
                 <a className="text-primary">{t("Losh asset")}</a>
               </Link>
             </p>
-            <span className="pt-4 text-primary">{t("ID: {{id}}", { id: economicResource.id })}</span>
+            <span className="pt-4 text-primary">ID: {economicResource.id}</span>
             {m && (
               <>
                 <div className="pt-12 text-primary">
@@ -38,7 +38,7 @@ const LoshPresentation = ({
                   </Link>
                 </div>
                 <div className="pt-12 prose" dangerouslySetInnerHTML={{ __html: MdParser.render(m.function) }} />
-                <img src={m.image} className="w-full py-10" alt="" />
+                <img src={m.image} className="w-full py-10" />
                 <BrTags tags={m.tags} />
               </>
             )}
@@ -52,15 +52,12 @@ const LoshPresentation = ({
               </span>
 
               <span className="pt-8">{t("Version: {{version}}", { version: m?.version })}</span>
-              <span className="pt-8">
-                {t("Version:")} {m?.version}
-              </span>
               {m?.okhv}
 
               {goToClaim && (
                 <>
                   <button type="button" className="mt-16 mr-8 w-72 btn btn-accent" onClick={goToClaim}>
-                    {t("Claim ownership")}
+                    {t("CLAIM OWNERSHIP")}
                   </button>
                   <button type="button" className="mt-3 mr-8 w-72 btn btn-outline">
                     {t("add to list +")}

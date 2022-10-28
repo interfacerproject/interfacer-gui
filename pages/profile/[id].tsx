@@ -70,7 +70,7 @@ const Profile: NextPage = () => {
                 <div className="flex flex-col">
                   <div className="flex flex-row">
                     <h2 className="pt-5 mb-6 mr-2">
-                      {isUser ? <>{t("Hi &nbsp;")}</> : <> </>}
+                      {isUser ? <>{t("hi")},&nbsp;</> : <> </>}
                       <span className="text-primary">{person?.name}</span>
                     </h2>
                     <div className="w-10 rounded-full">

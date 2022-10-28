@@ -1,11 +1,11 @@
 import { NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useRouter } from "next/router";
 import ResourceTable from "../components/ResourceTable";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
 const Resources: NextPage = () => {
-  const { conformTo } = useRouter().query;
+  const { conformTo, primaryAccountable } = useRouter().query;
   const filter: {
     conformsTo?: string[];
     primaryAccountable?: string[];
