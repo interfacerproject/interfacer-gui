@@ -1,8 +1,0 @@
-{
-  "title": "titolo",
-  "description": "descrizione",
-  "Load more": "Per saperne di più",
-  "filters": "filtri",
-  "empty_state_assets": "stato_vuoto_patrimonio",
-  "table_head": ["Attività", "Ultimo aggiornamento", "Proprietario", "Tag"]
-}

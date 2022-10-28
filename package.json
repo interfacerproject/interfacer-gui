@@ -12,6 +12,7 @@
     "check-types": "tsc --pretty --noEmit",
     "check-format": "prettier --check .",
     "check-lint": "eslint . --ext ts --ext tsx --ext js",
+    "i18n:collect": "i18next -c i18n-parser.config.mjs '{pages,components}/**/*.{js,ts,jsx,tsx}'",
     "reload": "pm2 startOrGracefulReload ecosystem.config.js",
     "cypress": "cypress open",
     "cypress:headless": "cypress run --config videoRecording=false",
