@@ -1,5 +1,7 @@
 {
   "title": "Costruire l'infrastruttura digitale per le Fab City",
+  "paragraph1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  "paragraph2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   "feature_title_0": "Creare",
   "feature_body_0": "Creare beni o importanti o importanti da LOSH",
   "feature_title_1": "Condividi",
@@ -13,7 +15,5 @@
   "feature_title_5": "Caratteristica 5",
   "feature_body_5": "Prossimamente",
   "cta_1": "Accedi",
-  "cta_2": "Per saperne di più",
-  "paragraph1": "Benvenuti nella messa in scena di Fabcity OS alpha di Interfacer 😎",
-  "paragraph2": "Creare o importare asset e collaborare con altri nella progettazione digitale o nella realizzazione di prodotti fisici."
+  "cta_2": "Per saperne di più"
 }

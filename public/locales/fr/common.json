@@ -5,11 +5,5 @@
   "Go to inventory": "Aller à l'inventaire",
   "This is a": "Il s'agit d'un",
   "Value of this asset": "Valeur de cet actif",
-  "Load more": "Chargez plus",
-  "assets": "actifs",
-  "contributorsHead": ["Nom d'utilisateur", "Date"],
-  "contributors": "contributeurs",
-  "watch": "regarder",
-  "add to list": "ajouter à la liste",
-  "unwatch": "débrancher"
+  "Load more": "Chargez plus"
 }

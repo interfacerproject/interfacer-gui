@@ -1,4 +1,4 @@
-import { getTextInput, randomEmail, randomString } from "../../utils";
+import { randomEmail, randomString, getTextInput } from "../../utils";
 
 describe("KeyringGeneration component", () => {
   it("should go to /sign_up and register a user (in order to go to keyring)", () => {
@@ -46,6 +46,6 @@ describe("KeyringGeneration component", () => {
     // Selecting "Login" button
     cy.get(".btn.btn-block.btn-accent").click();
     // The url should be now "/logged_in"
-    cy.url().should("eq", "http://localhost:3000/");
+    cy.url().should("include", "/logged_in");
   });
 });

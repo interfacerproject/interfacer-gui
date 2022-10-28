@@ -19,7 +19,7 @@
     "e2e": "pnpm build && start-server-and-test start http://localhost:3000 cypress",
     "e2e:headless": "pnpm build && start-server-and-test start http://localhost:3000 cypress:headless",
     "test": "pnpm build && start-server-and-test start http://localhost:3000 cypress:headless",
-    "translate": "./bin/translate.sh",
+    "translate": "pnpx json-autotranslate -s deepl-free -i public/locales -c YOUR_DEEPL_FREE_KEY",
     "prepare": "husky install",
     "release": "HUSKY=0 standard-version --no-verify",
     "types:generate": "graphql-codegen"

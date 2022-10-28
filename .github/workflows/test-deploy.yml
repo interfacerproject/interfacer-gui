@@ -1,4 +1,4 @@
-name: 🧪 & 🚀
+name: Test 🧪 and deploy 🚀 on staging
 on:
   push:
     branches:
@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,6 +18,16 @@ jobs:
 
     name: Test on Node v${{ matrix.node }}
     steps:
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          #cache: 'pnpm'
+          #cache-dependency-path: '**/pnpm-lock.yaml'
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -25,62 +35,21 @@ jobs:
       - name: Git Sumbodule Update
         run: |
           git submodule update --init
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          run_install: false
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Write local env file
-        run: cp .env.example .env.local
-      - run: pnpm run build
-      - name: Save build folder 🆙
-        uses: actions/upload-artifact@v3
-        with:
-          name: built
-          if-no-files-found: error
-          path: .next
-
-  e2e:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v3
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          run_install: false
-      - name: Download the built folders ⏬
-        uses: actions/download-artifact@v3
-        with:
-          name: built
-          path: .next
       - name: Write the cypress.env.json file 📝
         run: |
           echo '${{ secrets.CYPRESS_ENV_CI }}' > cypress.env.json
+      - name: Write local env file
+        run: cp .env.example .env.local
       - name: Cypress E2E tests 🧪
         uses: cypress-io/github-action@v4
         with:
-          start: npm run start
+          install: false
+          start: pnpm run dev
           wait-on: "http://localhost:3000"
           wait-on-timeout: 130
-          record: true 
+          record: true
           tag: node-${{ matrix.node }}
           browser: chrome
           config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
@@ -88,51 +57,26 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-
-  # components:
-  #   runs-on: ubuntu-latest
-  #   needs: [build, e2e]
-  #   steps:
-  #     - name: Checkout 🛎️
-  #       uses: actions/checkout@v3
-  #     - name: Set up pnpm
-  #       uses: pnpm/action-setup@v2
-  #       with:
-  #         version: latest
-  #         install: false
-  #     - name: Get pnpm store directory
-  #       id: pnpm-cache
-  #       shell: bash
-  #       run: |
-  #         echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-  #     - name: Download the built folders ⏬
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: built
-  #         path: .next
-  #     - name: Write the cypress.env.json file 📝
-  #       run: |
-  #         echo '${{ secrets.CYPRESS_ENV_CI }}' > cypress.env.json
-  #     - name: Cypress Component tests 🧪
-  #       uses: cypress-io/github-action@v4
-  #       with:
-  #         start: npm run start
-  #         command: npm run test:component
-  #         wait-on: "http://localhost:3000"
-  #         wait-on-timeout: 130
-  #         record: true
-  #         tag: node-${{ matrix.node }}
-  #         browser: chrome
-  #         config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
-  #       env:
-  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY_COMPONENTS }}
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         CYPRESS_PROJECT_ID: 7iq8xz
+      - name: Cypress Component tests 🧪
+        uses: cypress-io/github-action@v4
+        with:
+          install: false
+          start: pnpm run dev
+          command: pnpm run test:component
+          wait-on: "http://localhost:3000"
+          wait-on-timeout: 130
+          record: true
+          tag: node-${{ matrix.node }}
+          browser: chrome
+          config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY_COMPONENTS }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_PROJECT_ID: 7iq8xz
 
   deploy:
     name: 🚀 Deploy on staging server
-    # needs: [e2e, components]
-    needs: [e2e]
+    needs: tests
     if: github.ref == 'refs/heads/main'
     uses: dyne/workflows/.github/workflows/node-staging-deploy.yml@main
     secrets: inherit

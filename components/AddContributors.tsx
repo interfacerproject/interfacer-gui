@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { gql, useQuery } from "@apollo/client";
+import devLog from "../lib/devLog";
 import BrSearchableSelect from "./brickroom/BrSearchableSelect";
-import { useAuth } from "../hooks/useAuth";
 
 type AddContributorsProps = {
   initialContributors?: string[];
@@ -45,7 +45,6 @@ const AddContributors = ({
 }: AddContributorsProps) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [hasChanged, setHasChanged] = useState<boolean>(false);
-  const { user } = useAuth();
   const agents = useQuery(QUERY_AGENTS).data?.agents.edges.map((agent: any) => agent.node);
   useEffect(() => {
     if (agents && !hasChanged && initialContributors) {
@@ -57,15 +56,15 @@ const AddContributors = ({
       setHasChanged(true);
     }
   }, [agents]);
-  const filteredContributors = agents?.filter(
-    (contributor: { id: string; name: string }) =>
-      contributor.name.toLowerCase().includes(searchTerm.toLowerCase()) && contributor.id !== user?.ulid
+  const filteredContributors = agents?.filter((contributor: { id: string; name: string }) =>
+    contributor.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const handleSelect = (values: { value: string; label: string }[]) => {
     const updatedOptions = [...values].map((value: { value: string; label: string }) => ({
       id: value.value,
       name: value.label,
     }));
+    devLog("contributors", updatedOptions);
     setContributors(updatedOptions);
     setHasChanged(true);
   };

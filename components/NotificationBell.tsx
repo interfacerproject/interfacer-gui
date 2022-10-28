@@ -35,7 +35,7 @@ const QUERY_ASSETS = gql`
 const NotificationBell = () => {
   const { user } = useAuth();
   const { data, startPolling } = useQuery(QUERY_ASSETS, { variables: { last: 50 } });
-  startPolling(120000);
+  startPolling(4000);
   const { getItem } = useStorage();
   const notifications = data?.proposals.edges.filter((proposal: any) =>
     proposal.node.primaryIntents[0]?.resourceInventoriedAs?.metadata?.contributors?.some(

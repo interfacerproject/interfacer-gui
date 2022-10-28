@@ -2,7 +2,10 @@
   "title": "Titel",
   "description": "Beschreibung",
   "Load more": "Mehr laden",
-  "filters": "filtert",
-  "empty_state_assets": "leeres_Vermögen",
-  "table_head": ["Asset", "Letzte Aktualisierung", "Eigentümer", "Tags"]
+  "tableHead": ["Asset", "Letzte Aktualisierung", "Owner", "Tags"],
+  "filters": {
+    "filter for": "Filtern nach",
+    "contributors": "Mitwirkende",
+    "type": "Typ"
+  }
 }

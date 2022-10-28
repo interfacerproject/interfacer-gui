@@ -32,6 +32,6 @@ describe("KeyringGeneration component", () => {
 
     // Logging in
     cy.get(".btn.btn-block.btn-accent").click();
-    cy.url().should("eq", "http://localhost:3000/");
+    cy.url().should("include", "/logged_in");
   });
 });

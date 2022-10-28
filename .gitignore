@@ -41,6 +41,3 @@ cypress.env.json
 
 # IDE
 # .vscode
-
-# translate
-.json-autotranslate-cache/

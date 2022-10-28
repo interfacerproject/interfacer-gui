@@ -3,22 +3,20 @@ import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
 import cn from "classnames";
+import Tabs from "components/Tabs";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import AssetsTable from "../../components/AssetsTable";
-import BrTabs from "../../components/brickroom/BrTabs";
 import Spinner from "../../components/brickroom/Spinner";
 import { useAuth } from "../../hooks/useAuth";
-import useStorage from "../../hooks/useStorage";
 import devLog from "../../lib/devLog";
 
 const Profile: NextPage = () => {
-  const { getItem } = useStorage();
   const router = useRouter();
-  const { id, conformTo, tags, tab } = router.query;
+  const { id, conformTo, tags } = router.query;
   const { t } = useTranslation("ProfileProps");
   const FETCH_USER = gql(`query($id:ID!) {
   person(id:$id) {
@@ -34,15 +32,11 @@ const Profile: NextPage = () => {
   }
 }`);
   const { user } = useAuth();
-
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
   const idToBeFetch = isUser ? user?.ulid : id;
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
+  devLog("person", person);
   const filter = { primaryIntentsResourceInventoriedAsPrimaryAccountable: idToBeFetch };
-  const hasCollectedAssets = isUser && !!getItem("assetsCollected");
-  let collectedAssets: { primaryIntentsResourceInventoriedAsId: string[] } = {
-    primaryIntentsResourceInventoriedAsId: [],
-  };
   if (conformTo) {
     // @ts-ignore
     filter["primaryIntentsResourceInventoriedAsConformsTo"] = conformTo.split(",");
@@ -52,19 +46,13 @@ const Profile: NextPage = () => {
     filter["primaryIntentsResourceInventoriedAsClassifiedAs"] = tags.split(",");
   }
   devLog(user);
-  if (hasCollectedAssets) {
-    collectedAssets["primaryIntentsResourceInventoriedAsId"] = JSON.parse(getItem("assetsCollected"));
-  }
   return (
     <>
       {!person && <Spinner />}
       {person && (
         <>
-          <div className="relative h-128 md:h-72">
-            <div
-              className="w-full bg-center bg-cover h-128 md:h-72"
-              style={{ backgroundImage: "url('/profile_bg.jpeg')", filter: "blur(1px)" }}
-            />
+          <div className="relative">
+            <div className="w-full bg-center bg-cover h-72" />
             <div className="absolute w-full p-2 bottom-8 top-2 md:p-0 md:bottom-12 md:h-100">
               <div className="grid grid-cols-1 px-2 md:pt-8 md:grid-cols-2 md:pl-8">
                 <div className="flex flex-col">
@@ -89,44 +77,37 @@ const Profile: NextPage = () => {
                   </h4>
                 </div>
                 <div className="my-4 shadow md:mr-20 stats stats-vertical">
-                  <StatValue title={t("Goals")} value={42} trend={12} />
-                  <StatValue title={t("Strength")} value="58%" trend={2.02} />
+                  <StatValue title={t("Goals")} value={71.897} totals={70.946} trend={12} />
+                  <StatValue title={t("Strength")} value={10} totals={2.02} trend={-2.02} />
                 </div>
               </div>
             </div>
           </div>
           <div className="px-4 pt-32 md:mr-12 md:px-10 md:pt-0">
-            <BrTabs
-              initialTab={(typeof tab === "string" && parseInt(tab)) || undefined}
+            <Tabs
               tabsArray={[
                 {
                   title: (
                     <span className="flex items-center space-x-4">
                       <CubeIcon className="w-5 h-5 mr-1" />
-                      {t("assets")}
+                      {t("Assets")}
                     </span>
                   ),
-                  component: (
-                    <div>
-                      <h3 className="my-8">{isUser ? t("my assets") : t("assets")}</h3>
-                      <AssetsTable filter={filter} noPrimaryAccountableFilter hideHeader={true} />
-                    </div>
-                  ),
+                  component: <AssetsTable filter={filter} noPrimaryAccountableFilter />,
                 },
                 {
                   title: (
                     <span className="flex items-center space-x-4">
                       <ClipboardListIcon className="w-5 h-5 mr-1" />
-                      {t("list")}
+                      {t("Lists")}
                     </span>
                   ),
                   component: (
                     <div>
-                      <h3 className="my-8">{isUser ? t("my list") : t("list")}</h3>
-                      <AssetsTable filter={collectedAssets} hideHeader={true} />
+                      <h3 className="py-5">Lists</h3>
+                      {t("Coming soon")}
                     </div>
                   ),
-                  disabled: hasCollectedAssets,
                 },
               ]}
             />
@@ -137,7 +118,17 @@ const Profile: NextPage = () => {
   );
 };
 
-const StatValue = ({ title, value, trend }: { title: string; value: number | string; trend: number }) => {
+const StatValue = ({
+  title,
+  value,
+  totals,
+  trend,
+}: {
+  title: string;
+  value: number;
+  totals: number;
+  trend: number;
+}) => {
   const { t } = useTranslation("ProfileProps");
   const positive = trend > 0;
 
@@ -159,7 +150,12 @@ const StatValue = ({ title, value, trend }: { title: string; value: number | str
         </span>
       </div>
       <div className="stat-title">{title}</div>
-      <div className="text-2xl font-semibold stat-value text-primary font-display">{value}&nbsp;</div>
+      <div className="text-2xl font-semibold stat-value text-primary font-display">
+        {value}&nbsp;
+        <span className="text-sm font-normal text-slate-300">
+          {t("from")}&nbsp;{totals}
+        </span>
+      </div>
     </div>
   );
 };

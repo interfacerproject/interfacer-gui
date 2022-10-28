@@ -1,15 +1,84 @@
 {
-  "headline": "Titolo",
-  "generalInfo": "generalInfo",
-  "projectType": "progettoTipo",
-  "projectName": "nomeprogetto",
-  "projectDescription": "progettoDescrizione",
-  "repositoryOrId": "repositoryOrId",
-  "imageUpload": "caricamento dell'immagine",
-  "projectTags": "progettoTags",
-  "location": "posizione",
-  "price": "prezzo",
-  "contributors": "collaboratori",
+  "headline": {
+    "title": "Creare una nuova risorsa",
+    "description": "Assicuratevi di leggere le Linee guida della comunità prima di creare una nuova risorsa."
+  },
+  "generalInfo": {
+    "title": "Informazioni generali",
+    "description": "Aiutateci a visualizzare correttamente la vostra risorsa."
+  },
+  "projectType": {
+    "label": "Selezionare il tipo di risorsa:",
+    "array": [
+      {
+        "id": "Design",
+        "name": "Design",
+        "value": "Design",
+        "label": "La risorsa sarebbe disponibile a chiunque abbia il link"
+      },
+      {
+        "id": "Servizio",
+        "name": "Servizio",
+        "value": "Servizio",
+        "label": "Solo i membri di questa risorsa potranno accedere a"
+      },
+      {
+        "id": "Prodotto",
+        "name": "Prodotto",
+        "value": "Prodotto",
+        "label": "Lei è l'unico in grado di accedere a questa risorsa."
+      }
+    ],
+    "hint": "Fare riferimento agli standard che vogliamo seguire per questo campo."
+  },
+  "projectName": {
+    "label": "nome dell'attività:",
+    "placeholder": "Ad esempio Fabulaser",
+    "hint": "Nome di lavoro del modulo delle risorse"
+  },
+  "projectDescription": {
+    "label": "Descrizione breve ma concisa di questa risorsa:",
+    "placeholder": "Ad esempio, una fresa laser open source a portata di mano.",
+    "hint": "Breve descrizione da visualizzare nella pagina della risorsa"
+  },
+  "repositoryOrId": {
+    "label": "Collegamento al repository o ID dell'interfaccia:",
+    "placeholder": "Ad esempio, github.com/my-repo",
+    "hint": "Riferimento al repository in cui è sviluppata la documentazione tecnica"
+  },
+  "imageUpload": {
+    "label": "Caricare fino a 10 immagini:",
+    "placeholder": "SVG, PNG, JPG o GIF (max. 800x400px)",
+    "hint": "SVG, PNG, JPG o GIF (max. 800x400px)",
+    "clickToUpload": "Click per iniziare a caricare"
+  },
+  "projectTags": {
+    "label": "Tag:",
+    "hint": "premere spazio o return per aggiungere i tag",
+    "placeholder": "Ad esempio, laser cutter, open source, stampa 3d"
+  },
+  "location": {
+    "name": {
+      "label": "Nome della località:",
+      "placeholder": "Ad esempio, il Magazzino Amburg",
+      "hint": "Nome breve per indicare la località"
+    },
+    "address": {
+      "label": "Indirizzo:",
+      "placeholder": "An d. Alsterschleife 3, 22399 - Amburgo, Germania",
+      "hint": "indirizzo"
+    }
+  },
+  "price": {
+    "label": "Valore in gettoni Fab:",
+    "placeholder": "Ad esempio, 1 gettone Fab",
+    "hint": "Breve descrizione da visualizzare nella pagina della risorsa"
+  },
+  "contributors": {
+    "label": "Collaboratori:",
+    "placeholder": "Ricerca agenti per nome",
+    "hint": "I collaboratori devono avere un account"
+  },
   "button": "Salva",
   "go to the asset": "Vai alla risposta",
   "resourceSpec": "73u648QASpCtC80ihY0KLg",

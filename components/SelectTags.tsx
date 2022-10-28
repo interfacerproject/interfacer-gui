@@ -54,7 +54,7 @@ const SelectTags = ({
     <>
       <BrSearchableSelect
         options={options}
-        value={selectedTags?.map(tag => ({ value: tag, label: tag }))}
+        value={selectedTags?.filter(Boolean).map(tag => ({ value: tag, label: tag }))}
         onInputChange={setInputValue}
         onChange={getTags}
         label={label}

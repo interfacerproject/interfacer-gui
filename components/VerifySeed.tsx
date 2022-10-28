@@ -64,7 +64,7 @@ const VerifySeed = ({ email, HMAC }: { email: string; HMAC: string }) => {
       <p className="mt-4 mb-6">{t("subtitle")}</p>
       <form onSubmit={onSubmit}>
         <BrInput
-          name="validateSeed"
+          type="text"
           error={error}
           label={t("label")}
           placeholder={t("placeholder")}

@@ -1,7 +1,28 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import BrSearchableSelect from "./brickroom/BrSearchableSelect";
-import { useQuery } from "@apollo/client";
-import { QUERY_VARIABLES } from "../lib/QueryAndMutation";
+import { gql, useQuery } from "@apollo/client";
+import devLog from "../lib/devLog";
+
+const QUERY_VARIABLES = gql`
+  query {
+    instanceVariables {
+      specs {
+        specProjectDesign {
+          name
+          id
+        }
+        specProjectProduct {
+          name
+          id
+        }
+        specProjectService {
+          name
+          id
+        }
+      }
+    }
+  }
+`;
 
 type SelectAssetTypeProps = {
   onChange: Dispatch<SetStateAction<{ value: string; label: string }[]>>;
@@ -16,7 +37,7 @@ type SelectAssetTypeProps = {
 const SelectAssetType = ({ onChange, label, hint, error, assetType, initialTypes }: SelectAssetTypeProps) => {
   const [inputValue, setInputValue] = useState("");
   const [hasChanged, setHasChanged] = useState(false);
-  const instanceVariables = useQuery(QUERY_VARIABLES()).data?.instanceVariables.specs;
+  const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables.specs;
   useEffect(() => {
     if (instanceVariables && !hasChanged) {
       onChange(

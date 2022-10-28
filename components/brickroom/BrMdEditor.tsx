@@ -12,7 +12,6 @@ type BrMdEditorProps = {
   label?: string;
   editorClass?: string;
   testID?: string;
-  subTitle?: string;
 };
 
 const MdEditor = dynamic(async () => await import("react-markdown-editor-lite"), {
@@ -20,17 +19,12 @@ const MdEditor = dynamic(async () => await import("react-markdown-editor-lite"),
   suspense: true,
 });
 
-const BrMdEditor = ({ className, onChange, error, hint, label, editorClass, testID, subTitle }: BrMdEditorProps) => {
+const BrMdEditor = ({ className, onChange, error, hint, label, editorClass, testID }: BrMdEditorProps) => {
   return (
     <div className={className}>
-      <label className="label pb-0">
+      <label className="label">
         <h4 className="label-text capitalize">{label}</h4>
-        <br />
       </label>
-      <label className="label pt-0">
-        <span className="label-text-alt">{subTitle}</span>
-      </label>
-
       <div data-test={testID}>
         <MdEditor className={editorClass} renderHTML={text => MdParser.render(text)} onChange={onChange} />
       </div>

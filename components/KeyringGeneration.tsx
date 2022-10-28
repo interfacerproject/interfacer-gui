@@ -1,8 +1,8 @@
 import { useTranslation } from "next-i18next";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import useStorage from "../hooks/useStorage";
 import devLog from "../lib/devLog";
+import useStorage from "../hooks/useStorage";
 import BrInput from "./brickroom/BrInput";
 
 const KeyringGeneration = ({
@@ -62,7 +62,7 @@ const KeyringGeneration = ({
       eddsaPublicKey,
     })
       .catch((err: string) => setError(err))
-      .then(() => window.location.replace("/"));
+      .then(() => window.location.replace("/logged_in"));
   };
   const nullAnswers = [question1, question2, question3, question4, question5].reduce((nullOccs, question) => {
     return question === "null" ? nullOccs + 1 : nullOccs;
@@ -99,7 +99,7 @@ const KeyringGeneration = ({
 
     await login({ email })
       .then(() => {
-        window.location.replace("/");
+        window.location.replace("/logged_in");
       })
       .catch((e: any) => setError(e));
   };
@@ -122,7 +122,6 @@ const KeyringGeneration = ({
             {/* Iterating over "questions" to display fields */}
             {[].concat(t("questions", { returnObjects: true })).map((question: string, index: number) => (
               <BrInput
-                name={question}
                 type="text"
                 key={index}
                 error={fillMoreAnswer(mapQuestions(index + 1)!.question)}

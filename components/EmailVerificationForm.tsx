@@ -1,9 +1,9 @@
-import { LinkIcon } from "@heroicons/react/solid";
-import { useTranslation } from "next-i18next";
-import Link from "next/link";
-import { ChangeEvent, useState } from "react";
-import { useAuth } from "../hooks/useAuth";
 import BrInput from "./brickroom/BrInput";
+import { ChangeEvent, useState } from "react";
+import { useTranslation } from "next-i18next";
+import { useAuth } from "../hooks/useAuth";
+import Link from "next/link";
+import { LinkIcon } from "@heroicons/react/solid";
 
 type SignUpProps = {
   HMAC: string;
@@ -48,7 +48,6 @@ const EmailVerificationForm = ({ HMAC, setHMAC, onSubmit, setEmail, setName, set
       <p className="mt-4 mb-6">{t("presentation")}</p>
       <form onSubmit={onSubmit}>
         <BrInput
-          name="email"
           type="email"
           error={yetRegisteredEmail}
           hint={emailValid}
@@ -58,7 +57,6 @@ const EmailVerificationForm = ({ HMAC, setHMAC, onSubmit, setEmail, setName, set
           onBlur={(e: ChangeEvent<HTMLInputElement>) => verifyEmail({ email: e.target.value })}
         />
         <BrInput
-          name="name"
           type="text"
           label={t("name.label")}
           help={t("name.help")}
@@ -66,7 +64,6 @@ const EmailVerificationForm = ({ HMAC, setHMAC, onSubmit, setEmail, setName, set
           onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
         />
         <BrInput
-          name="username"
           type="text"
           placeholder={t("user.placeholder")}
           label={t("user.label")}

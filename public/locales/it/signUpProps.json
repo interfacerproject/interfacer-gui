@@ -31,8 +31,8 @@
   "button": "Passo successivo",
   "keyring_title": "Rispondete a queste domande per completare l'iscrizione 🧩",
   "invitationTitle": "Hai le chiavi?",
-  "invitationPresentation": "Per procedere all'iscrizione è necessaria una frase di invito!",
+  "invitationPresentation": "Per procedere con l'iscrizione è necessaria una frase di invito!",
   "invitationButton": "Continua",
-  "invitationKey": "chiave di invito:*",
-  "invitationKeyError": "Inserire una chiave d'invito valida"
+  "invitationKey": "chiave d'invito:*",
+  "invitationKeyError": "Inserire una chiave di invito valida"
 }

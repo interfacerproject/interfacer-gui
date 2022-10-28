@@ -3,21 +3,19 @@ import { ReactElement, useState } from "react";
 type TabsProps = Array<{
   title: ReactElement | string;
   component: ReactElement<any, any>;
-  disabled?: boolean;
 }>;
 
-const BrTabs = ({ tabsArray, initialTab = 0 }: { tabsArray: TabsProps; initialTab?: number }) => {
-  const [tab, setTab] = useState(initialTab);
+const Tabs = ({ tabsArray }: { tabsArray: TabsProps }) => {
+  const [tab, setTab] = useState(0);
 
   return (
     <>
-      <div className="tabs text-primary">
+      <div className="tabs">
         {tabsArray.map((t, i) => (
           <a
             key={i}
             className={cn("tab tab-bordered pb-9", {
               "tab-active text-primary": i === tab,
-              "tab-disabled": tabsArray[i].disabled,
             })}
             onClick={() => setTab(i)}
           >
@@ -29,4 +27,4 @@ const BrTabs = ({ tabsArray, initialTab = 0 }: { tabsArray: TabsProps; initialTa
     </>
   );
 };
-export default BrTabs;
+export default Tabs;

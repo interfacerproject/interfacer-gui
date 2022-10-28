@@ -11,10 +11,8 @@
   "create_asset": "Créer un actif",
   "my_assets": "Mes atouts",
   "assets": "Actifs",
-  "latest_assets": "Tous les actifs",
+  "latest_assets": "Derniers actifs",
   "imported_losh": "Importé de LOSH",
   "user_guide": "Guide de l'utilisateur",
-  "report_bug": "Signaler un bogue",
-  "user_manual": "Manuel d'utilisation",
-  "my_list": "Ma liste"
+  "report_bug": "Signaler un bogue"
 }

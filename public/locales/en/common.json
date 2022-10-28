@@ -8,10 +8,5 @@
   "Load more": "Load more...",
   "assets": "Assets",
   "contributorsHead": ["UserName", "Date"],
-  "contributors": "Contributors",
-  "watch": "Watch",
-  "add to list": "Add to list",
-  "unwatch": "unwatch",
-  "star": "Star",
-  "unstar": "Unstar"
+  "contributors": "Contributors"
 }

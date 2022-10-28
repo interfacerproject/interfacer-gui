@@ -31,23 +31,21 @@ const BrThumbinailsGallery = ({ images }: { images: string[] | undefined }) => {
               </SwiperSlide>
             ))}
           </Swiper>
-          {images.length > 1 && (
-            <Swiper
-              onSwiper={setThumbsSwiper}
-              spaceBetween={10}
-              slidesPerView={4}
-              freeMode={true}
-              watchSlidesProgress={true}
-              modules={[FreeMode, Navigation, Thumbs]}
-              className="mySwiper"
-            >
-              {images.map((image, index) => (
-                <SwiperSlide key={index}>
-                  <img src={image} />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          )}
+          <Swiper
+            onSwiper={setThumbsSwiper}
+            spaceBetween={10}
+            slidesPerView={4}
+            freeMode={true}
+            watchSlidesProgress={true}
+            modules={[FreeMode, Navigation, Thumbs]}
+            className="mySwiper"
+          >
+            {images.map((image, index) => (
+              <SwiperSlide key={index}>
+                <img src={image} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </>
       )}
     </>

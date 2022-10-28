@@ -11,10 +11,8 @@
   "create_asset": "Crea attività",
   "my_assets": "I miei beni",
   "assets": "Attività",
-  "latest_assets": "Tutte le attività",
+  "latest_assets": "Ultime attività",
   "imported_losh": "Importato da LOSH",
   "user_guide": "Guida per l'utente",
-  "report_bug": "Segnala un bug",
-  "user_manual": "Manuale d'uso",
-  "my_list": "La mia lista"
+  "report_bug": "Segnala un bug"
 }

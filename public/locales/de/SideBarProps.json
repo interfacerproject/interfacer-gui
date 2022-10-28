@@ -11,10 +11,8 @@
   "create_asset": "Anlage erstellen",
   "my_assets": "Mein Vermögen",
   "assets": "Vermögenswerte",
-  "latest_assets": "Alle Vermögenswerte",
+  "latest_assets": "Letzte Vermögenswerte",
   "imported_losh": "Eingeführt von LOSH",
   "user_guide": "Benutzerhandbuch",
-  "report_bug": "Einen Fehler melden",
-  "user_manual": "Benutzerhandbuch",
-  "my_list": "Meine Liste"
+  "report_bug": "Einen Fehler melden"
 }

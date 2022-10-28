@@ -81,10 +81,10 @@ const Sign_in: NextPageWithLayout = () => {
               {step === 1 && (
                 <>
                   <BrInput
-                    name="email"
                     type="email"
                     label={t("email.label")}
                     error={errorMail}
+                    className={"w-full"}
                     placeholder={t("email.placeholder")}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                   />
