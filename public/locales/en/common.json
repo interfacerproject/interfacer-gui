@@ -11,5 +11,7 @@
   "contributors": "Contributors",
   "watch": "Watch",
   "add to list": "Add to list",
-  "unwatch": "unwatch"
+  "unwatch": "unwatch",
+  "star": "Star",
+  "unstar": "Unstar"
 }
