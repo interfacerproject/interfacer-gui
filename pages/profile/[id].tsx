@@ -89,8 +89,8 @@ const Profile: NextPage = () => {
                   </h4>
                 </div>
                 <div className="my-4 shadow md:mr-20 stats stats-vertical">
-                  <StatValue title={t("Goals")} value={71.897} totals={70.946} trend={12} />
-                  <StatValue title={t("Strength")} value={10} totals={2.02} trend={-2.02} />
+                  <StatValue title={t("Goals")} value={42} trend={12} />
+                  <StatValue title={t("Strength")} value="58%" trend={2.02} />
                 </div>
               </div>
             </div>
@@ -103,12 +103,12 @@ const Profile: NextPage = () => {
                   title: (
                     <span className="flex items-center space-x-4">
                       <CubeIcon className="w-5 h-5 mr-1" />
-                      {t("Assets")}
+                      {t("assets")}
                     </span>
                   ),
                   component: (
                     <div>
-                      <h3 className="my-8">{t("My Assets")}</h3>
+                      <h3 className="my-8">{isUser ? t("my assets") : t("assets")}</h3>
                       <AssetsTable filter={filter} noPrimaryAccountableFilter hideHeader={true} />
                     </div>
                   ),
@@ -117,12 +117,12 @@ const Profile: NextPage = () => {
                   title: (
                     <span className="flex items-center space-x-4">
                       <ClipboardListIcon className="w-5 h-5 mr-1" />
-                      {t("Lists")}
+                      {t("list")}
                     </span>
                   ),
                   component: (
                     <div>
-                      <h3 className="my-8">{t("My Lists")}</h3>
+                      <h3 className="my-8">{isUser ? t("my list") : t("list")}</h3>
                       <AssetsTable filter={collectedAssets} hideHeader={true} />
                     </div>
                   ),
@@ -137,17 +137,7 @@ const Profile: NextPage = () => {
   );
 };
 
-const StatValue = ({
-  title,
-  value,
-  totals,
-  trend,
-}: {
-  title: string;
-  value: number;
-  totals: number;
-  trend: number;
-}) => {
+const StatValue = ({ title, value, trend }: { title: string; value: number | string; trend: number }) => {
   const { t } = useTranslation("ProfileProps");
   const positive = trend > 0;
 
@@ -169,12 +159,7 @@ const StatValue = ({
         </span>
       </div>
       <div className="stat-title">{title}</div>
-      <div className="text-2xl font-semibold stat-value text-primary font-display">
-        {value}&nbsp;
-        <span className="text-sm font-normal text-slate-300">
-          {t("from")}&nbsp;{totals}
-        </span>
-      </div>
+      <div className="text-2xl font-semibold stat-value text-primary font-display">{value}&nbsp;</div>
     </div>
   );
 };

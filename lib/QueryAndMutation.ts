@@ -238,3 +238,14 @@ export const QUERY_RESOURCE = gql`
     }
   }
 `;
+
+export const UPDATE_METADATA = gql`
+  mutation ($metadata: JSON!, $id: ID!) {
+    updateEconomicResource(resource: { id: $id, metadata: $metadata }) {
+      economicResource {
+        id
+        metadata
+      }
+    }
+  }
+`;
