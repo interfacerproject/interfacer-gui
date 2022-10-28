@@ -1,14 +1,12 @@
 {
-  "hi": "Ciao",
-  "description": "en: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque pellentesque hendrerit ultrices mauris et non pellentesque suspendisse est.",
-  "activity by the user": "activity by the user",
-  "saved list": "Saved list",
-  "your stats": "Your stats",
-  "statText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  "goals": "Goals",
-  "strength": "Strength",
-  "lorem ipsum": "lorem ipsum",
-  "dolor sit amet": "dolor sit amet",
-  "user id title": "id utente titolo",
-  "other user id title": "altro titolo id utente"
+  "Assets": "Attività",
+  "description": "descrizione",
+  "Goals": "Obiettivi",
+  "Hi &nbsp;": "Ciao &nbsp;",
+  "Lists": "Elenchi",
+  "My Assets": "I miei beni",
+  "My Lists": "I miei elenchi",
+  "other user id title": "altro titolo id utente",
+  "Strength": "La forza",
+  "user id title": "id utente titolo"
 }

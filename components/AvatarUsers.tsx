@@ -1,10 +1,9 @@
-import React from "react";
-import Link from "next/link";
 import Avatar from "boring-avatars";
+import Link from "next/link";
 
 const AvatarUsers = ({ users }: { users: Array<{ name: string; id: string }> }) => {
   return (
-    <div className="avatar-group -space-x-6 h-20 w-32">
+    <div className="w-32 h-20 -space-x-6 avatar-group">
       {users?.map((u, i) => (
         <>
           {i < 4 && (
@@ -18,7 +17,6 @@ const AvatarUsers = ({ users }: { users: Array<{ name: string; id: string }> }) 
                       variant="beam"
                       colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
                     />
-                    ;
                   </div>
                 </div>
               </a>

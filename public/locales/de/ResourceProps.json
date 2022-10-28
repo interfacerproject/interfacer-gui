@@ -1,7 +1,10 @@
 {
-  "assigned to:": "Assigne to:",
-  "current location:": "Current location:",
-  "Claim Ownership": "Anspruch auf Eigentumstitel",
-  "claim your ownership over this asset": "Ihr Eigentum an diesem Vermögenswert geltend machen",
-  "description:": "Beschreibung:"
+  "add to list +": "zur Liste hinzufügen +",
+  "by": "von",
+  "Claim ownership": "Eigentum beanspruchen",
+  "ID: {{id}}": "",
+  "Losh asset": "Losh asset",
+  "Owner": "Eigentümer",
+  "This is a &nbsp;": "Dies ist eine &nbsp;",
+  "Version: {{version}}": ""
 }
