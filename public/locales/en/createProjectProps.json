@@ -39,7 +39,8 @@
   "projectDescription": {
     "label": "Description:",
     "placeholder": "E.g. An open source laser cutter within you reach",
-    "hint": "Short description to be displayed on the asset page"
+    "hint": "Short description to be displayed on the asset page",
+    "md-editor-explainer": "in this markdown editor, the right box shows a preview. Type up to 2048 characters"
   },
   "repositoryOrId": {
     "label": "Repository link or Interfacer ID:",
@@ -65,7 +66,7 @@
     },
     "address": {
       "label": "Address:",
-      "placeholder": "An d. Alsterschleife 3, 22399 - Hamburg, Germany",
+      "placeholder": "E.g. Hamburg",
       "hint": "Address of the asset location"
     }
   },

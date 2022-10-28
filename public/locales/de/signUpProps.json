@@ -31,8 +31,8 @@
   "button": "Next Step",
   "keyring_title": "Beantworten Sie diese Fragen, um Ihre Anmeldung abzuschließen 🧩",
   "invitationTitle": "Haben Sie Ihre Schlüssel?",
-  "invitationPresentation": "Sie benötigen eine Einladungsphrase, um mit Ihrer Anmeldung fortzufahren!",
-  "invitationButton": "Fortfahren",
+  "invitationPresentation": "Sie benötigen einen Einladungssatz, um mit Ihrer Anmeldung fortzufahren!",
+  "invitationButton": "Weiter",
   "invitationKey": "Einladungsschlüssel:*",
   "invitationKeyError": "Bitte geben Sie einen gültigen Einladungsschlüssel ein"
 }

@@ -1,7 +1,5 @@
 {
   "title": "Aufbau der digitalen Infrastruktur für Fab Cities",
-  "paragraph1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  "paragraph2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   "feature_title_0": "erstellen.",
   "feature_body_0": "Erstellen Sie Vermögenswerte oder wichtige oder wichtige von LOSH",
   "feature_title_1": "Teilen Sie",
@@ -15,5 +13,7 @@
   "feature_title_5": "Merkmal 5",
   "feature_body_5": "Demnächst verfügbar",
   "cta_1": "Eintragen",
-  "cta_2": "Mehr erfahren"
+  "cta_2": "Mehr erfahren",
+  "paragraph1": "Willkommen bei Interfacer's Fabcity OS alpha staging 😎",
+  "paragraph2": "Erstellen oder importieren Sie Assets und arbeiten Sie mit anderen bei digitalen Entwürfen oder bei der Herstellung physischer Produkte zusammen."
 }

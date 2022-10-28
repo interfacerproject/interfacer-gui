@@ -8,7 +8,7 @@ const ContributorsTable = ({
   head,
   title,
 }: {
-  contributors: { name: string; id: string }[];
+  contributors?: { name: string; id: string }[];
   date: any;
   head: string[];
   title?: string;

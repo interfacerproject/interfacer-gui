@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import devLog from "../lib/devLog";
 import BrSearchableSelect from "./brickroom/BrSearchableSelect";
 
 type Address = {
@@ -9,8 +8,8 @@ type Address = {
 };
 
 type GeocoderInputProps = {
-  onSelect: (value: Address) => void;
-  value?: any;
+  onSelect: (value?: Address) => void;
+  selectedAddress: string;
   label?: string;
   placeholder?: string;
   hint?: string;
@@ -22,7 +21,7 @@ type GeocoderInputProps = {
 
 const GeoCoderInput = ({
   onSelect,
-  value,
+  selectedAddress,
   label,
   placeholder,
   hint,
@@ -31,7 +30,6 @@ const GeoCoderInput = ({
   help,
   testID,
 }: GeocoderInputProps) => {
-  const [address] = useState(value?.address);
   const [options, setOptions] = useState([] as any[]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -45,29 +43,39 @@ const GeoCoderInput = ({
     const data = await fetch(`${process.env.NEXT_PUBLIC_LOCATION_LOOKUP}?id=${encodeURI(id)}`).then(async r =>
       JSON.parse(await r.text())
     );
-    devLog("data", data);
     return { lat: data.position.lat, lng: data.position.lng };
   };
   useEffect(() => {
     Promise.resolve(fetchResults());
   }, [searchTerm]);
 
-  const handleSelectAddress = async (value: any) => {
-    const location = await fetchLocation(value.value.id).then(r => r);
-    onSelect({ lat: location.lat, lng: location.lng, address: value });
+  const handleSelectAddress = async (value?: any) => {
+    if (value) {
+      const location = await fetchLocation(value.value.id).then(r => r);
+      onSelect({ lat: location.lat, lng: location.lng, address: value });
+    } else {
+      onSelect(undefined);
+    }
+  };
+  const handleInputChange = (value: any) => {
+    setSearchTerm(value);
+    if (value.length === 1) {
+      handleSelectAddress();
+    }
   };
   return (
     <BrSearchableSelect
-      value={address}
+      value={selectedAddress.length > 0 ? { value: selectedAddress, label: selectedAddress } : ""}
       options={options?.map((o: any) => ({ label: o.address.label, value: o } as any))}
       onChange={handleSelectAddress}
-      onInputChange={setSearchTerm}
+      onInputChange={handleInputChange}
       placeholder={placeholder}
       inputValue={searchTerm}
       label={label}
       hint={hint}
       error={error}
       help={help}
+      onBackspace={() => handleSelectAddress()}
       testID={testID}
     />
   );

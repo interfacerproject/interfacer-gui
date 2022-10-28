@@ -5,19 +5,18 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 
-//
-
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["resourcesProps", "signInProps", "SideBarProps"])),
-    },
-  };
-}
-
-//
-
 const Resources: NextPage = () => {
+  const { conformTo, primaryAccountable } = useRouter().query;
+  const filter: {
+    conformsTo?: string[];
+    primaryAccountable?: string[];
+    gtOnhandQuantityHasNumericalValue: number;
+  } = {
+    primaryAccountable: [process.env.NEXT_PUBLIC_LOASH_ID!],
+    gtOnhandQuantityHasNumericalValue: 0,
+  };
+  // @ts-ignore
+  conformTo && (filter["conformsTo"] = [].concat(conformTo));
   const { t } = useTranslation("resourcesProps");
 
   // Getting filters from url

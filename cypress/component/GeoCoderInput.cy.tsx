@@ -58,7 +58,7 @@ describe("AddContributors.cy.tsx", () => {
       body: { position: { lat: 40.84778, lng: 14.26187 } },
     }).as("geoCode");
     const setSelected = cy.spy().as("setSelected");
-    cy.mount(<GeoCoderInput onSelect={setSelected} />);
+    cy.mount(<GeoCoderInput onSelect={setSelected} selectedAddress={undefined} />);
     // Act
     cy.get("input").type("corso umb");
     cy.get("#react-select-2-option-0").should("exist").click();
