@@ -109,7 +109,7 @@ const Profile: NextPage = () => {
                   ),
                   component: (
                     <div>
-                      <h3 className="my-8">{isUser ? t("my assets") : t("assets")}</h3>
+                      <h3 className="my-8">{isUser ? t("My Assets") : t("Assets")}</h3>
                       <AssetsTable filter={filter} noPrimaryAccountableFilter hideHeader={true} />
                     </div>
                   ),
@@ -118,12 +118,12 @@ const Profile: NextPage = () => {
                   title: (
                     <span className="flex items-center space-x-4">
                       <ClipboardListIcon className="w-5 h-5 mr-1" />
-                      {t("list")}
+                      {t("List")}
                     </span>
                   ),
                   component: (
                     <div>
-                      <h3 className="my-8">{isUser ? t("my list") : t("list")}</h3>
+                      <h3 className="my-8">{isUser ? t("My List") : t("List")}</h3>
                       <AssetsTable filter={collectedAssets} hideHeader={true} />
                     </div>
                   ),
