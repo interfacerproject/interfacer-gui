@@ -47,7 +47,6 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   const [location, setLocation] = useState("");
   const [locationName, setLocationName] = useState("");
   const [price] = useState("1");
-  const [resourceSpec, setResourceSpec] = useState("");
   const [images, setImages] = useState([] as Images);
   const [contributors, setContributors] = useState([] as { id: string; name: string }[]);
   const [imagesFiles, setImagesFiles] = useState([] as Array<any>);
@@ -56,7 +55,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
 
   const isButtonEnabled = () => {
     return (
-      resourceSpec.length > 0 &&
+      projectType.length > 0 &&
       projectName.length > 0 &&
       projectDescription.length > 0 &&
       repositoryOrId.length > 0 &&
@@ -69,18 +68,6 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     isButtonEnabled()
       ? setLogs(logs.concat(["info: mandatory fields compiled"]))
       : setLogs(logs.concat(["warning: compile all mandatory fields"]));
-    switch (projectType) {
-      case "Design":
-        setResourceSpec(instanceVariables?.specs?.specProjectDesign.id);
-        break;
-      case "Service":
-        setResourceSpec(instanceVariables?.specs?.specProjectService.id);
-        break;
-      case "Product":
-        setResourceSpec(instanceVariables?.specs?.specProjectProduct.id);
-        break;
-    }
-    devLog("typeId", resourceSpec);
   }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price]);
 
   const handleEditorChange = ({ html, text }: any) => {
@@ -94,6 +81,13 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);
   const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
   const [linkProposalAndIntent, { data: link }] = useMutation(LINK_PROPOSAL_AND_INTENT);
+
+  const typeArray = ["Design", "Service", "Product"].map(type => ({
+    name: t(type),
+    id: instanceVariables?.specs?.[`specProject${type}`]?.id,
+    label: t(`${type}_Label`),
+  }));
+  devLog("typeArray", typeArray);
 
   const handleCreateLocation = async (loc?: any) => {
     devLog("handleCreateLocation", loc);
@@ -132,7 +126,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   async function onSubmit(e: any) {
     e.preventDefault();
     const variables = {
-      resourceSpec: resourceSpec,
+      resourceSpec: projectType,
       agent: user?.ulid,
       name: projectName,
       note: projectDescription,
@@ -271,7 +265,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         testID="repositoryOrId"
       />
       <BrRadio
-        array={t("projectType.array", { returnObjects: true })}
+        array={typeArray}
         label={t("projectType.label")}
         hint={t("projectType.hint")}
         onChange={setAssetType}

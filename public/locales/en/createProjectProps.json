@@ -1,14 +1,29 @@
 {
-  "button": "button",
-  "contributors": "contributors",
-  "control window": "control window",
-  "go to the asset": "go to the asset",
-  "headline": "headline",
-  "imageUpload": "imageUpload",
-  "location": "location",
-  "projectDescription": "projectDescription",
-  "projectName": "projectName",
-  "projectTags": "projectTags",
-  "projectType": "projectType",
-  "repositoryOrId": "repositoryOrId"
+  "button": "Save",
+  "go to the asset": "Go to the asset",
+  "imageUpload": {
+    "clickToUpload": "Click to upload",
+    "hint": "SVG, PNG, JPG or GIF (MAX. 2MB)",
+    "label": "Upload up to 10 pictures:",
+    "placeholder": "SVG, PNG, JPG or GIF (MAX. 2MB)"
+  },
+  "projectDescription": {
+    "hint": "Short description to be displayed on the asset page",
+    "label": "Description:",
+    "md-editor-explainer": "in this markdown editor, the right box shows a preview. Type up to 2048 characters"
+  },
+  "projectName": {
+    "hint": "Working name of the asset, visible to the whole community",
+    "label": "Asset name:",
+    "placeholder": "E.g. Fabulaser"
+  },
+  "projectType": {
+    "hint": "",
+    "label": ""
+  },
+  "repositoryOrId": {
+    "hint": "Reference to the asset's repository or Interfacer ID of the asset",
+    "label": "Repository link or Interfacer ID:",
+    "placeholder": "E.g. github.com/my-repo"
+  }
 }
