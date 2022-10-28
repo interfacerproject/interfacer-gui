@@ -1,23 +1,23 @@
-import BrInput from "./brickroom/BrInput";
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
-import BrMdEditor from "./brickroom/BrMdEditor";
-import BrImageUpload from "./brickroom/BrImageUpload";
-import Link from "next/link";
-import { useAuth } from "../hooks/useAuth";
-import { useTranslation } from "next-i18next";
 import { useMutation, useQuery } from "@apollo/client";
-import devLog from "../lib/devLog";
 import dayjs from "dayjs";
 import {
-  QUERY_VARIABLES,
-  CREATE_PROPOSAL,
   CREATE_ASSET,
   CREATE_INTENT,
-  LINK_PROPOSAL_AND_INTENT,
   CREATE_LOCATION,
+  CREATE_PROPOSAL,
+  LINK_PROPOSAL_AND_INTENT,
+  QUERY_VARIABLES,
 } from "lib/QueryAndMutation";
-import TagsGeoContributors from "./TagsGeoContributors";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useAuth } from "../hooks/useAuth";
+import devLog from "../lib/devLog";
+import BrImageUpload from "./brickroom/BrImageUpload";
+import BrInput from "./brickroom/BrInput";
+import BrMdEditor from "./brickroom/BrMdEditor";
 import BrRadio from "./brickroom/BrRadio";
+import TagsGeoContributors from "./TagsGeoContributors";
 import { EconomicEvent, Intent, Proposal, Unnamed_5_Mutation } from "../lib/types";
 
 type Image = {
@@ -234,6 +234,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   return (
     <form onSubmit={onSubmit} className="w-full">
       <BrInput
+        name="projectName"
         label={t("projectName.label")}
         hint={t("projectName.hint")}
         value={projectName}
@@ -261,6 +262,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         clickToUpload={t("imageUpload.clickToUpload")}
       />
       <BrInput
+        name="repositoryOrId"
         label={t("repositoryOrId.label")}
         hint={t("repositoryOrId.hint")}
         value={repositoryOrId}
