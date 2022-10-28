@@ -1,0 +1,30 @@
+{
+  "button": "Étape suivante",
+  "email": {
+    "help": "email.aide",
+    "label": "email.label",
+    "placeholder": "email.placeholder",
+    "valid": "email.valide"
+  },
+  "invitationButton": "Continuer",
+  "invitationKey": "clé d'invitation:*",
+  "invitationKeyError": "Veuillez entrer une clé d'invitation valide",
+  "invitationPresentation": "Vous avez besoin d'une phrase d'invitation pour procéder à votre inscription !",
+  "invitationTitle": "Vous avez vos clés ?",
+  "name": {
+    "help": "nom.aide",
+    "label": "nom.étiquette",
+    "placeholder": "nom.placeholder"
+  },
+  "presentation": "Le processus d'inscription génère vos clés privées qui ne sont jamais communiquées au serveur. Conservez une copie de votre phrase de passe.",
+  "register": {
+    "answer": "enregistrer.réponse",
+    "question": "enregistrer.question"
+  },
+  "title": "S'inscrire",
+  "user": {
+    "help": "utilisateur.aide",
+    "label": "utilisateur.étiquette",
+    "placeholder": "utilisateur.placeholder"
+  }
+}
