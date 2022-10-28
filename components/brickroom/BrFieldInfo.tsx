@@ -1,5 +1,5 @@
 import { ExclamationIcon } from "@heroicons/react/solid";
-import { ChildrenComponent } from "./utils";
+import { ChildrenComponent } from "./types";
 
 export interface BrFieldInfoProps {
   for?: string;

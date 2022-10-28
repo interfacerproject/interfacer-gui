@@ -1,4 +1,4 @@
-import { ChildrenComponent as CC } from "components/brickroom/utils";
+import { ChildrenComponent as CC } from "components/brickroom/types";
 import useStorage from "hooks/useStorage";
 import { useTranslation } from "next-i18next";
 import SeedBox from "./SeedBox";

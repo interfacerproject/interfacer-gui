@@ -40,8 +40,8 @@ const Questions = (props: QuestionsNS.Props) => {
    * Counter for missing questions
    */
 
-  const minQuestions = 3;
-  const [missingQuestions, setMissingQuestions] = useState(minQuestions);
+  const MIN_QUESTIONS = 3;
+  const [missingQuestions, setMissingQuestions] = useState(MIN_QUESTIONS);
 
   function countFilledQuestions(q: QuestionsNS.FormValues): number {
     // Keeps track of how many answers are valid
@@ -59,11 +59,11 @@ const Questions = (props: QuestionsNS.Props) => {
   }
 
   function countMissingQuestions(q: QuestionsNS.FormValues): number {
-    return minQuestions - countFilledQuestions(q);
+    return MIN_QUESTIONS - countFilledQuestions(q);
   }
 
   function areEnoughQuestions(q: QuestionsNS.FormValues): boolean {
-    return countFilledQuestions(q) >= minQuestions;
+    return countFilledQuestions(q) >= MIN_QUESTIONS;
   }
 
   /**
@@ -87,7 +87,7 @@ const Questions = (props: QuestionsNS.Props) => {
       question5: yup.string(),
     })
     .required()
-    .test("three-questions", t("minQuestions", { minQuestions }), value => {
+    .test("three-questions", t("minQuestions", { minQuestions: MIN_QUESTIONS }), value => {
       const v = value as QuestionsNS.FormValues;
       setMissingQuestions(countMissingQuestions(v));
       return areEnoughQuestions(v);
@@ -140,7 +140,7 @@ const Questions = (props: QuestionsNS.Props) => {
       )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 pt-8">
         {/* Iterating over "questions" to display fields */}
         <div className="space-y-4">
           {questions.map((question, index) => (
@@ -149,8 +149,8 @@ const Questions = (props: QuestionsNS.Props) => {
               <BrInput
                 type="text"
                 // @ts-ignore
-                {...register("question" + (index + 1))}
-                testID={"question" + (index + 1)}
+                {...register(`question${index + 1}`)}
+                testID={`question${index + 1}`}
               />
             </div>
           ))}

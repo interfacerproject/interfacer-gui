@@ -8,7 +8,7 @@ import * as yup from "yup";
 
 // Components
 import BrInput from "components/brickroom/BrInput";
-import { ChildrenComponent as CC } from "components/brickroom/utils";
+import { ChildrenComponent as CC } from "components/brickroom/types";
 
 //
 

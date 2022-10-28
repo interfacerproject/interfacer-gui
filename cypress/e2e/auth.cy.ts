@@ -1,8 +1,7 @@
 import { get, randomEmail, randomString } from "../utils";
 
-describe("When user wants to sign up", () => {
+describe("Sign up process", () => {
   let email = randomEmail();
-  let wrongEmail = randomEmail();
   let question1 = randomString();
   let question2 = randomString();
   let question3 = randomString();
@@ -78,13 +77,15 @@ describe("When user wants to sign up", () => {
   it("shold check the seed box, and login", () => {
     get("passphrase").should("be.visible");
     get("signUpBtn").click();
-    // TODO: Check for some added localstorage keys
-    cy.url().should("eq", "http://localhost:3000/");
   });
 
   it("should log out", () => {
-    get("sidebarOpener").click();
-    get("signOut").click();
+    cy.url()
+      .should("eq", "http://localhost:3000/")
+      .then(() => {
+        get("sidebarOpener").click();
+        get("signOut").click();
+      });
   });
 
   /**
@@ -94,6 +95,8 @@ describe("When user wants to sign up", () => {
   // Using "function" instead of arrow function
   // Same reason as previous comment
   it("should sign in with passphrase", function () {
+    cy.clearLocalStorageSnapshot();
+
     cy.visit("/sign_in");
     get("email").type(email);
     get("submit").click();
@@ -104,8 +107,12 @@ describe("When user wants to sign up", () => {
   });
 
   it("should log out", () => {
-    get("sidebarOpener").click();
-    get("signOut").click();
+    cy.url()
+      .should("eq", "http://localhost:3000/")
+      .then(() => {
+        get("sidebarOpener").click();
+        get("signOut").click();
+      });
   });
 
   /**

@@ -1,13 +1,9 @@
-import { ChildrenComponent as CC } from "components/brickroom/utils";
 import { useTranslation } from "next-i18next";
+import { ReactNode } from "react";
 
 //
 
-export interface AnswerQuestionsProps {}
-
-//
-
-export default function AnswerQuestions(props: CC<AnswerQuestionsProps>) {
+export default function AnswerQuestions(props: { children?: ReactNode }) {
   const { t } = useTranslation("signUpProps", { keyPrefix: "AnswerQuestions" });
 
   return (

@@ -64,7 +64,6 @@ const Sign_in: NextPageWithLayout = () => {
     const result = await register(data.email, false);
     const key = result.keypairoomServer;
     //
-    console.log(key);
     if (!key) {
       setError(t("enterEmail.notRegistered"));
       return;
@@ -158,7 +157,7 @@ const Sign_in: NextPageWithLayout = () => {
 
     // Logging in
     await login({ email: signInData.email });
-    router.push("/");
+    router.replace("/");
   }
 
   //

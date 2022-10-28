@@ -58,7 +58,7 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
   // This function checks if the provided email exists
   async function testEmail(email: string) {
     const result = await register(email, true);
-    return result?.keypairoomServer ? true : false;
+    return Boolean(result?.keypairoomServer);
   }
 
   // Creating form

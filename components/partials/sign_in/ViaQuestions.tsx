@@ -1,4 +1,4 @@
-import { ChildrenComponent as CC } from "components/brickroom/utils";
+import { ChildrenComponent as CC } from "components/brickroom/types";
 import { useTranslation } from "next-i18next";
 
 //
@@ -18,7 +18,7 @@ export default function ViaQuestions(props: CC<ViaQuestionsNS.Props>) {
       <h2>{t("title")}</h2>
       <p className="mt-2 mb-6">{t("description")}</p>
 
-      {/* Form */}
+      {/* Here goes the `Questions` component */}
       {props.children}
     </div>
   );

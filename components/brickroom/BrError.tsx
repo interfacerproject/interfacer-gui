@@ -1,4 +1,4 @@
-import { ChildrenComponent as CC, TestProp as TP } from "./utils";
+import { ChildrenComponent as CC, TestProp as TP } from "./types";
 
 export interface BrErrorProps extends TP {}
 

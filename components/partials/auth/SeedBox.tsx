@@ -1,4 +1,4 @@
-import { ChildrenComponent as CC } from "components/brickroom/utils";
+import { ChildrenComponent as CC } from "components/brickroom/types";
 
 export interface SeedBoxProps {}
 
