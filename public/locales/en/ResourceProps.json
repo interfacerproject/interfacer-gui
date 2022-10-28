@@ -1,10 +1,7 @@
 {
-  "add to list +": "add to list +",
-  "by": "by",
-  "Claim ownership": "Claim ownership",
-  "ID: {{id}}": "ID: {{id}}",
-  "Losh asset": "Losh asset",
-  "Owner": "Owner",
-  "This is a &nbsp;": "This is a &nbsp;",
-  "Version: {{version}}": "Version: {{version}}"
+  "assigned to:": "Assigned to:",
+  "current location:": "Current location:",
+  "description:": "Here you will see the material passport of asset",
+  "Claim Ownership": "Claim Ownership",
+  "claim your ownership over this asset": "claim your ownership over this asset"
 }

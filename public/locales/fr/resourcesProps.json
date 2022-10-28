@@ -1,9 +1,6 @@
 {
-  "by": "",
-  "description": "",
-  "resourceHead": "",
-  "There’s nothing to display here": "",
-  "This table will display the resources that you will have in inventory": "Ce tableau affichera les ressources que vous aurez en stock.",
-  "title": "",
-  "Version: {{version}}": ""
+  "title": "Ressources",
+  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque pellentesque hendrerit ultrices mauris et non pellentesque suspendisse est.",
+  "by": "par",
+  "resourceHead": ["Ressource", "Source", "Licence", "Version"]
 }

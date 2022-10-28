@@ -1,13 +1,9 @@
 {
-  "Assets": "Actifs",
-  "Create a new asset": "Créer un nouvel actif",
-  "Create asset": "Créer un actif",
+  "title": "titre",
   "description": "description",
-  "empty_state_assets": "Actifs de l'État vide",
-  "Filter by": "Filtrer par",
-  "filters": "filtres",
   "Load more": "Chargez plus",
-  "Report a bug": "Signaler un bogue",
-  "table_head": "tête de table",
-  "title": "titre"
+  "filters": "filtres",
+  "empty_state_assets": "Actifs de l'État vide",
+  "tableHead": "tableHead",
+  "table_head": ["Actif", "Dernière mise à jour", "Propriétaire", "Balises"]
 }

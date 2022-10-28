@@ -147,7 +147,7 @@ const Asset = () => {
                   </Link>
                 </p>
                 <h2 className="my-2">{asset.name}</h2>
-                <p className="text-primary">{t("ID: {id}", asset.id)}</p>
+                <p className="text-primary">ID: {asset.id}</p>
               </div>
               {images && <BrThumbinailsGallery images={images} />}
               <div id="tabs" className="my-6">
@@ -161,7 +161,7 @@ const Asset = () => {
                           contributors={asset.metadata?.contributors}
                           date={data?.proposal.created}
                           head={t("contributorsHead", { returnObjects: true })}
-                          title={t("Contributors")}
+                          title={t("contributors")}
                         />
                       ),
                     },

@@ -1,17 +1,15 @@
 {
-  "assets": "Assets",
   "hi": "Hi",
   "description": "Welcome to your Interfacer profile",
   "activity by the user": "activity by the user",
-  "description": "Welcome to your FCOS profile",
-  "goals": "Goals",
-  "hi": "Hi",
-  "lists": "Lists",
-  "my Assets": "My Assets",
-  "my Lists": "My Lists",
-  "other user id title": "The user id is: ",
   "saved list": "Saved list",
+  "your stats": "Your statistics",
+  "goals": "Goals",
   "strength": "Strength",
   "user id title": "Your user id is: ",
-  "your stats": "Your statistics"
+  "other user id title": "The user id is: ",
+  "assets": "Assets",
+  "my assets": "My Assets",
+  "my list": "My List",
+  "list": "List"
 }

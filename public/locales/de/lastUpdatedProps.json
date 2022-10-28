@@ -1,13 +1,8 @@
 {
-  "Assets": "Vermögenswerte",
-  "Create a new asset": "Ein neues Asset erstellen",
-  "Create asset": "Anlage erstellen",
+  "title": "Titel",
   "description": "Beschreibung",
-  "empty_state_assets": "leeres_Vermögen",
-  "Filter by": "Filtern nach",
-  "filters": "filtert",
   "Load more": "Mehr laden",
-  "Report a bug": "Einen Fehler melden",
-  "table_head": "tabellen_kopf",
-  "title": "Titel"
+  "filters": "filtert",
+  "empty_state_assets": "leeres_Vermögen",
+  "table_head": ["Asset", "Letzte Aktualisierung", "Eigentümer", "Tags"]
 }

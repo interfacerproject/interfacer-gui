@@ -12,7 +12,6 @@
     "check-types": "tsc --pretty --noEmit",
     "check-format": "prettier --check .",
     "check-lint": "eslint . --ext ts --ext tsx --ext js",
-    "i18n:collect": "i18next -c i18n-parser.config.mjs '{pages,components}/**/*.{js,ts,jsx,tsx}'",
     "reload": "pm2 startOrGracefulReload ecosystem.config.js",
     "cypress": "cypress open",
     "cypress:headless": "cypress run --config videoRecording=false",
@@ -89,12 +88,10 @@
     "eslint": "^8.23.0",
     "eslint-config-next": "12.2.5",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-i18next": "6.0.0-2",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.31.8",
-    "i18next-parser": "^6.6.0",
     "prettier": "^2.7.1",
     "start-server-and-test": "^1.14.0"
   }

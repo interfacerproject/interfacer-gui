@@ -1,12 +1,14 @@
 {
-  "Assets": "Vermögenswerte",
-  "description": "Beschreibung",
-  "Goals": "Ziele",
-  "Hi &nbsp;": "Hallo &nbsp;",
-  "Lists": "Verzeichnisse",
-  "My Assets": "Mein Vermögen",
-  "My Lists": "Meine Listen",
-  "other user id title": "andere Benutzerkennung Titel",
-  "Strength": "Stärke",
-  "user id title": "Benutzerkennung Titel"
+  "hi": "Hi",
+  "description": "en: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Neque pellentesque hendrerit ultrices mauris et non pellentesque suspendisse est.",
+  "activity by the user": "activity by the user",
+  "saved list": "Saved list",
+  "your stats": "Your stats",
+  "statText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  "goals": "Goals",
+  "strength": "Strength",
+  "lorem ipsum": "lorem ipsum",
+  "dolor sit amet": "dolor sit amet",
+  "user id title": "Benutzerkennung Titel",
+  "other user id title": "andere Benutzerkennung Titel"
 }
