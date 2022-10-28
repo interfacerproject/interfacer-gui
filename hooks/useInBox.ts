@@ -5,7 +5,7 @@ import sign from "../zenflows-crypto/src/sign_graphql";
 import useStorage from "./useStorage";
 
 type UseInBoxReturnValue = {
-  sendMessage: (message: string, receivers: string[], subject: string) => Promise<Response>;
+  sendMessage: (message: any, receivers: string[], subject: string) => Promise<Response>;
   readMessages: () => Promise<Response>;
 };
 
@@ -21,10 +21,10 @@ const useInBox = (): UseInBoxReturnValue => {
     };
   };
 
-  const sendMessage = async (message: string, receivers: string[], subject: string = "Subject"): Promise<Response> => {
+  const sendMessage = async (message: any, receivers: string[], subject: string = "Subject"): Promise<Response> => {
     const request = {
-      sender: user?.email,
-      receiver: receivers,
+      sender: user?.ulid,
+      receivers: receivers,
       message: message,
       subject: subject,
       data: dayjs(),
@@ -43,7 +43,7 @@ const useInBox = (): UseInBoxReturnValue => {
   const readMessages = async () => {
     const request = {
       request_id: 42,
-      sender: user?.email,
+      receiver: user?.ulid,
     };
     const requestJSON = JSON.stringify(request);
     const requestHeaders = await signRequest(requestJSON);
