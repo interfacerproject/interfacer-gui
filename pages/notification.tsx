@@ -7,6 +7,8 @@ import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 import { useAuth } from "../hooks/useAuth";
 import useStorage from "../hooks/useStorage";
 import dayjs from "../lib/dayjs";
+import useInBox from "../hooks/useInBox";
+import devLog from "../lib/devLog";
 
 const QUERY_ASSETS = gql`
   query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
@@ -45,22 +47,32 @@ const QUERY_ASSETS = gql`
 const Notification = () => {
   const { user } = useAuth();
   const { t } = useTranslation("notificationProps");
+  const { readMessages } = useInBox();
   const { getItem, setItem } = useStorage();
   const { data, startPolling } = useQuery(QUERY_ASSETS, { variables: { last: 50 } });
-  startPolling(4000);
+  startPolling(120000);
   const notifications = data?.proposals.edges.filter((proposal: any) =>
     proposal.node.primaryIntents[0]?.resourceInventoriedAs?.metadata?.contributors?.some(
       (c: { id: string; name: string }) => c.id === user?.ulid
     )
   );
+  const fetchMessages = async () => {
+    const _messages = await readMessages();
+    devLog("messages", _messages.messages);
+    if (_messages.success && _messages.messages) {
+      const updatedMessages = getItem("messages")
+        ? { ...JSON.parse(getItem("messages")), ..._messages.messages }
+        : { ..._messages.messages };
+      setItem("messages", JSON.stringify(updatedMessages));
+    }
+  };
   useEffect(() => {
     setInterval(() => {
+      fetchMessages();
       notifications?.map((n: any) => setItem(n.node.id, "read"));
-    }, 2000);
-    if (getItem("watchedList")) {
-      const _watchedList = JSON.parse(getItem("watchedList"));
-    }
+    }, 120000);
   }, [notifications]);
+  devLog(readMessages());
 
   return (
     <div className="grid grid-cols-1 p-12">
