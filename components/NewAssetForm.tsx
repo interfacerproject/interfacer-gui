@@ -19,6 +19,7 @@ import BrMdEditor from "./brickroom/BrMdEditor";
 import BrRadio from "./brickroom/BrRadio";
 import TagsGeoContributors from "./TagsGeoContributors";
 import { EconomicEvent, Intent, Proposal, Unnamed_5_Mutation } from "../lib/types";
+import useInBox from "../hooks/useInBox";
 
 type Image = {
   description: string;
@@ -52,6 +53,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   const [imagesFiles, setImagesFiles] = useState([] as Array<any>);
   const [assetCreatedId, setAssetCreatedId] = useState(undefined as string | undefined);
   const { t } = useTranslation("createProjectProps");
+  const { sendMessage } = useInBox();
 
   const isButtonEnabled = () => {
     return (
@@ -222,6 +224,17 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         setLogs(logsText);
         setAssetCreatedId(`/asset/${proposal?.id}`);
       });
+      devLog(
+        await sendMessage(
+          {
+            user: { name: user?.name, id: user?.ulid },
+            message: "added you as contributor to",
+            asset: economicEvent?.resourceInventoriedAs?.id,
+          },
+          contributors.map(c => c.id),
+          "contribution"
+        )
+      );
     }
   }
 

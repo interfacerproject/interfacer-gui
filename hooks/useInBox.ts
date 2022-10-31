@@ -6,7 +6,7 @@ import useStorage from "./useStorage";
 
 type UseInBoxReturnValue = {
   sendMessage: (message: any, receivers: string[], subject: string) => Promise<Response>;
-  readMessages: () => Promise<Response>;
+  readMessages: () => Promise<{ messages?: any; request_id: number; success: boolean }>;
 };
 
 const useInBox = (): UseInBoxReturnValue => {
@@ -52,7 +52,7 @@ const useInBox = (): UseInBoxReturnValue => {
       body: JSON.stringify(request),
       headers: requestHeaders,
     };
-    return await fetch(process.env.NEXT_PUBLIC_INBOX_READ!, options);
+    return await fetch(process.env.NEXT_PUBLIC_INBOX_READ!, options).then(res => res.json());
   };
 
   return { sendMessage, readMessages };
