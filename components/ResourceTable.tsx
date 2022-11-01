@@ -172,7 +172,7 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
 
                     {/* Cell 4 */}
                     <div className="table-cell text-sm align-top">
-                      Version: {e.node.version}
+                      {t("Version: {{version}}", { version: e.node.version })}
                       <br />
                       {e.node.okhv}
                     </div>
@@ -184,10 +184,11 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
               <>
                 <div className="table-row">
                   <div className="table-cell col-span-full">
-                    <h4>There’s nothing to display here.</h4>
+                    <h4>{t("There’s nothing to display here.")}</h4>
                     <p>
-                      This table will display the resources that you will have in inventory. Raise, transfer or Produce
-                      a resource and it will displayed here.
+                      {t(
+                        "This table will display the resources that you will have in inventory. Raise, transfer or Produce a resource and it will displayed here."
+                      )}
                     </p>
                   </div>
                 </div>

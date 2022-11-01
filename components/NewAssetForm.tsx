@@ -1,23 +1,24 @@
-import BrInput from "./brickroom/BrInput";
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
-import BrMdEditor from "./brickroom/BrMdEditor";
-import BrImageUpload from "./brickroom/BrImageUpload";
-import Link from "next/link";
-import { useAuth } from "../hooks/useAuth";
-import { useTranslation } from "next-i18next";
 import { useMutation, useQuery } from "@apollo/client";
-import devLog from "../lib/devLog";
 import dayjs from "dayjs";
 import {
-  QUERY_VARIABLES,
-  CREATE_PROPOSAL,
   CREATE_ASSET,
   CREATE_INTENT,
-  LINK_PROPOSAL_AND_INTENT,
   CREATE_LOCATION,
+  CREATE_PROPOSAL,
+  LINK_PROPOSAL_AND_INTENT,
+  QUERY_VARIABLES,
 } from "lib/QueryAndMutation";
-import TagsGeoContributors from "./TagsGeoContributors";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useAuth } from "../hooks/useAuth";
+import devLog from "../lib/devLog";
+import BrImageUpload from "./brickroom/BrImageUpload";
+import BrInput from "./brickroom/BrInput";
+import BrMdEditor from "./brickroom/BrMdEditor";
 import BrRadio from "./brickroom/BrRadio";
+import TagsGeoContributors from "./TagsGeoContributors";
+import { EconomicEvent, Intent, Proposal, Unnamed_5_Mutation } from "../lib/types";
 
 type Image = {
   description: string;
@@ -144,12 +145,13 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     };
     let logsText = logs.concat("info:Creating raise resource economicEvent").concat(JSON.stringify(variables, null, 2));
 
-    const asset = await createAsset({
+    const economicEvent: EconomicEvent | string = await createAsset({
       variables: variables,
     })
       .catch(error => {
         logsText = logsText.concat("error:".concat(error.message));
         setLogs(logsText);
+        return "error";
       })
       .then((re: any) => {
         logsText = logsText.concat(
@@ -164,71 +166,75 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         ]);
         setLogs(logsText);
         devLog("2", re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id);
-        return re?.data;
+        return re?.data.createEconomicEvent.economicEvent;
+      });
+    if (typeof economicEvent === "string") {
+      return;
+    } else {
+      images.forEach((i, index) => {
+        logsText = logsText.concat(`info:Uploading image ${index + 1} of ${images.length}`);
+        setLogs(logsText);
+        const filesArray = new FormData();
+        filesArray.append(i.hash, imagesFiles[index]);
+        fetch(process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL!, {
+          method: "post",
+          body: filesArray,
+        })
+          .catch(error => {
+            logsText = logsText.concat([`error:${error}`]);
+            setLogs(logsText);
+          })
+          .then((r: any) => {
+            devLog("image upload response", r);
+          });
       });
 
-    images.forEach((i, index) => {
-      logsText = logsText.concat(`info:Uploading image ${index + 1} of ${images.length}`);
-      setLogs(logsText);
-      const filesArray = new FormData();
-      filesArray.append(i.hash, imagesFiles[index]);
-      fetch(process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL!, {
-        method: "post",
-        body: filesArray,
-      })
-        .catch(error => {
-          logsText = logsText.concat([`error:${error}`]);
-          setLogs(logsText);
-        })
-        .then((r: any) => {
-          devLog("image upload response", r);
-        });
-    });
+      const proposal: Proposal = await createProposal().then(proposal => {
+        logsText = logsText.concat([
+          `success: Created proposal with id: ${proposal.data?.createProposal.proposal.id}`,
+          "info: Creating intents",
+        ]);
+        setLogs(logsText);
+        devLog("3", proposal);
+        return proposal.data.createProposal.proposal;
+      });
 
-    const proposal = await createProposal().then(proposal => {
-      logsText = logsText.concat([
-        `success: Created proposal with id: ${proposal.data?.createProposal.proposal.id}`,
-        "info: Creating intents",
-      ]);
-      setLogs(logsText);
-      devLog("3", proposal);
-      return proposal.data;
-    });
+      const intent: { item: Intent; payment: Intent } = await createIntent({
+        variables: {
+          agent: user?.ulid,
+          resource: economicEvent?.resourceInventoriedAs?.id,
+          oneUnit: instanceVariables?.units.unitOne.id,
+          howMuch: parseFloat(price),
+          currency: instanceVariables?.specs.specCurrency.id,
+        },
+      }).then(intent => {
+        logsText = logsText.concat([
+          `success: Created intent with id: ${intent.data?.item.intent.id}`,
+          "info: Linking proposal and intent",
+        ]);
+        setLogs(logsText);
+        devLog("4", intent);
+        return { item: intent.data.item.intent, payment: intent.data.payment.intent };
+      });
 
-    const intent = await createIntent({
-      variables: {
-        agent: user?.ulid,
-        resource: asset?.createEconomicEvent.economicEvent.resourceInventoriedAs.id,
-        oneUnit: instanceVariables?.units.unitOne.id,
-        howMuch: parseFloat(price),
-        currency: instanceVariables?.specs.specCurrency.id,
-      },
-    }).then(intent => {
-      logsText = logsText.concat([
-        `success: Created intent with id: ${intent.data?.item.intent.id}`,
-        "info: Linking proposal and intent",
-      ]);
-      setLogs(logsText);
-      devLog("4", intent);
-      return intent.data;
-    });
-
-    linkProposalAndIntent({
-      variables: {
-        proposal: proposal?.createProposal.proposal.id,
-        item: intent?.item.intent.id,
-        payment: intent?.payment.intent.id,
-      },
-    }).then(() => {
-      logsText = logsText.concat(["success: Asset succesfull created!!!"]);
-      setLogs(logsText);
-      setAssetCreatedId(`/asset/${proposal?.createProposal.proposal.id}`);
-    });
+      linkProposalAndIntent({
+        variables: {
+          proposal: proposal?.id,
+          item: intent?.item.id,
+          payment: intent?.payment.id,
+        },
+      }).then(() => {
+        logsText = logsText.concat(["success: Asset succesfull created!!!"]);
+        setLogs(logsText);
+        setAssetCreatedId(`/asset/${proposal?.id}`);
+      });
+    }
   }
 
   return (
     <form onSubmit={onSubmit} className="w-full">
       <BrInput
+        name="projectName"
         label={t("projectName.label")}
         hint={t("projectName.hint")}
         value={projectName}
@@ -256,6 +262,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         clickToUpload={t("imageUpload.clickToUpload")}
       />
       <BrInput
+        name="repositoryOrId"
         label={t("repositoryOrId.label")}
         hint={t("repositoryOrId.hint")}
         value={repositoryOrId}

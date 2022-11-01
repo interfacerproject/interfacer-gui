@@ -1,8 +1,8 @@
 import { useTranslation } from "next-i18next";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import devLog from "../lib/devLog";
 import useStorage from "../hooks/useStorage";
+import devLog from "../lib/devLog";
 import BrInput from "./brickroom/BrInput";
 
 const KeyringGeneration = ({
@@ -122,6 +122,7 @@ const KeyringGeneration = ({
             {/* Iterating over "questions" to display fields */}
             {[].concat(t("questions", { returnObjects: true })).map((question: string, index: number) => (
               <BrInput
+                name={question}
                 type="text"
                 key={index}
                 error={fillMoreAnswer(mapQuestions(index + 1)!.question)}

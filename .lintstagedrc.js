@@ -10,6 +10,8 @@ module.exports = {
     `prettier --write ${filenames.join(" ")}`,
   ],
 
+  "(pages|components)/**/*.(ts|tsx|js|jsx)": f => [`i18next -c i18n-parser.config.mjs ${f.join(" ")}`],
+
   // Prettify only Markdown and JSON files
   "**/*.(md|json)": filenames => `pnpm prettier --write ${filenames.join(" ")}`,
 };

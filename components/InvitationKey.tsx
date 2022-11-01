@@ -1,8 +1,8 @@
-import { useTranslation } from "next-i18next";
-import BrInput from "./brickroom/BrInput";
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
-import Link from "next/link";
 import { KeyIcon, LinkIcon } from "@heroicons/react/solid";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
+import BrInput from "./brickroom/BrInput";
 
 const InvitationKey = ({ setStep }: { setStep: Dispatch<SetStateAction<number>> }) => {
   const [isDisabled, setIsDisabled] = useState(true);
@@ -53,6 +53,8 @@ const InvitationKey = ({ setStep }: { setStep: Dispatch<SetStateAction<number>> 
       </p>
       <form onSubmit={onSubmit} className="mt-2">
         <BrInput
+          type="text"
+          name="invitationKey"
           onChange={(e: ChangeEvent<HTMLInputElement>) => setInvitationKey(e.target.value)}
           label={t("invitationKey")}
           onBlur={handleBlur}

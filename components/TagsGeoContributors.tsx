@@ -1,9 +1,9 @@
-import SelectTags from "./SelectTags";
-import BrInput from "./brickroom/BrInput";
-import { ChangeEvent } from "react";
-import GeoCoderInput from "./GeoCoderInput";
-import AddContributors from "./AddContributors";
 import { useTranslation } from "next-i18next";
+import { ChangeEvent } from "react";
+import AddContributors from "./AddContributors";
+import BrInput from "./brickroom/BrInput";
+import GeoCoderInput from "./GeoCoderInput";
+import SelectTags from "./SelectTags";
 
 type TagsGeoContributorsProps = {
   setAssetTags: (tags: string[]) => void;
@@ -40,6 +40,8 @@ const TagsGeoContributors = ({
       />
       <div className="grid grid-cols-2 gap-2">
         <BrInput
+          type="text"
+          name="location"
           label={t("location.name.label")}
           hint={t("location.name.hint")}
           value={locationName}
