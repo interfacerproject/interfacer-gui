@@ -70,10 +70,10 @@ const Sign_in: NextPageWithLayout = () => {
               {step === 0 && (
                 <>
                   <button className="btn btn-block btn-primary" type="button" onClick={() => viaPassphrase()}>
-                    {t("Login answering the signup questions 💬")}
+                    {t("Login via passphrase 🔑")}
                   </button>
                   <button className="mt-4 btn btn-block btn-primary" type="button" onClick={() => viaQuestions()}>
-                    {t("Login via passphrase 🔑")}
+                    {t("Login answering the signup questions 💬")}
                   </button>
                 </>
               )}
@@ -83,18 +83,20 @@ const Sign_in: NextPageWithLayout = () => {
                   <BrInput
                     name="email"
                     type="email"
-                    label={t("Your email:")}
+                    label={t("Your email&#x3a;")}
                     error={errorMail}
                     placeholder={t("alice@email&#46;com")}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                   />
-                  <p className="text-[#8A8E96] mb-6">{t("help_text_step_1")}</p>
+                  <p className="text-[#8A8E96] mb-6">
+                    {t("Input the email address provided during the signup process&#46;")}
+                  </p>
                   <button
                     className="btn btn-block btn-primary"
                     type="button"
                     onClick={() => toNextStep(isPassprhase ? 3 : 2)}
                   >
-                    {t("button4")}
+                    {t("Continue")}
                   </button>
                 </>
               )}

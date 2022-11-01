@@ -46,7 +46,7 @@ const Home: NextPageWithLayout = () => {
           </p>
 
           <Link href="/sign_in">
-            <a className={`btn btn-primary mt-6 ${authenticated ? "btn-disabled" : ""}`}>{t("Create")}</a>
+            <a className={`btn btn-primary mt-6 ${authenticated ? "btn-disabled" : ""}`}>{t("Log In")}</a>
           </Link>
           <Link href="/">
             <a className="ml-4 btn btn-outline btn-primary">{t("Create new assets or import from LOSH")}</a>

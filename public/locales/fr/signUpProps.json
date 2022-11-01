@@ -24,5 +24,7 @@
   "You need an invitation phrase to proceed with your signup!": "Vous avez besoin d'une phrase d'invitation pour procéder à votre inscription !",
   "Continue": "Continuer",
   "invitation key:*": "clé d'invitation:*",
-  "Please enter a valid invitation key": "Veuillez entrer une clé d'invitation valide"
+  "Please enter a valid invitation key": "Veuillez entrer une clé d'invitation valide",
+  "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46": "Le processus d'inscription génère vos clés privées qui ne sont jamais communiquées au serveur&#46 Gardez une copie de votre phrase de passe&#46",
+  "invitation key&#58;*": "clé d'invitation&#58;*"
 }

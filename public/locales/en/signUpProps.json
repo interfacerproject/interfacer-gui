@@ -1,7 +1,7 @@
 {
   "Sign up": "Sign up",
   "Answer security questions to complete your signup 🧩": "Answer security questions to complete your signup 🧩",
-  "The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase.": "The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase.",
+  "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46": "The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase.",
   "Your name": "Your name",
   "Type your name": "Type your name",
   "Your name is shown and visible to everyone": "Your name is shown and visible to everyone",
@@ -23,6 +23,6 @@
   "Got your keys?": "Got your keys?",
   "You need an invitation phrase to proceed with your signup!": "You need an invitation phrase to proceed with your signup!",
   "Continue": "Continue",
-  "invitation key:*": "invitation key:*",
+  "invitation key&#58;*": "invitation key:*",
   "Please enter a valid invitation key": "Please enter a valid invitation key"
 }
