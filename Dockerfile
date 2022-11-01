@@ -25,16 +25,16 @@ ENV NEXT_PUBLIC_ZENFLOWS_ADMIN=$NEXT_PUBLIC_ZENFLOWS_ADMIN
 ARG NEXT_PUBLIC_INVITATION_KEY=""
 ENV NEXT_PUBLIC_INVITATION_KEY=$NEXT_PUBLIC_INVITATION_KEY
 
-RUN apk add --no-cache                  \
-        libc6-compat                    \
-        yarn
+RUN apk add --no-cache libc6-compat
+RUN wget "https://github.com/pnpm/pnpm/releases/latest/download/pnpm-linuxstatic-x64" -O /bin/pnpm && \
+    chmod +x /bin/pnpm
 
 WORKDIR /build
 
 COPY . .
 
-RUN yarn install --frozen-lockfile &&   \
-    yarn build
+RUN pnpm install --frozen-lockfile && \
+    pnpm build
 
 FROM node:lts-alpine AS worker
 
