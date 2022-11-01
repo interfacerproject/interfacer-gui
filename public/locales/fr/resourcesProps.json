@@ -1,0 +1,12 @@
+{
+  "Resources": "Ressources",
+  "Use this page to generate digital product passports of resources": "Utilisez cette page pour générer des passeports de produits numériques de ressources",
+  "by": "par",
+  "Resource": "Ressources",
+  "Source": "Source :",
+  "License": "Licence",
+  "Version": "Version",
+  "There’s nothing to display here&#46;": "Il n'y a rien à afficher ici&#46 ;",
+  "This table will display the resources that you will have in inventory": "Ce tableau affichera les ressources que vous aurez en stock.",
+  "Version: {{version}}": "Version : {{version}}"
+}

@@ -59,7 +59,7 @@ function Topbar({ search = true, children, userMenu = true, cta }: topbarProps) 
               {t("Login")}
             </button>
             <button className="btn btn-accent" onClick={() => router.push("/sign_up")}>
-              {t("Sign up")}{" "}
+              {t("Sign up")}
             </button>
           </div>
         )}

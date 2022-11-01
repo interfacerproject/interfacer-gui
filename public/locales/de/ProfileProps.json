@@ -1,0 +1,16 @@
+{
+  "Hi": "Hallo",
+  "Welcome to your FCOS profile": "Willkommen in Ihrem FCOS-Profil",
+  "activity by the user": "Aktivität des Benutzers",
+  "Saved list": "Gespeicherte Liste",
+  "Your statistics": "Ihre Statistiken",
+  "Goals": "Ziele",
+  "Strength": "Stärke",
+  "Your user id is: {{id}}": "Ihre Benutzerkennung lautet: {{id}}",
+  "The user id is: {{id}}": "Die Benutzerkennung lautet: {{id}}",
+  "Assets": "Vermögenswerte",
+  "My Assets": "Mein Vermögen",
+  "Lists": "Verzeichnisse",
+  "My Lists": "Meine Listen",
+  "Hi,&nbsp;": "Hallo, &nbsp;"
+}
