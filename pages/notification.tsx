@@ -1,27 +1,20 @@
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 import dayjs from "../lib/dayjs";
 import useInBox from "../hooks/useInBox";
-import devLog from "../lib/devLog";
 
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { readMessages } = useInBox();
-  const [messages, setMessages] = useState([]);
-
-  const fetchMessages = async () => {
-    return await readMessages().then(res => res.messages);
-  };
+  const { startReading, messages, setReadedMessages } = useInBox();
   useEffect(() => {
-    fetchMessages().then(setMessages);
+    startReading();
     setInterval(() => {
-      fetchMessages().then(setMessages);
-    }, 120000);
-  }, []);
-
+      setReadedMessages(messages.map(m => m.id));
+    }, 20000);
+  }, [messages]);
   const ContributionRow = ({
     contribution,
   }: {
@@ -57,7 +50,6 @@ const Notification = () => {
   const RenderMessagePerSubject = (message: any) => {
     return <ContributionRow contribution={message.message} />;
   };
-  devLog(messages);
 
   return (
     <div className="grid grid-cols-1 p-12">
