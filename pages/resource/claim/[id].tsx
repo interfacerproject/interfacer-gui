@@ -22,6 +22,7 @@ import TagsGeoContributors from "components/TagsGeoContributors";
 import devLog from "lib/devLog";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
+import useInBox from "../../../hooks/useInBox";
 
 const ClaimAsset: NextPageWithLayout = () => {
   const router = useRouter();
@@ -33,6 +34,7 @@ const ClaimAsset: NextPageWithLayout = () => {
   const [contributors, setContributors] = useState([] as { id: string; name: string }[]);
   const [locationId, setLocationId] = useState("");
 
+  const { sendMessage } = useInBox();
   const { t } = useTranslation("ResourceProps");
   const { loading, data } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id: id },
@@ -90,7 +92,7 @@ const ClaimAsset: NextPageWithLayout = () => {
       .catch(error => {})
       .then((re: any) => {
         devLog("2", re?.data?.createEconomicEvent.economicEvent.toResourceInventoriedAs.id);
-        return re?.data;
+        return re?.data?.createEconomicEvent.economicEvent.toResourceInventoriedAs;
       });
 
     const proposal = await createProposal().then(proposal => {
@@ -101,7 +103,7 @@ const ClaimAsset: NextPageWithLayout = () => {
     const intent = await createIntent({
       variables: {
         agent: user?.ulid,
-        resource: asset?.createEconomicEvent.economicEvent.toResourceInventoriedAs.id,
+        resource: asset?.id,
         oneUnit: instanceVariables?.units.unitOne.id,
         howMuch: 1,
         currency: instanceVariables?.specs.specCurrency.id,
@@ -117,9 +119,23 @@ const ClaimAsset: NextPageWithLayout = () => {
         item: intent?.item.intent.id,
         payment: intent?.payment.intent.id,
       },
-    }).then(() => {
-      router.push(`/asset/${proposal?.createProposal.proposal.id}`);
-    });
+    })
+      .then(() => {
+        sendMessage(
+          {
+            user: { name: user?.name, id: user?.ulid },
+            asset: {
+              id: proposal?.createProposal.proposal.id,
+              name: asset?.name,
+            },
+          },
+          contributors.map(c => c.id),
+          "contribution"
+        );
+      })
+      .then(() => {
+        router.push(`/asset/${proposal?.createProposal.proposal.id}`);
+      });
   };
 
   return (
