@@ -2,65 +2,20 @@ import { gql, useQuery } from "@apollo/client";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
-import { Component, ReactComponentElement, ReactNode, useEffect, useState } from "react";
+import { useEffect } from "react";
 import BrDisplayUser from "../components/brickroom/BrDisplayUser";
-import { useAuth } from "../hooks/useAuth";
-import useStorage from "../hooks/useStorage";
 import dayjs from "../lib/dayjs";
 import useInBox from "../hooks/useInBox";
-import devLog from "../lib/devLog";
-import { Intent } from "../lib/types";
-
-const QUERY_ASSETS = gql`
-  query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
-    proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
-      pageInfo {
-        startCursor
-        endCursor
-        hasPreviousPage
-        hasNextPage
-        totalCount
-        pageLimit
-      }
-      edges {
-        cursor
-        node {
-          id
-          name
-          created
-          primaryIntents {
-            resourceInventoriedAs {
-              id
-              name
-              metadata
-              primaryAccountable {
-                name
-                id
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
 
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { readMessages } = useInBox();
-  const [messages, setMessages] = useState([]);
-
-  const fetchMessages = async () => {
-    const _messages = await readMessages().then(res => res.messages);
-    return _messages;
-  };
+  const { startReading, messages, setReadedMessages } = useInBox();
   useEffect(() => {
-    fetchMessages().then(setMessages);
+    startReading();
     setInterval(() => {
-      fetchMessages().then(setMessages);
-    }, 120000);
-  }, []);
-
+      setReadedMessages(messages.map(m => m.id));
+    }, 20000);
+  }, [messages]);
   const ContributionRow = ({
     contribution,
   }: {
@@ -96,7 +51,6 @@ const Notification = () => {
   const RenderMessagePerSubject = (message: any) => {
     return <ContributionRow contribution={message.message} />;
   };
-  devLog(messages);
 
   return (
     <div className="grid grid-cols-1 p-12">

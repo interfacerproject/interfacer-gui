@@ -9,30 +9,47 @@ type UseInBoxReturnValue = {
   sendMessage: (message: any, receivers: string[], subject: string) => Promise<Response>;
   readMessages: () => Promise<{ messages?: any; request_id: number; success: boolean }>;
   countMessages: () => Promise<{ count: number; success: boolean }>;
+  setMessage: (id: number, read?: boolean) => Promise<Response>;
   countUnread: number;
   hasNewMessages: boolean;
+  messages: { id: number; sender: string; content: { data: string; message: any; subject: string } }[];
+  startReading: () => void;
+  setReadedMessages: (ids: number[]) => void;
 };
 
 const useInBox = (): UseInBoxReturnValue => {
   const [countUnread, setCountUnread] = useState(0);
-  const [messages, setMessages] = useState<any>(undefined);
+  const [messages, setMessages] = useState<any[]>([]);
   const [hasNewMessages, setHasNewMessages] = useState(false);
+  const [startFetch, setStartFetch] = useState(false);
+  const [readedMessages, setReadedMessages] = useState<number[]>([]);
   const { user } = useAuth();
   const { getItem } = useStorage();
   useEffect(() => {
+    readedMessages.forEach(id => {
+      setMessage(id, true);
+    });
+    if (startFetch) {
+      fetchMessages().then(setMessages);
+      setInterval(() => {
+        fetchMessages().then(setMessages);
+      }, 120000);
+    }
     setInterval(() => {
       const previousCounted = countUnread;
       count().then(counted => {
+        setCountUnread(counted);
         if (counted && previousCounted < counted) {
           setHasNewMessages(true);
           setCountUnread(counted);
           setInterval(() => {
             setHasNewMessages(false);
-          }, 100000);
+          }, 30000);
         }
       });
     }, 120000);
-  }, []);
+  }, [startFetch, readedMessages]);
+
   const signRequest = async (json: string) => {
     const data = `{"gql": "${Buffer.from(json, "utf8").toString("base64")}"}`;
     const keys = `{"keyring": {"eddsa": "${getItem("eddsa_key")}"}}`;
@@ -84,8 +101,31 @@ const useInBox = (): UseInBoxReturnValue => {
       return _count.count;
     }
   };
+  const setMessage = async (id: number, read = true) => {
+    const request = {
+      message_id: id,
+      receiver: user?.ulid,
+      read: read,
+    };
+    return await signedPost(process.env.NEXT_PUBLIC_INBOX_SET_READ!, request).then(res => res.json());
+  };
 
-  return { sendMessage, readMessages, countMessages, countUnread, hasNewMessages };
+  const fetchMessages = async () => {
+    const _messages = await readMessages().then(res => res.messages);
+    return _messages;
+  };
+
+  return {
+    sendMessage,
+    readMessages,
+    countMessages,
+    countUnread,
+    hasNewMessages,
+    setMessage,
+    messages,
+    startReading: () => setStartFetch(true),
+    setReadedMessages,
+  };
 };
 
 export default useInBox;
