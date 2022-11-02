@@ -221,8 +221,10 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         await sendMessage(
           {
             user: { name: user?.name, id: user?.ulid },
-            message: "added you as contributor to",
-            asset: economicEvent?.resourceInventoriedAs?.id,
+            asset: {
+              id: proposal?.id,
+              name: economicEvent?.resourceInventoriedAs?.name,
+            },
           },
           contributors.map(c => c.id),
           "contribution"
