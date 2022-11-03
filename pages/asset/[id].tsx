@@ -16,8 +16,8 @@ import ContributorsTable from "../../components/ContributorsTable";
 import { useAuth } from "../../hooks/useAuth";
 import useStorage from "../../hooks/useStorage";
 import { EconomicResource } from "../../lib/types";
-import { UPDATE_METADATA } from "../../lib/QueryAndMutation";
 import AddStar from "../../components/AddStar";
+import WatchButton from "../../components/WatchButton";
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -71,7 +71,6 @@ const Asset = () => {
 
   const { data, startPolling } = useQuery(QUERY_ASSET, { variables: { id } });
   startPolling(2000);
-  const [updateEconomicResource] = useMutation(UPDATE_METADATA);
 
   useEffect(() => {
     const _asset: EconomicResource = data?.proposal.primaryIntents[0].resourceInventoriedAs;
@@ -85,24 +84,6 @@ const Asset = () => {
     setImages(_images);
   }, [data]);
 
-  const handleWatch = async () => {
-    const _metadata = {
-      ...asset!.metadata,
-      watchers: asset!.metadata.watchers ? [...asset!.metadata.watchers, user!.ulid] : [user!.ulid],
-    };
-    await updateEconomicResource({ variables: { metadata: JSON.stringify(_metadata), id: asset!.id } }).then(r => {
-      setIsWatching(true);
-    });
-  };
-  const handleUnwatch = async () => {
-    const _metadata = {
-      ...asset!.metadata,
-      watchers: asset!.metadata.watchers?.filter((w: any) => w !== user!.ulid),
-    };
-    await updateEconomicResource({ variables: { metadata: JSON.stringify(_metadata), id: asset!.id } }).then(r => {
-      setIsWatching(false);
-    });
-  };
   const handleCollect = () => {
     const _list = getItem("assetsCollected");
     const _listParsed = _list ? JSON.parse(_list) : [];
@@ -180,15 +161,7 @@ const Asset = () => {
               >
                 {t(inList ? "remove from list" : "add to list")}
               </button>
-              <button
-                className="btn btn-accent btn-outline btn-block"
-                tabIndex={-1}
-                role="button"
-                aria-disabled={true}
-                onClick={isWatching ? handleUnwatch : handleWatch}
-              >
-                {isWatching ? t("unwatch") : t("Watch")}
-              </button>
+              <WatchButton id={asset.id} metadata={asset.metadata} />
               <p className="mt-8 mb-2">{t("Owner")}:</p>
               <BrDisplayUser
                 id={asset.primaryAccountable.id}
