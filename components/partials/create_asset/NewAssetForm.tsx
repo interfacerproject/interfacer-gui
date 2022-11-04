@@ -11,13 +11,13 @@ import {
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useAuth } from "../hooks/useAuth";
-import devLog from "../lib/devLog";
-import BrImageUpload from "./brickroom/BrImageUpload";
-import BrInput from "./brickroom/BrInput";
-import BrMdEditor from "./brickroom/BrMdEditor";
-import BrRadio from "./brickroom/BrRadio";
-import TagsGeoContributors from "./TagsGeoContributors";
+import { useAuth } from "../../../hooks/useAuth";
+import devLog from "../../../lib/devLog";
+import BrImageUpload from "../../brickroom/BrImageUpload";
+import BrInput from "../../brickroom/BrInput";
+import BrMdEditor from "../../brickroom/BrMdEditor";
+import BrRadio from "../../brickroom/BrRadio";
+import TagsGeoContributors from "../../TagsGeoContributors";
 
 type Image = {
   description: string;

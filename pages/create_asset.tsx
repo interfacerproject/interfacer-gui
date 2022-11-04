@@ -1,11 +1,29 @@
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { ReactElement, useState } from "react";
-import ControlWindow from "../components/ControlWindow";
-import Layout from "../components/layout/CreateAssetLayout";
-import NewAssetForm from "../components/NewAssetForm";
 import { useAuth } from "../hooks/useAuth";
 import type { NextPageWithLayout } from "./_app";
+
+// Partials
+import NewAssetForm from "../components/partials/create_asset/NewAssetForm";
+
+// Layout
+import Layout from "../components/layout/CreateAssetLayout";
+
+// Compo
+import ControlWindow from "../components/partials/create_asset/ControlWindow";
+
+//
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["createProjectProps", "signInProps", "SideBarProps", "SideBarProps"])),
+    },
+  };
+}
+
+//
 
 const CreateProject: NextPageWithLayout = () => {
   const { user, loading } = useAuth();
@@ -34,14 +52,6 @@ const CreateProject: NextPageWithLayout = () => {
     </>
   );
 };
-
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["createProjectProps", "signInProps", "SideBarProps", "SideBarProps"])),
-    },
-  };
-}
 
 CreateProject.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
