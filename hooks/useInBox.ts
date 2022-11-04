@@ -35,6 +35,9 @@ const useInBox = (): UseInBoxReturnValue => {
         fetchMessages().then(setMessages);
       }, 120000);
     }
+    count().then(counted => {
+      setCountUnread(counted);
+    });
     setInterval(() => {
       const previousCounted = countUnread;
       count().then(counted => {
