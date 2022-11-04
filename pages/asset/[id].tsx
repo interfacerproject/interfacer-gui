@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import cn from "classnames";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";

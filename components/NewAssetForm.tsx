@@ -217,18 +217,16 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         setLogs(logsText);
         setAssetCreatedId(`/asset/${proposal?.id}`);
       });
-      devLog(
-        await sendMessage(
-          {
-            user: { name: user?.name, id: user?.ulid },
-            asset: {
-              id: proposal?.id,
-              name: economicEvent?.resourceInventoriedAs?.name,
-            },
+      await sendMessage(
+        {
+          user: { name: user?.name, id: user?.ulid },
+          asset: {
+            id: proposal?.id,
+            name: economicEvent?.resourceInventoriedAs?.name,
           },
-          contributors.map(c => c.id),
-          "contribution"
-        )
+        },
+        contributors.map(c => c.id),
+        "contribution"
       );
     }
   }
