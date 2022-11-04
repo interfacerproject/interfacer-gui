@@ -5,13 +5,11 @@ import { useAuth } from "../hooks/useAuth";
 import type { NextPageWithLayout } from "./_app";
 
 // Partials
+import ControlWindow from "../components/partials/create_asset/ControlWindow";
 import NewAssetForm from "../components/partials/create_asset/NewAssetForm";
 
 // Layout
 import Layout from "../components/layout/CreateAssetLayout";
-
-// Compo
-import ControlWindow from "../components/partials/create_asset/ControlWindow";
 
 //
 
