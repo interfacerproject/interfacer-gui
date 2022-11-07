@@ -37,15 +37,15 @@ const BrImageUpload = React.forwardRef<HTMLInputElement, BrImageUploadProps>((pr
       // Running onDrop function
       // @ts-ignore
       onDrop(acceptedFiles, fileRejections);
-      // // Adding "preview" field to files, needed for thumbnails
-      // const newFiles = acceptedFiles.map(file =>
-      //   Object.assign(file, {
-      //     preview: URL.createObjectURL(file),
-      //   })
-      // );
+      // Adding "preview" field to files, needed for thumbnails
+      const newFiles = acceptedFiles.map(file =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      );
       // Setting files
       // @ts-ignore
-      setFiles(acceptedFiles);
+      setFiles(newFiles);
     },
   });
 
