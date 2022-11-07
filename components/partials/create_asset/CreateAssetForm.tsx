@@ -23,6 +23,7 @@ import { useTranslation } from "next-i18next";
 // Components
 import BrImageUpload from "components/brickroom/BrImageUpload";
 import BrInput from "components/brickroom/BrInput";
+import BrMdEditor from "components/brickroom/BrMdEditor";
 import { Contributor } from "components/TagsGeoContributors";
 
 //
@@ -280,7 +281,7 @@ const NewAssetForm = (props: CreateAssetNS.Props) => {
         error={errors.name?.message}
       />
 
-      {/* <BrMdEditor
+      <BrMdEditor
         name="description"
         editorClass="h-60"
         label={t("projectDescription.label")}
@@ -291,7 +292,7 @@ const NewAssetForm = (props: CreateAssetNS.Props) => {
           setValue("description", text);
         }}
         error={errors.description?.message}
-      /> */}
+      />
 
       <BrImageUpload
         {...register("images")}
