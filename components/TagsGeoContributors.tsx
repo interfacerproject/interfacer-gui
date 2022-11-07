@@ -5,14 +5,23 @@ import BrInput from "./brickroom/BrInput";
 import GeoCoderInput from "./GeoCoderInput";
 import SelectTags from "./SelectTags";
 
+//
+
+export interface Contributor {
+  id: string;
+  name: string;
+}
+
+//
+
 type TagsGeoContributorsProps = {
   setAssetTags: (tags: string[]) => void;
   setLocationName: (locationName: string) => void;
   handleCreateLocation: (location: any) => void;
   locationName: string;
   locationAddress: string;
-  setContributors: (contributors: { id: string; name: string }[]) => void;
-  contributors: { id: string; name: string }[];
+  setContributors: (contributors: Array<Contributor>) => void;
+  contributors: Array<Contributor>;
   assetTags: string[];
 };
 
