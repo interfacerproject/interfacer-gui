@@ -6,7 +6,6 @@ import {
   CREATE_LOCATION,
   CREATE_PROPOSAL,
   LINK_PROPOSAL_AND_INTENT,
-  QUERY_VARIABLES,
 } from "lib/QueryAndMutation";
 import { Dispatch, SetStateAction } from "react";
 
@@ -16,15 +15,21 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Hooks
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
 
 // Components
+import BrFieldInfo from "components/brickroom/BrFieldInfo";
 import BrImageUpload from "components/brickroom/BrImageUpload";
 import BrInput from "components/brickroom/BrInput";
 import BrMdEditor from "components/brickroom/BrMdEditor";
-import { Contributor } from "components/TagsGeoContributors";
+import BrRadioOption from "components/brickroom/BrRadioOption";
+import type { Contributor } from "components/TagsGeoContributors";
+
+// Importing translations to check for data structure
+import strings from "public/locales/en/createProjectProps.json";
+type ProjectType = typeof strings.projectType.array[0];
 
 //
 
@@ -57,6 +62,14 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
   const { logs, setLogs } = props;
   const { user } = useAuth();
   const { t } = useTranslation("createProjectProps");
+
+  //
+
+  // // Loading asset types
+  // const queryAssetTypes = useQuery<GetAssetTypesQuery>(QUERY_ASSET_TYPES);
+  // console.log(queryAssetTypes);
+
+  //
 
   const defaultValues: CreateAssetNS.FormValues = {
     name: "",
@@ -131,7 +144,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
   //   devLog("typeId", resourceSpec);
   // }, [assetType, assetName, assetDescription, repositoryOrId, locationId, locationName, price]);
 
-  const instanceVariables = useQuery(QUERY_VARIABLES(true)).data?.instanceVariables;
+  // const instanceVariables = useQuery(QUERY_VARIABLES(true)).data?.instanceVariables;
   const [createAsset, { data, error }] = useMutation(CREATE_ASSET);
   const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
   const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);
@@ -270,6 +283,57 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
   //   });
   // }
 
+  //   const QUERY_VARIABLES = gql`
+  //   query {
+  //     instanceVariables {
+  //       specs {
+  //         specCurrency {
+  //           id
+  //         }
+  //         specProjectDesign {
+  //           id
+  //         }
+  //         specProjectProduct {
+  //           id
+  //         }
+  //         specProjectService {
+  //           id
+  //         }
+  //       }
+  //       units {
+  //         unitOne {
+  //           id
+  //         }
+  //       }
+  //     }
+  //   }
+  // `;
+
+  // const SelectAssetTypeRadio = ({ setConformsTo }: { setConformsTo: (id: string) => void }) => {
+  //   const [assetType, setAssetType] = useState("");
+  //   const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables;
+  //   const { t } = useTranslation("createProjectProps");
+  //   const onChange = (value: string) => {
+  //     setAssetType(value);
+  //     devLog(assetType);
+  //     switch (value) {
+  //       case t("projectType.array.0.value"):
+  //         setConformsTo(instanceVariables?.specs?.specProjectDesign?.id);
+  //         break;
+  //       case t("projectType.array.1.value", { returnObjects: true }):
+  //         setConformsTo(instanceVariables?.specs?.specProjectProduct?.id);
+  //         break;
+  //       case t("projectType.array.2.value", { returnObjects: true }):
+  //         setConformsTo(instanceVariables?.specs?.specProjectService?.id);
+  //         break;
+  //     }
+  //   };
+
+  // Loading options
+  const assetTypes: Array<ProjectType> = t("projectType.array", { returnObjects: true });
+
+  //
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full pt-12 space-y-12">
       <BrInput
@@ -312,16 +376,14 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         hint={t("repositoryOrId.hint")}
         placeholder={t("repositoryOrId.placeholder")}
         testID="repositoryOrId"
+        error={errors.repositoryOrId?.message}
       />
 
-      {/* <BrRadio
-        array={t("projectType.array", { returnObjects: true })}
-        label={t("projectType.label")}
-        hint={t("projectType.hint")}
-        onChange={setAssetType}
-        value={assetType}
-        testID="projectType"
-      /> */}
+      <BrFieldInfo label={t("projectType.label")} error={errors.type?.message}>
+        {assetTypes.map(type => (
+          <BrRadioOption {...type} {...register("type")} key={type.id} />
+        ))}
+      </BrFieldInfo>
 
       <pre>{JSON.stringify(watch(), null, 2)}</pre>
 
