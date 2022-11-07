@@ -234,14 +234,9 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   return (
     <form onSubmit={onSubmit} className="w-full">
       <BrInput
-<<<<<<< HEAD
         name="projectName"
-        label={t("projectName.label")}
-        hint={t("projectName.hint")}
-=======
         label={t("Asset name")}
         hint={t("Working name of the asset, visible to the whole community")}
->>>>>>> 4dcd029 (Merge branch 'main' into i18n-utils)
         value={projectName}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setAssetName(e.target.value)}
         placeholder={t("Fabulaser")}
@@ -267,14 +262,9 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         clickToUpload={t("Click to upload")}
       />
       <BrInput
-<<<<<<< HEAD
         name="repositoryOrId"
-        label={t("repositoryOrId.label")}
-        hint={t("repositoryOrId.hint")}
-=======
         label={t("Repository link or Interfacer ID:")}
         hint={t("Reference to the asset's repository or Interfacer ID of the asset")}
->>>>>>> 4dcd029 (Merge branch 'main' into i18n-utils)
         value={repositoryOrId}
         placeholder={t("github&#46;com/my-repo")}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setRepositoryOrId(e.target.value)}
