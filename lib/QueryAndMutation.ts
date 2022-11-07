@@ -61,6 +61,7 @@ export const CREATE_PROPOSAL = gql`
     }
   }
 `;
+
 export const CREATE_INTENT = gql`
   mutation ($agent: ID!, $resource: ID!, $oneUnit: ID!, $currency: ID!, $howMuch: Float!) {
     item: createIntent(
@@ -234,6 +235,27 @@ export const QUERY_RESOURCE = gql`
         name
         mimeType
         bin
+      }
+    }
+  }
+`;
+
+export const QUERY_ASSET_TYPES = gql`
+  query GetAssetTypes {
+    instanceVariables {
+      specs {
+        specProjectDesign {
+          id
+          name
+        }
+        specProjectProduct {
+          id
+          name
+        }
+        specProjectService {
+          id
+          name
+        }
       }
     }
   }

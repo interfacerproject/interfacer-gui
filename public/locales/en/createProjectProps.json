@@ -12,21 +12,21 @@
     "array": [
       {
         "id": "Design",
-        "name": "Design",
         "value": "Design",
-        "label": "A digital asset, like an open source hardware project or 3D model"
+        "label": "Design",
+        "description": "A digital asset, like an open source hardware project or 3D model"
       },
       {
         "id": "Service",
-        "name": "Service",
         "value": "Service",
-        "label": "A service, like a consultancy, training course or usage/rental of equipment"
+        "label": "Service",
+        "description": "A service, like a consultancy, training course or usage/rental of equipment"
       },
       {
         "id": "Product",
-        "name": "Product",
         "value": "Product",
-        "label": "A physical product that can be picked up or delivered"
+        "label": "Product",
+        "description": "A physical product that can be picked up or delivered"
       }
     ],
     "hint": " "
