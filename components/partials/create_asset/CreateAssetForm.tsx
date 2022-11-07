@@ -53,7 +53,7 @@ export namespace CreateAssetNS {
 
 //
 
-const NewAssetForm = (props: CreateAssetNS.Props) => {
+export default function NewAssetForm(props: CreateAssetNS.Props) {
   const { logs, setLogs } = props;
   const { user } = useAuth();
   const { t } = useTranslation("createProjectProps");
@@ -314,17 +314,18 @@ const NewAssetForm = (props: CreateAssetNS.Props) => {
         testID="repositoryOrId"
       />
 
-      <pre>{JSON.stringify(watch(), null, 2)}</pre>
-
-      {/* 
-      <BrRadio
+      {/* <BrRadio
         array={t("projectType.array", { returnObjects: true })}
         label={t("projectType.label")}
         hint={t("projectType.hint")}
         onChange={setAssetType}
         value={assetType}
         testID="projectType"
-      />
+      /> */}
+
+      <pre>{JSON.stringify(watch(), null, 2)}</pre>
+
+      {/* 
       <TagsGeoContributors
         setAssetTags={setAssetTags}
         setLocationName={setLocationName}
@@ -346,6 +347,4 @@ const NewAssetForm = (props: CreateAssetNS.Props) => {
       </button>
     </form>
   );
-};
-
-export default NewAssetForm;
+}

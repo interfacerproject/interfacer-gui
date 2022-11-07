@@ -6,7 +6,7 @@ import type { NextPageWithLayout } from "./_app";
 
 // Partials
 import ControlWindow from "../components/partials/create_asset/ControlWindow";
-import NewAssetForm from "../components/partials/create_asset/CreateAssetForm";
+import CreateAssetForm from "../components/partials/create_asset/CreateAssetForm";
 
 // Layout
 import Layout from "../components/layout/CreateAssetLayout";
@@ -51,7 +51,7 @@ const CreateProject: NextPageWithLayout = () => {
               <p>{t("headline.description")}</p>
             </div>
 
-            <NewAssetForm logs={logs} setLogs={setLogs} />
+            <CreateAssetForm logs={logs} setLogs={setLogs} />
           </div>
 
           {/* Right side */}

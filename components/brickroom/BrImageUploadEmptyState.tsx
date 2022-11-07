@@ -4,7 +4,7 @@ export default function BrImageUploadEmptyState() {
   const { t } = useTranslation("BrImageUploadProps");
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-2">
+    <div className="flex flex-col items-center justify-center space-y-2 p-6">
       <svg
         aria-hidden="true"
         className="w-10 h-10 text-gray-400"
