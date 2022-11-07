@@ -51,7 +51,7 @@
     "label": "Upload up to 10 pictures:",
     "placeholder": "SVG, PNG, JPG or GIF (MAX. 2MB)",
     "hint": "SVG, PNG, JPG or GIF (MAX. 2MB)",
-    "clickToUpload": "Click to upload"
+    "clickToUpload": "Drag here or Click to upload"
   },
   "projectTags": {
     "label": "Tags:",
