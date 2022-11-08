@@ -12,7 +12,7 @@ describe("KeyringGeneration component", () => {
     cy.visit("/sign_in");
 
     // Clicking "Answer questions" button
-    cy.contains("Login: answer questions").click();
+    cy.contains("Login answering").click();
 
     // Setting email and running
     cy.get("input[type=email]").type("puria@dyne.org");

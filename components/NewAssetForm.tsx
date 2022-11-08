@@ -231,6 +231,24 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     }
   }
 
+  const typeArray = [
+    {
+      name: t("Design"),
+      id: instanceVariables?.specs?.specProjectDesign?.id,
+      label: t("A digital asset, like an open source hardware project or 3D model"),
+    },
+    {
+      name: t("Service"),
+      id: instanceVariables?.specs?.specProjectService?.id,
+      label: t("A service, like a consultancy, training course or usage/rental of equipment"),
+    },
+    {
+      name: t("Product"),
+      id: instanceVariables?.specs?.specProjectProduct?.id,
+      label: t("A physical product that can be picked up or delivered"),
+    },
+  ];
+
   return (
     <form onSubmit={onSubmit} className="w-full">
       <BrInput
@@ -254,7 +272,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
       <BrImageUpload
         onChange={setImages}
         setImagesFiles={setImagesFiles}
-        label={t("Upload up to 10 pictures:")}
+        label={t("Upload up to 10 pictures") + ":"}
         placeholder={t("SVG, PNG, JPG or GIF (MAX 2MB)")}
         value={imagesFiles}
         hint={t("SVG, PNG, JPG or GIF (MAX 2MB)")}
@@ -263,7 +281,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
       />
       <BrInput
         name="repositoryOrId"
-        label={t("Repository link or Interfacer ID:")}
+        label={t("Repository link or Interfacer ID") + ":*"}
         hint={t("Reference to the asset's repository or Interfacer ID of the asset")}
         value={repositoryOrId}
         placeholder={t("github&#46;com/my-repo")}
@@ -271,8 +289,8 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         testID="repositoryOrId"
       />
       <BrRadio
-        array={[t("Design"), t("Service"), t("Product")]}
-        label={t("Select asset type:")}
+        array={typeArray}
+        label={t("Select asset type" + ":*")}
         hint={t("")}
         onChange={setAssetType}
         value={projectType}

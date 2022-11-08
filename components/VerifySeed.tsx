@@ -26,7 +26,7 @@ const VerifySeed = ({ email, HMAC }: { email: string; HMAC: string }) => {
   const completeSignIn = async () => {
     await login({ email })
       .then(() => {
-        window.location.replace("/logged_in");
+        window.location.replace("/");
       })
       .catch((error: any) => setError(t("Invalid passphrase")));
   };

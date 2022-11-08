@@ -4,7 +4,7 @@ describe("VerifySeed component", () => {
   it("should display VerifySeed", () => {
     cy.visit("/sign_in");
 
-    cy.contains("Login: passprhase").click();
+    cy.contains("Login via passphrase").click();
     cy.get("input[type=email]").type("puria@dyne.org");
     cy.contains("Continue").click();
   });
