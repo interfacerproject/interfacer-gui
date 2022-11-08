@@ -10,7 +10,7 @@ describe("Asset Detail functionality", () => {
   });
 
   it("Should add user id to metadata.starred then remove it", () => {
-    cy.visit("/asset/0620MPMK9ETE8390ZQEYVGT8MW");
+    cy.visit(`/asset/${Cypress.env("asset_id")}`);
     cy.get("#addStar > :nth-child(3)").then($starCount => {
       const count = parseInt($starCount.text());
       cy.get("#addStar").click();
@@ -20,7 +20,7 @@ describe("Asset Detail functionality", () => {
     });
   });
   it("Should add to list then remove it", () => {
-    cy.visit("/asset/0620MPMK9ETE8390ZQEYVGT8MW");
+    cy.visit(`/asset/${Cypress.env("asset_id")}`);
     cy.get("button.px-20.mb-4.btn.btn-block.btn-accent")
       .should("have.text", "Add to list")
       .click()
