@@ -1,4 +1,4 @@
-import { formatSelectOption } from "components/brickroom/utils/BrSelectUtils";
+import { assetTypesQueryToSelectOptions } from "lib/formatAssetTypes";
 
 // Request
 import { useQuery } from "@apollo/client";
@@ -12,17 +12,13 @@ import BrSearchableSelect, { BrSelectSearchableProps } from "components/brickroo
 
 export default function SelectAssetType(props: BrSelectSearchableProps) {
   // Loading asset types
-  const assetTypes = useQuery<GetAssetTypesQuery>(QUERY_ASSET_TYPES).data?.instanceVariables.specs;
+  const assetTypes = useQuery<GetAssetTypesQuery>(QUERY_ASSET_TYPES).data;
 
   // If assetTypes are not loaded, don't show the component
   if (!assetTypes) return <></>;
 
   // Prepping options
-  const options = [
-    formatSelectOption(assetTypes.specProjectDesign.name, assetTypes.specProjectDesign.id),
-    formatSelectOption(assetTypes.specProjectProduct.name, assetTypes.specProjectProduct.id),
-    formatSelectOption(assetTypes.specProjectService.name, assetTypes.specProjectService.id),
-  ];
+  const options = assetTypesQueryToSelectOptions(assetTypes);
 
   //
 
