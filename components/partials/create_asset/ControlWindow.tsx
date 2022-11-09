@@ -20,7 +20,7 @@ const ControlWindow = ({ logs }: { logs: Array<string> }) => {
 
   return (
     <div data-test="controlWindow">
-      <div className="hidden text-error text-success text-warning text-info" />
+      <div className="text-error text-success text-warning text-info" />
       <div className="w-full px-2 pb-2 bg-white border-2 md:w-128 md:fixed">
         <h4 className="my-2 capitalize text-primary">{t("control window")}</h4>
         <div className="overflow-y-scroll font-mono border-2 max-h-80 bg-[#F7F7F7] p-2">

@@ -42,22 +42,19 @@ const CreateProject: NextPageWithLayout = () => {
       {loading && <div>creating...</div>}
 
       {!loading && (
-        <div className="grid grid-cols-1 gap-4 p-8 md:grid-cols-12">
-          {/* Left side */}
-          <div className="w-full md:col-start-2 md:col-end-8">
-            {/* Heading */}
-            <div className="w-80">
-              <h2 className="text-primary">{t("headline.title")} </h2>
-              <p>{t("headline.description")}</p>
-            </div>
-
-            <CreateAssetForm logs={logs} setLogs={setLogs} />
+        <div className="mx-auto p-8 max-w-xl">
+          {/* Heading */}
+          <div>
+            <h2 className="text-primary">{t("headline.title")} </h2>
+            <p>{t("headline.description")}</p>
           </div>
 
-          {/* Right side */}
-          <div className="w-full md:col-start-8 md:col-end-12">
-            <ControlWindow logs={logs} />
-          </div>
+          <CreateAssetForm logs={logs} setLogs={setLogs} />
+          <ControlWindow logs={logs} />
+          {/* {createdAssetId ? (
+        <Link href={createdAssetId}>
+          <a className="btn btn-accent">{t("go to the asset")}</a>
+        </Link> */}
         </div>
       )}
     </>
