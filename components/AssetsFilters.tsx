@@ -94,6 +94,7 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
           }}
           isMulti
           defaultValueRaw={queryFilters.conformsTo}
+          testID="type"
         />
 
         <SelectTags
@@ -107,6 +108,7 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
           }}
           isMulti
           defaultValueRaw={queryFilters.tags}
+          testID="tags"
         />
 
         {!noPrimaryAccountable && (
@@ -121,6 +123,7 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
             }}
             isMulti
             defaultValueRaw={queryFilters.primaryAccountable}
+            testID="primaryAccountable"
           />
         )}
       </div>
