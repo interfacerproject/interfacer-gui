@@ -32,6 +32,8 @@ export default function Assets() {
           </a>
         </Link>
       </div>
+
+      {/*  */}
       <AssetsTable />
     </div>
   );

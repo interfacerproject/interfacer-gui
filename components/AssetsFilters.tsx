@@ -11,7 +11,7 @@ import SelectTags from "./SelectTags";
 //
 
 export interface AssetsFiltersProps {
-  noPrimaryAccountable?: boolean;
+  hidePrimaryAccountable?: boolean;
 }
 
 export const AssetFilters = ["conformsTo", "tags", "primaryAccountable"] as const;
@@ -22,7 +22,7 @@ export type QueryFilters<T> = Record<AssetFilter, T>;
 //
 
 export default function AssetsFilters(props: AssetsFiltersProps) {
-  const { noPrimaryAccountable = false } = props;
+  const { hidePrimaryAccountable = false } = props;
 
   const { t } = useTranslation("lastUpdatedProps");
   const router = useRouter();
@@ -111,7 +111,7 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
           testID="tags"
         />
 
-        {!noPrimaryAccountable && (
+        {!hidePrimaryAccountable && (
           <SelectContributors
             label={t("filters.contributors")}
             onChange={v => {
