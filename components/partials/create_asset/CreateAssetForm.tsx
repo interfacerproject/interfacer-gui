@@ -11,7 +11,7 @@ import { Dispatch, SetStateAction } from "react";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Hooks
@@ -25,6 +25,10 @@ import BrImageUpload from "components/brickroom/BrImageUpload";
 import BrInput from "components/brickroom/BrInput";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import BrRadioOption from "components/brickroom/BrRadioOption";
+import SelectContributors from "components/SelectContributors";
+import SelectLocation from "components/SelectLocation";
+import SelectTags from "components/SelectTags";
+
 import type { Contributor } from "components/TagsGeoContributors";
 
 // Importing translations to check for data structure
@@ -364,9 +368,9 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         hint={t("imageUpload.hint")}
         testID="imageUpload"
         onDrop={acceptedFiles => {
-          console.log(acceptedFiles);
           setValue("images", acceptedFiles);
         }}
+        error={errors.images?.message}
       />
 
       <BrInput
@@ -385,25 +389,76 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         ))}
       </BrFieldInfo>
 
+      {/* Form cntroller for tags field */}
+      <Controller
+        control={control}
+        name="tags"
+        render={({ field: { onChange, onBlur, name, ref } }) => (
+          <SelectTags
+            name={name}
+            ref={ref}
+            onBlur={onBlur}
+            onChange={onChange}
+            label={t("projectTags.label")}
+            isMulti
+            placeholder={t("projectTags.placeholder")}
+            error={errors.tags?.message}
+            creatable={true}
+          />
+        )}
+      />
+
+      {/* Form cntroller for contributors field */}
+      <Controller
+        control={control}
+        name="contributors"
+        render={({ field: { onChange, onBlur, name, ref } }) => (
+          <SelectContributors
+            name={name}
+            ref={ref}
+            onBlur={onBlur}
+            onChange={onChange}
+            label={t("contributors.label")}
+            isMulti
+            placeholder={t("contributors.placeholder")}
+            error={errors.contributors?.message}
+            creatable={true}
+          />
+        )}
+      />
+
+      <div className="space-y-4">
+        {/* Location name */}
+        <BrInput
+          {...register("locationName")}
+          type="text"
+          label={t("location.name.label")}
+          hint={t("location.name.hint")}
+          placeholder={t("location.name.placeholder")}
+          testID="location.name"
+        />
+
+        {/* Form cntroller for location field */}
+        <Controller
+          control={control}
+          name="locationId"
+          render={({ field: { onChange, onBlur, name, ref } }) => (
+            <SelectLocation
+              name={name}
+              ref={ref}
+              onBlur={onBlur}
+              onChange={onChange}
+              label={t("location.address.label")}
+              placeholder={t("location.address.placeholder")}
+              error={errors.location?.message}
+              creatable={false}
+            />
+          )}
+        />
+      </div>
+
       <pre>{JSON.stringify(watch(), null, 2)}</pre>
 
-      {/* 
-      <TagsGeoContributors
-        setAssetTags={setAssetTags}
-        setLocationName={setLocationName}
-        handleCreateLocation={handleCreateLocation}
-        locationName={locationName}
-        locationAddress={location}
-        setContributors={setContributors}
-        contributors={contributors}
-        assetTags={assetTags}
-      />
-      {createdAssetId ? (
-        <Link href={createdAssetId}>
-          <a className="btn btn-accent">{t("go to the asset")}</a>
-        </Link>
-      ) : (
-      )} */}
       <button type="submit" className="btn btn-accent" disabled={!isValid} data-test="submit">
         {t("button")}
       </button>
