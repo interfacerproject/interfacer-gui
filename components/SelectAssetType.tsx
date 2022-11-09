@@ -1,58 +1,30 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import BrSearchableSelect from "./brickroom/BrSearchableSelect";
+import { formatSelectOption } from "components/brickroom/utils/BrSelectUtils";
+
+// Request
 import { useQuery } from "@apollo/client";
-import { QUERY_VARIABLES } from "../lib/QueryAndMutation";
+import { QUERY_ASSET_TYPES } from "lib/QueryAndMutation";
+import { GetAssetTypesQuery } from "lib/types";
 
-type SelectAssetTypeProps = {
-  onChange: Dispatch<SetStateAction<{ value: string; label: string }[]>>;
-  label?: string;
-  hint?: string;
-  error?: string;
-  assetType: Array<{ value: string; label: string }>;
-  testID?: string;
-  initialTypes?: string[];
-};
+// Components
+import BrSearchableSelect, { BrSelectSearchableProps } from "components/brickroom/BrSelectSearchable";
 
-const SelectAssetType = ({ onChange, label, hint, error, assetType, initialTypes }: SelectAssetTypeProps) => {
-  const [inputValue, setInputValue] = useState("");
-  const [hasChanged, setHasChanged] = useState(false);
-  const instanceVariables = useQuery(QUERY_VARIABLES()).data?.instanceVariables.specs;
-  useEffect(() => {
-    if (instanceVariables && !hasChanged) {
-      onChange(
-        Object.keys(instanceVariables)
-          .filter(key => initialTypes?.includes(instanceVariables[key].id))
-          .map(key => ({ value: instanceVariables[key].id, label: instanceVariables[key].name }))
-      );
-    }
-  }, [instanceVariables]);
+//
 
-  const options =
-    instanceVariables &&
-    Object.keys(instanceVariables).map(key => ({
-      value: instanceVariables[key].id,
-      label: instanceVariables[key].name,
-    }));
-  const handleChange = (newValue: { value: string; label: string }[]) => {
-    onChange(newValue);
-    setHasChanged(true);
-  };
+export default function SelectAssetType(props: BrSelectSearchableProps) {
+  // Loading asset types
+  const assetTypes = useQuery<GetAssetTypesQuery>(QUERY_ASSET_TYPES).data?.instanceVariables.specs;
 
-  return (
-    <>
-      <BrSearchableSelect
-        options={options}
-        onChange={handleChange}
-        onInputChange={setInputValue}
-        label={label}
-        hint={hint}
-        error={error}
-        value={assetType}
-        inputValue={inputValue}
-        multiple
-      />
-    </>
-  );
-};
+  // If assetTypes are not loaded, don't show the component
+  if (!assetTypes) return <></>;
 
-export default SelectAssetType;
+  // Prepping options
+  const options = [
+    formatSelectOption(assetTypes.specProjectDesign.name, assetTypes.specProjectDesign.id),
+    formatSelectOption(assetTypes.specProjectProduct.name, assetTypes.specProjectProduct.id),
+    formatSelectOption(assetTypes.specProjectService.name, assetTypes.specProjectService.id),
+  ];
+
+  //
+
+  return <BrSearchableSelect options={options} isMulti {...props} />;
+}

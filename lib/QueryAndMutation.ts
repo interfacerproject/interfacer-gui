@@ -260,3 +260,97 @@ export const QUERY_ASSET_TYPES = gql`
     }
   }
 `;
+
+export const QUERY_AGENTS = gql`
+  query getAgent($first: Int, $id: ID) {
+    agents(first: $first, after: $id) {
+      pageInfo {
+        startCursor
+        endCursor
+        hasPreviousPage
+        hasNextPage
+        totalCount
+        pageLimit
+      }
+      edges {
+        cursor
+        node {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const GET_TAGS = gql`
+  query GetTags {
+    economicResourceClassifications
+  }
+`;
+
+export const QUERY_ASSETS = gql`
+  query GetAssets($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
+    proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
+      pageInfo {
+        startCursor
+        endCursor
+        hasPreviousPage
+        hasNextPage
+        totalCount
+        pageLimit
+      }
+      edges {
+        cursor
+        node {
+          id
+          name
+          created
+          primaryIntents {
+            resourceClassifiedAs
+            action {
+              id
+            }
+            hasPointInTime
+            hasBeginning
+            hasEnd
+            resourceInventoriedAs {
+              conformsTo {
+                name
+              }
+              classifiedAs
+              primaryAccountable {
+                name
+                id
+              }
+              name
+              id
+              note
+              metadata
+              onhandQuantity {
+                hasUnit {
+                  label
+                }
+              }
+              images {
+                hash
+                name
+                mimeType
+                bin
+              }
+            }
+          }
+          reciprocalIntents {
+            resourceQuantity {
+              hasNumericalValue
+              hasUnit {
+                label
+                symbol
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
