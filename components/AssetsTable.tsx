@@ -1,4 +1,3 @@
-import { gql, useQuery } from "@apollo/client";
 import { AdjustmentsIcon } from "@heroicons/react/outline";
 import cn from "classnames";
 import { useTranslation } from "next-i18next";
@@ -7,88 +6,33 @@ import { useEffect, useState } from "react";
 import AssetsTableRow from "./AssetsTableRow";
 import BrTable from "./brickroom/BrTable";
 import Spinner from "./brickroom/Spinner";
-import Filters from "./Filters";
 
-const AssetsTable = ({
-  filter,
-  noPrimaryAccountableFilter = false,
-  hideHeader = false,
-  hidePagination = false,
-}: {
-  filter?: any;
-  noPrimaryAccountableFilter?: boolean;
-  hidePagination?: boolean;
+//
+import { useQuery } from "@apollo/client";
+import { QUERY_ASSETS } from "lib/QueryAndMutation";
+import { GetAssetsQuery, GetAssetsQueryVariables, ProposalFilterParams } from "lib/types";
+
+//
+
+export interface AssetsTableProps {
+  filter?: ProposalFilterParams;
   hideHeader?: boolean;
-}) => {
+  hidePagination?: boolean;
+}
+
+//
+
+export default function AssetsTable(props: AssetsTableProps) {
   const { t } = useTranslation("lastUpdatedProps");
-  const QUERY_ASSETS = gql`
-    query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
-      proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
-        pageInfo {
-          startCursor
-          endCursor
-          hasPreviousPage
-          hasNextPage
-          totalCount
-          pageLimit
-        }
-        edges {
-          cursor
-          node {
-            id
-            name
-            created
-            primaryIntents {
-              resourceClassifiedAs
-              action {
-                id
-              }
-              hasPointInTime
-              hasBeginning
-              hasEnd
-              resourceInventoriedAs {
-                conformsTo {
-                  name
-                }
-                classifiedAs
-                primaryAccountable {
-                  name
-                  id
-                }
-                name
-                id
-                note
-                metadata
-                onhandQuantity {
-                  hasUnit {
-                    label
-                  }
-                }
-                images {
-                  hash
-                  name
-                  mimeType
-                  bin
-                }
-              }
-            }
-            reciprocalIntents {
-              resourceQuantity {
-                hasNumericalValue
-                hasUnit {
-                  label
-                  symbol
-                }
-              }
-            }
-          }
-        }
-      }
+  const { filter = {}, hideHeader = false, hidePagination = false } = props;
+
+  const { loading, data, fetchMore, refetch, variables } = useQuery<GetAssetsQuery, GetAssetsQueryVariables>(
+    QUERY_ASSETS,
+    {
+      variables: { last: 10, filter: filter },
     }
-  `;
-  const { loading, data, fetchMore, refetch, variables } = useQuery(QUERY_ASSETS, {
-    variables: { last: 10, filter: filter },
-  });
+  );
+
   const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
     if (!fetchMoreResult) {
       return previousResult;
@@ -101,6 +45,7 @@ const AssetsTable = ({
 
     return { ...fetchMoreResult };
   };
+
   const getHasNextPage = data?.proposals.pageInfo.hasNextPage;
   const loadMore = () => {
     if (data && fetchMore) {
@@ -178,12 +123,9 @@ const AssetsTable = ({
                 )
               )}
             </div>
-            {showFilter && <Filters noPrimaryAccountableFilter={noPrimaryAccountableFilter} filter={filter} />}
           </div>
         </div>
       )}
     </>
   );
-};
-
-export default AssetsTable;
+}

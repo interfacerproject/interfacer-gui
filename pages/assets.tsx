@@ -1,24 +1,24 @@
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import AssetsTable from "../components/AssetsTable";
-import NewProjectButton from "../components/NewProjectButton";
 
-const Assets = () => {
-  const { conformTo, primaryAccountable, tags } = useRouter().query;
-  const filter: {
-    primaryIntentsResourceInventoriedAsConformsTo?: string[];
-    primaryIntentsResourceInventoriedAsPrimaryAccountable?: string[];
-    primaryIntentsResourceInventoriedAsClassifiedAs?: string[];
-  } = {};
-  const primaryAccountableList =
-    typeof primaryAccountable === "string" ? primaryAccountable.split(",") : primaryAccountable;
-  const tagsList = typeof tags === "string" ? tags.split(",") : tags;
-  const conformToList = typeof conformTo === "string" ? conformTo.split(",") : conformTo;
-  conformTo && (filter["primaryIntentsResourceInventoriedAsConformsTo"] = conformToList);
-  primaryAccountable && (filter["primaryIntentsResourceInventoriedAsPrimaryAccountable"] = primaryAccountableList);
-  tags && (filter["primaryIntentsResourceInventoriedAsClassifiedAs"] = tagsList);
+// Components
+import AssetsTable from "components/AssetsTable";
+import NewProjectButton from "components/NewProjectButton";
+
+//
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["signInProps", "lastUpdatedProps", "SideBarProps"])),
+    },
+  };
+}
+
+//
+
+export default function Assets() {
   const { t } = useTranslation("lastUpdatedProps");
   return (
     <div className="p-8">
@@ -32,17 +32,7 @@ const Assets = () => {
           </a>
         </Link>
       </div>
-      <AssetsTable filter={filter} />
+      <AssetsTable />
     </div>
   );
-};
-
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["signInProps", "lastUpdatedProps", "SideBarProps"])),
-    },
-  };
 }
-
-export default Assets;
