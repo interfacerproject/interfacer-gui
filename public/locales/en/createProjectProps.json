@@ -1,71 +1,14 @@
 {
+  "button": "button",
+  "contributors": "contributors",
   "control window": "control window",
-  "Design": "Design",
-  "Design_Label": "A digital asset, like an open source hardware project or 3D model",
-  "Product": "Product",
-  "Product_Label": "A physical product that can be picked up or delivered",
-  "Service": "Service",
-  "Service_Label": "A service, like a consultancy, training course or usage/rental of equipment",
-  "headline": {
-    "title": "Create a new asset",
-    "description": "Make sure you read the Comunity Guidelines before you create a new asset."
-  },
-  "generalInfo": {
-    "title": "General Information",
-    "description": "Help us display your asset correctly."
-  },
-  "projectName": {
-    "label": "Asset name:",
-    "placeholder": "E.g. Fabulaser",
-    "hint": "Working name of the asset, visible to the whole community"
-  },
-  "projectDescription": {
-    "label": "Description:",
-    "placeholder": "E.g. An open source laser cutter within you reach",
-    "hint": "Short description to be displayed on the asset page",
-    "md-editor-explainer": "in this markdown editor, the right box shows a preview. Type up to 2048 characters"
-  },
-  "repositoryOrId": {
-    "label": "Repository link or Interfacer ID:",
-    "placeholder": "E.g. github.com/my-repo",
-    "hint": "Reference to the asset's repository or Interfacer ID of the asset"
-  },
-  "imageUpload": {
-    "label": "Upload up to 10 pictures:",
-    "placeholder": "SVG, PNG, JPG or GIF (MAX. 2MB)",
-    "hint": "SVG, PNG, JPG or GIF (MAX. 2MB)",
-    "clickToUpload": "Click to upload"
-  },
-  "projectTags": {
-    "label": "Tags:",
-    "hint": "Press space to add a new tag",
-    "placeholder": "chair laser-cutter open-source 3d-printing"
-  },
-  "location": {
-    "name": {
-      "label": "Location name:",
-      "placeholder": "E.g. Hamburg Warehouse",
-      "hint": "Name of the location where the asset can be found"
-    },
-    "address": {
-      "label": "Address:",
-      "placeholder": "E.g. Hamburg",
-      "hint": "Address of the asset location"
-    }
-  },
-  "price": {
-    "label": "Value in Fab Token:",
-    "placeholder": "E.g. 1 Fab Token",
-    "hint": "Value of the asset in Fab Token"
-  },
-  "contributors": {
-    "label": "Contributors:",
-    "placeholder": "Search agents by name",
-    "hint": "Contributors must have an account"
-  },
-  "button": "Save",
-  "go to the asset": "Go to the asset",
-  "resourceSpec": "73u648QASpCtC80ihY0KLg",
-  "unitId": "82XqknZlTsGcFbQw8Gg6ow",
-  "project_type_label": "Select asset type:"
+  "go to the asset": "go to the asset",
+  "headline": "headline",
+  "imageUpload": "imageUpload",
+  "location": "location",
+  "projectDescription": "projectDescription",
+  "projectName": "projectName",
+  "projectTags": "projectTags",
+  "projectType": "projectType",
+  "repositoryOrId": "repositoryOrId"
 }

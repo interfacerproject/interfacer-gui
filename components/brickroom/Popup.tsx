@@ -1,3 +1,4 @@
+import { useTranslation } from "next-i18next";
 import React, { ReactEventHandler } from "react";
 
 type PopupPops = {
@@ -13,6 +14,7 @@ type PopupPops = {
 };
 
 function Popup({ name, action1, action2, buttons, children, svg, disabled, outlined, XL }: PopupPops) {
+  const { t } = useTranslation("common");
   const larger = XL ? "w-156 max-w-5xl" : "";
   const disabledClass = disabled ? "btn-disabled" : "";
   const outlinedClass = outlined ? "btn-outline" : "";
@@ -30,7 +32,7 @@ function Popup({ name, action1, action2, buttons, children, svg, disabled, outli
       <div className="modal">
         <div className={`pt-10 modal-box ${larger}`}>
           <label htmlFor={name} className="absolute btn btn-sm btn-outline btn-square right-2 top-2">
-            ✕
+            {t("✕")}
           </label>
           {children}
           <div className="modal-action">{buttons}</div>

@@ -1,15 +1,6 @@
 {
-  "all set!": "tutto pronto!",
-  "Go to home": "Vai a casa",
-  "Go to projects": "Vai ai progetti",
-  "Go to inventory": "Vai all'inventario",
-  "This is a": "Questo è un",
-  "Value of this asset": "Valore di questa attività",
-  "Load more": "Per saperne di più",
-  "assets": "patrimonio",
-  "contributorsHead": ["UserName", "Date"],
-  "contributors": "collaboratori",
-  "watch": "orologio",
-  "add to list": "Aggiungi all'elenco",
-  "unwatch": "non guardare"
+  "✕": "",
+  "Go back and discard": "",
+  "Login": "",
+  "Sign up": ""
 }

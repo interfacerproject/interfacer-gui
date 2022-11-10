@@ -1,17 +1,14 @@
 {
-  "headline": "Titre :",
-  "generalInfo": "Informations générales",
-  "projectType": "projectType",
-  "projectName": "nom du projet",
-  "projectDescription": "description du projet",
-  "repositoryOrId": "repositoryOrId",
-  "imageUpload": "imageUpload",
-  "projectTags": "projectTags",
-  "location": "emplacement",
-  "price": "prix",
+  "button": "bouton",
   "contributors": "contributeurs",
-  "button": "Sauvez",
-  "go to the asset": "Aller à l'actif",
-  "resourceSpec": "73u648QASpCtC80ihY0KLg",
-  "unitId": "82XqknZlTsGcFbQw8Gg6ow"
+  "control window": "fenêtre de contrôle",
+  "go to the asset": "aller à l'actif",
+  "headline": "Titre :",
+  "imageUpload": "imageUpload",
+  "location": "emplacement",
+  "projectDescription": "description du projet",
+  "projectName": "nom du projet",
+  "projectTags": "projectTags",
+  "projectType": "projectType",
+  "repositoryOrId": "repositoryOrId"
 }
