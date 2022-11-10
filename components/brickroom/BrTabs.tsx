@@ -4,6 +4,7 @@ type TabsProps = Array<{
   title: ReactElement | string;
   component: ReactElement<any, any>;
   disabled?: boolean;
+  hidden?: boolean;
 }>;
 
 const BrTabs = ({ tabsArray, initialTab = 0 }: { tabsArray: TabsProps; initialTab?: number }) => {
@@ -18,6 +19,7 @@ const BrTabs = ({ tabsArray, initialTab = 0 }: { tabsArray: TabsProps; initialTa
             className={cn("tab tab-bordered pb-9", {
               "tab-active text-primary": i === tab,
               "tab-disabled": tabsArray[i].disabled,
+              hidden: tabsArray[i].hidden,
             })}
             onClick={() => setTab(i)}
           >

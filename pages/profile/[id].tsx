@@ -1,13 +1,8 @@
 import { useQuery } from "@apollo/client";
-import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
+import { AdjustmentsIcon, ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
 import cn from "classnames";
-import AssetsTable from "components/AssetsTable";
-import BrTabs from "components/brickroom/BrTabs";
-import Spinner from "components/brickroom/Spinner";
-import { useAuth } from "hooks/useAuth";
-import useStorage from "hooks/useStorage";
 import { FETCH_USER } from "lib/QueryAndMutation";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
@@ -17,6 +12,12 @@ import { useRouter } from "next/router";
 import useFilters from "../../hooks/useFilters";
 
 //
+import AssetsTable from "../../components/AssetsTable";
+import BrTabs from "../../components/brickroom/BrTabs";
+import Spinner from "../../components/brickroom/Spinner";
+import { useAuth } from "../../hooks/useAuth";
+import useStorage from "../../hooks/useStorage";
+import UpdateProfileForm from "../../components/UpdateProfileForm";
 
 const Profile: NextPage = () => {
   const { getItem } = useStorage();
@@ -114,6 +115,21 @@ const Profile: NextPage = () => {
                     </div>
                   ),
                   disabled: hasCollectedAssets,
+                },
+                {
+                  title: (
+                    <span className="flex items-center space-x-4">
+                      <AdjustmentsIcon className="w-5 h-5 mr-1" />
+                      {t("update profile")}
+                    </span>
+                  ),
+                  component: (
+                    <div>
+                      <h3 className="my-8">{t("update personal info")}</h3>
+                      <UpdateProfileForm />
+                    </div>
+                  ),
+                  hidden: !isUser,
                 },
               ]}
             />
