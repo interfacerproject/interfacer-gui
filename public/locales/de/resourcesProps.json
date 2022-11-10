@@ -1,9 +1,12 @@
 {
-  "by": "",
-  "description": "",
-  "resourceHead": "",
-  "There’s nothing to display here": "",
+  "Resources": "Ressourcen",
+  "Use this page to generate digital product passports of resources": "Verwenden Sie diese Seite, um digitale Produktpässe von Ressourcen zu erstellen",
+  "by": "von",
+  "Resource": "Ressource",
+  "Source": "Quelle",
+  "License": "Lizenz",
+  "Version": "Version",
+  "There’s nothing to display here&#46;": "Hier gibt es nichts zu sehen&#46;",
   "This table will display the resources that you will have in inventory": "In dieser Tabelle werden die Ressourcen angezeigt, die Sie im Inventar haben werden",
-  "title": "",
-  "Version: {{version}}": ""
+  "Version: {{version}}": "Version: {{version}}"
 }

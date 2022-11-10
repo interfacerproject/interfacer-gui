@@ -24,7 +24,7 @@ const InvitationKey = ({ setStep }: { setStep: Dispatch<SetStateAction<number>> 
     if (invitationKey === process.env.NEXT_PUBLIC_INVITATION_KEY) {
       setError("");
     } else {
-      setError(t("invitationKeyError"));
+      setError(t("Please enter a valid invitation key"));
     }
   };
 
@@ -38,16 +38,16 @@ const InvitationKey = ({ setStep }: { setStep: Dispatch<SetStateAction<number>> 
   return (
     <>
       <div className="flex flex-row">
-        <h2>{t("invitationTitle")}</h2>
+        <h2>{t("Got your keys?")}</h2>
         <KeyIcon className="w-8 h-8" />
       </div>
-      <p className="mt-4 mb-6">{t("invitationPresentation")}</p>
+      <p className="mt-4 mb-6">{t("You need an invitation phrase to proceed with your signup!")}</p>
       <p className="flex flex-row items-center">
-        <span>{t("register.question")}</span>
+        <span>{t("👌 You already have an account?")}</span>
         <Link href={"/sign_in"}>
           <a className="flex flex-row font-semibold">
             <LinkIcon className="w-5 h-5 mx-2" />
-            {t("register.answer")}
+            {t("Login")}
           </a>
         </Link>
       </p>
@@ -56,12 +56,12 @@ const InvitationKey = ({ setStep }: { setStep: Dispatch<SetStateAction<number>> 
           type="text"
           name="invitationKey"
           onChange={(e: ChangeEvent<HTMLInputElement>) => setInvitationKey(e.target.value)}
-          label={t("invitationKey")}
+          label={t("invitation key&#58;*")}
           onBlur={handleBlur}
           error={error}
         />
         <button className="mt-4 btn btn-block btn-accent" type="submit" disabled={isDisabled}>
-          {t("invitationButton")}
+          {t("Continue")}
         </button>
       </form>
     </>

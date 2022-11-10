@@ -10,7 +10,7 @@ export default {
   defaultNamespace: "translation",
   // Default namespace used in your i18next config
 
-  defaultValue: "",
+  // defaultValue: "",
   // Default value to give to empty keys
   // You may also specify a function accepting the locale, namespace, and key as arguments
 
@@ -20,7 +20,7 @@ export default {
   keepRemoved: false,
   // Keep keys from the catalog that are no longer in code
 
-  keySeparator: ".",
+  keySeparator: false,
   // Key separator used in your translation keys
   // If you want to use plain english keys, separators such as `.` and `:` will conflict. You might want to set `keySeparator: false` and `namespaceSeparator: false`. That way, `t('Status: Loading...')` will not think that there are a namespace and three separator dots for instance.
 
@@ -67,19 +67,19 @@ export default {
   sort: true,
   // Whether or not to sort the catalog. Can also be a [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters)
 
-  skipDefaultValues: false,
+  // skipDefaultValues: false,
   // Whether to ignore default values
   // You may also specify a function accepting the locale and namespace as arguments
 
-  useKeysAsDefaultValue: false,
+  useKeysAsDefaultValue: true,
   // Whether to use the keys as the default value; ex. "Hello": "Hello", "World": "World"
   // This option takes precedence over the `defaultValue` and `skipDefaultValues` options
   // You may also specify a function accepting the locale and namespace as arguments
 
-  verbose: false,
+  verbose: true,
   // Display info about the parsing including some stats
 
-  failOnWarnings: false,
+  failOnWarnings: true,
   // Exit with an exit code of 1 on warnings
 
   failOnUpdate: false,

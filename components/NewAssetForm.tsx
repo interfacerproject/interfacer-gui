@@ -231,49 +231,67 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     }
   }
 
+  const typeArray = [
+    {
+      name: t("Design"),
+      id: instanceVariables?.specs?.specProjectDesign?.id,
+      label: t("A digital asset, like an open source hardware project or 3D model"),
+    },
+    {
+      name: t("Service"),
+      id: instanceVariables?.specs?.specProjectService?.id,
+      label: t("A service, like a consultancy, training course or usage/rental of equipment"),
+    },
+    {
+      name: t("Product"),
+      id: instanceVariables?.specs?.specProjectProduct?.id,
+      label: t("A physical product that can be picked up or delivered"),
+    },
+  ];
+
   return (
     <form onSubmit={onSubmit} className="w-full">
       <BrInput
         name="projectName"
-        label={t("projectName.label")}
-        hint={t("projectName.hint")}
+        label={t("Asset name")}
+        hint={t("Working name of the asset, visible to the whole community")}
         value={projectName}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setAssetName(e.target.value)}
-        placeholder={t("projectName.placeholder")}
+        placeholder={t("Fabulaser")}
         testID="projectName"
       />
       <BrMdEditor
         onChange={handleEditorChange}
         className="my-2"
         editorClass="h-60"
-        label={t("projectDescription.label")}
-        hint={t("projectDescription.hint")}
+        label={t("General information")}
+        hint={t("Short description to be displayed on the asset page")}
         testID="projectDescription"
-        subTitle={t("projectDescription.md-editor-explainer")}
+        subTitle={t("in this markdown editor, the right box shows a preview; Type up to 2048 characters")}
       />
       <BrImageUpload
         onChange={setImages}
         setImagesFiles={setImagesFiles}
-        label={t("imageUpload.label")}
-        placeholder={t("imageUpload.placeholder")}
+        label={t("Upload up to 10 pictures") + ":"}
+        placeholder={t("SVG, PNG, JPG or GIF (MAX 2MB)")}
         value={imagesFiles}
-        hint={t("imageUpload.hint")}
+        hint={t("SVG, PNG, JPG or GIF (MAX 2MB)")}
         testID="imageUpload"
-        clickToUpload={t("imageUpload.clickToUpload")}
+        clickToUpload={t("Click to upload")}
       />
       <BrInput
         name="repositoryOrId"
-        label={t("repositoryOrId.label")}
-        hint={t("repositoryOrId.hint")}
+        label={t("Repository link or Interfacer ID") + ":*"}
+        hint={t("Reference to the asset's repository or Interfacer ID of the asset")}
         value={repositoryOrId}
-        placeholder={t("repositoryOrId.placeholder")}
+        placeholder={t("github&#46;com/my-repo")}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setRepositoryOrId(e.target.value)}
         testID="repositoryOrId"
       />
       <BrRadio
-        array={t("projectType.array", { returnObjects: true })}
-        label={t("projectType.label")}
-        hint={t("projectType.hint")}
+        array={typeArray}
+        label={t("Select asset type" + ":*")}
+        hint={t("")}
         onChange={setAssetType}
         value={projectType}
         testID="projectType"
@@ -290,7 +308,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
       />
       {assetCreatedId ? (
         <Link href={assetCreatedId}>
-          <a className="btn btn-accent">{t("go to the asset")}</a>
+          <a className="btn btn-accent">{t("Go to the asset")}</a>
         </Link>
       ) : (
         <button type="submit" className="btn btn-accent" disabled={!isButtonEnabled()} data-test="submit">

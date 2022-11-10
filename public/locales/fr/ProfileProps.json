@@ -1,12 +1,16 @@
 {
-  "Assets": "Actifs",
-  "description": "description",
+  "Hi": "Bonjour",
+  "Welcome to your FCOS profile": "Bienvenue dans votre profil FCOS",
+  "activity by the user": "activité de l'utilisateur",
+  "Saved list": "Liste sauvegardée",
+  "Your statistics": "Vos statistiques",
   "Goals": "Objectifs",
-  "Hi &nbsp;": "Salut &nbsp ;",
-  "Lists": "Listes",
-  "My Assets": "Mes atouts",
-  "My Lists": "Mes listes",
-  "other user id title": "autre titre d'identification de l'utilisateur",
   "Strength": "Force",
-  "user id title": "id utilisateur titre"
+  "Your user id is: {{id}}": "Votre identifiant d'utilisateur est : {{id}}",
+  "The user id is: {{id}}": "L'identifiant de l'utilisateur est : {{id}}.",
+  "Assets": "Actifs",
+  "My Assets": "Mes atouts",
+  "Lists": "Listes",
+  "My Lists": "Mes listes",
+  "Hi,&nbsp;": "Bonjour,&nbsp ;"
 }

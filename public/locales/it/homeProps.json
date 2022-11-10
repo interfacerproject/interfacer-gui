@@ -1,7 +1,16 @@
 {
-  "cta_1": "Accedi",
-  "cta_2": "Per saperne di più",
-  "paragraph1": "Benvenuti nella messa in scena di Fabcity OS alpha di Interfacer 😎",
-  "paragraph2": "Creare o importare asset e collaborare con altri nella progettazione digitale o nella realizzazione di prodotti fisici.",
-  "title": "Costruire l'infrastruttura digitale per le Fab City"
+  "Building the digital infrastructure for Fab Cities": "Costruire l'infrastruttura digitale per le Fab City",
+  "Welcome to Interfacer's Fabcity OS alpha staging 😎": "Benvenuti nella messa in scena di Fabcity OS alpha di Interfacer 😎",
+  "Create or import assets and collaborate with others in digital designs or in manufacturing physical products&#46;": "Creare o importare asset e collaborare con altri nella progettazione digitale o nella realizzazione di prodotti fisici&#46;",
+  "Create": "Creare",
+  "Create new assets or import from LOSH": "Creare nuove risorse o importare da LOSH",
+  "Share": "Condividi",
+  "Share your digital designs with the community": "Condividete i vostri progetti digitali con la comunità",
+  "Interact": "Interagire",
+  "Interact with the community": "Interagire con la comunità",
+  "Feature {{n}}": "Caratteristica {{n}}",
+  "Coming soon": "Prossimamente",
+  "Sign in": "Accedi",
+  "Learn more": "Per saperne di più",
+  "Log In": "Accedi"
 }

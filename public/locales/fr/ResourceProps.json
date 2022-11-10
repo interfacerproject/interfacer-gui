@@ -1,10 +1,16 @@
 {
-  "add to list +": "",
-  "by": "",
-  "Claim ownership": "",
-  "ID: {{id}}": "",
-  "Losh asset": "",
-  "Owner": "",
-  "This is a &nbsp;": "",
-  "Version: {{version}}": ""
+  "Assigned to:": "Affecté à :",
+  "Current location:": "Emplacement actuel :",
+  "Here you will see the material passport of asset": "Ici, vous verrez le passeport matériel de l'actif",
+  "Claim Ownership": "Revendication de la propriété",
+  "claim your ownership over this asset": "revendiquez votre droit de propriété sur cet actif",
+  "This is a &nbsp; {{type}}": "C'est un &nbsp ; {{type}}",
+  "Losh asset": "L'actif de Losh",
+  " {{economicResource": " {{Ressource économique",
+  "": "",
+  "CLAIM OWNERSHIP": "REVENDIQUER LA PROPRIÉTÉ",
+  "add to list +": "ajouter à la liste +",
+  "Owner": "Propriétaire",
+  "by": "par",
+  "&nbsp;": "&nbsp ;"
 }

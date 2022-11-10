@@ -18,7 +18,7 @@ function Sidebar() {
   // Links
   const items: Record<string, IfSideBarLinkProps> = {
     home: {
-      text: t("home"),
+      text: t("Home"),
       link: "/profile/my_profile",
       leftIcon: <HomeIcon className="w-5 h-5" />,
     },
@@ -35,11 +35,11 @@ function Sidebar() {
     },
     // Dropdown -> Assets
     latestAssets: {
-      text: t("Latest assets"),
+      text: t("Assets"),
       link: "/assets",
     },
     resources: {
-      text: t("Imported losh"),
+      text: t("Imported from LOSH"),
       link: "/resources",
       tag: "NEW",
     },
@@ -48,7 +48,7 @@ function Sidebar() {
       link: "/profile/my_profile?tab=1",
     },
     reportBug: {
-      text: t("Report bug"),
+      text: t("Report a bug"),
       link: "https://github.com/dyne/interfacer-gui/issues/new",
       leftIcon: <SupportIcon className="w-5 h-5" />,
       target: "_blank",
@@ -70,11 +70,11 @@ function Sidebar() {
   // Dropdown items
   const drItems: Record<string, IfSidebarItemProps> = {
     assets: {
-      text: t("assets"),
+      text: t("Assets"),
       leftIcon: <CubeIcon className="w-5 h-5" />,
     },
     myStuff: {
-      text: t("assets"),
+      text: t("Assets"),
       leftIcon: <BriefcaseIcon className="w-5 h-5" />,
     },
   };

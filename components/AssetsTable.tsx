@@ -7,6 +7,7 @@ import AssetsTableRow from "./AssetsTableRow";
 import BrTable from "./brickroom/BrTable";
 import Spinner from "./brickroom/Spinner";
 import Filters from "./Filters";
+import Link from "next/link";
 
 const AssetsTable = ({
   filter,
@@ -154,20 +155,22 @@ const AssetsTable = ({
           )}
           <div className="flex flex-col flex-col-reverse md:space-x-2 md:flex-row">
             <div className="pt-5 grow md:pt-0">
-              <BrTable headArray={t("table_head", { returnObjects: true })}>
+              <BrTable headArray={[t("Asset"), t("Last update"), t("Owner"), t("tags")]}>
                 {assets?.map((e: any) => (
                   <AssetsTableRow asset={e} key={e.cursor} />
                 ))}
               </BrTable>
               {showEmptyState ? (
-                <div className="mt-3 p-12 flex flex-col items-center justify-center bg-white rounded-md">
-                  <h4>{t("no_assets_found_title")}</h4>
-                  <p className="font-light text-white-700">{t("no_assets_found_content")}</p>
-                  {/* <h4>{t("Create a new asset")}</h4>
-                  <p className="pt-2 pb-5 font-light text-white-700">{t("empty_state_assets")}</p>
+                <div className="p-4 pt-6">
+                  <h4>{t("Create a new asset")}</h4>
+                  <p className="pt-2 pb-5 font-light text-white-700">
+                    {t(
+                      "It looks like you haven't created an asset yet&#46; Proceed by pressing the button below to create a new one"
+                    )}
+                  </p>
                   <Link href="/create_asset">
                     <a className="btn btn-accent btn-md">{t("Create asset")}</a>
-                  </Link> */}
+                  </Link>
                 </div>
               ) : (
                 !hidePagination && (

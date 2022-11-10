@@ -30,11 +30,6 @@ describe("when user is logged in", () => {
   //     /* ==== End Cypress Studio ==== */
   // });
 
-  it("Should see /logged_in", () => {
-    cy.visit("/logged_in");
-    cy.contains("How did you arrived here? This app is still under construction!");
-  });
-
   it("Should see /resources", () => {
     cy.visit("/resources");
     cy.contains("Resources");

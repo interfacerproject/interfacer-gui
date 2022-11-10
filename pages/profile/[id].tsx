@@ -82,10 +82,11 @@ const Profile: NextPage = () => {
                       />
                     </div>
                   </div>
-                  <p>{isUser ? t("description") : t("")} </p>
+                  <p>{isUser ? t("Welcome to your FCOS profile") : t("")} </p>
                   <h4 className="mt-2">
-                    {isUser ? t("user id title") : t("other user id title")}{" "}
-                    <span className="text-primary">{person?.id}</span>
+                    {isUser
+                      ? t("Your user id is: {{id}}", { id: person?.id })
+                      : t("The user id is: {{id}}", { id: person?.id })}{" "}
                   </h4>
                 </div>
                 <div className="my-4 shadow md:mr-20 stats stats-vertical">

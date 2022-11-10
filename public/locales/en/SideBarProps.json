@@ -1,12 +1,18 @@
 {
   "assets": "assets",
-  "Create asset": "Create asset",
   "home": "home",
   "Imported losh": "Imported losh",
   "Latest assets": "Latest assets",
-  "Map": "Map",
-  "My assets": "My assets",
-  "My list": "My list",
   "Report bug": "Report bug",
-  "User manual": "User manual"
+  "Home": "Home",
+  "My Stuff": "My Stuff",
+  "Create asset": "Create asset",
+  "My assets": "My assets",
+  "Assets": "Assets",
+  "All assets": "All assets",
+  "Imported from LOSH": "Imported from LOSH",
+  "User manual": "User manual",
+  "Map": "Map",
+  "Report a bug": "Report a bug",
+  "My list": "My list"
 }

@@ -126,7 +126,7 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
     <>
       {data ? (
         <>
-          <BrTable headArray={t("resourceHead", { returnObjects: true })}>
+          <BrTable headArray={[t("Resource"), t("Source"), t("License"), t("Version")]}>
             {data?.economicResources.edges.length !== 0 && (
               <>
                 {data?.economicResources.edges.map((e: any) => (
@@ -184,7 +184,7 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
               <>
                 <div className="table-row">
                   <div className="table-cell col-span-full">
-                    <h4>{t("There’s nothing to display here.")}</h4>
+                    <h4>{t("There’s nothing to display here")}</h4>
                     <p>
                       {t(
                         "This table will display the resources that you will have in inventory. Raise, transfer or Produce a resource and it will displayed here."

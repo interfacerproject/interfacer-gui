@@ -8,9 +8,7 @@ import BrInput from "./brickroom/BrInput";
 
 const VerifySeed = ({ email, HMAC }: { email: string; HMAC: string }) => {
   const { login } = useAuth();
-  const { t } = useTranslation("signInProps", {
-    keyPrefix: "step_passphrase",
-  });
+  const { t } = useTranslation("signInProps");
   const [seed, setSeed] = useState("");
   const [error, setError] = useState("");
   const { setItem } = useStorage();
@@ -21,16 +19,16 @@ const VerifySeed = ({ email, HMAC }: { email: string; HMAC: string }) => {
       setSeed(seed);
       setError("");
     } else {
-      setError(t("error"));
+      setError(t("Invalid passphrase"));
     }
   };
 
   const completeSignIn = async () => {
     await login({ email })
       .then(() => {
-        window.location.replace("/logged_in");
+        window.location.replace("/");
       })
-      .catch((error: any) => setError(t("error")));
+      .catch((error: any) => setError(t("Invalid passphrase")));
   };
 
   const onSubmit = async (e: { preventDefault: () => void }) => {
@@ -53,7 +51,7 @@ const VerifySeed = ({ email, HMAC }: { email: string; HMAC: string }) => {
         setItem("eddsa", res.keyring.eddsa);
         setItem("seed", res.seed);
       })
-      .catch(() => setError(t("error")))
+      .catch(() => setError(t("Invalid passphrase")))
       .then(() => {
         completeSignIn();
       });
@@ -61,18 +59,20 @@ const VerifySeed = ({ email, HMAC }: { email: string; HMAC: string }) => {
 
   return (
     <>
-      <p className="mt-4 mb-6">{t("subtitle")}</p>
+      <p className="mt-4 mb-6">{t("Input the passphrase that you kept generated during the signup process")}</p>
       <form onSubmit={onSubmit}>
         <BrInput
           name="validateSeed"
           error={error}
-          label={t("label")}
-          placeholder={t("placeholder")}
+          label={t("Passphrase")}
+          placeholder={t("state stumble clever trap excuse scheme world human")}
           onChange={(e: ChangeEvent<HTMLInputElement>) => validateSeed(e.target.value)}
         />
-        <p className="text-[#8A8E96] mb-6">{t("help_text")}</p>
+        <p className="text-[#8A8E96] mb-6">
+          {t("Make sure to insert all the 12 words of the passphrase separated by a space")}
+        </p>
         <button className="btn btn-block btn-accent" type="submit" onClick={onSubmit}>
-          {t("button")}
+          {t("Login")}
         </button>
       </form>
     </>

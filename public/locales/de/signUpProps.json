@@ -1,30 +1,30 @@
 {
-  "button": "Nächster Schritt",
-  "email": {
-    "help": "email.help",
-    "label": "email.label",
-    "placeholder": "email.platzhalter",
-    "valid": "email.gültig"
-  },
-  "invitationButton": "Weiter",
-  "invitationKey": "Einladungsschlüssel:*",
-  "invitationKeyError": "Bitte geben Sie einen gültigen Einladungsschlüssel ein",
-  "invitationPresentation": "Sie benötigen einen Einladungssatz, um mit Ihrer Anmeldung fortzufahren!",
-  "invitationTitle": "Haben Sie Ihre Schlüssel?",
-  "name": {
-    "help": "name.help",
-    "label": "name.label",
-    "placeholder": "name.platzhalter"
-  },
-  "presentation": "Bei der Anmeldung werden Ihre privaten Schlüssel generiert, die niemals an den Server übermittelt werden. Bewahren Sie eine Kopie Ihrer Passphrase auf.",
-  "register": {
-    "answer": "registrieren.antworten",
-    "question": "registrieren.fragen"
-  },
-  "title": "Registrieren Sie sich",
-  "user": {
-    "help": "benutzer.hilfe",
-    "label": "user.label",
-    "placeholder": "user.platzhalter"
-  }
+  "Sign up": "Registrieren Sie sich",
+  "Answer security questions to complete your signup 🧩": "Beantworten Sie Sicherheitsfragen, um Ihre Anmeldung abzuschließen 🧩.",
+  "The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase.": "Bei der Anmeldung werden Ihre privaten Schlüssel generiert, die niemals an den Server übermittelt werden. Bewahren Sie eine Kopie Ihrer Passphrase auf.",
+  "Your name": "Ihr Name",
+  "Type your name": "Geben Sie Ihren Namen ein",
+  "Your name is shown and visible to everyone": "Ihr Name wird angezeigt und ist für alle sichtbar",
+  "Choose a username": "Wählen Sie einen Benutzernamen",
+  "Type your visible username": "Geben Sie Ihren sichtbaren Benutzernamen ein",
+  "Your username is used to identify you in the system": "Ihr Benutzername wird verwendet, um Sie im System zu identifizieren",
+  "Your email": "Deine E-Mail",
+  "alice@email.com": "alice@email.com",
+  "Your email address that will be used for your login": "Ihre E-Mail-Adresse, die für Ihr Login verwendet wird",
+  "✅ your email free": "✅ Ihre E-Mail kostenlos",
+  "👌 You already have an account?": "👌 Sie haben bereits ein Konto?",
+  "Login": "Anmeldung",
+  "Where did your parents meet?": "Wo haben sich Ihre Eltern kennengelernt?",
+  "What is the name of your first pet?": "Wie lautet der Name Ihres ersten Haustiers?",
+  "What is your home town?": "Was ist Ihre Heimatstadt?",
+  "What is the name of your first teacher?": "Wie lautet der Name Ihres ersten Lehrers?",
+  "What is your mother's maiden name?": "Wie lautet der Mädchenname Ihrer Mutter?",
+  "Next step": "Nächster Schritt",
+  "Got your keys?": "Haben Sie Ihre Schlüssel?",
+  "You need an invitation phrase to proceed with your signup!": "Sie benötigen einen Einladungssatz, um mit Ihrer Anmeldung fortzufahren!",
+  "Continue": "Weiter",
+  "invitation key:*": "Einladungsschlüssel:*",
+  "Please enter a valid invitation key": "Bitte geben Sie einen gültigen Einladungsschlüssel ein",
+  "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46": "Bei der Anmeldung werden Ihre privaten Schlüssel generiert, die niemals an den Server übermittelt werden&#46 Bewahren Sie eine Kopie Ihrer Passphrase auf&#46",
+  "invitation key&#58;*": "Einladungsschlüssel&#58;*"
 }

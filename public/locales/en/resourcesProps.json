@@ -1,9 +1,17 @@
 {
-  "by": "by",
   "description": "description",
-  "resourceHead": "resourceHead",
   "There’s nothing to display here": "There’s nothing to display here",
-  "This table will display the resources that you will have in inventory": "This table will display the resources that you will have in inventory",
   "title": "title",
+  "Resources": "Resources",
+  "Use this page to generate digital product passports of resources": "Use this page to generate digital product passports of resources",
+  "by": "by",
+  "Resource": "Resource",
+  "Source": "Source",
+  "License": "License",
+  "Version": "Version",
+  "There’s nothing to display here&#46;": "There’s nothing to display here.",
+  "This table will display the resources that you will have in inventory": {
+    " Raise, transfer or Producea resource and it will displayed here&#46;": "This table will display the resources that you will have in inventory. Raise, transfer or Producea resource and it will displayed here&#46;"
+  },
   "Version: {{version}}": "Version: {{version}}"
 }

@@ -1,8 +1,16 @@
 {
-  "cta_1": "Sign in",
-  "cta_2": "Learn more",
-  "title": "Building the digital infrastructure for Fab Cities",
-  "paragraph1": "Welcome to Interfacer alpha staging 😎",
-  "paragraph2": "Create or import assets and collaborate with others in digital designs or in manufacturing physical products.",
-  "title": "Building the digital infrastructure for Fab Cities"
+  "Building the digital infrastructure for Fab Cities": "Building the digital infrastructure for Fab Cities",
+  "Welcome to Interfacer's Fabcity OS alpha staging 😎": "Welcome to Interfacer's Fabcity OS alpha staging 😎",
+  "Create or import assets and collaborate with others in digital designs or in manufacturing physical products&#46;": "Create or import assets and collaborate with others in digital designs or in manufacturing physical products.",
+  "Create": "Create",
+  "Create new assets or import from LOSH": "Create new assets or import from LOSH",
+  "Share": "Share",
+  "Share your digital designs with the community": "Share your digital designs with the community",
+  "Interact": "Interact",
+  "Interact with the community": "Interact with the community",
+  "Feature {{n}}": "Feature {{n}}",
+  "Coming soon": "Coming soon",
+  "Sign in": "Sign in",
+  "Learn more": "Learn more",
+  "Log In": "Log In"
 }
