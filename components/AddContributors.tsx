@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 import BrSearchableSelect from "./brickroom/BrSearchableSelect";
-import { useAuth } from "../hooks/useAuth";
 
 type AddContributorsProps = {
   initialContributors?: string[];
@@ -12,9 +11,9 @@ type AddContributorsProps = {
   error?: string;
   testID?: string;
 };
-export const QUERY_AGENTS = gql`
-  query ($first: Int, $id: ID) {
-    agents(first: $first, after: $id) {
+export const QUERY_PEOPLE = gql`
+  query ($query: String) {
+    people(filter: { name: $query }) {
       pageInfo {
         startCursor
         endCursor
@@ -45,22 +44,16 @@ const AddContributors = ({
 }: AddContributorsProps) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [hasChanged, setHasChanged] = useState<boolean>(false);
-  const { user } = useAuth();
-  const agents = useQuery(QUERY_AGENTS).data?.agents.edges.map((agent: any) => agent.node);
+  const people = useQuery(QUERY_PEOPLE, { variables: { name: searchTerm } }).data?.people.edges.map(
+    (agent: any) => agent.node
+  );
   useEffect(() => {
-    if (agents && !hasChanged && initialContributors) {
-      setContributors(
-        agents
-          .filter((agent: any) => initialContributors?.includes(agent.id))
-          .map((agent: any) => ({ id: agent.id, name: agent.name }))
-      );
+    if (people && initialContributors && !hasChanged) {
+      setContributors(people.filter((agent: any) => initialContributors?.includes(agent.id)));
       setHasChanged(true);
     }
-  }, [agents]);
-  const filteredContributors = agents?.filter(
-    (contributor: { id: string; name: string }) =>
-      contributor.name.toLowerCase().includes(searchTerm.toLowerCase()) && contributor.id !== user?.ulid
-  );
+  }, [hasChanged, initialContributors, people]);
+
   const handleSelect = (values: { value: string; label: string }[]) => {
     const updatedOptions = [...values].map((value: { value: string; label: string }) => ({
       id: value.value,
@@ -72,7 +65,7 @@ const AddContributors = ({
   return (
     <BrSearchableSelect
       multiple
-      options={filteredContributors?.map((contributor: { id: string; name: string }) => ({
+      options={people?.map((contributor: { id: string; name: string }) => ({
         label: contributor?.name,
         value: contributor?.id,
       }))}

@@ -24,43 +24,43 @@ function Sidebar() {
     },
     // Dropdown -> My stuff
     createAsset: {
-      text: t("Create asset"),
+      text: t("create_asset"),
       link: "/create_asset",
       leftIcon: <CubeIcon className="w-5 h-5" />,
       tag: "NEW",
     },
     myAssets: {
-      text: t("My assets"),
+      text: t("my_assets"),
       link: "/profile/my_profile",
     },
     // Dropdown -> Assets
     latestAssets: {
-      text: t("Latest assets"),
+      text: t("latest_assets"),
       link: "/assets",
     },
     resources: {
-      text: t("Imported losh"),
+      text: t("imported_losh"),
       link: "/resources",
       tag: "NEW",
     },
     my_list: {
-      text: t("My list"),
+      text: t("my_list"),
       link: "/profile/my_profile?tab=1",
     },
     reportBug: {
-      text: t("Report bug"),
+      text: t("report_bug"),
       link: "https://github.com/dyne/interfacer-gui/issues/new",
       leftIcon: <SupportIcon className="w-5 h-5" />,
       target: "_blank",
     },
     userGuide: {
-      text: t("User manual"),
+      text: t("user_manual"),
       link: "https://new.dyne.org/interfacer-docs/#/pages/user-manual/quickstart",
       leftIcon: <ChatIcon className="w-5 h-5" />,
       target: "_blank",
     },
     map: {
-      text: t("Map"),
+      text: t("map"),
       link: "/",
       leftIcon: <GlobeIcon className="w-5 h-5" />,
       disabled: true,

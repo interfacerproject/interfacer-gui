@@ -4,85 +4,58 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useEffect } from "react";
 import BrDisplayUser from "../components/brickroom/BrDisplayUser";
-import { useAuth } from "../hooks/useAuth";
-import useStorage from "../hooks/useStorage";
 import dayjs from "../lib/dayjs";
-
-const QUERY_ASSETS = gql`
-  query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
-    proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
-      pageInfo {
-        startCursor
-        endCursor
-        hasPreviousPage
-        hasNextPage
-        totalCount
-        pageLimit
-      }
-      edges {
-        cursor
-        node {
-          id
-          name
-          created
-          primaryIntents {
-            resourceInventoriedAs {
-              id
-              name
-              metadata
-              primaryAccountable {
-                name
-                id
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+import useInBox from "../hooks/useInBox";
 
 const Notification = () => {
-  const { user } = useAuth();
   const { t } = useTranslation("notificationProps");
-  const { getItem, setItem } = useStorage();
-  const { data, startPolling } = useQuery(QUERY_ASSETS, { variables: { last: 50 } });
-  startPolling(4000);
-  const notifications = data?.proposals.edges.filter((proposal: any) =>
-    proposal.node.primaryIntents[0]?.resourceInventoriedAs?.metadata?.contributors?.some(
-      (c: { id: string; name: string }) => c.id === user?.ulid
-    )
-  );
+  const { startReading, messages, setReadedMessages } = useInBox();
   useEffect(() => {
+    startReading();
     setInterval(() => {
-      notifications?.map((n: any) => setItem(n.node.id, "read"));
-    }, 2000);
-    if (getItem("watchedList")) {
-      const _watchedList = JSON.parse(getItem("watchedList"));
-    }
-  }, [notifications]);
+      setReadedMessages(messages.map(m => m.id));
+    }, 20000);
+  }, [messages]);
+  const ContributionRow = ({
+    contribution,
+  }: {
+    contribution: {
+      data: string;
+      message: {
+        user: { name: string; id: string };
+        classifiedAs?: string;
+        asset: {
+          id: string;
+          name: string;
+        };
+      };
+    };
+  }) => (
+    <div className="pb-2 my-2 border-b-2">
+      <p className="mr-1">{dayjs(contribution.data).fromNow()}</p>
+      <p className="text-xs">{dayjs(contribution.data).format("HH:mm DD/MM/YYYY")}</p>
+      <div className="flex flex-row my-2 center">
+        <div className="mr-2">
+          <BrDisplayUser id={contribution.message.user?.id} name={contribution.message.user?.name} />
+        </div>
+        <div className="pt-3">
+          <span className="mr-1">{t("added")}</span>
+          <Link href={`/asset/${contribution.message.asset.id}`}>
+            <a className="text-primary hover:underline">{contribution.message.asset.name}</a>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+
+  const RenderMessagePerSubject = (message: any) => {
+    return <ContributionRow contribution={message.message} />;
+  };
 
   return (
     <div className="grid grid-cols-1 p-12">
-      {notifications?.map((n: any) => (
-        <div key={n.node.id} className="pb-2 my-2 border-b-2">
-          <p className="mr-1">{dayjs(n.node.created).fromNow()}</p>
-          <p className="text-xs">{dayjs(n.node.created).format("HH:mm DD/MM/YYYY")}</p>
-          <div className="flex flex-row my-2 center">
-            <div className="mr-2">
-              <BrDisplayUser
-                id={n.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id}
-                name={n.node.primaryIntents[0].resourceInventoriedAs.primaryAccountable.name}
-              />
-            </div>
-            <div className="pt-3">
-              <span className="mr-1">{t("added")}</span>
-              <Link href={`/asset/${n.node.id}`}>
-                <a className="text-primary hover:underline">{n.node.primaryIntents[0].resourceInventoriedAs.name}</a>
-              </Link>
-            </div>
-          </div>
-        </div>
+      {messages.map((m: any) => (
+        <RenderMessagePerSubject key={m.id} message={m.content} />
       ))}
     </div>
   );

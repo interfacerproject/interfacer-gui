@@ -9,17 +9,21 @@ describe("when user has notification", () => {
     cy.restoreLocalStorage();
   });
 
-  it("should see notification bell", () => {
-    cy.visit("/");
-    cy.get("#notification-bell > sup").should("be.visible");
-  });
-
   it("should mark notification as read", () => {
+    cy.intercept("POST", Cypress.env("NEXT_PUBLIC_INBOX_COUNT_UNREAD"), {
+      body: { count: 4, success: "true" },
+    }).as("countUnread");
     cy.visit("/");
-    cy.get("#notification-bell > sup").click();
+    cy.get("#notification-bell > sup").should("exist");
+    cy.get("#notification-bell > sup").should("have.text", "4");
+    cy.get("#notification-bell").click();
     cy.contains("added you as contributor to").should("be.visible");
-    cy.wait(3000);
+    cy.wait(30000);
+    cy.intercept("POST", Cypress.env("NEXT_PUBLIC_INBOX_COUNT_UNREAD"), req => {
+      req.continue();
+    });
     cy.visit("/");
+    cy.get("#notification-bell").should("exist");
     cy.get("#notification-bell > sup").should("not.exist");
   });
 });

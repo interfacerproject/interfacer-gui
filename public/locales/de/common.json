@@ -1,6 +1,15 @@
 {
-  "✕": "✕",
-  "Go back and discard": "Zurückgehen und verwerfen",
-  "Login": "Anmeldung",
-  "Sign up": "Registrieren Sie sich"
+  "all set!": "alles bereit!",
+  "Go to home": "Nach Hause gehen",
+  "Go to projects": "Zu den Projekten",
+  "Go to inventory": "Zum Inventar gehen",
+  "This is a": "Dies ist eine",
+  "Value of this asset": "Wert dieses Vermögenswerts",
+  "Load more": "Mehr laden",
+  "assets": "Vermögenswerte",
+  "contributorsHead": ["Nutzername", "Datum"],
+  "contributors": "Beitragszahler",
+  "watch": "Uhr",
+  "add to list": "zur Liste hinzufügen",
+  "unwatch": "abrufen."
 }

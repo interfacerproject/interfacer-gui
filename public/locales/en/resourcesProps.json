@@ -1,9 +1,6 @@
 {
+  "title": "Resources",
+  "description": "Use this page to generate digital product passports of resources",
   "by": "by",
-  "description": "description",
-  "resourceHead": "resourceHead",
-  "There’s nothing to display here": "There’s nothing to display here",
-  "This table will display the resources that you will have in inventory": "This table will display the resources that you will have in inventory",
-  "title": "title",
-  "Version: {{version}}": "Version: {{version}}"
+  "resourceHead": ["Resource", "Source", "License", "Version"]
 }

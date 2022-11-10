@@ -3,10 +3,4 @@ module.exports = {
     defaultLocale: "en",
     locales: ["fr", "en", "de", "it"],
   },
-  /*
-  fallbackLng: {
-    default: ["en"],
-  },
-  */
-  nonExplicitSupportedLngs: true,
 };
