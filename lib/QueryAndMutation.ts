@@ -150,7 +150,6 @@ export const CREATE_ASSET = gql`
         id
         resourceInventoriedAs {
           id
-          name
         }
       }
     }
@@ -186,7 +185,6 @@ export const TRANSFER_ASSET = gql`
         id
         toResourceInventoriedAs {
           id
-          name
         }
       }
     }

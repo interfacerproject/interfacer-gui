@@ -1,6 +1,6 @@
+import { LocationMarkerIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
 import Link from "next/link";
-import { LocationMarkerIcon } from "@heroicons/react/solid";
 
 type BrDisplayUserProps = {
   id: string;
@@ -20,7 +20,6 @@ const BrDisplayUser = (props: BrDisplayUserProps) => {
               variant="beam"
               colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
             />
-            ;
           </div>
         </label>
         <div className="ml-4">

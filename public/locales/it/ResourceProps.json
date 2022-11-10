@@ -1,7 +1,10 @@
 {
-  "assigned to:": "Assigne to:",
-  "current location:": "Current location:",
-  "Claim Ownership": "Rivendicare la proprietà",
-  "claim your ownership over this asset": "rivendicare la proprietà di questo bene",
-  "description:": "descrizione:"
+  "add to list +": "",
+  "by": "",
+  "Claim ownership": "",
+  "ID: {{id}}": "",
+  "Losh asset": "",
+  "Owner": "",
+  "This is a &nbsp;": "",
+  "Version: {{version}}": ""
 }

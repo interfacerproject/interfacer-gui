@@ -1,4 +1,9 @@
 {
+  "Assets": "Assets",
+  "Create a new asset": "Create a new asset",
+  "Create asset": "Create asset",
+  "Filter by": "Filter by",
+  "Report a bug": "Report a bug",
   "title": "Latest assets",
   "description": "Most recently updated assets",
   "Load more": "Load more...",
