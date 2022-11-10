@@ -18,7 +18,6 @@ const AvatarUsers = ({ users }: { users: Array<{ name: string; id: string }> }) 
                       variant="beam"
                       colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
                     />
-                    ;
                   </div>
                 </div>
               </a>

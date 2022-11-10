@@ -28,7 +28,6 @@ const Asset = () => {
   const [asset, setAsset] = useState<EconomicResource | undefined>();
   const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
-  const [isWatching, setIsWatching] = useState(asset?.metadata?.watchers?.some((w: any) => w.id === user?.ulid));
   const QUERY_ASSET = gql`
     query ($id: ID!) {
       proposal(id: $id) {
@@ -128,7 +127,9 @@ const Asset = () => {
                   </Link>
                 </p>
                 <h2 className="my-2">{asset.name}</h2>
-                <p className="text-primary">ID: {asset.id}</p>
+                <p className="text-primary">
+                  {"ID:"} {asset.id}
+                </p>
               </div>
               {images && <BrThumbinailsGallery images={images} />}
               <div id="tabs" className="my-6">
@@ -142,7 +143,6 @@ const Asset = () => {
                           contributors={asset.metadata?.contributors}
                           date={data?.proposal.created}
                           title={t("Contributors")}
-                          head={t("contributorsHead", { returnObjects: true })}
                         />
                       ),
                     },

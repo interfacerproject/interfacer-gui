@@ -27,7 +27,9 @@ const LoshPresentation = ({
                 <a className="text-primary">{t("Losh asset")}</a>
               </Link>
             </p>
-            <span className="pt-4 text-primary">ID: {economicResource.id}</span>
+            <span className="pt-4 text-primary">
+              {"ID:"} {economicResource.id}
+            </span>
             {m && (
               <>
                 <div className="pt-12 text-primary">

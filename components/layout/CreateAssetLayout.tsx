@@ -2,6 +2,7 @@ import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
 import React, { ReactNode } from "react";
 import Topbar from "../Topbar";
+import { useTranslation } from "next-i18next";
 
 type layoutProps = {
   children: ReactNode;
@@ -10,6 +11,7 @@ type layoutProps = {
 
 const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
   const router = useRouter();
+  const { t } = useTranslation("common");
 
   return (
     <>
@@ -24,7 +26,7 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
               </div>
               <button className="btn btn-primary btn-outline" data-test="back" onClick={() => router.back()}>
                 <ArrowLeftIcon className="w-5 h-5" />
-                <p className="ml-2">Go back and discard</p>
+                <p className="ml-2">{t("Go back and discard")}</p>
               </button>
             </Topbar>
 

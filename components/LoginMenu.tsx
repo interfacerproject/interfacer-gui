@@ -2,9 +2,11 @@ import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import React from "react";
 import Avatar from "boring-avatars";
+import { useTranslation } from "next-i18next";
 
 export default function LoginBtn() {
   const { logout, user } = useAuth();
+  const { t } = useTranslation("common");
 
   return (
     <>
@@ -21,7 +23,6 @@ export default function LoginBtn() {
                       variant="beam"
                       colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
                     />
-                    ;
                   </a>
                 </Link>
               </div>
@@ -33,7 +34,7 @@ export default function LoginBtn() {
                 </a>
               </Link>
               <button className="text-left hover:text-accent" onClick={() => logout()}>
-                Sign Out
+                {t("Sign Out")}
               </button>
             </div>
           </div>

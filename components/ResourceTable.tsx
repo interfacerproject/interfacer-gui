@@ -172,7 +172,7 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
 
                     {/* Cell 4 */}
                     <div className="table-cell text-sm align-top">
-                      Version: {e.node.version}
+                      {t("Version") + ":"} {e.node.version}
                       <br />
                       {e.node.okhv}
                     </div>
