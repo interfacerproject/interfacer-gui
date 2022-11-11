@@ -50,7 +50,7 @@ describe("KeyringGeneration component", () => {
     cy.get(".btn.btn-block.btn-accent").click();
     cy.location().should(loc => {
       expect(loc.origin).to.eq("http://localhost:3000");
-      expect(loc.pathname).to.be.oneOf(["/it", "/en", "/de", "/fr"]);
+      expect(loc.pathname).to.be.oneOf(["/it", "/en", "/de", "/fr", "/"]);
     });
   });
 });
