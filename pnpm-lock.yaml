@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@apollo/client': ^3.6.9
   '@babel/core': ^7.19.3
+  '@bbtgnn/polaris-interfacer': ^0.1.0
   '@graphql-codegen/cli': ^2.13.7
   '@graphql-codegen/typescript': ^2.7.4
   '@graphql-codegen/typescript-operations': ^2.5.4
@@ -76,6 +77,7 @@ specifiers:
 dependencies:
   '@apollo/client': 3.6.9_o264z5epwuajru7y4dsijkqr44
   '@babel/core': 7.19.3
+  '@bbtgnn/polaris-interfacer': 0.1.0_biqbaboplfbrettd7655fr4n2y
   '@graphql-codegen/cli': 2.13.7_yqrgiyy23c32gl7xkwisdmdpby
   '@graphql-codegen/typescript': 2.7.4_graphql@15.8.0
   '@graphql-codegen/typescript-operations': 2.5.4_graphql@15.8.0
@@ -787,6 +789,23 @@ packages:
       '@babel/helper-string-parser': 7.19.4
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
+    dev: false
+
+  /@bbtgnn/polaris-interfacer/0.1.0_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-uw/hYIvyJVIoicWM58VtN7Y+80TXACJ0YwtiC7Ptb7WZBiHpktYg2Bi9JczY0o/f5n/0dRY0mSpLOIb5A1HD/Q==}
+    peerDependencies:
+      react: ^16.14.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@shopify/polaris-icons': 6.5.0
+      '@shopify/polaris-tokens': 6.3.0
+      '@types/react': 18.0.18
+      '@types/react-dom': 18.0.6
+      '@types/react-transition-group': 4.4.5
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-fast-compare: 3.2.0
+      react-transition-group: 4.4.5_biqbaboplfbrettd7655fr4n2y
     dev: false
 
   /@colors/colors/1.5.0:
@@ -1801,6 +1820,14 @@ packages:
   /@rushstack/eslint-patch/1.1.4:
     resolution: {integrity: sha512-LwzQKA4vzIct1zNZzBmRKI9QuNpLgTQMEjsQLf3BXuGYb3QPTP4Yjf6mkdX+X1mYttZ808QpOwAzZjv28kq7DA==}
     dev: true
+
+  /@shopify/polaris-icons/6.5.0:
+    resolution: {integrity: sha512-/PtTzYNsGzhrg+1B07o+Gxp2W9s83YY/4+JszP05zbKsr9iW7rza15pa03P3C9RoGb/1GR0ZKhxVIpaxpljNwA==}
+    dev: false
+
+  /@shopify/polaris-tokens/6.3.0:
+    resolution: {integrity: sha512-ZYcV/yzTDw/qizqb2zKYi0ryNTWg1fKs492sZajs5Rk6TdEYIJSuIHG4U1iP2RFadIFWyHu5ELC5UZWsUCxP9w==}
+    dev: false
 
   /@sideway/address/4.1.4:
     resolution: {integrity: sha512-7vwq+rOHVWjyXxVlR76Agnvhy8I9rpzjosTESvmhNeXOXdZZB15Fl+TI9x1SiHZH5Jv2wTGduSxFDIaq0m3DUw==}
@@ -6901,6 +6928,10 @@ packages:
       file-selector: 0.6.0
       prop-types: 15.8.1
       react: 18.2.0
+    dev: false
+
+  /react-fast-compare/3.2.0:
+    resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}
     dev: false
 
   /react-hook-form/7.38.0_react@18.2.0:
