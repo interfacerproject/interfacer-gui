@@ -10,8 +10,6 @@ import LoginBtn from "./LoginMenu";
 
 import { BriefcaseIcon, ChatIcon, CubeIcon, GlobeIcon, HomeIcon, SupportIcon } from "@heroicons/react/outline";
 
-//
-
 function Sidebar() {
   const { t } = useTranslation("SideBarProps");
 

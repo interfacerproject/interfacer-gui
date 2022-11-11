@@ -9,9 +9,15 @@ describe("KeyringGeneration component", () => {
    */
 
   it("should check keyring for /sign_in page", () => {
-    cy.visit("/sign_in");
+    Cypress.on("uncaught:exception", (err, runnable) => {
+      return false;
+    });
+    cy.visit("/sign_in", {
+      onBeforeLoad: contentWindow => {
+        Object.defineProperty(navigator, "language", { value: "en-EN" });
+      },
+    });
 
-    // Clicking "Answer questions" button
     cy.contains("Login answering").click();
 
     // Setting email and running
@@ -32,6 +38,9 @@ describe("KeyringGeneration component", () => {
 
     // Logging in
     cy.get(".btn.btn-block.btn-accent").click();
-    cy.url().should("eq", "http://localhost:3000/");
+    cy.location().should(loc => {
+      expect(loc.origin).to.eq("http://localhost:3000");
+      expect(loc.pathname).to.be.oneOf(["/it", "/en", "/de", "/fr"]);
+    });
   });
 });

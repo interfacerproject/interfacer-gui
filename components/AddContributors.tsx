@@ -13,7 +13,7 @@ type AddContributorsProps = {
 };
 export const QUERY_PEOPLE = gql`
   query ($query: String) {
-    people(filter: { name: $query }) {
+    agents(filter: { name: $query }) {
       pageInfo {
         startCursor
         endCursor
@@ -44,7 +44,7 @@ const AddContributors = ({
 }: AddContributorsProps) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [hasChanged, setHasChanged] = useState<boolean>(false);
-  const people = useQuery(QUERY_PEOPLE, { variables: { name: searchTerm } }).data?.people.edges.map(
+  const people = useQuery(QUERY_PEOPLE, { variables: { query: searchTerm } }).data?.agents.edges.map(
     (agent: any) => agent.node
   );
   useEffect(() => {

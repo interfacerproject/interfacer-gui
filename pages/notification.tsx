@@ -38,7 +38,7 @@ const Notification = () => {
           <BrDisplayUser id={contribution.message.user?.id} name={contribution.message.user?.name} />
         </div>
         <div className="pt-3">
-          <span className="mr-1">{t("added")}</span>
+          <span className="mr-1">{t("added you as contributor to")}</span>
           <Link href={`/asset/${contribution.message.asset.id}`}>
             <a className="text-primary hover:underline">{contribution.message.asset.name}</a>
           </Link>
