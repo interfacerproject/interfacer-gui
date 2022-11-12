@@ -90,11 +90,12 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
       return;
     } else {
       if (!publicPage) {
+        router.push("/sign_in");
         window.location.href = "/sign_in";
       }
       setLoading(false);
     }
-  }, []);
+  }, [router.asPath]);
 
   const login = async ({ email }: { email: string }) => {
     if (authenticated) return;
