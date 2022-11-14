@@ -37,6 +37,9 @@ module.exports = {
   },
   theme: {
     extend: {
+      borderWidth: {
+        1: "1px",
+      },
       keyframes: {
         swing: {
           "0%,100%": { transform: "rotate(15deg)" },

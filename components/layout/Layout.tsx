@@ -1,8 +1,8 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import React, { ReactNode, useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth";
 import Sidebar from "../Sidebar";
 import Topbar from "../Topbar";
-import { useAuth } from "../../hooks/useAuth";
-import { useRouter } from "next/router";
 
 type layoutProps = {
   children: ReactNode;

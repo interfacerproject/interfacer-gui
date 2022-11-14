@@ -1,7 +1,7 @@
-import { ExclamationIcon } from "@heroicons/react/solid";
-import { ChildrenComponent } from "./utils";
+import BrFieldError from "./BrFieldError";
+import { ChildrenComponent, TestProp } from "./types";
 
-export interface BrFieldInfoProps {
+export interface BrFieldInfoProps extends TestProp {
   for?: string;
   label?: string;
   hint?: string;
@@ -10,32 +10,48 @@ export interface BrFieldInfoProps {
 }
 
 export default function BrFieldInfo(props: ChildrenComponent<BrFieldInfoProps>) {
+  const { hint, help, error, testID = "info" } = props;
+
+  // Building test-ids
+  const wrapperID = `${testID}-wrapper`;
+  const labelID = `${testID}-label`;
+  const errorID = `${testID}-error`;
+  const hintID = `${testID}-hint`;
+  const helpID = `${testID}-help`;
+
   return (
-    <div className="flex flex-col items-start justify-start space-y-2">
+    <div className="flex flex-col items-stretch justify-start space-y-2" data-test={wrapperID}>
       {/* Label */}
-      <label className="" htmlFor={props.for}>
-        <h4 className="label-text">{props.label}</h4>
-      </label>
+      {props.label && (
+        <label className="" htmlFor={props.for} data-test={labelID}>
+          <h4 className="label-text">{props.label}</h4>
+        </label>
+      )}
 
       {/* Slot for content */}
       {props.children}
 
       {/* Info under field */}
-      <label htmlFor={props.for} className="space-y-2">
-        {/* Error */}
-        {props.error && (
-          <span className="flex flex-row text-warning pt-1">
-            <ExclamationIcon className="w-5 h-5" />
-            <p className="ml-2 label-text-alt text-warning">{props.error}</p>
-          </span>
-        )}
+      {(error || hint || help) && (
+        <label htmlFor={props.for} className="space-y-2">
+          {/* Hints */}
+          {hint && (
+            <span className="label-text-alt" data-test={hintID}>
+              {hint}
+            </span>
+          )}
 
-        {/* Hints */}
-        {props.hint && <span className="label-text-alt">{props.hint}</span>}
+          {/* Help */}
+          {help && (
+            <p className="text-[#8A8E96]" data-test={helpID}>
+              {help}
+            </p>
+          )}
 
-        {/* Help */}
-        {props.help && <p className="text-[#8A8E96]">{props.help}</p>}
-      </label>
+          {/* Error */}
+          {error && <BrFieldError testID={errorID} message={error} />}
+        </label>
+      )}
     </div>
   );
 }
