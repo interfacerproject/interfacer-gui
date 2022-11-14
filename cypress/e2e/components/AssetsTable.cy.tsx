@@ -1,4 +1,4 @@
-import { waitForData } from "../../utils";
+import { intercept, waitForData } from "../../utils";
 
 function checkTableAndContent() {
   // Rows of table should be visible
@@ -18,6 +18,7 @@ describe("When user visit Assets", () => {
 
   it("should wait to load the table and display some items", () => {
     cy.restoreLocalStorage();
+    intercept();
     cy.visit("/assets");
     waitForData();
     checkTableAndContent();

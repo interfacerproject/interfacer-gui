@@ -3,17 +3,20 @@ import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
 import cn from "classnames";
+import AssetsTable from "components/AssetsTable";
+import BrTabs from "components/brickroom/BrTabs";
+import Spinner from "components/brickroom/Spinner";
+import { useAuth } from "hooks/useAuth";
+import useStorage from "hooks/useStorage";
+import devLog from "lib/devLog";
+import { ProposalFilterParams } from "lib/types";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import AssetsTable from "../../components/AssetsTable";
-import BrTabs from "../../components/brickroom/BrTabs";
-import Spinner from "../../components/brickroom/Spinner";
-import { useAuth } from "../../hooks/useAuth";
-import useStorage from "../../hooks/useStorage";
-import devLog from "../../lib/devLog";
+
+//
 
 const Profile: NextPage = () => {
   const { getItem } = useStorage();
@@ -36,9 +39,15 @@ const Profile: NextPage = () => {
   const { user } = useAuth();
 
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
+
   const idToBeFetch = isUser ? user?.ulid : id;
+
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
-  const filter = { primaryIntentsResourceInventoriedAsPrimaryAccountable: idToBeFetch };
+
+  const filter: ProposalFilterParams = {};
+  // TODO – TOFIX
+  if (idToBeFetch) filter.primaryIntentsResourceInventoriedAsPrimaryAccountable = [idToBeFetch as string];
+
   const hasCollectedAssets = isUser && !!getItem("assetsCollected");
   let collectedAssets: { primaryIntentsResourceInventoriedAsId: string[] } = {
     primaryIntentsResourceInventoriedAsId: [],
@@ -110,7 +119,7 @@ const Profile: NextPage = () => {
                   component: (
                     <div>
                       <h3 className="my-8">{isUser ? t("My Assets") : t("Assets")}</h3>
-                      <AssetsTable filter={filter} noPrimaryAccountableFilter hideHeader={true} />
+                      <AssetsTable filter={filter} hideHeader={true} />
                     </div>
                   ),
                 },

@@ -1,4 +1,4 @@
-import { waitForData } from "../utils";
+import { intercept, waitForData } from "../utils";
 
 describe.skip("When user visit resources", () => {
   before(() => {
@@ -7,6 +7,7 @@ describe.skip("When user visit resources", () => {
   });
 
   it("should have items with a source url", () => {
+    intercept();
     cy.visit("/resources");
     waitForData();
     cy.get(`[data-test="resource-item"]`).each($item => {

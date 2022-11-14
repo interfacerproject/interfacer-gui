@@ -24,7 +24,7 @@ function Topbar({ search = true, children, userMenu = true, cta }: topbarProps) 
         {children}
         {search && (
           <>
-            <label htmlFor="my-drawer" className="btn btn-square btn-ghost drawer-button">
+            <label htmlFor="my-drawer" className="btn btn-square btn-ghost drawer-button" data-test="sidebarOpener">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
