@@ -13,13 +13,14 @@ export default function BrFieldInfo(props: ChildrenComponent<BrFieldInfoProps>) 
   const { hint, help, error, testID = "info" } = props;
 
   // Building test-ids
-  const labelID = testID + "-label";
-  const errorID = testID + "-error";
-  const hintID = testID + "-hint";
-  const helpID = testID + "-help";
+  const wrapperID = `${testID}-wrapper`;
+  const labelID = `${testID}-label`;
+  const errorID = `${testID}-error`;
+  const hintID = `${testID}-hint`;
+  const helpID = `${testID}-help`;
 
   return (
-    <div className="flex flex-col items-stretch justify-start space-y-2">
+    <div className="flex flex-col items-stretch justify-start space-y-2" data-test={wrapperID}>
       {/* Label */}
       {props.label && (
         <label className="" htmlFor={props.for} data-test={labelID}>

@@ -1,72 +1,34 @@
 import { gql, useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
-import BrSearchableSelect from "./brickroom/BrSearchableSelect";
+import { formatSelectOption } from "components/brickroom/utils/BrSelectUtils";
+import type { GetTagsQuery } from "lib/types";
+import { forwardRef } from "react";
 
-const QUERY = gql`
-  {
+// Components
+import BrSelectSearchable, { BrSelectSearchableProps } from "components/brickroom/BrSelectSearchable";
+
+//
+
+const GET_TAGS = gql`
+  query GetTags {
     economicResourceClassifications
   }
 `;
 
-type SelectAssetTypeProps = {
-  label?: string;
-  hint?: string;
-  error?: string;
-  placeholder?: string;
-  onChange: (values: string[]) => void;
-  canCreateTags?: boolean;
-  testID?: string;
-  initialTags?: string[];
-  selectedTags?: string[];
-};
+const SelectTags = forwardRef<any, BrSelectSearchableProps>((props, ref) => {
+  const tags = useQuery<GetTagsQuery>(GET_TAGS).data?.economicResourceClassifications;
 
-const SelectTags = ({
-  label,
-  hint,
-  error,
-  placeholder,
-  onChange,
-  canCreateTags = false,
-  initialTags,
-  selectedTags,
-}: SelectAssetTypeProps) => {
-  const [inputValue, setInputValue] = useState("");
-  const [hasChanged, setHasChanged] = useState(false);
-  const tags = useQuery(QUERY).data?.economicResourceClassifications;
-  useEffect(() => {
-    if (tags && !hasChanged && initialTags) {
-      onChange(initialTags);
-    }
-  }, [hasChanged, initialTags, onChange, tags]);
+  // If no tags are found, return error
+  // Next iteration of the component will use an async loading
+  // ToDo – Return proper error
+  if (!tags) return <></>;
 
-  const options =
-    tags &&
-    tags.map((tag: string) => ({
-      value: tag,
-      label: tag,
-    }));
-  const getTags = (tags: { value: string; label: string; __isNew__?: boolean }[]) => {
-    onChange(tags.map(tag => tag.value));
-    setHasChanged(true);
-  };
+  // Prepping options to input in Select
+  const options = tags.map((tag: string) => formatSelectOption(tag, tag));
 
-  return (
-    <>
-      <BrSearchableSelect
-        options={options}
-        value={selectedTags?.map(tag => ({ value: tag, label: tag }))}
-        onInputChange={setInputValue}
-        onChange={getTags}
-        label={label}
-        hint={hint}
-        error={error}
-        placeholder={placeholder}
-        inputValue={inputValue}
-        multiple
-        isCreatable={canCreateTags}
-      />
-    </>
-  );
-};
+  return <BrSelectSearchable {...props} options={options} ref={ref} />;
+});
 
+//
+
+SelectTags.displayName = "SelectTags";
 export default SelectTags;

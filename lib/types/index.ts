@@ -3210,41 +3210,13 @@ export type UnitUpdateParams = {
 
 export type Unnamed_1_QueryVariables = Exact<{
   first?: InputMaybe<Scalars["Int"]>;
-  id?: InputMaybe<Scalars["ID"]>;
-}>;
-
-export type Unnamed_1_Query = {
-  __typename?: "RootQueryType";
-  agents?: {
-    __typename?: "AgentConnection";
-    pageInfo: {
-      __typename?: "PageInfo";
-      startCursor?: string | null;
-      endCursor?: string | null;
-      hasPreviousPage: boolean;
-      hasNextPage: boolean;
-      totalCount?: number | null;
-      pageLimit?: number | null;
-    };
-    edges: Array<{
-      __typename?: "AgentEdge";
-      cursor: string;
-      node:
-        | { __typename?: "Organization"; id: string; name: string }
-        | { __typename?: "Person"; id: string; name: string };
-    }>;
-  } | null;
-};
-
-export type Unnamed_2_QueryVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]>;
   after?: InputMaybe<Scalars["ID"]>;
   last?: InputMaybe<Scalars["Int"]>;
   before?: InputMaybe<Scalars["ID"]>;
   filter?: InputMaybe<ProposalFilterParams>;
 }>;
 
-export type Unnamed_2_Query = {
+export type Unnamed_1_Query = {
   __typename?: "RootQueryType";
   proposals: {
     __typename?: "ProposalConnection";
@@ -3300,7 +3272,7 @@ export type Unnamed_2_Query = {
   };
 };
 
-export type Unnamed_3_QueryVariables = Exact<{
+export type Unnamed_2_QueryVariables = Exact<{
   first?: InputMaybe<Scalars["Int"]>;
   after?: InputMaybe<Scalars["ID"]>;
   last?: InputMaybe<Scalars["Int"]>;
@@ -3308,7 +3280,7 @@ export type Unnamed_3_QueryVariables = Exact<{
   filter?: InputMaybe<ProposalFilterParams>;
 }>;
 
-export type Unnamed_3_Query = {
+export type Unnamed_2_Query = {
   __typename?: "RootQueryType";
   proposals: {
     __typename?: "ProposalConnection";
@@ -3338,7 +3310,7 @@ export type Unnamed_3_Query = {
   };
 };
 
-export type Unnamed_4_QueryVariables = Exact<{
+export type Unnamed_3_QueryVariables = Exact<{
   first?: InputMaybe<Scalars["Int"]>;
   after?: InputMaybe<Scalars["ID"]>;
   last?: InputMaybe<Scalars["Int"]>;
@@ -3346,7 +3318,7 @@ export type Unnamed_4_QueryVariables = Exact<{
   filter?: InputMaybe<EconomicResourceFilterParams>;
 }>;
 
-export type Unnamed_4_Query = {
+export type Unnamed_3_Query = {
   __typename?: "RootQueryType";
   economicResources?: {
     __typename?: "EconomicResourceConnection";
@@ -3401,35 +3373,18 @@ export type Unnamed_4_Query = {
   } | null;
 };
 
-export type Unnamed_5_QueryVariables = Exact<{ [key: string]: never }>;
+export type GetTagsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type Unnamed_5_Query = {
-  __typename?: "RootQueryType";
-  instanceVariables: {
-    __typename?: "InstanceVariables";
-    specs: {
-      __typename?: "InstanceSpecs";
-      specCurrency: { __typename?: "ResourceSpecification"; id: string };
-      specProjectDesign: { __typename?: "ResourceSpecification"; id: string };
-      specProjectProduct: { __typename?: "ResourceSpecification"; id: string };
-      specProjectService: { __typename?: "ResourceSpecification"; id: string };
-    };
-    units: { __typename?: "InstanceUnits"; unitOne: { __typename?: "Unit"; id: string } };
-  };
-};
+export type GetTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
 
-export type Unnamed_6_QueryVariables = Exact<{ [key: string]: never }>;
+export type Unnamed_4_MutationVariables = Exact<{ [key: string]: never }>;
 
-export type Unnamed_6_Query = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
-
-export type Unnamed_7_MutationVariables = Exact<{ [key: string]: never }>;
-
-export type Unnamed_7_Mutation = {
+export type Unnamed_4_Mutation = {
   __typename?: "RootMutationType";
   createProposal: { __typename?: "ProposalResponse"; proposal: { __typename?: "Proposal"; id: string } };
 };
 
-export type Unnamed_8_MutationVariables = Exact<{
+export type Unnamed_5_MutationVariables = Exact<{
   agent: Scalars["ID"];
   resource: Scalars["ID"];
   oneUnit: Scalars["ID"];
@@ -3437,32 +3392,32 @@ export type Unnamed_8_MutationVariables = Exact<{
   howMuch: Scalars["Float"];
 }>;
 
-export type Unnamed_8_Mutation = {
+export type Unnamed_5_Mutation = {
   __typename?: "RootMutationType";
   item: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
   payment: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
 };
 
-export type Unnamed_9_MutationVariables = Exact<{
+export type Unnamed_6_MutationVariables = Exact<{
   proposal: Scalars["ID"];
   item: Scalars["ID"];
   payment: Scalars["ID"];
 }>;
 
-export type Unnamed_9_Mutation = {
+export type Unnamed_6_Mutation = {
   __typename?: "RootMutationType";
   linkItem: { __typename?: "ProposedIntentResponse"; proposedIntent: { __typename?: "ProposedIntent"; id: string } };
   linkPayment: { __typename?: "ProposedIntentResponse"; proposedIntent: { __typename?: "ProposedIntent"; id: string } };
 };
 
-export type Unnamed_10_MutationVariables = Exact<{
+export type Unnamed_7_MutationVariables = Exact<{
   name: Scalars["String"];
   addr: Scalars["String"];
   lat: Scalars["Float"];
   lng: Scalars["Float"];
 }>;
 
-export type Unnamed_10_Mutation = {
+export type Unnamed_7_Mutation = {
   __typename?: "RootMutationType";
   createSpatialThing: {
     __typename?: "SpatialThingResponse";
@@ -3470,7 +3425,7 @@ export type Unnamed_10_Mutation = {
   };
 };
 
-export type Unnamed_11_MutationVariables = Exact<{
+export type Unnamed_8_MutationVariables = Exact<{
   name: Scalars["String"];
   note: Scalars["String"];
   metadata?: InputMaybe<Scalars["JSON"]>;
@@ -3483,7 +3438,7 @@ export type Unnamed_11_MutationVariables = Exact<{
   images?: InputMaybe<Array<IFile> | IFile>;
 }>;
 
-export type Unnamed_11_Mutation = {
+export type Unnamed_8_Mutation = {
   __typename?: "RootMutationType";
   createEconomicEvent: {
     __typename?: "EconomicEventResponse";
@@ -3495,7 +3450,7 @@ export type Unnamed_11_Mutation = {
   };
 };
 
-export type Unnamed_12_MutationVariables = Exact<{
+export type Unnamed_9_MutationVariables = Exact<{
   resource: Scalars["ID"];
   name: Scalars["String"];
   note: Scalars["String"];
@@ -3507,7 +3462,7 @@ export type Unnamed_12_MutationVariables = Exact<{
   oneUnit: Scalars["ID"];
 }>;
 
-export type Unnamed_12_Mutation = {
+export type Unnamed_9_Mutation = {
   __typename?: "RootMutationType";
   createEconomicEvent: {
     __typename?: "EconomicEventResponse";
@@ -3565,11 +3520,103 @@ export type GetAssetTypesQuery = {
   };
 };
 
-export type Unnamed_13_QueryVariables = Exact<{
+export type GetAgentQueryVariables = Exact<{
+  first?: InputMaybe<Scalars["Int"]>;
+  id?: InputMaybe<Scalars["ID"]>;
+}>;
+
+export type GetAgentQuery = {
+  __typename?: "RootQueryType";
+  agents?: {
+    __typename?: "AgentConnection";
+    pageInfo: {
+      __typename?: "PageInfo";
+      startCursor?: string | null;
+      endCursor?: string | null;
+      hasPreviousPage: boolean;
+      hasNextPage: boolean;
+      totalCount?: number | null;
+      pageLimit?: number | null;
+    };
+    edges: Array<{
+      __typename?: "AgentEdge";
+      cursor: string;
+      node:
+        | { __typename?: "Organization"; id: string; name: string }
+        | { __typename?: "Person"; id: string; name: string };
+    }>;
+  } | null;
+};
+
+export type GetAssetsQueryVariables = Exact<{
+  first?: InputMaybe<Scalars["Int"]>;
+  after?: InputMaybe<Scalars["ID"]>;
+  last?: InputMaybe<Scalars["Int"]>;
+  before?: InputMaybe<Scalars["ID"]>;
+  filter?: InputMaybe<ProposalFilterParams>;
+}>;
+
+export type GetAssetsQuery = {
+  __typename?: "RootQueryType";
+  proposals: {
+    __typename?: "ProposalConnection";
+    pageInfo: {
+      __typename?: "PageInfo";
+      startCursor?: string | null;
+      endCursor?: string | null;
+      hasPreviousPage: boolean;
+      hasNextPage: boolean;
+      totalCount?: number | null;
+      pageLimit?: number | null;
+    };
+    edges: Array<{
+      __typename?: "ProposalEdge";
+      cursor: string;
+      node: {
+        __typename?: "Proposal";
+        id: string;
+        name?: string | null;
+        created: any;
+        primaryIntents?: Array<{
+          __typename?: "Intent";
+          resourceClassifiedAs?: Array<any> | null;
+          hasPointInTime?: any | null;
+          hasBeginning?: any | null;
+          hasEnd?: any | null;
+          action: { __typename?: "Action"; id: string };
+          resourceInventoriedAs?: {
+            __typename?: "EconomicResource";
+            classifiedAs?: Array<any> | null;
+            name: string;
+            id: string;
+            note?: string | null;
+            metadata?: any | null;
+            conformsTo: { __typename?: "ResourceSpecification"; name: string };
+            primaryAccountable:
+              | { __typename?: "Organization"; name: string; id: string }
+              | { __typename?: "Person"; name: string; id: string };
+            onhandQuantity: { __typename?: "Measure"; hasUnit?: { __typename?: "Unit"; label: string } | null };
+            images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+          } | null;
+        }> | null;
+        reciprocalIntents?: Array<{
+          __typename?: "Intent";
+          resourceQuantity?: {
+            __typename?: "Measure";
+            hasNumericalValue: number;
+            hasUnit?: { __typename?: "Unit"; label: string; symbol: string } | null;
+          } | null;
+        }> | null;
+      };
+    }>;
+  };
+};
+
+export type Unnamed_10_QueryVariables = Exact<{
   id: Scalars["ID"];
 }>;
 
-export type Unnamed_13_Query = {
+export type Unnamed_10_Query = {
   __typename?: "RootQueryType";
   proposal?: {
     __typename?: "Proposal";
@@ -3596,12 +3643,12 @@ export type Unnamed_13_Query = {
   } | null;
 };
 
-export type Unnamed_14_MutationVariables = Exact<{
+export type Unnamed_11_MutationVariables = Exact<{
   metadata: Scalars["JSON"];
   id: Scalars["ID"];
 }>;
 
-export type Unnamed_14_Mutation = {
+export type Unnamed_11_Mutation = {
   __typename?: "RootMutationType";
   updateEconomicResource: {
     __typename?: "EconomicResourceResponse";
@@ -3609,7 +3656,7 @@ export type Unnamed_14_Mutation = {
   };
 };
 
-export type Unnamed_15_QueryVariables = Exact<{
+export type Unnamed_12_QueryVariables = Exact<{
   first?: InputMaybe<Scalars["Int"]>;
   after?: InputMaybe<Scalars["ID"]>;
   last?: InputMaybe<Scalars["Int"]>;
@@ -3617,7 +3664,7 @@ export type Unnamed_15_QueryVariables = Exact<{
   filter?: InputMaybe<ProposalFilterParams>;
 }>;
 
-export type Unnamed_15_Query = {
+export type Unnamed_12_Query = {
   __typename?: "RootQueryType";
   proposals: {
     __typename?: "ProposalConnection";
@@ -3655,11 +3702,11 @@ export type Unnamed_15_Query = {
   };
 };
 
-export type Unnamed_16_QueryVariables = Exact<{
+export type Unnamed_13_QueryVariables = Exact<{
   id: Scalars["ID"];
 }>;
 
-export type Unnamed_16_Query = {
+export type Unnamed_13_Query = {
   __typename?: "RootQueryType";
   person?: {
     __typename?: "Person";

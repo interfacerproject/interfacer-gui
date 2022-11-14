@@ -52,7 +52,7 @@ const Home: NextPageWithLayout = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 px-2 md:px-8 pt">{<AssetsTable hideHeader={true} hidePagination={true} />}</div>
+      <div className="px-2 md:px-8">{<AssetsTable hideHeader={true} hidePagination={true} />}</div>
 
       <div className="grid gap-16 md:pl-32 md:grid-cols-3 mt-44">
         {features.map((f, i) => {

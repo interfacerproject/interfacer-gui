@@ -82,7 +82,7 @@ const BrImageUpload = React.forwardRef<HTMLInputElement, BrImageUploadProps>((pr
       {/* Dropdown zone */}
       <section className="p-2 border-[1px] border-gray-300 rounded-md hover:bg-gray-200 hover:cursor-pointer">
         {/* Dropdown area */}
-        <div {...getRootProps({ className: "dropzone" })}>
+        <div {...getRootProps({ className: "dropzone" })} data-test={props.testID}>
           <input {...getInputProps()} ref={ref} />
 
           {/* If there are no files, show empty state */}

@@ -29,8 +29,8 @@ const BrRadioOption = forwardRef<HTMLInputElement, BrRadioOptionProps>((props, r
   });
 
   return (
-    <label htmlFor={id} className={classes}>
-      <input type="radio" name={name} id={id} ref={ref} value={value} {...other} data-test={testID} />
+    <label htmlFor={id} className={classes} data-test={testID}>
+      <input type="radio" name={name} id={id} ref={ref} value={value} {...other} />
       <div>
         <p className="font-bold">{label}</p>
         {description && <p className="text-gray-500">{description}</p>}
