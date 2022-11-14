@@ -1,94 +1,40 @@
-import { gql, useQuery } from "@apollo/client";
-import { AdjustmentsIcon } from "@heroicons/react/outline";
 import cn from "classnames";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import AssetsTableRow from "./AssetsTableRow";
-import BrTable from "./brickroom/BrTable";
-import Spinner from "./brickroom/Spinner";
-import Filters from "./Filters";
 
-const AssetsTable = ({
-  filter,
-  noPrimaryAccountableFilter = false,
-  hideHeader = false,
-  hidePagination = false,
-}: {
-  filter?: any;
-  noPrimaryAccountableFilter?: boolean;
-  hidePagination?: boolean;
+// Request
+import { useQuery } from "@apollo/client";
+import { QUERY_ASSETS } from "lib/QueryAndMutation";
+import { GetAssetsQuery, GetAssetsQueryVariables, ProposalFilterParams } from "lib/types";
+
+// Components
+import { AdjustmentsIcon } from "@heroicons/react/outline";
+import AssetsFilters from "./AssetsFilters";
+import AssetsTableBase from "./AssetsTableBase";
+import Spinner from "./brickroom/Spinner";
+
+//
+
+export interface AssetsTableProps {
+  filter?: ProposalFilterParams;
   hideHeader?: boolean;
-}) => {
+  hidePagination?: boolean;
+  hidePrimaryAccountable?: boolean;
+}
+
+//
+
+export default function AssetsTable(props: AssetsTableProps) {
   const { t } = useTranslation("lastUpdatedProps");
-  const QUERY_ASSETS = gql`
-    query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
-      proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
-        pageInfo {
-          startCursor
-          endCursor
-          hasPreviousPage
-          hasNextPage
-          totalCount
-          pageLimit
-        }
-        edges {
-          cursor
-          node {
-            id
-            name
-            created
-            primaryIntents {
-              resourceClassifiedAs
-              action {
-                id
-              }
-              hasPointInTime
-              hasBeginning
-              hasEnd
-              resourceInventoriedAs {
-                conformsTo {
-                  name
-                }
-                classifiedAs
-                primaryAccountable {
-                  name
-                  id
-                }
-                name
-                id
-                note
-                metadata
-                onhandQuantity {
-                  hasUnit {
-                    label
-                  }
-                }
-                images {
-                  hash
-                  name
-                  mimeType
-                  bin
-                }
-              }
-            }
-            reciprocalIntents {
-              resourceQuantity {
-                hasNumericalValue
-                hasUnit {
-                  label
-                  symbol
-                }
-              }
-            }
-          }
-        }
-      }
+  const { filter = {}, hideHeader = false, hidePagination = false, hidePrimaryAccountable = false } = props;
+
+  const { loading, data, fetchMore, refetch, variables } = useQuery<GetAssetsQuery, GetAssetsQueryVariables>(
+    QUERY_ASSETS,
+    {
+      variables: { last: 10, filter: filter },
     }
-  `;
-  const { loading, data, fetchMore, refetch, variables } = useQuery(QUERY_ASSETS, {
-    variables: { last: 10, filter: filter },
-  });
+  );
+
   const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
     if (!fetchMoreResult) {
       return previousResult;
@@ -101,6 +47,7 @@ const AssetsTable = ({
 
     return { ...fetchMoreResult };
   };
+
   const getHasNextPage = data?.proposals.pageInfo.hasNextPage;
   const loadMore = () => {
     if (data && fetchMore) {
@@ -139,9 +86,13 @@ const AssetsTable = ({
       )}
       {!loading && (
         <div className="flex flex-col">
+          {/* Header */}
           {!hideHeader && (
             <div className="flex items-center justify-between py-5">
+              {/* Left side */}
               <h3>{t("Assets")}</h3>
+
+              {/* Right side */}
               <button
                 onClick={toggleFilter}
                 className={cn(
@@ -153,37 +104,22 @@ const AssetsTable = ({
               </button>
             </div>
           )}
-          <div className="flex flex-col flex-col-reverse md:space-x-2 md:flex-row">
-            <div className="pt-5 grow md:pt-0">
-              <BrTable headArray={t("table_head", { returnObjects: true })}>
-                {assets?.map((e: any) => (
-                  <AssetsTableRow asset={e} key={e.cursor} />
-                ))}
-              </BrTable>
-              {showEmptyState ? (
-                <div className="p-4 pt-6">
-                  <h4>{t("Create a new asset")}</h4>
-                  <p className="pt-2 pb-5 font-light text-white-700">{t("empty_state_assets")}</p>
-                  <Link href="/create_asset">
-                    <a className="btn btn-accent btn-md">{t("Create asset")}</a>
-                  </Link>
-                </div>
-              ) : (
-                !hidePagination && (
-                  <div className="w-full pt-4 text-center">
-                    <button className="text-center btn btn-primary" onClick={loadMore} disabled={!getHasNextPage}>
-                      {t("Load more")}
-                    </button>
-                  </div>
-                )
-              )}
-            </div>
-            {showFilter && <Filters noPrimaryAccountableFilter={noPrimaryAccountableFilter} filter={filter} />}
+
+          {/* Table and filters */}
+          <div className="flex flex-row flex-nowrap items-start space-x-8">
+            {data && (
+              <div className="grow">
+                <AssetsTableBase data={data} onLoadMore={loadMore} hidePagination={hidePagination} />
+              </div>
+            )}
+            {showFilter && (
+              <div className="basis-96 sticky top-8">
+                <AssetsFilters hidePrimaryAccountable={hidePrimaryAccountable} />
+              </div>
+            )}
           </div>
         </div>
       )}
     </>
   );
-};
-
-export default AssetsTable;
+}

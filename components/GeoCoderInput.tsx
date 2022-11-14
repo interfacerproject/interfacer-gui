@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import BrSearchableSelect from "./brickroom/BrSearchableSelect";
+import { useEffect, useState } from "react";
+import BrSearchableSelect from "./brickroom/BrSelectSearchable";
 
 type Address = {
   lat: number;
@@ -45,6 +45,7 @@ const GeoCoderInput = ({
     );
     return { lat: data.position.lat, lng: data.position.lng };
   };
+
   useEffect(() => {
     Promise.resolve(fetchResults());
   }, [searchTerm]);
@@ -75,7 +76,7 @@ const GeoCoderInput = ({
       hint={hint}
       error={error}
       help={help}
-      onBackspace={() => handleSelectAddress()}
+      // onBackspace={() => handleSelectAddress()}
       testID={testID}
     />
   );

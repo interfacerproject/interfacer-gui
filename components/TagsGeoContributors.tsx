@@ -1,9 +1,17 @@
 import { useTranslation } from "next-i18next";
 import { ChangeEvent } from "react";
-import AddContributors from "./AddContributors";
+// import AddContributors from "./AddContributors";
 import BrInput from "./brickroom/BrInput";
 import GeoCoderInput from "./GeoCoderInput";
-import SelectTags from "./SelectTags";
+
+//
+
+export interface Contributor {
+  id: string;
+  name: string;
+}
+
+//
 
 type TagsGeoContributorsProps = {
   setAssetTags: (tags: string[]) => void;
@@ -11,8 +19,8 @@ type TagsGeoContributorsProps = {
   handleCreateLocation: (location: any) => void;
   locationName: string;
   locationAddress: string;
-  setContributors: (contributors: { id: string; name: string }[]) => void;
-  contributors: { id: string; name: string }[];
+  setContributors: (contributors: Array<Contributor>) => void;
+  contributors: Array<Contributor>;
   assetTags: string[];
 };
 
@@ -29,7 +37,7 @@ const TagsGeoContributors = ({
   const { t } = useTranslation("createProjectProps");
   return (
     <>
-      <SelectTags
+      {/* <TagsSelect
         label={t("projectTags.label")}
         hint={t("projectTags.hint")}
         canCreateTags
@@ -37,7 +45,7 @@ const TagsGeoContributors = ({
         placeholder={t("projectTags.placeholder")}
         testID="tagsList"
         selectedTags={assetTags}
-      />
+      /> */}
       <div className="grid grid-cols-2 gap-2">
         <BrInput
           type="text"
@@ -58,13 +66,13 @@ const TagsGeoContributors = ({
           testID="location.address"
         />
       </div>
-      <AddContributors
+      {/* <AddContributors
         label={t("contributors.label")}
         hint={t("contributors.hint")}
         setContributors={c => setContributors(c)}
         contributors={contributors}
         testID="contributors"
-      />
+      /> */}
     </>
   );
 };
