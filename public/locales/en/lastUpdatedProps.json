@@ -1,10 +1,11 @@
 {
-  "Asset": "Asset",
-  "Create a new asset": "Create a new asset",
-  "Create asset": "Create asset",
-  "empty_state_assets": "empty_state_assets",
-  "Last update": "Last update",
-  "Load more": "Load more",
-  "Owner": "Owner",
-  "tags": "tags"
+  "apply": "apply",
+  "Contributors": "Contributors",
+  "filters": "filters",
+  "Latest assets": "Latest assets",
+  "Most recently updated assets": "Most recently updated assets",
+  "Report a bug": "Report a bug",
+  "reset": "reset",
+  "Tags": "Tags",
+  "Type": "Type"
 }

@@ -20,7 +20,7 @@ describe("When user visit Assets", () => {
     cy.restoreLocalStorage();
     intercept();
     cy.visit("/assets");
-    waitForData();
+    // waitForData();
     checkTableAndContent();
   });
 
@@ -30,7 +30,7 @@ describe("When user visit Assets", () => {
     cy.get(".justify-between > .gap-2").click();
 
     // Clicking "Contributors" the multiselect dropdown
-    cy.get(`[data-test="add-contributors"]`).click();
+    cy.get("#primaryAccountable-select").click();
 
     // Clicking the option
     cy.get(`[id$="option-0"]`).should("be.visible").click({ force: true, timeout: 1000 });

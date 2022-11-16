@@ -14,7 +14,8 @@ export interface BrSelectSearchableProps extends Props, BrFieldInfoProps {
 //
 
 const BrSelectSearchable = forwardRef<any, BrSelectSearchableProps>((props, ref) => {
-  const { creatable = false, defaultValueRaw } = props;
+  const { creatable = false, defaultValueRaw, testID } = props;
+  const selectID = `${testID}-select`;
 
   /**
    * Important explanation:
@@ -36,8 +37,8 @@ const BrSelectSearchable = forwardRef<any, BrSelectSearchableProps>((props, ref)
 
   return (
     <BrFieldInfo {...props}>
-      {!creatable && <Select defaultValue={defaultValue} {...props} ref={ref} />}
-      {creatable && <CreatableSelect defaultValue={defaultValue} {...props} ref={ref} />}
+      {!creatable && <Select defaultValue={defaultValue} {...props} ref={ref} id={selectID} />}
+      {creatable && <CreatableSelect defaultValue={defaultValue} {...props} ref={ref} id={selectID} />}
     </BrFieldInfo>
   );
 });
