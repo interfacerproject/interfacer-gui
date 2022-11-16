@@ -1,11 +1,7 @@
 // Functionality
-import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
-<<<<<<< HEAD:components/EmailVerificationForm.tsx
 import { ChangeEvent } from "react";
-import { useAuth } from "../hooks/useAuth";
-=======
->>>>>>> e94c280 (Sign up in rework #143 (#244)):components/partials/sign_up/UserData.tsx
+import { useAuth } from "hooks/useAuth";
 
 // Form imports
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -54,7 +50,7 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
         .string()
         .email()
         .required()
-        .test("email-exists", t("email.invalid"), async (value, testContext) => {
+        .test("email-exists", t("email is not valid"), async (value, testContext) => {
           return await testEmail(value!);
         }),
     })
@@ -63,11 +59,7 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
   // This function checks if the provided email exists
   async function testEmail(email: string) {
     const result = await register(email, true);
-<<<<<<< HEAD:components/EmailVerificationForm.tsx
-    return !!result?.keypairoomServer;
-=======
     return Boolean(result?.keypairoomServer);
->>>>>>> e94c280 (Sign up in rework #143 (#244)):components/partials/sign_up/UserData.tsx
   }
 
   // Creating form
@@ -84,21 +76,14 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
   //
 
   return (
-<<<<<<< HEAD:components/EmailVerificationForm.tsx
-    <>
+    <div>
+      {/* Info */}
       <h2>{t("Sign up")}</h2>
-      <p className="mt-4 mb-6">
+      <p>
         {t(
           "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46"
         )}
       </p>
-=======
-    <div>
-      {/* Info */}
-      <h2>{t("title")}</h2>
-      <p>{t("description")}</p>
-
->>>>>>> e94c280 (Sign up in rework #143 (#244)):components/partials/sign_up/UserData.tsx
       {/* The form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-8">
         {/* Email */}
@@ -118,7 +103,6 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
           label={t("Your name")}
           help={t("Your name is shown and visible to everyone")}
           placeholder={t("Type your name")}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
           error={errors.name?.message}
           testID="name"
         />
@@ -129,34 +113,14 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
           placeholder={t("Type your visible username")}
           label={t("Choose a username")}
           help={t("Your username is used to identify you in the system")}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setUser(e.target.value)}
           error={errors.user?.message}
           testID="user"
         />
         {/* Submit button */}
-<<<<<<< HEAD:components/EmailVerificationForm.tsx
-        <button className={`my-6 btn btn-block btn-primary ${isButtonEnabled}`} type="submit" disabled={!isValid}>
+        <button className="btn btn-block btn-primary" type="submit" disabled={!isValid} data-test="submit">
           {t("Next step")}
         </button>
       </form>
-
-      {/* Link alla registrazione */}
-      <p className="flex flex-row items-center">
-        <span>{t("👌 You already have an account?")}</span>
-        <Link href={"/sign_in"}>
-          <a className="flex flex-row font-semibold">
-            <LinkIcon className="w-5 h-5 mx-2" />
-            {t("Login")}
-          </a>
-        </Link>
-      </p>
-    </>
-=======
-        <button className="btn btn-block btn-primary" type="submit" disabled={!isValid} data-test="submit">
-          {t("button")}
-        </button>
-      </form>
     </div>
->>>>>>> e94c280 (Sign up in rework #143 (#244)):components/partials/sign_up/UserData.tsx
   );
 }

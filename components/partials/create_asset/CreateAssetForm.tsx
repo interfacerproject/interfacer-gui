@@ -23,9 +23,6 @@ import SelectTags from "components/SelectTags";
 // Types
 import type { Contributor } from "components/TagsGeoContributors";
 import { LocationLookup } from "lib/fetchLocation";
-// Importing translations to check for data structure
-import strings from "public/locales/en/createProjectProps.json";
-type ProjectType = typeof strings.projectType.array[0];
 
 // Other
 import { assetTypesQueryToArray } from "lib/formatAssetTypes";
@@ -61,14 +58,23 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
 
   // Loading asset types
   const queryAssetTypes = useQuery<GetAssetTypesQuery>(QUERY_ASSET_TYPES).data;
-  const assetTypes = queryAssetTypes && assetTypesQueryToArray(queryAssetTypes);
-
-  // Loading asset types text
-  const assetTypesTexts: Array<ProjectType> = t("projectType.array", { returnObjects: true });
-  const getAssetTypeDesc = (id: string): string => {
-    return assetTypesTexts.filter(t => t.id == id)[0].description;
-  };
-
+  const assetTypes = queryAssetTypes && [
+    {
+      name: t("Design"),
+      id: queryAssetTypes.instanceVariables.specs.specProjectDesign.id,
+      label: t("A digital asset, like an open source hardware project or 3D model"),
+    },
+    {
+      name: t("Service"),
+      id: queryAssetTypes.instanceVariables.specs.specProjectService.id,
+      label: t("A service, like a consultancy, training course or usage/rental of equipment"),
+    },
+    {
+      name: t("Product"),
+      id: queryAssetTypes.instanceVariables.specs.specProjectProduct.id,
+      label: t("A physical product that can be picked up or delivered"),
+    },
+  ];
   //
 
   const defaultValues: CreateAssetNS.FormValues = {
@@ -119,9 +125,9 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
     <form onSubmit={handleSubmit(onSubmit)} className="w-full pt-12 space-y-12">
       <BrInput
         {...register("name")}
-        label={t("projectName.label")}
-        hint={t("projectName.hint")}
-        placeholder={t("projectName.placeholder")}
+        label={t("")}
+        hint={t("")}
+        placeholder={t("")}
         testID="assetName"
         error={errors.name?.message}
       />
@@ -129,10 +135,10 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
       <BrMdEditor
         name="description"
         editorClass="h-60"
-        label={t("projectDescription.label")}
-        hint={t("projectDescription.hint")}
+        label={t("")}
+        hint={t("")}
         testID="assetDescription"
-        subtitle={t("projectDescription.md-editor-explainer")}
+        subtitle={t("")}
         onChange={({ text, html }) => {
           setValue("description", text);
         }}
@@ -141,8 +147,8 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
 
       <BrImageUpload
         {...register("images")}
-        label={t("imageUpload.label")}
-        hint={t("imageUpload.hint")}
+        label={t("")}
+        hint={t("")}
         testID="imageUpload"
         onDrop={acceptedFiles => {
           setValue("images", acceptedFiles);
@@ -153,21 +159,21 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
       <BrInput
         {...register("repositoryOrId")}
         name="repositoryOrId"
-        label={t("repositoryOrId.label")}
-        hint={t("repositoryOrId.hint")}
-        placeholder={t("repositoryOrId.placeholder")}
+        label={t("")}
+        hint={t("")}
+        placeholder={t("")}
         testID="repositoryOrId"
         error={errors.repositoryOrId?.message}
       />
 
-      <BrFieldInfo label={t("projectType.label")} error={errors.type?.message}>
+      <BrFieldInfo label={t("")} error={errors.type?.message}>
         {assetTypes &&
           assetTypes.map(type => (
             <BrRadioOption
               id={type.id}
               value={type.id}
               label={type.name}
-              description={getAssetTypeDesc(type.name)}
+              description={type.label}
               {...register("type")}
               key={type.id}
               testID={`type-${type.id}`}
@@ -185,9 +191,9 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             ref={ref}
             onBlur={onBlur}
             onChange={onChange}
-            label={t("projectTags.label")}
+            label={t("")}
             isMulti
-            placeholder={t("projectTags.placeholder")}
+            placeholder={t("")}
             error={errors.tags?.message}
             creatable={true}
             testID="selectTags"
@@ -205,9 +211,9 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             ref={ref}
             onBlur={onBlur}
             onChange={onChange}
-            label={t("contributors.label")}
+            label={t("")}
             isMulti
-            placeholder={t("contributors.placeholder")}
+            placeholder={t("")}
             error={errors.contributors?.message}
             creatable={false}
             testID="SelectContributors"
@@ -220,9 +226,9 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         <BrInput
           {...register("locationName")}
           type="text"
-          label={t("location.name.label")}
-          hint={t("location.name.hint")}
-          placeholder={t("location.name.placeholder")}
+          label={t("")}
+          hint={t("")}
+          placeholder={t("")}
           testID="locationName"
         />
 
@@ -236,8 +242,8 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
               ref={ref}
               onBlur={onBlur}
               onChange={onChange}
-              label={t("location.address.label")}
-              placeholder={t("location.address.placeholder")}
+              label={t("")}
+              placeholder={t("")}
               error={errors.location?.message}
               creatable={false}
               testID="selectLocation"
