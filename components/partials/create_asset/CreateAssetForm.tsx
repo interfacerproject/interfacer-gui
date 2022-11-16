@@ -176,7 +176,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
               description={type.label}
               {...register("type")}
               key={type.id}
-              testID={`type-${type.id}`}
+              testID={`type-${type.name}`}
             />
           ))}
       </BrFieldInfo>

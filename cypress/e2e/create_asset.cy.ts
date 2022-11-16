@@ -27,13 +27,13 @@ describe("when user visits create asset", () => {
     cy.visit("/create_asset");
 
     // Title
-    cy.get(`[data-test="projectName"]`).type("Asset " + randomString(5));
+    cy.get(`[data-test="assetName"]`).type("Asset " + randomString(5));
 
     // Description
-    cy.get(`[data-test="projectDescription"]`).find("textarea").type(randomString(15));
+    cy.get(`[data-test="assetDescription"]`).find("textarea").type(randomString(15));
 
     // Multiselect
-    cy.get(`[data-test="projectType"]`).eq(1).click();
+    cy.get(`[data-test="type-Design"]`).click();
   });
 
   it("should display a non-clickable submit button", () => {
