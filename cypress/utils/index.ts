@@ -33,7 +33,7 @@ export interface InterceptArgs {
 }
 
 export function intercept(args?: InterceptArgs) {
-  const { url = Cypress.env("NEXT_PUBLIC_ZENFLOWS_URL") as string, name = request, method = "GET" } = args;
+  const { url = Cypress.env("NEXT_PUBLIC_ZENFLOWS_URL") as string, name = request, method = "GET" } = args || {};
 
   return cy
     .intercept({

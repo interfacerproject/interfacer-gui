@@ -5,6 +5,7 @@ import Link from "next/link";
 // Components
 import AssetsTable from "components/AssetsTable";
 import NewProjectButton from "components/NewProjectButton";
+import useFilters from "../hooks/useFilters";
 
 //
 
@@ -20,6 +21,7 @@ export async function getStaticProps({ locale }: any) {
 
 export default function Assets() {
   const { t } = useTranslation("lastUpdatedProps");
+  const { filter } = useFilters();
   return (
     <div className="p-8">
       <div className="mb-6 w-96">
@@ -34,7 +36,7 @@ export default function Assets() {
       </div>
 
       {/*  */}
-      <AssetsTable />
+      <AssetsTable filter={filter} />
     </div>
   );
 }

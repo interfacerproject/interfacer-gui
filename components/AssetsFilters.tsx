@@ -79,12 +79,12 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
   return (
     <div className="p-4 bg-white border rounded-lg shadow space-y-6">
       {/* Heading */}
-      <h4 className="text-xl font-bold">{t("filters.filter for")}:</h4>
+      <h4 className="text-xl font-bold capitalize">{t("filters")}:</h4>
 
       {/* Filters */}
       <div className="space-y-4">
         <SelectAssetType
-          label={t("filters.type")}
+          label={t("Type")}
           onChange={v => {
             setQueryFilters({
               ...queryFilters,
@@ -98,7 +98,7 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
         />
 
         <SelectTags
-          label={t("filters.tags")}
+          label={t("Tags")}
           onChange={v => {
             setQueryFilters({
               ...queryFilters,
@@ -113,7 +113,7 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
 
         {!hidePrimaryAccountable && (
           <SelectContributors
-            label={t("filters.contributors")}
+            label={t("Contributors")}
             onChange={v => {
               setQueryFilters({
                 ...queryFilters,
@@ -131,10 +131,10 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
       {/* Control buttons */}
       <div className="grid grid-cols-2 gap-2">
         <button data-test="btn-reset" className="btn btn-outline btn-error btn-block" onClick={clearFilters}>
-          {t("filters.reset")}
+          {t("reset")}
         </button>
         <button data-test="btn-apply" onClick={applyFilters} className="btn btn-accent btn-block">
-          {t("filters.apply")}
+          {t("apply")}
         </button>
       </div>
     </div>
