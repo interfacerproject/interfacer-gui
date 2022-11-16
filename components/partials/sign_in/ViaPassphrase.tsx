@@ -24,7 +24,7 @@ export namespace ViaPassphraseNS {
 
 export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
   const { onSubmit = () => {} } = props;
-  const { t } = useTranslation("signInProps", { keyPrefix: "viaPassphrase" });
+  const { t } = useTranslation("signInProps");
 
   /* Form setup */
 
@@ -37,7 +37,7 @@ export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
       passphrase: yup
         .string()
         .required()
-        .test("name", t("field.error"), value => value?.split(" ").length == 12),
+        .test("name", t("Invalid passphrase"), value => value?.split(" ").length == 12),
     })
     .required();
 
@@ -57,8 +57,8 @@ export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
   return (
     <div>
       {/* Intro */}
-      <h2>{t("title")}</h2>
-      <p className="mt-2 mb-6">{t("description")}</p>
+      <h2>{t("Login")}</h2>
+      <p className="mt-2 mb-6">{t("Input the passphrase that you kept generated during the signup process")}</p>
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -66,15 +66,15 @@ export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
         <BrInput
           {...form.register("passphrase")}
           type="text"
-          label={t("field.label")}
+          label={t("Passphrase")}
           error={errors.passphrase?.message}
-          placeholder={t("field.placeholder")}
+          placeholder={t("")}
           testID="passphrase"
         />
 
         {/* Submit button */}
         <button className="btn btn-block btn-primary" type="submit" data-test="submit" disabled={!isValid}>
-          {t("button")}
+          {t("Login")}
         </button>
       </form>
     </div>

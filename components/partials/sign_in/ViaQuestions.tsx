@@ -10,13 +10,13 @@ export namespace ViaQuestionsNS {
 //
 
 export default function ViaQuestions(props: CC<ViaQuestionsNS.Props>) {
-  const { t } = useTranslation("signInProps", { keyPrefix: "viaQuestions" });
+  const { t } = useTranslation("signInProps");
 
   return (
     <div>
       {/* Intro */}
-      <h2>{t("title")}</h2>
-      <p className="mt-2 mb-6">{t("description")}</p>
+      <h2>{t("Login")}</h2>
+      <p className="mt-2 mb-6">{t("Answer the questions that you answered during the signup process")}</p>
 
       {/* Here goes the `Questions` component */}
       {props.children}

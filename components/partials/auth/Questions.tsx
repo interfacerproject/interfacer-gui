@@ -33,8 +33,14 @@ const Questions = (props: QuestionsNS.Props) => {
    * Texts and translations
    */
 
-  const { t } = useTranslation(["authProps"], { keyPrefix: "Questions" });
-  const questions = Object.values(t("questions", { returnObjects: true }));
+  const { t } = useTranslation("signInProps");
+  const questions = [
+    t("Where my parents met?"),
+    t("What is the name of your first pet?"),
+    t("What is your home town?"),
+    t("What is the name of your first teacher?"),
+    t("What is the surname of your mother before wedding?"),
+  ];
 
   /**
    * Counter for missing questions
@@ -86,12 +92,7 @@ const Questions = (props: QuestionsNS.Props) => {
       question4: yup.string(),
       question5: yup.string(),
     })
-    .required()
-    .test("three-questions", t("minQuestions", { minQuestions: MIN_QUESTIONS }), value => {
-      const v = value as QuestionsNS.FormValues;
-      setMissingQuestions(countMissingQuestions(v));
-      return areEnoughQuestions(v);
-    });
+    .required();
 
   const form = useForm<QuestionsNS.FormValues>({
     mode: "all",
@@ -135,7 +136,7 @@ const Questions = (props: QuestionsNS.Props) => {
       {/* Hint */}
       {!isValid && (
         <p className="text-amber-500 font-bold" data-test="missingQuestions">
-          {t("missingQuestions", { missingQuestions })}
+          {t("")}
         </p>
       )}
 
@@ -158,7 +159,7 @@ const Questions = (props: QuestionsNS.Props) => {
 
         {/* Submit button */}
         <button className="btn btn-block btn-accent" type="submit" disabled={!isValid} data-test="submit">
-          {t("next")}
+          {t("Next step")}
         </button>
       </form>
     </>

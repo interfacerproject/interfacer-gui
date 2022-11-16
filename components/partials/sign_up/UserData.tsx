@@ -29,7 +29,7 @@ export namespace UserDataNS {
 
 export default function UserData({ onSubmit }: UserDataNS.Props) {
   // Loading translations
-  const { t } = useTranslation("signUpProps", { keyPrefix: "UserData" });
+  const { t } = useTranslation("signUpProps");
 
   // Getting function that checks for email
   const { register } = useAuth();
