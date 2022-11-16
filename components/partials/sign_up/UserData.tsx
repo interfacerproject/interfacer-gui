@@ -29,7 +29,7 @@ export namespace UserDataNS {
 
 export default function UserData({ onSubmit }: UserDataNS.Props) {
   // Loading translations
-  const { t } = useTranslation("signUpProps", { keyPrefix: "UserData" });
+  const { t } = useTranslation("signUpProps");
 
   // Getting function that checks for email
   const { register } = useAuth();
@@ -90,7 +90,7 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
         <BrInput
           {...form.register("email")}
           type="email"
-          placeholder={t("alice@email.com")}
+          placeholder={t("alice@email&#183;com")}
           label={t("Your email")}
           help={t("Your email address that will be used for your login")}
           error={errors.email?.message}

@@ -7,22 +7,24 @@ export interface ChooseModeProps {
 
 export default function ChooseMode(props: ChooseModeProps) {
   const { viaPassphrase = () => {}, viaQuestions = () => {} } = props;
-  const { t } = useTranslation("signInProps", { keyPrefix: "chooseMode" });
+  const { t } = useTranslation("signInProps");
 
   return (
     <div>
       {/* Intro */}
-      <h2>{t("title")}</h2>
-      <p className="mt-2 mb-6">{t("description")}</p>
+      <h2>{t("Login")}</h2>
+      <p className="mt-2 mb-6">
+        {t("Login by providing your generated passphrase or by answering the questions during your Signup proccess")}
+      </p>
 
       {/* Login via passphrase */}
       <button className="btn btn-block btn-primary" type="button" onClick={viaPassphrase} data-test="viaPassphrase">
-        {t("buttons.passphrase")}
+        {t("Login via passphrase 🔑")}
       </button>
 
       {/* Login via questions */}
       <button className="mt-4 btn btn-block btn-primary" type="button" onClick={viaQuestions} data-test="viaQuestions">
-        {t("buttons.questions")}
+        {t("Login answering the signup questions 💬")}
       </button>
     </div>
   );

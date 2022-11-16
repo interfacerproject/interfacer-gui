@@ -125,9 +125,9 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
     <form onSubmit={handleSubmit(onSubmit)} className="w-full pt-12 space-y-12">
       <BrInput
         {...register("name")}
-        label={t("")}
-        hint={t("")}
-        placeholder={t("")}
+        label={t("Asset name")}
+        hint={t("Working name of the asset, visible to the whole community")}
+        placeholder={t("Fabulaser")}
         testID="assetName"
         error={errors.name?.message}
       />
@@ -135,10 +135,10 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
       <BrMdEditor
         name="description"
         editorClass="h-60"
-        label={t("")}
-        hint={t("")}
+        label={t("General information")}
+        hint={t("in this markdown editor, the right box shows a preview; Type up to 2048 characters")}
         testID="assetDescription"
-        subtitle={t("")}
+        subtitle={t("Short description to be displayed on the asset page")}
         onChange={({ text, html }) => {
           setValue("description", text);
         }}
@@ -147,8 +147,8 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
 
       <BrImageUpload
         {...register("images")}
-        label={t("")}
-        hint={t("")}
+        label={t("Upload up to 10 pictures")}
+        hint={t("SVG, PNG, JPG or GIF (MAX 2MB)")}
         testID="imageUpload"
         onDrop={acceptedFiles => {
           setValue("images", acceptedFiles);
@@ -159,14 +159,14 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
       <BrInput
         {...register("repositoryOrId")}
         name="repositoryOrId"
-        label={t("")}
-        hint={t("")}
-        placeholder={t("")}
+        label={t("Repository link or Interfacer ID")}
+        hint={t("Reference to the asset's repository or Interfacer ID of the asset")}
+        placeholder={t("github&#46;com/my-repo")}
         testID="repositoryOrId"
         error={errors.repositoryOrId?.message}
       />
 
-      <BrFieldInfo label={t("")} error={errors.type?.message}>
+      <BrFieldInfo label={t("Select asset type") + ":*"} error={errors.type?.message}>
         {assetTypes &&
           assetTypes.map(type => (
             <BrRadioOption
@@ -191,7 +191,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             ref={ref}
             onBlur={onBlur}
             onChange={onChange}
-            label={t("")}
+            label={t("Tags") + ":"}
             isMulti
             placeholder={t("")}
             error={errors.tags?.message}
@@ -211,7 +211,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             ref={ref}
             onBlur={onBlur}
             onChange={onChange}
-            label={t("")}
+            label={t("Contributors") + ":"}
             isMulti
             placeholder={t("")}
             error={errors.contributors?.message}
@@ -242,8 +242,8 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
               ref={ref}
               onBlur={onBlur}
               onChange={onChange}
-              label={t("")}
-              placeholder={t("")}
+              label={t("Select location") + ":*"}
+              placeholder={t("Hamburg")}
               error={errors.location?.message}
               creatable={false}
               testID="selectLocation"
@@ -253,7 +253,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
       </div>
 
       <button type="submit" className="btn btn-accent" disabled={!isValid} data-test="submit">
-        {t("button")}
+        {t("Save")}
       </button>
     </form>
   );

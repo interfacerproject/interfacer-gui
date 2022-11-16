@@ -26,7 +26,7 @@ export namespace EnterEmailNS {
 
 export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
   const { onSubmit } = props;
-  const { t } = useTranslation("signInProps", { keyPrefix: "enterEmail" });
+  const { t } = useTranslation("signInProps");
 
   /* Form setup */
 
@@ -56,8 +56,8 @@ export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
   return (
     <div>
       {/* Intro */}
-      <h2>{t("title")}</h2>
-      <p className="mt-2 mb-6">{t("description")}</p>
+      <h2>{t("Login")}</h2>
+      <p className="mt-2 mb-6">{t("")}</p>
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -65,9 +65,9 @@ export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
         <BrInput
           {...form.register("email")}
           type="email"
-          label={t("label")}
+          label={t("Your email&#x3a;")}
           error={errors.email?.message}
-          placeholder={t("placeholder")}
+          placeholder={t("alice@email&#46;com")}
           testID="email"
         />
 
