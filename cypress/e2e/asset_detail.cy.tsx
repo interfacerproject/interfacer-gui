@@ -22,10 +22,10 @@ describe("Asset Detail functionality", () => {
   it("Should add to list then remove it", () => {
     cy.visit(`/asset/${Cypress.env("asset_id")}`);
     cy.get("button.px-20.mb-4.btn.btn-block.btn-accent")
-      .should("have.text", "Add to list")
+      .should("have.text", "add to list")
       .click()
       .should("have.text", "remove from list")
       .click()
-      .should("have.text", "Add to list");
+      .should("have.text", "add to list");
   });
 });
