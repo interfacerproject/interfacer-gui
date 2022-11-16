@@ -106,7 +106,7 @@ describe("Sign up process", () => {
     get("submit").click();
   });
 
-  it("should log out", () => {
+  it.skip("should log out", () => {
     cy.url()
       .should("eq", "http://localhost:3000/")
       .then(() => {

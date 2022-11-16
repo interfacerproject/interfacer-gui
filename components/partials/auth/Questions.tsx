@@ -47,7 +47,7 @@ const Questions = (props: QuestionsNS.Props) => {
    */
 
   const MIN_QUESTIONS = 3;
-  const [missingQuestions, setMissingQuestions] = useState(MIN_QUESTIONS);
+  const [missingQuestions, setMissingQuestions] = useState("");
 
   function countFilledQuestions(q: QuestionsNS.FormValues): number {
     // Keeps track of how many answers are valid
@@ -92,7 +92,14 @@ const Questions = (props: QuestionsNS.Props) => {
       question4: yup.string(),
       question5: yup.string(),
     })
-    .required();
+    .required()
+    .test("three-questions", value => {
+      const v = value as QuestionsNS.FormValues;
+      setMissingQuestions(
+        t("At least {{missingQuestions}} questions are missing!", { missingQuestions: countMissingQuestions(v) })
+      );
+      return areEnoughQuestions(v);
+    });
 
   const form = useForm<QuestionsNS.FormValues>({
     mode: "all",
@@ -136,7 +143,7 @@ const Questions = (props: QuestionsNS.Props) => {
       {/* Hint */}
       {!isValid && (
         <p className="text-amber-500 font-bold" data-test="missingQuestions">
-          {t("")}
+          {missingQuestions}
         </p>
       )}
 
