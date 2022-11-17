@@ -1,57 +1,34 @@
-import { randomString } from "../utils";
-
 describe("when user visits create asset", () => {
-  before(() => {
+  it("should login, go to /create_asset, and complete the form", () => {
     cy.login();
-    cy.saveLocalStorage();
-  });
-
-  // beforeEach(() => {
-  //     cy.visit("");
-  //     cy.restoreLocalStorage();
-  // });
-
-  // it.skip('it should create tags', function () {
-  //     /* ==== Generated with Cypress Studio ==== */
-  //     cy.visit('http://localhost:3000/create_asset');
-  //     cy.get(':nth-child(6) > div.w-full.form-control > textarea').type('one two three');
-  //     cy.get(':nth-child(3) > .badge-primary').should('have.text', 'xone');
-  //     cy.get(':nth-child(3) > .badge-error').should('have.text', 'xtwo');
-  //     cy.get(':nth-child(3) > .badge-accent').should('have.text', 'xthree');
-  //     /* ==== End Cypress Studio ==== */
-  // });
-
-  // it("should go to /create_asset page", () => {});
-
-  it("should edit some fields", () => {
     cy.visit("/create_asset");
 
-    // Title
-    cy.get(`[data-test="assetName"]`).type("Asset " + randomString(5));
+    // It should display a non-clickable submit button
+    cy.get("#submit").invoke("attr", "aria-disabled").should("eq", "true");
 
-    // Description
-    cy.get(`[data-test="assetDescription"]`).find("textarea").type(randomString(15));
-
-    // Multiselect
-    cy.get(`[data-test="type-Design"]`).click();
-  });
-
-  it("should display a non-clickable submit button", () => {
-    cy.get(`[data-test="submit"]`).should("be.disabled");
-  });
-
-  it("should edit some other fields", () => {
-    // Repo link
-    cy.get(`[data-test="repositoryOrId"]`).type("11");
+    // It should edit some fields
+    cy.get("#name").type("Awesome project");
+    cy.get("#description").find("textarea").type("The asset description");
+    // cy.get(`[data-test="assetName"]`).type("Asset " + randomString(5));
 
     // // Description
-    // cy.get(`[data-test="projectDescription"]`)
-    //     .find("textarea")
-    //     .type(randomString(15));
 
     // // Multiselect
-    // cy.get(`[data-test="projectType"]`).eq(1).click();
+    // cy.get(`[data-test="type-Design"]`).click();
   });
+
+  // it("should edit some other fields", () => {
+  //   // Repo link
+  //   cy.get(`[data-test="repositoryOrId"]`).type("11");
+
+  //   // // Description
+  //   // cy.get(`[data-test="projectDescription"]`)
+  //   //     .find("textarea")
+  //   //     .type(randomString(15));
+
+  //   // // Multiselect
+  //   // cy.get(`[data-test="projectType"]`).eq(1).click();
+  // });
 
   // it('Should see contributors', () => {
   //     cy.visit('/create_asset')
