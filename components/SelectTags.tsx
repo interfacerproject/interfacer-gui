@@ -16,7 +16,6 @@ const GET_TAGS = gql`
 
 const SelectTags = forwardRef<any, BrSelectSearchableProps>((props, ref) => {
   const tags = useQuery<GetTagsQuery>(GET_TAGS).data?.economicResourceClassifications;
-  console.log(tags);
 
   // Next iteration of the component will use an async loading
   // ToDo – Return proper error
