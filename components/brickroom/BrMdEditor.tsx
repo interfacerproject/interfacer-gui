@@ -3,29 +3,37 @@ import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 
 // Components
-import BrFieldInfo, { BrFieldInfoProps } from "components/brickroom/BrFieldInfo";
+import PFieldInfo, { PFieldInfoProps } from "components/polaris/PFieldInfo";
+import PHelp from "components/polaris/PHelp";
 
 //
 
-export interface BrMdEditorProps extends BrFieldInfoProps {
+export interface BrMdEditorProps extends PFieldInfoProps {
   onChange?: (data: { html: string; text: string }) => void;
   editorClass?: string;
   subtitle?: string;
   name?: string;
+  id?: string;
 }
 
 //
 
 export default function BrMdEditor(props: BrMdEditorProps) {
-  const { editorClass, testID, subtitle, name, onChange = () => {} } = props;
+  const { editorClass, subtitle, name, onChange = () => {}, id } = props;
 
   return (
-    <BrFieldInfo {...props}>
-      <label className="label-text-alt">{subtitle}</label>
+    <PFieldInfo htmlFor={id} {...props}>
+      <PHelp helpText={subtitle} />
 
-      <div data-test={testID} className="pt-2">
-        <MdEditor className={editorClass} renderHTML={text => MdParser.render(text)} onChange={onChange} name={name} />
+      <div className="pt-2">
+        <MdEditor
+          className={editorClass}
+          renderHTML={text => MdParser.render(text)}
+          onChange={onChange}
+          name={name}
+          id={id}
+        />
       </div>
-    </BrFieldInfo>
+    </PFieldInfo>
   );
 }

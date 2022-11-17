@@ -1,21 +1,22 @@
 import { SelectOptions } from "components/brickroom/utils/BrSelectUtils";
+import PFieldInfo, { PFieldInfoProps } from "components/polaris/PFieldInfo";
 import { forwardRef } from "react";
 import Select, { Props } from "react-select";
 import CreatableSelect from "react-select/creatable";
-import BrFieldInfo, { BrFieldInfoProps } from "./BrFieldInfo";
 
 //
 
-export interface BrSelectSearchableProps extends Props, BrFieldInfoProps {
+export interface BrSelectSearchableProps extends Props, PFieldInfoProps {
   creatable?: boolean;
   defaultValueRaw?: Array<any>;
+  id?: string;
 }
 
 //
 
 const BrSelectSearchable = forwardRef<any, BrSelectSearchableProps>((props, ref) => {
-  const { creatable = false, defaultValueRaw, testID } = props;
-  const selectID = `${testID}-select`;
+  const { creatable = false, defaultValueRaw, id } = props;
+  const selectID = `${id}-select`;
 
   /**
    * Important explanation:
@@ -36,10 +37,10 @@ const BrSelectSearchable = forwardRef<any, BrSelectSearchableProps>((props, ref)
   }
 
   return (
-    <BrFieldInfo {...props}>
+    <PFieldInfo {...props}>
       {!creatable && <Select defaultValue={defaultValue} {...props} ref={ref} id={selectID} />}
       {creatable && <CreatableSelect defaultValue={defaultValue} {...props} ref={ref} id={selectID} />}
-    </BrFieldInfo>
+    </PFieldInfo>
   );
 });
 
