@@ -3600,13 +3600,14 @@ export type GetAssetsQuery = {
   };
 };
 
-export type GetUnitOneQueryVariables = Exact<{ [key: string]: never }>;
+export type GetUnitAndCurrencyQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetUnitOneQuery = {
+export type GetUnitAndCurrencyQuery = {
   __typename?: "RootQueryType";
   instanceVariables: {
     __typename?: "InstanceVariables";
     units: { __typename?: "InstanceUnits"; unitOne: { __typename?: "Unit"; id: string } };
+    specs: { __typename?: "InstanceSpecs"; specCurrency: { __typename?: "ResourceSpecification"; id: string } };
   };
 };
 

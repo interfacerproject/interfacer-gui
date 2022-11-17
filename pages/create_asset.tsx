@@ -5,11 +5,37 @@ import { useAuth } from "../hooks/useAuth";
 import type { NextPageWithLayout } from "./_app";
 
 // Partials
+import CreateAssetForm, { CreateAssetNS } from "components/partials/create_asset/CreateAssetForm";
 import ControlWindow from "../components/partials/create_asset/ControlWindow";
-import CreateAssetForm from "../components/partials/create_asset/CreateAssetForm";
 
 // Layout
 import Layout from "../components/layout/CreateAssetLayout";
+
+// Queries
+import { useMutation, useQuery } from "@apollo/client";
+import useStorage from "hooks/useStorage";
+import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
+import {
+  CREATE_ASSET,
+  CREATE_INTENT,
+  CREATE_LOCATION,
+  CREATE_PROPOSAL,
+  LINK_PROPOSAL_AND_INTENT,
+  QUERY_UNIT_AND_CURRENCY,
+} from "lib/QueryAndMutation";
+import {
+  CreateAssetMutation,
+  CreateAssetMutationVariables,
+  CreateIntentMutation,
+  CreateIntentMutationVariables,
+  CreateLocationMutation,
+  CreateLocationMutationVariables,
+  CreateProposalMutation,
+  CreateProposalMutationVariables,
+  GetUnitAndCurrencyQuery,
+  LinkProposalAndIntentMutation,
+  LinkProposalAndIntentMutationVariables,
+} from "lib/types";
 
 //
 
@@ -33,7 +59,104 @@ const CreateProject: NextPageWithLayout = () => {
   const { t } = useTranslation("createProjectProps");
 
   const { user, loading } = useAuth();
+  const { getItem } = useStorage();
+
   const [logs, setLogs] = useState<Array<string>>([`info: user ${user?.ulid}`]);
+  function controlLog(text: string) {
+    setLogs([...logs, text]);
+  }
+
+  /* Getting all the needed mutations */
+
+  const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
+  const [createAsset] = useMutation<CreateAssetMutation, CreateAssetMutationVariables>(CREATE_ASSET);
+  const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
+  const [createProposal] = useMutation<CreateProposalMutation, CreateProposalMutationVariables>(CREATE_PROPOSAL);
+  const [createIntent] = useMutation<CreateIntentMutation, CreateIntentMutationVariables>(CREATE_INTENT);
+  const [linkProposalAndIntent] = useMutation<LinkProposalAndIntentMutation, LinkProposalAndIntentMutationVariables>(
+    LINK_PROPOSAL_AND_INTENT
+  );
+
+  /* Location Creation */
+
+  type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
+
+  async function handleCreateLocation(formData: CreateAssetNS.FormValues): Promise<SpatialThingRes | undefined> {
+    try {
+      const { data } = await createLocation({
+        variables: {
+          name: formData.locationName,
+          addr: formData.location?.address.label!,
+          lat: formData.location?.position.lat!,
+          lng: formData.location?.position.lng!,
+        },
+      });
+      const st = data?.createSpatialThing.spatialThing;
+      // controlLog(`info: ${t("location created")}`);
+      // controlLog(`    id: ${st?.id}`);
+      // controlLog(`    latitude: ${st?.lat}`);
+      // controlLog(`    longitude: ${st?.long}`);
+      return st;
+    } catch (e) {
+      throw e;
+      // controlLog(`error: ${t("location creation failed")}`);
+    }
+  }
+
+  async function handleAssetCreation(formData: CreateAssetNS.FormValues) {
+    const location = await handleCreateLocation(formData);
+    const images = await prepFilesForZenflows(formData.images, getItem("eddsa"));
+    const tags = formData.tags.map(t => encodeURI(t.value));
+    const contributors = formData.contributors.map(c => c.value);
+
+    console.log(images);
+
+    const variables: CreateAssetMutationVariables = {
+      resourceSpec: formData.type,
+      agent: user?.ulid!,
+      name: formData.name,
+      note: formData.description,
+      metadata: JSON.stringify({ repositoryOrId: formData.repositoryOrId, contributors }),
+      location: location?.id!,
+      oneUnit: unitAndCurrency?.units.unitOne.id!,
+      creationTime: new Date().toISOString(),
+      images,
+      tags,
+    };
+
+    // Create asset
+    const { data: createAssetData, errors } = await createAsset({ variables });
+    const economicEvent = createAssetData?.createEconomicEvent.economicEvent;
+    const asset = economicEvent?.resourceInventoriedAs;
+
+    if (errors?.length || (!economicEvent && !asset)) throw new Error("AssetNotCreated");
+
+    // Upload images
+    await uploadFiles(formData.images);
+
+    // Create proposal & intent
+    const { data: createProposalData } = await createProposal();
+    const { data: createIntentData } = await createIntent({
+      variables: {
+        agent: user?.ulid!,
+        resource: asset?.id!,
+        oneUnit: unitAndCurrency?.units.unitOne.id!,
+        howMuch: 1,
+        currency: unitAndCurrency?.specs.specCurrency.id!,
+      },
+    });
+
+    // Linking the two of them
+    await linkProposalAndIntent({
+      variables: {
+        proposal: createProposalData?.createProposal.proposal.id!,
+        item: createIntentData?.item.intent.id!,
+        payment: createIntentData?.payment.intent.id!,
+      },
+    });
+
+    // TODO: Send message
+  }
 
   //
 
@@ -52,7 +175,7 @@ const CreateProject: NextPageWithLayout = () => {
 
           <CreateAssetForm
             onSubmit={data => {
-              console.log(data);
+              handleAssetCreation(data);
             }}
           />
           <ControlWindow logs={logs} />
@@ -76,68 +199,6 @@ export default CreateProject;
 
 //
 
-/* Questo sta a parte dopo */
-// imagesFiles: [],
-
-// useEffect(() => {
-//   isButtonEnabled()
-//     ? setLogs(logs.concat(["info: mandatory fields compiled"]))
-//     : setLogs(logs.concat(["warning: compile all mandatory fields"]));
-//   switch (assetType) {
-//     case "Design":
-//       setResourceSpec(instanceVariables?.specs?.specProjectDesign.id);
-//       break;
-//     case "Service":
-//       setResourceSpec(instanceVariables?.specs?.specProjectService.id);
-//       break;
-//     case "Product":
-//       setResourceSpec(instanceVariables?.specs?.specProjectProduct.id);
-//       break;
-//   }
-//   devLog("typeId", resourceSpec);
-// }, [assetType, assetName, assetDescription, repositoryOrId, locationId, locationName, price]);
-
-// const instanceVariables = useQuery(QUERY_VARIABLES(true)).data?.instanceVariables;
-// const [createAsset, { data, error }] = useMutation(CREATE_ASSET);
-// const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
-// const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);
-// const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
-// const [linkProposalAndIntent, { data: link }] = useMutation(LINK_PROPOSAL_AND_INTENT);
-
-// const handleCreateLocation = async (loc?: any) => {
-//   devLog("handleCreateLocation", loc);
-
-//   const name = locationName === "" ? "*untitled*" : locationName;
-//   if (loc) {
-//     setLocation(loc.address.label);
-//     createLocation({
-//       variables: {
-//         name: name,
-//         addr: loc.address.label,
-//         lat: loc.lat,
-//         lng: loc.lng,
-//       },
-//     })
-//       .then(r => {
-//         setLocationId(r.data.createSpatialThing.spatialThing.id);
-//         setLogs(
-//           logs
-//             .concat(["info: location created"])
-//             .concat([`    id: ${r.data.createSpatialThing.spatialThing.id}`])
-//             .concat([`    latitude: ${r.data.createSpatialThing.spatialThing.lat}`])
-//             .concat([`    longitude: ${r.data.createSpatialThing.spatialThing.long}`])
-//         );
-//       })
-//       .catch(e => {
-//         setLogs(logs.concat(["error: location creation failed"]).concat([e.message]));
-//       });
-//   } else {
-//     setLocationId("");
-//     setLocation("");
-//     setLogs(logs.concat(["info: no location provided"]));
-//   }
-// };
-
 // async function onSubmit(e: any) {
 //   e.preventDefault();
 //   const variables = {
@@ -153,29 +214,6 @@ export default CreateProject;
 //     tags: assetTags?.map(t => encodeURI(t)),
 //   };
 //   let logsText = logs.concat("info:Creating raise resource economicEvent").concat(JSON.stringify(variables, null, 2));
-
-//   const asset = await createAsset({
-//     variables: variables,
-//   })
-//     .catch(error => {
-//       logsText = logsText.concat("error:".concat(error.message));
-//       setLogs(logsText);
-//     })
-//     .then((re: any) => {
-//       logsText = logsText.concat(
-//         logsText.concat([
-//           `success: Resource with id ${re?.data.createEconomicEvent.economicEvent.resourceInventoriedAs.id} created`,
-//         ])
-//       );
-//       setLogs(logsText);
-//       logsText = logsText.concat([
-//         `success: Created resource inventoried with iD: ${re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id}`,
-//         "info: Creating proposal",
-//       ]);
-//       setLogs(logsText);
-//       devLog("2", re?.data?.createEconomicEvent.economicEvent.resourceInventoriedAs.id);
-//       return re?.data;
-//     });
 
 //   images.forEach((i, index) => {
 //     logsText = logsText.concat(`info:Uploading image ${index + 1} of ${images.length}`);

@@ -24,6 +24,10 @@ describe("when user visits create asset", () => {
     cy.get("#tags").type("laser");
     cy.get(`[class$="-option"]`).eq(0).click();
 
+    // It should add a contributor
+    cy.get("#contributors").click();
+    cy.get(`[class$="-option"]`).eq(0).click();
+
     // Uploading some images
     cy.fixture("images/img1.png").as("img1");
     cy.fixture("images/img2.png").as("img2");

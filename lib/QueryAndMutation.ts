@@ -345,11 +345,16 @@ export const QUERY_ASSETS = gql`
   }
 `;
 
-export const QUERY_UNIT_ONE = gql`
-  query GetUnitOne {
+export const QUERY_UNIT_AND_CURRENCY = gql`
+  query GetUnitAndCurrency {
     instanceVariables {
       units {
         unitOne {
+          id
+        }
+      }
+      specs {
+        specCurrency {
           id
         }
       }
