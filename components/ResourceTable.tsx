@@ -11,7 +11,7 @@ const truncate = (input: string, max: number) => (input?.length > max ? `${input
 
 // prettier-ignore
 const FETCH_INVENTORY = gql`
-  query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: EconomicResourceFilterParams) {
+  query FetchInventory ($first: Int, $after: ID, $last: Int, $before: ID, $filter: EconomicResourceFilterParams) {
     economicResources(first: $first after: $after before: $before last: $last filter: $filter) {
       pageInfo {
         startCursor
@@ -172,7 +172,8 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
 
                     {/* Cell 4 */}
                     <div className="table-cell text-sm align-top">
-                      {t("Version") + ":"} {e.node.version}
+                      {t("Version")}
+                      {`: ${e.node.version}`}
                       <br />
                       {e.node.okhv}
                     </div>
@@ -186,9 +187,8 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
                   <div className="table-cell col-span-full">
                     <h4>{t("There’s nothing to display here")}</h4>
                     <p>
-                      {t(
-                        "This table will display the resources that you will have in inventory; Raise, transfer or Produce a resource and it will displayed here"
-                      )}
+                      {`${t("This table will display the resources that you will have in inventory")}.`}
+                      {`${t("Raise, transfer or Produce a resource and it will displayed here")}.`}
                     </p>
                   </div>
                 </div>

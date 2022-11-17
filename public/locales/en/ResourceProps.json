@@ -1,22 +1,16 @@
 {
+  "&nbsp;": "&nbsp;",
   "add to list +": "add to list +",
   "by": "by",
   "Claim ownership": "Claim ownership",
   "ID: {{id}}": "ID: {{id}}",
   "Losh asset": "Losh asset",
   "Owner": "Owner",
-  "This is a &nbsp;": "This is a &nbsp;",
-  "Version: {{version}}": "Version: {{version}}",
-  "Assigned to:": "Assigned to:",
-  "Current location:": "Current location:",
-  "Here you will see the material passport of asset": "Here you will see the material passport of asset",
-  "Claim Ownership": "Claim Ownership",
-  "claim your ownership over this asset": "claim your ownership over this asset",
   "This is a &nbsp; {{type}}": "This is a &nbsp; {{type}}",
   " {{economicResource": {
     "id}}": "ID: {{economicResource.id}}"
   },
   "": "Version:",
   "CLAIM OWNERSHIP": "CLAIM OWNERSHIP",
-  "&nbsp;": "&nbsp;"
+  "Version": "Version"
 }

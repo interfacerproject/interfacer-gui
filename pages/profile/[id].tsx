@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
@@ -9,6 +9,7 @@ import Spinner from "components/brickroom/Spinner";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import devLog from "lib/devLog";
+import { FETCH_USER } from "lib/QueryAndMutation";
 import { ProposalFilterParams } from "lib/types";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
@@ -23,19 +24,7 @@ const Profile: NextPage = () => {
   const router = useRouter();
   const { id, conformTo, tags, tab } = router.query;
   const { t } = useTranslation("ProfileProps");
-  const FETCH_USER = gql(`query($id:ID!) {
-  person(id:$id) {
-    id
-    name
-    email
-    user
-    ethereumAddress
-    primaryLocation {
-      name
-      mappableAddress
-    }
-  }
-}`);
+
   const { user } = useAuth();
 
   const isUser: boolean = id === "my_profile" || id === user?.ulid;

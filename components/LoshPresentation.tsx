@@ -53,7 +53,10 @@ const LoshPresentation = ({
                 {t("by")} {m?.licensor}
               </span>
 
-              <span className="pt-8">{t("Version: {{version}}", { version: m?.version })}</span>
+              <span className="pt-8">
+                {t("Version")}
+                {`: ${m?.version}`}
+              </span>
               {m?.okhv}
 
               {goToClaim && (

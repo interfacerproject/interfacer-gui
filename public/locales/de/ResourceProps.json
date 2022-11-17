@@ -1,20 +1,14 @@
 {
+  "&nbsp;": "&nbsp;",
   "add to list +": "zur Liste hinzufügen +",
   "by": "von",
   "Claim ownership": "Eigentum beanspruchen",
   "ID: {{id}}": "ID: {{id}}",
   "Losh asset": "Losh asset",
   "Owner": "Eigentümer",
-  "This is a &nbsp;": "Dies ist eine &nbsp;",
-  "Version: {{version}}": "Version: {{version}}",
-  "Assigned to:": "Zugewiesen an:",
-  "Current location:": "Derzeitiger Standort:",
-  "Here you will see the material passport of asset": "Hier sehen Sie den Materialpass der Anlage",
-  "Claim Ownership": "Anspruch auf Eigentumstitel",
-  "claim your ownership over this asset": "Ihr Eigentum an diesem Vermögenswert geltend machen",
   "This is a &nbsp; {{type}}": "Dies ist ein &nbsp; {{type}}",
   " {{economicResource": " {{economicResource",
   "": "",
   "CLAIM OWNERSHIP": "EIGENTUM BEANSPRUCHEN",
-  "&nbsp;": "&nbsp;"
+  "Version": "Version"
 }

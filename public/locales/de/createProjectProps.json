@@ -37,5 +37,6 @@
   "save": "speichern",
   "control window": "Steuerungsfenster",
   "Create a new asset": "Ein neues Asset erstellen",
+  "Fields marked with a red asterisk are mandatory": "Die mit einem roten Sternchen gekennzeichneten Felder sind Pflichtfelder",
   "Make sure you read the Comunity Guidelines before you create a new asset": "Lesen Sie unbedingt die Gemeinschaftsrichtlinien, bevor Sie ein neues Asset erstellen"
 }

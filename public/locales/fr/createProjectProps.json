@@ -33,5 +33,6 @@
   "save": "sauver",
   "control window": "fenêtre de contrôle",
   "Create a new asset": "Créer un nouvel actif",
+  "Fields marked with a red asterisk are mandatory": "Les champs marqués d'un astérisque rouge sont obligatoires.",
   "Make sure you read the Comunity Guidelines before you create a new asset": "Assurez-vous de lire les directives communautaires avant de créer une nouvelle ressource."
 }

@@ -235,39 +235,3 @@ export default CreateProject;
 //     setAssetCreatedId(`/asset/${proposal?.createProposal.proposal.id}`);
 //   });
 // }
-
-//   const QUERY_VARIABLES = gql`
-//   query {
-//     instanceVariables {
-//       specs {
-//         specCurrency {
-//           id
-//         }
-//         specProjectDesign {
-//           id
-//         }
-//         specProjectProduct {
-//           id
-//         }
-//         specProjectService {
-//           id
-//         }
-//       }
-//       units {
-//         unitOne {
-//           id
-//         }
-//       }
-//     }
-//   }
-// `;
-
-// const SelectAssetTypeRadio = ({ setConformsTo }: { setConformsTo: (id: string) => void }) => {
-//   const [assetType, setAssetType] = useState("");
-//   const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables;
-//   const { t } = useTranslation("createProjectProps");
-//   const onChange = (value: string) => {
-//     setAssetType(value);
-//     devLog(assetType);
-
-//   };
