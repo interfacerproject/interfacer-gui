@@ -1,8 +1,8 @@
-import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
 import React from "react";
 import LocationMenu from "./LocationMenu";
+import { useRouter } from "next/router";
 import NotificationBell from "./NotificationBell";
+import { useTranslation } from "next-i18next";
 
 type topbarProps = {
   userMenu?: boolean;
@@ -14,9 +14,9 @@ type topbarProps = {
 function Topbar({ search = true, children, userMenu = true, cta }: topbarProps) {
   const router = useRouter();
   const path = router.asPath;
+  const { t } = useTranslation("common");
   const isSignup = path === "/sign_up";
   const isSignin = path === "/sign_in";
-  const { t } = useTranslation("common");
 
   return (
     <div className="navbar bg-[#F3F3F1] px-2 pt-0 h-16 border-b border-base-400">
@@ -38,22 +38,10 @@ function Topbar({ search = true, children, userMenu = true, cta }: topbarProps) 
           </>
         )}
       </div>
-      <div className="navbar-center"></div>
       <div className="navbar-end">
         {cta}
         {userMenu && <NotificationBell />}
-
-        {isSignin && (
-          <div className="flex mr-2 space-x-2">
-            <button className="btn btn-primary" onClick={() => router.push("/sign_in")}>
-              {t("Login")}
-            </button>
-            <button className="btn btn-accent" onClick={() => router.push("/sign_up")}>
-              {t("Sign up")}
-            </button>
-          </div>
-        )}
-        {isSignup && (
+        {(isSignup || isSignin) && (
           <div className="flex mr-2 space-x-2">
             <button className="btn btn-primary" onClick={() => router.push("/sign_in")}>
               {t("Login")}

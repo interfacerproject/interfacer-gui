@@ -1,6 +1,6 @@
-import { LocationMarkerIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
 import Link from "next/link";
+import { LocationMarkerIcon } from "@heroicons/react/solid";
 
 type BrDisplayUserProps = {
   id: string;

@@ -5,7 +5,7 @@ describe("Screenshot nru", () => {
     cy.viewport("macbook-13");
   });
   after(() => {
-    cy.exec("mv cypress/screenshots/ci/screenshot_nru.cy.ts cypress/screenshots/ci/screenshot_nru");
+    cy.exec("mv cypress/screenshots/ci/screenshots/screenshot_nru.cy.ts cypress/screenshots/ci/screenshot_nru/");
   });
 
   Nru_pages.forEach(page => {

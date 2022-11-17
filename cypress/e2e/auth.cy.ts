@@ -104,7 +104,10 @@ describe("Authentication", () => {
         expect(localStorage.getItem("ethereum_address")).to.eq(Cypress.env("ethereum_address"));
         expect(localStorage.getItem("eddsa")).to.eq(Cypress.env("eddsa"));
       });
-    cy.contains("Building the digital infrastructure");
+    cy.location().should(loc => {
+      expect(loc.origin).to.eq("http://localhost:3000");
+      expect(loc.pathname).to.be.oneOf(["/it", "/en", "/de", "/fr", "/"]);
+    });
   });
   it("Should save in local storage keys at sign up", () => {
     localStorage.clear();

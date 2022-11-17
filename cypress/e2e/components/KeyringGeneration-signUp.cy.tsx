@@ -2,6 +2,9 @@ import { getTextInput, randomEmail, randomString } from "../../utils";
 
 describe("KeyringGeneration component", () => {
   it("should go to /sign_up and register a user (in order to go to keyring)", () => {
+    Cypress.on("uncaught:exception", (err, runnable) => {
+      return false;
+    });
     // Signing up before viewing keyring
     cy.visit("/sign_up");
     cy.get("form > :nth-child(1) > .w-full").should("be.visible").type(Cypress.env("NEXT_PUBLIC_INVITATION_KEY"));
@@ -45,7 +48,9 @@ describe("KeyringGeneration component", () => {
     cy.get("span.font-mono").should("be.visible");
     // Selecting "Login" button
     cy.get(".btn.btn-block.btn-accent").click();
-    // The url should be now "/logged_in"
-    cy.url().should("eq", "http://localhost:3000/");
+    cy.location().should(loc => {
+      expect(loc.origin).to.eq("http://localhost:3000");
+      expect(loc.pathname).to.be.oneOf(["/it", "/en", "/de", "/fr", "/"]);
+    });
   });
 });

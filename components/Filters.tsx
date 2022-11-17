@@ -45,24 +45,24 @@ const Filters = ({
   };
   return (
     <div className="p-4 bg-white border rounded-lg shadow md:w-1/3">
-      <h4 className="mb-4 text-2xl font-bold">{t("filters.filter for")}:</h4>
+      <h4 className="mb-4 text-2xl font-bold">{t("Filter by")}:</h4>
       {!noPrimaryAccountableFilter && (
         <AddContributors
           initialContributors={filter?.primaryIntentsResourceInventoriedAsPrimaryAccountable}
           contributors={contributors}
           setContributors={setContributors}
-          label={t("filters.contributors")}
+          label={t("Contributors")}
           testID="add-contributors"
         />
       )}
       <SelectAssetType
         onChange={setConformsTo}
-        label={t("filters.type")}
+        label={t("Type")}
         assetType={conformsTo}
         initialTypes={filter?.primaryIntentsResourceInventoriedAsConformsTo}
       />
       <SelectTags
-        label={t("filters.tags")}
+        label={t("Tags")}
         onChange={setTags}
         selectedTags={tags}
         initialTags={filter?.primaryIntentsResourceInventoriedAsClassifiedAs}
@@ -70,12 +70,12 @@ const Filters = ({
       <div className="grid grid-cols-2 gap-2 mt-4">
         <div>
           <button data-test="btn-reset" className="btn btn-outline btn-error btn-block" onClick={clearFilters}>
-            {t("filters.reset")}
+            {t("reset")}
           </button>
         </div>
         <div>
           <button data-test="btn-apply" onClick={applyFilters} className="btn btn-accent btn-block">
-            {t("filters.apply")}
+            {t("apply")}
           </button>
         </div>
       </div>

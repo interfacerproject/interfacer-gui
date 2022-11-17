@@ -1,9 +1,10 @@
-import Avatar from "boring-avatars";
+import React from "react";
 import Link from "next/link";
+import Avatar from "boring-avatars";
 
 const AvatarUsers = ({ users }: { users: Array<{ name: string; id: string }> }) => {
   return (
-    <div className="w-32 h-20 -space-x-6 avatar-group">
+    <div className="avatar-group -space-x-6 h-20 w-32">
       {users?.map((u, i) => (
         <>
           {i < 4 && (

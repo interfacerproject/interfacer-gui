@@ -1,7 +1,12 @@
 {
+  "assets": "patrimonio",
+  "home": "casa",
+  "Imported losh": "L'importazione di losh",
+  "Latest assets": "Ultime attività",
+  "Report bug": "Segnala un bug",
   "Home": "Casa",
   "My Stuff": "Le mie cose",
-  "Create asset": "Crea attività",
+  "Create asset": "Creare una risorsa",
   "My assets": "I miei beni",
   "Assets": "Attività",
   "All assets": "Tutte le attività",

@@ -1,4 +1,3 @@
-import { useTranslation } from "next-i18next";
 import React, { ReactEventHandler } from "react";
 
 type PopupPops = {
@@ -14,7 +13,6 @@ type PopupPops = {
 };
 
 function Popup({ name, action1, action2, buttons, children, svg, disabled, outlined, XL }: PopupPops) {
-  const { t } = useTranslation("common");
   const larger = XL ? "w-156 max-w-5xl" : "";
   const disabledClass = disabled ? "btn-disabled" : "";
   const outlinedClass = outlined ? "btn-outline" : "";

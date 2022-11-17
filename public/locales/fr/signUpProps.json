@@ -1,7 +1,7 @@
 {
   "Sign up": "S'inscrire",
   "Answer security questions to complete your signup 🧩": "Répondez aux questions de sécurité pour compléter votre inscription 🧩",
-  "The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase.": "Le processus d'inscription génère vos clés privées qui ne sont jamais communiquées au serveur. Conservez une copie de votre phrase de passe.",
+  "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46": "Le processus d'inscription génère vos clés privées qui ne sont jamais communiquées au serveur&#46 Gardez une copie de votre phrase de passe&#46",
   "Your name": "Votre nom",
   "Type your name": "Tapez votre nom",
   "Your name is shown and visible to everyone": "Votre nom est affiché et visible par tous",
@@ -23,8 +23,6 @@
   "Got your keys?": "Vous avez vos clés ?",
   "You need an invitation phrase to proceed with your signup!": "Vous avez besoin d'une phrase d'invitation pour procéder à votre inscription !",
   "Continue": "Continuer",
-  "invitation key:*": "clé d'invitation:*",
-  "Please enter a valid invitation key": "Veuillez entrer une clé d'invitation valide",
-  "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46": "Le processus d'inscription génère vos clés privées qui ne sont jamais communiquées au serveur&#46 Gardez une copie de votre phrase de passe&#46",
-  "invitation key&#58;*": "clé d'invitation&#58;*"
+  "invitation key&#58;*": "clé d'invitation&#58;*",
+  "Please enter a valid invitation key": "Veuillez entrer une clé d'invitation valide"
 }

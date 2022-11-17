@@ -13,14 +13,10 @@
   "Claim Ownership": "Claim Ownership",
   "claim your ownership over this asset": "claim your ownership over this asset",
   "This is a &nbsp; {{type}}": "This is a &nbsp; {{type}}",
-  "Losh asset": "Losh asset",
   " {{economicResource": {
     "id}}": "ID: {{economicResource.id}}"
   },
   "": "Version:",
   "CLAIM OWNERSHIP": "CLAIM OWNERSHIP",
-  "add to list +": "add to list +",
-  "Owner": "Owner",
-  "by": "by",
   "&nbsp;": "&nbsp;"
 }
