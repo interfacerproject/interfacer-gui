@@ -3,6 +3,7 @@ import { ActionMeta } from "react-select";
 export interface SelectOption<T> {
   label: string;
   value: T;
+  __isNew__?: boolean;
 }
 
 export type SelectOptions<T> = Array<SelectOption<T>>;
