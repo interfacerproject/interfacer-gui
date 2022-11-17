@@ -11,11 +11,12 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import BrFieldInfo from "components/brickroom/BrFieldInfo";
+
+import { Button, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import BrImageUpload from "components/brickroom/BrImageUpload";
-import BrInput from "components/brickroom/BrInput";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import BrRadioOption from "components/brickroom/BrRadioOption";
+import PFieldInfo from "components/polaris/PFieldInfo";
 import SelectContributors from "components/SelectContributors";
 import SelectLocation from "components/SelectLocation";
 import SelectTags from "components/SelectTags";
@@ -25,7 +26,7 @@ import type { Contributor } from "components/TagsGeoContributors";
 import { LocationLookup } from "lib/fetchLocation";
 
 // Other
-import { assetTypesQueryToArray } from "lib/formatAssetTypes";
+import { isRequired } from "lib/isFieldRequired";
 
 //
 
@@ -123,65 +124,96 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full pt-12 space-y-12">
-      <BrInput
-        {...register("name")}
-        label={t("Asset name")}
-        hint={t("Working name of the asset, visible to the whole community")}
-        placeholder={t("Fabulaser")}
-        testID="assetName"
-        error={errors.name?.message}
+      <Controller
+        control={control}
+        name="name"
+        render={({ field: { onChange, onBlur, name, value } }) => (
+          <TextField
+            type="text"
+            id={name}
+            name={name}
+            value={value}
+            autoComplete="off"
+            onChange={onChange}
+            onBlur={onBlur}
+            label={t("Asset name")}
+            placeholder={t("Fabulaser")}
+            helpText={t("Working name of the asset, visible to the whole community")}
+            error={errors.name?.message}
+            requiredIndicator={isRequired(schema, name)}
+          />
+        )}
       />
 
       <BrMdEditor
+        id="description"
         name="description"
         editorClass="h-60"
         label={t("General information")}
-        hint={t("in this markdown editor, the right box shows a preview; Type up to 2048 characters")}
-        testID="assetDescription"
+        helpText={t("In this markdown editor, the right box shows a preview[dot] Type up to 2048 characters[dot]")}
         subtitle={t("Short description to be displayed on the asset page")}
         onChange={({ text, html }) => {
           setValue("description", text);
         }}
+        requiredIndicator={isRequired(schema, "description")}
         error={errors.description?.message}
       />
 
       <BrImageUpload
         {...register("images")}
         label={t("Upload up to 10 pictures")}
-        hint={t("SVG, PNG, JPG or GIF (MAX 2MB)")}
+        helpText={t("SVG, PNG, JPG or GIF (MAX 2MB)")}
         testID="imageUpload"
         onDrop={acceptedFiles => {
+          console.log(acceptedFiles);
           setValue("images", acceptedFiles);
         }}
         error={errors.images?.message}
+        requiredIndicator={isRequired(schema, "images")}
       />
 
-      <BrInput
-        {...register("repositoryOrId")}
+      <Controller
+        control={control}
         name="repositoryOrId"
-        label={t("Repository link or Interfacer ID")}
-        hint={t("Reference to the asset's repository or Interfacer ID of the asset")}
-        placeholder={t("github&#46;com/my-repo")}
-        testID="repositoryOrId"
-        error={errors.repositoryOrId?.message}
+        render={({ field: { onChange, onBlur, name, value } }) => (
+          <TextField
+            type="text"
+            id={name}
+            name={name}
+            value={value}
+            autoComplete="off"
+            onChange={onChange}
+            onBlur={onBlur}
+            label={t("Repository link or Interfacer ID")}
+            placeholder={t("github[dot]com/my-repo")}
+            helpText={t("Reference to the asset's repository or Interfacer ID of the asset")}
+            error={errors.repositoryOrId?.message}
+            requiredIndicator={isRequired(schema, name)}
+          />
+        )}
       />
 
-      <BrFieldInfo label={t("Select asset type") + ":*"} error={errors.type?.message}>
-        {assetTypes &&
-          assetTypes.map(type => (
-            <BrRadioOption
-              id={type.id}
-              value={type.id}
-              label={type.name}
-              description={type.label}
-              {...register("type")}
-              key={type.id}
-              testID={`type-${type.name}`}
-            />
-          ))}
-      </BrFieldInfo>
+      <PFieldInfo
+        label={`${t("Select asset type")}:`}
+        error={errors.type?.message}
+        requiredIndicator={isRequired(schema, "type")}
+      >
+        <Stack vertical spacing="tight">
+          {assetTypes &&
+            assetTypes.map(type => (
+              <BrRadioOption
+                id={type.id}
+                value={type.id}
+                label={type.name}
+                description={type.label}
+                {...register("type")}
+                key={type.id}
+                testID={`type-${type.name}`}
+              />
+            ))}
+        </Stack>
+      </PFieldInfo>
 
-      {/* Form cntroller for tags field */}
       <Controller
         control={control}
         name="tags"
@@ -191,17 +223,17 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             ref={ref}
             onBlur={onBlur}
             onChange={onChange}
-            label={t("Tags") + ":"}
+            label={`${t("Tags")}:`}
             isMulti
-            placeholder={t("")}
+            placeholder={t("Open-source, 3D Printing, Medical use")}
+            helpText={t("Select a tag from the list, or type to create a new one")}
             error={errors.tags?.message}
             creatable={true}
-            testID="selectTags"
+            requiredIndicator={isRequired(schema, name)}
           />
         )}
       />
 
-      {/* Form cntroller for contributors field */}
       <Controller
         control={control}
         name="contributors"
@@ -209,52 +241,64 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
           <SelectContributors
             name={name}
             ref={ref}
+            id={name}
             onBlur={onBlur}
             onChange={onChange}
-            label={t("Contributors") + ":"}
+            label={`${t("Contributors")}:`}
             isMulti
-            placeholder={t("")}
+            placeholder={t("Type to search for a user")}
             error={errors.contributors?.message}
             creatable={false}
-            testID="SelectContributors"
+            requiredIndicator={isRequired(schema, name)}
           />
         )}
       />
 
       <div className="space-y-4">
-        {/* Location name */}
-        <BrInput
-          {...register("locationName")}
-          type="text"
-          label={t("")}
-          hint={t("")}
-          placeholder={t("")}
-          testID="locationName"
+        <Controller
+          control={control}
+          name="locationName"
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <TextField
+              type="text"
+              id={name}
+              name={name}
+              value={value}
+              autoComplete="off"
+              onChange={onChange}
+              onBlur={onBlur}
+              label={t("Location")}
+              placeholder={t("Fabulaser")}
+              helpText={t("The name of the place where the asset is stored")}
+              error={errors.name?.message}
+              requiredIndicator={isRequired(schema, name)}
+            />
+          )}
         />
 
-        {/* Form cntroller for location field */}
         <Controller
           control={control}
           name="location"
           render={({ field: { onChange, onBlur, name, ref } }) => (
             <SelectLocation
+              id={name}
               name={name}
               ref={ref}
               onBlur={onBlur}
               onChange={onChange}
-              label={t("Select location") + ":*"}
+              label={t("Select location")}
               placeholder={t("Hamburg")}
               error={errors.location?.message}
               creatable={false}
-              testID="selectLocation"
+              requiredIndicator={isRequired(schema, name)}
             />
           )}
         />
       </div>
 
-      <button type="submit" className="btn btn-accent" disabled={!isValid} data-test="submit">
+      <Button submit disabled={!isValid} id="submit">
         {t("Save")}
-      </button>
+      </Button>
     </form>
   );
 }
