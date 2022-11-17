@@ -82,7 +82,7 @@ const Profile: NextPage = () => {
                       />
                     </div>
                   </div>
-                  <p>{isUser ? t("Welcome to your FCOS profile") : t("")} </p>
+                  <p>{isUser ? t("Welcome to your Interfacer profile") : t("")} </p>
                   <h4 className="mt-2">
                     {isUser
                       ? t("Your user id is: {{id}}", { id: person?.id })

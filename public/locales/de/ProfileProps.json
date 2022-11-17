@@ -1,6 +1,5 @@
 {
   "Hi": "Hallo",
-  "Welcome to your FCOS profile": "Willkommen in Ihrem FCOS-Profil",
   "activity by the user": "Aktivität des Benutzers",
   "Saved list": "Gespeicherte Liste",
   "Your statistics": "Ihre Statistiken",
@@ -10,7 +9,8 @@
   "The user id is: {{id}}": "Die Benutzerkennung lautet: {{id}}",
   "Assets": "Vermögenswerte",
   "My Assets": "Mein Vermögen",
-  "List": "Liste",
-  "My List": "Meine Liste",
-  "Hi,&nbsp;": "Hallo, &nbsp;"
+  "Lists": "Verzeichnisse",
+  "My Lists": "Meine Listen",
+  "Hi,&nbsp;": "Hallo, &nbsp;",
+  "Welcome to your Interfacer profile": "Willkommen in Ihrem Interfacer-Profil"
 }
