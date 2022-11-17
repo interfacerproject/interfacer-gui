@@ -17,15 +17,15 @@ import BrImageUpload from "components/brickroom/BrImageUpload";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import BrRadioOption from "components/brickroom/BrRadioOption";
 import PFieldInfo from "components/polaris/PFieldInfo";
-import SelectContributors from "components/SelectContributors";
+import SelectContributors, { ContributorOption } from "components/SelectContributors";
 import SelectLocation from "components/SelectLocation";
 import SelectTags from "components/SelectTags";
 
 // Types
-import type { Contributor } from "components/TagsGeoContributors";
 import { LocationLookup } from "lib/fetchLocation";
 
 // Other
+import { SelectOption } from "components/brickroom/utils/BrSelectUtils";
 import { isRequired } from "lib/isFieldRequired";
 
 //
@@ -40,12 +40,12 @@ export namespace CreateAssetNS {
     description: string;
     type: string;
     repositoryOrId: string;
-    tags: Array<string>;
+    tags: Array<SelectOption<string>>;
     location: LocationLookup.Location | null;
     locationName: string;
     price: string;
     images: Array<File>;
-    contributors: Array<Contributor>;
+    contributors: Array<ContributorOption>;
   }
 }
 
