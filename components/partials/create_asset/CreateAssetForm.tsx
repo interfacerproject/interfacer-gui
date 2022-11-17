@@ -220,6 +220,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         render={({ field: { onChange, onBlur, name, ref } }) => (
           <SelectTags
             name={name}
+            id={name}
             ref={ref}
             onBlur={onBlur}
             onChange={onChange}
@@ -267,8 +268,8 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
               autoComplete="off"
               onChange={onChange}
               onBlur={onBlur}
-              label={t("Location")}
-              placeholder={t("Fabulaser")}
+              label={t("Location name")}
+              placeholder={t("Cool fablab")}
               helpText={t("The name of the place where the asset is stored")}
               error={errors.name?.message}
               requiredIndicator={isRequired(schema, name)}
@@ -286,7 +287,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
               ref={ref}
               onBlur={onBlur}
               onChange={onChange}
-              label={t("Select location")}
+              label={t("Select the address")}
               placeholder={t("Hamburg")}
               error={errors.location?.message}
               creatable={false}
@@ -296,7 +297,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         />
       </div>
 
-      <Button submit disabled={!isValid} id="submit">
+      <Button size="large" primary fullWidth submit disabled={!isValid} id="submit">
         {t("Save")}
       </Button>
     </form>

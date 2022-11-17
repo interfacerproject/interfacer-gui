@@ -6,6 +6,7 @@ import { forwardRef } from "react";
 
 // Components
 import BrSelectSearchable, { BrSelectSearchableProps } from "components/brickroom/BrSelectSearchable";
+import { formatSelectOption, SelectOption } from "./brickroom/utils/BrSelectUtils";
 
 //
 
@@ -21,18 +22,9 @@ const SelectContributors = forwardRef<any, SelectContributorsProps>((props, ref)
 
   const agents = useQuery<GetAgentQuery>(QUERY_AGENTS).data?.agents?.edges.map(a => a.node);
 
-  // If no agents are found, return error
-  // Next iteration of the component will use an async loading
-  // ToDo – Return proper error
-  if (!agents) return <></>;
-
   // Preparing the options for the component
-  let options = agents.map(a => ({
-    value: a.id,
-    label: a.name,
-  }));
-
-  // Removing the current user from the list
+  let options: Array<SelectOption<string>> = [];
+  if (agents) agents.map(a => formatSelectOption(a.name, a.id));
   if (removeCurrentUser) options = options.filter(a => a.value != user?.ulid);
 
   return <BrSelectSearchable {...props} options={options} ref={ref} />;

@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import { formatSelectOption } from "components/brickroom/utils/BrSelectUtils";
+import { formatSelectOption, SelectOption } from "components/brickroom/utils/BrSelectUtils";
 import type { GetTagsQuery } from "lib/types";
 import { forwardRef } from "react";
 
@@ -16,14 +16,12 @@ const GET_TAGS = gql`
 
 const SelectTags = forwardRef<any, BrSelectSearchableProps>((props, ref) => {
   const tags = useQuery<GetTagsQuery>(GET_TAGS).data?.economicResourceClassifications;
+  console.log(tags);
 
-  // If no tags are found, return error
   // Next iteration of the component will use an async loading
   // ToDo – Return proper error
-  if (!tags) return <></>;
-
-  // Prepping options to input in Select
-  const options = tags.map((tag: string) => formatSelectOption(tag, tag));
+  let options: Array<SelectOption<string>> = [];
+  if (tags) options = tags.map((tag: string) => formatSelectOption(tag, tag));
 
   return <BrSelectSearchable {...props} options={options} ref={ref} />;
 });

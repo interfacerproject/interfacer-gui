@@ -3,18 +3,28 @@ describe("when user visits create asset", () => {
     cy.login();
     cy.visit("/create_asset");
 
-    // It should display a non-clickable submit button
-    cy.get("#submit").invoke("attr", "aria-disabled").should("eq", "true");
+    // Contributors and tags fields should be visible
+    cy.wait(10000);
+    cy.get("#tags").should("be.visible");
+    cy.get("#contributors").should("be.visible");
 
-    // It should edit some fields
+    // It should display a non-clickable submit button
+    cy.get("#submit").should("have.attr", "aria-disabled");
+
+    // It should edit all the mandatory fields
     cy.get("#name").type("Awesome project");
     cy.get("#description").find("textarea").type("The asset description");
-    // cy.get(`[data-test="assetName"]`).type("Asset " + randomString(5));
+    cy.get("#repositoryOrId").type("gitttt");
+    cy.get("#0627GW44NH7TGB9J9MAC1YJVHR").click();
+    cy.get("#locationName").type("Cool Fablab");
+    cy.get("#location").type("bari").wait(500);
+    cy.get(`[class$="-option"]`).eq(0).click();
 
-    // // Description
+    // The submit button should be clickable
+    cy.get("#submit").should("not.have.attr", "aria-disabled");
 
-    // // Multiselect
-    // cy.get(`[data-test="type-Design"]`).click();
+    // CLick the button
+    cy.get("#submit").click();
   });
 
   // it("should edit some other fields", () => {
