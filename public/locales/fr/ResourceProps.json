@@ -12,5 +12,9 @@
   "add to list +": "ajouter à la liste +",
   "Owner": "Propriétaire",
   "by": "par",
-  "&nbsp;": "&nbsp ;"
+  "&nbsp;": "&nbsp ;",
+  "Claim ownership": "Revendiquer la propriété",
+  "ID: {{id}}": "ID : {{id}}",
+  "This is a &nbsp;": "Il s'agit d'un &nbsp ;",
+  "Version: {{version}}": "Version : {{version}}"
 }

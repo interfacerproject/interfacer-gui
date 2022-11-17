@@ -8,5 +8,8 @@
   "Version": "Versione",
   "There’s nothing to display here&#46;": "Non c'è nulla da mostrare qui&#46;",
   "This table will display the resources that you will have in inventory": "In questa tabella vengono visualizzate le risorse presenti nell'inventario.",
-  "Version: {{version}}": "Versione: {{version}}"
+  "Version: {{version}}": "Versione: {{version}}",
+  "description": "descrizione",
+  "There’s nothing to display here": "Non c'è nulla da mostrare qui",
+  "title": "titolo"
 }

@@ -150,7 +150,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         name="description"
         editorClass="h-60"
         label={t("General information")}
-        helpText={t("In this markdown editor, the right box shows a preview[dot] Type up to 2048 characters[dot]")}
+        helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t("Type up to 2048 characters")}.`}
         subtitle={t("Short description to be displayed on the asset page")}
         onChange={({ text, html }) => {
           setValue("description", text);

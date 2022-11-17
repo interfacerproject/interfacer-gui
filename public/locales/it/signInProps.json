@@ -31,5 +31,7 @@
   "Your email:": "Il tuo indirizzo e-mail:",
   "alice@email&#46;com": "alice@email&#46;com",
   "✌️  You don't have an account yet?": "✌️ Non hai ancora un account?",
-  "Your email&#x3a;": "La tua email&#x3a;"
+  "Your email&#x3a;": "La tua email&#x3a;",
+  "At least {{missingQuestions}} questions are missing!": "Mancano almeno {{missingQuestions}} domande!",
+  "Next step": "Passo successivo"
 }

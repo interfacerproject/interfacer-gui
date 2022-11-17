@@ -26,5 +26,9 @@
   "invitation key:*": "chiave di invito:*",
   "Please enter a valid invitation key": "Inserire una chiave d'invito valida",
   "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46": "Il processo di registrazione genera le vostre chiavi private che non vengono mai comunicate al server&#46 Conservate una copia della vostra passphrase&#46",
-  "invitation key&#58;*": "chiave di invito&#58;*"
+  "invitation key&#58;*": "chiave di invito&#58;*",
+  "alice@email&#183;com": "alice@email&#183;com",
+  "Answer to these questions to complete your signup 🧩": "Rispondete a queste domande per completare l'iscrizione 🧩",
+  "email is not valid": "L'e-mail non è valida",
+  "You will have to remember the answers and keep them for later as they are necessary for the log in&#46;": "Dovrete ricordarvi le risposte e conservarle per un secondo momento, poiché sono necessarie per l'accesso&#46;"
 }
