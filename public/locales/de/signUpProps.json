@@ -1,14 +1,14 @@
 {
   "Sign up": "Registrieren Sie sich",
   "Answer security questions to complete your signup 🧩": "Beantworten Sie Sicherheitsfragen, um Ihre Anmeldung abzuschließen 🧩.",
-  "The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase.": "Bei der Anmeldung werden Ihre privaten Schlüssel generiert, die niemals an den Server übermittelt werden. Bewahren Sie eine Kopie Ihrer Passphrase auf.",
+  "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46": "Der Anmeldevorgang generiert Ihre privaten Schlüssel, die niemals an den Server übermittelt werden&#46 Bewahren Sie eine Kopie Ihrer Passphrase auf&#46",
   "Your name": "Ihr Name",
   "Type your name": "Geben Sie Ihren Namen ein",
   "Your name is shown and visible to everyone": "Ihr Name wird angezeigt und ist für alle sichtbar",
   "Choose a username": "Wählen Sie einen Benutzernamen",
   "Type your visible username": "Geben Sie Ihren sichtbaren Benutzernamen ein",
   "Your username is used to identify you in the system": "Ihr Benutzername wird verwendet, um Sie im System zu identifizieren",
-  "Your email": "Deine E-Mail",
+  "Your email": "Ihre E-Mail",
   "alice@email.com": "alice@email.com",
   "Your email address that will be used for your login": "Ihre E-Mail-Adresse, die für Ihr Login verwendet wird",
   "✅ your email free": "✅ Ihre E-Mail kostenlos",
@@ -23,8 +23,6 @@
   "Got your keys?": "Haben Sie Ihre Schlüssel?",
   "You need an invitation phrase to proceed with your signup!": "Sie benötigen einen Einladungssatz, um mit Ihrer Anmeldung fortzufahren!",
   "Continue": "Weiter",
-  "invitation key:*": "Einladungsschlüssel:*",
-  "Please enter a valid invitation key": "Bitte geben Sie einen gültigen Einladungsschlüssel ein",
-  "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46": "Bei der Anmeldung werden Ihre privaten Schlüssel generiert, die niemals an den Server übermittelt werden&#46 Bewahren Sie eine Kopie Ihrer Passphrase auf&#46",
-  "invitation key&#58;*": "Einladungsschlüssel&#58;*"
+  "invitation key&#58;*": "Einladungsschlüssel&#58;*",
+  "Please enter a valid invitation key": "Bitte geben Sie einen gültigen Einladungsschlüssel ein"
 }

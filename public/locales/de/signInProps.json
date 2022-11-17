@@ -1,4 +1,5 @@
 {
+  "Sign Out": "Abmelden",
   "Login": "Anmeldung",
   "Login answering the signup questions 💬": "Anmeldung mit Beantwortung der Anmeldefragen 💬.",
   "Login by providing your generated passphrase or by answering the questions during your Signup proccess": "Melden Sie sich an, indem Sie Ihre generierte Passphrase eingeben oder die Fragen während des Anmeldevorgangs beantworten.",
@@ -28,8 +29,7 @@
   "Sign up": "Registrieren Sie sich",
   "Continue": "Weiter",
   "Input the email address provided during the signup process&#46;": "Geben Sie die bei der Anmeldung angegebene E-Mail-Adresse ein&#46;",
-  "Your email:": "Ihre E-Mail:",
+  "Your email&#x3a;": "Ihre E-Mail&#x3a;",
   "alice@email&#46;com": "alice@email&#46;com",
-  "✌️  You don't have an account yet?": "✌️ Sie haben noch kein Konto?",
-  "Your email&#x3a;": "Ihre E-Mail&#x3a;"
+  "✌️  You don't have an account yet?": "✌️ Sie haben noch kein Konto?"
 }

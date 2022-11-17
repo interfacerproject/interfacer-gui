@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import cn from "classnames";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
@@ -16,8 +16,8 @@ import ContributorsTable from "../../components/ContributorsTable";
 import { useAuth } from "../../hooks/useAuth";
 import useStorage from "../../hooks/useStorage";
 import { EconomicResource } from "../../lib/types";
-import { UPDATE_METADATA } from "../../lib/QueryAndMutation";
 import AddStar from "../../components/AddStar";
+import WatchButton from "../../components/WatchButton";
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -28,7 +28,6 @@ const Asset = () => {
   const [asset, setAsset] = useState<EconomicResource | undefined>();
   const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
-  const [isWatching, setIsWatching] = useState(asset?.metadata?.watchers?.some((w: any) => w.id === user?.ulid));
   const QUERY_ASSET = gql`
     query ($id: ID!) {
       proposal(id: $id) {
@@ -71,7 +70,6 @@ const Asset = () => {
 
   const { data, startPolling } = useQuery(QUERY_ASSET, { variables: { id } });
   startPolling(2000);
-  const [updateEconomicResource] = useMutation(UPDATE_METADATA);
 
   useEffect(() => {
     const _asset: EconomicResource = data?.proposal.primaryIntents[0].resourceInventoriedAs;
@@ -85,24 +83,6 @@ const Asset = () => {
     setImages(_images);
   }, [data]);
 
-  const handleWatch = async () => {
-    const _metadata = {
-      ...asset!.metadata,
-      watchers: asset!.metadata.watchers ? [...asset!.metadata.watchers, user!.ulid] : [user!.ulid],
-    };
-    await updateEconomicResource({ variables: { metadata: JSON.stringify(_metadata), id: asset!.id } }).then(r => {
-      setIsWatching(true);
-    });
-  };
-  const handleUnwatch = async () => {
-    const _metadata = {
-      ...asset!.metadata,
-      watchers: asset!.metadata.watchers?.filter((w: any) => w !== user!.ulid),
-    };
-    await updateEconomicResource({ variables: { metadata: JSON.stringify(_metadata), id: asset!.id } }).then(r => {
-      setIsWatching(false);
-    });
-  };
   const handleCollect = () => {
     const _list = getItem("assetsCollected");
     const _listParsed = _list ? JSON.parse(_list) : [];
@@ -147,7 +127,9 @@ const Asset = () => {
                   </Link>
                 </p>
                 <h2 className="my-2">{asset.name}</h2>
-                <p className="text-primary">{t("ID: {id}", asset.id)}</p>
+                <p className="text-primary">
+                  {"ID:"} {asset.id}
+                </p>
               </div>
               {images && <BrThumbinailsGallery images={images} />}
               <div id="tabs" className="my-6">
@@ -179,15 +161,7 @@ const Asset = () => {
               >
                 {t(inList ? "remove from list" : "add to list")}
               </button>
-              <button
-                className="btn btn-accent btn-outline btn-block"
-                tabIndex={-1}
-                role="button"
-                aria-disabled={true}
-                onClick={isWatching ? handleUnwatch : handleWatch}
-              >
-                {isWatching ? t("unwatch") : t("Watch")}
-              </button>
+              <WatchButton id={asset.id} metadata={asset.metadata} />
               <p className="mt-8 mb-2">{t("Owner")}:</p>
               <BrDisplayUser
                 id={asset.primaryAccountable.id}

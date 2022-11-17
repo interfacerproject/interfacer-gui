@@ -1,8 +1,8 @@
-import Avatar from "boring-avatars";
-import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import React from "react";
+import Avatar from "boring-avatars";
+import { useTranslation } from "next-i18next";
 
 export default function LoginBtn() {
   const { logout, user } = useAuth();

@@ -19,6 +19,7 @@ import BrMdEditor from "./brickroom/BrMdEditor";
 import BrRadio from "./brickroom/BrRadio";
 import TagsGeoContributors from "./TagsGeoContributors";
 import { EconomicEvent, Intent, Proposal, Unnamed_5_Mutation } from "../lib/types";
+import useInBox from "../hooks/useInBox";
 
 type Image = {
   description: string;
@@ -47,16 +48,16 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   const [location, setLocation] = useState("");
   const [locationName, setLocationName] = useState("");
   const [price] = useState("1");
-  const [resourceSpec, setResourceSpec] = useState("");
   const [images, setImages] = useState([] as Images);
   const [contributors, setContributors] = useState([] as { id: string; name: string }[]);
   const [imagesFiles, setImagesFiles] = useState([] as Array<any>);
   const [assetCreatedId, setAssetCreatedId] = useState(undefined as string | undefined);
   const { t } = useTranslation("createProjectProps");
+  const { sendMessage } = useInBox();
 
   const isButtonEnabled = () => {
     return (
-      resourceSpec.length > 0 &&
+      projectType.length > 0 &&
       projectName.length > 0 &&
       projectDescription.length > 0 &&
       repositoryOrId.length > 0 &&
@@ -69,18 +70,6 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
     isButtonEnabled()
       ? setLogs(logs.concat(["info: mandatory fields compiled"]))
       : setLogs(logs.concat(["warning: compile all mandatory fields"]));
-    switch (projectType) {
-      case "Design":
-        setResourceSpec(instanceVariables?.specs?.specProjectDesign.id);
-        break;
-      case "Service":
-        setResourceSpec(instanceVariables?.specs?.specProjectService.id);
-        break;
-      case "Product":
-        setResourceSpec(instanceVariables?.specs?.specProjectProduct.id);
-        break;
-    }
-    devLog("typeId", resourceSpec);
   }, [projectType, projectName, projectDescription, repositoryOrId, locationId, locationName, price]);
 
   const handleEditorChange = ({ html, text }: any) => {
@@ -132,7 +121,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
   async function onSubmit(e: any) {
     e.preventDefault();
     const variables = {
-      resourceSpec: resourceSpec,
+      resourceSpec: projectType,
       agent: user?.ulid,
       name: projectName,
       note: projectDescription,
@@ -228,6 +217,17 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         setLogs(logsText);
         setAssetCreatedId(`/asset/${proposal?.id}`);
       });
+      await sendMessage(
+        {
+          user: { name: user?.name, id: user?.ulid },
+          asset: {
+            id: proposal?.id,
+            name: economicEvent?.resourceInventoriedAs?.name,
+          },
+        },
+        contributors.map(c => c.id),
+        "contribution"
+      );
     }
   }
 
@@ -312,7 +312,7 @@ const NewAssetForm = ({ logs, setLogs }: NewAssetFormProps) => {
         </Link>
       ) : (
         <button type="submit" className="btn btn-accent" disabled={!isButtonEnabled()} data-test="submit">
-          {t("button")}
+          {t("save")}
         </button>
       )}
     </form>

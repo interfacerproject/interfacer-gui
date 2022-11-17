@@ -28,7 +28,7 @@ describe("Screenshot ru", () => {
     cy.viewport("macbook-13");
   });
   after(() => {
-    cy.exec("mv cypress/screenshots/ci/screenshot_ru.cy.ts cypress/screenshots/ci/screenshot_ru");
+    cy.exec("mv cypress/screenshots/ci/screenshots/screenshot_ru.cy.ts cypress/screenshots/ci/screenshot_ru/");
   });
 
   it("should takes a screenshot every page", () => {
