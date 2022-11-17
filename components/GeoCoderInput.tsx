@@ -73,11 +73,11 @@ const GeoCoderInput = ({
       placeholder={placeholder}
       inputValue={searchTerm}
       label={label}
-      hint={hint}
+      helpText={hint}
       error={error}
-      help={help}
+      // helpText={help}
       // onBackspace={() => handleSelectAddress()}
-      testID={testID}
+      id={testID}
     />
   );
 };

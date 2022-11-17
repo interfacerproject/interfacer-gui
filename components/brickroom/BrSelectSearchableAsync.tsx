@@ -1,12 +1,12 @@
+import PFieldInfo, { PFieldInfoProps } from "components/polaris/PFieldInfo";
 import { forwardRef } from "react";
 import { GroupBase } from "react-select";
 import AsyncSelect, { AsyncProps } from "react-select/async";
 import AsyncCreatableSelect from "react-select/async-creatable";
-import BrFieldInfo, { BrFieldInfoProps } from "./BrFieldInfo";
 
 //
 
-export interface BrSelectSearchableAsyncProps extends AsyncProps<any, boolean, GroupBase<any>>, BrFieldInfoProps {
+export interface BrSelectSearchableAsyncProps extends AsyncProps<any, boolean, GroupBase<any>>, PFieldInfoProps {
   creatable?: boolean;
 }
 
@@ -16,9 +16,9 @@ const BrSelectSearchableAsync = forwardRef<any, BrSelectSearchableAsyncProps>((p
   const { creatable = false } = props;
 
   return (
-    <BrFieldInfo {...props}>
+    <PFieldInfo {...props}>
       {!creatable ? <AsyncSelect {...props} ref={ref} /> : <AsyncCreatableSelect {...props} ref={ref} />}
-    </BrFieldInfo>
+    </PFieldInfo>
   );
 });
 

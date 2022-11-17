@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react";
 import { ErrorCode, FileError, FileRejection, useDropzone } from "react-dropzone";
 
 // Components
-import BrFieldError from "./BrFieldError";
-import BrFieldInfo, { BrFieldInfoProps } from "./BrFieldInfo";
+import PError from "components/polaris/PError";
+import PFieldInfo, { PFieldInfoProps } from "components/polaris/PFieldInfo";
 import BrImageUploadEmptyState from "./BrImageUploadEmptyState";
 import BrImageUploadThumb from "./BrImageUploadThumb";
+import { TestProp as TP } from "./types";
 
 //
 
@@ -14,7 +15,7 @@ interface ImgFile extends File {
   preview: string;
 }
 
-interface BrImageUploadProps extends BrFieldInfoProps {
+interface BrImageUploadProps extends PFieldInfoProps, TP {
   onDrop?: (acceptedFiles: Array<File>, fileRejections?: FileRejection) => void;
 }
 
@@ -59,10 +60,10 @@ const BrImageUpload = React.forwardRef<HTMLInputElement, BrImageUploadProps>((pr
   function errorTranslator(e: FileError): string {
     // Listing errors and translations
     const errors: Record<ErrorCode | string, string> = {
-      "file-invalid-type": t("errors.invalidFileType"),
-      "file-too-large": t("errors.fileTooLarge"),
-      "file-too-small": t("errors.fileTooSmall"),
-      "too-many-files": t("errors.tooManyFiles"),
+      "file-invalid-type": t("Invalid file type"),
+      "file-too-large": t("File too large"),
+      "file-too-small": t("File too small"),
+      "too-many-files": t("Too many files"),
     };
 
     if (errors[e.code]) return errors[e.code];
@@ -78,7 +79,7 @@ const BrImageUpload = React.forwardRef<HTMLInputElement, BrImageUploadProps>((pr
   //
 
   return (
-    <BrFieldInfo {...props}>
+    <PFieldInfo {...props}>
       {/* Dropdown zone */}
       <section className="p-2 border-[1px] border-gray-300 rounded-md hover:bg-gray-200 hover:cursor-pointer">
         {/* Dropdown area */}
@@ -101,17 +102,17 @@ const BrImageUpload = React.forwardRef<HTMLInputElement, BrImageUploadProps>((pr
 
       {/* Errors */}
       {fileRejections.length > 0 && (
-        <div className="pt-2">
+        <div>
           {fileRejections.map(r => (
             <React.Fragment key={r.file.name}>
               {rejectionFormatter(r).map(s => (
-                <BrFieldError message={s} key={s} />
+                <PError error={s} key={s} />
               ))}
             </React.Fragment>
           ))}
         </div>
       )}
-    </BrFieldInfo>
+    </PFieldInfo>
   );
 });
 
