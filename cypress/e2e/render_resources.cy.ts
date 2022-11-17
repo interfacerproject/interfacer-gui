@@ -9,7 +9,7 @@ describe.skip("When user visit resources", () => {
   it("should have items with a source url", () => {
     intercept();
     cy.visit("/resources");
-    waitForData();
+    // waitForData();
     cy.get(`[data-test="resource-item"]`).each($item => {
       cy.wrap($item).children(".table-cell").eq(1).should("not.be.empty");
     });

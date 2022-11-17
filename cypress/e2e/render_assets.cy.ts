@@ -10,9 +10,9 @@ describe("When user visit Assets", () => {
   });
 
   it.skip("should Filter resources by the url query string", () => {
-    cy.visit("/assets?primaryAccountable=061KPJM661MN6S3QA3PPQ6AQDR");
+    cy.visit(`/assets?primaryAccountable=${Cypress.env("authId")}`);
     cy.get("tr").each($tr => {
-      cy.wrap($tr).get("td").eq(2).should("contain", "nenno");
+      cy.wrap($tr).get("td").eq(2).should("contain", "gino");
     });
   });
 });
