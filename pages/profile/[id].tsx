@@ -8,51 +8,39 @@ import BrTabs from "components/brickroom/BrTabs";
 import Spinner from "components/brickroom/Spinner";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
-import devLog from "lib/devLog";
 import { FETCH_USER } from "lib/QueryAndMutation";
-import { ProposalFilterParams } from "lib/types";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
+import useFilters from "../../hooks/useFilters";
 
 //
 
 const Profile: NextPage = () => {
   const { getItem } = useStorage();
   const router = useRouter();
-  const { id, conformTo, tags, tab } = router.query;
+  const { id, tab } = router.query;
   const { t } = useTranslation("ProfileProps");
-
+  const { proposalFilter } = useFilters();
   const { user } = useAuth();
 
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
-
   const idToBeFetch = isUser ? user?.ulid : id;
 
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
-
-  const filter: ProposalFilterParams = {};
-  // TODO – TOFIX
-  if (idToBeFetch) filter.primaryIntentsResourceInventoriedAsPrimaryAccountable = [idToBeFetch as string];
-
+  typeof idToBeFetch === "string"
+    ? (proposalFilter.primaryIntentsResourceInventoriedAsPrimaryAccountable = [idToBeFetch])
+    : idToBeFetch!;
   const hasCollectedAssets = isUser && !!getItem("assetsCollected");
   let collectedAssets: { primaryIntentsResourceInventoriedAsId: string[] } = {
     primaryIntentsResourceInventoriedAsId: [],
   };
-  if (conformTo) {
-    // @ts-ignore
-    filter["primaryIntentsResourceInventoriedAsConformsTo"] = conformTo.split(",");
-  }
-  if (tags) {
-    // @ts-ignore
-    filter["primaryIntentsResourceInventoriedAsClassifiedAs"] = tags.split(",");
-  }
-  devLog(user);
   if (hasCollectedAssets) {
     collectedAssets["primaryIntentsResourceInventoriedAsId"] = JSON.parse(getItem("assetsCollected"));
   }
+
   return (
     <>
       {!person && <Spinner />}
@@ -108,7 +96,7 @@ const Profile: NextPage = () => {
                   component: (
                     <div>
                       <h3 className="my-8">{isUser ? t("My Assets") : t("Assets")}</h3>
-                      <AssetsTable filter={filter} hideHeader={true} />
+                      <AssetsTable filter={proposalFilter} hideHeader={true} />
                     </div>
                   ),
                 },
