@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { useAuth } from "hooks/useAuth";
 import { QUERY_AGENTS } from "lib/QueryAndMutation";
-import { GetAgentQuery } from "lib/types";
+import { Agent, GetAgentQuery, Organization } from "lib/types";
 import { forwardRef } from "react";
 
 // Components
@@ -14,6 +14,8 @@ export interface SelectContributorsProps extends BrSelectSearchableProps {
   removeCurrentUser?: boolean;
 }
 
+export type ContributorOption = SelectOption<Agent | Organization>;
+
 //
 
 const SelectContributors = forwardRef<any, SelectContributorsProps>((props, ref) => {
@@ -23,9 +25,9 @@ const SelectContributors = forwardRef<any, SelectContributorsProps>((props, ref)
   const agents = useQuery<GetAgentQuery>(QUERY_AGENTS).data?.agents?.edges.map(a => a.node);
 
   // Preparing the options for the component
-  let options: Array<SelectOption<string>> = [];
-  if (agents) agents.map(a => formatSelectOption(a.name, a.id));
-  if (removeCurrentUser) options = options.filter(a => a.value != user?.ulid);
+  let options: Array<ContributorOption> = [];
+  if (agents?.length) options = agents.map(a => formatSelectOption(a.name, a));
+  if (removeCurrentUser) options = options.filter(a => a.value.id != user?.ulid);
 
   return <BrSelectSearchable {...props} options={options} ref={ref} />;
 });
