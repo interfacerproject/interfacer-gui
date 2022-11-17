@@ -1,9 +1,6 @@
 {
-  "errors": {
-    "invalidFileType": "Tipo di file non valido",
-    "fileTooLarge": "File troppo grande",
-    "fileTooSmall": "File troppo piccolo",
-    "tooManyFiles": "Troppi file"
-  },
-  "dragHereOrClick": "Trascinare i file o Fare clic qui per caricare"
+  "File too large": "File troppo grande",
+  "File too small": "File troppo piccolo",
+  "Invalid file type": "Tipo di file non valido",
+  "Too many files": "Troppi file"
 }
