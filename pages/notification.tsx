@@ -8,8 +8,8 @@ import { useAuth } from "../hooks/useAuth";
 import useStorage from "../hooks/useStorage";
 import dayjs from "../lib/dayjs";
 
-const QUERY_ASSETS = gql`
-  query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
+const QUERY_ASSETS_NOTIFICATION = gql`
+  query GetNotificationAssets($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
     proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
       pageInfo {
         startCursor
@@ -46,7 +46,7 @@ const Notification = () => {
   const { user } = useAuth();
   const { t } = useTranslation("notificationProps");
   const { getItem, setItem } = useStorage();
-  const { data, startPolling } = useQuery(QUERY_ASSETS, { variables: { last: 50 } });
+  const { data, startPolling } = useQuery(QUERY_ASSETS_NOTIFICATION, { variables: { last: 50 } });
   startPolling(4000);
   const notifications = data?.proposals.edges.filter((proposal: any) =>
     proposal.node.primaryIntents[0]?.resourceInventoriedAs?.metadata?.contributors?.some(

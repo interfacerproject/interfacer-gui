@@ -1,27 +1,27 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { EconomicResource } from "lib/types";
-import type { GetStaticPaths, NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useRouter } from "next/router";
 import Spinner from "components/brickroom/Spinner";
+import Layout from "components/layout/CreateAssetLayout";
+import LoshPresentation from "components/LoshPresentation";
+import TagsGeoContributors from "components/TagsGeoContributors";
+import dayjs from "dayjs";
+import { useAuth } from "hooks/useAuth";
+import devLog from "lib/devLog";
 import {
-  TRANSFER_ASSET,
   CREATE_INTENT,
   CREATE_LOCATION,
   CREATE_PROPOSAL,
   LINK_PROPOSAL_AND_INTENT,
   QUERY_RESOURCE,
   QUERY_VARIABLES,
+  TRANSFER_ASSET,
 } from "lib/QueryAndMutation";
+import { EconomicResource } from "lib/types";
+import type { GetStaticPaths } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
-import Layout from "components/layout/CreateAssetLayout";
 import { NextPageWithLayout } from "../../_app";
-import LoshPresentation from "components/LoshPresentation";
-import TagsGeoContributors from "components/TagsGeoContributors";
-import devLog from "lib/devLog";
-import dayjs from "dayjs";
-import { useAuth } from "hooks/useAuth";
 
 const ClaimAsset: NextPageWithLayout = () => {
   const router = useRouter();
@@ -39,7 +39,7 @@ const ClaimAsset: NextPageWithLayout = () => {
   });
   const e = data?.economicResource;
 
-  const instanceVariables = useQuery(QUERY_VARIABLES(true)).data?.instanceVariables;
+  const instanceVariables = useQuery(QUERY_VARIABLES).data?.instanceVariables;
   const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
   const [transferAsset, { data: economicResource, error }] = useMutation(TRANSFER_ASSET);
   const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);

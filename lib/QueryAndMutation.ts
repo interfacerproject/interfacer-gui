@@ -1,8 +1,7 @@
 import { gql } from "@apollo/client";
 
-export const QUERY_VARIABLES = (unitsAndCurrencies = false) => {
-  const _query = unitsAndCurrencies
-    ? `query {
+export const QUERY_VARIABLES = gql`
+  query GetVariables {
     instanceVariables {
       specs {
         specCurrency {
@@ -28,32 +27,11 @@ export const QUERY_VARIABLES = (unitsAndCurrencies = false) => {
         }
       }
     }
-  }`
-    : `query {
-    instanceVariables {
-      specs {
-        specProjectDesign {
-          id
-          name
-        }
-        specProjectProduct {
-          id
-          name
-        }
-        specProjectService {
-          id
-          name
-        }
-      }
-    }
-  }`;
-  return gql`
-    ${_query}
-  `;
-};
+  }
+`;
 
 export const CREATE_PROPOSAL = gql`
-  mutation {
+  mutation CreateProposal {
     createProposal(proposal: { name: "price tag", unitBased: true }) {
       proposal {
         id
@@ -63,7 +41,7 @@ export const CREATE_PROPOSAL = gql`
 `;
 
 export const CREATE_INTENT = gql`
-  mutation ($agent: ID!, $resource: ID!, $oneUnit: ID!, $currency: ID!, $howMuch: Float!) {
+  mutation CreateIntent($agent: ID!, $resource: ID!, $oneUnit: ID!, $currency: ID!, $howMuch: Float!) {
     item: createIntent(
       intent: {
         name: "project"
@@ -77,7 +55,6 @@ export const CREATE_INTENT = gql`
         id
       }
     }
-
     payment: createIntent(
       intent: {
         name: "payment"
@@ -95,7 +72,7 @@ export const CREATE_INTENT = gql`
 `;
 
 export const LINK_PROPOSAL_AND_INTENT = gql`
-  mutation ($proposal: ID!, $item: ID!, $payment: ID!) {
+  mutation LinkProposalAndIntent($proposal: ID!, $item: ID!, $payment: ID!) {
     linkItem: proposeIntent(publishedIn: $proposal, publishes: $item, reciprocal: false) {
       proposedIntent {
         id
@@ -110,7 +87,7 @@ export const LINK_PROPOSAL_AND_INTENT = gql`
 `;
 
 export const CREATE_LOCATION = gql`
-  mutation ($name: String!, $addr: String!, $lat: Float!, $lng: Float!) {
+  mutation CreateLocation($name: String!, $addr: String!, $lat: Float!, $lng: Float!) {
     createSpatialThing(spatialThing: { name: $name, mappableAddress: $addr, lat: $lat, long: $lng }) {
       spatialThing {
         id
@@ -122,7 +99,7 @@ export const CREATE_LOCATION = gql`
 `;
 
 export const CREATE_ASSET = gql`
-  mutation (
+  mutation CreateAsset(
     $name: String!
     $note: String!
     $metadata: JSON
@@ -158,7 +135,7 @@ export const CREATE_ASSET = gql`
 `;
 
 export const TRANSFER_ASSET = gql`
-  mutation (
+  mutation TransferAsset (
     $resource: ID!
     $name: String!
     $note: String!
@@ -241,7 +218,7 @@ export const QUERY_RESOURCE = gql`
 `;
 
 export const UPDATE_METADATA = gql`
-  mutation ($metadata: JSON!, $id: ID!) {
+  mutation UpdateMetadata($metadata: JSON!, $id: ID!) {
     updateEconomicResource(resource: { id: $id, metadata: $metadata }) {
       economicResource {
         id
@@ -250,6 +227,7 @@ export const UPDATE_METADATA = gql`
     }
   }
 `;
+
 export const QUERY_ASSET_TYPES = gql`
   query GetAssetTypes {
     instanceVariables {
@@ -360,6 +338,34 @@ export const QUERY_ASSETS = gql`
             }
           }
         }
+      }
+    }
+  }
+`;
+
+export const QUERY_UNIT_ONE = gql`
+  query GetUnitOne {
+    instanceVariables {
+      units {
+        unitOne {
+          id
+        }
+      }
+    }
+  }
+`;
+
+export const FETCH_USER = gql`
+  query GetUser($id: ID!) {
+    person(id: $id) {
+      id
+      name
+      email
+      user
+      ethereumAddress
+      primaryLocation {
+        name
+        mappableAddress
       }
     }
   }

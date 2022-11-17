@@ -6,6 +6,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import AddStar from "../../components/AddStar";
 import AssetDetailOverview from "../../components/AssetDetailOverview";
 import BrBreadcrumb from "../../components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "../../components/brickroom/BrDisplayUser";
@@ -15,9 +16,8 @@ import Spinner from "../../components/brickroom/Spinner";
 import ContributorsTable from "../../components/ContributorsTable";
 import { useAuth } from "../../hooks/useAuth";
 import useStorage from "../../hooks/useStorage";
-import { EconomicResource } from "../../lib/types";
 import { UPDATE_METADATA } from "../../lib/QueryAndMutation";
-import AddStar from "../../components/AddStar";
+import { EconomicResource } from "../../lib/types";
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -29,8 +29,8 @@ const Asset = () => {
   const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
   const [isWatching, setIsWatching] = useState(asset?.metadata?.watchers?.some((w: any) => w.id === user?.ulid));
-  const QUERY_ASSET = gql`
-    query ($id: ID!) {
+  const QUERY_ASSET_PAGE = gql`
+    query GetAssetPage($id: ID!) {
       proposal(id: $id) {
         created
         primaryIntents {
@@ -69,7 +69,7 @@ const Asset = () => {
     }
   `;
 
-  const { data, startPolling } = useQuery(QUERY_ASSET, { variables: { id } });
+  const { data, startPolling } = useQuery(QUERY_ASSET_PAGE, { variables: { id } });
   startPolling(2000);
   const [updateEconomicResource] = useMutation(UPDATE_METADATA);
 

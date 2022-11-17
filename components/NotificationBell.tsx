@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import useStorage from "../hooks/useStorage";
 import dayjs from "../lib/dayjs";
-const QUERY_ASSETS = gql`
-  query ($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
+const QUERY_ASSETS_BELL = gql`
+  query GetBellAssets($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
     proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
       pageInfo {
         startCursor
@@ -34,7 +34,7 @@ const QUERY_ASSETS = gql`
 
 const NotificationBell = () => {
   const { user } = useAuth();
-  const { data, startPolling } = useQuery(QUERY_ASSETS, { variables: { last: 50 } });
+  const { data, startPolling } = useQuery(QUERY_ASSETS_BELL, { variables: { last: 50 } });
   startPolling(120000);
   const { getItem } = useStorage();
   const notifications = data?.proposals.edges.filter((proposal: any) =>

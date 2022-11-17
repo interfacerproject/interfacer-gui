@@ -1,20 +1,11 @@
 {
-  "Assigned to:": "Assegnato a:",
-  "Current location:": "Posizione attuale:",
-  "Here you will see the material passport of asset": "Qui si vedrà il passaporto materiale dell'asset",
-  "Claim Ownership": "Rivendicare la proprietà",
-  "claim your ownership over this asset": "rivendicare la proprietà di questo bene",
-  "This is a &nbsp; {{type}}": "Questo è un &nbsp; {{type}}",
-  "Losh asset": "Attività di Losh",
-  " {{economicResource": " {{risorsaeconomica",
-  "": "",
-  "CLAIM OWNERSHIP": "RIVENDICARE LA PROPRIETÀ",
-  "add to list +": "aggiungi all'elenco +",
-  "Owner": "Proprietario",
-  "by": "da",
   "&nbsp;": "&nbsp;",
+  "add to list +": "aggiungi all'elenco +",
+  "by": "da",
   "Claim ownership": "Rivendicare la proprietà",
   "ID: {{id}}": "ID: {{id}}",
-  "This is a &nbsp;": "Questo è un &nbsp;",
-  "Version: {{version}}": "Versione: {{version}}"
+  "Losh asset": "Attività di Losh",
+  "Owner": "Proprietario",
+  "This is a &nbsp; {{type}}": "Questo è un &nbsp; {{type}}",
+  "Version": "Version"
 }

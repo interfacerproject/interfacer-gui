@@ -1,15 +1,10 @@
 {
-  "Resources": "Ressourcen",
-  "Use this page to generate digital product passports of resources": "Verwenden Sie diese Seite, um digitale Produktpässe von Ressourcen zu erstellen",
   "by": "von",
+  "License": "Lizenz",
+  "Raise, transfer or Produce a resource and it will displayed here": "Raise, transfer or Produce a resource and it will displayed here",
   "Resource": "Ressource",
   "Source": "Quelle",
-  "License": "Lizenz",
-  "Version": "Version",
-  "There’s nothing to display here&#46;": "Hier gibt es nichts zu sehen&#46;",
-  "This table will display the resources that you will have in inventory": "In dieser Tabelle werden die Ressourcen angezeigt, die Sie im Inventar haben werden",
-  "Version: {{version}}": "Version: {{version}}",
-  "description": "Beschreibung",
   "There’s nothing to display here": "Hier gibt es nichts zu sehen",
-  "title": "Titel"
+  "This table will display the resources that you will have in inventory": "This table will display the resources that you will have in inventory",
+  "Version": "Version"
 }
