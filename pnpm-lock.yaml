@@ -9,6 +9,7 @@ specifiers:
   '@graphql-codegen/typescript-operations': ^2.5.4
   '@heroicons/react': ^1.0.6
   '@hookform/resolvers': ^2.9.10
+  '@shopify/polaris-icons': ^6.5.0
   '@tailwindcss/typography': ^0.5.7
   '@testing-library/cypress': ^8.0.3
   '@types/base45': ^2.0.0
@@ -84,6 +85,7 @@ dependencies:
   '@graphql-codegen/typescript-operations': 2.5.7_graphql@15.8.0
   '@heroicons/react': 1.0.6_react@18.2.0
   '@hookform/resolvers': 2.9.10_react-hook-form@7.39.5
+  '@shopify/polaris-icons': 6.5.0
   '@tailwindcss/typography': 0.5.8_tailwindcss@3.2.4
   '@testing-library/cypress': 8.0.7_cypress@10.11.0
   '@types/base45': 2.0.0

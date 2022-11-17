@@ -1,0 +1,17 @@
+{
+  "Passphrase": {
+    "title": "Hier ist Ihre Passphrase",
+    "description": "Diese Passphrase wird generiert und nicht auf dem Server gespeichert. Bewahren Sie eine Kopie davon auf."
+  },
+  "Questions": {
+    "missingQuestions": "{{missingQuestions}} Fragen fehlen!",
+    "questions": [
+      "Wo sich meine Eltern kennengelernt haben?",
+      "Wie lautet der Name Ihres ersten Haustiers?",
+      "Was ist Ihre Heimatstadt?",
+      "Wie lautet der Name Ihres ersten Lehrers?",
+      "Wie lautete der Nachname Ihrer Mutter vor der Hochzeit?"
+    ],
+    "next": "Weiter"
+  }
+}

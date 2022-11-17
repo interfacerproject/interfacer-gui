@@ -1,0 +1,9 @@
+{
+  "errors": {
+    "invalidFileType": "Ungültiger Dateityp",
+    "fileTooLarge": "Datei zu groß",
+    "fileTooSmall": "Datei zu klein",
+    "tooManyFiles": "Zu viele Dateien"
+  },
+  "dragHereOrClick": "Ziehen Sie Dateien oder klicken Sie hier zum Hochladen"
+}

@@ -34,6 +34,7 @@
     "@graphql-codegen/typescript-operations": "^2.5.4",
     "@heroicons/react": "^1.0.6",
     "@hookform/resolvers": "^2.9.10",
+    "@shopify/polaris-icons": "^6.5.0",
     "@tailwindcss/typography": "^0.5.7",
     "@testing-library/cypress": "^8.0.3",
     "@types/base45": "^2.0.0",

@@ -46,7 +46,8 @@ const CreateProject: NextPageWithLayout = () => {
           {/* Heading */}
           <div>
             <h2 className="text-primary">{t("Create a new asset")} </h2>
-            <p>{t("Make sure you read the Comunity Guidelines before you create a new asset")}</p>
+            <p>{t("Make sure you read the Comunity Guidelines before you create a new asset")}.</p>
+            <p>{t("Fields marked with a red asterisk are mandatory")}.</p>
           </div>
 
           <CreateAssetForm
@@ -268,15 +269,5 @@ export default CreateProject;
 //   const onChange = (value: string) => {
 //     setAssetType(value);
 //     devLog(assetType);
-//     switch (value) {
-//       case t("projectType.array.0.value"):
-//         setConformsTo(instanceVariables?.specs?.specProjectDesign?.id);
-//         break;
-//       case t("projectType.array.1.value", { returnObjects: true }):
-//         setConformsTo(instanceVariables?.specs?.specProjectProduct?.id);
-//         break;
-//       case t("projectType.array.2.value", { returnObjects: true }):
-//         setConformsTo(instanceVariables?.specs?.specProjectService?.id);
-//         break;
-//     }
+
 //   };

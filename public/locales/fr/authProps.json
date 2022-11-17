@@ -1,0 +1,17 @@
+{
+  "Passphrase": {
+    "title": "Voici votre phrase d'authentification",
+    "description": "Cette phrase de passe est générée et n'est pas stockée sur le serveur. Conservez-en une copie."
+  },
+  "Questions": {
+    "missingQuestions": "{{missingQuestions}} questions sont manquantes !",
+    "questions": [
+      "Où mes parents se sont rencontrés ?",
+      "Quel est le nom de votre premier animal de compagnie ?",
+      "Quelle est votre ville natale ?",
+      "Quel est le nom de votre premier professeur ?",
+      "Quel est le nom de famille de votre mère avant le mariage ?"
+    ],
+    "next": "Suivant"
+  }
+}

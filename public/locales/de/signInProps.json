@@ -19,9 +19,9 @@
   "This passphrase is generated and are not stored on the server&#46; Keep a copy of it&#46;": "Diese Passphrase wird generiert und ist nicht auf dem Server gespeichert&#46; Bewahren Sie eine Kopie davon auf&#46;",
   "User not found": "Benutzer nicht gefunden",
   "Your passprhase is: ": "Ihr Passphrase ist:",
-  "Where my parents met?": "Wo sich meine Eltern kennengelernt haben?",
+  "At least {{missingQuestions}} questions are missing!": "Es fehlen mindestens {{missingQuestions}} Fragen!",
+  "Next step": "Nächster Schritt",
   "What is the name of your first pet?": "Wie lautet der Name Ihres ersten Haustiers?",
-  "What is your home town?": "Was ist Ihre Heimatstadt?",
   "What is the name of your first teacher?": "Wie lautet der Name Ihres ersten Lehrers?",
   "What is the surname of your mother before wedding?": "Wie lautete der Nachname Ihrer Mutter vor der Hochzeit?",
   "Login: passprhase": "Anmeldung: Passphrase",
@@ -32,4 +32,6 @@
   "Your email&#x3a;": "Ihre E-Mail&#x3a;",
   "alice@email&#46;com": "alice@email&#46;com",
   "✌️  You don't have an account yet?": "✌️ Sie haben noch kein Konto?"
+  "What is your home town?": "Was ist Ihre Heimatstadt?",
+  "Where my parents met?": "Wo sich meine Eltern kennengelernt haben?",
 }
