@@ -17,6 +17,7 @@ interface ImgFile extends File {
 
 interface BrImageUploadProps extends PFieldInfoProps, TP {
   onDrop?: (acceptedFiles: Array<File>, fileRejections?: FileRejection) => void;
+  id?: string;
 }
 
 //
@@ -84,7 +85,7 @@ const BrImageUpload = React.forwardRef<HTMLInputElement, BrImageUploadProps>((pr
       <section className="p-2 border-[1px] border-gray-300 rounded-md hover:bg-gray-200 hover:cursor-pointer">
         {/* Dropdown area */}
         <div {...getRootProps({ className: "dropzone" })} data-test={props.testID}>
-          <input {...getInputProps()} ref={ref} />
+          <input {...getInputProps()} ref={ref} id={props.id} />
 
           {/* If there are no files, show empty state */}
           {files.length == 0 && <BrImageUploadEmptyState />}

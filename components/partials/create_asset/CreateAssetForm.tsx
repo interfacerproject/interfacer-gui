@@ -163,7 +163,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         {...register("images")}
         label={t("Upload up to 10 pictures")}
         helpText={t("SVG, PNG, JPG or GIF (MAX 2MB)")}
-        testID="imageUpload"
+        id="images"
         onDrop={acceptedFiles => {
           console.log(acceptedFiles);
           setValue("images", acceptedFiles);
