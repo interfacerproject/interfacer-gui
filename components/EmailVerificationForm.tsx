@@ -56,7 +56,7 @@ const EmailVerificationForm = ({ HMAC, setHMAC, onSubmit, setEmail, setName, set
           type="email"
           error={yetRegisteredEmail}
           hint={emailValid}
-          placeholder={t("alice@email.com")}
+          placeholder={t("alice@email&#46com")}
           label={t("Your email")}
           help={t("Your email address that will be used for your login")}
           onBlur={(e: ChangeEvent<HTMLInputElement>) => verifyEmail({ email: e.target.value })}
