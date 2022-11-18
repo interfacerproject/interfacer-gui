@@ -40,6 +40,7 @@ import {
 // Utils
 import devLog from "lib/devLog";
 import { errorFormatter } from "lib/errorFormatter";
+import { useRouter } from "next/router";
 
 //
 
@@ -62,6 +63,7 @@ export async function getStaticProps({ locale }: any) {
 const CreateProject: NextPageWithLayout = () => {
   const { t } = useTranslation("createProjectProps");
 
+  const router = useRouter();
   const { user, loading } = useAuth();
   const { getItem } = useStorage();
   const [error, setError] = useState<string>("");
@@ -166,6 +168,9 @@ const CreateProject: NextPageWithLayout = () => {
 
       // TODO: Send message
       // ...
+
+      // Redirecting user
+      await router.replace(`/asset/${createProposalData?.createProposal.proposal.id}`);
     } catch (e) {
       devLog(e);
       let err = errorFormatter(e);
@@ -191,8 +196,8 @@ const CreateProject: NextPageWithLayout = () => {
           </div>
 
           <CreateAssetForm
-            onSubmit={data => {
-              handleAssetCreation(data);
+            onSubmit={async data => {
+              await handleAssetCreation(data);
             }}
           >
             {error && (
