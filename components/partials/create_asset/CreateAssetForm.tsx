@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import { Button, Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Spinner, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import BrImageUpload from "components/brickroom/BrImageUpload";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import BrRadioOption from "components/brickroom/BrRadioOption";
@@ -118,7 +118,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
   });
 
   const { formState, handleSubmit, register, control, setValue, watch } = form;
-  const { isValid, errors } = formState;
+  const { isValid, errors, isSubmitting } = formState;
 
   //
 
@@ -300,7 +300,16 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
       {/* Slot to display errors, for example */}
       {props.children}
 
-      <Button size="large" primary fullWidth submit disabled={!isValid} id="submit">
+      {isSubmitting && (
+        <Card>
+          <div className="flex flex-col items-center justify-center p-4">
+            <Spinner />
+            <p className="pt-2">{`${t("Creating asset")}...`}</p>
+          </div>
+        </Card>
+      )}
+
+      <Button size="large" primary fullWidth submit disabled={!isValid || isSubmitting} id="submit">
         {t("Save")}
       </Button>
     </form>
