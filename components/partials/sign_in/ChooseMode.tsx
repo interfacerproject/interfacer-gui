@@ -1,4 +1,5 @@
 import { useTranslation } from "next-i18next";
+import { Button } from "@bbtgnn/polaris-interfacer";
 
 export interface ChooseModeProps {
   viaPassphrase?: () => void;
@@ -18,14 +19,16 @@ export default function ChooseMode(props: ChooseModeProps) {
       </p>
 
       {/* Login via passphrase */}
-      <button className="btn btn-block btn-primary" type="button" onClick={viaPassphrase} data-test="viaPassphrase">
+      <Button size="large" primary fullWidth id="submit" data-test="viaPassphrase" onClick={viaPassphrase}>
         {t("Login via passphrase 🔑")}
-      </button>
+      </Button>
 
       {/* Login via questions */}
-      <button className="mt-4 btn btn-block btn-primary" type="button" onClick={viaQuestions} data-test="viaQuestions">
-        {t("Login answering the signup questions 💬")}
-      </button>
+      <div className="mt-4">
+        <Button size="large" primary fullWidth id="submit" data-test="viaQuestions" onClick={viaQuestions}>
+          {t("Login answering the signup questions 💬")}
+        </Button>
+      </div>
     </div>
   );
 }

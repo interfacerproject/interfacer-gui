@@ -1,14 +1,16 @@
 // Functionality
 import { useTranslation } from "next-i18next";
 
+import { Button, TextField } from "@bbtgnn/polaris-interfacer";
+
 // Form imports
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import BrInput from "components/brickroom/BrInput";
 import { ChildrenComponent as CC } from "components/brickroom/types";
+import { isRequired } from "../../../lib/isFieldRequired";
 
 //
 
@@ -48,7 +50,7 @@ export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
   });
 
   // Getting data from the form
-  const { formState, handleSubmit } = form;
+  const { formState, handleSubmit, control } = form;
   const { errors, isValid } = formState;
 
   //
@@ -62,22 +64,33 @@ export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {/* Email field */}
-        <BrInput
-          {...form.register("email")}
-          type="email"
-          label={t("Your email&#x3a;")}
-          error={errors.email?.message}
-          placeholder={t("alice@email&#46;com")}
-          testID="email"
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <TextField
+              type="email"
+              id={name}
+              name={name}
+              value={value}
+              autoComplete="off"
+              onChange={onChange}
+              onBlur={onBlur}
+              label={t("Your email&#x3a;")}
+              placeholder={t("alice@email&#46;com")}
+              error={errors.email?.message}
+              requiredIndicator={isRequired(schema, name)}
+            />
+          )}
         />
 
         {/* Slot for errors */}
         {props.children}
 
         {/* Submit button */}
-        <button className="btn btn-block btn-primary" type="submit" data-test="submit" disabled={!isValid}>
-          {t("button")}
-        </button>
+        <Button size="large" primary fullWidth submit disabled={!isValid} id="submit" data-test="submit">
+          {t("Next step")}
+        </Button>
       </form>
     </div>
   );

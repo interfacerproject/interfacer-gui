@@ -2,11 +2,12 @@ import { useTranslation } from "next-i18next";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import BrInput from "components/brickroom/BrInput";
+import { Button, TextField } from "@bbtgnn/polaris-interfacer";
+import { isRequired } from "../../../lib/isFieldRequired";
 
 //
 
@@ -23,7 +24,7 @@ export namespace InvitationKeyNS {
 //
 
 export default function InvitationKey({ onSubmit }: InvitationKeyNS.Props) {
-  const { t } = useTranslation("signUpProps", { keyPrefix: "InvitationKey" });
+  const { t } = useTranslation("signUpProps");
 
   /* Form setup */
 
@@ -44,7 +45,7 @@ export default function InvitationKey({ onSubmit }: InvitationKeyNS.Props) {
   });
 
   // Getting data from the form
-  const { formState, handleSubmit, register } = form;
+  const { formState, handleSubmit, register, control } = form;
   const { errors, isValid } = formState;
 
   //
@@ -52,28 +53,34 @@ export default function InvitationKey({ onSubmit }: InvitationKeyNS.Props) {
   return (
     <div>
       {/* Info */}
-      <h2>{t("title")}</h2>
-      <p className="mt-4 mb-6">{t("description")}</p>
+      <h2>{t("Invitation key")}</h2>
+      <p className="mt-4 mb-6">{t("Do you have your invitation key?")}</p>
 
       {/* The form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <BrInput
-          {...register("invitationKey")}
-          type="text"
-          label={t("field.label")}
-          placeholder={t("field.placeholder")}
-          error={errors.invitationKey?.message}
-          testID="invitationKey"
+        <Controller
+          control={control}
+          name="invitationKey"
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <TextField
+              type="text"
+              id={name}
+              name={name}
+              value={value}
+              autoComplete="off"
+              onChange={onChange}
+              onBlur={onBlur}
+              label={t("Type your invitation key")}
+              error={errors.invitationKey?.message}
+              requiredIndicator={isRequired(schema, name)}
+            />
+          )}
         />
 
-        <button
-          className="mt-4 btn btn-block btn-accent"
-          type="submit"
-          disabled={!isValid}
-          data-test="invitationButton"
-        >
-          {t("button")}
-        </button>
+        {/* Submit button */}
+        <Button size="large" primary fullWidth submit disabled={!isValid} data-test="invitationButton">
+          {t("Next step")}
+        </Button>
       </form>
     </div>
   );

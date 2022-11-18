@@ -2,11 +2,12 @@ import { useTranslation } from "next-i18next";
 
 // Form imports
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import BrInput from "components/brickroom/BrInput";
+import { Button, TextField } from "@bbtgnn/polaris-interfacer";
+import { isRequired } from "../../../lib/isFieldRequired";
 
 //
 
@@ -49,7 +50,7 @@ export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
   });
 
   // Getting data from the form
-  const { formState, handleSubmit } = form;
+  const { formState, handleSubmit, control } = form;
   const { errors, isValid } = formState;
 
   //
@@ -63,19 +64,30 @@ export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {/* Email field */}
-        <BrInput
-          {...form.register("passphrase")}
-          type="text"
-          label={t("Passphrase")}
-          error={errors.passphrase?.message}
-          placeholder={t("")}
-          testID="passphrase"
+        <Controller
+          control={control}
+          name="passphrase"
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <TextField
+              type="text"
+              id={name}
+              name={name}
+              value={value}
+              autoComplete="off"
+              onChange={onChange}
+              onBlur={onBlur}
+              label={t("Passphrase")}
+              placeholder={t("penalty now before knife offer market drum flush advice frown claw hold")}
+              error={errors.passphrase?.message}
+              requiredIndicator={isRequired(schema, name)}
+            />
+          )}
         />
 
         {/* Submit button */}
-        <button className="btn btn-block btn-primary" type="submit" data-test="submit" disabled={!isValid}>
+        <Button size="large" primary fullWidth submit disabled={!isValid} data-test="submit">
           {t("Login")}
-        </button>
+        </Button>
       </form>
     </div>
   );

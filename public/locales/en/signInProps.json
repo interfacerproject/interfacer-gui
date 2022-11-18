@@ -1,9 +1,19 @@
 {
+  "alice@email&#46;com": "alice@email&#46;com",
   "At least {{missingQuestions}} questions are missing!": "At least {{missingQuestions}} questions are missing!",
+  "Input the passphrase that you kept generated during the signup process": "Input the passphrase that you kept generated during the signup process",
+  "Invalid passphrase": "Invalid passphrase",
+  "Login": "Login",
+  "Login answering the signup questions 💬": "Login answering the signup questions 💬",
+  "Login by providing your generated passphrase or by answering the questions during your Signup proccess": "Login by providing your generated passphrase or by answering the questions during your Signup proccess",
+  "Login via passphrase 🔑": "Login via passphrase 🔑",
   "Next step": "Next step",
+  "Passphrase": "Passphrase",
+  "penalty now before knife offer market drum flush advice frown claw hold": "penalty now before knife offer market drum flush advice frown claw hold",
   "What is the name of your first pet?": "What is the name of your first pet?",
   "What is the name of your first teacher?": "What is the name of your first teacher?",
   "What is the surname of your mother before wedding?": "What is the surname of your mother before wedding?",
   "What is your home town?": "What is your home town?",
-  "Where my parents met?": "Where my parents met?"
+  "Where my parents met?": "Where my parents met?",
+  "Your email&#x3a;": "Your email&#x3a;"
 }

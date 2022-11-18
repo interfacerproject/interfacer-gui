@@ -13,8 +13,8 @@ export default function Passphrase(props: CC<PassphraseProps>) {
     <div className="space-y-6">
       {/* Intro */}
       <div>
-        <h2>{t("title")}</h2>
-        <p>{t("description")}</p>
+        <h2>{t("Passphrase ")}</h2>
+        <p>{t("keep your passphrase safe")}</p>
       </div>
 
       {/* Seed box */}

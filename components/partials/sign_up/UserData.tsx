@@ -5,11 +5,12 @@ import { useAuth } from "hooks/useAuth";
 
 // Form imports
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import BrInput from "components/brickroom/BrInput";
+import { Button, TextField } from "@bbtgnn/polaris-interfacer";
+import { isRequired } from "../../../lib/isFieldRequired";
 
 //
 
@@ -70,7 +71,7 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
   });
 
   // Getting data from the form
-  const { formState, handleSubmit } = form;
+  const { formState, handleSubmit, control } = form;
   const { errors, isValid } = formState;
 
   //
@@ -87,39 +88,72 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
       {/* The form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-8">
         {/* Email */}
-        <BrInput
-          {...form.register("email")}
-          type="email"
-          placeholder={t("alice@email&#46com")}
-          label={t("Your email")}
-          help={t("Your email address that will be used for your login")}
-          error={errors.email?.message}
-          testID="email"
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <TextField
+              type="email"
+              id={name}
+              name={name}
+              value={value}
+              autoComplete="off"
+              onChange={onChange}
+              onBlur={onBlur}
+              label={t("Your email")}
+              helpText={t("Your email address that will be used for your login")}
+              placeholder={t("alice@email&#183;com")}
+              error={errors.email?.message}
+              requiredIndicator={isRequired(schema, name)}
+            />
+          )}
         />
         {/* Name */}
-        <BrInput
-          {...form.register("name")}
-          type="text"
-          label={t("Your name")}
-          help={t("Your name is shown and visible to everyone")}
-          placeholder={t("Type your name")}
-          error={errors.name?.message}
-          testID="name"
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <TextField
+              type="text"
+              id={name}
+              name={name}
+              value={value}
+              autoComplete="off"
+              onChange={onChange}
+              onBlur={onBlur}
+              label={t("Your name")}
+              helpText={t("Your name is shown and visible to everyone")}
+              placeholder={t("Type your name")}
+              error={errors.name?.message}
+              requiredIndicator={isRequired(schema, name)}
+            />
+          )}
         />
         {/* Username */}
-        <BrInput
-          {...form.register("user")}
-          type="text"
-          placeholder={t("Type your visible username")}
-          label={t("Choose a username")}
-          help={t("Your username is used to identify you in the system")}
-          error={errors.user?.message}
-          testID="user"
+        <Controller
+          control={control}
+          name="user"
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <TextField
+              type="text"
+              id={name}
+              name={name}
+              value={value}
+              autoComplete="off"
+              onChange={onChange}
+              onBlur={onBlur}
+              label={t("Choose a username")}
+              helpText={t("Your username is used to identify you in the system")}
+              placeholder={t("Type your visible username")}
+              error={errors.user?.message}
+              requiredIndicator={isRequired(schema, name)}
+            />
+          )}
         />
         {/* Submit button */}
-        <button className="btn btn-block btn-primary" type="submit" disabled={!isValid} data-test="submit">
+        <Button size="large" primary fullWidth submit disabled={!isValid} data-test="submit">
           {t("Next step")}
-        </button>
+        </Button>
       </form>
     </div>
   );

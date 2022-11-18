@@ -1,17 +1,6 @@
 {
   "Passphrase": {
-    "title": "Here's your passphrase",
-    "description": "This passphrase is generated and is not stored on the server. Keep a copy of it."
-  },
-  "Questions": {
-    "missingQuestions": "{{missingQuestions}} questions are missing!",
-    "questions": [
-      "Where my parents met?",
-      "What is the name of your first pet?",
-      "What is your home town?",
-      "What is the name of your first teacher?",
-      "What is the surname of your mother before wedding?"
-    ],
-    "next": "Next"
+    "keep your passphrase safe": "Passphrase__!NO_KEY_SEPARATOR!__keep your passphrase safe",
+    "Passphrase ": "Passphrase__!NO_KEY_SEPARATOR!__Passphrase "
   }
 }

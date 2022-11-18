@@ -1,12 +1,13 @@
-import BrInput from "components/brickroom/BrInput";
 import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
+import { Button, TextField } from "@bbtgnn/polaris-interfacer";
+import { isRequired } from "../../../lib/isFieldRequired";
 
 //
 
@@ -107,8 +108,8 @@ const Questions = (props: QuestionsNS.Props) => {
     defaultValues,
   });
 
-  const { formState, handleSubmit, register } = form;
-  const { isValid } = formState;
+  const { formState, handleSubmit, register, control } = form;
+  const { isValid, errors } = formState;
 
   /**
    * Submit function
@@ -148,26 +149,38 @@ const Questions = (props: QuestionsNS.Props) => {
       )}
 
       {/* Form */}
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 pt-8">
         {/* Iterating over "questions" to display fields */}
         <div className="space-y-4">
           {questions.map((question, index) => (
             <div key={index}>
-              <p className="font-bold">{question}</p>
-              <BrInput
-                type="text"
+              <Controller
+                control={control}
                 // @ts-ignore
-                {...register(`question${index + 1}`)}
-                testID={`question${index + 1}`}
+                name={`question${index + 1}`}
+                render={({ field: { onChange, onBlur, name, value } }) => (
+                  <TextField
+                    type="text"
+                    id={name}
+                    name={name}
+                    value={value}
+                    autoComplete="off"
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    label={question}
+                    requiredIndicator={isRequired(schema, name)}
+                  />
+                )}
               />
             </div>
           ))}
         </div>
 
         {/* Submit button */}
-        <button className="btn btn-block btn-accent" type="submit" disabled={!isValid} data-test="submit">
+        <Button size="large" primary fullWidth submit disabled={!isValid} id="submit" data-test="submit">
           {t("Next step")}
-        </button>
+        </Button>
       </form>
     </>
   );
