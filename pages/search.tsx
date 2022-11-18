@@ -5,10 +5,12 @@ import ResourceTable from "../components/ResourceTable";
 const Search = () => {
   const { q } = useRouter().query;
   const Assetfilter = {
-    primaryIntentsResourceInventoriedAsName: q,
+    orPrimaryIntentsResourceInventoriedAsName: q,
+    orPrimaryIntentsResourceInventoriedAsNote: q,
   };
   const Resourcefilter = {
-    economicResourcesName: q,
+    orName: q,
+    orNote: q,
   };
 
   return (
