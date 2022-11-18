@@ -29,10 +29,10 @@ describe("when user visits create asset", () => {
     cy.get(`[class$="-option"]`).eq(0).click();
 
     // Uploading some images
-    cy.fixture("images/img1.png").as("img1");
-    cy.fixture("images/img2.png").as("img2");
-    cy.fixture("images/img3.png").as("img3");
-    cy.get("#images").selectFile(["@img1", "@img2", "@img3"], { force: true });
+    // cy.fixture("images/img1.png").as("img1");
+    // cy.fixture("images/img2.png").as("img2");
+    // cy.fixture("images/img3.png").as("img3");
+    // cy.get("#images").selectFile(["@img1", "@img2", "@img3"], { force: true });
 
     // CLick the button
     cy.get("#submit").click();
