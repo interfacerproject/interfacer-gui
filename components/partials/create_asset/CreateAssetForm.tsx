@@ -11,11 +11,11 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-
 import { Button, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import BrImageUpload from "components/brickroom/BrImageUpload";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import BrRadioOption from "components/brickroom/BrRadioOption";
+import { ChildrenProp as CP } from "components/brickroom/types";
 import PFieldInfo from "components/polaris/PFieldInfo";
 import SelectContributors, { ContributorOption } from "components/SelectContributors";
 import SelectLocation from "components/SelectLocation";
@@ -31,7 +31,7 @@ import { isRequired } from "lib/isFieldRequired";
 //
 
 export namespace CreateAssetNS {
-  export interface Props {
+  export interface Props extends CP {
     onSubmit: (data: FormValues) => void;
   }
 
@@ -296,6 +296,9 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
           )}
         />
       </div>
+
+      {/* Slot to display errors, for example */}
+      {props.children}
 
       <Button size="large" primary fullWidth submit disabled={!isValid} id="submit">
         {t("Save")}

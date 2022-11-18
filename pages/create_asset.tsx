@@ -1,10 +1,11 @@
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import type { NextPageWithLayout } from "./_app";
 
 // Partials
+import { Banner } from "@bbtgnn/polaris-interfacer";
 import CreateAssetForm, { CreateAssetNS } from "components/partials/create_asset/CreateAssetForm";
 
 // Layout
@@ -36,7 +37,9 @@ import {
   LinkProposalAndIntentMutationVariables,
 } from "lib/types";
 
+// Utils
 import devLog from "lib/devLog";
+import { errorFormatter } from "lib/errorFormatter";
 
 //
 
@@ -61,6 +64,7 @@ const CreateProject: NextPageWithLayout = () => {
 
   const { user, loading } = useAuth();
   const { getItem } = useStorage();
+  const [error, setError] = useState<string>("");
 
   /* Getting all the needed mutations */
 
@@ -93,73 +97,82 @@ const CreateProject: NextPageWithLayout = () => {
     } catch (e) {
       devLog("error: location not created", e);
       throw e;
-      // controlLog(`error: ${t("location creation failed")}`);
     }
   }
 
   async function handleAssetCreation(formData: CreateAssetNS.FormValues) {
-    const location = await handleCreateLocation(formData);
-    // devLog is in handleCreateLocation
-    const images = await prepFilesForZenflows(formData.images, getItem("eddsa"));
-    devLog("info: images prepared", images);
-    const tags = formData.tags.map(t => encodeURI(t.value));
-    devLog("info: tags prepared", tags);
-    const contributors = formData.contributors.map(c => c.value);
-    devLog("info: contributors prepared", contributors);
+    try {
+      const location = await handleCreateLocation(formData);
+      // devLog is in handleCreateLocation
+      const images = await prepFilesForZenflows(formData.images, getItem("eddsa"));
+      devLog("info: images prepared", images);
+      const tags = formData.tags.map(t => encodeURI(t.value));
+      devLog("info: tags prepared", tags);
+      const contributors = formData.contributors.map(c => c.value);
+      devLog("info: contributors prepared", contributors);
 
-    const variables: CreateAssetMutationVariables = {
-      resourceSpec: formData.type,
-      agent: user?.ulid!,
-      name: formData.name,
-      note: formData.description,
-      metadata: JSON.stringify({ repositoryOrId: formData.repositoryOrId, contributors }),
-      location: location?.id!,
-      oneUnit: unitAndCurrency?.units.unitOne.id!,
-      creationTime: new Date().toISOString(),
-      images,
-      tags,
-    };
-    devLog("info: asset variables created", variables);
-
-    // Create asset
-    const { data: createAssetData, errors } = await createAsset({ variables });
-    // if (errors) throw new Error("AssetNotCreated");
-
-    const economicEvent = createAssetData?.createEconomicEvent.economicEvent!;
-    const asset = economicEvent?.resourceInventoriedAs!;
-    devLog("success: asset created");
-    devLog("info: economicEvent", economicEvent);
-    devLog("info: asset", asset);
-
-    // Upload images
-    await uploadFiles(formData.images);
-    devLog("success: images uploaded");
-
-    // Create proposal & intent
-    const { data: createProposalData } = await createProposal();
-    devLog("info: created proposal", createProposalData?.createProposal.proposal);
-
-    const { data: createIntentData } = await createIntent({
-      variables: {
+      const variables: CreateAssetMutationVariables = {
+        resourceSpec: formData.type,
         agent: user?.ulid!,
-        resource: asset?.id!,
+        name: formData.name,
+        note: formData.description,
+        metadata: JSON.stringify({ repositoryOrId: formData.repositoryOrId, contributors }),
+        location: location?.id!,
         oneUnit: unitAndCurrency?.units.unitOne.id!,
-        howMuch: 1,
-        currency: unitAndCurrency?.specs.specCurrency.id!,
-      },
-    });
-    devLog("info: created intent", createIntentData);
+        creationTime: new Date().toISOString(),
+        images,
+        tags,
+      };
+      devLog("info: asset variables created", variables);
 
-    // Linking the two of them
-    const { data: linkData } = await linkProposalAndIntent({
-      variables: {
-        proposal: createProposalData?.createProposal.proposal.id!,
-        item: createIntentData?.item.intent.id!,
-        payment: createIntentData?.payment.intent.id!,
-      },
-    });
-    devLog("info: created link", linkData);
-    // TODO: Send message
+      // Create asset
+      const { data: createAssetData, errors } = await createAsset({ variables });
+      if (errors) throw new Error("AssetNotCreated");
+
+      const economicEvent = createAssetData?.createEconomicEvent.economicEvent!;
+      const asset = economicEvent?.resourceInventoriedAs!;
+      devLog("success: asset created");
+      devLog("info: economicEvent", economicEvent);
+      devLog("info: asset", asset);
+
+      // Upload images
+      await uploadFiles(formData.images);
+      devLog("success: images uploaded");
+
+      // Create proposal & intent
+      const { data: createProposalData } = await createProposal();
+      devLog("info: created proposal", createProposalData?.createProposal.proposal);
+
+      const { data: createIntentData } = await createIntent({
+        variables: {
+          agent: user?.ulid!,
+          resource: asset?.id!,
+          oneUnit: unitAndCurrency?.units.unitOne.id!,
+          howMuch: 1,
+          currency: unitAndCurrency?.specs.specCurrency.id!,
+        },
+      });
+      devLog("info: created intent", createIntentData);
+
+      // Linking the two of them
+      const { data: linkData } = await linkProposalAndIntent({
+        variables: {
+          proposal: createProposalData?.createProposal.proposal.id!,
+          item: createIntentData?.item.intent.id!,
+          payment: createIntentData?.payment.intent.id!,
+        },
+      });
+      devLog("info: created link", linkData);
+
+      // TODO: Send message
+      // ...
+    } catch (e) {
+      devLog(e);
+      let err = errorFormatter(e);
+      if (err.includes("has already been taken"))
+        err = `${t("One of the images you selected already exists on the server, please upload a different file")}.`;
+      setError(err);
+    }
   }
 
   //
@@ -181,7 +194,19 @@ const CreateProject: NextPageWithLayout = () => {
             onSubmit={data => {
               handleAssetCreation(data);
             }}
-          />
+          >
+            {error && (
+              <Banner
+                title={t("Error in Asset creation")}
+                status="critical"
+                onDismiss={() => {
+                  setError("");
+                }}
+              >
+                <p className="whitespace-pre-wrap">{error}</p>
+              </Banner>
+            )}
+          </CreateAssetForm>
           {/* {createdAssetId ? (
         <Link href={createdAssetId}>
           <a className="btn btn-accent">{t("go to the asset")}</a>
