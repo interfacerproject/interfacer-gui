@@ -1,12 +1,11 @@
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { ReactElement, useState } from "react";
+import { ReactElement } from "react";
 import { useAuth } from "../hooks/useAuth";
 import type { NextPageWithLayout } from "./_app";
 
 // Partials
 import CreateAssetForm, { CreateAssetNS } from "components/partials/create_asset/CreateAssetForm";
-import ControlWindow from "../components/partials/create_asset/ControlWindow";
 
 // Layout
 import Layout from "../components/layout/CreateAssetLayout";
@@ -37,6 +36,8 @@ import {
   LinkProposalAndIntentMutationVariables,
 } from "lib/types";
 
+import devLog from "lib/devLog";
+
 //
 
 export async function getStaticProps({ locale }: any) {
@@ -60,11 +61,6 @@ const CreateProject: NextPageWithLayout = () => {
 
   const { user, loading } = useAuth();
   const { getItem } = useStorage();
-
-  const [logs, setLogs] = useState<Array<string>>([`info: user ${user?.ulid}`]);
-  function controlLog(text: string) {
-    setLogs([...logs, text]);
-  }
 
   /* Getting all the needed mutations */
 
@@ -92,12 +88,10 @@ const CreateProject: NextPageWithLayout = () => {
         },
       });
       const st = data?.createSpatialThing.spatialThing;
-      // controlLog(`info: ${t("location created")}`);
-      // controlLog(`    id: ${st?.id}`);
-      // controlLog(`    latitude: ${st?.lat}`);
-      // controlLog(`    longitude: ${st?.long}`);
+      devLog("success: location created", st);
       return st;
     } catch (e) {
+      devLog("error: location not created", e);
       throw e;
       // controlLog(`error: ${t("location creation failed")}`);
     }
@@ -105,11 +99,13 @@ const CreateProject: NextPageWithLayout = () => {
 
   async function handleAssetCreation(formData: CreateAssetNS.FormValues) {
     const location = await handleCreateLocation(formData);
+    // devLog is in handleCreateLocation
     const images = await prepFilesForZenflows(formData.images, getItem("eddsa"));
+    devLog("info: images prepared", images);
     const tags = formData.tags.map(t => encodeURI(t.value));
+    devLog("info: tags prepared", tags);
     const contributors = formData.contributors.map(c => c.value);
-
-    console.log(images);
+    devLog("info: contributors prepared", contributors);
 
     const variables: CreateAssetMutationVariables = {
       resourceSpec: formData.type,
@@ -123,19 +119,26 @@ const CreateProject: NextPageWithLayout = () => {
       images,
       tags,
     };
+    devLog("info: asset variables created", variables);
 
     // Create asset
     const { data: createAssetData, errors } = await createAsset({ variables });
-    const economicEvent = createAssetData?.createEconomicEvent.economicEvent;
-    const asset = economicEvent?.resourceInventoriedAs;
+    // if (errors) throw new Error("AssetNotCreated");
 
-    if (errors?.length || (!economicEvent && !asset)) throw new Error("AssetNotCreated");
+    const economicEvent = createAssetData?.createEconomicEvent.economicEvent!;
+    const asset = economicEvent?.resourceInventoriedAs!;
+    devLog("success: asset created");
+    devLog("info: economicEvent", economicEvent);
+    devLog("info: asset", asset);
 
     // Upload images
     await uploadFiles(formData.images);
+    devLog("success: images uploaded");
 
     // Create proposal & intent
     const { data: createProposalData } = await createProposal();
+    devLog("info: created proposal", createProposalData?.createProposal.proposal);
+
     const { data: createIntentData } = await createIntent({
       variables: {
         agent: user?.ulid!,
@@ -145,16 +148,17 @@ const CreateProject: NextPageWithLayout = () => {
         currency: unitAndCurrency?.specs.specCurrency.id!,
       },
     });
+    devLog("info: created intent", createIntentData);
 
     // Linking the two of them
-    await linkProposalAndIntent({
+    const { data: linkData } = await linkProposalAndIntent({
       variables: {
         proposal: createProposalData?.createProposal.proposal.id!,
         item: createIntentData?.item.intent.id!,
         payment: createIntentData?.payment.intent.id!,
       },
     });
-
+    devLog("info: created link", linkData);
     // TODO: Send message
   }
 
@@ -178,7 +182,6 @@ const CreateProject: NextPageWithLayout = () => {
               handleAssetCreation(data);
             }}
           />
-          <ControlWindow logs={logs} />
           {/* {createdAssetId ? (
         <Link href={createdAssetId}>
           <a className="btn btn-accent">{t("go to the asset")}</a>
