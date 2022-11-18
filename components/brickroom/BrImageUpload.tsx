@@ -8,6 +8,7 @@ import PFieldInfo, { PFieldInfoProps } from "components/polaris/PFieldInfo";
 import BrImageUploadEmptyState from "./BrImageUploadEmptyState";
 import BrImageUploadThumb from "./BrImageUploadThumb";
 import { TestProp as TP } from "./types";
+import devLog from "../../lib/devLog";
 
 //
 
@@ -84,8 +85,8 @@ const BrImageUpload = React.forwardRef<HTMLInputElement, BrImageUploadProps>((pr
       {/* Dropdown zone */}
       <section className="p-2 border-[1px] border-gray-300 rounded-md hover:bg-gray-200 hover:cursor-pointer">
         {/* Dropdown area */}
-        <div {...getRootProps({ className: "dropzone" })} data-test={props.testID}>
-          <input {...getInputProps()} ref={ref} id={props.id} />
+        <div {...getRootProps({ className: "dropzone" })} data-test={props.testID} ref={ref}>
+          <input {...getInputProps()} id={props.id} />
 
           {/* If there are no files, show empty state */}
           {files.length == 0 && <BrImageUploadEmptyState />}
