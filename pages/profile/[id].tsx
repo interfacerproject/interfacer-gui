@@ -104,7 +104,7 @@ const Profile: NextPage = () => {
                   title: (
                     <span className="flex items-center space-x-4">
                       <CubeIcon className="w-5 h-5 mr-1" />
-                      {t("assets")}
+                      {t("Assets")}
                     </span>
                   ),
                   component: (

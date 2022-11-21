@@ -15,5 +15,10 @@
   "unwatch": "débrancher",
   "star": "étoile",
   "unstar": "sans vedette",
-  "Sign Out": "Se déconnecter"
+  "Sign Out": "Se déconnecter",
+  "Overview": "Vue d'ensemble",
+  "Contributions": "Contributions",
+  "Contributors": "Contributeurs",
+  "remove from list": "supprimer de la liste",
+  "Owner": "Propriétaire"
 }

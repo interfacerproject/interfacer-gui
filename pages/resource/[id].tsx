@@ -1,19 +1,14 @@
 import { useQuery } from "@apollo/client";
-import { LinkIcon } from "@heroicons/react/solid";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
-import BrDisplayUser from "components/brickroom/BrDisplayUser";
-import BrTags from "components/brickroom/BrTags";
 import { EconomicResource } from "lib/types";
 import type { GetStaticPaths, NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import Spinner from "../../components/brickroom/Spinner";
 import { QUERY_RESOURCE } from "lib/QueryAndMutation";
 import LoshPresentation from "../../components/LoshPresentation";
 import devLog from "../../lib/devLog";
-import MdParser from "../../lib/MdParser";
 
 const Resource: NextPage = () => {
   const router = useRouter();

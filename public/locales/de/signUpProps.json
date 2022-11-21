@@ -23,6 +23,7 @@
   "Got your keys?": "Haben Sie Ihre Passphrase?",
   "You need an invitation phrase to proceed with your signup!": "Sie benötigen einen Einladungsschlüssel, um mit Ihrer Anmeldung fortzufahren!",
   "Continue": "Weiter",
+  "invitation key:*": "Einladungsschlüssel:*",
   "invitation key&#58;*": "Einladungsschlüssel&#58;*",
   "Please enter a valid invitation key": "Bitte geben Sie einen gültigen Einladungsschlüssel ein"
 }

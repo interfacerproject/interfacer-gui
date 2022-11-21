@@ -15,5 +15,10 @@
   "unwatch": "unwatch",
   "star": "Star",
   "unstar": "Unstar",
-  "Sign Out": "Sign Out"
+  "Sign Out": "Sign Out",
+  "Overview": "Overview",
+  "Contributions": "Contributions",
+  "Contributors": "Contributors",
+  "remove from list": "remove from list",
+  "Owner": "Owner"
 }

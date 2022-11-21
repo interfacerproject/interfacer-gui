@@ -72,7 +72,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     const privateKey = getItem("eddsa_key");
     const username = getItem("authUsername");
 
-    if (!!privateKey && !!username) {
+    if (Boolean(privateKey) && Boolean(username)) {
       const ulid = getItem("authId") as string;
       const name = getItem("authName") as string;
       const email = getItem("authEmail") as string;
