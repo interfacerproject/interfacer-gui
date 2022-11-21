@@ -85,7 +85,7 @@ export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
         />
 
         {/* Submit button */}
-        <Button size="large" primary fullWidth submit disabled={!isValid} data-test="submit">
+        <Button size="large" primary fullWidth submit disabled={!isValid} id="submit">
           {t("Login")}
         </Button>
       </form>

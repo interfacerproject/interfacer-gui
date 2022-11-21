@@ -1,5 +1,6 @@
 import { intercept, waitForData } from "../utils";
 
+//Skipped because we need a new ingestion
 describe.skip("When user visit resources", () => {
   before(() => {
     cy.login();

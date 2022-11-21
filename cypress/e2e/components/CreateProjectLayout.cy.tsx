@@ -9,19 +9,17 @@ describe("CreateProjectLayout component", () => {
 
   it("should allow the logged user to go to /create_asset", () => {
     cy.login();
-    // Before going to /create_asset, we go to another page
-    // in order to test the "back" button
-    cy.visit(backPage);
     // Then, we go to "/create_asset"
     cy.visit("/create_asset");
     cy.contains("Create a new asset").should("be.visible");
   });
 
-  it.skip("should go back to the previous page", () => {
+  it("should go back to the previous page", () => {
     cy.login();
     cy.visit(backPage);
+    cy.visit("/create_asset");
     // Clicking the back button
-    cy.get(`[data-test="back"]`).click();
+    cy.get("#back").click();
     // Checking if url matches
     cy.url().should("include", backPage);
   });

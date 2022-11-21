@@ -19,13 +19,13 @@ export default function ChooseMode(props: ChooseModeProps) {
       </p>
 
       {/* Login via passphrase */}
-      <Button size="large" primary fullWidth id="submit" data-test="viaPassphrase" onClick={viaPassphrase}>
+      <Button size="large" primary fullWidth id="viaPassphrase" onClick={viaPassphrase}>
         {t("Login via passphrase 🔑")}
       </Button>
 
       {/* Login via questions */}
       <div className="mt-4">
-        <Button size="large" primary fullWidth id="submit" data-test="viaQuestions" onClick={viaQuestions}>
+        <Button size="large" primary fullWidth id="viaQuestions" onClick={viaQuestions}>
           {t("Login answering the signup questions 💬")}
         </Button>
       </div>

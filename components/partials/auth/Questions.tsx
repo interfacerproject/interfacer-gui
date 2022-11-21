@@ -178,7 +178,7 @@ const Questions = (props: QuestionsNS.Props) => {
         </div>
 
         {/* Submit button */}
-        <Button size="large" primary fullWidth submit disabled={!isValid} id="submit" data-test="submit">
+        <Button size="large" primary fullWidth submit disabled={!isValid} id="submit">
           {t("Next step")}
         </Button>
       </form>

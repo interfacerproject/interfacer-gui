@@ -78,7 +78,7 @@ export default function InvitationKey({ onSubmit }: InvitationKeyNS.Props) {
         />
 
         {/* Submit button */}
-        <Button size="large" primary fullWidth submit disabled={!isValid} data-test="invitationButton">
+        <Button size="large" primary fullWidth submit disabled={!isValid} id="invitationButton">
           {t("Next step")}
         </Button>
       </form>

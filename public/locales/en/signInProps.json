@@ -1,6 +1,7 @@
 {
-  "alice@email&#46;com": "alice@email&#46;com",
+  "✌️  You don't have an account yet?": "✌️  You don't have an account yet?",
   "At least {{missingQuestions}} questions are missing!": "At least {{missingQuestions}} questions are missing!",
+  "Email not found": "Email not found",
   "Input the passphrase that you kept generated during the signup process": "Input the passphrase that you kept generated during the signup process",
   "Invalid passphrase": "Invalid passphrase",
   "Login": "Login",
@@ -10,10 +11,10 @@
   "Next step": "Next step",
   "Passphrase": "Passphrase",
   "penalty now before knife offer market drum flush advice frown claw hold": "penalty now before knife offer market drum flush advice frown claw hold",
+  "Sign up": "Sign up",
   "What is the name of your first pet?": "What is the name of your first pet?",
   "What is the name of your first teacher?": "What is the name of your first teacher?",
   "What is the surname of your mother before wedding?": "What is the surname of your mother before wedding?",
   "What is your home town?": "What is your home town?",
-  "Where my parents met?": "Where my parents met?",
-  "Your email&#x3a;": "Your email&#x3a;"
+  "Where my parents met?": "Where my parents met?"
 }

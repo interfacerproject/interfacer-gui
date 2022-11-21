@@ -25,6 +25,7 @@ import ViaQuestions from "components/partials/sign_in/ViaQuestions";
 // Components
 import BrAuthSuggestion from "components/brickroom/BrAuthSuggestion";
 import BrError from "components/brickroom/BrError";
+import { Button } from "@bbtgnn/polaris-interfacer";
 
 //
 
@@ -65,7 +66,7 @@ const Sign_in: NextPageWithLayout = () => {
     const key = result.keypairoomServer;
     //
     if (!key) {
-      setError(t("enterEmail.notRegistered"));
+      setError(t("Email not found"));
       return;
     }
     //
@@ -186,9 +187,9 @@ const Sign_in: NextPageWithLayout = () => {
           {/* Displaying seed */}
           {step === 3 && isQuestions && (
             <Passphrase>
-              <button className="block w-full btn btn-primary" onClick={doLogin} data-test="loginBtn">
-                {t("buttons.login")}
-              </button>
+              <Button size="large" primary fullWidth onClick={doLogin} id="loginBtn">
+                {t("Login")}
+              </Button>
             </Passphrase>
           )}
 

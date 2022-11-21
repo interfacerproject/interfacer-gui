@@ -5,10 +5,10 @@ describe("Authentication", () => {
     intercept({ method: "POST" });
 
     cy.visit("/sign_in");
-    get("email").type("mailmoltoimprobabilechenessunoregistramai@tt.ii");
+    cy.get("#email").type("mailmoltoimprobabilechenessunoregistramai@tt.ii");
 
     // Clicking button and checking for response
-    get("submit")
+    cy.get("#submit")
       .click()
       .then(() => {
         waitForData();
@@ -22,7 +22,7 @@ describe("Authentication", () => {
     });
 
     get("email").clear().type(Cypress.env("authEmail"));
-    get("submit")
+    cy.get("#submit")
       .click()
       .then(() => {
         waitForData().its("response.body.data.keypairoomServer").should("include", Cypress.env("HMAC"));
@@ -30,17 +30,17 @@ describe("Authentication", () => {
   });
 
   it("should choose passphrase", () => {
-    get("viaPassphrase").click();
+    cy.get("#viaPassphrase").click();
   });
 
   it("should type a short passphrase (< 12 words), and get an error", () => {
-    get("passphrase").type("mario insomma cosa fai");
-    get("passphrase-error").should("be.visible");
+    cy.get("#passphrase").type("mario insomma cosa fai");
+    cy.get("#passphraseError").should("be.visible");
   });
 
   it("should type the correct passphrase and login", () => {
-    get("passphrase").clear().type(Cypress.env("seed"));
-    get("submit").click();
+    cy.get("#passphrase").clear().type(Cypress.env("seed"));
+    cy.get("#submit").click();
     cy.url().should("eq", "http://localhost:3000/");
   });
 
@@ -52,19 +52,19 @@ describe("Authentication", () => {
     cy.visit("/sign_in");
 
     get("email").type(Cypress.env("authEmail"));
-    get("submit").click();
+    cy.get("#submit").click();
     get("viaQuestions").click();
   });
 
   it("should show an error until three questions are filled", () => {
-    get("submit").should("be.disabled");
+    cy.get("#submit").should("have.class", "Polaris-Button--disabled");
     get("missingQuestions").should("be.visible");
 
     for (let i = 1; i <= 5; i++) {
       get("question" + i).type(Cypress.env("answer" + i));
 
       if (i == 3) {
-        get("submit").should("not.be.disabled");
+        cy.get("#submit").should("not.have.class", "Polaris-Button--disabled");
         get("missingQuestions").should("not.exist");
       }
     }

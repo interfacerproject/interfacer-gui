@@ -66,28 +66,28 @@ describe("Sign up process", () => {
   });
 
   it("should type the invitationKey", () => {
-    get("invitationButton").should("be.disabled");
-    get("invitationKey").type(Cypress.env("NEXT_PUBLIC_INVITATION_KEY"));
-    get("invitationButton").should("not.be.disabled");
-    get("invitationButton").click();
+    cy.get("#invitationButton").should("have.class", "Polaris-Button--disabled");
+    cy.get("#invitationKey").type(Cypress.env("NEXT_PUBLIC_INVITATION_KEY"));
+    cy.get("#invitationButton").should("not.have.class", "Polaris-Button--disabled");
+    cy.get("#invitationButton").click();
   });
 
   it("should type all the data", () => {
-    get("submit").should("be.disabled");
+    cy.get("#submit").should("have.class", "Polaris-Button--disabled");
     get("email").type(email);
     // waitForData();
     get("name").type(randomString());
     get("user").type(randomString());
-    get("submit").should("not.be.disabled");
-    get("submit").click();
+    cy.get("#submit").should("not.have.class", "Polaris-Button--disabled");
+    cy.get("#submit").click();
   });
 
   it("should type some questions", () => {
-    get("submit").should("be.disabled");
+    cy.get("#submit").should("have.class", "Polaris-Button--disabled");
     get("question1").type(question1);
     get("question2").type(question2);
     get("question3").type(question3);
-    get("submit").should("not.be.disabled");
+    cy.get("#submit").should("not.have.class", "Polaris-Button--disabled");
   });
 
   // "Function" is used here instead of arrow function
@@ -167,7 +167,7 @@ describe("Sign up process", () => {
     cy.visit("/sign_in");
     get("email").type(email);
     get("submit").click();
-    get("viaPassphrase").click();
+    cy.get("#viaPassphrase").click();
     // @ts-ignore
     get("passphrase").type(this.seed);
     get("submit").click();
@@ -199,6 +199,6 @@ describe("Sign up process", () => {
 
   it("should see the passphrase and click login", () => {
     get("passphrase").should("be.visible");
-    get("loginBtn").click();
+    cy.get("#loginBtn").click();
   });
 });

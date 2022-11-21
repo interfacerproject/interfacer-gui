@@ -24,7 +24,7 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
               <div className="hidden w-auto h-16 p-4 mx-2 border-r md:block">
                 <div className="mx-auto logo" />
               </div>
-              <button className="btn btn-primary btn-outline" data-test="back" onClick={() => router.back()}>
+              <button className="btn btn-primary btn-outline" id="back" onClick={() => router.back()}>
                 <ArrowLeftIcon className="w-5 h-5" />
                 <p className="ml-2">{t("Go back and discard")}</p>
               </button>
