@@ -14,7 +14,7 @@ const user = {
   authUsername: "nenno",
 };
 
-describe("Screenshot ru", () => {
+describe.skip("Screenshot ru", () => {
   before(() => {
     Object.keys(user).forEach(key => {
       cy.setLocalStorage(key, user[key]);

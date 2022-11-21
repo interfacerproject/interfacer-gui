@@ -1,6 +1,6 @@
 import { waitForData } from "../utils";
 
-describe("When user visit resources", () => {
+describe.skip("When user visit resources", () => {
   before(() => {
     cy.login();
     cy.saveLocalStorage();

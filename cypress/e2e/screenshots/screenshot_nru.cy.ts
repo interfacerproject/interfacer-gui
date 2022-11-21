@@ -1,6 +1,6 @@
 const Nru_pages = "/ /sign_up /sign_in".split(" ");
 
-describe("Screenshot nru", () => {
+describe.skip("Screenshot nru", () => {
   beforeEach(() => {
     cy.viewport("macbook-13");
   });

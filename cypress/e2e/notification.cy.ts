@@ -1,4 +1,4 @@
-describe("when user has notification", () => {
+describe.skip("when user has notification", () => {
   before(() => {
     cy.login();
     cy.saveLocalStorage();

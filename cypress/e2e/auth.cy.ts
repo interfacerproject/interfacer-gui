@@ -35,7 +35,7 @@ describe("Authentication", () => {
     cy.contains("Invalid passphrase");
   });
 
-  it("Should render error if user answer less than 3 question", () => {
+  it.skip("Should render error if user answer less than 3 question", () => {
     cy.intercept({
       method: "POST",
       url: Cypress.env("NEXT_PUBLIC_ZENFLOWS_URL"),
