@@ -17,7 +17,9 @@ describe("CreateProjectLayout component", () => {
     cy.contains("Create a new asset").should("be.visible");
   });
 
-  it("should go back to the previous page", () => {
+  it.skip("should go back to the previous page", () => {
+    cy.login();
+    cy.visit(backPage);
     // Clicking the back button
     cy.get(`[data-test="back"]`).click();
     // Checking if url matches

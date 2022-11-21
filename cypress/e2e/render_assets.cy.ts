@@ -9,7 +9,7 @@ describe("When user visit Assets", () => {
     cy.restoreLocalStorage();
   });
 
-  it("should Filter resources by the url query string", () => {
+  it.skip("should Filter resources by the url query string", () => {
     cy.visit("/assets?primaryAccountable=061KPJM661MN6S3QA3PPQ6AQDR");
     cy.get("tr").each($tr => {
       cy.wrap($tr).get("td").eq(2).should("contain", "nenno");
