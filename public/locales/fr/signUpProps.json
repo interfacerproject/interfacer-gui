@@ -24,5 +24,6 @@
   "You need an invitation phrase to proceed with your signup!": "Vous avez besoin d'une phrase d'invitation pour procéder à votre inscription !",
   "Continue": "Continuer",
   "invitation key&#58;*": "clé d'invitation&#58;*",
-  "Please enter a valid invitation key": "Veuillez entrer une clé d'invitation valide"
+  "Please enter a valid invitation key": "Veuillez entrer une clé d'invitation valide",
+  "alice@email&#46com": "alice@email&#46com"
 }
