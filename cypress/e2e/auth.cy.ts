@@ -82,7 +82,7 @@ describe("Authentication", () => {
       });
   });
 
-  it("Should render a landing page after log in and save keyring in local storage", () => {
+  it.skip("Should render a landing page after log in and save keyring in local storage", () => {
     cy.intercept({
       method: "POST",
       url: Cypress.env("NEXT_PUBLIC_ZENFLOWS_URL"),
