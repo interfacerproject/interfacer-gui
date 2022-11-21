@@ -22,13 +22,13 @@ function Sidebar() {
     },
     // Dropdown -> My stuff
     createAsset: {
-      text: t("create_asset"),
+      text: t("Create Assets"),
       link: "/create_asset",
       leftIcon: <CubeIcon className="w-5 h-5" />,
       tag: "NEW",
     },
     myAssets: {
-      text: t("my_assets"),
+      text: t("My Assets"),
       link: "/profile/my_profile",
     },
     // Dropdown -> Assets
