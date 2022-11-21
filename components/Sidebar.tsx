@@ -53,7 +53,7 @@ function Sidebar() {
     },
     userGuide: {
       text: t("User manual"),
-      link: "https://new.dyne.org/interfacer-docs/#/pages/user-manual/quickstart",
+      link: "https://interfacerproject.github.io/interfacer-docs/#/",
       leftIcon: <ChatIcon className="w-5 h-5" />,
       target: "_blank",
     },
