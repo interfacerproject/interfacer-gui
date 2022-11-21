@@ -64,11 +64,11 @@ describe("Authentication", () => {
     cy.get("input:first").should("be.visible").type(Cypress.env("authEmail"), { force: true });
     cy.get(".h-full > :nth-child(1) > .btn").should("be.visible").click();
     cy.wait("@api");
-    cy.get("input").eq(0).should("be.visible").type(Cypress.env("answer1"), { force: true });
-    cy.get("input").eq(1).should("be.visible").type(Cypress.env("answer2"), { force: true });
-    cy.get("input").eq(2).should("be.visible").type(Cypress.env("answer3"), { force: true });
-    cy.get("input").eq(3).should("be.visible").type(Cypress.env("answer4"), { force: true });
-    cy.get("input").eq(4).should("be.visible").type(Cypress.env("answer5"), { force: true });
+    cy.get("input").eq(0).should("be.visible").clear().type(Cypress.env("answer1"), { force: true });
+    cy.get("input").eq(1).should("be.visible").clear().type(Cypress.env("answer2"), { force: true });
+    cy.get("input").eq(2).should("be.visible").clear().type(Cypress.env("answer3"), { force: true });
+    cy.get("input").eq(3).should("be.visible").clear().type(Cypress.env("answer4"), { force: true });
+    cy.get("input").eq(4).should("be.visible").clear().type(Cypress.env("answer5"), { force: true });
     cy.get("form > .mt-4")
       .click()
       .should(() => {

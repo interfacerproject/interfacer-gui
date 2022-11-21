@@ -15,5 +15,10 @@
   "unwatch": "Beobachten beenden",
   "star": "Favorit hinzufügen",
   "unstar": "Favorit beenden",
-  "Sign Out": "Abmelden"
+  "Sign Out": "Abmelden",
+  "Overview": "Übersicht",
+  "Contributions": "Beiträge",
+  "Contributors": "Mitwirkende",
+  "remove from list": "aus der Liste entfernen",
+  "Owner": "Eigentümer"
 }
