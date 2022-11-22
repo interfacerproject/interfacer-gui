@@ -20,5 +20,7 @@
   "Contributions": "Contributions",
   "Contributors": "Contributeurs",
   "remove from list": "supprimer de la liste",
-  "Owner": "Propriétaire"
+  "Owner": "Propriétaire",
+  "Passphrase ": "Phrase de passe",
+  "keep your passphrase safe": "gardez votre phrase d'authentification en sécurité"
 }
