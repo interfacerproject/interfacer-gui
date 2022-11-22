@@ -104,7 +104,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     const publicKey = getItem("eddsa_public_key") as string;
     const SignInMutation = gql`
       query ($email: String!, $pubkey: String!) {
-        personExists(email: $email, eddsaPublicKey: $pubkey) {
+        personCheck(email: $email, eddsaPublicKey: $pubkey) {
           name
           user
           email
@@ -118,16 +118,16 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
         variables: { email, pubkey: publicKey },
       })
       .then(({ data }) => {
-        setItem("authId", data?.personExists.id);
-        setItem("authName", data?.personExists.name);
-        setItem("authUsername", data?.personExists.user);
-        setItem("authEmail", data?.personExists.email);
+        setItem("authId", data?.personCheck.id);
+        setItem("authName", data?.personCheck.name);
+        setItem("authUsername", data?.personCheck.user);
+        setItem("authEmail", data?.personCheck.email);
         setAuthenticated(true);
         setUser({
-          ulid: data?.personExists.id,
+          ulid: data?.personChecks.id,
           email,
-          username: data?.personExists.user,
-          name: data?.personExists.name,
+          username: data?.personCheck.user,
+          name: data?.personCheck.name,
           privateKey: getItem("eddsa_key") as string,
           publicKey,
         });

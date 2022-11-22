@@ -8,14 +8,6 @@ describe("Sign up process", () => {
 
   //
 
-  beforeEach(() => {
-    cy.restoreLocalStorage();
-  });
-
-  afterEach(() => {
-    cy.saveLocalStorage();
-  });
-
   /**
    * Sign up
    */
@@ -31,15 +23,13 @@ describe("Sign up process", () => {
     }).as("api");
     cy.viewport("macbook-13");
     cy.visit("/sign_in");
-    cy.get(".mt-4").should("be.visible").click();
+    cy.get("#email").should("be.visible").click();
     cy.get("input:first").should("be.visible").type(Cypress.env("authEmail"), { force: true });
-    cy.get(".h-full > :nth-child(1) > .btn").should("be.visible").click();
+    cy.get("#submit").should("be.visible").click();
     cy.wait("@api");
-    cy.get("input").eq(0).should("be.visible").type("pupu pi", { force: true });
-    cy.get("form > .mt-4").should("be.visible").click();
-    cy.contains("Fill at least 2 more answer");
-    cy.get("input").eq(1).should("be.visible").type("pupu pi", { force: true });
-    cy.contains("Fill at least 1 more answer");
+    cy.get("#viaQuestions").should("be.visible").click();
+    cy.get("#question1").eq(0).should("be.visible").type(randomString(), { force: true });
+    cy.contains("At least 2 questions");
   });
 
   it("Should save in local storage keys at sign in via question", () => {
@@ -49,16 +39,17 @@ describe("Sign up process", () => {
     }).as("api");
     cy.viewport("macbook-13");
     cy.visit("/sign_in");
-    cy.get(".mt-4").should("be.visible").click();
+    cy.get("#email").should("be.visible").click();
     cy.get("input:first").should("be.visible").type(Cypress.env("authEmail"), { force: true });
-    cy.get(".h-full > :nth-child(1) > .btn").should("be.visible").click();
+    cy.get("#submit").should("be.visible").click();
+    cy.get("#viaQuestions").should("be.visible").click();
     cy.wait("@api");
-    cy.get("input").eq(0).should("be.visible").clear().type(Cypress.env("answer1"), { force: true });
-    cy.get("input").eq(1).should("be.visible").clear().type(Cypress.env("answer2"), { force: true });
-    cy.get("input").eq(2).should("be.visible").clear().type(Cypress.env("answer3"), { force: true });
-    cy.get("input").eq(3).should("be.visible").clear().type(Cypress.env("answer4"), { force: true });
-    cy.get("input").eq(4).should("be.visible").clear().type(Cypress.env("answer5"), { force: true });
-    cy.get("form > .mt-4")
+    cy.get("#question1").should("be.visible").clear().type(Cypress.env("answer1"), { force: true });
+    cy.get("#question2").should("be.visible").clear().type(Cypress.env("answer2"), { force: true });
+    cy.get("#question3").should("be.visible").clear().type(Cypress.env("answer3"), { force: true });
+    cy.get("#question4").should("be.visible").clear().type(Cypress.env("answer4"), { force: true });
+    cy.get("#question5").should("be.visible").clear().type(Cypress.env("answer5"), { force: true });
+    cy.get("#submit")
       .click()
       .should(() => {
         expect(localStorage.getItem("reflow")).not.to.be.null;
@@ -132,18 +123,28 @@ describe("Sign up process", () => {
     });
   });
 
-  it("shold check the seed box, and login", () => {
-    get("passphrase").should("be.visible");
-    get("signUpBtn").click();
-  });
+  // it("shold check the seed box, and login", () => {
+  //   cy.get("#passphrase").should("be.visible");
+  //   cy.get("#signUpBtn").click();
+  // });
 
   it("should log out", () => {
+    cy.login();
+    cy.visit("/");
     cy.url()
       .should("eq", "http://localhost:3000/")
       .then(() => {
         get("sidebarOpener").click();
         get("signOut").click();
       });
+    cy.url().should("eq", "http://localhost:3000/sign_in");
+    expect(localStorage.getItem("reflow")).to.be.null;
+    expect(localStorage.getItem("eddsa_public_key")).to.be.null;
+    expect(localStorage.getItem("eddsa_key")).to.be.null;
+    expect(localStorage.getItem("seed")).to.be.null;
+    expect(localStorage.getItem("schnorr")).to.be.null;
+    expect(localStorage.getItem("ethereum_address")).to.be.null;
+    expect(localStorage.getItem("eddsa")).to.be.null;
   });
 
   /**
@@ -153,24 +154,25 @@ describe("Sign up process", () => {
   // Using "function" instead of arrow function
   // Same reason as previous comment
   it("should sign in with passphrase", function () {
-    cy.clearLocalStorageSnapshot();
-
     cy.visit("/sign_in");
-    get("email").type(email);
-    get("submit").click();
+    cy.get("#email").type(Cypress.env("authEmail"));
+    cy.get("#submit").click();
     cy.get("#viaPassphrase").click();
     // @ts-ignore
-    get("passphrase").type(this.seed);
-    get("submit").click();
-  });
-
-  it.skip("should log out", () => {
-    cy.url()
-      .should("eq", "http://localhost:3000/")
-      .then(() => {
-        get("sidebarOpener").click();
-        get("signOut").click();
-      });
+    cy.get("#passphrase").type(this.seed);
+    cy.get("#submit").click();
+    cy.get("#submit").click();
+    cy.wait(1000);
+    cy.url().should(() => {
+      expect(localStorage.getItem("reflow")).to.eq(Cypress.env("reflow"));
+      expect(localStorage.getItem("eddsa_public_key")).to.eq(Cypress.env("eddsa_public_key"));
+      expect(localStorage.getItem("eddsa_key")).to.eq(Cypress.env("eddsa_key"));
+      expect(localStorage.getItem("seed")).to.eq(Cypress.env("seed"));
+      expect(localStorage.getItem("schnorr")).to.eq(Cypress.env("schnorr"));
+      expect(localStorage.getItem("ethereum_address")).to.eq(Cypress.env("ethereum_address"));
+      expect(localStorage.getItem("eddsa")).to.eq(Cypress.env("eddsa"));
+    });
+    cy.clearLocalStorageSnapshot();
   });
 
   /**
@@ -179,13 +181,25 @@ describe("Sign up process", () => {
 
   it("should sign in with questions", () => {
     cy.visit("/sign_in");
-    get("email").type(email);
-    get("submit").click();
-    get("viaQuestions").click();
-    get("question1").type(question1);
-    get("question2").type(question2);
-    get("question3").type(question3);
-    get("submit").click();
+    cy.get("#email").type(Cypress.env("authEmail"));
+    cy.get("#submit").click();
+    cy.get("#viaQuestions").click();
+    cy.get("#question1").type(Cypress.env("answer1"));
+    cy.get("#question2").type(Cypress.env("answer2"));
+    cy.get("#question3").type(Cypress.env("answer3"));
+    cy.get("#question4").type(Cypress.env("answer4"));
+    cy.get("#question5").type(Cypress.env("answer5"));
+    cy.get("#submit").click();
+    cy.url().should(() => {
+      expect(localStorage.getItem("reflow")).to.eq(Cypress.env("reflow"));
+      expect(localStorage.getItem("eddsa_public_key")).to.eq(Cypress.env("eddsa_public_key"));
+      expect(localStorage.getItem("eddsa_key")).to.eq(Cypress.env("eddsa_key"));
+      expect(localStorage.getItem("seed")).to.eq(Cypress.env("seed"));
+      expect(localStorage.getItem("schnorr")).to.eq(Cypress.env("schnorr"));
+      expect(localStorage.getItem("ethereum_address")).to.eq(Cypress.env("ethereum_address"));
+      expect(localStorage.getItem("eddsa")).to.eq(Cypress.env("eddsa"));
+    });
+    cy.clearLocalStorageSnapshot();
   });
 
   it("should see the passphrase and click login", () => {
