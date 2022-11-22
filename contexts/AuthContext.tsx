@@ -124,7 +124,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
         setItem("authEmail", data?.personCheck.email);
         setAuthenticated(true);
         setUser({
-          ulid: data?.personChecks.id,
+          ulid: data?.personCheck.id,
           email,
           username: data?.personCheck.user,
           name: data?.personCheck.name,
