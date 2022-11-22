@@ -24,8 +24,7 @@ describe("Sign up process", () => {
     cy.clearLocalStorageSnapshot();
   });
 
-<<<<<<< HEAD
-  it.skip("Should render error if user answer less than 3 question", () => {
+  it("Should render error if user answer less than 3 question", () => {
     cy.intercept({
       method: "POST",
       url: Cypress.env("NEXT_PUBLIC_ZENFLOWS_URL"),
@@ -60,7 +59,22 @@ describe("Sign up process", () => {
     cy.get("input").eq(3).should("be.visible").clear().type(Cypress.env("answer4"), { force: true });
     cy.get("input").eq(4).should("be.visible").clear().type(Cypress.env("answer5"), { force: true });
     cy.get("form > .mt-4")
-=======
+      .click()
+      .should(() => {
+        expect(localStorage.getItem("reflow")).not.to.be.null;
+        expect(localStorage.getItem("eddsa_public_key")).not.to.be.null;
+        expect(localStorage.getItem("eddsa_key")).not.to.be.null;
+        expect(localStorage.getItem("seed")).not.to.be.null;
+        expect(localStorage.getItem("schnorr")).not.to.be.null;
+        expect(localStorage.getItem("ethereum_address")).not.to.be.null;
+        expect(localStorage.getItem("eddsa")).not.to.be.null;
+      })
+      .then(() => {
+        // Saving the seed for later
+        cy.wrap(localStorage.getItem("seed")).as("seed");
+      });
+  });
+
   it("should go to sign up page", () => {
     cy.visit("/sign_up");
   });
@@ -90,29 +104,6 @@ describe("Sign up process", () => {
     cy.get("#submit").should("not.have.class", "Polaris-Button--disabled");
   });
 
-  // "Function" is used here instead of arrow function
-  // Here we're setting a global variable
-  // And Cypress docs suggest to not use arrow functions when working with variables
-  it("should submit, generate keys in localstorage", function () {
-    get("submit")
->>>>>>> 256677e (Sign up in rework #143 (#244))
-      .click()
-      .should(() => {
-        expect(localStorage.getItem("reflow")).not.to.be.null;
-        expect(localStorage.getItem("eddsa_public_key")).not.to.be.null;
-        expect(localStorage.getItem("eddsa_key")).not.to.be.null;
-        expect(localStorage.getItem("seed")).not.to.be.null;
-        expect(localStorage.getItem("schnorr")).not.to.be.null;
-        expect(localStorage.getItem("ethereum_address")).not.to.be.null;
-        expect(localStorage.getItem("eddsa")).not.to.be.null;
-      })
-      .then(() => {
-        // Saving the seed for later
-        cy.wrap(localStorage.getItem("seed")).as("seed");
-      });
-  });
-
-<<<<<<< HEAD
   it.skip("Should render a landing page after log in and save keyring in local storage", () => {
     cy.intercept({
       method: "POST",
@@ -134,7 +125,7 @@ describe("Sign up process", () => {
         expect(localStorage.getItem("schnorr")).to.eq(Cypress.env("schnorr"));
         expect(localStorage.getItem("ethereum_address")).to.eq(Cypress.env("ethereum_address"));
         expect(localStorage.getItem("eddsa")).to.eq(Cypress.env("eddsa"));
-      })
+      });
     cy.location().should(loc => {
       expect(loc.origin).to.eq("http://localhost:3000");
       expect(loc.pathname).to.be.oneOf(["/it", "/en", "/de", "/fr", "/"]);
@@ -147,12 +138,12 @@ describe("Sign up process", () => {
   });
 
   it("should log out", () => {
-      cy.url()
-          .should("eq", "http://localhost:3000/")
-          .then(() => {
-              get("sidebarOpener").click();
-              get("signOut").click();
-          });
+    cy.url()
+      .should("eq", "http://localhost:3000/")
+      .then(() => {
+        get("sidebarOpener").click();
+        get("signOut").click();
+      });
   });
 
   /**
