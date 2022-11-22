@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "@bbtgnn/polaris-interfacer/build/esm/styles";
+
 html,
 body {
   padding: 0;
@@ -61,24 +63,24 @@ table {
   @apply w-full h-full block object-cover;
 }
 
-
 .swiper {
-  @apply w-full h-full mx-auto
+  @apply w-full h-full mx-auto;
 }
 
 .swiper-slide {
-  @apply bg-cover bg-center}
+  @apply bg-cover bg-center;
+}
 
 .mySwiper2 {
-  @apply w-full h-4/5
+  @apply w-full h-4/5;
 }
 
 .mySwiper {
-  @apply h-1/5 box-border py-4
+  @apply h-1/5 box-border py-4;
 }
 
 .mySwiper .swiper-slide {
-  @apply w-1/4 h-full opacity-40
+  @apply w-1/4 h-full opacity-40;
 }
 
 .mySwiper .swiper-slide-thumb-active {
@@ -88,4 +90,3 @@ table {
 .swiper-slide img {
   @apply w-full h-full block object-cover;
 }
-

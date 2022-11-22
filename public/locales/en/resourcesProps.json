@@ -1,19 +1,15 @@
 {
-  "description": "description",
-  "There’s nothing to display here": "There’s nothing to display here",
-  "title": "title",
-  "Resources": "Resources",
-  "Use this page to generate digital product passports of resources": "Use this page to generate digital product passports of resources",
   "by": "by",
+  "License": "License",
+  "Raise, transfer or Produce a resource and it will displayed here": "Raise, transfer or Produce a resource and it will displayed here",
   "Resource": "Resource",
   "Source": "Source",
-  "License": "License",
-  "Version": "Version",
   "There’s nothing to display here&#46;": "There’s nothing to display here.",
-  "This table will display the resources that you will have in inventory": {
-    " Raise, transfer or Producea resource and it will displayed here&#46;": "This table will display the resources that you will have in inventory. Raise, transfer or Producea resource and it will displayed here&#46;"
-  },
+  "Raise, transfer or Producea resource and it will displayed here&#46;": "This table will display the resources that you will have in inventory. Raise, transfer or Producea resource and it will displayed here&#46;",
   "Version: {{version}}": "Version: {{version}}",
   "resourceHead": ["Resource", "Source", "License", "Version"],
-  "This table will display the resources that you will have in inventory; Raise, transfer or Produce a resource and it will displayed here": "This table will display the resources that you will have in inventory; Raise, transfer or Produce a resource and it will displayed here"
+  "This table will display the resources that you will have in inventory; Raise, transfer or Produce a resource and it will displayed here": "This table will display the resources that you will have in inventory; Raise, transfer or Produce a resource and it will displayed here",
+  "There’s nothing to display here": "There’s nothing to display here",
+  "This table will display the resources that you will have in inventory": "This table will display the resources that you will have in inventory",
+  "Version": "Version"
 }

@@ -1,60 +1,46 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
 import cn from "classnames";
+import AssetsTable from "components/AssetsTable";
+import BrTabs from "components/brickroom/BrTabs";
+import Spinner from "components/brickroom/Spinner";
+import { useAuth } from "hooks/useAuth";
+import useStorage from "hooks/useStorage";
+import { FETCH_USER } from "lib/QueryAndMutation";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import AssetsTable from "../../components/AssetsTable";
-import BrTabs from "../../components/brickroom/BrTabs";
-import Spinner from "../../components/brickroom/Spinner";
-import { useAuth } from "../../hooks/useAuth";
-import useStorage from "../../hooks/useStorage";
-import devLog from "../../lib/devLog";
+import useFilters from "../../hooks/useFilters";
+
+//
 
 const Profile: NextPage = () => {
   const { getItem } = useStorage();
   const router = useRouter();
-  const { id, conformTo, tags, tab } = router.query;
+  const { id, tab } = router.query;
   const { t } = useTranslation("ProfileProps");
-  const FETCH_USER = gql(`query($id:ID!) {
-  person(id:$id) {
-    id
-    name
-    email
-    user
-    ethereumAddress
-    primaryLocation {
-      name
-      mappableAddress
-    }
-  }
-}`);
+  const { proposalFilter } = useFilters();
   const { user } = useAuth();
 
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
   const idToBeFetch = isUser ? user?.ulid : id;
+
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
-  const filter = { primaryIntentsResourceInventoriedAsPrimaryAccountable: idToBeFetch };
+  typeof idToBeFetch === "string"
+    ? (proposalFilter.primaryIntentsResourceInventoriedAsPrimaryAccountable = [idToBeFetch])
+    : idToBeFetch!;
   const hasCollectedAssets = isUser && !!getItem("assetsCollected");
   let collectedAssets: { primaryIntentsResourceInventoriedAsId: string[] } = {
     primaryIntentsResourceInventoriedAsId: [],
   };
-  if (conformTo) {
-    // @ts-ignore
-    filter["primaryIntentsResourceInventoriedAsConformsTo"] = conformTo.split(",");
-  }
-  if (tags) {
-    // @ts-ignore
-    filter["primaryIntentsResourceInventoriedAsClassifiedAs"] = tags.split(",");
-  }
-  devLog(user);
   if (hasCollectedAssets) {
     collectedAssets["primaryIntentsResourceInventoriedAsId"] = JSON.parse(getItem("assetsCollected"));
   }
+
   return (
     <>
       {!person && <Spinner />}
@@ -110,7 +96,7 @@ const Profile: NextPage = () => {
                   component: (
                     <div>
                       <h3 className="my-8">{isUser ? t("My Assets") : t("Assets")}</h3>
-                      <AssetsTable filter={filter} noPrimaryAccountableFilter hideHeader={true} />
+                      <AssetsTable filter={proposalFilter} hideHeader={true} />
                     </div>
                   ),
                 },

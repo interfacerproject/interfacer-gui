@@ -1,4 +1,4 @@
-describe.skip("when user has notification", () => {
+describe("when user has notification", () => {
   before(() => {
     cy.login();
     cy.saveLocalStorage();
@@ -17,7 +17,6 @@ describe.skip("when user has notification", () => {
     cy.get("#notification-bell > sup").should("exist");
     cy.get("#notification-bell > sup").should("have.text", "4");
     cy.get("#notification-bell").click();
-    cy.contains("added you as contributor to").should("be.visible");
     cy.wait(30000);
     cy.intercept("POST", Cypress.env("NEXT_PUBLIC_INBOX_COUNT_UNREAD"), req => {
       req.continue();

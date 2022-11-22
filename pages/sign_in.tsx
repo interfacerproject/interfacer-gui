@@ -1,140 +1,216 @@
-import { LinkIcon } from "@heroicons/react/solid";
+import useStorage from "hooks/useStorage";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { ChangeEvent, ReactElement, useState } from "react";
-import BrInput from "../components/brickroom/BrInput";
-import KeyringGeneration from "../components/KeyringGeneration";
-import NRULayout from "../components/layout/NRULayout";
-import VerifySeed from "../components/VerifySeed";
+import { ReactElement, useEffect, useState } from "react";
+import * as yup from "yup";
 import { useAuth } from "../hooks/useAuth";
-import devLog from "../lib/devLog";
-import { NextPageWithLayout } from "./_app";
+import type { NextPageWithLayout } from "./_app";
+
+// Login functions
+import keypairoomClientRecreateKeys from "zenflows-crypto/src/keypairoomClientRecreateKeys";
+import { zencode_exec } from "zenroom";
+
+// Layout
+import NRULayout from "../components/layout/NRULayout";
+
+// Partials
+import Passphrase from "components/partials/auth/Passphrase";
+import Questions, { QuestionsNS } from "components/partials/auth/Questions";
+import ChooseMode from "components/partials/sign_in/ChooseMode";
+import EnterEmail, { EnterEmailNS } from "components/partials/sign_in/EnterEmail";
+import ViaPassphrase, { ViaPassphraseNS } from "components/partials/sign_in/ViaPassphrase";
+import ViaQuestions from "components/partials/sign_in/ViaQuestions";
+
+// Components
+import BrAuthSuggestion from "components/brickroom/BrAuthSuggestion";
+import BrError from "components/brickroom/BrError";
+import { Button } from "@bbtgnn/polaris-interfacer";
+
+//
 
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["signInProps", "signUpProps"])),
+      ...(await serverSideTranslations(locale, ["signInProps", "common"])),
     },
   };
 }
 
+//
+
 const Sign_in: NextPageWithLayout = () => {
-  const [isPassprhase, setIsPassphrase] = useState(false);
-  const [step, setStep] = useState(0);
-  const [email, setEmail] = useState("");
-  const [pdfk, setPdfk] = useState("");
-  const [isMailExisting, setIsMailExising] = useState(true);
-
+  const { t } = useTranslation("signInProps");
   const { register, login } = useAuth();
+  const { getItem, setItem } = useStorage();
+  const router = useRouter();
 
-  const errorMail = isMailExisting ? undefined : "this email doesn't exists";
+  //
+
+  const [isPassprhase, setIsPassphrase] = useState(false);
+  const [isQuestions, setIsQuestions] = useState(false);
+  const [step, setStep] = useState(0);
+  const [error, setError] = useState("");
+
+  const [signInData, setSignInData] = useState({
+    email: "",
+    pdfk: "",
+    seed: "",
+  });
+
+  //
+
+  const emailEntered = async (data: EnterEmailNS.FormValues) => {
+    // Getting HMAC
+    const result = await register(data.email, false);
+    const key = result.keypairoomServer;
+    //
+    if (!key) {
+      setError(t("Email not found"));
+      return;
+    }
+    //
+    setSignInData({
+      ...signInData,
+      email: data.email,
+      pdfk: key,
+    });
+    //
+    setStep(1);
+  };
+
   const viaPassphrase = () => {
     setIsPassphrase(true);
-    setStep(1);
+    setIsQuestions(false);
+    setStep(2);
   };
 
   const viaQuestions = () => {
     setIsPassphrase(false);
-    setStep(1);
-  };
-  const toNextStep = async (step: number) => {
-    const result = await register(email, false);
-    if (result["keypairoomServer"]) {
-      setPdfk(result["keypairoomServer"]);
-      setStep(step);
-      devLog(result);
-    } else {
-      setIsMailExising(false);
-      devLog(result);
-    }
+    setIsQuestions(true);
+    setStep(2);
   };
 
-  const router = useRouter();
-  const { t } = useTranslation("signInProps");
+  const passphraseEntered = (data: ViaPassphraseNS.FormValues) => {
+    setSignInData({
+      ...signInData,
+      seed: data.passphrase,
+    });
+  };
 
-  async function onSubmit(e: { preventDefault: () => void }) {
-    e.preventDefault();
+  const questionsEntered = (data: QuestionsNS.FormValues) => {
+    setSignInData({
+      ...signInData,
+      seed: getItem("seed"),
+    });
+    setStep(3);
+  };
+
+  //
+
+  // TODO: Review
+  // A fix for "passphrase" scenario - ask @bbtgnn for explanation
+  // Doing login when all the data is ready
+  useEffect(() => {
+    try {
+      // We do this only if it's passphrase mode
+      if (!isPassprhase) {
+        throw new Error("notPassphrase");
+      }
+
+      // Checking if we have all the data
+      yup
+        .object({
+          email: yup.string().required(),
+          pdfk: yup.string().required(),
+          seed: yup.string().required(),
+        })
+        .required()
+        .validateSync(signInData);
+
+      // Then logging in
+      doLogin();
+
+      //
+    } catch (error) {}
+  });
+
+  //
+
+  async function doLogin() {
+    // Requesting data
+    const zenData = `
+    {
+        "seed": "${signInData.seed}",
+        "seedServerSideShard.HMAC": "${signInData.pdfk}"
+    }`;
+    const { result } = await zencode_exec(keypairoomClientRecreateKeys, { data: zenData });
+    const res = JSON.parse(result);
+
+    // Setting localstorage
+    setItem("eddsa_public_key", res.eddsa_public_key);
+    setItem("eddsa_key", res.keyring.eddsa);
+    setItem("ethereum_address", res.keyring.ethereum);
+    setItem("reflow", res.keyring.reflow);
+    setItem("schnorr", res.keyring.schnorr);
+    setItem("eddsa", res.keyring.eddsa);
+    setItem("seed", res.seed);
+
+    // Logging in
+    await login({ email: signInData.email });
+    router.replace("/");
   }
+
+  //
 
   return (
     <div className="grid h-full grid-cols-6">
       <div className="col-span-6 p-2 md:col-span-4 md:col-start-2 md:col-end-6">
         <div className="w-full h-full pt-56">
+          {/* Entering email */}
+          {step === 0 && (
+            <EnterEmail onSubmit={emailEntered}>{error && <BrError testID="error">{error}</BrError>}</EnterEmail>
+          )}
+
+          {/* Choose login mode */}
+          {step === 1 && <ChooseMode viaPassphrase={viaPassphrase} viaQuestions={viaQuestions} />}
+
+          {/* Passphrase login */}
+          {step == 2 && isPassprhase && <ViaPassphrase onSubmit={passphraseEntered} />}
+
+          {/* Questions login */}
+          {step === 2 && isQuestions && (
+            <ViaQuestions>
+              <Questions email={signInData.email} HMAC={signInData.pdfk} onSubmit={questionsEntered} />
+            </ViaQuestions>
+          )}
+          {/* Displaying seed */}
+          {step === 3 && isQuestions && (
+            <Passphrase>
+              <Button size="large" primary fullWidth onClick={doLogin} id="loginBtn">
+                {t("Login")}
+              </Button>
+            </Passphrase>
+          )}
+
+          {/* Link to registration */}
           {(step === 0 || step === 1) && (
-            <div>
-              <h2>{t("Login")}</h2>
-              <p className="mt-2 mb-6">{t("")}</p>
-
-              {step === 0 && (
-                <>
-                  <button className="btn btn-block btn-primary" type="button" onClick={() => viaPassphrase()}>
-                    {t("Login via passphrase 🔑")}
-                  </button>
-                  <button className="mt-4 btn btn-block btn-primary" type="button" onClick={() => viaQuestions()}>
-                    {t("Login answering the signup questions 💬")}
-                  </button>
-                </>
-              )}
-
-              {step === 1 && (
-                <>
-                  <BrInput
-                    name="email"
-                    type="email"
-                    label={t("Your email&#x3a;")}
-                    error={errorMail}
-                    placeholder={t("alice@email&#46;com")}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                  />
-                  <p className="text-[#8A8E96] mb-6">
-                    {t("Input the email address provided during the signup process&#46;")}
-                  </p>
-                  <button
-                    className="btn btn-block btn-primary"
-                    type="button"
-                    onClick={() => toNextStep(isPassprhase ? 3 : 2)}
-                  >
-                    {t("Continue")}
-                  </button>
-                </>
-              )}
-
-              <p className="flex flex-row items-center mt-6">
-                <span>{t("✌️  You don't have an account yet?")}</span>
-                <Link href={"/sign_up"}>
-                  <a className="flex flex-row font-semibold">
-                    <LinkIcon className="w-5 h-5 mx-2" />
-                    {t("Sign up")}
-                  </a>
-                </Link>
-              </p>
+            <div className="mt-8">
+              <BrAuthSuggestion
+                baseText={t("✌️  You don't have an account yet?")}
+                linkText={t("Sign up")}
+                url="/sign_up"
+              />
             </div>
-          )}
-
-          {step === 2 && (
-            <>
-              <h2>
-                {t(
-                  "Login by providing your generated passphrase or by answering the questions during your Signup proccess"
-                )}
-              </h2>
-              <KeyringGeneration email={email} HMAC={pdfk} />
-            </>
-          )}
-
-          {step === 3 && (
-            <>
-              <h2>{t("Input the passphrase that you kept generated during the signup process")}</h2>
-              <VerifySeed email={email} HMAC={pdfk} />
-            </>
           )}
         </div>
       </div>
     </div>
   );
 };
+
+//
+
 Sign_in.getLayout = function getLayout(page: ReactElement) {
   return <NRULayout>{page}</NRULayout>;
 };

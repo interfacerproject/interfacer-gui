@@ -1,14 +1,16 @@
-import { waitForData } from "../utils";
+import { intercept, waitForData } from "../utils";
 
-describe.skip("When user visit resources", () => {
+//Skipped because we need a new ingestion
+describe("When user visit resources", () => {
   before(() => {
     cy.login();
     cy.saveLocalStorage();
   });
 
   it("should have items with a source url", () => {
+    intercept();
     cy.visit("/resources");
-    waitForData();
+    // waitForData();
     cy.get(`[data-test="resource-item"]`).each($item => {
       cy.wrap($item).children(".table-cell").eq(1).should("not.be.empty");
     });

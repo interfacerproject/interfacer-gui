@@ -1,50 +1,39 @@
-import dynamic from "next/dynamic";
-import MdParser from "../../lib/MdParser";
+import MdParser from "lib/MdParser";
+import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
-import { ExclamationIcon } from "@heroicons/react/solid";
-import React from "react";
 
-type BrMdEditorProps = {
-  className?: string;
-  onChange?: ({ html, text }: { html: string; text: string }) => void;
-  error?: string;
-  hint?: string;
-  label?: string;
+// Components
+import PFieldInfo, { PFieldInfoProps } from "components/polaris/PFieldInfo";
+import PHelp from "components/polaris/PHelp";
+
+//
+
+export interface BrMdEditorProps extends PFieldInfoProps {
+  onChange?: (data: { html: string; text: string }) => void;
   editorClass?: string;
-  testID?: string;
-  subTitle?: string;
-};
+  subtitle?: string;
+  name?: string;
+  id?: string;
+}
 
-const MdEditor = dynamic(async () => await import("react-markdown-editor-lite"), {
-  ssr: false,
-  suspense: true,
-});
+//
 
-const BrMdEditor = ({ className, onChange, error, hint, label, editorClass, testID, subTitle }: BrMdEditorProps) => {
+export default function BrMdEditor(props: BrMdEditorProps) {
+  const { editorClass, subtitle, name, onChange = () => {}, id } = props;
+
   return (
-    <div className={className}>
-      <label className="label pb-0">
-        <h4 className="label-text capitalize">{label}</h4>
-        <br />
-      </label>
-      <label className="label pt-0">
-        <span className="label-text-alt">{subTitle}</span>
-      </label>
+    <PFieldInfo htmlFor={id} {...props}>
+      <PHelp helpText={subtitle} />
 
-      <div data-test={testID}>
-        <MdEditor className={editorClass} renderHTML={text => MdParser.render(text)} onChange={onChange} />
+      <div className="pt-2">
+        <MdEditor
+          className={editorClass}
+          renderHTML={text => MdParser.render(text)}
+          onChange={onChange}
+          name={name}
+          id={id}
+        />
       </div>
-      <label className="label">
-        {error && (
-          <span className="flex flex-row items-center justify-between label-text-alt text-warning">
-            <ExclamationIcon className="w-5 h-5" />
-            {error}
-          </span>
-        )}
-        {hint && <span className="label-text-alt">{hint}</span>}
-      </label>
-    </div>
+    </PFieldInfo>
   );
-};
-
-export default BrMdEditor;
+}

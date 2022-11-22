@@ -33,7 +33,7 @@ export default function LoginBtn() {
                   <p className="text-base-400 whitespace-nowrap test-2xs">{user?.username}</p>
                 </a>
               </Link>
-              <button className="text-left hover:text-accent" onClick={() => logout()}>
+              <button className="text-left hover:text-accent" onClick={() => logout()} data-test="signOut">
                 {t("Sign Out")}
               </button>
             </div>
