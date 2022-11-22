@@ -24,23 +24,20 @@ describe("When user visit Assets", () => {
     checkTableAndContent();
   });
 
-  //TODO: Fix filters and this test
   it("should filter the table by contributor", () => {
     cy.restoreLocalStorage();
     cy.visit("/assets");
     cy.get(".justify-between > .gap-2").click();
 
-    // Clicking "Contributors" the multiselect dropdown
-    cy.get("#primaryAccountable").click();
-
-    // Clicking the option
-    cy.get(`[id$="option-0"]`).should("be.visible").click({ force: true, timeout: 1000 });
+    // Type and press enter in tags field
+    cy.get("#tags").type("open-source{enter}");
 
     // Applying filter
     cy.get(`[data-test="btn-apply"]`).click({ force: true, timeout: 1000 });
 
-    /**
-     * After the last one, the test breaks the table
-     */
+    // Checking if table is filtered
+    cy.get("tr").each($tr => {
+      cy.wrap($tr).get("td").eq(3).should("contain", "open-source");
+    });
   });
 });

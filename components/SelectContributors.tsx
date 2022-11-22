@@ -19,17 +19,20 @@ export type ContributorOption = SelectOption<Agent | Organization>;
 //
 
 const SelectContributors = forwardRef<any, SelectContributorsProps>((props, ref) => {
-  const { removeCurrentUser = true } = props;
+  const { removeCurrentUser = true, defaultValueRaw } = props;
   const { user } = useAuth();
 
   const agents = useQuery<GetAgentQuery>(QUERY_AGENTS).data?.agents?.edges.map(a => a.node);
+
+  let defaultValue;
 
   // Preparing the options for the component
   let options: Array<ContributorOption> = [];
   if (agents?.length) options = agents.map(a => formatSelectOption(a.name, a));
   if (removeCurrentUser) options = options.filter(a => a.value.id != user?.ulid);
+  if (defaultValueRaw) defaultValue = options?.filter(a => defaultValueRaw.includes(a.value.id));
 
-  return <BrSelectSearchable {...props} options={options} ref={ref} />;
+  return <BrSelectSearchable {...props} options={options} ref={ref} value={defaultValue} />;
 });
 
 //

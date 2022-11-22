@@ -7,6 +7,7 @@ import { getOptionValue } from "components/brickroom/utils/BrSelectUtils";
 import SelectAssetType from "./SelectAssetType";
 import SelectContributors from "./SelectContributors";
 import SelectTags from "./SelectTags";
+import devLog from "../lib/devLog";
 
 //
 
@@ -118,7 +119,7 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
               setQueryFilters({
                 ...queryFilters,
                 // @ts-ignore
-                primaryAccountable: v.map(getOptionValue),
+                primaryAccountable: v.map(e => e.value.id),
               });
             }}
             isMulti
