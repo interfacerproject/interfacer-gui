@@ -38,12 +38,6 @@ describe("Authentication", () => {
     cy.get("#passphraseError").should("be.visible");
   });
 
-  it("should type the correct passphrase and login", () => {
-    cy.get("#passphrase").clear().type(Cypress.env("seed"));
-    cy.get("#submit").click();
-    cy.url().should("eq", "http://localhost:3000/");
-  });
-
   //
 
   it("should choose questions method", () => {
@@ -71,11 +65,9 @@ describe("Authentication", () => {
   });
 
   it("should login, and save in local storage keys", () => {
-    get("submit").click();
-
-    intercept({ method: "POST" });
-    get("loginBtn").click();
-    waitForData().then(() => {
+    cy.get("#submit").click();
+    cy.get("#loginBtn").click();
+    cy.url().should(() => {
       expect(localStorage.getItem("reflow")).to.eq(Cypress.env("reflow"));
       expect(localStorage.getItem("eddsa_public_key")).to.eq(Cypress.env("eddsa_public_key"));
       expect(localStorage.getItem("eddsa_key")).to.eq(Cypress.env("eddsa_key"));
@@ -84,7 +76,5 @@ describe("Authentication", () => {
       expect(localStorage.getItem("ethereum_address")).to.eq(Cypress.env("ethereum_address"));
       expect(localStorage.getItem("eddsa")).to.eq(Cypress.env("eddsa"));
     });
-
-    cy.url().should("eq", "http://localhost:3000/");
   });
 });

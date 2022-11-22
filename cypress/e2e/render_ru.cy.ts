@@ -58,7 +58,7 @@ describe("when user is logged in", () => {
     cy.contains(Cypress.env("authName"));
   });
 
-  it.skip("Should see /resource/:id", () => {
+  it("Should see /resource/:id", () => {
     cy.visit("/resource/" + Cypress.env("resource_id"));
     cy.wait(2000);
     cy.contains("Imported from Losh");

@@ -24,14 +24,14 @@ describe("When user visit Assets", () => {
     checkTableAndContent();
   });
 
-  //TODO: Fix filters
-  it.skip("should filter the table by contributor", () => {
+  //TODO: Fix filters and this test
+  it("should filter the table by contributor", () => {
     cy.restoreLocalStorage();
     cy.visit("/assets");
     cy.get(".justify-between > .gap-2").click();
 
     // Clicking "Contributors" the multiselect dropdown
-    cy.get("#primaryAccountable-select").click();
+    cy.get("#primaryAccountable").click();
 
     // Clicking the option
     cy.get(`[id$="option-0"]`).should("be.visible").click({ force: true, timeout: 1000 });

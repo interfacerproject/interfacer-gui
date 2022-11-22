@@ -1,4 +1,4 @@
-describe("When user visit Assets", () => {
+describe.skip("When user visit Assets", () => {
   before(() => {
     cy.login();
     cy.saveLocalStorage();
@@ -8,8 +8,8 @@ describe("When user visit Assets", () => {
     cy.visit("");
     cy.restoreLocalStorage();
   });
-
-  it.skip("should Filter resources by the url query string", () => {
+  //TODO: fix filters!
+  it("should Filter resources by the url query string", () => {
     cy.visit(`/assets?primaryAccountable=${Cypress.env("authId")}`);
     cy.get("tr").each($tr => {
       cy.wrap($tr).get("td").eq(2).should("contain", "gino");

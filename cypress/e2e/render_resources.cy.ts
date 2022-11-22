@@ -1,7 +1,7 @@
 import { intercept, waitForData } from "../utils";
 
 //Skipped because we need a new ingestion
-describe.skip("When user visit resources", () => {
+describe("When user visit resources", () => {
   before(() => {
     cy.login();
     cy.saveLocalStorage();
