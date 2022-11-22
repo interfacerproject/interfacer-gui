@@ -32,7 +32,7 @@ import { Button } from "@bbtgnn/polaris-interfacer";
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["signInProps", "authProps"])),
+      ...(await serverSideTranslations(locale, ["signInProps", "common"])),
     },
   };
 }

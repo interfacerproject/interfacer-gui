@@ -1,4 +1,4 @@
-import { get, randomEmail, randomString } from "../utils";
+import { get, randomEmail, randomString, waitForData } from "../utils";
 
 describe("Sign up process", () => {
   let email = randomEmail();
@@ -161,9 +161,9 @@ describe("Sign up process", () => {
     // @ts-ignore
     cy.get("#passphrase").type(this.seed);
     cy.get("#submit").click();
+    cy.intercept("POST", Cypress.env("ZENFLOWS_URL")).as("api");
     cy.get("#submit").click();
-    cy.wait(1000);
-    cy.url().should(() => {
+    waitForData("api").should(() => {
       expect(localStorage.getItem("reflow")).to.eq(Cypress.env("reflow"));
       expect(localStorage.getItem("eddsa_public_key")).to.eq(Cypress.env("eddsa_public_key"));
       expect(localStorage.getItem("eddsa_key")).to.eq(Cypress.env("eddsa_key"));

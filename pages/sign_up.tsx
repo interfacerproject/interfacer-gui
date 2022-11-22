@@ -24,7 +24,7 @@ import BrError from "components/brickroom/BrError";
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["signUpProps", "authProps"])),
+      ...(await serverSideTranslations(locale, ["signUpProps", "common"])),
     },
   };
 }

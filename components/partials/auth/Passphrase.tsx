@@ -7,7 +7,7 @@ export interface PassphraseProps {}
 
 export default function Passphrase(props: CC<PassphraseProps>) {
   const { getItem } = useStorage();
-  const { t } = useTranslation("authProps", { keyPrefix: "Passphrase" });
+  const { t } = useTranslation("common");
 
   return (
     <div className="space-y-6">
