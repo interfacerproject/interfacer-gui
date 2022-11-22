@@ -27,5 +27,9 @@
   "alice@email&#46com": "alice@email&#46com",
   "Your name": "Il tuo nome",
   "Your name is shown and visible to everyone": "Il vostro nome è mostrato e visibile a tutti",
-  "Your username is used to identify you in the system": "Il nome utente viene utilizzato per identificare l'utente nel sistema."
+  "Your username is used to identify you in the system": "Il nome utente viene utilizzato per identificare l'utente nel sistema.",
+  "Do you have your invitation key?": "Avete la chiave d'invito?",
+  "formError": "moduloErrore",
+  "Invitation key": "Chiave d'invito",
+  "Type your invitation key": "Digitare la chiave di invito"
 }

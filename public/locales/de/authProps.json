@@ -1,7 +1,9 @@
 {
   "Passphrase": {
     "title": "Hier ist Ihre Passphrase",
-    "description": "Diese Passphrase wird generiert und nicht auf dem Server gespeichert. Bewahren Sie eine Kopie davon auf."
+    "description": "Diese Passphrase wird generiert und nicht auf dem Server gespeichert. Bewahren Sie eine Kopie davon auf.",
+    "keep your passphrase safe": "behalten Sie Ihre Passphrase sicher",
+    "Passphrase ": "Passphrase"
   },
   "Questions": {
     "missingQuestions": "{{missingQuestions}} Fragen fehlen!",

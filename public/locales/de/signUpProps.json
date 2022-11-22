@@ -5,7 +5,7 @@
   "Answer to these questions to complete your signup 🧩": "Beantworten Sie diese Fragen, um Ihre Anmeldung abzuschließen 🧩",
   "Choose a username": "Wählen Sie einen Benutzernamen",
   "email is not valid": "E-Mail ist nicht gültig",
-  "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46": "Der Anmeldevorgang generiert Ihre privaten Schlüssel, die niemals an den Server übermittelt werden&#46 Bewahren Sie eine Kopie Ihrer Passphrase auf&#46",
+  "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46": "Bei der Anmeldung werden Ihre privaten Schlüssel generiert, die niemals an den Server übermittelt werden&#46 Bewahren Sie eine Kopie Ihrer Passphrase auf&#46",
   "Type your name": "Geben Sie Ihren Namen ein",
   "Type your visible username": "Geben Sie Ihren sichtbaren Benutzernamen ein",
   "You will have to remember the answers and keep them for later as they are necessary for the log in&#46;": "Sie müssen sich die Antworten merken und sie für später aufbewahren, da sie für die Anmeldung erforderlich sind&#46;",
@@ -29,5 +29,9 @@
   "Your email address that will be used for your login": "Ihre E-Mail-Adresse, die für Ihr Login verwendet wird",
   "Your name": "Ihr Name",
   "Your name is shown and visible to everyone": "Ihr Name wird angezeigt und ist für alle sichtbar",
-  "Your username is used to identify you in the system": "Ihr Benutzername wird verwendet, um Sie im System zu identifizieren"
+  "Your username is used to identify you in the system": "Ihr Benutzername wird verwendet, um Sie im System zu identifizieren",
+  "Do you have your invitation key?": "Haben Sie Ihren Einladungsschlüssel?",
+  "formError": "formError",
+  "Invitation key": "Einladungsschlüssel",
+  "Type your invitation key": "Geben Sie Ihren Einladungsschlüssel ein"
 }
