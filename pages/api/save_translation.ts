@@ -10,11 +10,11 @@ const saveTranslation = async (req: NextApiRequest, res: NextApiResponse<Data>) 
   const _lang = _parsedRequest.lang;
   const _translations = JSON.stringify(_parsedRequest.translations);
   const jsonDirectory = path.join(process.cwd(), "public/locales/");
-  console.log(_file);
 
   fs.writeFile(`${jsonDirectory}${_lang}/${_file}`, _translations, error => {
     if (error) {
       console.log(error);
+      res.status(500).json({ text: "Error saving translation" });
     } else {
       res.status(200).json({ text: "success" });
     }
