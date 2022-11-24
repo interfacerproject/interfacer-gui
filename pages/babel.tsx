@@ -1,5 +1,5 @@
 import { Frame, Navigation, TextField, ButtonGroup, Button } from "@bbtgnn/polaris-interfacer";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import devLog from "../lib/devLog";
 
 const Babel = () => {
@@ -10,6 +10,7 @@ const Babel = () => {
   const [focus, setFocus] = useState<string | undefined>("");
   const [lang, setLang] = useState<string>("en");
   const [translations, setTranslations] = useState<any>({});
+
   const fetchNameSpaces = async () => {
     await fetch("/api/translations", { method: "get" }).then(async r => setNameSpaces(JSON.parse(await r.text())));
   };
@@ -40,6 +41,13 @@ const Babel = () => {
     }).then(async r => setTranslations({ ...translations, [text]: JSON.parse(await r.text()).text }));
   };
 
+  const saveTranslation = async () => {
+    await fetch("/api/save_translation", {
+      method: "post",
+      body: JSON.stringify({ file: file, translations: translations, lang: lang }),
+    }).then(async r => devLog(await r.text()));
+  };
+
   const LangMenu = () => (
     <ButtonGroup>
       {["en", "de", "fr", "it"].map(lan => (
@@ -61,7 +69,7 @@ const Babel = () => {
       {keys?.map(key => (
         <div className={"flex gap-2"} key={key}>
           <div className={"flex-col pt-6"}>
-            <Button primary onClick={() => autoTranslate(key)}>
+            <Button primary disabled={lang === "en"} onClick={() => autoTranslate(key)}>
               {"translate"}
             </Button>
           </div>
@@ -108,6 +116,7 @@ const Babel = () => {
               <div className="flex flex-col gap-2 pt-4 pl-2">
                 <LangMenu />
                 <Editor />
+                <Button onClick={saveTranslation}>{"save"}</Button>
               </div>
             )}
           </div>
