@@ -13,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const _fileContents = await fs.readFile(`${jsonDirectory}${_lang}/${_file}`, "utf8");
   const _fileContentsParsed = JSON.parse(_fileContents);
   _keys.forEach((key: string) => {
-    key in _fileContentsParsed || (_fileContentsParsed[key] = key);
+    key in _fileContentsParsed || (_fileContentsParsed[key] = "");
   });
 
   res.status(200).json({ content: JSON.stringify(_fileContentsParsed) });

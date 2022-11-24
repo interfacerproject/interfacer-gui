@@ -52,6 +52,7 @@ const Babel = () => {
     <ButtonGroup>
       {["en", "de", "fr", "it"].map(lan => (
         <Button
+          pressed={lan === lang}
           key={lan}
           onClick={() => {
             setLang(lan);
@@ -67,7 +68,7 @@ const Babel = () => {
   const Editor = () => (
     <div className="full">
       {keys?.map(key => (
-        <div className={"flex gap-2"} key={key}>
+        <div className={`flex gap-2 full px-2 pb-6 ${translations[key]?.length == 0 ? "bg-slate-300" : ""}`} key={key}>
           <div className={"flex-col pt-6"}>
             <Button primary disabled={lang === "en"} onClick={() => autoTranslate(key)}>
               {"translate"}
@@ -105,6 +106,7 @@ const Babel = () => {
                   onClick() {
                     setFile(item);
                     fetchContent(item);
+                    setLang("en");
                   },
                   label: item.split(".json")[0],
                 }))}
@@ -114,9 +116,15 @@ const Babel = () => {
           <div className="flex flex-col">
             {enTranslations && (
               <div className="flex flex-col gap-2 pt-4 pl-2">
+                <h2>{file}</h2>
                 <LangMenu />
                 <Editor />
-                <Button onClick={saveTranslation}>{"save"}</Button>
+                <ButtonGroup>
+                  <Button onClick={() => fetchLanguage(lang)}>{"reset"}</Button>
+                  <Button primary onClick={saveTranslation}>
+                    {"save"}
+                  </Button>
+                </ButtonGroup>
               </div>
             )}
           </div>
