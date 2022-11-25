@@ -1,12 +1,17 @@
 import { useAuth } from "../hooks/useAuth";
 import { gql, useMutation } from "@apollo/client";
 import { ChangeEvent, useState } from "react";
-import BrInput from "./brickroom/BrInput";
-import BrTextField from "./brickroom/BrTextField";
 import { useTranslation } from "next-i18next";
-import GeoCoderInput from "./GeoCoderInput";
 import devLog from "../lib/devLog";
 import { CREATE_LOCATION } from "../lib/QueryAndMutation";
+import * as yup from "yup";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Button, TextField } from "@bbtgnn/polaris-interfacer";
+import { isRequired } from "../lib/isFieldRequired";
+import SelectLocation from "./SelectLocation";
+import { LocationLookup } from "../lib/fetchLocation";
+import { CreateLocationMutation, Person, PersonResponse } from "../lib/types";
 
 const UPDATE_USER = gql(`mutation ($name: String, $id: ID!, $note:String, $primaryLocation: ID, $user: String) {
     updatePerson(person: { id: $id, name:$name, note: $note, primaryLocation: $primaryLocation, user: $user}) {
@@ -25,96 +30,199 @@ const UPDATE_USER = gql(`mutation ($name: String, $id: ID!, $note:String, $prima
   }
   `);
 
-const UpdateProfileForm = () => {
-  const { user } = useAuth();
+export namespace UpdateUserNS {
+  export interface FormValues {
+    name: string;
+    username: string;
+    locationName: string;
+    address: LocationLookup.Location | null;
+    note: string;
+  }
+
+  export interface Props {
+    locationId: string;
+    lat: number;
+    long: number;
+    onSubmit: (data: FormValues) => void;
+  }
+}
+
+const UpdateProfileForm = ({ person }: { person: Person }) => {
   const { t } = useTranslation("ProfileProps");
-  const [name, setName] = useState(user?.name || "");
-  const [note, setNote] = useState("");
-  const [username, setUsername] = useState(user?.username || "");
-  const [locationName, setLocationName] = useState("untitled");
-  const [locationAddress, setLocationAddress] = useState("");
-  const [locationId, setLocationId] = useState("");
 
-  const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
+  const [createLocation] = useMutation(CREATE_LOCATION);
 
-  const [updateUser] = useMutation(UPDATE_USER, {
-    variables: {
-      id: user?.ulid,
-      name,
-      note,
-      primaryLocation: locationId,
-      user: username,
-    },
-  });
-  const handleCreateLocation = async (loc?: any) => {
-    devLog("handleCreateLocation", loc);
+  const [updateUser] = useMutation(UPDATE_USER);
 
-    const name = locationName === "" ? "*untitled*" : locationName;
-    if (loc) {
-      setLocationAddress(loc.address.label);
-      createLocation({
+  const onSubmit = async (formData: UpdateUserNS.FormValues) => {
+    try {
+      const location = await handleCreateLocation(formData);
+      const variables = {
         variables: {
-          name: locationName,
-          addr: loc.address.label,
-          lat: loc.lat,
-          lng: loc.lng,
+          id: person.id,
+          name: formData.name,
+          note: formData.note,
+          primaryLocation: location?.id,
+          user: formData.username,
         },
-      })
-        .then(r => {
-          setLocationId(r.data.createSpatialThing.spatialThing.id);
-        })
-        .catch(e => {});
-    } else {
-      setLocationId("");
-      setLocationAddress("");
+      };
+      devLog(await updateUser(variables));
+    } catch (e) {
+      devLog(e);
     }
   };
+  const defaultValues: UpdateUserNS.FormValues = {
+    name: person?.name || "",
+    username: person?.user || "",
+    locationName: person?.primaryLocation?.name || "",
+    address: null,
+    note: person?.note || "",
+  };
+
+  const schema = yup
+    .object({
+      name: yup.string(),
+      username: yup.string(),
+      locationName: yup.string(),
+      address: yup.object(),
+      note: yup.string(),
+    })
+    .required();
+
+  const form = useForm<UpdateUserNS.FormValues>({
+    mode: "all",
+    resolver: yupResolver(schema),
+    defaultValues,
+  });
+
+  const { formState, handleSubmit, register, control } = form;
+  const { errors } = formState;
+
+  type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
+
+  async function handleCreateLocation(formData: UpdateUserNS.FormValues): Promise<SpatialThingRes | undefined> {
+    try {
+      const { data } = await createLocation({
+        variables: {
+          name: formData.locationName,
+          addr: formData.address?.address.label!,
+          lat: formData.address?.position.lat!,
+          lng: formData.address?.position.lng!,
+        },
+      });
+      const st = data?.createSpatialThing.spatialThing;
+      devLog("success: location created", st);
+      return st;
+    } catch (e) {
+      devLog("error: location not created", e);
+      throw e;
+    }
+  }
 
   return (
-    <form className="max-w-screen-md">
+    <form className="max-w-screen-md" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col">
-        <BrInput
-          value={name}
+        <Controller
+          control={control}
+          // @ts-ignore
           name="name"
-          label="Name"
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <TextField
+              type="text"
+              id={name}
+              name={name}
+              value={value}
+              autoComplete="off"
+              onChange={onChange}
+              onBlur={onBlur}
+              label={t("name")}
+              requiredIndicator={isRequired(schema, name)}
+            />
+          )}
         />
-        <BrInput
-          value={username}
+
+        <Controller
+          control={control}
+          // @ts-ignore
           name="username"
-          label="Username"
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <TextField
+              type="text"
+              id={name}
+              name={name}
+              value={value}
+              autoComplete="off"
+              onChange={onChange}
+              onBlur={onBlur}
+              label={t("username")}
+              requiredIndicator={isRequired(schema, name)}
+            />
+          )}
         />
+
         <div className="grid grid-cols-2 gap-2">
-          <BrInput
-            type="text"
-            name="location"
-            label={t("Location name")}
-            hint={t("")}
-            value={locationName}
-            placeholder={t("Hamburg warehouse")}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setLocationName(e.target.value)}
-            testID="location.name"
+          <Controller
+            control={control}
+            // @ts-ignore
+            name="locationName"
+            render={({ field: { onChange, onBlur, name, value } }) => (
+              <TextField
+                type="text"
+                id={name}
+                name={name}
+                value={value}
+                autoComplete="off"
+                onChange={onChange}
+                onBlur={onBlur}
+                label={t("location")}
+                requiredIndicator={isRequired(schema, name)}
+              />
+            )}
           />
-          <GeoCoderInput
-            onSelect={handleCreateLocation}
-            selectedAddress={locationAddress}
-            label={t("Select Address")}
-            hint={t("Start typing then select from the list")}
-            placeholder={t("Hamburg")}
-            testID="location.address"
+          <Controller
+            control={control}
+            name="address"
+            render={({ field: { onChange, onBlur, name, ref } }) => (
+              <SelectLocation
+                id={name}
+                name={name}
+                ref={ref}
+                onBlur={onBlur}
+                onChange={onChange}
+                label={t("Select the address")}
+                placeholder={person?.primaryLocation?.mappableAddress || t("Hamburg")}
+                error={errors.address?.message}
+                creatable={false}
+                requiredIndicator={isRequired(schema, name)}
+              />
+            )}
           />
         </div>
-        <BrTextField
-          value={note}
-          label="Note"
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setNote(e.target.value)}
+
+        <Controller
+          control={control}
+          // @ts-ignore
+          name="note"
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <TextField
+              type="text"
+              id={name}
+              multiline={5}
+              name={name}
+              value={value}
+              autoComplete="off"
+              onChange={onChange}
+              onBlur={onBlur}
+              label={t("Note")}
+              requiredIndicator={isRequired(schema, name)}
+            />
+          )}
         />
       </div>
-      <div className="flex flex-col items-end">
-        <button className="btn btn-accent" onClick={() => updateUser}>
+      <div className="flex flex-col items-end mt-5">
+        <Button size="large" primary submit id="submit">
           {t("Update")}
-        </button>
+        </Button>
       </div>
     </form>
   );

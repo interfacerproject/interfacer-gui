@@ -14,5 +14,16 @@
   "Hi,&nbsp;": "Hi,&nbsp;",
   "Welcome to your Interfacer profile": "Welcome to your Interfacer profile",
   "My List": "My List",
-  "List": "List"
+  "List": "List",
+  "name": "name",
+  "username": "username",
+  "location": "location",
+  "Select Address": "Select Address",
+  "Start typing then select from the list": "Start typing then select from the list",
+  "Hamburg": "Hamburg",
+  "Select the address": "Select the address",
+  "Update": "Update",
+  "Note": "Note",
+  "update personal info": "update personal info",
+  "update profile": "update profile"
 }

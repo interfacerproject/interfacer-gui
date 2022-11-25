@@ -126,7 +126,7 @@ const Profile: NextPage = () => {
                   component: (
                     <div>
                       <h3 className="my-8">{t("update personal info")}</h3>
-                      <UpdateProfileForm />
+                      <UpdateProfileForm person={person} />
                     </div>
                   ),
                   hidden: !isUser,
