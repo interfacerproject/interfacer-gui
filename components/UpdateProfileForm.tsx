@@ -1,6 +1,4 @@
-import { useAuth } from "../hooks/useAuth";
 import { gql, useMutation } from "@apollo/client";
-import { ChangeEvent, useState } from "react";
 import { useTranslation } from "next-i18next";
 import devLog from "../lib/devLog";
 import { CREATE_LOCATION } from "../lib/QueryAndMutation";
