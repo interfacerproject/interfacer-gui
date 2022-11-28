@@ -1,23 +1,25 @@
 import { useRouter } from "next/router";
-import AssetsTable from "../components/AssetsTable";
 import ResourceTable from "../components/ResourceTable";
+import AssetsCards from "../components/AssetsCards";
+import ResourcesCards from "../components/ResourcesCards";
 
 const Search = () => {
   const { q } = useRouter().query;
   const Assetfilter = {
-    orPrimaryIntentsResourceInventoriedAsName: q,
-    orPrimaryIntentsResourceInventoriedAsNote: q,
+    orPrimaryIntentsResourceInventoriedAsName: q?.toString(),
+    orPrimaryIntentsResourceInventoriedAsNote: q?.toString(),
   };
   const Resourcefilter = {
-    orName: q,
-    orNote: q,
+    orName: q?.toString(),
+    orNote: q?.toString(),
   };
 
   return (
     <div>
       <h1>{"Search"}</h1>
-      <AssetsTable filter={Assetfilter} />
-      <ResourceTable filter={Resourcefilter} />
+      <AssetsCards filter={Assetfilter} />
+      {/*<AssetsTable filter={Assetfilter} />*/}
+      <ResourcesCards filter={Resourcefilter} />
     </div>
   );
 };
