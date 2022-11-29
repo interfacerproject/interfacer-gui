@@ -48,9 +48,11 @@ export default function AssetsTableBase(props: AssetsTableBaseProps) {
       {/* Pagination */}
       {!hidePagination && (
         <div className="w-full pt-4 text-center">
-          <button className="text-center btn btn-primary" onClick={onLoadMore} disabled={!hasNextPage}>
-            {t("Load more")}
-          </button>
+          {hasNextPage && (
+            <button className="text-center btn btn-primary" onClick={onLoadMore}>
+              {t("Load more")}
+            </button>
+          )}
         </div>
       )}
     </div>

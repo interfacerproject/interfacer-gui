@@ -195,7 +195,7 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
               </>
             )}
           </BrTable>
-          <BrLoadMore handleClick={loadMore} disabled={!getHasNextPage} text={"Load more"} />
+          <BrLoadMore handleClick={loadMore} hidden={!getHasNextPage} text={"Load more"} />
         </>
       ) : (
         <Spinner />
