@@ -12,5 +12,16 @@
   },
   "": "Version:",
   "CLAIM OWNERSHIP": "CLAIM OWNERSHIP",
-  "Version": "Version"
+  "Version": "Version",
+  "claim your ownership over this asset": "claim your ownership over this asset",
+  "Open-source, 3D Printing, Medical use": "Open-source, 3D Printing, Medical use",
+  "Contributors": "Contributors",
+  "Type to search for a user": "Type to search for a user",
+  "Location name": "Location name",
+  "Cool fablab": "Cool fablab",
+  "The name of the place where the asset is stored": "The name of the place where the asset is stored",
+  "Select the address": "Select the address",
+  "Hamburg": "Hamburg",
+  "Error in Asset Claim": "Error in Asset Claim",
+  "Claim Ownership": "Claim Ownership"
 }
