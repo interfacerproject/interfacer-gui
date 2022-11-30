@@ -108,7 +108,7 @@ const ResourcesCards = (props: ResourcesCardsProps) => {
         onLoadMore={loadMore}
         nextPage={!!getHasNextPage}
         loading={loading}
-        hideHeader={hideHeader}
+        header={hideHeader ? undefined : "Resources"}
         hidePagination={hidePagination}
         hidePrimaryAccountable={hidePrimaryAccountable}
         hideFilters={hideFilters}

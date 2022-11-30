@@ -44,7 +44,6 @@ const useLoadMore = ({
   useEffect(() => {
     const intervalId = setInterval(() => {
       const total = data?.[dataQueryIdentifier].edges.length || 0;
-
       refetch({
         ...variables,
         last: total,

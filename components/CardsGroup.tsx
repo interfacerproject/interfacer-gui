@@ -8,7 +8,7 @@ import { useTranslation } from "next-i18next";
 export interface CardsGroupProps {
   hidePagination?: boolean;
   hidePrimaryAccountable?: boolean;
-  hideHeader?: boolean;
+  header?: string;
   hideFilters?: boolean;
   children: React.ReactNode;
   onLoadMore: () => void;
@@ -18,7 +18,7 @@ export interface CardsGroupProps {
 
 const CardsGroup = (props: CardsGroupProps) => {
   const {
-    hideHeader = false,
+    header,
     hidePagination = false,
     hidePrimaryAccountable = false,
     hideFilters = false,
@@ -43,10 +43,10 @@ const CardsGroup = (props: CardsGroupProps) => {
       {!loading && (
         <div className="flex flex-col">
           {/* Header */}
-          {!hideHeader && (
+          {header && (
             <div className="flex items-center justify-between py-5">
               {/* Left side */}
-              <h3>{"Assets"}</h3>
+              <h3>{header}</h3>
 
               {/* Right side */}
               {hideFilters && (
@@ -67,7 +67,7 @@ const CardsGroup = (props: CardsGroupProps) => {
               {/* CARDS */}
               {children}
               {/* Pagination */}
-              {!hidePagination && (
+              {!hidePagination && nextPage && (
                 <div className="w-full pt-4 text-center">
                   <button className="text-center btn btn-primary" onClick={onLoadMore} disabled={!nextPage}>
                     {t("Load more")}

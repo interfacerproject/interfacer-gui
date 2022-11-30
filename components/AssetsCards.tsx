@@ -1,5 +1,5 @@
 import { Card } from "@bbtgnn/polaris-interfacer";
-import { GetAssetsQuery, GetAssetsQueryVariables, ProposalFilterParams } from "../lib/types";
+import { GetAssetsQuery, GetAssetsQueryVariables, ProposalFilterParams, EconomicResource } from "../lib/types";
 import { useQuery } from "@apollo/client";
 import { QUERY_ASSETS } from "../lib/QueryAndMutation";
 import CardsGroup from "./CardsGroup";
@@ -45,49 +45,55 @@ const AssetsCards = (props: AssetsCardsProps) => {
         onLoadMore={loadMore}
         nextPage={!!getHasNextPage}
         loading={loading}
-        hideHeader={hideHeader}
+        header={hideHeader ? undefined : "Assets"}
         hidePagination={hidePagination}
         hidePrimaryAccountable={hidePrimaryAccountable}
         hideFilters={hideFilters}
       >
         {
           // @ts-ignore
-          assets?.map(({ node: { id, primaryIntents } }) => (
-            <>
-              {Boolean(!primaryIntents || primaryIntents[0]) && (
-                <Card
-                  key={id}
-                  title={!primaryIntents || primaryIntents[0].resourceInventoriedAs?.name}
-                  footerActionAlignment={"right"}
-                  sectioned
-                  primaryFooterAction={{
-                    id: "primaryFooterAction",
-                    content: "View",
-                    url: `/asset/${id}`,
-                  }}
-                  secondaryFooterActions={[
-                    {
-                      id: "watch",
-                      content: "Watch",
-                      url: "/watch",
-                    },
-                    {
-                      id: "share",
-                      content: "Share",
-                      url: "/share",
-                    },
-                    {
-                      id: "Add to list",
-                      content: "Add to list +",
-                      url: "/add-to-list",
-                    },
-                  ]}
-                >
-                  <p>{!primaryIntents || primaryIntents[0].resourceInventoriedAs?.note}</p>
-                </Card>
-              )}
-            </>
-          ))
+          assets?.map(
+            ({
+              node: { id, primaryIntents },
+            }: {
+              node: { id: string; primaryIntents: { resourceInventoriedAs: EconomicResource }[] };
+            }) => (
+              <>
+                {Boolean(!primaryIntents || primaryIntents[0]) && (
+                  <Card
+                    key={id}
+                    title={!primaryIntents || primaryIntents[0].resourceInventoriedAs?.name}
+                    footerActionAlignment={"right"}
+                    sectioned
+                    primaryFooterAction={{
+                      id: "primaryFooterAction",
+                      content: "View",
+                      url: `/asset/${id}`,
+                    }}
+                    secondaryFooterActions={[
+                      {
+                        id: "watch",
+                        content: "Watch",
+                        url: "/watch",
+                      },
+                      {
+                        id: "share",
+                        content: "Share",
+                        url: "/share",
+                      },
+                      {
+                        id: "Add to list",
+                        content: "Add to list +",
+                        url: "/add-to-list",
+                      },
+                    ]}
+                  >
+                    <p>{!primaryIntents || primaryIntents[0].resourceInventoriedAs?.note}</p>
+                  </Card>
+                )}
+              </>
+            )
+          )
         }
       </CardsGroup>
     </>
