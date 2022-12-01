@@ -1,8 +1,8 @@
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import React from "react";
 import LocationMenu from "./LocationMenu";
-import { useRouter } from "next/router";
 import NotificationBell from "./NotificationBell";
-import { useTranslation } from "next-i18next";
 
 type topbarProps = {
   userMenu?: boolean;
@@ -19,7 +19,7 @@ function Topbar({ search = true, children, userMenu = true, cta }: topbarProps) 
   const isSignin = path === "/sign_in";
 
   return (
-    <div className="navbar bg-[#F3F3F1] px-2 pt-0 h-16 border-b border-base-400">
+    <div className="navbar bg-[#F3F3F1] px-2 pt-0 h-16 border-b border-text-primary">
       <div className="navbar-start">
         {children}
         {search && (
