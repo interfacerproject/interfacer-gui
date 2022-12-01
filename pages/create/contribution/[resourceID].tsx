@@ -31,7 +31,10 @@ const CreateContribution: NextPageWithLayout = () => {
   if (error) {
     return (
       <Card>
-        <div className="p-4 text-center text-red-600">{t(error.message)}</div>
+        <div className="p-4 text-center text-red-600 space-y-2">
+          <p>{t("Resource not found")}</p>
+          <pre>{t(error.message)}</pre>
+        </div>
       </Card>
     );
   }
