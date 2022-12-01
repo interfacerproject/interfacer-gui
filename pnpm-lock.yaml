@@ -4,6 +4,7 @@ specifiers:
   '@apollo/client': ^3.6.9
   '@babel/core': ^7.19.3
   '@bbtgnn/polaris-interfacer': ^0.1.0
+  '@bbtgnn/polaris-interfacer-tokens': ^6.3.0
   '@graphql-codegen/cli': ^2.13.7
   '@graphql-codegen/typescript': ^2.7.4
   '@graphql-codegen/typescript-operations': ^2.5.4
@@ -80,6 +81,7 @@ dependencies:
   '@apollo/client': 3.7.1_wxfjnvblbhu4ianu4f2qg722fu
   '@babel/core': 7.20.2
   '@bbtgnn/polaris-interfacer': 0.1.0_biqbaboplfbrettd7655fr4n2y
+  '@bbtgnn/polaris-interfacer-tokens': 6.3.0
   '@graphql-codegen/cli': 2.13.12_p5f6mevuc2csew42at7bqdjpce
   '@graphql-codegen/typescript': 2.8.2_graphql@15.8.0
   '@graphql-codegen/typescript-operations': 2.5.7_graphql@15.8.0
@@ -797,6 +799,10 @@ packages:
       '@babel/helper-string-parser': 7.19.4
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
+    dev: false
+
+  /@bbtgnn/polaris-interfacer-tokens/6.3.0:
+    resolution: {integrity: sha512-wCEaosEg5yUFwsjfTqD1wC+ksYMFjeZ0rlCbYX4bqLn9Ru4gCso/mbEu59++5eJM8Sl5Uy9GWC0N+A0g1o797g==}
     dev: false
 
   /@bbtgnn/polaris-interfacer/0.1.0_biqbaboplfbrettd7655fr4n2y:
