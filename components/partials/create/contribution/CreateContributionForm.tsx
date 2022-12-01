@@ -1,7 +1,5 @@
 import { useTranslation } from "next-i18next";
 
-// Request
-
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
@@ -12,11 +10,8 @@ import { Banner, Button, Card, Spinner, Stack, TextField } from "@bbtgnn/polaris
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import { ChildrenProp as CP } from "components/brickroom/types";
 
-// Types
-
 // Other
 import { isRequired } from "lib/isFieldRequired";
-import { useRouter } from "next/router";
 import React from "react";
 
 //
@@ -28,7 +23,6 @@ export interface Props extends CP {
 }
 
 export interface FormValues {
-  parentRepositoryID: string;
   contributionRepositoryID: string; // also: url
   description: string;
   strengthPoints: string;
@@ -36,17 +30,13 @@ export interface FormValues {
 
 //
 
-export default function NewAssetForm(props: Props) {
+export default function CreateContributionForm(props: Props) {
   const { onSubmit, error, setError } = props;
   const { t } = useTranslation("createProjectProps");
-
-  const router = useRouter();
-  const { repo } = router.query;
 
   //
 
   const defaultValues: FormValues = {
-    parentRepositoryID: "",
     contributionRepositoryID: "",
     description: "",
     strengthPoints: "0",
@@ -54,7 +44,6 @@ export default function NewAssetForm(props: Props) {
 
   const schema = yup
     .object({
-      parentRepositoryID: yup.string().required(),
       contributionRepositoryID: yup.string().required(),
       description: yup.string().required(),
       strengthPoints: yup.number().positive().integer().required(),
@@ -70,33 +59,11 @@ export default function NewAssetForm(props: Props) {
   const { formState, handleSubmit, register, control, setValue, watch } = form;
   const { isValid, errors, isSubmitting } = formState;
 
-  setValue("parentRepositoryID", repo?.toString() || "");
-
   //
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack vertical spacing="extraLoose">
-        <Controller
-          control={control}
-          name="parentRepositoryID"
-          render={({ field: { onChange, onBlur, name, value } }) => (
-            <TextField
-              type="text"
-              id={name}
-              name={name}
-              value={value}
-              autoComplete="off"
-              onChange={onChange}
-              onBlur={onBlur}
-              label={t("Parent repository ID")}
-              placeholder={t("17272827282")}
-              error={errors[name]?.message}
-              requiredIndicator={isRequired(schema, name)}
-            />
-          )}
-        />
-
         <Controller
           control={control}
           name="contributionRepositoryID"
@@ -110,7 +77,7 @@ export default function NewAssetForm(props: Props) {
               onChange={onChange}
               onBlur={onBlur}
               label={t("Contribution repository link or Interfacer ID")}
-              placeholder={t("github[dot]com/my-repo")}
+              placeholder={t("github.com/my-repo")}
               helpText={t("Reference to the resource's repository or Interfacer ID of the resource")}
               error={errors[name]?.message}
               requiredIndicator={isRequired(schema, name)}

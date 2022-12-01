@@ -455,3 +455,43 @@ export const FETCH_RESOURCES = gql`
     }
   }
 `;
+
+export const GET_RESOURCE_DETAILS = gql`
+  query GetResourceDetails($id: ID!) {
+    proposal(id: $id) {
+      created
+      primaryIntents {
+        hasPointInTime
+        resourceInventoriedAs {
+          conformsTo {
+            name
+            id
+          }
+          currentLocation {
+            name
+          }
+          name
+          id
+          note
+          classifiedAs
+          metadata
+          primaryAccountable {
+            name
+            id
+          }
+          onhandQuantity {
+            hasUnit {
+              label
+            }
+          }
+          images {
+            hash
+            name
+            mimeType
+            bin
+          }
+        }
+      }
+    }
+  }
+`;
