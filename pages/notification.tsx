@@ -7,6 +7,7 @@ import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 import dayjs from "../lib/dayjs";
 import useInBox, { Notification } from "../hooks/useInBox";
 import { useRouter } from "next/router";
+import devLog from "lib/devLog";
 
 export enum ProposalType {
   HARDWARE_IMPROVEMENT = "Hardware Improvement",
@@ -37,6 +38,15 @@ export interface ProposalNotification {
   proposerName: string;
 }
 
+export interface ProposalAcceptedNotification {
+  proposalID: string;
+  text: string;
+  type: ProposalType;
+  resourceName: string;
+  resourceID: string;
+  ownerName: string;
+}
+
 const FakeProposal: Proposal = {
   ID: "123",
   senderID: "123",
@@ -59,9 +69,18 @@ const FakeMessage: ProposalNotification = {
   proposerName: "Nenno",
 };
 
+const FakeMessage2: ProposalAcceptedNotification = {
+  proposalID: "123",
+  text: "Lorem ipsum dolor sit amet",
+  type: ProposalType.HARDWARE_IMPROVEMENT,
+  resourceName: "ZACplus",
+  resourceID: "062AN5TMJM0FA92DT85QCQ6H2G",
+  ownerName: "Nenno",
+};
+
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { startReading, messages, setReadedMessages, countUnread } = useInBox();
+  const { startReading, messages, setReadedMessages, countUnread, sendMessage } = useInBox();
   useEffect(() => {
     startReading();
     countUnread > 0 &&
@@ -88,11 +107,14 @@ const Notification = () => {
   );
 
   const RenderMessagePerSubject = (props: { message: Notification.Content; sender: string; data: Date }) => {
+    devLog("senderId", props.sender ? "pepe" : "nope");
     switch (props.message.subject) {
       case "contribution":
         return <ContributionRow contribution={props.message} />;
       case "contributionRequest":
         return <RenderContributionRequest {...props} />;
+      case "contributionAccepted":
+        return <RenderContributionAccepted {...props} />;
       default:
         return <div />;
     }
@@ -100,17 +122,59 @@ const Notification = () => {
 
   return (
     <div className="grid grid-cols-1 p-12">
-      {/*<Button*/}
-      {/*  primary*/}
-      {/*  onClick={() => sendMessage(JSON.stringify(FakeMessage), ["0628KS3FG5FT2QD1CHRJBBFD88"], "contributionRequest")}*/}
-      {/*>*/}
-      {/*  {t("sendFakeMessage")}*/}
-      {/*</Button>*/}
+      <Button
+        primary
+        onClick={() =>
+          sendMessage(JSON.stringify(FakeMessage2), ["0628KS3FG5FT2QD1CHRJBBFD88"], "contributionAccepted")
+        }
+      >
+        {t("sendFakeMessage")}
+      </Button>
       {messages.map((m: any) => (
         <>
-          <RenderMessagePerSubject key={m.id} message={m.content} sender={m.sender} data={m.date} />
+          <RenderMessagePerSubject key={m.id} message={m.content} sender={m.sender} data={m.content.data} />
         </>
       ))}
+    </div>
+  );
+};
+
+const RenderContributionAccepted = ({
+  message,
+  sender,
+  data,
+}: {
+  message: Notification.Content;
+  sender: string;
+  data: Date;
+}) => {
+  devLog("senderId", sender ? sender : "nope");
+  const router = useRouter();
+  const { t } = useTranslation("notificationProps");
+  const _parsedMessage: ProposalAcceptedNotification = JSON.parse(message.message);
+  return (
+    <div className="pb-2 my-2 border-b-2">
+      <p className="mr-1">{dayjs(data).fromNow()}</p>
+      <p className="text-xs">{dayjs(data).format("HH:mm DD/MM/YYYY")}</p>
+      <div className="flex flex-row my-2 center">
+        <div className="mr-2">
+          <BrDisplayUser id={sender} name={_parsedMessage.ownerName} />
+        </div>
+        <div className="pt-3">
+          <span className="mr-1">{t("accepted your contribution to")}</span>
+          <Link href={`/asset/${_parsedMessage.resourceID}`}>
+            <a className="text-primary hover:underline">{_parsedMessage.resourceName}</a>
+          </Link>
+        </div>
+      </div>
+      <Button
+        primary
+        onClick={() => {
+          router.push("/");
+        }}
+      >
+        {"review"}
+      </Button>
     </div>
   );
 };
