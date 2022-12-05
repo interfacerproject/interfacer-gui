@@ -8,6 +8,7 @@ import dayjs from "../lib/dayjs";
 import useInBox, { Notification } from "../hooks/useInBox";
 import { useRouter } from "next/router";
 import devLog from "lib/devLog";
+import ContributionMessage from "../components/ContributionMessage";
 
 export enum ProposalType {
   HARDWARE_IMPROVEMENT = "Hardware Improvement",
@@ -47,6 +48,15 @@ export interface ProposalAcceptedNotification {
   ownerName: string;
 }
 
+export interface ProposalRejectedNotification {
+  proposalID: string;
+  text: string;
+  type: ProposalType;
+  resourceName: string;
+  resourceID: string;
+  ownerName: string;
+}
+
 const FakeProposal: Proposal = {
   ID: "123",
   senderID: "123",
@@ -70,6 +80,15 @@ const FakeMessage: ProposalNotification = {
 };
 
 const FakeMessage2: ProposalAcceptedNotification = {
+  proposalID: "123",
+  text: "Lorem ipsum dolor sit amet",
+  type: ProposalType.HARDWARE_IMPROVEMENT,
+  resourceName: "ZACplus",
+  resourceID: "062AN5TMJM0FA92DT85QCQ6H2G",
+  ownerName: "Nenno",
+};
+
+const FakeMessage3: ProposalRejectedNotification = {
   proposalID: "123",
   text: "Lorem ipsum dolor sit amet",
   type: ProposalType.HARDWARE_IMPROVEMENT,
@@ -115,6 +134,8 @@ const Notification = () => {
         return <RenderContributionRequest {...props} />;
       case "contributionAccepted":
         return <RenderContributionAccepted {...props} />;
+      case "contributionRejected":
+        return <RenderContributionRejected {...props} />;
       default:
         return <div />;
     }
@@ -125,7 +146,7 @@ const Notification = () => {
       <Button
         primary
         onClick={() =>
-          sendMessage(JSON.stringify(FakeMessage2), ["0628KS3FG5FT2QD1CHRJBBFD88"], "contributionAccepted")
+          sendMessage(JSON.stringify(FakeMessage2), ["0628KS3FG5FT2QD1CHRJBBFD88"], "contributionRejected")
         }
       >
         {t("sendFakeMessage")}
@@ -148,14 +169,11 @@ const RenderContributionAccepted = ({
   sender: string;
   data: Date;
 }) => {
-  devLog("senderId", sender ? sender : "nope");
   const router = useRouter();
   const { t } = useTranslation("notificationProps");
   const _parsedMessage: ProposalAcceptedNotification = JSON.parse(message.message);
   return (
-    <div className="pb-2 my-2 border-b-2">
-      <p className="mr-1">{dayjs(data).fromNow()}</p>
-      <p className="text-xs">{dayjs(data).format("HH:mm DD/MM/YYYY")}</p>
+    <ContributionMessage data={data}>
       <div className="flex flex-row my-2 center">
         <div className="mr-2">
           <BrDisplayUser id={sender} name={_parsedMessage.ownerName} />
@@ -167,6 +185,7 @@ const RenderContributionAccepted = ({
           </Link>
         </div>
       </div>
+      <p>{t("Your profile is now mentioned in the Contributions section") + "."}</p>
       <Button
         primary
         onClick={() => {
@@ -175,7 +194,7 @@ const RenderContributionAccepted = ({
       >
         {"review"}
       </Button>
-    </div>
+    </ContributionMessage>
   );
 };
 
@@ -192,9 +211,7 @@ const RenderContributionRequest = ({
   const router = useRouter();
 
   return (
-    <div className="pb-2 my-2 border-b-2">
-      <p className="mr-1">{dayjs(data).fromNow()}</p>
-      <p className="text-xs">{dayjs(data).format("HH:mm DD/MM/YYYY")}</p>
+    <ContributionMessage data={data}>
       <div className="flex flex-row my-2 center">
         <div className="mr-2">
           <BrDisplayUser id={sender} name={_parsedMessage.proposerName} />
@@ -220,7 +237,51 @@ const RenderContributionRequest = ({
       >
         {"review"}
       </Button>
-    </div>
+    </ContributionMessage>
+  );
+};
+
+const RenderContributionRejected = ({
+  message,
+  sender,
+  data,
+}: {
+  message: Notification.Content;
+  sender: string;
+  data: Date;
+}) => {
+  const { t } = useTranslation("notificationProps");
+  const _parsedMessage: ProposalRejectedNotification = JSON.parse(message.message);
+  const router = useRouter();
+
+  return (
+    <ContributionMessage data={data}>
+      <div className="flex flex-row my-2 center">
+        <div className="mr-2">
+          <BrDisplayUser id={sender} name={_parsedMessage.ownerName} />
+        </div>
+        <div className="pt-3">
+          <span className="mr-1">{"rejected your contribution to"}</span>
+          <Link href={`/asset/${_parsedMessage.resourceID}`}>
+            <a className="text-primary hover:underline">{_parsedMessage.resourceName}</a>
+          </Link>
+        </div>
+      </div>
+      <p>{_parsedMessage.text}</p>
+
+      <p>
+        {t("You can review your contribution and submit it again, or create a new asset linked to the parent asset") +
+          ":"}
+      </p>
+      <Button
+        primary
+        onClick={() => {
+          router.push("/");
+        }}
+      >
+        {"review"}
+      </Button>
+    </ContributionMessage>
   );
 };
 
