@@ -1,8 +1,6 @@
 import { useQuery } from "@apollo/client";
 import cn from "classnames";
-import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -19,7 +17,9 @@ import useStorage from "../../hooks/useStorage";
 import { EconomicResource } from "../../lib/types";
 import WatchButton from "../../components/WatchButton";
 import { QUERY_RESOURCE } from "../../lib/QueryAndMutation";
-import devLog from "../../lib/devLog";
+import { Button } from "@bbtgnn/polaris-interfacer";
+import { GetStaticPaths } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -139,6 +139,11 @@ const Asset = () => {
                 name={asset.primaryAccountable.name}
                 location={asset.currentLocation?.name}
               />
+              <div className="mt-8">
+                <Button size="large" fullWidth primary onClick={() => router.push(`/create/contribution/${id}`)}>
+                  {t("Propose a contribute")}
+                </Button>
+              </div>
             </div>
           </div>
         </>
@@ -146,6 +151,7 @@ const Asset = () => {
     </>
   );
 };
+
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   return {
     paths: [], //indicates that no page needs be created at build time

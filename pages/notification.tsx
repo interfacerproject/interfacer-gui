@@ -57,46 +57,6 @@ export interface ProposalRejectedNotification {
   ownerName: string;
 }
 
-const FakeProposal: Proposal = {
-  ID: "123",
-  senderID: "123",
-  receiverID: "123",
-  parentRepositoryID: "123",
-  repoURL: "123",
-  type: ProposalType.HARDWARE_IMPROVEMENT,
-  description: "123",
-  workHours: 123,
-  strengthPoints: 123,
-  status: "123",
-};
-
-const FakeMessage: ProposalNotification = {
-  proposalID: "123",
-  text: "test",
-  type: ProposalType.HARDWARE_IMPROVEMENT,
-  originalResourceName: "ZACplus",
-  originalResourceID: "062AN5TMJM0FA92DT85QCQ6H2G",
-  proposerName: "Nenno",
-};
-
-const FakeMessage2: ProposalAcceptedNotification = {
-  proposalID: "123",
-  text: "Lorem ipsum dolor sit amet",
-  type: ProposalType.HARDWARE_IMPROVEMENT,
-  resourceName: "ZACplus",
-  resourceID: "062AN5TMJM0FA92DT85QCQ6H2G",
-  ownerName: "Nenno",
-};
-
-const FakeMessage3: ProposalRejectedNotification = {
-  proposalID: "123",
-  text: "Lorem ipsum dolor sit amet",
-  type: ProposalType.HARDWARE_IMPROVEMENT,
-  resourceName: "ZACplus",
-  resourceID: "062AN5TMJM0FA92DT85QCQ6H2G",
-  ownerName: "Nenno",
-};
-
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
   const { startReading, messages, setReadedMessages, countUnread, sendMessage } = useInBox();
@@ -143,14 +103,6 @@ const Notification = () => {
 
   return (
     <div className="grid grid-cols-1 p-12">
-      <Button
-        primary
-        onClick={() =>
-          sendMessage(JSON.stringify(FakeMessage2), ["0628KS3FG5FT2QD1CHRJBBFD88"], "contributionRejected")
-        }
-      >
-        {t("sendFakeMessage")}
-      </Button>
       {messages.map((m: any) => (
         <>
           <RenderMessagePerSubject key={m.id} message={m.content} sender={m.sender} data={m.content.data} />
