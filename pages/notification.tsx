@@ -1,12 +1,12 @@
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { Button } from "@bbtgnn/polaris-interfacer";
 import Link from "next/link";
 import { useEffect } from "react";
 import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 import dayjs from "../lib/dayjs";
 import useInBox, { Notification } from "../hooks/useInBox";
 import ContributionMessage from "../components/ContributionMessage";
-import { Button } from "@bbtgnn/polaris-interfacer";
 import { useRouter } from "next/router";
 
 export enum ProposalType {
@@ -103,6 +103,51 @@ const Notification = () => {
           <RenderMessagePerSubject key={m.id} message={m.content} sender={m.sender} data={m.content.data} />
         </>
       ))}
+    </div>
+  );
+};
+
+const RenderContributionRequest = ({
+  message,
+  sender,
+  data,
+}: {
+  message: Notification.Content;
+  sender: string;
+  data: Date;
+}) => {
+  const _parsedMessage: ProposalNotification = JSON.parse(message.message);
+  const router = useRouter();
+
+  return (
+    <div className="pb-2 my-2 border-b-2">
+      <p className="mr-1">{dayjs(data).fromNow()}</p>
+      <p className="text-xs">{dayjs(data).format("HH:mm DD/MM/YYYY")}</p>
+      <div className="flex flex-row my-2 center">
+        <div className="mr-2">
+          <BrDisplayUser id={sender} name={_parsedMessage.proposerName} />
+        </div>
+        <div className="pt-3">
+          <span className="mr-1">{"want to contribute to your"}</span>
+          <Link href={`/asset/${_parsedMessage.originalResourceID}`}>
+            <a className="text-primary hover:underline">{_parsedMessage.originalResourceName}</a>
+          </Link>
+        </div>
+      </div>
+      <p>{_parsedMessage.text}</p>
+      <p>
+        {"this is a "}
+        {_parsedMessage.type}
+      </p>
+      <p>{`let ${_parsedMessage.proposalID} knows about your decision`}</p>
+      <Button
+        primary
+        onClick={() => {
+          router.push("/");
+        }}
+      >
+        {"review"}
+      </Button>
     </div>
   );
 };
