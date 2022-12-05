@@ -21,8 +21,7 @@ export async function getStaticProps({ locale }: any) {
 
 export default function Assets() {
   const { t } = useTranslation("lastUpdatedProps");
-  const { resourceFilter } = useFilters();
-  delete resourceFilter.primaryAccountable;
+  const { proposalFilter } = useFilters();
   return (
     <div className="p-8">
       <div className="mb-6 w-96">
@@ -37,7 +36,7 @@ export default function Assets() {
       </div>
 
       {/*  */}
-      <AssetsTable filter={resourceFilter} />
+      <AssetsTable filter={proposalFilter} />
     </div>
   );
 }

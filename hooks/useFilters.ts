@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { EconomicResourceFilterParams, ProposalFilterParams } from "../lib/types";
+import { EconomicResourceFilterParams } from "../lib/types";
 import { useEffect, useState } from "react";
 
 const useFilters = () => {

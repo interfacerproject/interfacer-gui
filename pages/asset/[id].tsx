@@ -102,11 +102,7 @@ const Asset = () => {
                     {
                       title: t("Contributions"),
                       component: (
-                        <ContributorsTable
-                          contributors={asset.metadata?.contributors}
-                          // date={data?.proposal.created}
-                          title={t("Contributors")}
-                        />
+                        <ContributorsTable contributors={asset.metadata?.contributors} title={t("Contributors")} />
                       ),
                     },
                     { title: t("DPP"), component: <Spinner /> },

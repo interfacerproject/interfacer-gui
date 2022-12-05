@@ -5,11 +5,9 @@ import { useTranslation } from "next-i18next";
 
 const ContributorsTable = ({
   contributors,
-  date,
   title,
 }: {
   contributors?: { name: string; id: string }[];
-  date?: any;
   title?: string;
 }) => {
   const { t } = useTranslation("common");
@@ -23,11 +21,7 @@ const ContributorsTable = ({
               <td>
                 <BrDisplayUser id={contributor.id} name={contributor.name} />
               </td>
-              <td>
-                {/*<p className="mr-1">{dayjs(date).fromNow()}</p>*/}
-                {/*<p className="text-xs">{dayjs(date).format("HH:mm")}</p>*/}
-                {/*<p className="text-xs">{dayjs(date).format("DD/MM/YYYY")}</p>*/}
-              </td>
+              <td></td>
             </tr>
           ))}
       </BrTable>
