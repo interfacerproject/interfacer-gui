@@ -9,7 +9,7 @@ const ContributorsTable = ({
   title,
 }: {
   contributors?: { name: string; id: string }[];
-  date: any;
+  date?: any;
   title?: string;
 }) => {
   const { t } = useTranslation("common");
@@ -24,9 +24,9 @@ const ContributorsTable = ({
                 <BrDisplayUser id={contributor.id} name={contributor.name} />
               </td>
               <td>
-                <p className="mr-1">{dayjs(date).fromNow()}</p>
-                <p className="text-xs">{dayjs(date).format("HH:mm")}</p>
-                <p className="text-xs">{dayjs(date).format("DD/MM/YYYY")}</p>
+                {/*<p className="mr-1">{dayjs(date).fromNow()}</p>*/}
+                {/*<p className="text-xs">{dayjs(date).format("HH:mm")}</p>*/}
+                {/*<p className="text-xs">{dayjs(date).format("DD/MM/YYYY")}</p>*/}
               </td>
             </tr>
           ))}

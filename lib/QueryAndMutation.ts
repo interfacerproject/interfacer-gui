@@ -110,6 +110,7 @@ export const CREATE_ASSET = gql`
     $resourceSpec: ID!
     $oneUnit: ID!
     $images: [IFile!]
+    $repo: String
   ) {
     createEconomicEvent(
       event: {
@@ -122,7 +123,7 @@ export const CREATE_ASSET = gql`
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
         toLocation: $location
       }
-      newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata }
+      newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata, repo: $repo }
     ) {
       economicEvent {
         id
@@ -373,6 +374,71 @@ export const FETCH_USER = gql`
       primaryLocation {
         name
         mappableAddress
+      }
+    }
+  }
+`;
+
+export const FETCH_RESOURCES = gql`
+  query FetchInventory($first: Int, $after: ID, $last: Int, $before: ID, $filter: EconomicResourceFilterParams) {
+    economicResources(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
+      pageInfo {
+        startCursor
+        endCursor
+        hasPreviousPage
+        hasNextPage
+        totalCount
+        pageLimit
+      }
+      edges {
+        cursor
+        node {
+          conformsTo {
+            id
+            name
+          }
+          currentLocation {
+            id
+            name
+            mappableAddress
+          }
+          id
+          name
+          classifiedAs
+          note
+          metadata
+          okhv
+          repo
+          version
+          licensor
+          license
+          primaryAccountable {
+            id
+            name
+            note
+          }
+          custodian {
+            id
+            name
+            note
+          }
+          accountingQuantity {
+            hasUnit {
+              id
+              label
+              symbol
+            }
+            hasNumericalValue
+          }
+          onhandQuantity {
+            hasUnit {
+              id
+              label
+              symbol
+            }
+            hasNumericalValue
+          }
+        }
       }
     }
   }

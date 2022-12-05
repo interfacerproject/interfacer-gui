@@ -18,6 +18,7 @@ import { useAuth } from "../../hooks/useAuth";
 import useStorage from "../../hooks/useStorage";
 import { EconomicResource } from "../../lib/types";
 import WatchButton from "../../components/WatchButton";
+import { QUERY_RESOURCE } from "../../lib/QueryAndMutation";
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -28,52 +29,13 @@ const Asset = () => {
   const [asset, setAsset] = useState<EconomicResource | undefined>();
   const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
-  const [isWatching, setIsWatching] = useState(asset?.metadata?.watchers?.some((w: any) => w.id === user?.ulid));
-  const QUERY_ASSET_PAGE = gql`
-    query GetAssetPage($id: ID!) {
-      proposal(id: $id) {
-        created
-        primaryIntents {
-          hasPointInTime
-          resourceInventoriedAs {
-            conformsTo {
-              name
-              id
-            }
-            currentLocation {
-              name
-            }
-            name
-            id
-            note
-            classifiedAs
-            metadata
-            primaryAccountable {
-              name
-              id
-            }
-            onhandQuantity {
-              hasUnit {
-                label
-              }
-            }
-            images {
-              hash
-              name
-              mimeType
-              bin
-            }
-          }
-        }
-      }
-    }
-  `;
-
-  const { data, startPolling } = useQuery(QUERY_ASSET_PAGE, { variables: { id } });
-  startPolling(2000);
+  const { loading, data, startPolling } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
+    variables: { id: id },
+  });
+  startPolling(20000);
 
   useEffect(() => {
-    const _asset: EconomicResource = data?.proposal.primaryIntents[0].resourceInventoriedAs;
+    const _asset: EconomicResource | undefined = data?.economicResource;
     setAsset(_asset);
     const singleImage = typeof _asset?.metadata?.image === "string";
     const metadataImage = singleImage ? [_asset?.metadata?.image] : _asset?.metadata?.image || [];
@@ -142,7 +104,7 @@ const Asset = () => {
                       component: (
                         <ContributorsTable
                           contributors={asset.metadata?.contributors}
-                          date={data?.proposal.created}
+                          // date={data?.proposal.created}
                           title={t("Contributors")}
                         />
                       ),

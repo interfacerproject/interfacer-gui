@@ -3411,6 +3411,7 @@ export type CreateAssetMutationVariables = Exact<{
   resourceSpec: Scalars["ID"];
   oneUnit: Scalars["ID"];
   images?: InputMaybe<Array<IFile> | IFile>;
+  repo?: Scalars["String"];
 }>;
 
 export type CreateAssetMutation = {

@@ -7,7 +7,7 @@ const useFilters = () => {
     primaryAccountable: [process.env.NEXT_PUBLIC_LOASH_ID!],
     gtOnhandQuantityHasNumericalValue: 0,
   });
-  const [proposalFilter, setProposalFilter] = useState<ProposalFilterParams>({});
+  const [proposalFilter, setProposalFilter] = useState<EconomicResourceFilterParams>({});
   const { conformsTo, primaryAccountable, tags } = useRouter().query;
   useEffect(() => {
     const primaryAccountableList =
@@ -16,9 +16,9 @@ const useFilters = () => {
     const conformToList = typeof conformsTo === "string" ? conformsTo.split(",") : conformsTo;
 
     setProposalFilter({
-      primaryIntentsResourceInventoriedAsConformsTo: conformToList,
-      primaryIntentsResourceInventoriedAsPrimaryAccountable: primaryAccountableList,
-      primaryIntentsResourceInventoriedAsClassifiedAs: tagsList,
+      conformsTo: conformToList,
+      primaryAccountable: primaryAccountableList,
+      classifiedAs: tagsList,
     });
     setResourceFilter({ ...resourceFilter, conformsTo: conformToList });
   }, [conformsTo, primaryAccountable, tags]);

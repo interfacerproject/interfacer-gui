@@ -6,7 +6,6 @@ import Link from "next/link";
 import AssetsTable from "components/AssetsTable";
 import NewProjectButton from "components/NewProjectButton";
 import useFilters from "../hooks/useFilters";
-import devLog from "../lib/devLog";
 
 //
 
@@ -22,8 +21,8 @@ export async function getStaticProps({ locale }: any) {
 
 export default function Assets() {
   const { t } = useTranslation("lastUpdatedProps");
-  const { proposalFilter } = useFilters();
-  devLog("Assets", proposalFilter);
+  const { resourceFilter } = useFilters();
+  delete resourceFilter.primaryAccountable;
   return (
     <div className="p-8">
       <div className="mb-6 w-96">
@@ -38,7 +37,7 @@ export default function Assets() {
       </div>
 
       {/*  */}
-      <AssetsTable filter={proposalFilter} />
+      <AssetsTable filter={resourceFilter} />
     </div>
   );
 }
