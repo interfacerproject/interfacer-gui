@@ -8,6 +8,7 @@ import dayjs from "../lib/dayjs";
 import useInBox, { Notification } from "../hooks/useInBox";
 import ContributionMessage from "../components/ContributionMessage";
 import { useRouter } from "next/router";
+import devLog from "lib/devLog";
 
 export enum ProposalType {
   HARDWARE_IMPROVEMENT = "Hardware Improvement",
@@ -34,7 +35,7 @@ export interface ProposalNotification {
 
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { startReading, messages, setReadedMessages, countUnread } = useInBox();
+  const { startReading, messages, setReadedMessages, countUnread, sendMessage } = useInBox();
   useEffect(() => {
     startReading();
     countUnread > 0 &&
@@ -103,6 +104,46 @@ const Notification = () => {
           <RenderMessagePerSubject key={m.id} message={m.content} sender={m.sender} data={m.content.data} />
         </>
       ))}
+    </div>
+  );
+};
+
+const RenderContributionAccepted = ({
+  message,
+  sender,
+  data,
+}: {
+  message: Notification.Content;
+  sender: string;
+  data: Date;
+}) => {
+  devLog("senderId", sender ? sender : "nope");
+  const router = useRouter();
+  const { t } = useTranslation("notificationProps");
+  const _parsedMessage: ProposalAcceptedNotification = JSON.parse(message.message);
+  return (
+    <div className="pb-2 my-2 border-b-2">
+      <p className="mr-1">{dayjs(data).fromNow()}</p>
+      <p className="text-xs">{dayjs(data).format("HH:mm DD/MM/YYYY")}</p>
+      <div className="flex flex-row my-2 center">
+        <div className="mr-2">
+          <BrDisplayUser id={sender} name={_parsedMessage.ownerName} />
+        </div>
+        <div className="pt-3">
+          <span className="mr-1">{t("accepted your contribution to")}</span>
+          <Link href={`/asset/${_parsedMessage.resourceID}`}>
+            <a className="text-primary hover:underline">{_parsedMessage.resourceName}</a>
+          </Link>
+        </div>
+      </div>
+      <Button
+        primary
+        onClick={() => {
+          router.push("/");
+        }}
+      >
+        {"review"}
+      </Button>
     </div>
   );
 };
