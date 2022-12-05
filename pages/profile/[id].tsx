@@ -108,7 +108,7 @@ const Profile: NextPage = () => {
                   component: (
                     <div>
                       <h3 className="my-8">{isUser ? t("My List") : t("List")}</h3>
-                      <AssetsTable filter={collectedAssets} hideHeader={true} />
+                      {/*<AssetsTable filter={collectedAssets} hideHeader={true} />*/}
                     </div>
                   ),
                   disabled: hasCollectedAssets,
