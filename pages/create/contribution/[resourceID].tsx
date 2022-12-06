@@ -9,7 +9,7 @@ import { ReactElement, useState } from "react";
 
 // Request
 import { useQuery } from "@apollo/client";
-import { GET_RESOURCE_DETAILS } from "lib/QueryAndMutation";
+import { GET_RESOURCE_DETAILS, QUERY_RESOURCE } from "lib/QueryAndMutation";
 import { EconomicResource, GetResourceDetailsQuery, GetResourceDetailsQueryVariables } from "lib/types";
 
 //
@@ -22,11 +22,11 @@ const CreateContribution: NextPageWithLayout = () => {
   const { resourceID } = router.query;
   const id = resourceID?.toString() || "";
 
-  const { data, error } = useQuery<GetResourceDetailsQuery, GetResourceDetailsQueryVariables>(GET_RESOURCE_DETAILS, {
+  const { data, error } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id },
   });
 
-  const resource = data?.proposal?.primaryIntents![0].resourceInventoriedAs as EconomicResource;
+  const resource = data?.economicResource;
 
   if (error) {
     return (
