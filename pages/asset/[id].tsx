@@ -42,6 +42,8 @@ const Asset = () => {
   useEffect(() => {
     const _asset: EconomicResource | undefined = data?.economicResource;
     setAsset(_asset);
+    // @ts-ignore
+    // devLog("data", _asset?.trace?.filter(t => !!t.hasPointInTime)[0]);
     const singleImage = typeof _asset?.metadata?.image === "string";
     const metadataImage = singleImage ? [_asset?.metadata?.image] : _asset?.metadata?.image || [];
     const _images =

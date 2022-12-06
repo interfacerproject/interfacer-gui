@@ -12,7 +12,6 @@ import { AdjustmentsIcon } from "@heroicons/react/outline";
 import AssetsFilters from "./AssetsFilters";
 import AssetsTableBase from "./AssetsTableBase";
 import Spinner from "./brickroom/Spinner";
-import devLog from "../lib/devLog";
 
 //
 
@@ -36,7 +35,6 @@ export default function AssetsTable(props: AssetsTableProps) {
       variables: { last: 10, filter: filter },
     }
   );
-  devLog("data");
 
   const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
     if (!fetchMoreResult) {
