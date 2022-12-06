@@ -613,6 +613,7 @@ export type EconomicResourceFilterParams = {
   conformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   custodian?: InputMaybe<Array<Scalars["ID"]>>;
   notCustodian?: InputMaybe<Array<Scalars["ID"]>>;
+  id?: InputMaybe<Array<Scalars["ID"]>>;
   gtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Decimal"]>;
   name?: InputMaybe<Scalars["String"]>;
   note?: InputMaybe<Scalars["String"]>;
@@ -3368,6 +3369,11 @@ export type GetResourceTableQuery = {
     name: string;
     note?: string | null;
     metadata?: any | null;
+    trace?: Array<
+      | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
+      | { __typename: "EconomicResource" }
+      | { __typename: "Process" }
+    > | null;
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     onhandQuantity: {
       __typename?: "Measure";
@@ -3579,9 +3585,9 @@ export type FetchInventoryQuery = {
           mappableAddress?: string | null;
         } | null;
         trace?: Array<
-          | { __typename?: "EconomicEvent"; hasPointInTime?: any | null }
-          | { __typename?: "EconomicResource" }
-          | { __typename?: "Process" }
+          | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
+          | { __typename: "EconomicResource" }
+          | { __typename: "Process" }
         > | null;
         primaryAccountable:
           | { __typename?: "Organization"; id: string; name: string; note?: string | null }
