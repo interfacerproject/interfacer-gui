@@ -19,6 +19,7 @@ import useStorage from "../../hooks/useStorage";
 import { EconomicResource } from "../../lib/types";
 import WatchButton from "../../components/WatchButton";
 import { QUERY_RESOURCE } from "../../lib/QueryAndMutation";
+import devLog from "../../lib/devLog";
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -37,6 +38,8 @@ const Asset = () => {
   useEffect(() => {
     const _asset: EconomicResource | undefined = data?.economicResource;
     setAsset(_asset);
+    // @ts-ignore
+    // devLog("data", _asset?.trace?.filter(t => !!t.hasPointInTime)[0]);
     const singleImage = typeof _asset?.metadata?.image === "string";
     const metadataImage = singleImage ? [_asset?.metadata?.image] : _asset?.metadata?.image || [];
     const _images =

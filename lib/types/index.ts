@@ -12,6 +12,7 @@ export type Scalars = {
   Float: number;
   Base64: any;
   DateTime: any;
+  Decimal: any;
   JSON: any;
   URI: any;
   Url64: any;
@@ -270,7 +271,7 @@ export type AgreementUpdateParams = {
 export type Duration = {
   __typename?: "Duration";
   /** A number representing the duration, will be paired with a unit. */
-  numericDuration: Scalars["Float"];
+  numericDuration: Scalars["Decimal"];
   /** A unit of measure. */
   unitType: TimeUnit;
 };
@@ -315,7 +316,7 @@ export type EconomicEvent = {
   /** Defines the process to which this event is an output. */
   outputOf?: Maybe<Process>;
   previous?: Maybe<ProductionFlowItem>;
-  previousDpp?: Maybe<ProductionFlowItem>;
+  previousEvent?: Maybe<EconomicEvent>;
   /** The economic agent from whom the actual economic event is initiated. */
   provider: Agent;
   /** This economic event occurs as part of this agreement. */
@@ -525,7 +526,6 @@ export type EconomicResource = {
    */
   onhandQuantity: Measure;
   previous?: Maybe<Array<EconomicEvent>>;
-  previousDpp?: Maybe<Array<EconomicEvent>>;
   /**
    * The agent currently with primary rights and responsibilites for
    * the economic resource.  It is the agent that is associated with the
@@ -547,6 +547,7 @@ export type EconomicResource = {
    * a pass or fail event.
    */
   state?: Maybe<Action>;
+  trace?: Maybe<Array<TrackTraceItem>>;
   /**
    * Sometimes called serial number, used when each item must have a traceable
    * identifier (like a computer).  Could also be used for other unique
@@ -611,13 +612,15 @@ export type EconomicResourceFilterParams = {
   classifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   conformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   custodian?: InputMaybe<Array<Scalars["ID"]>>;
-  gtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Float"]>;
+  gtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Decimal"]>;
   name?: InputMaybe<Scalars["String"]>;
+  note?: InputMaybe<Scalars["String"]>;
   orClassifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   orConformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   orCustodian?: InputMaybe<Array<Scalars["ID"]>>;
-  orGtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Float"]>;
+  orGtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Decimal"]>;
   orName?: InputMaybe<Scalars["String"]>;
+  orNote?: InputMaybe<Scalars["String"]>;
   orPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
   primaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
 };
@@ -653,7 +656,7 @@ export type File = {
 /** Mutation input structure for defining time durations. */
 export type IDuration = {
   /** A number representing the duration, will be paired with a unit. */
-  numericDuration: Scalars["Float"];
+  numericDuration: Scalars["Decimal"];
   /** A unit of measure. */
   unitType: TimeUnit;
 };
@@ -676,7 +679,7 @@ export type IFile = {
  */
 export type IMeasure = {
   /** A number representing the quantity, will be paired with a unit. */
-  hasNumericalValue: Scalars["Float"];
+  hasNumericalValue: Scalars["Decimal"];
   /** (`Unit`) A unit of measure. */
   hasUnit?: InputMaybe<Scalars["ID"]>;
 };
@@ -977,7 +980,7 @@ export type IntentUpdateParams = {
 export type Measure = {
   __typename?: "Measure";
   /** A number representing the quantity, will be paired with a unit. */
-  hasNumericalValue: Scalars["Float"];
+  hasNumericalValue: Scalars["Decimal"];
   /** A unit of measure. */
   hasUnit?: Maybe<Unit>;
 };
@@ -1317,7 +1320,6 @@ export type Process = {
   /** The process with its inputs and outputs is part of the plan. */
   plannedWithin?: Maybe<Plan>;
   previous?: Maybe<Array<EconomicEvent>>;
-  previousDpp?: Maybe<Array<EconomicEvent>>;
 };
 
 export type ProcessConnection = {
@@ -1576,11 +1578,13 @@ export type ProposalFilterParams = {
   orPrimaryIntentsResourceInventoriedAsConformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   orPrimaryIntentsResourceInventoriedAsId?: InputMaybe<Array<Scalars["ID"]>>;
   orPrimaryIntentsResourceInventoriedAsName?: InputMaybe<Scalars["String"]>;
+  orPrimaryIntentsResourceInventoriedAsNote?: InputMaybe<Scalars["String"]>;
   orPrimaryIntentsResourceInventoriedAsPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
   primaryIntentsResourceInventoriedAsClassifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   primaryIntentsResourceInventoriedAsConformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   primaryIntentsResourceInventoriedAsId?: InputMaybe<Array<Scalars["ID"]>>;
   primaryIntentsResourceInventoriedAsName?: InputMaybe<Scalars["String"]>;
+  primaryIntentsResourceInventoriedAsNote?: InputMaybe<Scalars["String"]>;
   primaryIntentsResourceInventoriedAsPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
 };
 
@@ -3103,12 +3107,12 @@ export type ScenarioUpdateParams = {
 export type SpatialThing = {
   __typename?: "SpatialThing";
   /** Altitude. */
-  alt?: Maybe<Scalars["Float"]>;
+  alt?: Maybe<Scalars["Decimal"]>;
   id: Scalars["ID"];
   /** Latitude. */
-  lat?: Maybe<Scalars["Float"]>;
+  lat?: Maybe<Scalars["Decimal"]>;
   /** Longitude. */
-  long?: Maybe<Scalars["Float"]>;
+  long?: Maybe<Scalars["Decimal"]>;
   /** An address that will be recognized as mappable by mapping software. */
   mappableAddress?: Maybe<Scalars["String"]>;
   /**
@@ -3128,11 +3132,11 @@ export type SpatialThingConnection = {
 
 export type SpatialThingCreateParams = {
   /** Altitude. */
-  alt?: InputMaybe<Scalars["Float"]>;
+  alt?: InputMaybe<Scalars["Decimal"]>;
   /** Latitude. */
-  lat?: InputMaybe<Scalars["Float"]>;
+  lat?: InputMaybe<Scalars["Decimal"]>;
   /** Longitude. */
-  long?: InputMaybe<Scalars["Float"]>;
+  long?: InputMaybe<Scalars["Decimal"]>;
   /** An address that will be recognized as mappable by mapping software. */
   mappableAddress?: InputMaybe<Scalars["String"]>;
   /**
@@ -3157,12 +3161,12 @@ export type SpatialThingResponse = {
 
 export type SpatialThingUpdateParams = {
   /** Altitude. */
-  alt?: InputMaybe<Scalars["Float"]>;
+  alt?: InputMaybe<Scalars["Decimal"]>;
   id: Scalars["ID"];
   /** Latitude. */
-  lat?: InputMaybe<Scalars["Float"]>;
+  lat?: InputMaybe<Scalars["Decimal"]>;
   /** Longitude. */
-  long?: InputMaybe<Scalars["Float"]>;
+  long?: InputMaybe<Scalars["Decimal"]>;
   /** An address that will be recognized as mappable by mapping software. */
   mappableAddress?: InputMaybe<Scalars["String"]>;
   /**
@@ -3184,6 +3188,8 @@ export enum TimeUnit {
   Week = "week",
   Year = "year",
 }
+
+export type TrackTraceItem = EconomicEvent | EconomicResource | Process;
 
 /**
  * Defines a unit of measurement, along with its display symbol.  From OM2
@@ -3230,107 +3236,6 @@ export type UnitUpdateParams = {
   symbol?: InputMaybe<Scalars["String"]>;
 };
 
-export type GetBellAssetsQueryVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]>;
-  after?: InputMaybe<Scalars["ID"]>;
-  last?: InputMaybe<Scalars["Int"]>;
-  before?: InputMaybe<Scalars["ID"]>;
-  filter?: InputMaybe<ProposalFilterParams>;
-}>;
-
-export type GetBellAssetsQuery = {
-  __typename?: "RootQueryType";
-  proposals: {
-    __typename?: "ProposalConnection";
-    pageInfo: {
-      __typename?: "PageInfo";
-      startCursor?: string | null;
-      endCursor?: string | null;
-      hasPreviousPage: boolean;
-      hasNextPage: boolean;
-      totalCount?: number | null;
-      pageLimit?: number | null;
-    };
-    edges: Array<{
-      __typename?: "ProposalEdge";
-      cursor: string;
-      node: {
-        __typename?: "Proposal";
-        id: string;
-        name?: string | null;
-        created: any;
-        primaryIntents?: Array<{
-          __typename?: "Intent";
-          resourceInventoriedAs?: { __typename?: "EconomicResource"; metadata?: any | null } | null;
-        }> | null;
-      };
-    }>;
-  };
-};
-
-export type FetchInventoryQueryVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]>;
-  after?: InputMaybe<Scalars["ID"]>;
-  last?: InputMaybe<Scalars["Int"]>;
-  before?: InputMaybe<Scalars["ID"]>;
-  filter?: InputMaybe<EconomicResourceFilterParams>;
-}>;
-
-export type FetchInventoryQuery = {
-  __typename?: "RootQueryType";
-  economicResources?: {
-    __typename?: "EconomicResourceConnection";
-    pageInfo: {
-      __typename?: "PageInfo";
-      startCursor?: string | null;
-      endCursor?: string | null;
-      hasPreviousPage: boolean;
-      hasNextPage: boolean;
-      totalCount?: number | null;
-      pageLimit?: number | null;
-    };
-    edges: Array<{
-      __typename?: "EconomicResourceEdge";
-      cursor: string;
-      node: {
-        __typename?: "EconomicResource";
-        id: string;
-        name: string;
-        note?: string | null;
-        metadata?: any | null;
-        okhv?: string | null;
-        repo?: string | null;
-        version?: string | null;
-        licensor?: string | null;
-        license?: string | null;
-        conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
-        currentLocation?: {
-          __typename?: "SpatialThing";
-          id: string;
-          name: string;
-          mappableAddress?: string | null;
-        } | null;
-        primaryAccountable:
-          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
-          | { __typename?: "Person"; id: string; name: string; note?: string | null };
-        custodian:
-          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
-          | { __typename?: "Person"; id: string; name: string; note?: string | null };
-        accountingQuantity: {
-          __typename?: "Measure";
-          hasNumericalValue: number;
-          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
-        };
-        onhandQuantity: {
-          __typename?: "Measure";
-          hasNumericalValue: number;
-          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
-        };
-      };
-    }>;
-  } | null;
-};
-
 export type GetTagsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
@@ -3364,7 +3269,7 @@ export type CreateIntentMutationVariables = Exact<{
   resource: Scalars["ID"];
   oneUnit: Scalars["ID"];
   currency: Scalars["ID"];
-  howMuch: Scalars["Float"];
+  howMuch: Scalars["Decimal"];
 }>;
 
 export type CreateIntentMutation = {
@@ -3388,15 +3293,15 @@ export type LinkProposalAndIntentMutation = {
 export type CreateLocationMutationVariables = Exact<{
   name: Scalars["String"];
   addr: Scalars["String"];
-  lat: Scalars["Float"];
-  lng: Scalars["Float"];
+  lat: Scalars["Decimal"];
+  lng: Scalars["Decimal"];
 }>;
 
 export type CreateLocationMutation = {
   __typename?: "RootMutationType";
   createSpatialThing: {
     __typename?: "SpatialThingResponse";
-    spatialThing: { __typename?: "SpatialThing"; id: string; lat?: number | null; long?: number | null };
+    spatialThing: { __typename?: "SpatialThing"; id: string; lat?: any | null; long?: any | null };
   };
 };
 
@@ -3411,7 +3316,7 @@ export type CreateAssetMutationVariables = Exact<{
   resourceSpec: Scalars["ID"];
   oneUnit: Scalars["ID"];
   images?: InputMaybe<Array<IFile> | IFile>;
-  repo?: Scalars["String"];
+  repo?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type CreateAssetMutation = {
@@ -3421,7 +3326,7 @@ export type CreateAssetMutation = {
     economicEvent: {
       __typename?: "EconomicEvent";
       id: string;
-      resourceInventoriedAs?: { __typename?: "EconomicResource"; id: string } | null;
+      resourceInventoriedAs?: { __typename?: "EconomicResource"; id: string; name: string } | null;
     };
   };
 };
@@ -3445,7 +3350,7 @@ export type TransferAssetMutation = {
     economicEvent: {
       __typename?: "EconomicEvent";
       id: string;
-      toResourceInventoriedAs?: { __typename?: "EconomicResource"; id: string } | null;
+      toResourceInventoriedAs?: { __typename?: "EconomicResource"; id: string; name: string } | null;
     };
   };
 };
@@ -3465,12 +3370,12 @@ export type GetResourceTableQuery = {
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     onhandQuantity: {
       __typename?: "Measure";
-      hasNumericalValue: number;
+      hasNumericalValue: any;
       hasUnit?: { __typename?: "Unit"; id: string; symbol: string; label: string } | null;
     };
     accountingQuantity: {
       __typename?: "Measure";
-      hasNumericalValue: number;
+      hasNumericalValue: any;
       hasUnit?: { __typename?: "Unit"; label: string; symbol: string } | null;
     };
     primaryAccountable:
@@ -3592,7 +3497,7 @@ export type GetAssetsQuery = {
           __typename?: "Intent";
           resourceQuantity?: {
             __typename?: "Measure";
-            hasNumericalValue: number;
+            hasNumericalValue: any;
             hasUnit?: { __typename?: "Unit"; label: string; symbol: string } | null;
           } | null;
         }> | null;
@@ -3629,49 +3534,18 @@ export type GetUserQuery = {
   } | null;
 };
 
-export type GetAssetPageQueryVariables = Exact<{
-  id: Scalars["ID"];
-}>;
-
-export type GetAssetPageQuery = {
-  __typename?: "RootQueryType";
-  proposal?: {
-    __typename?: "Proposal";
-    created: any;
-    primaryIntents?: Array<{
-      __typename?: "Intent";
-      hasPointInTime?: any | null;
-      resourceInventoriedAs?: {
-        __typename?: "EconomicResource";
-        name: string;
-        id: string;
-        note?: string | null;
-        classifiedAs?: Array<any> | null;
-        metadata?: any | null;
-        conformsTo: { __typename?: "ResourceSpecification"; name: string; id: string };
-        currentLocation?: { __typename?: "SpatialThing"; name: string } | null;
-        primaryAccountable:
-          | { __typename?: "Organization"; name: string; id: string }
-          | { __typename?: "Person"; name: string; id: string };
-        onhandQuantity: { __typename?: "Measure"; hasUnit?: { __typename?: "Unit"; label: string } | null };
-        images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
-      } | null;
-    }> | null;
-  } | null;
-};
-
-export type GetNotificationAssetsQueryVariables = Exact<{
+export type FetchInventoryQueryVariables = Exact<{
   first?: InputMaybe<Scalars["Int"]>;
   after?: InputMaybe<Scalars["ID"]>;
   last?: InputMaybe<Scalars["Int"]>;
   before?: InputMaybe<Scalars["ID"]>;
-  filter?: InputMaybe<ProposalFilterParams>;
+  filter?: InputMaybe<EconomicResourceFilterParams>;
 }>;
 
-export type GetNotificationAssetsQuery = {
+export type FetchInventoryQuery = {
   __typename?: "RootQueryType";
-  proposals: {
-    __typename?: "ProposalConnection";
+  economicResources?: {
+    __typename?: "EconomicResourceConnection";
     pageInfo: {
       __typename?: "PageInfo";
       startCursor?: string | null;
@@ -3682,26 +3556,49 @@ export type GetNotificationAssetsQuery = {
       pageLimit?: number | null;
     };
     edges: Array<{
-      __typename?: "ProposalEdge";
+      __typename?: "EconomicResourceEdge";
       cursor: string;
       node: {
-        __typename?: "Proposal";
+        __typename?: "EconomicResource";
         id: string;
-        name?: string | null;
-        created: any;
-        primaryIntents?: Array<{
-          __typename?: "Intent";
-          resourceInventoriedAs?: {
-            __typename?: "EconomicResource";
-            id: string;
-            name: string;
-            metadata?: any | null;
-            primaryAccountable:
-              | { __typename?: "Organization"; name: string; id: string }
-              | { __typename?: "Person"; name: string; id: string };
-          } | null;
-        }> | null;
+        name: string;
+        classifiedAs?: Array<any> | null;
+        note?: string | null;
+        metadata?: any | null;
+        okhv?: string | null;
+        repo?: string | null;
+        version?: string | null;
+        licensor?: string | null;
+        license?: string | null;
+        conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
+        currentLocation?: {
+          __typename?: "SpatialThing";
+          id: string;
+          name: string;
+          mappableAddress?: string | null;
+        } | null;
+        trace?: Array<
+          | { __typename?: "EconomicEvent"; hasPointInTime?: any | null }
+          | { __typename?: "EconomicResource" }
+          | { __typename?: "Process" }
+        > | null;
+        primaryAccountable:
+          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
+          | { __typename?: "Person"; id: string; name: string; note?: string | null };
+        custodian:
+          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
+          | { __typename?: "Person"; id: string; name: string; note?: string | null };
+        accountingQuantity: {
+          __typename?: "Measure";
+          hasNumericalValue: any;
+          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
+        };
+        onhandQuantity: {
+          __typename?: "Measure";
+          hasNumericalValue: any;
+          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
+        };
       };
     }>;
-  };
+  } | null;
 };
