@@ -30,7 +30,7 @@ const Asset = () => {
   const [asset, setAsset] = useState<EconomicResource | undefined>();
   const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
-  const { loading, data, startPolling } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
+  const { loading, data, startPolling, refetch } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id: id },
   });
   startPolling(20000);
@@ -79,7 +79,13 @@ const Asset = () => {
                 ]}
               />
             </div>
-            <AddStar id={asset.id} metadata={asset.metadata} userId={user?.ulid} />
+            <AddStar
+              id={asset.id}
+              metadata={asset.metadata}
+              userId={user?.ulid}
+              onStarred={refetch}
+              onDestarred={refetch}
+            />
           </div>
           <div className="grid grid-cols-1 px-2 md:grid-cols-3 md:gap-4 md:px-0 md:mx-32">
             <div id="left-col" className="flex flex-col col-span-2">
