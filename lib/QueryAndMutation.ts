@@ -179,6 +179,12 @@ export const QUERY_RESOURCE = gql`
       name
       note
       metadata
+      trace {
+        __typename
+        ... on EconomicEvent {
+          hasPointInTime
+        }
+      }
       conformsTo {
         id
         name
@@ -413,6 +419,7 @@ export const FETCH_RESOURCES = gql`
           licensor
           license
           trace {
+            __typename
             ... on EconomicEvent {
               hasPointInTime
             }

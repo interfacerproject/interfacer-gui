@@ -31,7 +31,9 @@ const AssetsTableRow = (props: any) => {
               </Link>
             </div>
           </td>
-          <td className="">{e.created && new Date(e.created).toLocaleString()}</td>
+          <td className="">
+            {new Date(e.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime).toLocaleString()}
+          </td>
           <td>
             <BrDisplayUser id={e.primaryAccountable.id} name={e.primaryAccountable.name} />
             <AvatarUsers users={e.metadata?.contributors} />
