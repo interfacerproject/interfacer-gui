@@ -1580,18 +1580,21 @@ export type ProposalEdge = {
 };
 
 export type ProposalFilterParams = {
+  notStatus?: InputMaybe<ProposedStatus>;
   orPrimaryIntentsResourceInventoriedAsClassifiedAs?: InputMaybe<Array<Scalars['URI']>>;
   orPrimaryIntentsResourceInventoriedAsConformsTo?: InputMaybe<Array<Scalars['ID']>>;
   orPrimaryIntentsResourceInventoriedAsId?: InputMaybe<Array<Scalars['ID']>>;
   orPrimaryIntentsResourceInventoriedAsName?: InputMaybe<Scalars['String']>;
   orPrimaryIntentsResourceInventoriedAsNote?: InputMaybe<Scalars['String']>;
   orPrimaryIntentsResourceInventoriedAsPrimaryAccountable?: InputMaybe<Array<Scalars['ID']>>;
+  orStatus?: InputMaybe<ProposedStatus>;
   primaryIntentsResourceInventoriedAsClassifiedAs?: InputMaybe<Array<Scalars['URI']>>;
   primaryIntentsResourceInventoriedAsConformsTo?: InputMaybe<Array<Scalars['ID']>>;
   primaryIntentsResourceInventoriedAsId?: InputMaybe<Array<Scalars['ID']>>;
   primaryIntentsResourceInventoriedAsName?: InputMaybe<Scalars['String']>;
   primaryIntentsResourceInventoriedAsNote?: InputMaybe<Scalars['String']>;
   primaryIntentsResourceInventoriedAsPrimaryAccountable?: InputMaybe<Array<Scalars['ID']>>;
+  status?: InputMaybe<ProposedStatus>;
 };
 
 export type ProposalResponse = {
