@@ -19,6 +19,7 @@ const useFilters = () => {
       conformsTo: conformToList,
       primaryAccountable: primaryAccountableList,
       classifiedAs: tagsList,
+      notCustodian: [process.env.NEXT_PUBLIC_LOASH_ID!],
     });
     setResourceFilter({ ...resourceFilter, conformsTo: conformToList });
   }, [conformsTo, primaryAccountable, tags]);
