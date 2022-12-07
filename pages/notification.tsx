@@ -35,7 +35,7 @@ export interface ProposalNotification {
 
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { startReading, messages, setReadedMessages, countUnread, sendMessage } = useInBox();
+  const { startReading, messages, setReadedMessages, countUnread } = useInBox();
   useEffect(() => {
     startReading();
     countUnread > 0 &&
