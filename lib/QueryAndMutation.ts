@@ -209,6 +209,7 @@ export const QUERY_RESOURCE = gql`
         name
       }
       currentLocation {
+        id
         name
         mappableAddress
       }
@@ -490,6 +491,71 @@ export const GET_RESOURCE_DETAILS = gql`
             mimeType
             bin
           }
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_PROCESS = gql`
+  mutation ($name: String!) {
+    createProcess(process: { name: $name }) {
+      process {
+        id
+      }
+    }
+  }
+`;
+
+export const PROPOSE_CONTRIBUTION = gql`
+  mutation proposeContribution(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $resource: ID! # EconomicResource.id
+    $process: ID! # Process.id
+    $unitOne: ID! # Unit.id
+    $tags: [URI!]
+    $location: ID! # SpatialThing.id
+    $spec: ID! # ResourceSpecification.id
+    $name: String!
+    $note: String
+    $repo: URI
+    $metadata: JSON
+  ) {
+    cite: createEconomicEvent(
+      event: {
+        action: "cite"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceInventoriedAs: $resource
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+    produce: createEconomicEvent(
+      event: {
+        action: "produce"
+        outputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceClassifiedAs: $tags
+        resourceConformsTo: $spec
+        toLocation: $location
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+      newInventoriedResource: { name: $name, note: $note, repo: $repo, metadata: $metadata }
+    ) {
+      economicEvent {
+        id
+        resourceInventoriedAs {
+          id
+          name
         }
       }
     }

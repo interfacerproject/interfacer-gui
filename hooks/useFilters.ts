@@ -15,6 +15,7 @@ const useFilters = () => {
     const tagsList = typeof tags === "string" ? tags.split(",") : tags;
     const conformToList = typeof conformsTo === "string" ? conformsTo.split(",") : conformsTo;
 
+    // @ts-ignore
     setProposalFilter({
       conformsTo: conformToList,
       primaryAccountable: primaryAccountableList,

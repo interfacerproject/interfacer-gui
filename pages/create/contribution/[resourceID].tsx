@@ -8,9 +8,12 @@ import { NextPageWithLayout } from "pages/_app";
 import { ReactElement, useState } from "react";
 
 // Request
-import { useQuery } from "@apollo/client";
-import { GET_RESOURCE_DETAILS, QUERY_RESOURCE } from "lib/QueryAndMutation";
-import { EconomicResource, GetResourceDetailsQuery, GetResourceDetailsQueryVariables } from "lib/types";
+import { useMutation, useQuery } from "@apollo/client";
+import { PROPOSE_CONTRIBUTION, QUERY_RESOURCE, QUERY_UNIT_AND_CURRENCY } from "lib/QueryAndMutation";
+import { EconomicResource, GetUnitAndCurrencyQuery } from "lib/types";
+import { CREATE_PROCESS } from "lib/QueryAndMutation";
+import devLog from "lib/devLog";
+import { useAuth } from "hooks/useAuth";
 
 //
 
@@ -21,12 +24,43 @@ const CreateContribution: NextPageWithLayout = () => {
   const router = useRouter();
   const { resourceID } = router.query;
   const id = resourceID?.toString() || "";
+  const { user } = useAuth();
 
+  const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
+  const [createProcess] = useMutation(CREATE_PROCESS);
+  const [proposeContribution] = useMutation(PROPOSE_CONTRIBUTION);
   const { data, error } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id },
   });
 
   const resource = data?.economicResource;
+
+  const onSubmit = async (formData: any) => {
+    if (!resource) throw new Error("No original resource found");
+    else {
+      const processName = `contribution of ${resource.name} by ${user!.name}`;
+      const { data: processData, errors } = await createProcess({ variables: { name: processName } });
+      if (errors) throw new Error(errors[0].message);
+      devLog("The process was created successfully with id: " + processData.createProcess.process.id);
+      const variables = {
+        resource: id,
+        process: processData.createProcess.process.id,
+        agent: user!.ulid,
+        name: `${resource!.name} forked by ${user!.name}`,
+        note: formData.description,
+        metadata: JSON.stringify(resource?.metadata),
+        location: resource!.currentLocation?.id,
+        unitOne: unitAndCurrency?.units.unitOne.id!,
+        creationTime: new Date().toISOString(),
+        repo: formData.repositoryOrId,
+        tags: resource!.classifiedAs,
+        spec: resource!.conformsTo.id,
+      };
+      devLog("The variables are: ", variables);
+      const proposal = await proposeContribution({ variables });
+      devLog("The contribution was created successfully with id: " + JSON.stringify(proposal));
+    }
+  };
 
   if (error) {
     return (
@@ -67,7 +101,7 @@ const CreateContribution: NextPageWithLayout = () => {
           </Stack>
         )}
 
-        <CreateContributionFrom onSubmit={() => {}} error={formError} setError={setFormError} />
+        <CreateContributionFrom onSubmit={onSubmit} error={formError} setError={setFormError} />
       </Stack>
     </>
   );
