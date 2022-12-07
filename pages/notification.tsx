@@ -17,6 +17,12 @@ export enum ProposalType {
   OTHER = "Other",
 }
 
+export enum MessageSubject {
+  CONTRIBUTION_REQUEST = "contributionRequest",
+  CONTRIBUTION_ACCEPTED = "contributionAccepted",
+  CONTRIBUTION_REJECTED = "contributionRejected",
+}
+
 export interface Proposal {
   ID: string;
   senderID: string;
@@ -59,7 +65,7 @@ export interface ProposalRejectedNotification {
 
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { startReading, messages, setReadedMessages, countUnread, sendMessage } = useInBox();
+  const { startReading, messages, setReadedMessages, countUnread } = useInBox();
   useEffect(() => {
     startReading();
     countUnread > 0 &&
@@ -90,11 +96,11 @@ const Notification = () => {
     switch (props.message.subject) {
       case "contribution":
         return <ContributionRow contribution={props.message} />;
-      case "contributionRequest":
+      case MessageSubject.CONTRIBUTION_REQUEST:
         return <RenderContributionRequest {...props} />;
-      case "contributionAccepted":
+      case MessageSubject.CONTRIBUTION_ACCEPTED:
         return <RenderContributionAccepted {...props} />;
-      case "contributionRejected":
+      case MessageSubject.CONTRIBUTION_REJECTED:
         return <RenderContributionRejected {...props} />;
       default:
         return <div />;
@@ -184,7 +190,7 @@ const RenderContributionRequest = ({
       <Button
         primary
         onClick={() => {
-          router.push("/");
+          router.push(`/proposal/${_parsedMessage.proposalID}`);
         }}
       >
         {"review"}

@@ -32,7 +32,7 @@ export const QUERY_VARIABLES = gql`
 
 export const CREATE_PROPOSAL = gql`
   mutation CreateProposal {
-    createProposal(proposal: { name: "price tag", unitBased: true }) {
+    createProposal(proposal: { name: "contribution" }) {
       proposal {
         id
       }
@@ -507,7 +507,7 @@ export const CREATE_PROCESS = gql`
   }
 `;
 
-export const PROPOSE_CONTRIBUTION = gql`
+export const FORK_ASSET = gql`
   mutation proposeContribution(
     $agent: ID! # Agent.id
     $creationTime: DateTime!
@@ -554,6 +554,88 @@ export const PROPOSE_CONTRIBUTION = gql`
       economicEvent {
         id
         resourceInventoriedAs {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const PROPOSE_CONTRIBUTION = gql`
+  mutation proposeContribution(
+    $process: ID!
+    $agent: ID!
+    $creationTime: DateTime!
+    $resource: ID!
+    $unitOne: ID!
+    $tags: [URI!]
+    $spec: ID!
+  ) {
+    citeForkedAsset: createIntent(
+      intent: {
+        action: "cite"
+        inputOf: $process
+        provider: $agent
+        hasPointInTime: $creationTime
+        resourceInventoriedAs: $resource
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      intent {
+        id
+      }
+    }
+    produceNewResource: createIntent(
+      intent: {
+        action: "produce"
+        outputOf: $process
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceClassifiedAs: $tags
+        resourceConformsTo: $spec
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      intent {
+        id
+      }
+    }
+  }
+`;
+
+export const LINK_CONTRIBUTION_PROPOSAL_INTENT = gql`
+  mutation LinkProposalAndIntent($proposal: ID!, $citeForkedAsset: ID!, $produceNewResource: ID!) {
+    linkItem: proposeIntent(publishedIn: $proposal, publishes: $citeForkedAsset, reciprocal: false) {
+      proposedIntent {
+        id
+      }
+    }
+    linkPayment: proposeIntent(publishedIn: $proposal, publishes: $produceNewResource, reciprocal: false) {
+      proposedIntent {
+        id
+      }
+    }
+  }
+`;
+
+export const QUERY_PROPOSAL = gql`
+  query ($id: ID!) {
+    proposal(id: $id) {
+      id
+      name
+      primaryIntents {
+        id
+        inputOf {
+          name
+          id
+        }
+        outputOf {
+          id
+          name
+        }
+        hasPointInTime
+        resourceConformsTo {
           id
           name
         }

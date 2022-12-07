@@ -9,11 +9,20 @@ import { ReactElement, useState } from "react";
 
 // Request
 import { useMutation, useQuery } from "@apollo/client";
-import { PROPOSE_CONTRIBUTION, QUERY_RESOURCE, QUERY_UNIT_AND_CURRENCY } from "lib/QueryAndMutation";
+import {
+  CREATE_PROPOSAL,
+  FORK_ASSET,
+  LINK_CONTRIBUTION_PROPOSAL_INTENT,
+  PROPOSE_CONTRIBUTION,
+  QUERY_RESOURCE,
+  QUERY_UNIT_AND_CURRENCY,
+} from "lib/QueryAndMutation";
 import { EconomicResource, GetUnitAndCurrencyQuery } from "lib/types";
 import { CREATE_PROCESS } from "lib/QueryAndMutation";
 import devLog from "lib/devLog";
 import { useAuth } from "hooks/useAuth";
+import useInBox from "../../../hooks/useInBox";
+import { MessageSubject, ProposalNotification, ProposalType } from "../../notification";
 
 //
 
@@ -25,10 +34,15 @@ const CreateContribution: NextPageWithLayout = () => {
   const { resourceID } = router.query;
   const id = resourceID?.toString() || "";
   const { user } = useAuth();
+  const { sendMessage } = useInBox();
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [createProcess] = useMutation(CREATE_PROCESS);
+  const [forkAsset] = useMutation(FORK_ASSET);
+  const [createProposal] = useMutation(CREATE_PROPOSAL);
   const [proposeContribution] = useMutation(PROPOSE_CONTRIBUTION);
+  const [linkProposalAndIntents] = useMutation(LINK_CONTRIBUTION_PROPOSAL_INTENT);
+
   const { data, error } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id },
   });
@@ -42,7 +56,7 @@ const CreateContribution: NextPageWithLayout = () => {
       const { data: processData, errors } = await createProcess({ variables: { name: processName } });
       if (errors) throw new Error(errors[0].message);
       devLog("The process was created successfully with id: " + processData.createProcess.process.id);
-      const variables = {
+      const forkVariables = {
         resource: id,
         process: processData.createProcess.process.id,
         agent: user!.ulid,
@@ -56,9 +70,50 @@ const CreateContribution: NextPageWithLayout = () => {
         tags: resource!.classifiedAs,
         spec: resource!.conformsTo.id,
       };
-      devLog("The variables are: ", variables);
-      const proposal = await proposeContribution({ variables });
-      devLog("The contribution was created successfully with id: " + JSON.stringify(proposal));
+      devLog("The forking variables are: ", forkVariables);
+      const forkedAsset = await forkAsset({ variables: forkVariables });
+      devLog("The forked asset was created successfully with id: " + JSON.stringify(forkedAsset));
+      const forkedAssetId = forkedAsset.data?.produce.economicEvent?.resourceInventoriedAs?.id;
+      if (!forkedAssetId) throw new Error("No forked asset id found");
+
+      const proposal = await createProposal();
+      devLog("The proposal was created successfully with id: " + JSON.stringify(proposal));
+
+      const contributionVariables = {
+        resource: forkedAssetId,
+        process: processData.createProcess.process.id,
+        agent: resource!.primaryAccountable?.id,
+        // name: resource!.name,
+        // note: resource!.note,
+        // metadata: JSON.stringify(resource?.metadata),
+        // location: resource!.currentLocation?.id,
+        unitOne: unitAndCurrency?.units.unitOne.id!,
+        creationTime: new Date().toISOString(),
+        // repo: resource!.repo,
+        tags: resource!.classifiedAs,
+        spec: resource!.conformsTo.id,
+      };
+      devLog("The contribution variables are: ", contributionVariables);
+      const contribution = await proposeContribution({ variables: contributionVariables });
+      devLog("The intent is " + JSON.stringify(contribution));
+      const linkProposalAndIntentsVariables = {
+        proposal: proposal.data?.createProposal.proposal.id,
+        citeForkedAsset: contribution.data?.citeForkedAsset.intent.id,
+        produceNewResource: contribution.data?.produceNewResource.intent.id,
+      };
+      devLog("The link variables are: ", linkProposalAndIntentsVariables);
+      const linkProposalAndIntentsResult = await linkProposalAndIntents({ variables: linkProposalAndIntentsVariables });
+      devLog("The link result is " + JSON.stringify(linkProposalAndIntentsResult));
+      const message: ProposalNotification = {
+        proposalID: proposal.data?.createProposal.proposal.id,
+        text: formData.description,
+        type: formData.type,
+        originalResourceName: resource.name,
+        originalResourceID: resource.id,
+        proposerName: user!.name,
+      };
+      sendMessage(JSON.stringify(message), [resource.primaryAccountable.id], MessageSubject.CONTRIBUTION_REQUEST);
+      router.push(`/proposal/${proposal.data?.createProposal.proposal.id}`);
     }
   };
 
