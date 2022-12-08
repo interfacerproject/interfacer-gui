@@ -1,72 +1,9 @@
 import { Card } from "@bbtgnn/polaris-interfacer";
-import { EconomicResource, FetchInventoryQuery, EconomicResourceFilterParams } from "../lib/types";
+import { EconomicResource, FetchInventoryQuery, EconomicResourceFilterParams } from "lib/types";
 import { gql, useQuery } from "@apollo/client";
 import CardsGroup from "./CardsGroup";
 import useLoadMore from "../hooks/useLoadMore";
-
-const FETCH_INVENTORY = gql`
-  query FetchInventory($first: Int, $after: ID, $last: Int, $before: ID, $filter: EconomicResourceFilterParams) {
-    economicResources(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
-      pageInfo {
-        startCursor
-        endCursor
-        hasPreviousPage
-        hasNextPage
-        totalCount
-        pageLimit
-      }
-      edges {
-        cursor
-        node {
-          conformsTo {
-            id
-            name
-          }
-          currentLocation {
-            id
-            name
-            mappableAddress
-          }
-          id
-          name
-          note
-          metadata
-          okhv
-          repo
-          version
-          licensor
-          license
-          primaryAccountable {
-            id
-            name
-            note
-          }
-          custodian {
-            id
-            name
-            note
-          }
-          accountingQuantity {
-            hasUnit {
-              id
-              label
-              symbol
-            }
-            hasNumericalValue
-          }
-          onhandQuantity {
-            hasUnit {
-              id
-              label
-              symbol
-            }
-            hasNumericalValue
-          }
-        }
-      }
-    }
-  }
-`;
+import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 
 export interface ResourcesCardsProps {
   filter?: EconomicResourceFilterParams;
@@ -86,7 +23,7 @@ const ResourcesCards = (props: ResourcesCardsProps) => {
   } = props;
   const dataQueryIdentifier = "economicResources";
 
-  const { loading, data, error, fetchMore, variables, refetch } = useQuery<FetchInventoryQuery>(FETCH_INVENTORY, {
+  const { loading, data, error, fetchMore, variables, refetch } = useQuery<FetchInventoryQuery>(FETCH_RESOURCES, {
     variables: {
       last: 10,
       filter: filter,
@@ -144,7 +81,7 @@ const ResourcesCards = (props: ResourcesCardsProps) => {
               ]}
             >
               <img src={e.node.metadata?.image} className="w-20 h-20" />
-              <p>{e.node.note}</p>
+              <p className="w-64">{e.node.note}</p>
             </Card>
           </>
         ))}

@@ -13,10 +13,12 @@ const Search: NextPageWithLayout = () => {
   const [checked, setChecked] = useState(false);
   const { t } = useTranslation("common");
   const Assetfilter = {
-    orPrimaryIntentsResourceInventoriedAsName: q?.toString(),
-    ...(!checked && { orPrimaryIntentsResourceInventoriedAsNote: q?.toString() }),
+    notCustodian: [process.env.NEXT_PUBLIC_LOASH_ID!],
+    orName: q?.toString(),
+    ...(!checked && { orNote: q?.toString() }),
   };
   const Resourcefilter = {
+    primaryAccountable: [process.env.NEXT_PUBLIC_LOASH_ID!],
     orName: q?.toString(),
     ...(!checked && { orNote: !checked && q?.toString() }),
   };

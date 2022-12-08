@@ -64,8 +64,10 @@ const CardsGroup = (props: CardsGroupProps) => {
           )}
           <div className="flex flex-row flex-nowrap items-start space-x-8">
             <div>
-              {/* CARDS */}
-              {children}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+                {/* CARDS */}
+                {children}
+              </div>
               {/* Pagination */}
               {!hidePagination && nextPage && (
                 <div className="w-full pt-4 text-center">

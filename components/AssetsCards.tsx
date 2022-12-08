@@ -1,12 +1,13 @@
 import { Card } from "@bbtgnn/polaris-interfacer";
-import { GetAssetsQuery, GetAssetsQueryVariables, ProposalFilterParams, EconomicResource } from "../lib/types";
+import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 import { useQuery } from "@apollo/client";
-import { QUERY_ASSETS } from "../lib/QueryAndMutation";
+import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import CardsGroup from "./CardsGroup";
 import useLoadMore from "../hooks/useLoadMore";
+import devLog from "../lib/devLog";
 
 export interface AssetsCardsProps {
-  filter?: ProposalFilterParams;
+  filter?: EconomicResourceFilterParams;
   hidePagination?: boolean;
   hidePrimaryAccountable?: boolean;
   hideHeader?: boolean;
@@ -21,14 +22,11 @@ const AssetsCards = (props: AssetsCardsProps) => {
     hidePrimaryAccountable = false,
     hideFilters = false,
   } = props;
-  const dataQueryIdentifier = "proposals";
+  const dataQueryIdentifier = "economicResources";
 
-  const { loading, data, fetchMore, refetch, variables } = useQuery<GetAssetsQuery, GetAssetsQueryVariables>(
-    QUERY_ASSETS,
-    {
-      variables: { last: 10, filter: filter },
-    }
-  );
+  const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
+    variables: { last: 10, filter: filter },
+  });
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
     refetch,
@@ -38,6 +36,8 @@ const AssetsCards = (props: AssetsCardsProps) => {
   });
 
   const assets = items;
+
+  devLog("assets", assets);
 
   return (
     <>
@@ -50,51 +50,40 @@ const AssetsCards = (props: AssetsCardsProps) => {
         hidePrimaryAccountable={hidePrimaryAccountable}
         hideFilters={hideFilters}
       >
-        {
-          // @ts-ignore
-          assets?.map(
-            ({
-              node: { id, primaryIntents },
-            }: {
-              node: { id: string; primaryIntents: { resourceInventoriedAs: EconomicResource }[] };
-            }) => (
-              <>
-                {Boolean(!primaryIntents || primaryIntents[0]) && (
-                  <Card
-                    key={id}
-                    title={!primaryIntents || primaryIntents[0].resourceInventoriedAs?.name}
-                    footerActionAlignment={"right"}
-                    sectioned
-                    primaryFooterAction={{
-                      id: "primaryFooterAction",
-                      content: "View",
-                      url: `/asset/${id}`,
-                    }}
-                    secondaryFooterActions={[
-                      {
-                        id: "watch",
-                        content: "Watch",
-                        url: "/watch",
-                      },
-                      {
-                        id: "share",
-                        content: "Share",
-                        url: "/share",
-                      },
-                      {
-                        id: "Add to list",
-                        content: "Add to list +",
-                        url: "/add-to-list",
-                      },
-                    ]}
-                  >
-                    <p>{!primaryIntents || primaryIntents[0].resourceInventoriedAs?.note}</p>
-                  </Card>
-                )}
-              </>
-            )
-          )
-        }
+        {assets?.map(({ node }: { node: EconomicResource }) => (
+          <>
+            <Card
+              key={node.id}
+              title={node.name}
+              footerActionAlignment={"right"}
+              sectioned
+              primaryFooterAction={{
+                id: "primaryFooterAction",
+                content: "View",
+                url: `/asset/${node.id}`,
+              }}
+              secondaryFooterActions={[
+                {
+                  id: "watch",
+                  content: "Watch",
+                  url: "/watch",
+                },
+                {
+                  id: "share",
+                  content: "Share",
+                  url: "/share",
+                },
+                {
+                  id: "Add to list",
+                  content: "Add to list +",
+                  url: "/add-to-list",
+                },
+              ]}
+            >
+              <p className="w-64">{node.note}</p>
+            </Card>
+          </>
+        ))}
       </CardsGroup>
     </>
   );
