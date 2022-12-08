@@ -1,8 +1,6 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import cn from "classnames";
-import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -18,6 +16,10 @@ import { useAuth } from "../../hooks/useAuth";
 import useStorage from "../../hooks/useStorage";
 import { EconomicResource } from "../../lib/types";
 import WatchButton from "../../components/WatchButton";
+import { QUERY_RESOURCE } from "../../lib/QueryAndMutation";
+import { Button } from "@bbtgnn/polaris-interfacer";
+import { GetStaticPaths } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -28,52 +30,13 @@ const Asset = () => {
   const [asset, setAsset] = useState<EconomicResource | undefined>();
   const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
-  const [isWatching, setIsWatching] = useState(asset?.metadata?.watchers?.some((w: any) => w.id === user?.ulid));
-  const QUERY_ASSET_PAGE = gql`
-    query GetAssetPage($id: ID!) {
-      proposal(id: $id) {
-        created
-        primaryIntents {
-          hasPointInTime
-          resourceInventoriedAs {
-            conformsTo {
-              name
-              id
-            }
-            currentLocation {
-              name
-            }
-            name
-            id
-            note
-            classifiedAs
-            metadata
-            primaryAccountable {
-              name
-              id
-            }
-            onhandQuantity {
-              hasUnit {
-                label
-              }
-            }
-            images {
-              hash
-              name
-              mimeType
-              bin
-            }
-          }
-        }
-      }
-    }
-  `;
-
-  const { data, startPolling } = useQuery(QUERY_ASSET_PAGE, { variables: { id } });
-  startPolling(2000);
+  const { loading, data, startPolling, refetch } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
+    variables: { id: id },
+  });
+  startPolling(20000);
 
   useEffect(() => {
-    const _asset: EconomicResource = data?.proposal.primaryIntents[0].resourceInventoriedAs;
+    const _asset: EconomicResource | undefined = data?.economicResource;
     setAsset(_asset);
     const singleImage = typeof _asset?.metadata?.image === "string";
     const metadataImage = singleImage ? [_asset?.metadata?.image] : _asset?.metadata?.image || [];
@@ -116,7 +79,13 @@ const Asset = () => {
                 ]}
               />
             </div>
-            <AddStar id={asset.id} metadata={asset.metadata} userId={user?.ulid} />
+            <AddStar
+              id={asset.id}
+              metadata={asset.metadata}
+              userId={user?.ulid}
+              onStarred={refetch}
+              onDestarred={refetch}
+            />
           </div>
           <div className="grid grid-cols-1 px-2 md:grid-cols-3 md:gap-4 md:px-0 md:mx-32">
             <div id="left-col" className="flex flex-col col-span-2">
@@ -142,8 +111,9 @@ const Asset = () => {
                       component: (
                         <ContributorsTable
                           contributors={asset.metadata?.contributors}
-                          date={data?.proposal.created}
                           title={t("Contributors")}
+                          // @ts-ignore
+                          data={asset.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
                         />
                       ),
                     },
@@ -169,6 +139,11 @@ const Asset = () => {
                 name={asset.primaryAccountable.name}
                 location={asset.currentLocation?.name}
               />
+              <div className="mt-8">
+                <Button size="large" fullWidth primary onClick={() => router.push(`/create/contribution/${id}`)}>
+                  {t("Propose a contribute")}
+                </Button>
+              </div>
             </div>
           </div>
         </>
@@ -176,6 +151,7 @@ const Asset = () => {
     </>
   );
 };
+
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   return {
     paths: [], //indicates that no page needs be created at build time

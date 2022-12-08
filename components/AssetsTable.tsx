@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 // Request
 import { useQuery } from "@apollo/client";
-import { QUERY_ASSETS } from "lib/QueryAndMutation";
-import { GetAssetsQuery, GetAssetsQueryVariables, ProposalFilterParams } from "lib/types";
+import { FETCH_RESOURCES } from "lib/QueryAndMutation";
+import { FetchInventoryQuery, FetchInventoryQueryVariables, EconomicResourceFilterParams } from "lib/types";
 
 // Components
 import { AdjustmentsIcon } from "@heroicons/react/outline";
@@ -16,7 +16,7 @@ import Spinner from "./brickroom/Spinner";
 //
 
 export interface AssetsTableProps {
-  filter?: ProposalFilterParams;
+  filter?: EconomicResourceFilterParams;
   hideHeader?: boolean;
   hidePagination?: boolean;
   hidePrimaryAccountable?: boolean;
@@ -28,8 +28,8 @@ export default function AssetsTable(props: AssetsTableProps) {
   const { t } = useTranslation("lastUpdatedProps");
   const { filter = {}, hideHeader = false, hidePagination = false, hidePrimaryAccountable = false } = props;
 
-  const { loading, data, fetchMore, refetch, variables } = useQuery<GetAssetsQuery, GetAssetsQueryVariables>(
-    QUERY_ASSETS,
+  const { loading, data, fetchMore, refetch, variables } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(
+    FETCH_RESOURCES,
     {
       variables: { last: 10, filter: filter },
     }
@@ -40,31 +40,31 @@ export default function AssetsTable(props: AssetsTableProps) {
       return previousResult;
     }
 
-    const previousEdges = previousResult.proposals.edges;
-    const fetchMoreEdges = fetchMoreResult.proposals.edges;
+    const previousEdges = previousResult.economicResources.edges;
+    const fetchMoreEdges = fetchMoreResult.economicResources.edges;
 
-    fetchMoreResult.proposals.edges = [...previousEdges, ...fetchMoreEdges];
+    fetchMoreResult.economicResources.edges = [...previousEdges, ...fetchMoreEdges];
 
     return { ...fetchMoreResult };
   };
 
-  const getHasNextPage = data?.proposals.pageInfo.hasNextPage;
+  const getHasNextPage = data?.economicResources?.pageInfo.hasNextPage;
   const loadMore = () => {
     if (data && fetchMore) {
       const nextPage = getHasNextPage;
-      const before = data.proposals.pageInfo.endCursor;
+      const before = data.economicResources?.pageInfo.endCursor;
       if (nextPage && before !== null) {
         fetchMore({ updateQuery, variables: { before } });
       }
     }
   };
-  const assets = data?.proposals.edges;
+  const assets = data?.economicResources?.edges;
   const showEmptyState = assets?.length === 0;
 
   // Poll interval that works with pagination
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const total = data?.proposals.edges.length || 0;
+      const total = data?.economicResources?.edges.length || 0;
 
       refetch({
         ...variables,
@@ -72,7 +72,7 @@ export default function AssetsTable(props: AssetsTableProps) {
       });
     }, 10000);
     return () => clearInterval(intervalId);
-  }, [...Object.values(variables!).flat(), data?.proposals.pageInfo.startCursor]);
+  }, [...Object.values(variables!).flat(), data?.economicResources?.pageInfo.startCursor]);
 
   const [showFilter, setShowFilter] = useState(false);
   const toggleFilter = () => setShowFilter(!showFilter);

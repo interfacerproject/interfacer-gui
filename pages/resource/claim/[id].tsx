@@ -129,36 +129,11 @@ const ClaimAsset: NextPageWithLayout = () => {
       devLog("info: economicEvent", economicEvent);
       devLog("info: asset", asset);
 
-      // Create proposal & intent
-      const { data: createProposalData } = await createProposal();
-      devLog("info: created proposal", createProposalData?.createProposal.proposal);
-
-      const { data: createIntentData } = await createIntent({
-        variables: {
-          agent: user?.ulid!,
-          resource: asset.id!,
-          oneUnit: unitAndCurrency?.units.unitOne.id!,
-          howMuch: 1,
-          currency: unitAndCurrency?.specs.specCurrency.id!,
-        },
-      });
-      devLog("info: created intent", createIntentData);
-
-      // Linking the two of them
-      const { data: linkData } = await linkProposalAndIntent({
-        variables: {
-          proposal: createProposalData?.createProposal.proposal.id!,
-          item: createIntentData?.item.intent.id!,
-          payment: createIntentData?.payment.intent.id!,
-        },
-      });
-      devLog("info: created link", linkData);
-
       // TODO: Send message
       // ...
 
       // Redirecting user
-      await router.replace(`/asset/${createProposalData?.createProposal.proposal.id}`);
+      await router.replace(`/asset/${asset.id}`);
     } catch (e) {
       devLog(e);
       let err = errorFormatter(e);

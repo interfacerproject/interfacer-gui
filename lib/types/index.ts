@@ -316,6 +316,7 @@ export type EconomicEvent = {
   /** Defines the process to which this event is an output. */
   outputOf?: Maybe<Process>;
   previous?: Maybe<ProductionFlowItem>;
+  previousEvent?: Maybe<EconomicEvent>;
   /** The economic agent from whom the actual economic event is initiated. */
   provider: Agent;
   /** This economic event occurs as part of this agreement. */
@@ -612,12 +613,16 @@ export type EconomicResourceFilterParams = {
   conformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   custodian?: InputMaybe<Array<Scalars["ID"]>>;
   gtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Decimal"]>;
+  id?: InputMaybe<Array<Scalars["ID"]>>;
+  notCustodian?: InputMaybe<Array<Scalars["ID"]>>;
+  notPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
   name?: InputMaybe<Scalars["String"]>;
   note?: InputMaybe<Scalars["String"]>;
   orClassifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   orConformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   orCustodian?: InputMaybe<Array<Scalars["ID"]>>;
   orGtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Decimal"]>;
+  orId?: InputMaybe<Array<Scalars["ID"]>>;
   orName?: InputMaybe<Scalars["String"]>;
   orNote?: InputMaybe<Scalars["String"]>;
   orPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
@@ -3378,6 +3383,7 @@ export type CreateAssetMutationVariables = Exact<{
   resourceSpec: Scalars["ID"];
   oneUnit: Scalars["ID"];
   images?: InputMaybe<Array<IFile> | IFile>;
+  repo?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type CreateAssetMutation = {
@@ -3428,6 +3434,11 @@ export type GetResourceTableQuery = {
     name: string;
     note?: string | null;
     metadata?: any | null;
+    trace?: Array<
+      | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
+      | { __typename: "EconomicResource" }
+      | { __typename: "Process" }
+    > | null;
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     onhandQuantity: {
       __typename?: "Measure";
