@@ -111,12 +111,14 @@ export const CREATE_ASSET = gql`
     $oneUnit: ID!
     $images: [IFile!]
     $repo: String
+    $process: ID!
   ) {
     createEconomicEvent(
       event: {
         action: "raise"
         provider: $agent
         receiver: $agent
+        outputOf: $process
         hasPointInTime: $creationTime
         resourceClassifiedAs: $tags
         resourceConformsTo: $resourceSpec
@@ -639,6 +641,32 @@ export const QUERY_PROPOSAL = gql`
           id
           name
         }
+      }
+    }
+  }
+`;
+
+export const CITE_ASSET = gql`
+  mutation citeAsset(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $resource: ID! # EconomicResource.id
+    $process: ID! # Process.id
+    $unitOne: ID! # Unit.id
+  ) {
+    createEconomicEvent(
+      event: {
+        action: "cite"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceInventoriedAs: $resource
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      economicEvent {
+        id
       }
     }
   }
