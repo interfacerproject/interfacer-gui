@@ -15,14 +15,7 @@ import Layout from "../components/layout/CreateAssetLayout";
 import { useMutation, useQuery } from "@apollo/client";
 import useStorage from "hooks/useStorage";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
-import {
-  CREATE_ASSET,
-  CREATE_INTENT,
-  CREATE_LOCATION,
-  CREATE_PROPOSAL,
-  LINK_PROPOSAL_AND_INTENT,
-  QUERY_UNIT_AND_CURRENCY,
-} from "lib/QueryAndMutation";
+import { CREATE_ASSET, CREATE_LOCATION, QUERY_UNIT_AND_CURRENCY } from "lib/QueryAndMutation";
 import {
   CreateAssetMutation,
   CreateAssetMutationVariables,
@@ -119,9 +112,6 @@ const CreateProject: NextPageWithLayout = () => {
       // Create asset
       const { data: createAssetData, errors } = await createAsset({ variables });
       if (errors) throw new Error("AssetNotCreated");
-
-      // TODO: Send message
-      // ...
 
       // Redirecting user
       await router.replace(`/asset/${createAssetData?.createEconomicEvent?.economicEvent?.resourceInventoriedAs?.id}`);

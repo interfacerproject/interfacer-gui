@@ -22,7 +22,7 @@ import { CREATE_PROCESS } from "lib/QueryAndMutation";
 import devLog from "lib/devLog";
 import { useAuth } from "hooks/useAuth";
 import useInBox from "../../../hooks/useInBox";
-import { MessageSubject, ProposalNotification, ProposalType } from "../../notification";
+import { MessageSubject, ProposalNotification } from "../../notification";
 
 //
 
