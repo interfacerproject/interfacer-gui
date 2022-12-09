@@ -1,12 +1,12 @@
-import { useRouter } from "next/router";
-import AssetsCards from "../components/AssetsCards";
-import ResourcesCards from "../components/ResourcesCards";
-import { NextPageWithLayout } from "./_app";
-import { ReactElement, useState } from "react";
-import Layout from "../components/layout/SearchLayout";
-import SearchBar from "../components/SearchBar";
 import { Checkbox } from "@bbtgnn/polaris-interfacer";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import { ReactElement, useState } from "react";
+import AssetsCards from "../components/AssetsCards";
+import Layout from "../components/layout/SearchLayout";
+import ResourcesCards from "../components/ResourcesCards";
+import SearchBar from "../components/SearchBar";
+import { NextPageWithLayout } from "./_app";
 
 const Search: NextPageWithLayout = () => {
   const { q } = useRouter().query;
@@ -14,13 +14,13 @@ const Search: NextPageWithLayout = () => {
   const { t } = useTranslation("common");
   const Assetfilter = {
     notCustodian: [process.env.NEXT_PUBLIC_LOASH_ID!],
-    orName: q?.toString(),
-    ...(!checked && { orNote: q?.toString() }),
+    name: q?.toString(),
+    ...(!checked && { note: q?.toString() }),
   };
   const Resourcefilter = {
     primaryAccountable: [process.env.NEXT_PUBLIC_LOASH_ID!],
-    orName: q?.toString(),
-    ...(!checked && { orNote: !checked && q?.toString() }),
+    name: q?.toString(),
+    ...(!checked && { note: !checked && q?.toString() }),
   };
 
   return (
