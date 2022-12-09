@@ -27,6 +27,7 @@ import { LocationLookup } from "lib/fetchLocation";
 // Other
 import { SelectOption } from "components/brickroom/utils/BrSelectUtils";
 import { isRequired } from "lib/isFieldRequired";
+import SelectResources from "../../SelectResources";
 
 //
 
@@ -46,6 +47,7 @@ export namespace CreateAssetNS {
     price: string;
     images: Array<File>;
     contributors: Array<ContributorOption>;
+    resources: Array<ContributorOption>;
   }
 }
 
@@ -89,27 +91,34 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
     price: "1",
     images: [], //as Array<File>
     contributors: [], // Array<{id:string, name:string}>
+    resources: [], // Array<{id:string, name:string}>
   };
 
-  const schema = yup
-    .object({
-      name: yup.string().required(),
-      description: yup.string().required(),
-      type: yup.string().required(),
-      repositoryOrId: yup.string().required(),
-      tags: yup.array(yup.object()),
-      location: yup.object().required(),
-      locationName: yup.string().required(),
-      price: yup.string().required(),
-      images: yup.array(), // Array<File & {preview: string}>
-      contributors: yup.array(
-        yup.object({
+  const schema = yup.object({
+    name: yup.string().required(),
+    description: yup.string().required(),
+    type: yup.string().required(),
+    repositoryOrId: yup.string().required(),
+    tags: yup.array(yup.object()),
+    location: yup.object().required(),
+    locationName: yup.string().required(),
+    price: yup.string().required(),
+    images: yup.array(), // Array<File & {preview: string}>
+    contributors: yup.array(
+      yup
+        .object({
           id: yup.string(),
           name: yup.string(),
         })
-      ),
-    })
-    .required();
+        .required()
+    ),
+    resources: yup.array(
+      yup.object({
+        id: yup.string(),
+        name: yup.string(),
+      })
+    ),
+  });
 
   const form = useForm<CreateAssetNS.FormValues>({
     mode: "all",
@@ -249,6 +258,27 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             isMulti
             placeholder={t("Type to search for a user")}
             error={errors.contributors?.message}
+            creatable={false}
+            requiredIndicator={isRequired(schema, name)}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="resources"
+        render={({ field: { onChange, onBlur, name, ref } }) => (
+          <SelectResources
+            name={name}
+            ref={ref}
+            id={name}
+            onBlur={onBlur}
+            onChange={onChange}
+            label={`${t("Include other resources")}:`}
+            isMulti
+            helpText={t("To include other resources, search by name or Interfacer ID")}
+            placeholder={t("Search resource name")}
+            error={errors.resources?.message}
             creatable={false}
             requiredIndicator={isRequired(schema, name)}
           />

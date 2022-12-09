@@ -16,11 +16,10 @@ import { useMutation, useQuery } from "@apollo/client";
 import useStorage from "hooks/useStorage";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
 import {
+  CITE_ASSET,
   CREATE_ASSET,
-  CREATE_INTENT,
   CREATE_LOCATION,
-  CREATE_PROPOSAL,
-  LINK_PROPOSAL_AND_INTENT,
+  CREATE_PROCESS,
   QUERY_UNIT_AND_CURRENCY,
 } from "lib/QueryAndMutation";
 import {
@@ -64,8 +63,10 @@ const CreateProject: NextPageWithLayout = () => {
   /* Getting all the needed mutations */
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
+  const [citeAsset] = useMutation(CITE_ASSET);
   const [createAsset] = useMutation<CreateAssetMutation, CreateAssetMutationVariables>(CREATE_ASSET);
   const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
+  const [createProcess] = useMutation(CREATE_PROCESS);
 
   /* Location Creation */
 
@@ -92,6 +93,10 @@ const CreateProject: NextPageWithLayout = () => {
 
   async function handleAssetCreation(formData: CreateAssetNS.FormValues) {
     try {
+      const processName = `creation of ${formData.name} by ${user!.name}`;
+      const { data: processData } = await createProcess({ variables: { name: processName } });
+      devLog("success: process created", processData);
+
       const location = await handleCreateLocation(formData);
       // devLog is in handleCreateLocation
       const images = await prepFilesForZenflows(formData.images, getItem("eddsa"));
@@ -101,8 +106,21 @@ const CreateProject: NextPageWithLayout = () => {
       const contributors = formData.contributors.map(c => c.value);
       devLog("info: contributors prepared", contributors);
 
+      for (const resource of formData.resources) {
+        devLog("pp", resource.value);
+        const citeVariables = {
+          agent: user!.ulid,
+          resource: resource.value.id,
+          process: processData?.createProcess.process.id,
+          creationTime: new Date().toISOString(),
+          unitOne: unitAndCurrency?.units.unitOne.id!,
+        };
+        await citeAsset({ variables: citeVariables });
+      }
+
       const variables: CreateAssetMutationVariables = {
         resourceSpec: formData.type,
+        process: processData.createProcess.process.id,
         agent: user?.ulid!,
         name: formData.name,
         note: formData.description,
@@ -119,9 +137,6 @@ const CreateProject: NextPageWithLayout = () => {
       // Create asset
       const { data: createAssetData, errors } = await createAsset({ variables });
       if (errors) throw new Error("AssetNotCreated");
-
-      // TODO: Send message
-      // ...
 
       // Redirecting user
       await router.replace(`/asset/${createAssetData?.createEconomicEvent?.economicEvent?.resourceInventoriedAs?.id}`);
