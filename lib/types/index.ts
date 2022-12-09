@@ -548,6 +548,7 @@ export type EconomicResource = {
    */
   state?: Maybe<Action>;
   trace?: Maybe<Array<TrackTraceItem>>;
+  traceDpp: Scalars["JSON"];
   /**
    * Sometimes called serial number, used when each item must have a traceable
    * identifier (like a computer).  Could also be used for other unique

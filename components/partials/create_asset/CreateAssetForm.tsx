@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import { Button, Card, Spinner, Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Select, Spinner, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import BrImageUpload from "components/brickroom/BrImageUpload";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import BrRadioOption from "components/brickroom/BrRadioOption";
@@ -44,6 +44,7 @@ export namespace CreateAssetNS {
     tags: Array<SelectOption<string>>;
     location: LocationLookup.Location | null;
     locationName: string;
+    license: string;
     price: string;
     images: Array<File>;
     contributors: Array<ContributorOption>;
@@ -78,6 +79,20 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
       label: t("A physical product that can be picked up or delivered"),
     },
   ];
+
+  const licenseTypes = [
+    "Creative Commons - Attribution",
+    "Creative Commons - Attribution - Share Alike",
+    "Creative Commons - Attribution - No Derivatives",
+    "Creative Commons - Attribution - Non-Commercial ",
+    "Creative Commons - Attribution - Non-Commercial - Share Alike",
+    "Creative Commons - Attribution - Non-commercial - No Derivatives",
+    "Creative Commons - Public Domain Dedication",
+    "GNU - GPL ",
+    "GNU - LGPL ",
+    "BSD License",
+  ];
+
   //
 
   const defaultValues: CreateAssetNS.FormValues = {
@@ -88,25 +103,27 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
     tags: [],
     location: null,
     locationName: "",
+    license: "",
     price: "1",
     images: [], //as Array<File>
     contributors: [], // Array<{id:string, name:string}>
     resources: [], // Array<{id:string, name:string}>
   };
 
-  const schema = yup.object({
-    name: yup.string().required(),
-    description: yup.string().required(),
-    type: yup.string().required(),
-    repositoryOrId: yup.string().required(),
-    tags: yup.array(yup.object()),
-    location: yup.object().required(),
-    locationName: yup.string().required(),
-    price: yup.string().required(),
-    images: yup.array(), // Array<File & {preview: string}>
-    contributors: yup.array(
-      yup
-        .object({
+  const schema = yup
+    .object({
+      name: yup.string().required(),
+      description: yup.string().required(),
+      type: yup.string().required(),
+      repositoryOrId: yup.string().required(),
+      tags: yup.array(yup.object()),
+      location: yup.object().required(),
+      license: yup.string().oneOf(licenseTypes).required(),
+      locationName: yup.string().required(),
+      price: yup.string().required(),
+      images: yup.array(), // Array<File & {preview: string}>
+      contributors: yup.array(
+        yup.object({
           id: yup.string(),
           name: yup.string(),
         })
@@ -198,6 +215,25 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             helpText={t("Reference to the asset's repository or Interfacer ID of the asset")}
             error={errors.repositoryOrId?.message}
             requiredIndicator={isRequired(schema, name)}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="license"
+        render={({ field: { onChange, onBlur, name, value } }) => (
+          <Select
+            options={licenseTypes}
+            id={name}
+            name={name}
+            value={value}
+            onChange={onChange}
+            onBlur={onBlur}
+            label={t("Select license type")}
+            error={errors.license?.message}
+            requiredIndicator={isRequired(schema, name)}
+            placeholder={t("Select license type")}
           />
         )}
       />
