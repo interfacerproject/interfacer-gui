@@ -32,7 +32,7 @@ export const QUERY_VARIABLES = gql`
 
 export const CREATE_PROPOSAL = gql`
   mutation CreateProposal {
-    createProposal(proposal: { name: "price tag", unitBased: true }) {
+    createProposal(proposal: { name: "contribution" }) {
       proposal {
         id
       }
@@ -110,19 +110,22 @@ export const CREATE_ASSET = gql`
     $resourceSpec: ID!
     $oneUnit: ID!
     $images: [IFile!]
+    $repo: String
+    $process: ID!
   ) {
     createEconomicEvent(
       event: {
         action: "raise"
         provider: $agent
         receiver: $agent
+        outputOf: $process
         hasPointInTime: $creationTime
         resourceClassifiedAs: $tags
         resourceConformsTo: $resourceSpec
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
         toLocation: $location
       }
-      newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata }
+      newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata, repo: $repo }
     ) {
       economicEvent {
         id
@@ -178,6 +181,12 @@ export const QUERY_RESOURCE = gql`
       name
       note
       metadata
+      trace {
+        __typename
+        ... on EconomicEvent {
+          hasPointInTime
+        }
+      }
       conformsTo {
         id
         name
@@ -202,6 +211,7 @@ export const QUERY_RESOURCE = gql`
         name
       }
       currentLocation {
+        id
         name
         mappableAddress
       }
@@ -373,6 +383,290 @@ export const FETCH_USER = gql`
       primaryLocation {
         name
         mappableAddress
+      }
+    }
+  }
+`;
+
+export const FETCH_RESOURCES = gql`
+  query FetchInventory($first: Int, $after: ID, $last: Int, $before: ID, $filter: EconomicResourceFilterParams) {
+    economicResources(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
+      pageInfo {
+        startCursor
+        endCursor
+        hasPreviousPage
+        hasNextPage
+        totalCount
+        pageLimit
+      }
+      edges {
+        cursor
+        node {
+          conformsTo {
+            id
+            name
+          }
+          currentLocation {
+            id
+            name
+            mappableAddress
+          }
+          id
+          name
+          classifiedAs
+          note
+          metadata
+          okhv
+          repo
+          version
+          licensor
+          license
+          trace {
+            __typename
+            ... on EconomicEvent {
+              hasPointInTime
+            }
+          }
+          primaryAccountable {
+            id
+            name
+            note
+          }
+          custodian {
+            id
+            name
+            note
+          }
+          accountingQuantity {
+            hasUnit {
+              id
+              label
+              symbol
+            }
+            hasNumericalValue
+          }
+          onhandQuantity {
+            hasUnit {
+              id
+              label
+              symbol
+            }
+            hasNumericalValue
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_RESOURCE_DETAILS = gql`
+  query GetResourceDetails($id: ID!) {
+    proposal(id: $id) {
+      created
+      primaryIntents {
+        hasPointInTime
+        resourceInventoriedAs {
+          conformsTo {
+            name
+            id
+          }
+          currentLocation {
+            name
+          }
+          name
+          id
+          note
+          classifiedAs
+          metadata
+          primaryAccountable {
+            name
+            id
+          }
+          onhandQuantity {
+            hasUnit {
+              label
+            }
+          }
+          images {
+            hash
+            name
+            mimeType
+            bin
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_PROCESS = gql`
+  mutation ($name: String!) {
+    createProcess(process: { name: $name }) {
+      process {
+        id
+      }
+    }
+  }
+`;
+
+export const FORK_ASSET = gql`
+  mutation proposeContribution(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $resource: ID! # EconomicResource.id
+    $process: ID! # Process.id
+    $unitOne: ID! # Unit.id
+    $tags: [URI!]
+    $location: ID! # SpatialThing.id
+    $spec: ID! # ResourceSpecification.id
+    $name: String!
+    $note: String
+    $repo: URI
+    $metadata: JSON
+  ) {
+    cite: createEconomicEvent(
+      event: {
+        action: "cite"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceInventoriedAs: $resource
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+    produce: createEconomicEvent(
+      event: {
+        action: "produce"
+        outputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceClassifiedAs: $tags
+        resourceConformsTo: $spec
+        toLocation: $location
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+      newInventoriedResource: { name: $name, note: $note, repo: $repo, metadata: $metadata }
+    ) {
+      economicEvent {
+        id
+        resourceInventoriedAs {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const PROPOSE_CONTRIBUTION = gql`
+  mutation proposeContribution(
+    $process: ID!
+    $agent: ID!
+    $creationTime: DateTime!
+    $resource: ID!
+    $unitOne: ID!
+    $tags: [URI!]
+    $spec: ID!
+  ) {
+    citeForkedAsset: createIntent(
+      intent: {
+        action: "cite"
+        inputOf: $process
+        provider: $agent
+        hasPointInTime: $creationTime
+        resourceInventoriedAs: $resource
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      intent {
+        id
+      }
+    }
+    produceNewResource: createIntent(
+      intent: {
+        action: "produce"
+        outputOf: $process
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceClassifiedAs: $tags
+        resourceConformsTo: $spec
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      intent {
+        id
+      }
+    }
+  }
+`;
+
+export const LINK_CONTRIBUTION_PROPOSAL_INTENT = gql`
+  mutation LinkProposalAndIntent($proposal: ID!, $citeForkedAsset: ID!, $produceNewResource: ID!) {
+    linkItem: proposeIntent(publishedIn: $proposal, publishes: $citeForkedAsset, reciprocal: false) {
+      proposedIntent {
+        id
+      }
+    }
+    linkPayment: proposeIntent(publishedIn: $proposal, publishes: $produceNewResource, reciprocal: false) {
+      proposedIntent {
+        id
+      }
+    }
+  }
+`;
+
+export const QUERY_PROPOSAL = gql`
+  query ($id: ID!) {
+    proposal(id: $id) {
+      id
+      name
+      primaryIntents {
+        id
+        inputOf {
+          name
+          id
+        }
+        outputOf {
+          id
+          name
+        }
+        hasPointInTime
+        resourceConformsTo {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const CITE_ASSET = gql`
+  mutation citeAsset(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $resource: ID! # EconomicResource.id
+    $process: ID! # Process.id
+    $unitOne: ID! # Unit.id
+  ) {
+    createEconomicEvent(
+      event: {
+        action: "cite"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceInventoriedAs: $resource
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      economicEvent {
+        id
       }
     }
   }

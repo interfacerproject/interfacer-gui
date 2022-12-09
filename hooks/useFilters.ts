@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { EconomicResourceFilterParams, ProposalFilterParams } from "../lib/types";
+import { EconomicResourceFilterParams } from "../lib/types";
 import { useEffect, useState } from "react";
 
 const useFilters = () => {
@@ -7,7 +7,7 @@ const useFilters = () => {
     primaryAccountable: [process.env.NEXT_PUBLIC_LOASH_ID!],
     gtOnhandQuantityHasNumericalValue: 0,
   });
-  const [proposalFilter, setProposalFilter] = useState<ProposalFilterParams>({});
+  const [proposalFilter, setProposalFilter] = useState<EconomicResourceFilterParams>({});
   const { conformsTo, primaryAccountable, tags } = useRouter().query;
   useEffect(() => {
     const primaryAccountableList =
@@ -15,10 +15,12 @@ const useFilters = () => {
     const tagsList = typeof tags === "string" ? tags.split(",") : tags;
     const conformToList = typeof conformsTo === "string" ? conformsTo.split(",") : conformsTo;
 
+    // @ts-ignore
     setProposalFilter({
-      primaryIntentsResourceInventoriedAsConformsTo: conformToList,
-      primaryIntentsResourceInventoriedAsPrimaryAccountable: primaryAccountableList,
-      primaryIntentsResourceInventoriedAsClassifiedAs: tagsList,
+      conformsTo: conformToList,
+      primaryAccountable: primaryAccountableList,
+      classifiedAs: tagsList,
+      notCustodian: [process.env.NEXT_PUBLIC_LOASH_ID!],
     });
     setResourceFilter({ ...resourceFilter, conformsTo: conformToList });
   }, [conformsTo, primaryAccountable, tags]);

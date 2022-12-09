@@ -615,9 +615,9 @@ export type EconomicResourceFilterParams = {
   custodian?: InputMaybe<Array<Scalars["ID"]>>;
   gtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Decimal"]>;
   id?: InputMaybe<Array<Scalars["ID"]>>;
-  name?: InputMaybe<Scalars["String"]>;
   notCustodian?: InputMaybe<Array<Scalars["ID"]>>;
   notPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
+  name?: InputMaybe<Scalars["String"]>;
   note?: InputMaybe<Scalars["String"]>;
   orClassifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   orConformsTo?: InputMaybe<Array<Scalars["ID"]>>;
@@ -3384,6 +3384,8 @@ export type CreateAssetMutationVariables = Exact<{
   resourceSpec: Scalars["ID"];
   oneUnit: Scalars["ID"];
   images?: InputMaybe<Array<IFile> | IFile>;
+  repo?: InputMaybe<Scalars["String"]>;
+  process?: InputMaybe<Scalars["ID"]>;
 }>;
 
 export type CreateAssetMutation = {
@@ -3434,6 +3436,11 @@ export type GetResourceTableQuery = {
     name: string;
     note?: string | null;
     metadata?: any | null;
+    trace?: Array<
+      | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
+      | { __typename: "EconomicResource" }
+      | { __typename: "Process" }
+    > | null;
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     onhandQuantity: {
       __typename?: "Measure";
@@ -3598,6 +3605,37 @@ export type GetUserQuery = {
     user: string;
     ethereumAddress?: string | null;
     primaryLocation?: { __typename?: "SpatialThing"; name: string; mappableAddress?: string | null } | null;
+  } | null;
+};
+
+export type GetResourceDetailsQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type GetResourceDetailsQuery = {
+  __typename?: "RootQueryType";
+  proposal?: {
+    __typename?: "Proposal";
+    created: any;
+    primaryIntents?: Array<{
+      __typename?: "Intent";
+      hasPointInTime?: any | null;
+      resourceInventoriedAs?: {
+        __typename?: "EconomicResource";
+        name: string;
+        id: string;
+        note?: string | null;
+        classifiedAs?: Array<any> | null;
+        metadata?: any | null;
+        conformsTo: { __typename?: "ResourceSpecification"; name: string; id: string };
+        currentLocation?: { __typename?: "SpatialThing"; name: string } | null;
+        primaryAccountable:
+          | { __typename?: "Organization"; name: string; id: string }
+          | { __typename?: "Person"; name: string; id: string };
+        onhandQuantity: { __typename?: "Measure"; hasUnit?: { __typename?: "Unit"; label: string } | null };
+        images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+      } | null;
+    }> | null;
   } | null;
 };
 

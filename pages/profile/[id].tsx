@@ -30,15 +30,13 @@ const Profile: NextPage = () => {
   const idToBeFetch = isUser ? user?.ulid : id;
 
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
-  typeof idToBeFetch === "string"
-    ? (proposalFilter.primaryIntentsResourceInventoriedAsPrimaryAccountable = [idToBeFetch])
-    : idToBeFetch!;
+  typeof idToBeFetch === "string" ? (proposalFilter.primaryAccountable = [idToBeFetch]) : idToBeFetch!;
   const hasCollectedAssets = isUser && !!getItem("assetsCollected");
-  let collectedAssets: { primaryIntentsResourceInventoriedAsId: string[] } = {
-    primaryIntentsResourceInventoriedAsId: [],
+  let collectedAssets: { id: string[] } = {
+    id: [],
   };
   if (hasCollectedAssets) {
-    collectedAssets["primaryIntentsResourceInventoriedAsId"] = JSON.parse(getItem("assetsCollected"));
+    collectedAssets["id"] = JSON.parse(getItem("assetsCollected"));
   }
 
   return (

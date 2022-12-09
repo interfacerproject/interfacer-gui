@@ -1,35 +1,79 @@
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { Button } from "@bbtgnn/polaris-interfacer";
 import Link from "next/link";
 import { useEffect } from "react";
 import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 import dayjs from "../lib/dayjs";
-import useInBox from "../hooks/useInBox";
+import useInBox, { Notification } from "../hooks/useInBox";
+import { useRouter } from "next/router";
+import devLog from "lib/devLog";
+import ContributionMessage from "../components/ContributionMessage";
+
+export enum ProposalType {
+  HARDWARE_IMPROVEMENT = "Hardware Improvement",
+  SOFTWARE_IMPROVEMENT = "Software Improvement",
+  DOCUMENTATION_IMPROVEMENT = "Documentation Improvement",
+  OTHER = "Other",
+}
+
+export enum MessageSubject {
+  CONTRIBUTION_REQUEST = "contributionRequest",
+  CONTRIBUTION_ACCEPTED = "contributionAccepted",
+  CONTRIBUTION_REJECTED = "contributionRejected",
+}
+
+export interface Proposal {
+  ID: string;
+  senderID: string;
+  receiverID: string;
+  parentRepositoryID: string;
+  repoURL: string;
+  type: ProposalType;
+  description: string;
+  workHours: number;
+  strengthPoints: number;
+  status: string;
+}
+
+export interface ProposalNotification {
+  proposalID: string;
+  text: string;
+  type: ProposalType;
+  originalResourceName: string;
+  originalResourceID: string;
+  proposerName: string;
+}
+
+export interface ProposalAcceptedNotification {
+  proposalID: string;
+  text: string;
+  type: ProposalType;
+  resourceName: string;
+  resourceID: string;
+  ownerName: string;
+}
+
+export interface ProposalRejectedNotification {
+  proposalID: string;
+  text: string;
+  type: ProposalType;
+  resourceName: string;
+  resourceID: string;
+  ownerName: string;
+}
 
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { startReading, messages, setReadedMessages } = useInBox();
+  const { startReading, messages, setReadedMessages, countUnread } = useInBox();
   useEffect(() => {
     startReading();
-    setInterval(() => {
-      setReadedMessages(messages.map(m => m.id));
-    }, 20000);
+    countUnread > 0 &&
+      setInterval(() => {
+        setReadedMessages(messages.map(m => m.id));
+      }, 20000);
   }, [messages]);
-  const ContributionRow = ({
-    contribution,
-  }: {
-    contribution: {
-      data: string;
-      message: {
-        user: { name: string; id: string };
-        classifiedAs?: string;
-        asset: {
-          id: string;
-          name: string;
-        };
-      };
-    };
-  }) => (
+  const ContributionRow = ({ contribution }: any) => (
     <div className="pb-2 my-2 border-b-2">
       <p className="mr-1">{dayjs(contribution.data).fromNow()}</p>
       <p className="text-xs">{dayjs(contribution.data).format("HH:mm DD/MM/YYYY")}</p>
@@ -47,16 +91,155 @@ const Notification = () => {
     </div>
   );
 
-  const RenderMessagePerSubject = (message: any) => {
-    return <ContributionRow contribution={message.message} />;
+  const RenderMessagePerSubject = (props: { message: Notification.Content; sender: string; data: Date }) => {
+    devLog("senderId", props.sender ? "pepe" : "nope");
+    switch (props.message.subject) {
+      case "contribution":
+        return <ContributionRow contribution={props.message} />;
+      case MessageSubject.CONTRIBUTION_REQUEST:
+        return <RenderContributionRequest {...props} />;
+      case MessageSubject.CONTRIBUTION_ACCEPTED:
+        return <RenderContributionAccepted {...props} />;
+      case MessageSubject.CONTRIBUTION_REJECTED:
+        return <RenderContributionRejected {...props} />;
+      default:
+        return <div />;
+    }
   };
 
   return (
     <div className="grid grid-cols-1 p-12">
       {messages.map((m: any) => (
-        <RenderMessagePerSubject key={m.id} message={m.content} />
+        <>
+          <RenderMessagePerSubject key={m.id} message={m.content} sender={m.sender} data={m.content.data} />
+        </>
       ))}
     </div>
+  );
+};
+
+const RenderContributionAccepted = ({
+  message,
+  sender,
+  data,
+}: {
+  message: Notification.Content;
+  sender: string;
+  data: Date;
+}) => {
+  const router = useRouter();
+  const { t } = useTranslation("notificationProps");
+  const _parsedMessage: ProposalAcceptedNotification = JSON.parse(message.message);
+  return (
+    <ContributionMessage data={data}>
+      <div className="flex flex-row my-2 center">
+        <div className="mr-2">
+          <BrDisplayUser id={sender} name={_parsedMessage.ownerName} />
+        </div>
+        <div className="pt-3">
+          <span className="mr-1">{t("accepted your contribution to")}</span>
+          <Link href={`/asset/${_parsedMessage.resourceID}`}>
+            <a className="text-primary hover:underline">{_parsedMessage.resourceName}</a>
+          </Link>
+        </div>
+      </div>
+      <p>{t("Your profile is now mentioned in the Contributions section") + "."}</p>
+      <Button
+        primary
+        onClick={() => {
+          router.push("/");
+        }}
+      >
+        {"review"}
+      </Button>
+    </ContributionMessage>
+  );
+};
+
+const RenderContributionRequest = ({
+  message,
+  sender,
+  data,
+}: {
+  message: Notification.Content;
+  sender: string;
+  data: Date;
+}) => {
+  const _parsedMessage: ProposalNotification = JSON.parse(message.message);
+  const router = useRouter();
+
+  return (
+    <ContributionMessage data={data}>
+      <div className="flex flex-row my-2 center">
+        <div className="mr-2">
+          <BrDisplayUser id={sender} name={_parsedMessage.proposerName} />
+        </div>
+        <div className="pt-3">
+          <span className="mr-1">{"want to contribute to your"}</span>
+          <Link href={`/asset/${_parsedMessage.originalResourceID}`}>
+            <a className="text-primary hover:underline">{_parsedMessage.originalResourceName}</a>
+          </Link>
+        </div>
+      </div>
+      <p>{_parsedMessage.text}</p>
+      <p>
+        {"this is a "}
+        {_parsedMessage.type}
+      </p>
+      <p>{`let ${_parsedMessage.proposalID} knows about your decision`}</p>
+      <Button
+        primary
+        onClick={() => {
+          router.push(`/proposal/${_parsedMessage.proposalID}`);
+        }}
+      >
+        {"review"}
+      </Button>
+    </ContributionMessage>
+  );
+};
+
+const RenderContributionRejected = ({
+  message,
+  sender,
+  data,
+}: {
+  message: Notification.Content;
+  sender: string;
+  data: Date;
+}) => {
+  const { t } = useTranslation("notificationProps");
+  const _parsedMessage: ProposalRejectedNotification = JSON.parse(message.message);
+  const router = useRouter();
+
+  return (
+    <ContributionMessage data={data}>
+      <div className="flex flex-row my-2 center">
+        <div className="mr-2">
+          <BrDisplayUser id={sender} name={_parsedMessage.ownerName} />
+        </div>
+        <div className="pt-3">
+          <span className="mr-1">{"rejected your contribution to"}</span>
+          <Link href={`/asset/${_parsedMessage.resourceID}`}>
+            <a className="text-primary hover:underline">{_parsedMessage.resourceName}</a>
+          </Link>
+        </div>
+      </div>
+      <p>{_parsedMessage.text}</p>
+
+      <p>
+        {t("You can review your contribution and submit it again, or create a new asset linked to the parent asset") +
+          ":"}
+      </p>
+      <Button
+        primary
+        onClick={() => {
+          router.push("/");
+        }}
+      >
+        {"review"}
+      </Button>
+    </ContributionMessage>
   );
 };
 
