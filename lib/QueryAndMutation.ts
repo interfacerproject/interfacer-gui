@@ -41,7 +41,7 @@ export const CREATE_PROPOSAL = gql`
 `;
 
 export const CREATE_INTENT = gql`
-  mutation CreateIntent($agent: ID!, $resource: ID!, $oneUnit: ID!, $currency: ID!, $howMuch: Float!) {
+  mutation CreateIntent($agent: ID!, $resource: ID!, $oneUnit: ID!, $currency: ID!, $howMuch: Decimal!) {
     item: createIntent(
       intent: {
         name: "project"
@@ -87,7 +87,7 @@ export const LINK_PROPOSAL_AND_INTENT = gql`
 `;
 
 export const CREATE_LOCATION = gql`
-  mutation CreateLocation($name: String!, $addr: String!, $lat: Float!, $lng: Float!) {
+  mutation CreateLocation($name: String!, $addr: String!, $lat: Decimal!, $lng: Decimal!) {
     createSpatialThing(spatialThing: { name: $name, mappableAddress: $addr, lat: $lat, long: $lng }) {
       spatialThing {
         id
