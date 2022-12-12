@@ -193,6 +193,10 @@ export const QUERY_RESOURCE = gql`
       traceDpp
       trace {
         __typename
+        ... on Process {
+          id
+          name
+        }
         ... on EconomicEvent {
           inputOf {
             id
@@ -593,15 +597,7 @@ export const FORK_ASSET = gql`
 `;
 
 export const PROPOSE_CONTRIBUTION = gql`
-  mutation proposeContribution(
-    $process: ID!
-    $agent: ID!
-    $creationTime: DateTime!
-    $resource: ID!
-    $unitOne: ID!
-    $tags: [URI!]
-    $spec: ID!
-  ) {
+  mutation proposeContribution($process: ID!, $agent: ID!, $creationTime: DateTime!, $resource: ID!, $unitOne: ID!) {
     citeForkedAsset: createIntent(
       intent: {
         action: "cite"
@@ -616,32 +612,12 @@ export const PROPOSE_CONTRIBUTION = gql`
         id
       }
     }
-    produceNewResource: createIntent(
-      intent: {
-        action: "produce"
-        outputOf: $process
-        receiver: $agent
-        hasPointInTime: $creationTime
-        resourceClassifiedAs: $tags
-        resourceConformsTo: $spec
-        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
-      }
-    ) {
-      intent {
-        id
-      }
-    }
   }
 `;
 
 export const LINK_CONTRIBUTION_PROPOSAL_INTENT = gql`
-  mutation LinkProposalAndIntent($proposal: ID!, $citeForkedAsset: ID!, $produceNewResource: ID!) {
-    linkItem: proposeIntent(publishedIn: $proposal, publishes: $citeForkedAsset, reciprocal: false) {
-      proposedIntent {
-        id
-      }
-    }
-    linkPayment: proposeIntent(publishedIn: $proposal, publishes: $produceNewResource, reciprocal: false) {
+  mutation LinkProposalAndIntent($proposal: ID!, $citeForkedAsset: ID!) {
+    proposeIntent(publishedIn: $proposal, publishes: $citeForkedAsset, reciprocal: false) {
       proposedIntent {
         id
       }

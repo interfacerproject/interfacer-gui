@@ -49,6 +49,11 @@ const CreateContribution: NextPageWithLayout = () => {
 
   const resource = data?.economicResource;
 
+  const findCreationProcessId = (resource: EconomicResource) => {
+    const _process = resource?.trace?.find(t => t.__typename === "Process" && t.name.includes("creation"));
+    return _process?.id;
+  };
+
   const onSubmit = async (formData: any) => {
     if (!resource) throw new Error("No original resource found");
     else {
@@ -81,17 +86,10 @@ const CreateContribution: NextPageWithLayout = () => {
 
       const contributionVariables = {
         resource: forkedAssetId,
-        process: processData.createProcess.process.id,
+        process: findCreationProcessId(resource),
         agent: resource!.primaryAccountable?.id,
-        // name: resource!.name,
-        // note: resource!.note,
-        // metadata: JSON.stringify(resource?.metadata),
-        // location: resource!.currentLocation?.id,
         unitOne: unitAndCurrency?.units.unitOne.id!,
         creationTime: new Date().toISOString(),
-        // repo: resource!.repo,
-        tags: resource!.classifiedAs,
-        spec: resource!.conformsTo.id,
       };
       devLog("The contribution variables are: ", contributionVariables);
       const contribution = await proposeContribution({ variables: contributionVariables });
@@ -99,7 +97,6 @@ const CreateContribution: NextPageWithLayout = () => {
       const linkProposalAndIntentsVariables = {
         proposal: proposal.data?.createProposal.proposal.id,
         citeForkedAsset: contribution.data?.citeForkedAsset.intent.id,
-        produceNewResource: contribution.data?.produceNewResource.intent.id,
       };
       devLog("The link variables are: ", linkProposalAndIntentsVariables);
       const linkProposalAndIntentsResult = await linkProposalAndIntents({ variables: linkProposalAndIntentsVariables });
