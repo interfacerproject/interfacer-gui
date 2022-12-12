@@ -162,7 +162,7 @@ export const TRANSFER_ASSET = gql`
       event: {
         resourceInventoriedAs: $resource
         action: "transfer"
-        provider: "${process.env.NEXT_PUBLIC_LOASH_ID}"
+        provider: "${process.env.NEXT_PUBLIC_LOSH_ID}"
         receiver: $agent
         hasPointInTime: $creationTime
         resourceClassifiedAs: $tags

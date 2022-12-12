@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const useFilters = () => {
   const [resourceFilter, setResourceFilter] = useState<EconomicResourceFilterParams>({
-    primaryAccountable: [process.env.NEXT_PUBLIC_LOASH_ID!],
+    primaryAccountable: [process.env.NEXT_PUBLIC_LOSH_ID!],
     gtOnhandQuantityHasNumericalValue: 0,
   });
   const [proposalFilter, setProposalFilter] = useState<EconomicResourceFilterParams>({});
@@ -20,7 +20,7 @@ const useFilters = () => {
       conformsTo: conformToList,
       primaryAccountable: primaryAccountableList,
       classifiedAs: tagsList,
-      notCustodian: [process.env.NEXT_PUBLIC_LOASH_ID!],
+      notCustodian: [process.env.NEXT_PUBLIC_LOSH_ID!],
     });
     setResourceFilter({ ...resourceFilter, conformsTo: conformToList });
   }, [conformsTo, primaryAccountable, tags]);
