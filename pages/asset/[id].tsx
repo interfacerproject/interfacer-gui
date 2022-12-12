@@ -10,7 +10,6 @@ import BrBreadcrumb from "../../components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "../../components/brickroom/BrDisplayUser";
 import BrTabs from "../../components/brickroom/BrTabs";
 import BrThumbinailsGallery from "../../components/brickroom/BrThumbinailsGallery";
-import Spinner from "../../components/brickroom/Spinner";
 import ContributorsTable from "../../components/ContributorsTable";
 import { useAuth } from "../../hooks/useAuth";
 import useStorage from "../../hooks/useStorage";
@@ -21,6 +20,7 @@ import { Button } from "@bbtgnn/polaris-interfacer";
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import devLog from "../../lib/devLog";
+import Dpp from "../../components/Dpp";
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -110,18 +110,18 @@ const Asset = () => {
                 <BrTabs
                   tabsArray={[
                     { title: t("Overview"), component: <AssetDetailOverview asset={asset} /> },
-                    {
-                      title: t("Contributions"),
-                      component: (
-                        <ContributorsTable
-                          contributors={asset.metadata?.contributors}
-                          title={t("Contributors")}
-                          // @ts-ignore
-                          data={asset.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
-                        />
-                      ),
-                    },
-                    { title: t("DPP"), component: <Spinner /> },
+                    // {
+                    //   title: t("Contributions"),
+                    //   component: (
+                    //     <ContributorsTable
+                    //       contributors={asset.metadata?.contributors}
+                    //       title={t("Contributors")}
+                    //       // @ts-ignore
+                    //       data={asset.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
+                    //     />
+                    //   ),
+                    // },
+                    { title: t("DPP"), component: <Dpp dpp={data?.economicResource.traceDpp} /> },
                   ]}
                 />
               </div>

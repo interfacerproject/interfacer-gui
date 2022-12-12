@@ -212,6 +212,7 @@ export const QUERY_RESOURCE = gql`
         ... on EconomicResource {
           id
           name
+          note
         }
       }
       conformsTo {
