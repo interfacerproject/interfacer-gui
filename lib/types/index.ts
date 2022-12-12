@@ -3386,6 +3386,7 @@ export type CreateAssetMutationVariables = Exact<{
   images?: InputMaybe<Array<IFile> | IFile>;
   repo?: InputMaybe<Scalars["String"]>;
   process?: InputMaybe<Scalars["ID"]>;
+  license: Scalars["String"];
 }>;
 
 export type CreateAssetMutation = {

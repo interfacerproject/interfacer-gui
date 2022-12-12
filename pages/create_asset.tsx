@@ -129,6 +129,7 @@ const CreateProject: NextPageWithLayout = () => {
         oneUnit: unitAndCurrency?.units.unitOne.id!,
         creationTime: new Date().toISOString(),
         repo: formData.repositoryOrId,
+        license: formData.license,
         images,
         tags,
       };

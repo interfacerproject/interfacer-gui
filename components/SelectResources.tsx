@@ -38,7 +38,7 @@ const SelectResources = forwardRef<any, SelectResourcesProps>((props, ref) => {
   }).data?.economicResources?.edges.map(a => a.node);
 
   // Preparing the options for the component
-  let options: Array<ResourceOption> = [];
+  let options: Array<any> = [];
   if (resources?.length) options = resources.map(a => formatSelectOption(a.name, a));
 
   return <BrSelectSearchable {...props} options={options} ref={ref} onInputChange={setInput} />;

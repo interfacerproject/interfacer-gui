@@ -112,6 +112,7 @@ export const CREATE_ASSET = gql`
     $images: [IFile!]
     $repo: String
     $process: ID!
+    $license: String!
   ) {
     createEconomicEvent(
       event: {
@@ -125,7 +126,14 @@ export const CREATE_ASSET = gql`
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
         toLocation: $location
       }
-      newInventoriedResource: { name: $name, note: $note, images: $images, metadata: $metadata, repo: $repo }
+      newInventoriedResource: {
+        name: $name
+        note: $note
+        images: $images
+        metadata: $metadata
+        repo: $repo
+        license: $license
+      }
     ) {
       economicEvent {
         id
@@ -181,6 +189,7 @@ export const QUERY_RESOURCE = gql`
       name
       note
       metadata
+      license
       trace {
         __typename
         ... on EconomicEvent {
