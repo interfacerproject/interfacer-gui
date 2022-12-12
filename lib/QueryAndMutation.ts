@@ -116,7 +116,7 @@ export const CREATE_ASSET = gql`
   ) {
     createEconomicEvent(
       event: {
-        action: "raise"
+        action: "produce"
         provider: $agent
         receiver: $agent
         outputOf: $process
@@ -190,10 +190,28 @@ export const QUERY_RESOURCE = gql`
       note
       metadata
       license
+      traceDpp
       trace {
         __typename
         ... on EconomicEvent {
+          inputOf {
+            id
+            name
+          }
+          outputOf {
+            id
+            name
+          }
           hasPointInTime
+          action {
+            id
+            label
+            inputOutput
+          }
+        }
+        ... on EconomicResource {
+          id
+          name
         }
       }
       conformsTo {

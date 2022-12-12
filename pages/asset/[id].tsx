@@ -20,6 +20,7 @@ import { QUERY_RESOURCE } from "../../lib/QueryAndMutation";
 import { Button } from "@bbtgnn/polaris-interfacer";
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import devLog from "../../lib/devLog";
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -33,7 +34,10 @@ const Asset = () => {
   const { loading, data, startPolling, refetch } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id: id },
   });
-  startPolling(20000);
+  startPolling(120000);
+
+  devLog("trace", data?.economicResource.trace);
+  devLog("traceDpp", data?.economicResource.traceDpp);
 
   useEffect(() => {
     const _asset: EconomicResource | undefined = data?.economicResource;
