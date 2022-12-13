@@ -31,8 +31,8 @@ export const QUERY_VARIABLES = gql`
 `;
 
 export const CREATE_PROPOSAL = gql`
-  mutation CreateProposal {
-    createProposal(proposal: { name: "contribution" }) {
+  mutation CreateProposal($name: String!, $note: String!) {
+    createProposal(proposal: { name: $name, note: $note }) {
       proposal {
         id
       }
@@ -630,8 +630,13 @@ export const QUERY_PROPOSAL = gql`
     proposal(id: $id) {
       id
       name
+      note
       primaryIntents {
         id
+        provider {
+          id
+          name
+        }
         inputOf {
           name
           id
@@ -641,6 +646,11 @@ export const QUERY_PROPOSAL = gql`
           name
         }
         hasPointInTime
+        resourceInventoriedAs {
+          id
+          name
+          repo
+        }
         resourceConformsTo {
           id
           name

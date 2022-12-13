@@ -58,7 +58,11 @@ const CreateContribution: NextPageWithLayout = () => {
     if (!resource) throw new Error("No original resource found");
     else {
       const processName = `contribution of ${resource.name} by ${user!.name}`;
-      const { data: processData, errors } = await createProcess({ variables: { name: processName } });
+      const processVariables = { name: processName };
+      devLog("processlVariables", processVariables);
+      const { data: processData, errors } = await createProcess({
+        variables: processVariables,
+      });
       if (errors) throw new Error(errors[0].message);
       devLog("The process was created successfully with id: " + processData.createProcess.process.id);
       const forkVariables = {
@@ -71,7 +75,7 @@ const CreateContribution: NextPageWithLayout = () => {
         location: resource!.currentLocation?.id,
         unitOne: unitAndCurrency?.units.unitOne.id!,
         creationTime: new Date().toISOString(),
-        repo: formData.repositoryOrId,
+        repo: formData.contributionRepositoryID,
         tags: resource!.classifiedAs,
         spec: resource!.conformsTo.id,
       };
@@ -81,8 +85,12 @@ const CreateContribution: NextPageWithLayout = () => {
       const forkedAssetId = forkedAsset.data?.produce.economicEvent?.resourceInventoriedAs?.id;
       if (!forkedAssetId) throw new Error("No forked asset id found");
 
-      const proposal = await createProposal();
+      const proposalVariables = { name: processName, note: formData.description };
+      devLog("proposallVariables", processVariables);
+      const proposal = await createProposal({ variables: proposalVariables });
       devLog("The proposal was created successfully with id: " + JSON.stringify(proposal));
+
+      devLog(findCreationProcessId(resource));
 
       const contributionVariables = {
         resource: forkedAssetId,
