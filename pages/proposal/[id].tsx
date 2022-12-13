@@ -9,14 +9,17 @@ import Spinner from "../../components/brickroom/Spinner";
 import { ProposalResponse } from "lib/types";
 import devLog from "../../lib/devLog";
 import React from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 const Proposal = () => {
   const router = useRouter();
   const { t } = useTranslation("proposalProps");
   const { id } = router.query;
+  const { user } = useAuth();
   const { data, loading } = useQuery(QUERY_PROPOSAL, { variables: { id: id?.toString() || "" } });
 
   const proposal = data?.proposal;
+  devLog("proposal", proposal);
 
   return (
     <div className="mx-auto max-w-lg p-6">
@@ -27,7 +30,7 @@ const Proposal = () => {
           <Stack vertical spacing="extraLoose">
             <Stack vertical spacing="tight">
               <Text as="h1" variant="headingXl">
-                {t("Contribution from ")} {proposal.primaryIntents[0].provider.name}
+                {t("Contribution from ")} {proposal.primaryIntents[0].receiver.name}
               </Text>
             </Stack>
 

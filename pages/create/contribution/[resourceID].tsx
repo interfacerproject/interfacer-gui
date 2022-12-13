@@ -57,7 +57,7 @@ const CreateContribution: NextPageWithLayout = () => {
   const onSubmit = async (formData: any) => {
     if (!resource) throw new Error("No original resource found");
     else {
-      const processName = `contribution of ${resource.name} by ${user!.name}`;
+      const processName = `fork of ${resource.name} by ${user!.name}`;
       const processVariables = { name: processName };
       devLog("processlVariables", processVariables);
       const { data: processData, errors } = await createProcess({
@@ -85,6 +85,12 @@ const CreateContribution: NextPageWithLayout = () => {
       const forkedAssetId = forkedAsset.data?.produce.economicEvent?.resourceInventoriedAs?.id;
       if (!forkedAssetId) throw new Error("No forked asset id found");
 
+      const processContributionName = `contribution of ${resource.name} by ${user!.name}`;
+      const proposeProcessVariables = {
+        name: processContributionName,
+      };
+      const processContribution = await createProcess({ variables: proposeProcessVariables });
+
       const proposalVariables = { name: processName, note: formData.description };
       devLog("proposallVariables", processVariables);
       const proposal = await createProposal({ variables: proposalVariables });
@@ -93,10 +99,11 @@ const CreateContribution: NextPageWithLayout = () => {
       devLog(findCreationProcessId(resource));
 
       const contributionVariables = {
-        resource: forkedAssetId,
-        process: findCreationProcessId(resource),
-        agent: resource!.primaryAccountable?.id,
-        unitOne: unitAndCurrency?.units.unitOne.id!,
+        resourceForked: forkedAssetId,
+        resourceOrigin: resource.id,
+        process: processContribution.data?.createProcess.process.id,
+        agent: resource.primaryAccountable.id,
+        unitOne: unitAndCurrency!.units.unitOne.id!,
         creationTime: new Date().toISOString(),
       };
       devLog("The contribution variables are: ", contributionVariables);
@@ -104,7 +111,9 @@ const CreateContribution: NextPageWithLayout = () => {
       devLog("The intent is " + JSON.stringify(contribution));
       const linkProposalAndIntentsVariables = {
         proposal: proposal.data?.createProposal.proposal.id,
-        citeForkedAsset: contribution.data?.citeForkedAsset.intent.id,
+        citeIntent: contribution.data?.citeResourceForked.intent.id,
+        acceptIntent: contribution.data?.acceptResourceOrigin.intent.id,
+        modifyIntent: contribution.data?.modifyResourceOrigin.intent.id,
       };
       devLog("The link variables are: ", linkProposalAndIntentsVariables);
       const linkProposalAndIntentsResult = await linkProposalAndIntents({ variables: linkProposalAndIntentsVariables });

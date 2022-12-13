@@ -542,7 +542,7 @@ export const CREATE_PROCESS = gql`
 `;
 
 export const FORK_ASSET = gql`
-  mutation proposeContribution(
+  mutation forkAsset(
     $agent: ID! # Agent.id
     $creationTime: DateTime!
     $resource: ID! # EconomicResource.id
@@ -597,14 +597,50 @@ export const FORK_ASSET = gql`
 `;
 
 export const PROPOSE_CONTRIBUTION = gql`
-  mutation proposeContribution($process: ID!, $agent: ID!, $creationTime: DateTime!, $resource: ID!, $unitOne: ID!) {
-    citeForkedAsset: createIntent(
+  mutation proposeContribution(
+    $process: ID!
+    $agent: ID!
+    $creationTime: DateTime!
+    $resourceForked: ID!
+    $unitOne: ID!
+    $resourceOrigin: ID!
+  ) {
+    citeResourceForked: createIntent(
       intent: {
         action: "cite"
         inputOf: $process
-        provider: $agent
+        receiver: $agent
         hasPointInTime: $creationTime
-        resourceInventoriedAs: $resource
+        resourceInventoriedAs: $resourceForked
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      intent {
+        id
+      }
+    }
+    acceptResourceOrigin: createIntent(
+      intent: {
+        action: "accept"
+        inputOf: $process
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceInventoriedAs: $resourceOrigin
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      intent {
+        id
+      }
+    }
+
+    modifyResourceOrigin: createIntent(
+      intent: {
+        action: "modify"
+        outputOf: $process
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceInventoriedAs: $resourceOrigin
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
       }
     ) {
@@ -616,8 +652,18 @@ export const PROPOSE_CONTRIBUTION = gql`
 `;
 
 export const LINK_CONTRIBUTION_PROPOSAL_INTENT = gql`
-  mutation LinkProposalAndIntent($proposal: ID!, $citeForkedAsset: ID!) {
-    proposeIntent(publishedIn: $proposal, publishes: $citeForkedAsset, reciprocal: false) {
+  mutation LinkProposalAndIntent($proposal: ID!, $citeIntent: ID!, $acceptIntent: ID!, $modifyIntent: ID!) {
+    proposeCite: proposeIntent(publishedIn: $proposal, publishes: $citeIntent) {
+      proposedIntent {
+        id
+      }
+    }
+    proposeAccept: proposeIntent(publishedIn: $proposal, publishes: $acceptIntent) {
+      proposedIntent {
+        id
+      }
+    }
+    proposeModify: proposeIntent(publishedIn: $proposal, publishes: $modifyIntent) {
       proposedIntent {
         id
       }
@@ -634,6 +680,10 @@ export const QUERY_PROPOSAL = gql`
       primaryIntents {
         id
         provider {
+          id
+          name
+        }
+        receiver {
           id
           name
         }

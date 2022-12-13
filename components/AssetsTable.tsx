@@ -20,6 +20,7 @@ export interface AssetsTableProps {
   hideHeader?: boolean;
   hidePagination?: boolean;
   hidePrimaryAccountable?: boolean;
+  id?: string[];
 }
 
 //
