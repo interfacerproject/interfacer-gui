@@ -3,7 +3,9 @@ import BASE64URL from "crypto-js/enc-base64url";
 import SHA512 from "crypto-js/sha512";
 import { IFile } from "lib/types";
 import signFile from "zenflows-crypto/src/sign_file";
-import { zencode_exec } from "zenroom";
+import { zencode_exec, zenroom_hash_final, zenroom_hash_init, zenroom_hash_update } from "zenroom";
+import devLog from "./devLog";
+import base64url from "base64url";
 
 //
 
@@ -28,19 +30,24 @@ export function createZenData(hashedFile: string): string {
 }
 
 export async function createFileHash(file: File): Promise<string> {
-  const arrayBuffer = await file.arrayBuffer();
-  return BASE64URL.stringify(SHA512(arrayBufferToWordArray(arrayBuffer)));
+  return base64url.fromBase64(await hashFile(await file.arrayBuffer()));
 }
 
 //
 
-export function arrayBufferToWordArray(ab: any) {
-  let i8a = new Uint8Array(ab);
-  let a = [];
-  for (let i = 0; i < i8a.length; i += 4) {
-    a.push((i8a[i] << 24) | (i8a[i + 1] << 16) | (i8a[i + 2] << 8) | i8a[i + 3]);
+export async function hashFile(ab: ArrayBuffer): Promise<string> {
+  const bytesChunkSize = 1024 * 64;
+  let ctx = await zenroom_hash_init("sha512");
+  if (ctx.logs) devLog("ERROR during hash");
+  let i;
+  for (i = 0; i < ab.byteLength; i += bytesChunkSize) {
+    const upperLimit = i + bytesChunkSize > ab.byteLength ? ab.byteLength : i + bytesChunkSize;
+    const i8a = new Uint8Array(ab.slice(i, upperLimit));
+    ctx = await zenroom_hash_update(ctx.result, i8a);
   }
-  return CryptoJS.lib.WordArray.create(a, i8a.length);
+  ctx = await zenroom_hash_final(ctx.result);
+
+  return ctx.result;
 }
 
 //
