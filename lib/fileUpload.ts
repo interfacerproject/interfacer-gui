@@ -1,6 +1,3 @@
-import CryptoJS from "crypto-js";
-import BASE64URL from "crypto-js/enc-base64url";
-import SHA512 from "crypto-js/sha512";
 import { IFile } from "lib/types";
 import signFile from "zenflows-crypto/src/sign_file";
 import { zencode_exec, zenroom_hash_final, zenroom_hash_init, zenroom_hash_update } from "zenroom";
