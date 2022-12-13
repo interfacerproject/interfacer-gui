@@ -548,6 +548,7 @@ export type EconomicResource = {
    */
   state?: Maybe<Action>;
   trace?: Maybe<Array<TrackTraceItem>>;
+  traceDpp: Scalars["JSON"];
   /**
    * Sometimes called serial number, used when each item must have a traceable
    * identifier (like a computer).  Could also be used for other unique
@@ -3240,6 +3241,70 @@ export type UnitUpdateParams = {
   symbol?: InputMaybe<Scalars["String"]>;
 };
 
+
+export type FetchInventoryQueryVariables = Exact<{
+  first?: InputMaybe<Scalars["Int"]>;
+  after?: InputMaybe<Scalars["ID"]>;
+  last?: InputMaybe<Scalars["Int"]>;
+  before?: InputMaybe<Scalars["ID"]>;
+  filter?: InputMaybe<EconomicResourceFilterParams>;
+}>;
+
+export type FetchInventoryQuery = {
+  __typename?: "RootQueryType";
+  economicResources?: {
+    __typename?: "EconomicResourceConnection";
+    pageInfo: {
+      __typename?: "PageInfo";
+      startCursor?: string | null;
+      endCursor?: string | null;
+      hasPreviousPage: boolean;
+      hasNextPage: boolean;
+      totalCount?: number | null;
+      pageLimit?: number | null;
+    };
+    edges: Array<{
+      __typename?: "EconomicResourceEdge";
+      cursor: string;
+      node: {
+        __typename?: "EconomicResource";
+        id: string;
+        name: string;
+        note?: string | null;
+        metadata?: any | null;
+        okhv?: string | null;
+        repo?: string | null;
+        version?: string | null;
+        licensor?: string | null;
+        license?: string | null;
+        conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
+        currentLocation?: {
+          __typename?: "SpatialThing";
+          id: string;
+          name: string;
+          mappableAddress?: string | null;
+        } | null;
+        primaryAccountable:
+          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
+          | { __typename?: "Person"; id: string; name: string; note?: string | null };
+        custodian:
+          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
+          | { __typename?: "Person"; id: string; name: string; note?: string | null };
+        accountingQuantity: {
+          __typename?: "Measure";
+          hasNumericalValue: any;
+          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
+        };
+        onhandQuantity: {
+          __typename?: "Measure";
+          hasNumericalValue: any;
+          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
+        };
+      };
+    }>;
+  } | null;
+};
+
 export type GetTagsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
@@ -3609,5 +3674,34 @@ export type FetchInventoryQuery = {
         };
       };
     }>;
+
+export type GetAssetPageQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type GetAssetPageQuery = {
+  __typename?: "RootQueryType";
+  proposal?: {
+    __typename?: "Proposal";
+    created: any;
+    primaryIntents?: Array<{
+      __typename?: "Intent";
+      hasPointInTime?: any | null;
+      resourceInventoriedAs?: {
+        __typename?: "EconomicResource";
+        name: string;
+        id: string;
+        note?: string | null;
+        classifiedAs?: Array<any> | null;
+        metadata?: any | null;
+        conformsTo: { __typename?: "ResourceSpecification"; name: string; id: string };
+        currentLocation?: { __typename?: "SpatialThing"; name: string } | null;
+        primaryAccountable:
+          | { __typename?: "Organization"; name: string; id: string }
+          | { __typename?: "Person"; name: string; id: string };
+        onhandQuantity: { __typename?: "Measure"; hasUnit?: { __typename?: "Unit"; label: string } | null };
+        images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+      } | null;
+    }> | null;
   } | null;
 };
