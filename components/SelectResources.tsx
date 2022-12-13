@@ -4,7 +4,7 @@ import { EconomicResource, FetchInventoryQuery } from "lib/types";
 import { forwardRef, useState } from "react";
 
 export const FETCH_RESOURCES = gql`
-  query ($filter: EconomicResourceFilterParams) {
+  query FetchResources($filter: EconomicResourceFilterParams) {
     economicResources(last: 10, filter: $filter) {
       edges {
         cursor

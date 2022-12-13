@@ -532,7 +532,7 @@ export const GET_RESOURCE_DETAILS = gql`
 `;
 
 export const CREATE_PROCESS = gql`
-  mutation ($name: String!) {
+  mutation CreateProcess($name: String!) {
     createProcess(process: { name: $name }) {
       process {
         id
@@ -542,7 +542,7 @@ export const CREATE_PROCESS = gql`
 `;
 
 export const FORK_ASSET = gql`
-  mutation forkAsset(
+  mutation ForkAsset(
     $agent: ID! # Agent.id
     $creationTime: DateTime!
     $resource: ID! # EconomicResource.id
@@ -553,7 +553,7 @@ export const FORK_ASSET = gql`
     $spec: ID! # ResourceSpecification.id
     $name: String!
     $note: String
-    $repo: URI
+    $repo: String
     $metadata: JSON
   ) {
     cite: createEconomicEvent(
@@ -652,7 +652,12 @@ export const PROPOSE_CONTRIBUTION = gql`
 `;
 
 export const LINK_CONTRIBUTION_PROPOSAL_INTENT = gql`
-  mutation LinkProposalAndIntent($proposal: ID!, $citeIntent: ID!, $acceptIntent: ID!, $modifyIntent: ID!) {
+  mutation LinkContributionAndProposalAndIntent(
+    $proposal: ID!
+    $citeIntent: ID!
+    $acceptIntent: ID!
+    $modifyIntent: ID!
+  ) {
     proposeCite: proposeIntent(publishedIn: $proposal, publishes: $citeIntent) {
       proposedIntent {
         id
@@ -672,7 +677,7 @@ export const LINK_CONTRIBUTION_PROPOSAL_INTENT = gql`
 `;
 
 export const QUERY_PROPOSAL = gql`
-  query ($id: ID!) {
+  query QueryProposal($id: ID!) {
     proposal(id: $id) {
       id
       name

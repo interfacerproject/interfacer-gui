@@ -3241,65 +3241,18 @@ export type UnitUpdateParams = {
   symbol?: InputMaybe<Scalars["String"]>;
 };
 
-export type FetchInventoryQueryVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]>;
-  after?: InputMaybe<Scalars["ID"]>;
-  last?: InputMaybe<Scalars["Int"]>;
-  before?: InputMaybe<Scalars["ID"]>;
+export type FetchResourcesQueryVariables = Exact<{
   filter?: InputMaybe<EconomicResourceFilterParams>;
 }>;
 
-export type FetchInventoryQuery = {
+export type FetchResourcesQuery = {
   __typename?: "RootQueryType";
   economicResources?: {
     __typename?: "EconomicResourceConnection";
-    pageInfo: {
-      __typename?: "PageInfo";
-      startCursor?: string | null;
-      endCursor?: string | null;
-      hasPreviousPage: boolean;
-      hasNextPage: boolean;
-      totalCount?: number | null;
-      pageLimit?: number | null;
-    };
     edges: Array<{
       __typename?: "EconomicResourceEdge";
       cursor: string;
-      node: {
-        __typename?: "EconomicResource";
-        id: string;
-        name: string;
-        note?: string | null;
-        metadata?: any | null;
-        okhv?: string | null;
-        repo?: string | null;
-        version?: string | null;
-        licensor?: string | null;
-        license?: string | null;
-        conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
-        currentLocation?: {
-          __typename?: "SpatialThing";
-          id: string;
-          name: string;
-          mappableAddress?: string | null;
-        } | null;
-        primaryAccountable:
-          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
-          | { __typename?: "Person"; id: string; name: string; note?: string | null };
-        custodian:
-          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
-          | { __typename?: "Person"; id: string; name: string; note?: string | null };
-        accountingQuantity: {
-          __typename?: "Measure";
-          hasNumericalValue: any;
-          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
-        };
-        onhandQuantity: {
-          __typename?: "Measure";
-          hasNumericalValue: any;
-          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
-        };
-      };
+      node: { __typename?: "EconomicResource"; id: string; name: string };
     }>;
   } | null;
 };
@@ -3325,7 +3278,10 @@ export type GetVariablesQuery = {
   };
 };
 
-export type CreateProposalMutationVariables = Exact<{ [key: string]: never }>;
+export type CreateProposalMutationVariables = Exact<{
+  name: Scalars["String"];
+  note: Scalars["String"];
+}>;
 
 export type CreateProposalMutation = {
   __typename?: "RootMutationType";
@@ -3385,7 +3341,7 @@ export type CreateAssetMutationVariables = Exact<{
   oneUnit: Scalars["ID"];
   images?: InputMaybe<Array<IFile> | IFile>;
   repo?: InputMaybe<Scalars["String"]>;
-  process?: InputMaybe<Scalars["ID"]>;
+  process: Scalars["ID"];
   license: Scalars["String"];
 }>;
 
@@ -3437,10 +3393,18 @@ export type GetResourceTableQuery = {
     name: string;
     note?: string | null;
     metadata?: any | null;
+    license?: string | null;
+    traceDpp: any;
     trace?: Array<
-      | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
-      | { __typename: "EconomicResource" }
-      | { __typename: "Process" }
+      | {
+          __typename: "EconomicEvent";
+          hasPointInTime?: any | null;
+          inputOf?: { __typename?: "Process"; id: string; name: string } | null;
+          outputOf?: { __typename?: "Process"; id: string; name: string } | null;
+          action: { __typename?: "Action"; id: string; label: string; inputOutput?: string | null };
+        }
+      | { __typename: "EconomicResource"; id: string; name: string; note?: string | null }
+      | { __typename: "Process"; id: string; name: string }
     > | null;
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     onhandQuantity: {
@@ -3456,7 +3420,7 @@ export type GetResourceTableQuery = {
     primaryAccountable:
       | { __typename?: "Organization"; id: string; name: string }
       | { __typename?: "Person"; id: string; name: string };
-    currentLocation?: { __typename?: "SpatialThing"; name: string; mappableAddress?: string | null } | null;
+    currentLocation?: { __typename?: "SpatialThing"; id: string; name: string; mappableAddress?: string | null } | null;
     images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
   } | null;
 };
@@ -3609,6 +3573,75 @@ export type GetUserQuery = {
   } | null;
 };
 
+export type FetchInventoryQueryVariables = Exact<{
+  first?: InputMaybe<Scalars["Int"]>;
+  after?: InputMaybe<Scalars["ID"]>;
+  last?: InputMaybe<Scalars["Int"]>;
+  before?: InputMaybe<Scalars["ID"]>;
+  filter?: InputMaybe<EconomicResourceFilterParams>;
+}>;
+
+export type FetchInventoryQuery = {
+  __typename?: "RootQueryType";
+  economicResources?: {
+    __typename?: "EconomicResourceConnection";
+    pageInfo: {
+      __typename?: "PageInfo";
+      startCursor?: string | null;
+      endCursor?: string | null;
+      hasPreviousPage: boolean;
+      hasNextPage: boolean;
+      totalCount?: number | null;
+      pageLimit?: number | null;
+    };
+    edges: Array<{
+      __typename?: "EconomicResourceEdge";
+      cursor: string;
+      node: {
+        __typename?: "EconomicResource";
+        id: string;
+        name: string;
+        classifiedAs?: Array<any> | null;
+        note?: string | null;
+        metadata?: any | null;
+        okhv?: string | null;
+        repo?: string | null;
+        version?: string | null;
+        licensor?: string | null;
+        license?: string | null;
+        conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
+        currentLocation?: {
+          __typename?: "SpatialThing";
+          id: string;
+          name: string;
+          mappableAddress?: string | null;
+        } | null;
+        trace?: Array<
+          | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
+          | { __typename: "EconomicResource" }
+          | { __typename: "Process" }
+        > | null;
+        primaryAccountable:
+          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
+          | { __typename?: "Person"; id: string; name: string; note?: string | null };
+        custodian:
+          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
+          | { __typename?: "Person"; id: string; name: string; note?: string | null };
+        accountingQuantity: {
+          __typename?: "Measure";
+          hasNumericalValue: any;
+          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
+        };
+        onhandQuantity: {
+          __typename?: "Measure";
+          hasNumericalValue: any;
+          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
+        };
+      };
+    }>;
+  } | null;
+};
+
 export type GetResourceDetailsQueryVariables = Exact<{
   id: Scalars["ID"];
 }>;
@@ -3640,33 +3673,127 @@ export type GetResourceDetailsQuery = {
   } | null;
 };
 
-export type GetAssetPageQueryVariables = Exact<{
+export type CreateProcessMutationVariables = Exact<{
+  name: Scalars["String"];
+}>;
+
+export type CreateProcessMutation = {
+  __typename?: "RootMutationType";
+  createProcess: { __typename?: "ProcessResponse"; process: { __typename?: "Process"; id: string } };
+};
+
+export type ForkAssetMutationVariables = Exact<{
+  agent: Scalars["ID"];
+  creationTime: Scalars["DateTime"];
+  resource: Scalars["ID"];
+  process: Scalars["ID"];
+  unitOne: Scalars["ID"];
+  tags?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
+  location: Scalars["ID"];
+  spec: Scalars["ID"];
+  name: Scalars["String"];
+  note?: InputMaybe<Scalars["String"]>;
+  repo?: InputMaybe<Scalars["String"]>;
+  metadata?: InputMaybe<Scalars["JSON"]>;
+}>;
+
+export type ForkAssetMutation = {
+  __typename?: "RootMutationType";
+  cite: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+  produce: {
+    __typename?: "EconomicEventResponse";
+    economicEvent: {
+      __typename?: "EconomicEvent";
+      id: string;
+      resourceInventoriedAs?: { __typename?: "EconomicResource"; id: string; name: string } | null;
+    };
+  };
+};
+
+export type ProposeContributionMutationVariables = Exact<{
+  process: Scalars["ID"];
+  agent: Scalars["ID"];
+  creationTime: Scalars["DateTime"];
+  resourceForked: Scalars["ID"];
+  unitOne: Scalars["ID"];
+  resourceOrigin: Scalars["ID"];
+}>;
+
+export type ProposeContributionMutation = {
+  __typename?: "RootMutationType";
+  citeResourceForked: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+  acceptResourceOrigin: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+  modifyResourceOrigin: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+};
+
+export type LinkContributionAndProposalAndIntentMutationVariables = Exact<{
+  proposal: Scalars["ID"];
+  citeIntent: Scalars["ID"];
+  acceptIntent: Scalars["ID"];
+  modifyIntent: Scalars["ID"];
+}>;
+
+export type LinkContributionAndProposalAndIntentMutation = {
+  __typename?: "RootMutationType";
+  proposeCite: { __typename?: "ProposedIntentResponse"; proposedIntent: { __typename?: "ProposedIntent"; id: string } };
+  proposeAccept: {
+    __typename?: "ProposedIntentResponse";
+    proposedIntent: { __typename?: "ProposedIntent"; id: string };
+  };
+  proposeModify: {
+    __typename?: "ProposedIntentResponse";
+    proposedIntent: { __typename?: "ProposedIntent"; id: string };
+  };
+};
+
+export type QueryProposalQueryVariables = Exact<{
   id: Scalars["ID"];
 }>;
 
-export type GetAssetPageQuery = {
+export type QueryProposalQuery = {
   __typename?: "RootQueryType";
   proposal?: {
     __typename?: "Proposal";
-    created: any;
+    id: string;
+    name?: string | null;
+    note?: string | null;
     primaryIntents?: Array<{
       __typename?: "Intent";
+      id: string;
       hasPointInTime?: any | null;
+      provider?:
+        | { __typename?: "Organization"; id: string; name: string }
+        | { __typename?: "Person"; id: string; name: string }
+        | null;
+      receiver?:
+        | { __typename?: "Organization"; id: string; name: string }
+        | { __typename?: "Person"; id: string; name: string }
+        | null;
+      inputOf?: { __typename?: "Process"; name: string; id: string } | null;
+      outputOf?: { __typename?: "Process"; id: string; name: string } | null;
       resourceInventoriedAs?: {
         __typename?: "EconomicResource";
-        name: string;
         id: string;
-        note?: string | null;
-        classifiedAs?: Array<any> | null;
-        metadata?: any | null;
-        conformsTo: { __typename?: "ResourceSpecification"; name: string; id: string };
-        currentLocation?: { __typename?: "SpatialThing"; name: string } | null;
-        primaryAccountable:
-          | { __typename?: "Organization"; name: string; id: string }
-          | { __typename?: "Person"; name: string; id: string };
-        onhandQuantity: { __typename?: "Measure"; hasUnit?: { __typename?: "Unit"; label: string } | null };
-        images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+        name: string;
+        repo?: string | null;
       } | null;
+      resourceConformsTo?: { __typename?: "EconomicResource"; id: string; name: string } | null;
     }> | null;
   } | null;
+};
+
+export type CiteAssetMutationVariables = Exact<{
+  agent: Scalars["ID"];
+  creationTime: Scalars["DateTime"];
+  resource: Scalars["ID"];
+  process: Scalars["ID"];
+  unitOne: Scalars["ID"];
+}>;
+
+export type CiteAssetMutation = {
+  __typename?: "RootMutationType";
+  createEconomicEvent: {
+    __typename?: "EconomicEventResponse";
+    economicEvent: { __typename?: "EconomicEvent"; id: string };
+  };
 };
