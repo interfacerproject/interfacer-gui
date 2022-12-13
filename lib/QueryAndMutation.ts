@@ -705,6 +705,12 @@ export const QUERY_PROPOSAL = gql`
           id
           name
           repo
+          onhandQuantity {
+            hasNumericalValue
+            hasUnit {
+              id
+            }
+          }
         }
         resourceConformsTo {
           id
@@ -735,6 +741,113 @@ export const CITE_ASSET = gql`
       }
     ) {
       economicEvent {
+        id
+      }
+    }
+  }
+`;
+
+export const ACCEPT_PROPOSAL = gql`
+  mutation acceptProposal(
+    $process: ID!
+    $agent: ID!
+    $unitOne: ID!
+    $resourceForked: ID!
+    $resourceOrigin: ID!
+    $creationTime: DateTime!
+  ) {
+    cite: createEconomicEvent(
+      event: {
+        action: "cite"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceInventoriedAs: $resourceForked
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+        hasPointInTime: $creationTime
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+
+    accept: createEconomicEvent(
+      event: {
+        action: "accept"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceInventoriedAs: $resourceOrigin
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+        hasPointInTime: $creationTime
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+
+    modify: createEconomicEvent(
+      event: {
+        action: "modify"
+        outputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceInventoriedAs: $resourceOrigin
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+        hasPointInTime: $creationTime
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+  }
+`;
+
+export const SATISFY_INTENTS = gql`
+  mutation satisfyIntents(
+    $unitOne: ID!
+    $intentCite: ID!
+    $intentAccept: ID!
+    $intentModify: ID!
+    $eventCite: ID!
+    $eventAccept: ID!
+    $eventModify: ID!
+  ) {
+    cite: createSatisfaction(
+      satisfaction: {
+        satisfies: $intentCite
+        satisfiedByEvent: $eventCite
+        resourceQuantity: { hasNumericanValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      satisfaction {
+        id
+      }
+    }
+
+    accept: createSatisfaction(
+      satisfaction: {
+        satisfies: $intentAccept
+        satisfiedByEvent: $eventAccept
+        resourceQuantity: { hasNumericanValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      satisfaction {
+        id
+      }
+    }
+
+    modify: createSatisfaction(
+      satisfaction: {
+        satisfies: $intentModify
+        satisfiedByEvent: $eventModify
+        resourceQuantity: { hasNumericanValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      satisfaction {
         id
       }
     }

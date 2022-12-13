@@ -1,15 +1,15 @@
 import { useRouter } from "next/router";
-import { useQuery } from "@apollo/client";
-import { QUERY_PROPOSAL } from "../../lib/QueryAndMutation";
+import { useMutation, useQuery } from "@apollo/client";
+import { ACCEPT_PROPOSAL, QUERY_PROPOSAL, QUERY_UNIT_AND_CURRENCY, SATISFY_INTENTS } from "../../lib/QueryAndMutation";
 import { Stack, Text, Button } from "@bbtgnn/polaris-interfacer";
 import PLabel from "../../components/polaris/PLabel";
 import ResourceDetailsCard from "../../components/ResourceDetailsCard";
 import { useTranslation } from "next-i18next";
 import Spinner from "../../components/brickroom/Spinner";
-import { ProposalResponse } from "lib/types";
 import devLog from "../../lib/devLog";
 import React from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { GetUnitAndCurrencyQuery } from "../../lib/types";
 
 const Proposal = () => {
   const router = useRouter();
@@ -18,8 +18,39 @@ const Proposal = () => {
   const { user } = useAuth();
   const { data, loading } = useQuery(QUERY_PROPOSAL, { variables: { id: id?.toString() || "" } });
 
+  const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
+  const [acceptProposal] = useMutation(ACCEPT_PROPOSAL);
+  const [satisfyIntents] = useMutation(SATISFY_INTENTS);
+
   const proposal = data?.proposal;
   devLog("proposal", proposal);
+
+  const onAccept = async () => {
+    const acceptanceVariables = {
+      process: proposal.primaryIntents[0].inputOf.id,
+      agent: user!.ulid,
+      unitOne: unitAndCurrency?.units.unitOne.id!,
+      resourceForked: proposal?.primaryIntents[0].resourceInventoriedAs.id,
+      resourceOrigin: proposal?.primaryIntents[1].resourceInventoriedAs.id,
+      creationTime: new Date().toISOString(),
+    };
+    devLog("acceptanceVariables", acceptanceVariables);
+    const economicEvents = await acceptProposal({ variables: acceptanceVariables });
+    devLog("economicEvents created", economicEvents);
+
+    const satisfyIntentsVariables = {
+      unitOne: unitAndCurrency?.units.unitOne.id!,
+      intentCited: proposal?.primaryIntents[0].id,
+      intentAccepted: proposal?.primaryIntents[1].id,
+      intentModify: proposal?.primaryIntents[2].id,
+      eventCite: economicEvents.data.cite.economicEvent.it,
+      eventAccept: economicEvents.data.accept.economicEvent.it,
+      eventModify: economicEvents.data.modify.economicEvent.it,
+    };
+    devLog("satisfyIntentsVariables", satisfyIntentsVariables);
+    const intentsSatisfied = await satisfyIntents({ variables: satisfyIntentsVariables });
+    devLog("intentsSatisfied created", intentsSatisfied);
+  };
 
   return (
     <div className="mx-auto max-w-lg p-6">
@@ -82,7 +113,7 @@ const Proposal = () => {
               <Button size="large" primary fullWidth submit disabled={true} id="submit">
                 {t("Reject contribution")}
               </Button>{" "}
-              <Button size="large" primary fullWidth submit disabled={true} id="submit">
+              <Button size="large" primary fullWidth submit onClick={onAccept} id="submit">
                 {t("Accept contribution")}
               </Button>
             </Stack>
