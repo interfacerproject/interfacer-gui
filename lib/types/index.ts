@@ -615,9 +615,9 @@ export type EconomicResourceFilterParams = {
   custodian?: InputMaybe<Array<Scalars["ID"]>>;
   gtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Decimal"]>;
   id?: InputMaybe<Array<Scalars["ID"]>>;
+  name?: InputMaybe<Scalars["String"]>;
   notCustodian?: InputMaybe<Array<Scalars["ID"]>>;
   notPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
-  name?: InputMaybe<Scalars["String"]>;
   note?: InputMaybe<Scalars["String"]>;
   orClassifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   orConformsTo?: InputMaybe<Array<Scalars["ID"]>>;
