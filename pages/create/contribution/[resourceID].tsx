@@ -102,7 +102,8 @@ const CreateContribution: NextPageWithLayout = () => {
         resourceForked: forkedAssetId,
         resourceOrigin: resource.id,
         process: processContribution.data?.createProcess.process.id,
-        agent: resource.primaryAccountable.id,
+        owner: resource.primaryAccountable.id,
+        proposer: user!.ulid,
         unitOne: unitAndCurrency!.units.unitOne.id!,
         creationTime: new Date().toISOString(),
       };

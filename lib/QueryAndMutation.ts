@@ -599,7 +599,8 @@ export const FORK_ASSET = gql`
 export const PROPOSE_CONTRIBUTION = gql`
   mutation proposeContribution(
     $process: ID!
-    $agent: ID!
+    $owner: ID!
+    $proposer: ID!
     $creationTime: DateTime!
     $resourceForked: ID!
     $unitOne: ID!
@@ -609,7 +610,7 @@ export const PROPOSE_CONTRIBUTION = gql`
       intent: {
         action: "cite"
         inputOf: $process
-        receiver: $agent
+        provider: $proposer
         hasPointInTime: $creationTime
         resourceInventoriedAs: $resourceForked
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
@@ -623,7 +624,7 @@ export const PROPOSE_CONTRIBUTION = gql`
       intent: {
         action: "accept"
         inputOf: $process
-        receiver: $agent
+        receiver: $owner
         hasPointInTime: $creationTime
         resourceInventoriedAs: $resourceOrigin
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
@@ -638,7 +639,7 @@ export const PROPOSE_CONTRIBUTION = gql`
       intent: {
         action: "modify"
         outputOf: $process
-        receiver: $agent
+        receiver: $owner
         hasPointInTime: $creationTime
         resourceInventoriedAs: $resourceOrigin
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
@@ -682,6 +683,7 @@ export const QUERY_PROPOSAL = gql`
       id
       name
       note
+      status
       primaryIntents {
         id
         provider {
@@ -705,6 +707,10 @@ export const QUERY_PROPOSAL = gql`
           id
           name
           repo
+          primaryAccountable {
+            id
+            name
+          }
           onhandQuantity {
             hasNumericalValue
             hasUnit {
@@ -750,7 +756,8 @@ export const CITE_ASSET = gql`
 export const ACCEPT_PROPOSAL = gql`
   mutation acceptProposal(
     $process: ID!
-    $agent: ID!
+    $owner: ID!
+    $proposer: ID!
     $unitOne: ID!
     $resourceForked: ID!
     $resourceOrigin: ID!
@@ -760,8 +767,8 @@ export const ACCEPT_PROPOSAL = gql`
       event: {
         action: "cite"
         inputOf: $process
-        provider: $agent
-        receiver: $agent
+        provider: $proposer
+        receiver: $owner
         resourceInventoriedAs: $resourceForked
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
         hasPointInTime: $creationTime
@@ -776,8 +783,8 @@ export const ACCEPT_PROPOSAL = gql`
       event: {
         action: "accept"
         inputOf: $process
-        provider: $agent
-        receiver: $agent
+        provider: $owner
+        receiver: $owner
         resourceInventoriedAs: $resourceOrigin
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
         hasPointInTime: $creationTime
@@ -792,8 +799,8 @@ export const ACCEPT_PROPOSAL = gql`
       event: {
         action: "modify"
         outputOf: $process
-        provider: $agent
-        receiver: $agent
+        provider: $owner
+        receiver: $owner
         resourceInventoriedAs: $resourceOrigin
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
         hasPointInTime: $creationTime
@@ -809,8 +816,8 @@ export const ACCEPT_PROPOSAL = gql`
 export const SATISFY_INTENTS = gql`
   mutation satisfyIntents(
     $unitOne: ID!
-    $intentCite: ID!
-    $intentAccept: ID!
+    $intentCited: ID!
+    $intentAccepted: ID!
     $intentModify: ID!
     $eventCite: ID!
     $eventAccept: ID!
@@ -818,9 +825,9 @@ export const SATISFY_INTENTS = gql`
   ) {
     cite: createSatisfaction(
       satisfaction: {
-        satisfies: $intentCite
+        satisfies: $intentCited
         satisfiedByEvent: $eventCite
-        resourceQuantity: { hasNumericanValue: 1, hasUnit: $unitOne }
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
       }
     ) {
       satisfaction {
@@ -830,9 +837,9 @@ export const SATISFY_INTENTS = gql`
 
     accept: createSatisfaction(
       satisfaction: {
-        satisfies: $intentAccept
+        satisfies: $intentAccepted
         satisfiedByEvent: $eventAccept
-        resourceQuantity: { hasNumericanValue: 1, hasUnit: $unitOne }
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
       }
     ) {
       satisfaction {
@@ -844,10 +851,30 @@ export const SATISFY_INTENTS = gql`
       satisfaction: {
         satisfies: $intentModify
         satisfiedByEvent: $eventModify
-        resourceQuantity: { hasNumericanValue: 1, hasUnit: $unitOne }
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
       }
     ) {
       satisfaction {
+        id
+      }
+    }
+  }
+`;
+
+export const REJECT_PROPOSAL = gql`
+  mutation ($intentCite: ID!, $intentAccept: ID!, $intentModify: ID!) {
+    cite: updateIntent(intent: { id: $intentCite, finished: true }) {
+      intent {
+        id
+      }
+    }
+    accept: updateIntent(intent: { id: $intentAccept, finished: true }) {
+      intent {
+        id
+      }
+    }
+    modify: updateIntent(intent: { id: $intentModify, finished: true }) {
+      intent {
         id
       }
     }

@@ -1,6 +1,12 @@
 import { useRouter } from "next/router";
 import { useMutation, useQuery } from "@apollo/client";
-import { ACCEPT_PROPOSAL, QUERY_PROPOSAL, QUERY_UNIT_AND_CURRENCY, SATISFY_INTENTS } from "../../lib/QueryAndMutation";
+import {
+  ACCEPT_PROPOSAL,
+  QUERY_PROPOSAL,
+  QUERY_UNIT_AND_CURRENCY,
+  REJECT_PROPOSAL,
+  SATISFY_INTENTS,
+} from "../../lib/QueryAndMutation";
 import { Stack, Text, Button } from "@bbtgnn/polaris-interfacer";
 import PLabel from "../../components/polaris/PLabel";
 import ResourceDetailsCard from "../../components/ResourceDetailsCard";
@@ -16,19 +22,34 @@ const Proposal = () => {
   const { t } = useTranslation("proposalProps");
   const { id } = router.query;
   const { user } = useAuth();
-  const { data, loading } = useQuery(QUERY_PROPOSAL, { variables: { id: id?.toString() || "" } });
+  const { data, loading, refetch } = useQuery(QUERY_PROPOSAL, { variables: { id: id?.toString() || "" } });
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [acceptProposal] = useMutation(ACCEPT_PROPOSAL);
   const [satisfyIntents] = useMutation(SATISFY_INTENTS);
+  const [rejectProposal] = useMutation(REJECT_PROPOSAL);
 
   const proposal = data?.proposal;
   devLog("proposal", proposal);
+  const status = proposal?.status;
+
+  const onReject = async () => {
+    const rejectProposalVariables = {
+      intentCite: proposal?.primaryIntents[0].id,
+      intentAccept: proposal?.primaryIntents[1].id,
+      intentModify: proposal?.primaryIntents[2].id,
+    };
+    devLog("rejectProposalVariables", rejectProposalVariables);
+    const rejection = await rejectProposal({ variables: rejectProposalVariables });
+    devLog("Proposal rejected", rejection);
+    await refetch();
+  };
 
   const onAccept = async () => {
     const acceptanceVariables = {
       process: proposal.primaryIntents[0].inputOf.id,
-      agent: user!.ulid,
+      owner: user!.ulid,
+      proposer: proposal.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id,
       unitOne: unitAndCurrency?.units.unitOne.id!,
       resourceForked: proposal?.primaryIntents[0].resourceInventoriedAs.id,
       resourceOrigin: proposal?.primaryIntents[1].resourceInventoriedAs.id,
@@ -43,13 +64,14 @@ const Proposal = () => {
       intentCited: proposal?.primaryIntents[0].id,
       intentAccepted: proposal?.primaryIntents[1].id,
       intentModify: proposal?.primaryIntents[2].id,
-      eventCite: economicEvents.data.cite.economicEvent.it,
-      eventAccept: economicEvents.data.accept.economicEvent.it,
-      eventModify: economicEvents.data.modify.economicEvent.it,
+      eventCite: economicEvents.data.cite.economicEvent.id,
+      eventAccept: economicEvents.data.accept.economicEvent.id,
+      eventModify: economicEvents.data.modify.economicEvent.id,
     };
     devLog("satisfyIntentsVariables", satisfyIntentsVariables);
     const intentsSatisfied = await satisfyIntents({ variables: satisfyIntentsVariables });
     devLog("intentsSatisfied created", intentsSatisfied);
+    await refetch();
   };
 
   return (
@@ -61,7 +83,7 @@ const Proposal = () => {
           <Stack vertical spacing="extraLoose">
             <Stack vertical spacing="tight">
               <Text as="h1" variant="headingXl">
-                {t("Contribution from ")} {proposal.primaryIntents[0].receiver.name}
+                {t("Contribution from ")} {proposal.primaryIntents[0].receiver?.name}
               </Text>
             </Stack>
 
@@ -110,10 +132,26 @@ const Proposal = () => {
               <Text as="h2" variant="headingLg">
                 {t("Your actions")}
               </Text>
-              <Button size="large" primary fullWidth submit disabled={true} id="submit">
+              <Button
+                size="large"
+                primary
+                fullWidth
+                submit
+                onClick={onReject}
+                id="submit"
+                disabled={!(status === "PENDING")}
+              >
                 {t("Reject contribution")}
               </Button>{" "}
-              <Button size="large" primary fullWidth submit onClick={onAccept} id="submit">
+              <Button
+                size="large"
+                primary
+                fullWidth
+                submit
+                onClick={onAccept}
+                disabled={!(status === "PENDING")}
+                id="submit"
+              >
                 {t("Accept contribution")}
               </Button>
             </Stack>
