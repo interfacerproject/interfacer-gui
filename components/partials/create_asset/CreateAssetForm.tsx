@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import { Button, Card, Spinner, Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Select, Spinner, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import BrImageUpload from "components/brickroom/BrImageUpload";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import BrRadioOption from "components/brickroom/BrRadioOption";
@@ -27,6 +27,7 @@ import { LocationLookup } from "lib/fetchLocation";
 // Other
 import { SelectOption } from "components/brickroom/utils/BrSelectUtils";
 import { isRequired } from "lib/isFieldRequired";
+import SelectResources from "../../SelectResources";
 
 //
 
@@ -43,9 +44,11 @@ export namespace CreateAssetNS {
     tags: Array<SelectOption<string>>;
     location: LocationLookup.Location | null;
     locationName: string;
+    license: string;
     price: string;
     images: Array<File>;
     contributors: Array<ContributorOption>;
+    resources: Array<ContributorOption>;
   }
 }
 
@@ -76,6 +79,20 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
       label: t("A physical product that can be picked up or delivered"),
     },
   ];
+
+  const licenseTypes = [
+    "Creative Commons - Attribution",
+    "Creative Commons - Attribution - Share Alike",
+    "Creative Commons - Attribution - No Derivatives",
+    "Creative Commons - Attribution - Non-Commercial ",
+    "Creative Commons - Attribution - Non-Commercial - Share Alike",
+    "Creative Commons - Attribution - Non-commercial - No Derivatives",
+    "Creative Commons - Public Domain Dedication",
+    "GNU - GPL ",
+    "GNU - LGPL ",
+    "BSD License",
+  ];
+
   //
 
   const defaultValues: CreateAssetNS.FormValues = {
@@ -86,9 +103,11 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
     tags: [],
     location: null,
     locationName: "",
+    license: "",
     price: "1",
     images: [], //as Array<File>
     contributors: [], // Array<{id:string, name:string}>
+    resources: [], // Array<{id:string, name:string}>
   };
 
   const schema = yup
@@ -99,6 +118,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
       repositoryOrId: yup.string().required(),
       tags: yup.array(yup.object()),
       location: yup.object().required(),
+      license: yup.string().oneOf(licenseTypes).required(),
       locationName: yup.string().required(),
       price: yup.string().required(),
       images: yup.array(), // Array<File & {preview: string}>
@@ -107,9 +127,15 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
           id: yup.string(),
           name: yup.string(),
         })
-      ),
-    })
-    .required();
+        .required()
+    ),
+    resources: yup.array(
+      yup.object({
+        id: yup.string(),
+        name: yup.string(),
+      })
+    ),
+  });
 
   const form = useForm<CreateAssetNS.FormValues>({
     mode: "all",
@@ -193,6 +219,25 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         )}
       />
 
+      <Controller
+        control={control}
+        name="license"
+        render={({ field: { onChange, onBlur, name, value } }) => (
+          <Select
+            options={licenseTypes}
+            id={name}
+            name={name}
+            value={value}
+            onChange={onChange}
+            onBlur={onBlur}
+            label={t("Select license type")}
+            error={errors.license?.message}
+            requiredIndicator={isRequired(schema, name)}
+            placeholder={t("Select license type")}
+          />
+        )}
+      />
+
       <PFieldInfo
         label={`${t("Select asset type")}:`}
         error={errors.type?.message}
@@ -249,6 +294,27 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             isMulti
             placeholder={t("Type to search for a user")}
             error={errors.contributors?.message}
+            creatable={false}
+            requiredIndicator={isRequired(schema, name)}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="resources"
+        render={({ field: { onChange, onBlur, name, ref } }) => (
+          <SelectResources
+            name={name}
+            ref={ref}
+            id={name}
+            onBlur={onBlur}
+            onChange={onChange}
+            label={`${t("Include other resources")}:`}
+            isMulti
+            helpText={t("To include other resources, search by name or Interfacer ID")}
+            placeholder={t("Search resource name")}
+            error={errors.resources?.message}
             creatable={false}
             requiredIndicator={isRequired(schema, name)}
           />

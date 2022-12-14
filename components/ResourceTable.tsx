@@ -6,77 +6,13 @@ import devLog from "../lib/devLog";
 import BrLoadMore from "./brickroom/BrLoadMore";
 import BrTable from "./brickroom/BrTable";
 import Spinner from "./brickroom/Spinner";
+import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 
 const truncate = (input: string, max: number) => (input?.length > max ? `${input.substring(0, max)}...` : input);
 
-// prettier-ignore
-const FETCH_INVENTORY = gql`
-  query FetchInventory ($first: Int, $after: ID, $last: Int, $before: ID, $filter: EconomicResourceFilterParams) {
-    economicResources(first: $first after: $after before: $before last: $last filter: $filter) {
-      pageInfo {
-        startCursor
-        endCursor
-        hasPreviousPage
-        hasNextPage
-        totalCount
-        pageLimit
-      }
-      edges {
-        cursor
-        node {
-          conformsTo {
-            id
-            name
-          }
-          currentLocation {
-            id
-            name
-            mappableAddress
-          }
-          id
-          name
-          note
-          metadata
-          okhv
-          repo
-          version
-          licensor
-          license
-          primaryAccountable {
-            id
-            name
-            note
-          }
-          custodian {
-            id
-            name
-            note
-          }
-          accountingQuantity {
-            hasUnit {
-              id
-              label
-              symbol
-            }
-            hasNumericalValue
-          }
-          onhandQuantity {
-            hasUnit {
-              id
-              label
-              symbol
-            }
-            hasNumericalValue
-          }
-        }
-      }
-    }
-  }
-`;
-
 const ResourceTable = ({ filter }: { filter?: any }) => {
   const { t } = useTranslation("resourcesProps");
-  const { loading, data, error, fetchMore, variables, refetch } = useQuery(FETCH_INVENTORY, {
+  const { loading, data, error, fetchMore, variables, refetch } = useQuery(FETCH_RESOURCES, {
     variables: {
       last: 10,
       filter: filter,

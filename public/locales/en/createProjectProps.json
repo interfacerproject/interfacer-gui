@@ -12,5 +12,8 @@
   "Error in Asset creation": "Error in Asset creation",
   "Fields marked with a red asterisk are mandatory": "Fields marked with a red asterisk are mandatory",
   "Make sure you read the Comunity Guidelines before you create a new asset": "Make sure you read the Comunity Guidelines before you create a new asset",
-  "One of the images you selected already exists on the server, please upload a different file": "One of the images you selected already exists on the server, please upload a different file"
+  "One of the images you selected already exists on the server, please upload a different file": "One of the images you selected already exists on the server, please upload a different file",
+  "Include other resources": "Include other resources",
+  "To include other resources, search by name or Interfacer ID": "To include other resources, search by name or Interfacer ID",
+  "Search resource name": "Search resource name"
 }
