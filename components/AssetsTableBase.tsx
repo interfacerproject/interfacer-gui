@@ -1,4 +1,4 @@
-import { GetAssetsQuery } from "lib/types";
+import { FetchInventoryQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 
 // Components
@@ -9,7 +9,7 @@ import BrTable from "./brickroom/BrTable";
 //
 
 export interface AssetsTableBaseProps {
-  data: GetAssetsQuery;
+  data: FetchInventoryQuery;
   hidePagination?: boolean;
   onLoadMore?: () => void;
 }
@@ -20,9 +20,9 @@ export default function AssetsTableBase(props: AssetsTableBaseProps) {
   const { data, hidePagination = false, onLoadMore = () => {} } = props;
   const { t } = useTranslation("lastUpdatedProps");
 
-  const assets = data.proposals.edges;
-  const hasNextPage = data.proposals.pageInfo.hasNextPage;
-  const showEmptyState = !Boolean(assets) || assets.length == 0;
+  const assets = data.economicResources?.edges;
+  const hasNextPage = data.economicResources?.pageInfo.hasNextPage;
+  const showEmptyState = !Boolean(assets) || assets?.length == 0;
 
   //
 
