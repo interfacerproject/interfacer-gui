@@ -6,23 +6,25 @@ import {
   QUERY_UNIT_AND_CURRENCY,
   REJECT_PROPOSAL,
   SATISFY_INTENTS,
-} from "../../lib/QueryAndMutation";
+} from "lib/QueryAndMutation";
 import { Stack, Text, Button } from "@bbtgnn/polaris-interfacer";
-import PLabel from "../../components/polaris/PLabel";
-import ResourceDetailsCard from "../../components/ResourceDetailsCard";
+import PLabel from "components/polaris/PLabel";
+import ResourceDetailsCard from "components/ResourceDetailsCard";
 import { useTranslation } from "next-i18next";
-import Spinner from "../../components/brickroom/Spinner";
-import devLog from "../../lib/devLog";
+import Spinner from "components/brickroom/Spinner";
+import devLog from "lib/devLog";
 import React from "react";
-import { useAuth } from "../../hooks/useAuth";
-import { GetUnitAndCurrencyQuery } from "../../lib/types";
+import { useAuth } from "hooks/useAuth";
+import { GetUnitAndCurrencyQuery, ProposedStatus, QueryProposalQuery, QueryProposalQueryVariables } from "lib/types";
 
 const Proposal = () => {
   const router = useRouter();
   const { t } = useTranslation("proposalProps");
   const { id } = router.query;
   const { user } = useAuth();
-  const { data, loading, refetch } = useQuery(QUERY_PROPOSAL, { variables: { id: id?.toString() || "" } });
+  const { data, loading, refetch } = useQuery<QueryProposalQuery, QueryProposalQueryVariables>(QUERY_PROPOSAL, {
+    variables: { id: id?.toString() || "" },
+  });
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [acceptProposal] = useMutation(ACCEPT_PROPOSAL);
@@ -34,10 +36,13 @@ const Proposal = () => {
   const status = proposal?.status;
 
   const onReject = async () => {
+    if (!proposal) return;
+    const intents = proposal.primaryIntents;
+    if (!intents) return;
     const rejectProposalVariables = {
-      intentCite: proposal?.primaryIntents[0].id,
-      intentAccept: proposal?.primaryIntents[1].id,
-      intentModify: proposal?.primaryIntents[2].id,
+      intentCite: intents[0].id,
+      intentAccept: intents[1].id,
+      intentModify: intents[2].id,
     };
     devLog("rejectProposalVariables", rejectProposalVariables);
     const rejection = await rejectProposal({ variables: rejectProposalVariables });
@@ -46,13 +51,17 @@ const Proposal = () => {
   };
 
   const onAccept = async () => {
+    if (!proposal) return;
+    const intents = proposal.primaryIntents;
+    if (!intents) return;
+
     const acceptanceVariables = {
-      process: proposal.primaryIntents[0].inputOf.id,
+      process: intents[0].inputOf?.id,
       owner: user!.ulid,
-      proposer: proposal.primaryIntents[0].resourceInventoriedAs.primaryAccountable.id,
+      proposer: intents[0].resourceInventoriedAs?.primaryAccountable.id,
       unitOne: unitAndCurrency?.units.unitOne.id!,
-      resourceForked: proposal?.primaryIntents[0].resourceInventoriedAs.id,
-      resourceOrigin: proposal?.primaryIntents[1].resourceInventoriedAs.id,
+      resourceForked: intents[0].resourceInventoriedAs?.id,
+      resourceOrigin: intents[1].resourceInventoriedAs?.id,
       creationTime: new Date().toISOString(),
     };
     devLog("acceptanceVariables", acceptanceVariables);
@@ -61,9 +70,9 @@ const Proposal = () => {
 
     const satisfyIntentsVariables = {
       unitOne: unitAndCurrency?.units.unitOne.id!,
-      intentCited: proposal?.primaryIntents[0].id,
-      intentAccepted: proposal?.primaryIntents[1].id,
-      intentModify: proposal?.primaryIntents[2].id,
+      intentCited: intents[0].id,
+      intentAccepted: intents[1].id,
+      intentModify: intents[2].id,
       eventCite: economicEvents.data.cite.economicEvent.id,
       eventAccept: economicEvents.data.accept.economicEvent.id,
       eventModify: economicEvents.data.modify.economicEvent.id,
@@ -74,22 +83,29 @@ const Proposal = () => {
     await refetch();
   };
 
+  const switchStatus = {
+    [ProposedStatus.Pending]: t("The proposal is still pending"),
+    [ProposedStatus.Accepted]: t("The proposal has been accepted"),
+    [ProposedStatus.Refused]: t("The proposal has been rejected"),
+  };
+
   return (
     <div className="mx-auto max-w-lg p-6">
-      {loading ? (
+      {loading && !Boolean(proposal?.primaryIntents) ? (
         <Spinner />
       ) : (
         <>
           <Stack vertical spacing="extraLoose">
             <Stack vertical spacing="tight">
               <Text as="h1" variant="headingXl">
-                {t("Contribution from ")} {proposal.primaryIntents[0].receiver?.name}
+                {t("Contribution from ")} {proposal!.primaryIntents![0].receiver?.name}
               </Text>
             </Stack>
 
             <Stack vertical spacing="extraTight">
               <PLabel label={t("Forked asset")} />
-              <ResourceDetailsCard resource={data?.proposal.primaryIntents[0].resourceInventoriedAs} />
+              {/* @ts-ignore           */}
+              <ResourceDetailsCard resource={proposal.primaryIntents[0].resourceInventoriedAs} />
             </Stack>
 
             <Stack vertical spacing="tight">
@@ -97,7 +113,8 @@ const Proposal = () => {
                 {t("Status")}
               </Text>
               <Text as="p" variant="bodyMd">
-                {t("Waiting for approval")}
+                {switchStatus[proposal!.status]}
+                {proposal?.status}
               </Text>
             </Stack>
 
@@ -106,7 +123,7 @@ const Proposal = () => {
                 {t("Contribution info")}
               </Text>
               <Text as="p" variant="bodyMd">
-                {proposal.note}
+                {proposal!.note}
               </Text>
             </Stack>
 
@@ -115,7 +132,7 @@ const Proposal = () => {
                 {t("Repository link")}
               </Text>
               <Text as="p" variant="bodyMd">
-                {proposal.primaryIntents[0].resourceInventoriedAs.repo}
+                {proposal!.primaryIntents![0].resourceInventoriedAs?.repo}
               </Text>
             </Stack>
 

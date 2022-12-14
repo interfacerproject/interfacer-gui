@@ -862,7 +862,7 @@ export const SATISFY_INTENTS = gql`
 `;
 
 export const REJECT_PROPOSAL = gql`
-  mutation ($intentCite: ID!, $intentAccept: ID!, $intentModify: ID!) {
+  mutation rejectProposal($intentCite: ID!, $intentAccept: ID!, $intentModify: ID!) {
     cite: updateIntent(intent: { id: $intentCite, finished: true }) {
       intent {
         id
