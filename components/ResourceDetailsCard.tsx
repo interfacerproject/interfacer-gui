@@ -5,13 +5,15 @@ import { Card, Text } from "@bbtgnn/polaris-interfacer";
 //
 
 export interface Props {
-  resource: Partial<EconomicResource>;
+  resource: Partial<EconomicResource> | null | undefined;
 }
 
 //
 
 const ResourceDetailsCard = (props: Props) => {
   const { resource } = props;
+
+  if (!resource) return null;
 
   return (
     <Card>

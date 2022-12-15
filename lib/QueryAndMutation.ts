@@ -862,7 +862,7 @@ export const SATISFY_INTENTS = gql`
 `;
 
 export const REJECT_PROPOSAL = gql`
-  mutation ($intentCite: ID!, $intentAccept: ID!, $intentModify: ID!) {
+  mutation rejectProposal($intentCite: ID!, $intentAccept: ID!, $intentModify: ID!) {
     cite: updateIntent(intent: { id: $intentCite, finished: true }) {
       intent {
         id
@@ -876,6 +876,16 @@ export const REJECT_PROPOSAL = gql`
     modify: updateIntent(intent: { id: $intentModify, finished: true }) {
       intent {
         id
+      }
+    }
+  }
+`;
+export const ASK_RESOURCE_PRIMARY_ACCOUNTABLE = gql`
+  query askResourcePrimaryAccountable($id: ID!) {
+    economicResource(id: $id) {
+      primaryAccountable {
+        id
+        name
       }
     }
   }

@@ -1538,6 +1538,7 @@ export type Proposal = {
   primaryIntents?: Maybe<Array<Intent>>;
   publishes?: Maybe<Array<ProposedIntent>>;
   reciprocalIntents?: Maybe<Array<Intent>>;
+  status: ProposedStatus;
   /**
    * This proposal contains unit based quantities, which can be multipied to
    * create commitments; commonly seen in a price list or e-commerce.
@@ -1643,6 +1644,13 @@ export type ProposedIntentResponse = {
   __typename?: "ProposedIntentResponse";
   proposedIntent: ProposedIntent;
 };
+
+/** The status of the proposal: pending, accepted, or refused. */
+export enum ProposedStatus {
+  Accepted = "ACCEPTED",
+  Pending = "PENDING",
+  Refused = "REFUSED",
+}
 
 /** Specifies an exchange agreement as part of a recipe. */
 export type RecipeExchange = {
@@ -2170,6 +2178,7 @@ export type RootMutationType = {
   createResourceSpecification: ResourceSpecificationResponse;
   /** Creates a role behavior. */
   createRoleBehavior: RoleBehaviorResponse;
+  createSatisfaction: SatisfactionResponse;
   createScenario: ScenarioResponse;
   createScenarioDefinition: ScenarioDefinitionResponse;
   createSpatialThing: SpatialThingResponse;
@@ -2202,6 +2211,7 @@ export type RootMutationType = {
   deleteResourceSpecification: Scalars["Boolean"];
   /** Deletes a role behavior. */
   deleteRoleBehavior: Scalars["Boolean"];
+  deleteSatisfaction: Scalars["Boolean"];
   deleteScenario: Scalars["Boolean"];
   deleteScenarioDefinition: Scalars["Boolean"];
   deleteSpatialThing: Scalars["Boolean"];
@@ -2239,6 +2249,7 @@ export type RootMutationType = {
   updateResourceSpecification: ResourceSpecificationResponse;
   /** Updates a role behavior. */
   updateRoleBehavior: RoleBehaviorResponse;
+  updateSatisfaction: SatisfactionResponse;
   updateScenario: ScenarioResponse;
   updateScenarioDefinition: ScenarioDefinitionResponse;
   updateSpatialThing: SpatialThingResponse;
@@ -2316,6 +2327,10 @@ export type RootMutationTypeCreateResourceSpecificationArgs = {
 
 export type RootMutationTypeCreateRoleBehaviorArgs = {
   roleBehavior: RoleBehaviorCreateParams;
+};
+
+export type RootMutationTypeCreateSatisfactionArgs = {
+  satisfaction: SatisfactionCreateParams;
 };
 
 export type RootMutationTypeCreateScenarioArgs = {
@@ -2407,6 +2422,10 @@ export type RootMutationTypeDeleteResourceSpecificationArgs = {
 };
 
 export type RootMutationTypeDeleteRoleBehaviorArgs = {
+  id: Scalars["ID"];
+};
+
+export type RootMutationTypeDeleteSatisfactionArgs = {
   id: Scalars["ID"];
 };
 
@@ -2521,6 +2540,10 @@ export type RootMutationTypeUpdateRoleBehaviorArgs = {
   roleBehavior: RoleBehaviorUpdateParams;
 };
 
+export type RootMutationTypeUpdateSatisfactionArgs = {
+  satisfaction: SatisfactionUpdateParams;
+};
+
 export type RootMutationTypeUpdateScenarioArgs = {
   scenario: ScenarioUpdateParams;
 };
@@ -2622,6 +2645,8 @@ export type RootQueryType = {
   resourceSpecifications?: Maybe<ResourceSpecificationConnection>;
   roleBehavior?: Maybe<RoleBehavior>;
   roleBehaviors?: Maybe<RoleBehaviorConnection>;
+  satisfaction?: Maybe<Satisfaction>;
+  satisfactions: SatisfactionConnection;
   scenario?: Maybe<Scenario>;
   scenarioDefinition?: Maybe<ScenarioDefinition>;
   scenarioDefinitions?: Maybe<ScenarioDefinitionConnection>;
@@ -2893,6 +2918,17 @@ export type RootQueryTypeRoleBehaviorsArgs = {
   last?: InputMaybe<Scalars["Int"]>;
 };
 
+export type RootQueryTypeSatisfactionArgs = {
+  id: Scalars["ID"];
+};
+
+export type RootQueryTypeSatisfactionsArgs = {
+  after?: InputMaybe<Scalars["ID"]>;
+  before?: InputMaybe<Scalars["ID"]>;
+  first?: InputMaybe<Scalars["Int"]>;
+  last?: InputMaybe<Scalars["Int"]>;
+};
+
 export type RootQueryTypeScenarioArgs = {
   id: Scalars["ID"];
 };
@@ -2935,6 +2971,93 @@ export type RootQueryTypeUnitsArgs = {
   before?: InputMaybe<Scalars["ID"]>;
   first?: InputMaybe<Scalars["Int"]>;
   last?: InputMaybe<Scalars["Int"]>;
+};
+
+/**
+ * Represents many-to-many relationships between intents and commitments
+ * or events that partially or full satisfy one or more intents.
+ */
+export type Satisfaction = {
+  __typename?: "Satisfaction";
+  /**
+   * The amount and unit of the work or use or citation effort-based
+   * action.  This is often a time duration, but also could be cycle
+   * counts or other measures of effort or usefulness.
+   */
+  effortQuantity?: Maybe<Measure>;
+  id: Scalars["ID"];
+  /** A textual description or comment. */
+  note?: Maybe<Scalars["String"]>;
+  /** The amount and unit of the economic resource counted or inventoried. */
+  resourceQuantity?: Maybe<Measure>;
+  /**
+   * An economic event fully or partially satisfying an intent.
+   *
+   * Mutually exclusive with commitment.
+   */
+  satisfiedByEvent?: Maybe<EconomicEvent>;
+  /** An intent satisfied fully or partially by an economic event or commitment. */
+  satisfies: Intent;
+};
+
+export type SatisfactionConnection = {
+  __typename?: "SatisfactionConnection";
+  edges: Array<SatisfactionEdge>;
+  pageInfo: PageInfo;
+};
+
+export type SatisfactionCreateParams = {
+  /**
+   * The amount and unit of the work or use or citation effort-based
+   * action.  This is often a time duration, but also could be cycle
+   * counts or other measures of effort or usefulness.
+   */
+  effortQuantity?: InputMaybe<IMeasure>;
+  /** A textual description or comment. */
+  note?: InputMaybe<Scalars["String"]>;
+  /** The amount and unit of the economic resource counted or inventoried. */
+  resourceQuantity?: InputMaybe<IMeasure>;
+  /**
+   * (`EconomicEvent`) An economic event fully or partially satisfying an intent.
+   *
+   * Mutually exclusive with commitment.
+   */
+  satisfiedByEvent?: InputMaybe<Scalars["ID"]>;
+  /** (`Intent`) An intent satisfied fully or partially by an economic event or commitment. */
+  satisfies: Scalars["ID"];
+};
+
+export type SatisfactionEdge = {
+  __typename?: "SatisfactionEdge";
+  cursor: Scalars["ID"];
+  node: Satisfaction;
+};
+
+export type SatisfactionResponse = {
+  __typename?: "SatisfactionResponse";
+  satisfaction: Satisfaction;
+};
+
+export type SatisfactionUpdateParams = {
+  /**
+   * The amount and unit of the work or use or citation effort-based
+   * action.  This is often a time duration, but also could be cycle
+   * counts or other measures of effort or usefulness.
+   */
+  effortQuantity?: InputMaybe<IMeasure>;
+  id: Scalars["ID"];
+  /** A textual description or comment. */
+  note?: InputMaybe<Scalars["String"]>;
+  /** The amount and unit of the economic resource counted or inventoried. */
+  resourceQuantity?: InputMaybe<IMeasure>;
+  /**
+   * (`EconomicEvent`) An economic event fully or partially satisfying an intent.
+   *
+   * Mutually exclusive with commitment.
+   */
+  satisfiedByEvent?: InputMaybe<Scalars["ID"]>;
+  /** (`Intent`) An intent satisfied fully or partially by an economic event or commitment. */
+  satisfies?: InputMaybe<Scalars["ID"]>;
 };
 
 /**
@@ -3712,7 +3835,8 @@ export type ForkAssetMutation = {
 
 export type ProposeContributionMutationVariables = Exact<{
   process: Scalars["ID"];
-  agent: Scalars["ID"];
+  owner: Scalars["ID"];
+  proposer: Scalars["ID"];
   creationTime: Scalars["DateTime"];
   resourceForked: Scalars["ID"];
   unitOne: Scalars["ID"];
@@ -3757,6 +3881,7 @@ export type QueryProposalQuery = {
     id: string;
     name?: string | null;
     note?: string | null;
+    status: ProposedStatus;
     primaryIntents?: Array<{
       __typename?: "Intent";
       id: string;
@@ -3776,6 +3901,14 @@ export type QueryProposalQuery = {
         id: string;
         name: string;
         repo?: string | null;
+        primaryAccountable:
+          | { __typename?: "Organization"; id: string; name: string }
+          | { __typename?: "Person"; id: string; name: string };
+        onhandQuantity: {
+          __typename?: "Measure";
+          hasNumericalValue: any;
+          hasUnit?: { __typename?: "Unit"; id: string } | null;
+        };
       } | null;
       resourceConformsTo?: { __typename?: "EconomicResource"; id: string; name: string } | null;
     }> | null;
@@ -3796,4 +3929,51 @@ export type CiteAssetMutation = {
     __typename?: "EconomicEventResponse";
     economicEvent: { __typename?: "EconomicEvent"; id: string };
   };
+};
+
+export type AcceptProposalMutationVariables = Exact<{
+  process: Scalars["ID"];
+  owner: Scalars["ID"];
+  proposer: Scalars["ID"];
+  unitOne: Scalars["ID"];
+  resourceForked: Scalars["ID"];
+  resourceOrigin: Scalars["ID"];
+  creationTime: Scalars["DateTime"];
+}>;
+
+export type AcceptProposalMutation = {
+  __typename?: "RootMutationType";
+  cite: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+  accept: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+  modify: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+};
+
+export type SatisfyIntentsMutationVariables = Exact<{
+  unitOne: Scalars["ID"];
+  intentCited: Scalars["ID"];
+  intentAccepted: Scalars["ID"];
+  intentModify: Scalars["ID"];
+  eventCite: Scalars["ID"];
+  eventAccept: Scalars["ID"];
+  eventModify: Scalars["ID"];
+}>;
+
+export type SatisfyIntentsMutation = {
+  __typename?: "RootMutationType";
+  cite: { __typename?: "SatisfactionResponse"; satisfaction: { __typename?: "Satisfaction"; id: string } };
+  accept: { __typename?: "SatisfactionResponse"; satisfaction: { __typename?: "Satisfaction"; id: string } };
+  modify: { __typename?: "SatisfactionResponse"; satisfaction: { __typename?: "Satisfaction"; id: string } };
+};
+
+export type RejectProposalMutationVariables = Exact<{
+  intentCite: Scalars["ID"];
+  intentAccept: Scalars["ID"];
+  intentModify: Scalars["ID"];
+}>;
+
+export type RejectProposalMutation = {
+  __typename?: "RootMutationType";
+  cite: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+  accept: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+  modify: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
 };

@@ -21,7 +21,7 @@ import { EconomicResource, GetUnitAndCurrencyQuery } from "lib/types";
 import { CREATE_PROCESS } from "lib/QueryAndMutation";
 import devLog from "lib/devLog";
 import { useAuth } from "hooks/useAuth";
-import useInBox from "../../../hooks/useInBox";
+import useInBox from "hooks/useInBox";
 import { MessageSubject, ProposalNotification } from "../../notification";
 
 //
@@ -126,8 +126,9 @@ const CreateContribution: NextPageWithLayout = () => {
         originalResourceName: resource.name,
         originalResourceID: resource.id,
         proposerName: user!.name,
+        ownerName: resource.primaryAccountable.name,
       };
-      sendMessage(JSON.stringify(message), [resource.primaryAccountable.id], MessageSubject.CONTRIBUTION_REQUEST);
+      sendMessage(message, [resource.primaryAccountable.id], MessageSubject.CONTRIBUTION_REQUEST);
       router.push(`/proposal/${proposal.data?.createProposal.proposal.id}`);
     }
   };
