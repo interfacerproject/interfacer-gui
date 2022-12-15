@@ -18,10 +18,11 @@ import { useAuth } from "hooks/useAuth";
 import { GetUnitAndCurrencyQuery, ProposedStatus, QueryProposalQuery, QueryProposalQueryVariables } from "lib/types";
 import useInBox from "../../hooks/useInBox";
 import { ProposalType, ProposalNotification, MessageSubject } from "../notification";
+import MdParser from "../../lib/MdParser";
 
 const Proposal = () => {
   const router = useRouter();
-  const { t } = useTranslation("proposalProps");
+  const { t } = useTranslation("ProposalProps");
   const { id } = router.query;
   const { user } = useAuth();
   const { data, loading, refetch } = useQuery<QueryProposalQuery, QueryProposalQueryVariables>(QUERY_PROPOSAL, {
@@ -115,10 +116,14 @@ const Proposal = () => {
   };
 
   const switchStatus = {
-    [ProposedStatus.Pending]: t("The proposal is still pending"),
-    [ProposedStatus.Accepted]: t("The proposal has been accepted"),
-    [ProposedStatus.Refused]: t("The proposal has been rejected"),
+    [ProposedStatus.Pending]: { text: t("The proposal is still pending"), color: "bg-warning" },
+    [ProposedStatus.Accepted]: { text: t("The proposal has been accepted"), color: "bg-success" },
+    [ProposedStatus.Refused]: { text: t("The proposal has been rejected"), color: "bg-danger" },
   };
+
+  const renderActions =
+    user?.ulid !== proposal?.primaryIntents?.[0].resourceInventoriedAs?.primaryAccountable.id &&
+    proposal?.status === ProposedStatus.Pending;
 
   return (
     <div className="mx-auto max-w-lg p-6">
@@ -129,7 +134,7 @@ const Proposal = () => {
           <Stack vertical spacing="extraLoose">
             <Stack vertical spacing="tight">
               <Text as="h1" variant="headingXl">
-                {t("Contribution from ")} {proposal!.primaryIntents![0].receiver?.name}
+                {t("Contribution from ")} {proposal!.primaryIntents![0].resourceInventoriedAs!.primaryAccountable.name}
               </Text>
             </Stack>
 
@@ -143,18 +148,19 @@ const Proposal = () => {
               <Text as="h2" variant="headingLg">
                 {t("Status")}
               </Text>
-              <Text as="p" variant="bodyMd">
-                {switchStatus[proposal!.status]}
-              </Text>
+              <div className={`p-4 rounded ${switchStatus[proposal!.status].color}`}>
+                <Text as="p" variant="bodyMd">
+                  {switchStatus[proposal!.status].text}
+                </Text>
+              </div>
             </Stack>
 
             <Stack vertical spacing="tight">
               <Text as="h2" variant="headingLg">
                 {t("Contribution info")}
+                {":"}
               </Text>
-              <Text as="p" variant="bodyMd">
-                {proposal!.note}
-              </Text>
+              <div className="mb-2" dangerouslySetInnerHTML={{ __html: MdParser.render(proposal!.note!) }} />
             </Stack>
 
             <Stack vertical spacing="tight">
@@ -166,42 +172,44 @@ const Proposal = () => {
               </Text>
             </Stack>
 
-            <Stack vertical spacing="tight">
-              <Text as="h2" variant="headingLg">
-                {t("Proposed Income")}
-              </Text>
-              {/*<Text as="p" variant="bodyMd">*/}
-              {/*  {proposal.primaryIntents[1]?.resourceInventoriedAs.onhandQuantity.numericValue}*/}
-              {/*</Text>*/}
-            </Stack>
+            {/*<Stack vertical spacing="tight">*/}
+            {/*  <Text as="h2" variant="headingLg">*/}
+            {/*    {t("Proposed Income")}*/}
+            {/*  </Text>*/}
+            {/*  /!*<Text as="p" variant="bodyMd">*!/*/}
+            {/*  /!*  {proposal.primaryIntents[1]?.resourceInventoriedAs.onhandQuantity.numericValue}*!/*/}
+            {/*  /!*</Text>*!/*/}
+            {/*</Stack>*/}
 
-            <Stack vertical spacing="tight">
-              <Text as="h2" variant="headingLg">
-                {t("Your actions")}
-              </Text>
-              <Button
-                size="large"
-                primary
-                fullWidth
-                submit
-                onClick={onReject}
-                id="submit"
-                disabled={!(status === "PENDING")}
-              >
-                {t("Reject contribution")}
-              </Button>{" "}
-              <Button
-                size="large"
-                primary
-                fullWidth
-                submit
-                onClick={onAccept}
-                disabled={!(status === "PENDING")}
-                id="submit"
-              >
-                {t("Accept contribution")}
-              </Button>
-            </Stack>
+            {renderActions && (
+              <Stack vertical spacing="tight">
+                <Text as="h2" variant="headingLg">
+                  {t("Your actions")}
+                </Text>
+                <Button
+                  size="large"
+                  primary
+                  fullWidth
+                  submit
+                  onClick={onReject}
+                  id="submit"
+                  disabled={!(status === "PENDING")}
+                >
+                  {t("Reject contribution")}
+                </Button>{" "}
+                <Button
+                  size="large"
+                  primary
+                  fullWidth
+                  submit
+                  onClick={onAccept}
+                  disabled={!(status === "PENDING")}
+                  id="submit"
+                >
+                  {t("Accept contribution")}
+                </Button>
+              </Stack>
+            )}
 
             {/*<CreateContributionFrom onSubmit={onSubmit} error={formError} setError={setFormError} />*/}
           </Stack>
