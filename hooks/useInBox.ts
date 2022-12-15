@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 export declare module Notification {
   export interface Content {
     data: Date;
-    message: string;
+    message: any;
     subject: string;
   }
 

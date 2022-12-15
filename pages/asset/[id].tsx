@@ -108,7 +108,15 @@ const Asset = () => {
                     //     />
                     //   ),
                     // },
-                    { title: t("DPP"), component: <Dpp dpp={data?.economicResource.traceDpp} /> },
+                    { title: t("Relationship tree"), component: <Dpp dpp={data?.economicResource.traceDpp} /> },
+                    {
+                      title: t("DPP"),
+                      component: (
+                        <pre className="overflow-scroll w-full border">
+                          {JSON.stringify(data?.economicResource.traceDpp, null, 2)}
+                        </pre>
+                      ),
+                    },
                   ]}
                 />
               </div>
@@ -157,5 +165,7 @@ export async function getStaticProps({ locale }: any) {
     },
   };
 }
+
+Asset.publicPage = true;
 
 export default Asset;

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import MdParser from "../lib/MdParser";
 import { useTranslation } from "next-i18next";
+import ResourceDetailsCard from "../components/ResourceDetailsCard";
 
 const Dpp = ({ dpp }: { dpp: JSON }) => {
   const [assets, setAssets] = useState<any[]>([]);
@@ -33,14 +34,7 @@ const Dpp = ({ dpp }: { dpp: JSON }) => {
         <div key={asset.id} className="flex flex-column mt-2 border-b-2">
           <Link href={`/asset/${asset.id}`}>
             <a>
-              <div className="flex flex-row">
-                <div className="flex">
-                  <b>{asset.name}</b>
-                </div>
-                <div className="flex-grow pl-2">
-                  <span dangerouslySetInnerHTML={{ __html: MdParser.render(asset.description!) }} />
-                </div>
-              </div>
+              <ResourceDetailsCard resource={asset} />
             </a>
           </Link>
         </div>
