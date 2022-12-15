@@ -21,6 +21,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import devLog from "../../lib/devLog";
 import Dpp from "../../components/Dpp";
 import HandleCollect from "../../lib/HandleCollect";
+import dynamic from "next/dynamic";
+
+const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -112,9 +115,13 @@ const Asset = () => {
                     {
                       title: t("DPP"),
                       component: (
-                        <pre className="overflow-scroll w-full border">
-                          {JSON.stringify(data?.economicResource.traceDpp, null, 2)}
-                        </pre>
+                        <DynamicReactJson
+                          src={data?.economicResource.traceDpp}
+                          collapsed={3}
+                          enableClipboard={false}
+                          displayDataTypes={false}
+                          sortKeys={true}
+                        />
                       ),
                     },
                   ]}
