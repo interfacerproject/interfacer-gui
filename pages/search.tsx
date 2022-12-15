@@ -7,18 +7,18 @@ import Layout from "../components/layout/SearchLayout";
 import ResourcesCards from "../components/ResourcesCards";
 import SearchBar from "../components/SearchBar";
 import { NextPageWithLayout } from "./_app";
+import AssetsTable from "../components/AssetsTable";
 
 const Search: NextPageWithLayout = () => {
   const { q } = useRouter().query;
   const [checked, setChecked] = useState(false);
   const { t } = useTranslation("common");
   const Assetfilter = {
-    notCustodian: [process.env.NEXT_PUBLIC_LOASH_ID!],
-    name: q?.toString(),
-    ...(!checked && { note: q?.toString() }),
+    orName: q?.toString(),
+    ...(!checked && { orNote: q?.toString() }),
   };
   const Resourcefilter = {
-    primaryAccountable: [process.env.NEXT_PUBLIC_LOASH_ID!],
+    primaryAccountable: [process.env.NEXT_PUBLIC_LOSH_ID!],
     name: q?.toString(),
     ...(!checked && { note: !checked && q?.toString() }),
   };
@@ -26,15 +26,19 @@ const Search: NextPageWithLayout = () => {
   return (
     <div>
       <div className="p-8">
-        <div className="mb-6 w-96">
-          <h1>{"Search"}</h1>
-          <p className="my-2">{"Search results for " + q}</p>
-          <SearchBar />
-          <Checkbox label={t("do not search inside the the description")} checked={checked} onChange={setChecked} />
+        <div className="mb-6">
+          <h1>
+            <span className="text-[#5DA091]">{t("Search result for") + ": "}</span>
+            {`"${q}"`}
+          </h1>
+          <div className="flex flex-col gap-2 my-8">
+            <SearchBar />
+            <Checkbox label={t("do not search inside the the description")} checked={checked} onChange={setChecked} />
+          </div>
         </div>
-        <AssetsCards filter={Assetfilter} />
-        {/*<AssetsTable filter={Assetfilter} />*/}
-        <ResourcesCards filter={Resourcefilter} />
+        <AssetsTable filter={Assetfilter} hideHeader />
+        {/*<AssetsCards filter={Assetfilter} />*/}
+        {/*<ResourcesCards filter={Resourcefilter} />*/}
       </div>
     </div>
   );
