@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 // Request
 import { useQuery } from "@apollo/client";
-import { FETCH_PEOPLE, FETCH_RESOURCES } from "lib/QueryAndMutation";
+import { FETCH_AGENTS, FETCH_RESOURCES } from "lib/QueryAndMutation";
 import { GetPeopleQuery, GetPeopleQueryVariables, EconomicResourceFilterParams } from "lib/types";
 
 // Components
@@ -13,6 +13,11 @@ import AssetsFilters from "./AssetsFilters";
 import AssetsTableBase from "./AssetsTableBase";
 import Spinner from "./brickroom/Spinner";
 import useLoadMore from "../hooks/useLoadMore";
+import SelectAssetType from "./SelectAssetType";
+import { getOptionValue } from "./brickroom/utils/BrSelectUtils";
+import SelectTags from "./SelectTags";
+import SelectContributors from "./SelectContributors";
+import AgentsTableBase from "./AgentsTableBase";
 
 //
 
@@ -30,14 +35,11 @@ export default function AgentsTable(props: AgentsTableProps) {
   const { t } = useTranslation("lastUpdatedProps");
   const { hideHeader = false, hidePagination = false, searchTerm, searchFilter } = props;
 
-  const { loading, data, fetchMore, refetch, variables } = useQuery<GetPeopleQuery, GetPeopleQueryVariables>(
-    FETCH_PEOPLE,
-    {
-      variables: { last: 10, userOrName: searchTerm || "" },
-    }
-  );
+  const { loading, data, fetchMore, refetch, variables } = useQuery(FETCH_AGENTS, {
+    variables: { last: 10, userOrName: searchTerm || "" },
+  });
 
-  const dataQueryIdentifier = "people";
+  const dataQueryIdentifier = "agents";
 
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
@@ -47,7 +49,7 @@ export default function AgentsTable(props: AgentsTableProps) {
     dataQueryIdentifier,
   });
 
-  const people = data?.people?.edges;
+  const people = data?.agents?.edges;
 
   const [showFilter, setShowFilter] = useState(false);
   const toggleFilter = () => setShowFilter(!showFilter);
@@ -84,12 +86,15 @@ export default function AgentsTable(props: AgentsTableProps) {
           <div className="flex flex-row flex-nowrap items-start space-x-8">
             {data && (
               <div className="grow">
-                <AssetsTableBase data={data} onLoadMore={loadMore} hidePagination={hidePagination} />
+                <AgentsTableBase data={data} onLoadMore={loadMore} hidePagination={hidePagination} />
               </div>
             )}
             {showFilter && (
               <div className="basis-96 sticky top-8">
-                <AssetsFilters>{searchFilter}</AssetsFilters>
+                <div className="p-4 bg-white border rounded-lg shadow space-y-6">
+                  <h4 className="text-xl font-bold capitalize">{t("filters")}:</h4>
+                  <div className="space-y-4">{searchFilter}</div>
+                </div>
               </div>
             )}
           </div>
