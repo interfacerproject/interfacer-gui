@@ -10,7 +10,6 @@ import BrBreadcrumb from "../../components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "../../components/brickroom/BrDisplayUser";
 import BrTabs from "../../components/brickroom/BrTabs";
 import BrThumbinailsGallery from "../../components/brickroom/BrThumbinailsGallery";
-import ContributorsTable from "../../components/ContributorsTable";
 import { useAuth } from "../../hooks/useAuth";
 import useStorage from "../../hooks/useStorage";
 import { EconomicResource } from "../../lib/types";
@@ -21,6 +20,7 @@ import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import devLog from "../../lib/devLog";
 import Dpp from "../../components/Dpp";
+import HandleCollect from "../../lib/HandleCollect";
 import dynamic from "next/dynamic";
 
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
@@ -53,19 +53,6 @@ const Asset = () => {
         : metadataImage;
     setImages(_images);
   }, [data]);
-
-  const handleCollect = () => {
-    const _list = getItem("assetsCollected");
-    const _listParsed = _list ? JSON.parse(_list) : [];
-    if (_listParsed.includes(asset!.id)) {
-      setItem("assetsCollected", JSON.stringify(_listParsed.filter((a: string) => a !== asset!.id)));
-      setInList(false);
-    } else {
-      const _listParsedUpdated = [..._listParsed, asset?.id];
-      setItem("assetsCollected", JSON.stringify(_listParsedUpdated));
-      setInList(true);
-    }
-  };
 
   useEffect(() => {
     const _list = getItem("assetsCollected");
@@ -147,7 +134,7 @@ const Asset = () => {
                   "btn-accent": !inList,
                   "btn-outline": inList,
                 })}
-                onClick={handleCollect}
+                onClick={() => HandleCollect({ asset: asset.id, setInList })}
               >
                 {t(inList ? "remove from list" : "add to list")}
               </button>
