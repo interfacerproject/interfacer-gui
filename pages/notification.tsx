@@ -1,12 +1,10 @@
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { Button } from "@bbtgnn/polaris-interfacer";
 import Link from "next/link";
 import { useEffect } from "react";
 import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 import dayjs from "../lib/dayjs";
 import useInBox, { Notification } from "../hooks/useInBox";
-import { useRouter } from "next/router";
 import devLog from "lib/devLog";
 import ContributionMessage from "../components/ContributionMessage";
 
@@ -39,27 +37,10 @@ export interface Proposal {
 export interface ProposalNotification {
   proposalID: string;
   text: string;
-  type: ProposalType;
+  type?: ProposalType;
   originalResourceName: string;
   originalResourceID: string;
   proposerName: string;
-}
-
-export interface ProposalAcceptedNotification {
-  proposalID: string;
-  text: string;
-  type: ProposalType;
-  resourceName: string;
-  resourceID: string;
-  ownerName: string;
-}
-
-export interface ProposalRejectedNotification {
-  proposalID: string;
-  text: string;
-  type: ProposalType;
-  resourceName: string;
-  resourceID: string;
   ownerName: string;
 }
 
@@ -92,154 +73,37 @@ const Notification = () => {
   );
 
   const RenderMessagePerSubject = (props: { message: Notification.Content; sender: string; data: Date }) => {
-    devLog("senderId", props.sender ? "pepe" : "nope");
+    const _parsedMessage: ProposalNotification = props.message.message;
+
     switch (props.message.subject) {
-      case "contribution":
-        return <ContributionRow contribution={props.message} />;
       case MessageSubject.CONTRIBUTION_REQUEST:
-        return <RenderContributionRequest {...props} />;
       case MessageSubject.CONTRIBUTION_ACCEPTED:
-        return <RenderContributionAccepted {...props} />;
       case MessageSubject.CONTRIBUTION_REJECTED:
-        return <RenderContributionRejected {...props} />;
+        return (
+          <ContributionMessage
+            data={props.data}
+            resourceName={_parsedMessage.originalResourceName}
+            resourceId={_parsedMessage.originalResourceID}
+            userName={_parsedMessage.proposerName}
+            userId={props.sender}
+            proposalId={_parsedMessage.proposalID}
+            message={_parsedMessage.text}
+            subject={props.message.subject}
+          />
+        );
       default:
         return <div />;
     }
   };
 
   return (
-    <div className="grid grid-cols-1 p-12">
+    <div className="mx-auto max-w-lg p-6">
       {messages.map((m: any) => (
         <>
           <RenderMessagePerSubject key={m.id} message={m.content} sender={m.sender} data={m.content.data} />
         </>
       ))}
     </div>
-  );
-};
-
-const RenderContributionAccepted = ({
-  message,
-  sender,
-  data,
-}: {
-  message: Notification.Content;
-  sender: string;
-  data: Date;
-}) => {
-  const router = useRouter();
-  const { t } = useTranslation("notificationProps");
-  const _parsedMessage: ProposalAcceptedNotification = JSON.parse(message.message);
-  return (
-    <ContributionMessage data={data}>
-      <div className="flex flex-row my-2 center">
-        <div className="mr-2">
-          <BrDisplayUser id={sender} name={_parsedMessage.ownerName} />
-        </div>
-        <div className="pt-3">
-          <span className="mr-1">{t("accepted your contribution to")}</span>
-          <Link href={`/asset/${_parsedMessage.resourceID}`}>
-            <a className="text-primary hover:underline">{_parsedMessage.resourceName}</a>
-          </Link>
-        </div>
-      </div>
-      <p>{t("Your profile is now mentioned in the Contributions section") + "."}</p>
-      <Button
-        primary
-        onClick={() => {
-          router.push("/");
-        }}
-      >
-        {"review"}
-      </Button>
-    </ContributionMessage>
-  );
-};
-
-const RenderContributionRequest = ({
-  message,
-  sender,
-  data,
-}: {
-  message: Notification.Content;
-  sender: string;
-  data: Date;
-}) => {
-  const _parsedMessage: ProposalNotification = JSON.parse(message.message);
-  const router = useRouter();
-
-  return (
-    <ContributionMessage data={data}>
-      <div className="flex flex-row my-2 center">
-        <div className="mr-2">
-          <BrDisplayUser id={sender} name={_parsedMessage.proposerName} />
-        </div>
-        <div className="pt-3">
-          <span className="mr-1">{"want to contribute to your"}</span>
-          <Link href={`/asset/${_parsedMessage.originalResourceID}`}>
-            <a className="text-primary hover:underline">{_parsedMessage.originalResourceName}</a>
-          </Link>
-        </div>
-      </div>
-      <p>{_parsedMessage.text}</p>
-      <p>
-        {"this is a "}
-        {_parsedMessage.type}
-      </p>
-      <p>{`let ${_parsedMessage.proposalID} knows about your decision`}</p>
-      <Button
-        primary
-        onClick={() => {
-          router.push(`/proposal/${_parsedMessage.proposalID}`);
-        }}
-      >
-        {"review"}
-      </Button>
-    </ContributionMessage>
-  );
-};
-
-const RenderContributionRejected = ({
-  message,
-  sender,
-  data,
-}: {
-  message: Notification.Content;
-  sender: string;
-  data: Date;
-}) => {
-  const { t } = useTranslation("notificationProps");
-  const _parsedMessage: ProposalRejectedNotification = JSON.parse(message.message);
-  const router = useRouter();
-
-  return (
-    <ContributionMessage data={data}>
-      <div className="flex flex-row my-2 center">
-        <div className="mr-2">
-          <BrDisplayUser id={sender} name={_parsedMessage.ownerName} />
-        </div>
-        <div className="pt-3">
-          <span className="mr-1">{"rejected your contribution to"}</span>
-          <Link href={`/asset/${_parsedMessage.resourceID}`}>
-            <a className="text-primary hover:underline">{_parsedMessage.resourceName}</a>
-          </Link>
-        </div>
-      </div>
-      <p>{_parsedMessage.text}</p>
-
-      <p>
-        {t("You can review your contribution and submit it again, or create a new asset linked to the parent asset") +
-          ":"}
-      </p>
-      <Button
-        primary
-        onClick={() => {
-          router.push("/");
-        }}
-      >
-        {"review"}
-      </Button>
-    </ContributionMessage>
   );
 };
 

@@ -16,6 +16,8 @@ import devLog from "lib/devLog";
 import React from "react";
 import { useAuth } from "hooks/useAuth";
 import { GetUnitAndCurrencyQuery, ProposedStatus, QueryProposalQuery, QueryProposalQueryVariables } from "lib/types";
+import useInBox from "../../hooks/useInBox";
+import { ProposalType, ProposalNotification, MessageSubject } from "../notification";
 
 const Proposal = () => {
   const router = useRouter();
@@ -25,6 +27,7 @@ const Proposal = () => {
   const { data, loading, refetch } = useQuery<QueryProposalQuery, QueryProposalQueryVariables>(QUERY_PROPOSAL, {
     variables: { id: id?.toString() || "" },
   });
+  const { sendMessage } = useInBox();
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [acceptProposal] = useMutation(ACCEPT_PROPOSAL);
@@ -47,6 +50,21 @@ const Proposal = () => {
     devLog("rejectProposalVariables", rejectProposalVariables);
     const rejection = await rejectProposal({ variables: rejectProposalVariables });
     devLog("Proposal rejected", rejection);
+
+    const message: ProposalNotification = {
+      originalResourceName: proposal.primaryIntents![0].resourceInventoriedAs?.name || "",
+      originalResourceID: proposal.primaryIntents![0].resourceInventoriedAs?.id || "",
+      proposalID: proposal.id,
+      ownerName: user!.name,
+      proposerName: proposal.primaryIntents![0].resourceInventoriedAs?.primaryAccountable.name || "",
+      text: proposal.note || "",
+    };
+
+    await sendMessage(
+      message,
+      [proposal.primaryIntents![0].resourceInventoriedAs!.primaryAccountable.id],
+      MessageSubject.CONTRIBUTION_REJECTED
+    );
     await refetch();
   };
 
@@ -80,6 +98,19 @@ const Proposal = () => {
     devLog("satisfyIntentsVariables", satisfyIntentsVariables);
     const intentsSatisfied = await satisfyIntents({ variables: satisfyIntentsVariables });
     devLog("intentsSatisfied created", intentsSatisfied);
+    const message: ProposalNotification = {
+      originalResourceName: proposal.primaryIntents![0].resourceInventoriedAs?.name || "",
+      originalResourceID: proposal.primaryIntents![0].resourceInventoriedAs?.id || "",
+      proposalID: proposal.id,
+      ownerName: user!.name,
+      proposerName: proposal.primaryIntents![0].resourceInventoriedAs?.primaryAccountable.name || "",
+      text: proposal.note || "",
+    };
+    await sendMessage(
+      message,
+      [proposal.primaryIntents![0].resourceInventoriedAs!.primaryAccountable.id],
+      MessageSubject.CONTRIBUTION_ACCEPTED
+    );
     await refetch();
   };
 
@@ -114,7 +145,6 @@ const Proposal = () => {
               </Text>
               <Text as="p" variant="bodyMd">
                 {switchStatus[proposal!.status]}
-                {proposal?.status}
               </Text>
             </Stack>
 
