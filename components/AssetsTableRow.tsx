@@ -9,6 +9,7 @@ import dayjs from "../lib/dayjs";
 
 const AssetsTableRow = (props: any) => {
   const e = props.asset.node;
+  devLog("AssetsTableRow", e);
   const data = e.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime;
   const metadata = e.metadata;
   const isMetadataImageString = typeof metadata?.image === "string";
@@ -31,6 +32,7 @@ const AssetsTableRow = (props: any) => {
               </Link>
             </div>
           </td>
+          <td>{e.conformsTo?.name}</td>
           <td className="">
             <p className="mr-1">{dayjs(data).fromNow()}</p>
             <p className="text-xs">{dayjs(data).format("HH:mm DD/MM/YYYY")}</p>

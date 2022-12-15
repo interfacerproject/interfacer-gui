@@ -28,7 +28,7 @@ export default function AssetsTableBase(props: AssetsTableBaseProps) {
 
   return (
     <div>
-      <BrTable headArray={[t("Asset"), t("Last update"), t("Owner"), t("tags")]}>
+      <BrTable headArray={[t("Asset"), t("Asset Type"), t("Last update"), t("tags"), t("Owner")]}>
         {assets?.map((e: any) => (
           <AssetsTableRow asset={e} key={e.cursor} />
         ))}
