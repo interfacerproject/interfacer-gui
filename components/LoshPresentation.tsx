@@ -5,6 +5,9 @@ import { LinkIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 import BrTags from "./brickroom/BrTags";
 import MdParser from "../lib/MdParser";
+import HandleCollect from "../lib/HandleCollect";
+import { useEffect, useState } from "react";
+import useStorage from "../hooks/useStorage";
 
 const LoshPresentation = ({
   economicResource,
@@ -14,7 +17,16 @@ const LoshPresentation = ({
   goToClaim?: () => void;
 }) => {
   const { t } = useTranslation("ResourceProps");
+  const [inList, setInList] = useState<boolean>(false);
   const m = economicResource?.metadata;
+  const { getItem } = useStorage();
+
+  useEffect(() => {
+    const _list = getItem("assetsCollected");
+    const _listParsed = _list ? JSON.parse(_list) : [];
+    setInList(_listParsed.includes(economicResource?.id));
+  }, [economicResource, getItem]);
+
   return (
     <>
       {economicResource && (
@@ -64,8 +76,12 @@ const LoshPresentation = ({
                   <button type="button" className="mt-16 mr-8 w-72 btn btn-accent" onClick={goToClaim}>
                     {t("CLAIM OWNERSHIP")}
                   </button>
-                  <button type="button" className="mt-3 mr-8 w-72 btn btn-outline">
-                    {t("add to list +")}
+                  <button
+                    type="button"
+                    className="mt-3 mr-8 w-72 btn btn-outline"
+                    onClick={() => HandleCollect({ asset: economicResource.id, setInList })}
+                  >
+                    {t(inList ? "add to list +" : "remove from list -")}
                   </button>
                 </>
               )}
