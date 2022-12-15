@@ -127,7 +127,15 @@ const Asset = () => {
                     { title: t("Relationship tree"), component: <Dpp dpp={data?.economicResource.traceDpp} /> },
                     {
                       title: t("DPP"),
-                      component: <DynamicReactJson src={data?.economicResource.traceDpp} />,
+                      component: (
+                        <DynamicReactJson
+                          src={data?.economicResource.traceDpp}
+                          collapsed={3}
+                          enableClipboard={false}
+                          displayDataTypes={false}
+                          sortKeys={true}
+                        />
+                      ),
                     },
                   ]}
                 />
