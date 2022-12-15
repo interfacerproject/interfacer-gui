@@ -8,11 +8,7 @@ import { useEffect, useState } from "react";
 export declare module Notification {
   export interface Content {
     data: Date;
-<<<<<<< HEAD
     message: any;
-=======
-    message: string;
->>>>>>> c3e8a6e (feat: ✨ notification message for new contribution proposal)
     subject: string;
   }
 
