@@ -5,8 +5,9 @@ import { useEffect } from "react";
 import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 import dayjs from "../lib/dayjs";
 import useInBox, { Notification } from "../hooks/useInBox";
-import devLog from "lib/devLog";
 import ContributionMessage from "../components/ContributionMessage";
+import { Button } from "@bbtgnn/polaris-interfacer";
+import { useRouter } from "next/router";
 
 export enum ProposalType {
   HARDWARE_IMPROVEMENT = "Hardware Improvement",
@@ -21,19 +22,6 @@ export enum MessageSubject {
   CONTRIBUTION_REJECTED = "contributionRejected",
 }
 
-export interface Proposal {
-  ID: string;
-  senderID: string;
-  receiverID: string;
-  parentRepositoryID: string;
-  repoURL: string;
-  type: ProposalType;
-  description: string;
-  workHours: number;
-  strengthPoints: number;
-  status: string;
-}
-
 export interface ProposalNotification {
   proposalID: string;
   text: string;
@@ -41,7 +29,7 @@ export interface ProposalNotification {
   originalResourceName: string;
   originalResourceID: string;
   proposerName: string;
-  ownerName: string;
+  ownerName?: string;
 }
 
 const Notification = () => {
@@ -54,26 +42,10 @@ const Notification = () => {
         setReadedMessages(messages.map(m => m.id));
       }, 20000);
   }, [messages]);
-  const ContributionRow = ({ contribution }: any) => (
-    <div className="pb-2 my-2 border-b-2">
-      <p className="mr-1">{dayjs(contribution.data).fromNow()}</p>
-      <p className="text-xs">{dayjs(contribution.data).format("HH:mm DD/MM/YYYY")}</p>
-      <div className="flex flex-row my-2 center">
-        <div className="mr-2">
-          <BrDisplayUser id={contribution.message.user?.id} name={contribution.message.user?.name} />
-        </div>
-        <div className="pt-3">
-          <span className="mr-1">{t("added you as contributor to")}</span>
-          <Link href={`/asset/${contribution.message.asset.id}`}>
-            <a className="text-primary hover:underline">{contribution.message.asset.name}</a>
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
 
   const RenderMessagePerSubject = (props: { message: Notification.Content; sender: string; data: Date }) => {
     const _parsedMessage: ProposalNotification = props.message.message;
+    const router = useRouter();
 
     switch (props.message.subject) {
       case MessageSubject.CONTRIBUTION_REQUEST:
@@ -90,6 +62,34 @@ const Notification = () => {
             message={_parsedMessage.text}
             subject={props.message.subject}
           />
+        );
+      case "Asset cited":
+        return (
+          <div className="my-2">
+            <p className="mr-1">{dayjs(props.data).fromNow()}</p>
+            <p className="text-xs">{dayjs(props.data).format("HH:mm DD/MM/YYYY")}</p>
+            <div className="flex flex-row my-2 center">
+              <div className="mr-2">
+                <BrDisplayUser id={props.sender} name={_parsedMessage.proposerName} />
+              </div>
+              <div className="pt-3.5">
+                <span className="mr-1">{"just cited your"}</span>
+                <Link href={`/asset/${_parsedMessage.originalResourceID}`}>
+                  <a className="text-primary hover:underline">{_parsedMessage.originalResourceName}</a>
+                </Link>
+              </div>
+            </div>
+            <p className="text-xs bg-[#E0E0E0] p-2 my-2">{_parsedMessage.text}</p>
+            <Button
+              primary
+              fullWidth
+              onClick={() => {
+                router.push(`/asset/${_parsedMessage.proposalID}`);
+              }}
+            >
+              {t("take me there")}
+            </Button>
+          </div>
         );
       default:
         return <div />;

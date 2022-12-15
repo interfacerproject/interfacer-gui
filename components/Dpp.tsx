@@ -38,7 +38,9 @@ const Dpp = ({ dpp }: { dpp: JSON }) => {
                   <b>{asset.name}</b>
                 </div>
                 <div className="flex-grow pl-2">
-                  <span dangerouslySetInnerHTML={{ __html: MdParser.render(asset.description!) }} />
+                  {asset.description! && (
+                    <span dangerouslySetInnerHTML={{ __html: MdParser.render(asset.description!) }} />
+                  )}
                 </div>
               </div>
             </a>

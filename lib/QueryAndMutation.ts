@@ -880,3 +880,13 @@ export const REJECT_PROPOSAL = gql`
     }
   }
 `;
+export const ASK_RESOURCE_PRIMARY_ACCOUNTABLE = gql`
+  query askResourcePrimaryAccountable($id: ID!) {
+    economicResource(id: $id) {
+      primaryAccountable {
+        id
+        name
+      }
+    }
+  }
+`;
