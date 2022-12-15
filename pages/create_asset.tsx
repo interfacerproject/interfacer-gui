@@ -16,6 +16,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import useStorage from "hooks/useStorage";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
 import {
+  ASK_RESOURCE_PRIMARY_ACCOUNTABLE,
   CITE_ASSET,
   CREATE_ASSET,
   CREATE_LOCATION,
@@ -34,6 +35,8 @@ import {
 import devLog from "lib/devLog";
 import { errorFormatter } from "lib/errorFormatter";
 import { useRouter } from "next/router";
+import useInBox from "../hooks/useInBox";
+import { ProposalNotification } from "./notification";
 
 //
 
@@ -57,6 +60,7 @@ const CreateProject: NextPageWithLayout = () => {
   const { t } = useTranslation("createProjectProps");
   const { user, loading } = useAuth();
   const router = useRouter();
+  const { sendMessage } = useInBox();
   const { getItem } = useStorage();
   const [error, setError] = useState<string>("");
 
@@ -67,6 +71,7 @@ const CreateProject: NextPageWithLayout = () => {
   const [createAsset] = useMutation<CreateAssetMutation, CreateAssetMutationVariables>(CREATE_ASSET);
   const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
   const [createProcess] = useMutation(CREATE_PROCESS);
+  const { refetch } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
 
   /* Location Creation */
 
@@ -107,7 +112,6 @@ const CreateProject: NextPageWithLayout = () => {
       devLog("info: contributors prepared", contributors);
 
       for (const resource of formData.resources) {
-        devLog("pp", resource.value);
         const citeVariables = {
           agent: user!.ulid,
           resource: resource.value.id,
@@ -116,6 +120,15 @@ const CreateProject: NextPageWithLayout = () => {
           unitOne: unitAndCurrency?.units.unitOne.id!,
         };
         await citeAsset({ variables: citeVariables });
+        const { data } = await refetch({ id: resource.value.id });
+        const message: ProposalNotification = {
+          proposalID: resource.value.id,
+          proposerName: user!.name,
+          originalResourceID: resource.value.id,
+          originalResourceName: resource.value.name,
+          text: formData.description,
+        };
+        await sendMessage(message, [data.economicResource.primaryAccountable.id], "Asset cited");
       }
 
       const variables: CreateAssetMutationVariables = {
