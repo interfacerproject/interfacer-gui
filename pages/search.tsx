@@ -1,4 +1,4 @@
-import { Checkbox } from "@bbtgnn/polaris-interfacer";
+import { Checkbox, Select } from "@bbtgnn/polaris-interfacer";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
@@ -8,19 +8,27 @@ import ResourcesCards from "../components/ResourcesCards";
 import SearchBar from "../components/SearchBar";
 import { NextPageWithLayout } from "./_app";
 import AssetsTable from "../components/AssetsTable";
+import useFilters from "../hooks/useFilters";
+import { isRequired } from "../lib/isFieldRequired";
+import AgentsTable from "../components/AgentsTable";
 
 const Search: NextPageWithLayout = () => {
   const { q } = useRouter().query;
   const [checked, setChecked] = useState(false);
+  const [searchType, setSearchType] = useState("assets");
+  const { proposalFilter } = useFilters();
   const { t } = useTranslation("common");
-  const Assetfilter = {
+  const assetsfilter = {
     orName: q?.toString(),
     ...(!checked && { orNote: q?.toString() }),
   };
-  const Resourcefilter = {
-    primaryAccountable: [process.env.NEXT_PUBLIC_LOSH_ID!],
-    name: q?.toString(),
-    ...(!checked && { note: !checked && q?.toString() }),
+
+  const filters = { ...proposalFilter, ...assetsfilter };
+
+  const searchTypes = ["assets", "people"];
+
+  const onChangeSearch = (value: string) => {
+    setSearchType(value);
   };
 
   return (
@@ -36,7 +44,36 @@ const Search: NextPageWithLayout = () => {
             <Checkbox label={t("do not search inside the the description")} checked={checked} onChange={setChecked} />
           </div>
         </div>
-        <AssetsTable filter={Assetfilter} hideHeader />
+        {searchType === "assets" && (
+          <AssetsTable
+            filter={filters}
+            hideHeader
+            searchFilter={
+              <Select
+                options={searchTypes}
+                value={searchType}
+                onChange={onChangeSearch}
+                label={t("Select search type")}
+                placeholder={t("Select search type")}
+              />
+            }
+          />
+        )}
+        {searchType === "people" && (
+          <AgentsTable
+            hideHeader
+            searchTerm={q?.toString() || ""}
+            searchFilter={
+              <Select
+                options={searchTypes}
+                value={searchType}
+                onChange={onChangeSearch}
+                label={t("Select search type")}
+                placeholder={t("Select search type")}
+              />
+            }
+          />
+        )}
         {/*<AssetsCards filter={Assetfilter} />*/}
         {/*<ResourcesCards filter={Resourcefilter} />*/}
       </div>

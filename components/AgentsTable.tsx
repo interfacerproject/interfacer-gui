@@ -4,83 +4,50 @@ import { useEffect, useState } from "react";
 
 // Request
 import { useQuery } from "@apollo/client";
-import { FETCH_RESOURCES } from "lib/QueryAndMutation";
-import { FetchInventoryQuery, FetchInventoryQueryVariables, EconomicResourceFilterParams } from "lib/types";
+import { FETCH_PEOPLE, FETCH_RESOURCES } from "lib/QueryAndMutation";
+import { GetPeopleQuery, GetPeopleQueryVariables, EconomicResourceFilterParams } from "lib/types";
 
 // Components
 import { AdjustmentsIcon } from "@heroicons/react/outline";
 import AssetsFilters from "./AssetsFilters";
 import AssetsTableBase from "./AssetsTableBase";
 import Spinner from "./brickroom/Spinner";
+import useLoadMore from "../hooks/useLoadMore";
 
 //
 
-export interface AssetsTableProps {
-  filter?: EconomicResourceFilterParams;
+export interface AgentsTableProps {
   hideHeader?: boolean;
   hidePagination?: boolean;
-  hidePrimaryAccountable?: boolean;
   id?: string[];
   searchFilter?: React.ReactNode;
+  searchTerm: string;
 }
 
 //
 
-export default function AssetsTable(props: AssetsTableProps) {
+export default function AgentsTable(props: AgentsTableProps) {
   const { t } = useTranslation("lastUpdatedProps");
-  const {
-    filter = {},
-    hideHeader = false,
-    hidePagination = false,
-    hidePrimaryAccountable = false,
-    searchFilter,
-  } = props;
+  const { hideHeader = false, hidePagination = false, searchTerm, searchFilter } = props;
 
-  const { loading, data, fetchMore, refetch, variables } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(
-    FETCH_RESOURCES,
+  const { loading, data, fetchMore, refetch, variables } = useQuery<GetPeopleQuery, GetPeopleQueryVariables>(
+    FETCH_PEOPLE,
     {
-      variables: { last: 10, filter: filter },
+      variables: { last: 10, userOrName: searchTerm || "" },
     }
   );
 
-  const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
-    if (!fetchMoreResult) {
-      return previousResult;
-    }
+  const dataQueryIdentifier = "people";
 
-    const previousEdges = previousResult.economicResources.edges;
-    const fetchMoreEdges = fetchMoreResult.economicResources.edges;
+  const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
+    fetchMore,
+    refetch,
+    variables,
+    data,
+    dataQueryIdentifier,
+  });
 
-    fetchMoreResult.economicResources.edges = [...previousEdges, ...fetchMoreEdges];
-
-    return { ...fetchMoreResult };
-  };
-
-  const getHasNextPage = data?.economicResources?.pageInfo.hasNextPage;
-  const loadMore = () => {
-    if (data && fetchMore) {
-      const nextPage = getHasNextPage;
-      const before = data.economicResources?.pageInfo.endCursor;
-      if (nextPage && before !== null) {
-        fetchMore({ updateQuery, variables: { before } });
-      }
-    }
-  };
-  const assets = data?.economicResources?.edges;
-  const showEmptyState = assets?.length === 0;
-
-  // Poll interval that works with pagination
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const total = data?.economicResources?.edges.length || 0;
-
-      refetch({
-        ...variables,
-        last: total,
-      });
-    }, 120000);
-    return () => clearInterval(intervalId);
-  }, [...Object.values(variables!).flat(), data?.economicResources?.pageInfo.startCursor]);
+  const people = data?.people?.edges;
 
   const [showFilter, setShowFilter] = useState(false);
   const toggleFilter = () => setShowFilter(!showFilter);
@@ -122,7 +89,7 @@ export default function AssetsTable(props: AssetsTableProps) {
             )}
             {showFilter && (
               <div className="basis-96 sticky top-8">
-                <AssetsFilters hidePrimaryAccountable={hidePrimaryAccountable}>{searchFilter}</AssetsFilters>
+                <AssetsFilters>{searchFilter}</AssetsFilters>
               </div>
             )}
           </div>
