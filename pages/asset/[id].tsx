@@ -21,6 +21,9 @@ import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import devLog from "../../lib/devLog";
 import Dpp from "../../components/Dpp";
+import dynamic from "next/dynamic";
+
+const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 const Asset = () => {
   const { getItem, setItem } = useStorage();
@@ -124,11 +127,7 @@ const Asset = () => {
                     { title: t("Relationship tree"), component: <Dpp dpp={data?.economicResource.traceDpp} /> },
                     {
                       title: t("DPP"),
-                      component: (
-                        <pre className="overflow-scroll w-full border">
-                          {JSON.stringify(data?.economicResource.traceDpp, null, 2)}
-                        </pre>
-                      ),
+                      component: <DynamicReactJson src={data?.economicResource.traceDpp} />,
                     },
                   ]}
                 />
