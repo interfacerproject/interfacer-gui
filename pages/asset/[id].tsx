@@ -202,8 +202,8 @@ const Asset = () => {
                 </Button>
               )}
 
-              <Button size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>
-                {inList ? t("remove from list") : t("add to list")}
+              <Button id="addToList" size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>
+                {inList ? t("Remove from list") : t("Add to list")}
               </Button>
 
               <WatchButton id={asset.id} metadata={asset.metadata} />
