@@ -152,6 +152,10 @@ const CreateProject: NextPageWithLayout = () => {
       const { data: createAssetData, errors } = await createAsset({ variables });
       if (errors) throw new Error("AssetNotCreated");
 
+      // Upload images
+      await uploadFiles(formData.images);
+      devLog("success: images uploaded");
+
       // Redirecting user
       await router.replace(`/asset/${createAssetData?.createEconomicEvent?.economicEvent?.resourceInventoriedAs?.id}`);
     } catch (e) {
