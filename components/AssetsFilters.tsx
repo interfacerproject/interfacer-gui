@@ -13,6 +13,7 @@ import devLog from "../lib/devLog";
 
 export interface AssetsFiltersProps {
   hidePrimaryAccountable?: boolean;
+  children?: React.ReactNode;
 }
 
 export const AssetFilters = ["conformsTo", "tags", "primaryAccountable"] as const;
@@ -23,7 +24,7 @@ export type QueryFilters<T> = Record<AssetFilter, T>;
 //
 
 export default function AssetsFilters(props: AssetsFiltersProps) {
-  const { hidePrimaryAccountable = false } = props;
+  const { hidePrimaryAccountable = false, children } = props;
 
   const { t } = useTranslation("lastUpdatedProps");
   const router = useRouter();
@@ -84,6 +85,8 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
 
       {/* Filters */}
       <div className="space-y-4">
+        {children}
+
         <SelectAssetType
           label={t("Type")}
           onChange={v => {

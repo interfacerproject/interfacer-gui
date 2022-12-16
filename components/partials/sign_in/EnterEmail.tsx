@@ -76,8 +76,8 @@ export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
               autoComplete="off"
               onChange={onChange}
               onBlur={onBlur}
-              label={t("Your email&#x3a;")}
-              placeholder={t("alice@email&#46;com")}
+              label={t("Your email")}
+              placeholder={t("alice@email.com")}
               error={errors.email?.message}
               requiredIndicator={isRequired(schema, name)}
             />
