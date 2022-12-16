@@ -1,8 +1,8 @@
-import devLog from "../lib/devLog";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import MdParser from "../lib/MdParser";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import devLog from "../lib/devLog";
+import MdParser from "../lib/MdParser";
 
 const Dpp = ({ dpp }: { dpp: JSON }) => {
   const [assets, setAssets] = useState<any[]>([]);
@@ -38,7 +38,9 @@ const Dpp = ({ dpp }: { dpp: JSON }) => {
                   <b>{asset.name}</b>
                 </div>
                 <div className="flex-grow pl-2">
-                  <span dangerouslySetInnerHTML={{ __html: MdParser.render(asset.description!) }} />
+                  {asset.description && (
+                    <span dangerouslySetInnerHTML={{ __html: MdParser.render(asset.description) }} />
+                  )}
                 </div>
               </div>
             </a>

@@ -1,8 +1,12 @@
-import { StarIcon } from "@heroicons/react/outline";
-import { StarIcon as StarIconSolid } from "@heroicons/react/solid";
-import { useTranslation } from "next-i18next";
 import { useMutation } from "@apollo/client";
+import { useTranslation } from "next-i18next";
 import { UPDATE_METADATA } from "../lib/QueryAndMutation";
+
+// Components
+import { Button, Icon } from "@bbtgnn/polaris-interfacer";
+import { StarFilledMinor, StarOutlineMinor } from "@shopify/polaris-icons";
+
+//
 
 const AddStar = ({
   id,
@@ -35,18 +39,16 @@ const AddStar = ({
     }
   };
   return (
-    <button
+    <Button
       id="addStar"
-      className={"btn btn-outline btn-neutral px-4 border-gray-300"}
       onClick={handleClick}
       disabled={disabled}
+      fullWidth
+      size="large"
+      icon={<Icon source={hasAlreadyStarred ? StarFilledMinor : StarOutlineMinor} />}
     >
-      {hasAlreadyStarred ? <StarIconSolid className="w-6 h-6" /> : <StarIcon className="w-6 h-6" />}
-      <span className="mx-2 capitalize">{hasAlreadyStarred ? t("unstar") : t("star")}</span>
-      <span className="bg-[#CDE4DF] text-[#5DA091] border-[#5DA091] border border-1 rounded-[4px] text-xs mr-1 px-0.5">
-        {metadata?.starred?.length}
-      </span>
-    </button>
+      {`${hasAlreadyStarred ? t("Unstar") : t("Star")} (${metadata?.starred?.length || 0})`}
+    </Button>
   );
 };
 
