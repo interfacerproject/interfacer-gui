@@ -25,6 +25,7 @@ const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
 import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
+import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 
 //
 
@@ -115,9 +116,7 @@ const Asset = () => {
               </Text>
             </Stack>
 
-            {/* Image placeholder */}
-            <div className="block h-80 bg-gray-300 rounded-lg"></div>
-            {/* {images && <BrThumbinailsGallery images={images} />} */}
+            <BrThumbinailsGallery images={images} />
 
             {/* Content */}
             <Stack vertical spacing="loose">
