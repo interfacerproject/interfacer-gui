@@ -1,13 +1,14 @@
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { Button } from "@bbtgnn/polaris-interfacer";
 import Link from "next/link";
 import { useEffect } from "react";
 import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 import dayjs from "../lib/dayjs";
 import useInBox, { Notification } from "../hooks/useInBox";
 import ContributionMessage from "../components/ContributionMessage";
-import { Button } from "@bbtgnn/polaris-interfacer";
 import { useRouter } from "next/router";
+import devLog from "lib/devLog";
 
 export enum ProposalType {
   HARDWARE_IMPROVEMENT = "Hardware Improvement",

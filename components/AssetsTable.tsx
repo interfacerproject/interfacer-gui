@@ -21,13 +21,20 @@ export interface AssetsTableProps {
   hidePagination?: boolean;
   hidePrimaryAccountable?: boolean;
   id?: string[];
+  searchFilter?: React.ReactNode;
 }
 
 //
 
 export default function AssetsTable(props: AssetsTableProps) {
   const { t } = useTranslation("lastUpdatedProps");
-  const { filter = {}, hideHeader = false, hidePagination = false, hidePrimaryAccountable = false } = props;
+  const {
+    filter = {},
+    hideHeader = false,
+    hidePagination = false,
+    hidePrimaryAccountable = false,
+    searchFilter,
+  } = props;
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(
     FETCH_RESOURCES,
@@ -71,7 +78,7 @@ export default function AssetsTable(props: AssetsTableProps) {
         ...variables,
         last: total,
       });
-    }, 10000);
+    }, 120000);
     return () => clearInterval(intervalId);
   }, [...Object.values(variables!).flat(), data?.economicResources?.pageInfo.startCursor]);
 
@@ -88,23 +95,24 @@ export default function AssetsTable(props: AssetsTableProps) {
       {!loading && (
         <div className="flex flex-col">
           {/* Header */}
-          {!hideHeader && (
-            <div className="flex items-center justify-between py-5">
-              {/* Left side */}
-              <h3>{t("Assets")}</h3>
+          <div
+            className={cn("flex items-center py-5", { "justify-end": hideHeader }, { "justify-between": !hideHeader })}
+          >
+            {/* Left side */}
+            {!hideHeader && <h3>{t("Assets")}</h3>}
 
-              {/* Right side */}
-              <button
-                onClick={toggleFilter}
-                className={cn(
-                  "gap-2 text-white-700 font-normal normal-case rounded-[4px] border-1 btn btn-sm btn-outline border-white-600 bg-white-100 hover:text-accent hover:bg-white-100",
-                  { "bg-accent text-white-100": showFilter }
-                )}
-              >
-                <AdjustmentsIcon className="w-5 h-5" /> {t("Filter by")}
-              </button>
-            </div>
-          )}
+            {/* Right side */}
+            <button
+              onClick={toggleFilter}
+              className={cn(
+                "gap-2 text-white-700 font-normal normal-case rounded-[4px] border-1 btn btn-sm btn-outline border-white-600 bg-white-100 hover:text-accent hover:bg-white-100",
+                { "bg-accent text-white-100": showFilter },
+                { "float-right": hideHeader }
+              )}
+            >
+              <AdjustmentsIcon className="w-5 h-5" /> {t("Filter by")}
+            </button>
+          </div>
           {/* Table and filters */}
           <div className="flex flex-row flex-nowrap items-start space-x-8">
             {data && (
@@ -114,7 +122,7 @@ export default function AssetsTable(props: AssetsTableProps) {
             )}
             {showFilter && (
               <div className="basis-96 sticky top-8">
-                <AssetsFilters hidePrimaryAccountable={hidePrimaryAccountable} />
+                <AssetsFilters hidePrimaryAccountable={hidePrimaryAccountable}>{searchFilter}</AssetsFilters>
               </div>
             )}
           </div>
