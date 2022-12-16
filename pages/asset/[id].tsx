@@ -22,6 +22,7 @@ import devLog from "../../lib/devLog";
 import Dpp from "../../components/Dpp";
 import HandleCollect from "../../lib/HandleCollect";
 import dynamic from "next/dynamic";
+import Spinner from "../../components/brickroom/Spinner";
 
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
@@ -59,6 +60,10 @@ const Asset = () => {
     const _listParsed = _list ? JSON.parse(_list) : [];
     setInList(_listParsed.includes(asset?.id));
   }, [asset, getItem]);
+
+  const isSelfOwned = asset?.primaryAccountable.id === user?.ulid;
+
+  if (loading) return <Spinner />;
 
   return (
     <>
@@ -145,11 +150,13 @@ const Asset = () => {
                 name={asset.primaryAccountable.name}
                 location={asset.currentLocation?.name}
               />
-              <div className="mt-8">
-                <Button size="large" fullWidth primary onClick={() => router.push(`/create/contribution/${id}`)}>
-                  {t("Propose a contribute")}
-                </Button>
-              </div>
+              {!isSelfOwned && (
+                <div className="mt-8">
+                  <Button size="large" fullWidth primary onClick={() => router.push(`/create/contribution/${id}`)}>
+                    {t("Propose a contribute")}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </>
