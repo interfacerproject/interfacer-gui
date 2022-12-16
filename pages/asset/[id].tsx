@@ -218,22 +218,24 @@ const Asset = () => {
           </Card>
 
           {/* Contributions */}
-          <Card sectioned>
-            <Stack vertical>
-              <Text as="h2" variant="headingMd">
-                {t("Contributions")}
-              </Text>
-              <Button
-                icon={<Icon source={MergeMinor} />}
-                size="large"
-                fullWidth
-                primary
-                onClick={() => router.push(`/create/contribution/${id}`)}
-              >
-                {t("Make a contribution")}
-              </Button>
-            </Stack>
-          </Card>
+          {asset.primaryAccountable.id != user?.ulid && (
+            <Card sectioned>
+              <Stack vertical>
+                <Text as="h2" variant="headingMd">
+                  {t("Contributions")}
+                </Text>
+                <Button
+                  icon={<Icon source={MergeMinor} />}
+                  size="large"
+                  fullWidth
+                  primary
+                  onClick={() => router.push(`/create/contribution/${id}`)}
+                >
+                  {t("Make a contribution")}
+                </Button>
+              </Stack>
+            </Card>
+          )}
         </div>
       </div>
     </>
