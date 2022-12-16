@@ -1,4 +1,5 @@
-import { Card, Stack, Tag, Text } from "@bbtgnn/polaris-interfacer";
+import { Card, Icon, Stack, Tag, Text } from "@bbtgnn/polaris-interfacer";
+import { DynamicSourceMinor } from "@shopify/polaris-icons";
 import { EconomicResource } from "lib/types";
 
 //
@@ -25,10 +26,11 @@ const ResourceDetailsCard = (props: Props) => {
   const type = resource.conformsTo?.name;
 
   return (
-    <Card sectioned>
-      <Stack alignment="center" spacing="loose">
-        <div className="w-20 h-20 rounded-md bg-gray-200 overflow-hidden">
+    <Card>
+      <div className="p-4 flex flex-row items-center space-x-4">
+        <div className="w-20 h-20 rounded-md bg-gray-200 overflow-hidden flex items-center justify-center">
           {image && <img src={image} alt="" className="w-full h-full object-cover" />}
+          {!image && <Icon color="subdued" source={DynamicSourceMinor} />}
         </div>
 
         <Stack vertical spacing="extraTight">
@@ -37,7 +39,7 @@ const ResourceDetailsCard = (props: Props) => {
           </Text>
           {type && <Tag>{resource.conformsTo?.name}</Tag>}
         </Stack>
-      </Stack>
+      </div>
     </Card>
   );
 };
