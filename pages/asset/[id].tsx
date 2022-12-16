@@ -20,6 +20,9 @@ import Dpp from "components/Dpp";
 import WatchButton from "components/WatchButton";
 import Link from "next/link";
 
+import dynamic from "next/dynamic";
+const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
+
 // Icons
 import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
 
@@ -127,9 +130,15 @@ const Asset = () => {
                     panelID: "overview-content",
                   },
                   {
+                    id: "relationships",
+                    content: t("Relationship tree"),
+                    accessibilityLabel: t("Relationship tree"),
+                    panelID: "relationships-content",
+                  },
+                  {
                     id: "dpp",
-                    content: "DPP",
-                    accessibilityLabel: "Digital Product Passport",
+                    content: t("DPP"),
+                    accessibilityLabel: t("Digital Product Passport"),
                     panelID: "dpp-content",
                   },
                 ]}
@@ -139,6 +148,16 @@ const Asset = () => {
 
               {selected == 0 && <AssetDetailOverview asset={asset} />}
               {selected == 1 && <Dpp dpp={data?.economicResource.traceDpp} />}
+              {selected == 2 && (
+                <DynamicReactJson
+                  src={data?.economicResource.traceDpp}
+                  collapsed={3}
+                  enableClipboard={false}
+                  displayDataTypes={false}
+                  sortKeys={true}
+                />
+              )}
+
               {/* <ContributorsTable
                 contributors={asset.metadata?.contributors}
                 title={t("Contributors")}
