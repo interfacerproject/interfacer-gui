@@ -258,6 +258,8 @@ export async function getStaticProps({ locale }: any) {
   };
 }
 
+Asset.publicPage = true;
+
 //
 
 export default Asset;
