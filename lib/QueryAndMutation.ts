@@ -315,6 +315,33 @@ export const QUERY_AGENTS = gql`
   }
 `;
 
+export const FETCH_AGENTS = gql`
+  query getAgents($userOrName: String!, $last: Int) {
+    agents(last: $last, filter: { name: $userOrName }) {
+      pageInfo {
+        startCursor
+        endCursor
+        hasPreviousPage
+        hasNextPage
+        totalCount
+        pageLimit
+      }
+      edges {
+        cursor
+        node {
+          id
+          name
+          note
+          primaryLocation {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const GET_TAGS = gql`
   query GetTags {
     economicResourceClassifications

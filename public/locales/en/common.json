@@ -23,5 +23,11 @@
   "Owner": "Owner",
   "Passphrase ": "Passphrase ",
   "keep your passphrase safe": "keep your passphrase safe",
-  "Relationship tree": "Relationship tree"
+  "Relationship tree": "Relationship tree",
+  "Login": "Login",
+  "Sign up": "Sign up",
+  "do not search inside the the description": "do not search inside the the description",
+  "Search": "Search",
+  "Search result for": "Search result for",
+  "Select search type": "Select search type"
 }

@@ -1580,18 +1580,21 @@ export type ProposalEdge = {
 };
 
 export type ProposalFilterParams = {
+  notStatus?: InputMaybe<ProposedStatus>;
   orPrimaryIntentsResourceInventoriedAsClassifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   orPrimaryIntentsResourceInventoriedAsConformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   orPrimaryIntentsResourceInventoriedAsId?: InputMaybe<Array<Scalars["ID"]>>;
   orPrimaryIntentsResourceInventoriedAsName?: InputMaybe<Scalars["String"]>;
   orPrimaryIntentsResourceInventoriedAsNote?: InputMaybe<Scalars["String"]>;
   orPrimaryIntentsResourceInventoriedAsPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
+  orStatus?: InputMaybe<ProposedStatus>;
   primaryIntentsResourceInventoriedAsClassifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   primaryIntentsResourceInventoriedAsConformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   primaryIntentsResourceInventoriedAsId?: InputMaybe<Array<Scalars["ID"]>>;
   primaryIntentsResourceInventoriedAsName?: InputMaybe<Scalars["String"]>;
   primaryIntentsResourceInventoriedAsNote?: InputMaybe<Scalars["String"]>;
   primaryIntentsResourceInventoriedAsPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
+  status?: InputMaybe<ProposedStatus>;
 };
 
 export type ProposalResponse = {
@@ -3604,6 +3607,38 @@ export type GetAgentQuery = {
   } | null;
 };
 
+export type GetPeopleQueryVariables = Exact<{
+  userOrName: Scalars["String"];
+  last?: InputMaybe<Scalars["Int"]>;
+}>;
+
+export type GetPeopleQuery = {
+  __typename?: "RootQueryType";
+  people?: {
+    __typename?: "PersonConnection";
+    pageInfo: {
+      __typename?: "PageInfo";
+      startCursor?: string | null;
+      endCursor?: string | null;
+      hasPreviousPage: boolean;
+      hasNextPage: boolean;
+      totalCount?: number | null;
+      pageLimit?: number | null;
+    };
+    edges: Array<{
+      __typename?: "PersonEdge";
+      cursor: string;
+      node: {
+        __typename?: "Person";
+        id: string;
+        name: string;
+        note?: string | null;
+        primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+      };
+    }>;
+  } | null;
+};
+
 export type GetAssetsQueryVariables = Exact<{
   first?: InputMaybe<Scalars["Int"]>;
   after?: InputMaybe<Scalars["ID"]>;
@@ -3976,4 +4011,18 @@ export type RejectProposalMutation = {
   cite: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
   accept: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
   modify: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+};
+
+export type AskResourcePrimaryAccountableQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type AskResourcePrimaryAccountableQuery = {
+  __typename?: "RootQueryType";
+  economicResource?: {
+    __typename?: "EconomicResource";
+    primaryAccountable:
+      | { __typename?: "Organization"; id: string; name: string }
+      | { __typename?: "Person"; id: string; name: string };
+  } | null;
 };
