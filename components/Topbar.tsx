@@ -19,7 +19,7 @@ function Topbar({ search = true, children, userMenu = true, cta }: topbarProps) 
   const isSignin = path === "/sign_in";
 
   return (
-    <div className="navbar bg-[#F3F3F1] px-2 pt-0 h-16 border-b border-text-primary">
+    <div className="navbar bg-[#F3F3F1] px-2 py-1 h-16 border-b border-text-primary">
       <div className="navbar-start">
         {children}
         <label htmlFor="my-drawer" className="btn btn-square btn-ghost drawer-button" data-test="sidebarOpener">
