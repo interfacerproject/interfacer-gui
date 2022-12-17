@@ -176,6 +176,7 @@ const CreateProject: NextPageWithLayout = () => {
           }}
           plain
           monochrome
+          id="#back"
         >
           {t("← Discard and go back")}
         </Button>
