@@ -167,7 +167,7 @@ const Asset = () => {
                   <DynamicReactJson
                     src={data?.economicResource.traceDpp}
                     collapsed={3}
-                    enableClipboard={false}
+                    enableClipboard={true}
                     displayDataTypes={false}
                     sortKeys={true}
                   />
