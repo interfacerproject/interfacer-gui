@@ -110,20 +110,20 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
     resources: [], // Array<{id:string, name:string}>
   };
 
-  const schema = yup
-    .object({
-      name: yup.string().required(),
-      description: yup.string().required(),
-      type: yup.string().required(),
-      repositoryOrId: yup.string().required(),
-      tags: yup.array(yup.object()),
-      location: yup.object().required(),
-      license: yup.string().oneOf(licenseTypes).required(),
-      locationName: yup.string().required(),
-      price: yup.string().required(),
-      images: yup.array(), // Array<File & {preview: string}>
-      contributors: yup.array(
-        yup.object({
+  const schema = yup.object({
+    name: yup.string().required(),
+    description: yup.string().required(),
+    type: yup.string().required(),
+    repositoryOrId: yup.string().required(),
+    tags: yup.array(yup.object()).min(1).required(),
+    location: yup.object().required(),
+    license: yup.string().oneOf(licenseTypes).required(),
+    locationName: yup.string().required(),
+    price: yup.string().required(),
+    images: yup.array(), // Array<File & {preview: string}>
+    contributors: yup.array(
+      yup
+        .object({
           id: yup.string(),
           name: yup.string(),
         })
@@ -272,7 +272,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             label={`${t("Tags")}:`}
             isMulti
             placeholder={t("Open-source, 3D Printing, Medical use")}
-            helpText={t("Select a tag from the list, or type to create a new one")}
+            helpText={t("Select a tag from the list, or type to create a new one | Min. 1 tag")}
             error={errors.tags?.message}
             creatable={true}
             requiredIndicator={isRequired(schema, name)}
