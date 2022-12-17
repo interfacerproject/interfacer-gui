@@ -17,7 +17,21 @@ const BrSelectSearchableAsync = forwardRef<any, BrSelectSearchableAsyncProps>((p
 
   return (
     <PFieldInfo {...props}>
-      {!creatable ? <AsyncSelect {...props} ref={ref} /> : <AsyncCreatableSelect {...props} ref={ref} />}
+      {!creatable ? (
+        <AsyncSelect
+          {...props}
+          ref={ref}
+          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          menuPortalTarget={document.body}
+        />
+      ) : (
+        <AsyncCreatableSelect
+          {...props}
+          ref={ref}
+          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          menuPortalTarget={document.body}
+        />
+      )}
     </PFieldInfo>
   );
 });
