@@ -11,6 +11,7 @@ import AssetsTable from "../components/AssetsTable";
 import useFilters from "../hooks/useFilters";
 import { isRequired } from "../lib/isFieldRequired";
 import AgentsTable from "../components/AgentsTable";
+import devLog from "../lib/devLog";
 
 const Search: NextPageWithLayout = () => {
   const { q } = useRouter().query;
@@ -18,15 +19,23 @@ const Search: NextPageWithLayout = () => {
   const [searchType, setSearchType] = useState("assets");
   const { proposalFilter } = useFilters();
   const { t } = useTranslation("common");
-  const assetsfilter = {
+
+  //This is an hugly hack to make the search work until we fix the boolean logic at backend
+  const isNotEmptyObj = (obj: any) => Boolean(Object.keys(obj).find(key => obj[key]?.length > 0));
+  delete proposalFilter.notCustodian;
+  const assetsOrFilter = {
     orName: q?.toString(),
     ...(!checked && { orNote: q?.toString() }),
   };
+  const assetsFilter = {
+    name: q?.toString(),
+    ...(!checked && { orNote: q?.toString() }),
+  };
+  const filters = isNotEmptyObj(proposalFilter) ? { ...proposalFilter, ...assetsFilter } : assetsOrFilter;
 
-  const filters = { ...proposalFilter, ...assetsfilter };
+  //
 
   const searchTypes = ["assets", "people"];
-
   const onChangeSearch = (value: string) => {
     setSearchType(value);
   };
