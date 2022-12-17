@@ -11,7 +11,8 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
 // Components
-import { Button, Card, Icon, Spinner, Stack, Tabs, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Frame, Icon, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
+import { DuplicateMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
 import AssetDetailOverview from "components/AssetDetailOverview";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
@@ -83,6 +84,16 @@ const Asset = () => {
 
   //
 
+  const [active, setActive] = useState(false);
+  const toggleActive = useCallback(() => setActive(active => !active), []);
+
+  function copyDPP() {
+    navigator.clipboard.writeText(JSON.stringify(data?.economicResource.traceDpp, null, 2));
+    setActive(true);
+  }
+
+  //
+
   if (loading) return <Spinner />;
   if (!asset) return null;
 
@@ -147,13 +158,20 @@ const Asset = () => {
               {selected == 0 && <AssetDetailOverview asset={asset} />}
               {selected == 1 && <Dpp dpp={data?.economicResource.traceDpp} />}
               {selected == 2 && (
-                <DynamicReactJson
-                  src={data?.economicResource.traceDpp}
-                  collapsed={3}
-                  enableClipboard={false}
-                  displayDataTypes={false}
-                  sortKeys={true}
-                />
+                <div>
+                  <div className="w-full flex justify-end">
+                    <Button onClick={copyDPP} icon={<Icon source={DuplicateMinor} />}>
+                      {t("Copy DPP")}
+                    </Button>
+                  </div>
+                  <DynamicReactJson
+                    src={data?.economicResource.traceDpp}
+                    collapsed={3}
+                    enableClipboard={false}
+                    displayDataTypes={false}
+                    sortKeys={true}
+                  />
+                </div>
               )}
 
               {/* <ContributorsTable
@@ -237,6 +255,8 @@ const Asset = () => {
           )}
         </div>
       </div>
+
+      <Frame>{active ? <Toast content={t("DPP copied!")} onDismiss={toggleActive} duration={2000} /> : null}</Frame>
     </>
   );
 };
