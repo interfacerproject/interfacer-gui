@@ -1,8 +1,10 @@
+import { useMutation } from "@apollo/client";
+import { Button, Icon } from "@bbtgnn/polaris-interfacer";
+import { HideMinor, ViewMinor } from "@shopify/polaris-icons";
+import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { useMutation } from "@apollo/client";
 import { UPDATE_METADATA } from "../lib/QueryAndMutation";
-import { useTranslation } from "next-i18next";
 
 const WatchButton = ({ id, metadata }: { id: string; metadata: any }) => {
   const { user } = useAuth();
@@ -29,15 +31,14 @@ const WatchButton = ({ id, metadata }: { id: string; metadata: any }) => {
   };
 
   return (
-    <button
-      className="btn btn-accent btn-outline btn-block"
-      tabIndex={-1}
-      role="button"
-      aria-disabled={true}
+    <Button
+      fullWidth
+      size="large"
       onClick={isWatching ? handleUnwatch : handleWatch}
+      icon={<Icon source={isWatching ? HideMinor : ViewMinor} />}
     >
-      {isWatching ? t("unwatch") : t("watch")}
-    </button>
+      {isWatching ? t("Unwatch") : t("Watch")}
+    </Button>
   );
 };
 
