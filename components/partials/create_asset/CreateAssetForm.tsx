@@ -91,6 +91,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
     "GNU - GPL ",
     "GNU - LGPL ",
     "BSD License",
+    "CERN OSL",
   ];
 
   //
