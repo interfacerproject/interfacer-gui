@@ -83,9 +83,8 @@ const Asset = () => {
 
   //
 
-  if (!asset) return null;
-
   if (loading) return <Spinner />;
+  if (!asset) return null;
 
   return (
     <>
