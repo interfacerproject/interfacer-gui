@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
 // Components
-import { Button, Card, Icon, Stack, Tabs, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Icon, Spinner, Stack, Tabs, Text } from "@bbtgnn/polaris-interfacer";
 import AddStar from "components/AddStar";
 import AssetDetailOverview from "components/AssetDetailOverview";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
@@ -78,14 +78,14 @@ const Asset = () => {
   }, [asset, getItem]);
 
   // Tabs setup
-
   const [selected, setSelected] = useState(0);
-
   const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
 
   //
 
   if (!asset) return null;
+
+  if (loading) return <Spinner />;
 
   return (
     <>

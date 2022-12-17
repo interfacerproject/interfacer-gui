@@ -46,7 +46,7 @@ export default function CreateContributionForm(props: Props) {
     .object({
       contributionRepositoryID: yup.string().required(),
       description: yup.string().required(),
-      strengthPoints: yup.number().positive().integer().required(),
+      strengthPoints: yup.number().integer(),
     })
     .required();
 
