@@ -21,17 +21,30 @@ const Home: NextPageWithLayout = () => {
   const { t } = useTranslation("homeProps");
   const { authenticated } = useAuth();
   const features = [
-    { icon: <LightningBoltIcon /> },
-    { icon: <ScaleIcon /> },
-    { icon: <GlobeAltIcon /> },
-    { icon: <LightningBoltIcon /> },
-    { icon: <ScaleIcon /> },
-    { icon: <GlobeAltIcon /> },
+    {
+      icon: <LightningBoltIcon />,
+      title: t("Share"),
+      description: t("Share your projects and services with makers and users"),
+    },
+    { icon: <ScaleIcon />, title: t("Collaborate"), description: t("Collaborate with the community") },
+    {
+      icon: <GlobeAltIcon />,
+      title: t("DPP"),
+      description: t("Validate your projects with a digital product passport"),
+    },
+    {
+      icon: <LightningBoltIcon />,
+      title: t("Combine"),
+      description: t("Create projects by including other maker's work"),
+    },
+    { icon: <ScaleIcon />, title: t("Explore"), description: t("Explore projects to find components and services") },
+    { icon: <GlobeAltIcon />, title: t("Import"), description: t("Import your work from existing repositories") },
   ];
 
   const subtitles = [
     t("Welcome to Interfacer's Fabcity OS alpha staging 😎"),
-    t("Create or import assets and collaborate with others in digital designs or in manufacturing physical products."),
+    t("Create or import assets and collaborate with others in digital designs or in manufacturing physical products") +
+      ".",
   ];
 
   return (
@@ -84,17 +97,17 @@ const Home: NextPageWithLayout = () => {
         {<AssetsTable hideHeader={true} hidePagination={true} />}
       </div>
 
-      {/* <div className="grid gap-16 md:pl-32 md:grid-cols-3 mt-44">
+      <div className="grid gap-16 md:pl-32 md:grid-cols-3 mt-44">
         {features.map((f, i) => {
           return (
-            <div key={i} className="flex md:flex-col">
+            <div key={i} className="flex md:flex-col mb-10">
               <div className="w-12 h-12 p-3 mr-2 text-white rounded-lg bg-[#5DA091]">{f.icon}</div>
-              <h3 className="mt-5 mb-2">{t("Feature {{n}}", { n: i })}</h3>
-              <p className="text-[#8a8e96]">{t("Coming soon")}</p>
+              <h3 className="mt-5 mb-2">{f.title}</h3>
+              <p className="text-[#8a8e96]">{f.description}</p>
             </div>
           );
         })}
-      </div> */}
+      </div>
     </>
   );
 };
