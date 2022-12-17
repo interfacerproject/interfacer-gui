@@ -112,7 +112,7 @@ const SignUp: NextPageWithLayout = () => {
 
             {/* Submit button */}
             <button className="btn btn-block btn-accent" onClick={signUp} data-test="signUpBtn">
-              {t("EndButton")}
+              {t("Register and login")}
             </button>
           </Passphrase>
         )}
