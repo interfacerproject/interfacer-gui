@@ -40,7 +40,7 @@ export namespace CreateAssetNS {
     name: string;
     description: string;
     type: string;
-    repositoryOrId: string;
+    repo: string;
     tags: Array<SelectOption<string>>;
     location: LocationLookup.Location | null;
     locationName: string;
@@ -100,7 +100,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
     name: "",
     description: "",
     type: "",
-    repositoryOrId: "",
+    repo: "",
     tags: [],
     location: null,
     locationName: "",
@@ -115,7 +115,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
     name: yup.string().required(),
     description: yup.string().required(),
     type: yup.string().required(),
-    repositoryOrId: yup.string().required(),
+    repo: yup.string().required(),
     tags: yup.array(yup.object()).min(1).required(),
     location: yup.object().required(),
     license: yup.string().oneOf(licenseTypes).required(),
@@ -201,7 +201,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
 
       <Controller
         control={control}
-        name="repositoryOrId"
+        name="repo"
         render={({ field: { onChange, onBlur, name, value } }) => (
           <TextField
             type="text"
@@ -211,10 +211,10 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             autoComplete="off"
             onChange={onChange}
             onBlur={onBlur}
-            label={t("Repository link or Interfacer ID")}
+            label={t("Repository link")}
             placeholder={t("github[dot]com/my-repo")}
-            helpText={t("Reference to the asset's repository or Interfacer ID of the asset")}
-            error={errors.repositoryOrId?.message}
+            helpText={t("Reference to the asset's repository (GitHub, Thingiverse, etc.)")}
+            error={errors.repo?.message}
             requiredIndicator={isRequired(schema, name)}
           />
         )}

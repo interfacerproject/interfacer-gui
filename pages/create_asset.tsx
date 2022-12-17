@@ -141,7 +141,7 @@ const CreateProject: NextPageWithLayout = () => {
         location: location?.id!,
         oneUnit: unitAndCurrency?.units.unitOne.id!,
         creationTime: new Date().toISOString(),
-        repo: formData.repositoryOrId,
+        repo: formData.repo,
         license: formData.license,
         images,
         tags,
