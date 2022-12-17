@@ -1,16 +1,11 @@
 {
-  "&nbsp;": "&nbsp;",
   "add to list +": "add to list +",
   "by": "by",
   "Claim ownership": "Claim ownership",
   "ID: {{id}}": "ID: {{id}}",
   "Losh asset": "Losh asset",
   "Owner": "Owner",
-  "This is a &nbsp; {{type}}": "This is a &nbsp; {{type}}",
-  " {{economicResource": {
-    "id}}": "ID: {{economicResource.id}}"
-  },
-  "": "Version:",
+  "This is a {{type}}": "This is a {{type}}",
   "CLAIM OWNERSHIP": "CLAIM OWNERSHIP",
   "Version": "Version",
   "claim your ownership over this asset": "claim your ownership over this asset",

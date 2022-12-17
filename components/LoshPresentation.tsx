@@ -33,13 +33,8 @@ const LoshPresentation = ({
         <div className="grid grid-cols-1 gap-2 md:grid-cols-12 pt-14">
           <div className="md:col-start-2 md:col-end-7">
             <h2>{economicResource.name}</h2>
-            <p className="pt-4 text-gray-500">
-              {t("This is a &nbsp; {{type}}", { type: economicResource.conformsTo })}
-              <Link href={`/resources`}>
-                <a className="text-primary">{t("Losh asset")}</a>
-              </Link>
-            </p>
-            <span className="pt-4 text-primary">
+            <p className="pt-4 text-gray-500">{t("This is a {{type}}", { type: economicResource.conformsTo.name })}</p>
+            <span className="pt-4 text-primary mt-2">
               {"ID:"} {economicResource.id}
             </span>
             {m && (
@@ -47,7 +42,7 @@ const LoshPresentation = ({
                 <div className="pt-12 text-primary">
                   <Link href={m.repo}>
                     <a target="_blank" className="flex items-center">
-                      <LinkIcon className="h-4" /> {t("&nbsp;")} {m.repo}
+                      <LinkIcon className="h-4" /> {m.repo}
                     </a>
                   </Link>
                 </div>
