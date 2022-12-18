@@ -9,6 +9,7 @@ import IfSidebarItem, { IfSidebarItemProps } from "./IfSidebarItem";
 export interface IfSideBarLinkProps extends IfSidebarItemProps {
   link: string;
   target?: string;
+  closed?: boolean;
 }
 
 const IfSideBarLink = (props: IfSideBarLinkProps) => {

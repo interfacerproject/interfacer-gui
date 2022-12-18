@@ -8,13 +8,24 @@ export interface IfSidebarItemProps {
   active?: boolean;
   leftIcon?: JSX.Element;
   rightIcon?: JSX.Element;
+  closed?: boolean;
 }
 
-const IfSidebarItem = ({ text, tag, leftIcon, rightIcon, disabled = false, active = false }: IfSidebarItemProps) => {
+const IfSidebarItem = ({
+  text,
+  tag,
+  leftIcon,
+  rightIcon,
+  disabled = false,
+  active = false,
+  closed = true,
+}: IfSidebarItemProps) => {
   const classes = classNames({
     // Base styles
-    "flex flex-row justify-between": true,
+    "flex flex-row ": true,
+    "justify-between": !closed,
     "btn btn-ghost font-medium normal-case rounded-lg border-2": true,
+    "justify-end": closed,
     // Disabled styles
     "text-primary hover:bg-amber-200": !disabled,
     "btn-disabled text-gray-400 border-0": disabled,
@@ -28,12 +39,16 @@ const IfSidebarItem = ({ text, tag, leftIcon, rightIcon, disabled = false, activ
       {/* Left side */}
       <div className="flex flex-row items-center justify-start space-x-2">
         {leftIcon}
-        <p>{text}</p>
+        {!closed && <p>{text}</p>}
       </div>
-      {/* Right side */}
+      {/*Right side*/}
       <div className="flex flex-row items-center justify-end space-x-2">
-        {tag && <IfSidebarTag text={tag} />}
-        <p>{rightIcon}</p>
+        {tag && !closed && (
+          <>
+            <IfSidebarTag text={tag} />
+            <p>{rightIcon}</p>
+          </>
+        )}
       </div>
     </div>
   );
