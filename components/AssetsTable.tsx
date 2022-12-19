@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 // Request
 import { useQuery } from "@apollo/client";
 import { FETCH_RESOURCES } from "lib/QueryAndMutation";
-import { FetchInventoryQuery, FetchInventoryQueryVariables, EconomicResourceFilterParams } from "lib/types";
+import { EconomicResourceFilterParams, FetchInventoryQuery, FetchInventoryQueryVariables } from "lib/types";
 
 // Components
 import { AdjustmentsIcon } from "@heroicons/react/outline";
