@@ -5,7 +5,7 @@ export function createImageSrc(image: File) {
 }
 
 export function getResourceImage(resource: Partial<EconomicResource>): string {
-  let metadataImage = resource.metadata.image as string;
+  let metadataImage = resource.metadata?.image as string;
   let galleryImage = "";
   if (resource.images && resource.images.length > 0) {
     galleryImage = createImageSrc(resource.images[0]);
