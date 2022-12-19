@@ -167,9 +167,6 @@ const CreateContribution: NextPageWithLayout = () => {
             <Text as="h1" variant="headingXl">
               {t("Make a Contribution")}
             </Text>
-            <Text as="p" variant="bodyMd">
-              {t("Lorem ipsum sic dolor amet")}
-            </Text>
           </Stack>
 
           <Stack vertical spacing="tight">
