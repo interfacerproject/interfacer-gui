@@ -2,14 +2,11 @@ import { Checkbox, Select } from "@bbtgnn/polaris-interfacer";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
-import AssetsCards from "../components/AssetsCards";
 import Layout from "../components/layout/SearchLayout";
-import ResourcesCards from "../components/ResourcesCards";
 import SearchBar from "../components/SearchBar";
 import { NextPageWithLayout } from "./_app";
 import AssetsTable from "../components/AssetsTable";
 import useFilters from "../hooks/useFilters";
-import { isRequired } from "../lib/isFieldRequired";
 import AgentsTable from "../components/AgentsTable";
 
 const Search: NextPageWithLayout = () => {
