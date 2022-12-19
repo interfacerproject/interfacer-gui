@@ -8,7 +8,15 @@ import { IfSidebarItemProps } from "./brickroom/IfSidebarItem";
 import IfSideBarLink, { IfSideBarLinkProps } from "./brickroom/IfSideBarLink";
 import LoginBtn from "./LoginMenu";
 
-import { BriefcaseIcon, ChatIcon, CubeIcon, GlobeIcon, HomeIcon, SupportIcon } from "@heroicons/react/outline";
+import {
+  BellIcon,
+  BriefcaseIcon,
+  ChatIcon,
+  CubeIcon,
+  GlobeIcon,
+  HomeIcon,
+  SupportIcon,
+} from "@heroicons/react/outline";
 
 function Sidebar() {
   const { t } = useTranslation("SideBarProps");
@@ -17,15 +25,20 @@ function Sidebar() {
   const items: Record<string, IfSideBarLinkProps> = {
     home: {
       text: t("Home"),
-      link: "/profile/my_profile",
+      link: "/",
       leftIcon: <HomeIcon className="w-5 h-5" />,
+    },
+    notification: {
+      text: t("Notifications"),
+      link: "/notification",
+      leftIcon: <BellIcon className="w-5 h-5" />,
     },
     // Dropdown -> My stuff
     createAsset: {
       text: t("Create Assets"),
       link: "/create_asset",
       leftIcon: <CubeIcon className="w-5 h-5" />,
-      tag: "NEW",
+      // tag: "NEW",
     },
     myAssets: {
       text: t("My Assets"),
@@ -39,7 +52,7 @@ function Sidebar() {
     resources: {
       text: t("Imported from LOSH"),
       link: "/resources",
-      tag: "NEW",
+      // tag: "NEW",
     },
     my_list: {
       text: t("My list"),
@@ -95,6 +108,7 @@ function Sidebar() {
         <ul className="p-4 space-y-1">
           <IfSideBarLink {...items.home} />
           <IfSideBarLink {...items.createAsset} />
+          <IfSideBarLink {...items.notification} />
 
           <IfSidebarDropdown {...drItems.myStuff}>
             <IfSideBarLink {...items.myAssets} />
