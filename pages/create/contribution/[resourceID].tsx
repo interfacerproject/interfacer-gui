@@ -1,7 +1,3 @@
-import { Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
-import CreateContributionFrom from "components/partials/create/contribution/CreateContributionForm";
-import PLabel from "components/polaris/PLabel";
-import ResourceDetailsCard from "components/ResourceDetailsCard";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
@@ -9,7 +5,11 @@ import { ReactElement, useState } from "react";
 
 // Request
 import { useMutation, useQuery } from "@apollo/client";
+import { useAuth } from "hooks/useAuth";
+import useInBox from "hooks/useInBox";
+import devLog from "lib/devLog";
 import {
+  CREATE_PROCESS,
   CREATE_PROPOSAL,
   FORK_ASSET,
   LINK_CONTRIBUTION_PROPOSAL_INTENT,
@@ -18,11 +18,14 @@ import {
   QUERY_UNIT_AND_CURRENCY,
 } from "lib/QueryAndMutation";
 import { EconomicResource, GetUnitAndCurrencyQuery } from "lib/types";
-import { CREATE_PROCESS } from "lib/QueryAndMutation";
-import devLog from "lib/devLog";
-import { useAuth } from "hooks/useAuth";
-import useInBox from "hooks/useInBox";
 import { MessageSubject, ProposalNotification } from "../../notification";
+
+// Components
+import { Button, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import Layout from "components/layout/Layout";
+import CreateContributionFrom from "components/partials/create/contribution/CreateContributionForm";
+import PLabel from "components/polaris/PLabel";
+import ResourceDetailsCard from "components/ResourceDetailsCard";
 
 //
 
@@ -146,34 +149,45 @@ const CreateContribution: NextPageWithLayout = () => {
 
   return (
     <>
-      <Stack vertical spacing="extraLoose">
-        <Stack vertical spacing="tight">
-          <Text as="h1" variant="headingXl">
-            {t("Make a Contribution")}
-          </Text>
-          <Text as="p" variant="bodyMd">
-            {t("Lorem ipsum sic dolor amet")}
-          </Text>
-        </Stack>
+      <div className="p-4 text-text-primary">
+        <Button
+          onClick={() => {
+            router.back();
+          }}
+          plain
+          monochrome
+        >
+          {t("← Discard and go back")}
+        </Button>
+      </div>
 
-        <Stack vertical spacing="tight">
-          <Text as="h2" variant="headingLg">
-            {t("Contribution info")}
-          </Text>
-          <Text as="p" variant="bodyMd">
-            {t("Help us display your proposal correctly.")}
-          </Text>
-        </Stack>
-
-        {resource && (
-          <Stack vertical spacing="extraTight">
-            <PLabel label={t("Parent repository")} />
-            <ResourceDetailsCard resource={resource} />
+      <div className="mx-auto max-w-lg p-6">
+        <Stack vertical spacing="extraLoose">
+          <Stack vertical spacing="tight">
+            <Text as="h1" variant="headingXl">
+              {t("Make a Contribution")}
+            </Text>
           </Stack>
-        )}
 
-        <CreateContributionFrom onSubmit={onSubmit} error={formError} setError={setFormError} />
-      </Stack>
+          <Stack vertical spacing="tight">
+            <Text as="h2" variant="headingLg">
+              {t("Contribution info")}
+            </Text>
+            <Text as="p" variant="bodyMd">
+              {t("Help us display your proposal correctly.")}
+            </Text>
+          </Stack>
+
+          {resource && (
+            <Stack vertical spacing="extraTight">
+              <PLabel label={t("Parent repository")} />
+              <ResourceDetailsCard resource={resource} />
+            </Stack>
+          )}
+
+          <CreateContributionFrom onSubmit={onSubmit} error={formError} setError={setFormError} />
+        </Stack>
+      </div>
     </>
   );
 };
@@ -181,7 +195,7 @@ const CreateContribution: NextPageWithLayout = () => {
 //
 
 CreateContribution.getLayout = function getLayout(page: ReactElement) {
-  return <div className="mx-auto max-w-lg p-6">{page}</div>;
+  return <Layout>{page}</Layout>;
 };
 
 export default CreateContribution;

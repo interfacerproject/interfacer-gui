@@ -5,11 +5,11 @@ import { useAuth } from "../hooks/useAuth";
 import type { NextPageWithLayout } from "./_app";
 
 // Partials
-import { Banner } from "@bbtgnn/polaris-interfacer";
+import { Banner, Button } from "@bbtgnn/polaris-interfacer";
 import CreateAssetForm, { CreateAssetNS } from "components/partials/create_asset/CreateAssetForm";
 
 // Layout
-import Layout from "../components/layout/CreateAssetLayout";
+import Layout from "../components/layout/Layout";
 
 // Queries
 import { useMutation, useQuery } from "@apollo/client";
@@ -141,7 +141,7 @@ const CreateProject: NextPageWithLayout = () => {
         location: location?.id!,
         oneUnit: unitAndCurrency?.units.unitOne.id!,
         creationTime: new Date().toISOString(),
-        repo: formData.repositoryOrId,
+        repo: formData.repo,
         license: formData.license,
         images,
         tags,
@@ -169,6 +169,19 @@ const CreateProject: NextPageWithLayout = () => {
 
   return (
     <>
+      <div className="p-4 text-text-primary">
+        <Button
+          onClick={() => {
+            router.back();
+          }}
+          plain
+          monochrome
+          id="#back"
+        >
+          {t("← Discard and go back")}
+        </Button>
+      </div>
+
       {loading && <div>creating...</div>}
 
       {!loading && (
