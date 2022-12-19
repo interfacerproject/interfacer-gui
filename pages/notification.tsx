@@ -1,4 +1,5 @@
 import { Button, Card, Text } from "@bbtgnn/polaris-interfacer";
+import { BellIcon } from "@heroicons/react/outline";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -152,7 +153,23 @@ const Notification = () => {
     [MessageGroup.CITATIONS]: t("Citations"),
   };
 
-  //
+  /* Empty state */
+
+  if (messages.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[90vh] space-y-2 text-gray-500">
+        <BellIcon className="w-5 h-5" />
+        <Text as="p" variant="bodyLg">
+          {t("No notifications at the moment :)")}
+        </Text>
+        <Link href="/">
+          <Button plain>{t("Go to home page")}</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  /* Main render */
 
   return (
     <div className="flex flex-wrap mx-auto justify-center">
