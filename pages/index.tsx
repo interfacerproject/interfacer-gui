@@ -83,11 +83,11 @@ const Home: NextPageWithLayout = () => {
               <>
                 <Link href="/create_asset">
                   <Button size="large" primary>
-                    {t("Create a new asset")}
+                    {t("Create a new project")}
                   </Button>
                 </Link>
                 <Link href="/resources">
-                  <Button size="large">{t("Import a resource from LOSH")}</Button>
+                  <Button size="large">{t("Import from LOSH")}</Button>
                 </Link>
               </>
             )}
