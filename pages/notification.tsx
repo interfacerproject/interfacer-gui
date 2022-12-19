@@ -1,14 +1,13 @@
+import { Button, Card } from "@bbtgnn/polaris-interfacer";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { Button } from "@bbtgnn/polaris-interfacer";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import BrDisplayUser from "../components/brickroom/BrDisplayUser";
-import dayjs from "../lib/dayjs";
-import useInBox, { Notification } from "../hooks/useInBox";
 import ContributionMessage from "../components/ContributionMessage";
-import { useRouter } from "next/router";
-import devLog from "lib/devLog";
+import useInBox, { Notification } from "../hooks/useInBox";
+import dayjs from "../lib/dayjs";
 
 export enum ProposalType {
   HARDWARE_IMPROVEMENT = "Hardware Improvement",
@@ -66,7 +65,7 @@ const Notification = () => {
         );
       case "Asset cited":
         return (
-          <div className="my-2">
+          <div>
             <p className="mr-1">{dayjs(props.data).fromNow()}</p>
             <p className="text-xs">{dayjs(props.data).format("HH:mm DD/MM/YYYY")}</p>
             <div className="flex flex-row my-2 center">
@@ -82,7 +81,6 @@ const Notification = () => {
             </div>
             <p className="text-xs bg-[#E0E0E0] p-2 my-2">{_parsedMessage.text}</p>
             <Button
-              primary
               fullWidth
               onClick={() => {
                 router.push(`/asset/${_parsedMessage.proposalID}`);
@@ -98,11 +96,13 @@ const Notification = () => {
   };
 
   return (
-    <div className="mx-auto max-w-lg p-6">
+    <div className="mx-auto max-w-lg p-6 space-y-4">
       {messages.map((m: any) => (
-        <>
-          <RenderMessagePerSubject key={m.id} message={m.content} sender={m.sender} data={m.content.data} />
-        </>
+        <Card key={m.id}>
+          <div className="p-4">
+            <RenderMessagePerSubject message={m.content} sender={m.sender} data={m.content.data} />
+          </div>
+        </Card>
       ))}
     </div>
   );
