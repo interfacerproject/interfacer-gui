@@ -33,8 +33,8 @@ const Resource: NextPage = () => {
             <div className="w-full p-2 md:p-8">
               <BrBreadcrumb
                 crumbs={[
-                  { name: t("Assets"), href: "/assets" },
-                  { name: e.conformsTo.name, href: `/assets?conformTo=${e.conformsTo.id}` },
+                  { name: t("Projects"), href: "/projects" },
+                  { name: e.conformsTo.name, href: `/projects?conformTo=${e.conformsTo.id}` },
                   { name: t("Imported from Losh"), href: `/resources` },
                 ]}
               />

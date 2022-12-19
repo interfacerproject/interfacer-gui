@@ -5,9 +5,9 @@
   "Go to projects": "Go to projects",
   "Go to inventory": "Go to inventory",
   "This is a": "This is a",
-  "Value of this asset": "Value of this project",
+  "Value of this project": "Value of this project",
   "Load more": "Load more...",
-  "assets": "Projects",
+  "projects": "Projects",
   "contributorsHead": ["UserName", "Date"],
   "contributors": "Contributors",
   "watch": "Watch",
@@ -44,6 +44,6 @@
   "Copy DPP": "Copy DPP",
   "Digital Product Passport": "Digital Product Passport",
   "DPP": "DPP",
-  "Asset overview": "Project overview",
-  "Assets": "Projects"
+  "Project overview": "Project overview",
+  "Projects": "Projects"
 }

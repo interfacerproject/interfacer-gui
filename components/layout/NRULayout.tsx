@@ -20,7 +20,7 @@ const NRULayout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProp
       <div className="container bg-[#F3F3F1] min-h-screen max-w-full">
         <div className="grid grid-cols-1 md:grid-cols-2">
           <img
-            src="https://www.interfacerproject.eu/assets/index/ABOUT.png"
+            src="https://www.interfacerproject.eu/projects/index/ABOUT.png"
             className={"w-full h-full object-cover md:h-screen hidden md:block"}
           />
           <div className="h-full">{layoutProps?.children}</div>

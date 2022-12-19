@@ -5,9 +5,9 @@
   "Go to projects": "Aller aux projets",
   "Go to inventory": "Aller à l'inventaire",
   "This is a": "Il s'agit d'un",
-  "Value of this asset": "Valeur de cet actif",
+  "Value of this project": "Valeur de cet actif",
   "Load more": "Chargez plus",
-  "assets": "actifs",
+  "projects": "actifs",
   "contributorsHead": "contributeursResponsable",
   "contributors": "contributeurs",
   "watch": "regarder",
@@ -44,6 +44,6 @@
   "Copy DPP": "Copie DPP",
   "Digital Product Passport": "Passeport pour produits numériques",
   "DPP": "DPP",
-  "Asset overview": "Aperçu des actifs",
-  "Assets": "Actifs"
+  "Project overview": "Aperçu des actifs",
+  "Projects": "Actifs"
 }

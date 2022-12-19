@@ -6,7 +6,7 @@ import type { NextPageWithLayout } from "./_app";
 
 // Partials
 import { Banner, Button } from "@bbtgnn/polaris-interfacer";
-import CreateAssetForm, { CreateAssetNS } from "components/partials/create_asset/CreateAssetForm";
+import CreateProjectForm, { CreateProjectNS } from "components/partials/create_project/CreateProjectForm";
 
 // Layout
 import Layout from "../components/layout/Layout";
@@ -17,15 +17,15 @@ import useStorage from "hooks/useStorage";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
 import {
   ASK_RESOURCE_PRIMARY_ACCOUNTABLE,
-  CITE_ASSET,
-  CREATE_ASSET,
+  CITE_PROJECT,
+  CREATE_PROJECT,
   CREATE_LOCATION,
   CREATE_PROCESS,
   QUERY_UNIT_AND_CURRENCY,
 } from "lib/QueryAndMutation";
 import {
-  CreateAssetMutation,
-  CreateAssetMutationVariables,
+  CreateProjectMutation,
+  CreateProjectMutationVariables,
   CreateLocationMutation,
   CreateLocationMutationVariables,
   GetUnitAndCurrencyQuery,
@@ -67,8 +67,8 @@ const CreateProject: NextPageWithLayout = () => {
   /* Getting all the needed mutations */
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
-  const [citeAsset] = useMutation(CITE_ASSET);
-  const [createAsset] = useMutation<CreateAssetMutation, CreateAssetMutationVariables>(CREATE_ASSET);
+  const [citeProject] = useMutation(CITE_PROJECT);
+  const [createProject] = useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CREATE_PROJECT);
   const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
   const [createProcess] = useMutation(CREATE_PROCESS);
   const { refetch } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
@@ -77,7 +77,7 @@ const CreateProject: NextPageWithLayout = () => {
 
   type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
 
-  async function handleCreateLocation(formData: CreateAssetNS.FormValues): Promise<SpatialThingRes | undefined> {
+  async function handleCreateLocation(formData: CreateProjectNS.FormValues): Promise<SpatialThingRes | undefined> {
     try {
       const { data } = await createLocation({
         variables: {
@@ -96,7 +96,7 @@ const CreateProject: NextPageWithLayout = () => {
     }
   }
 
-  async function handleAssetCreation(formData: CreateAssetNS.FormValues) {
+  async function handleProjectCreation(formData: CreateProjectNS.FormValues) {
     try {
       const processName = `creation of ${formData.name} by ${user!.name}`;
       const { data: processData } = await createProcess({ variables: { name: processName } });
@@ -119,7 +119,7 @@ const CreateProject: NextPageWithLayout = () => {
           creationTime: new Date().toISOString(),
           unitOne: unitAndCurrency?.units.unitOne.id!,
         };
-        await citeAsset({ variables: citeVariables });
+        await citeProject({ variables: citeVariables });
         const { data } = await refetch({ id: resource.value.id });
         const message: ProposalNotification = {
           proposalID: resource.value.id,
@@ -128,10 +128,10 @@ const CreateProject: NextPageWithLayout = () => {
           originalResourceName: resource.value.name,
           text: formData.description,
         };
-        await sendMessage(message, [data.economicResource.primaryAccountable.id], "Asset cited");
+        await sendMessage(message, [data.economicResource.primaryAccountable.id], "Project cited");
       }
 
-      const variables: CreateAssetMutationVariables = {
+      const variables: CreateProjectMutationVariables = {
         resourceSpec: formData.type,
         process: processData.createProcess.process.id,
         agent: user?.ulid!,
@@ -146,18 +146,20 @@ const CreateProject: NextPageWithLayout = () => {
         images,
         tags,
       };
-      devLog("info: asset variables created", variables);
+      devLog("info: project variables created", variables);
 
-      // Create asset
-      const { data: createAssetData, errors } = await createAsset({ variables });
-      if (errors) throw new Error("AssetNotCreated");
+      // Create project
+      const { data: createProjectData, errors } = await createProject({ variables });
+      if (errors) throw new Error("ProjectNotCreated");
 
       // Upload images
       await uploadFiles(formData.images);
       devLog("success: images uploaded");
 
       // Redirecting user
-      await router.replace(`/asset/${createAssetData?.createEconomicEvent?.economicEvent?.resourceInventoriedAs?.id}`);
+      await router.replace(
+        `/project/${createProjectData?.createEconomicEvent?.economicEvent?.resourceInventoriedAs?.id}`
+      );
     } catch (e) {
       devLog(e);
       let err = errorFormatter(e);
@@ -188,19 +190,19 @@ const CreateProject: NextPageWithLayout = () => {
         <div className="mx-auto p-8 max-w-xl">
           {/* Heading */}
           <div>
-            <h2 className="text-primary">{t("Create a new asset")} </h2>
-            <p>{t("Make sure you read the Comunity Guidelines before you create a new asset")}.</p>
+            <h2 className="text-primary">{t("Create a new project")} </h2>
+            <p>{t("Make sure you read the Comunity Guidelines before you create a new project")}.</p>
             <p>{t("Fields marked with a red asterisk are mandatory")}.</p>
           </div>
 
-          <CreateAssetForm
+          <CreateProjectForm
             onSubmit={async data => {
-              await handleAssetCreation(data);
+              await handleProjectCreation(data);
             }}
           >
             {error && (
               <Banner
-                title={t("Error in Asset creation")}
+                title={t("Error in Project creation")}
                 status="critical"
                 onDismiss={() => {
                   setError("");
@@ -209,10 +211,10 @@ const CreateProject: NextPageWithLayout = () => {
                 <p className="whitespace-pre-wrap">{error}</p>
               </Banner>
             )}
-          </CreateAssetForm>
-          {/* {createdAssetId ? (
-        <Link href={createdAssetId}>
-          <a className="btn btn-accent">{t("go to the asset")}</a>
+          </CreateProjectForm>
+          {/* {createdProjectId ? (
+        <Link href={createdProjectId}>
+          <a className="btn btn-accent">{t("go to the project")}</a>
         </Link> */}
         </div>
       )}

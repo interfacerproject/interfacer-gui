@@ -72,7 +72,7 @@ const Notification = () => {
             subject={props.message.subject}
           />
         );
-      case "Asset cited":
+      case "Project cited":
         return (
           <div>
             <p className="mr-1">{dayjs(props.data).fromNow()}</p>
@@ -83,7 +83,7 @@ const Notification = () => {
               </div>
               <div className="pt-3.5">
                 <span className="mr-1">{t("just mentioned your")}</span>
-                <Link href={`/asset/${_parsedMessage.originalResourceID}`}>
+                <Link href={`/project/${_parsedMessage.originalResourceID}`}>
                   <a className="text-primary hover:underline">{_parsedMessage.originalResourceName}</a>
                 </Link>
               </div>
@@ -92,7 +92,7 @@ const Notification = () => {
             <Button
               fullWidth
               onClick={() => {
-                router.push(`/asset/${_parsedMessage.proposalID}`);
+                router.push(`/project/${_parsedMessage.proposalID}`);
               }}
             >
               {t("take me there")}
@@ -132,7 +132,7 @@ const Notification = () => {
       ) {
         groupedMessages.contributionResponses.push(m);
       }
-      if (m.content.subject === "Asset cited") {
+      if (m.content.subject === "Project cited") {
         groupedMessages.citations.push(m);
       }
     }

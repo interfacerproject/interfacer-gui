@@ -1,4 +1,4 @@
-describe.skip("When user visit Assets", () => {
+describe.skip("When user visit Projects", () => {
   before(() => {
     cy.login();
     cy.saveLocalStorage();
@@ -9,7 +9,7 @@ describe.skip("When user visit Assets", () => {
     cy.restoreLocalStorage();
   });
   it("should Filter resources by the url query string", () => {
-    cy.visit(`/assets?primaryAccountable=${Cypress.env("authId")}`);
+    cy.visit(`/projects?primaryAccountable=${Cypress.env("authId")}`);
     cy.get("tr").each($tr => {
       cy.wrap($tr).get("td").eq(2).should("contain", Cypress.env("authName"));
     });

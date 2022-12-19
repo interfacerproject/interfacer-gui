@@ -4,12 +4,12 @@ import MdParser from "../lib/MdParser";
 import { EconomicResource } from "../lib/types";
 import BrTags from "./brickroom/BrTags";
 
-const AssetDetailOverview = ({ asset }: { asset: EconomicResource }) => {
+const ProjectDetailOverview = ({ project }: { project: EconomicResource }) => {
   const { t } = useTranslation("common");
 
-  const license = asset?.license;
-  const tags = asset?.classifiedAs;
-  const text = asset?.note;
+  const license = project?.license;
+  const tags = project?.classifiedAs;
+  const text = project?.note;
 
   return (
     <Stack vertical>
@@ -36,4 +36,4 @@ const AssetDetailOverview = ({ asset }: { asset: EconomicResource }) => {
   );
 };
 
-export default AssetDetailOverview;
+export default ProjectDetailOverview;

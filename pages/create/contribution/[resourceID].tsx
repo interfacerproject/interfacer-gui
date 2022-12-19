@@ -11,7 +11,7 @@ import devLog from "lib/devLog";
 import {
   CREATE_PROCESS,
   CREATE_PROPOSAL,
-  FORK_ASSET,
+  FORK_PROJECT,
   LINK_CONTRIBUTION_PROPOSAL_INTENT,
   PROPOSE_CONTRIBUTION,
   QUERY_RESOURCE,
@@ -41,7 +41,7 @@ const CreateContribution: NextPageWithLayout = () => {
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [createProcess] = useMutation(CREATE_PROCESS);
-  const [forkAsset] = useMutation(FORK_ASSET);
+  const [forkProject] = useMutation(FORK_PROJECT);
   const [createProposal] = useMutation(CREATE_PROPOSAL);
   const [proposeContribution] = useMutation(PROPOSE_CONTRIBUTION);
   const [linkProposalAndIntents] = useMutation(LINK_CONTRIBUTION_PROPOSAL_INTENT);
@@ -83,10 +83,10 @@ const CreateContribution: NextPageWithLayout = () => {
         spec: resource!.conformsTo.id,
       };
       devLog("The forking variables are: ", forkVariables);
-      const forkedAsset = await forkAsset({ variables: forkVariables });
-      devLog("The forked asset was created successfully with id: " + JSON.stringify(forkedAsset));
-      const forkedAssetId = forkedAsset.data?.produce.economicEvent?.resourceInventoriedAs?.id;
-      if (!forkedAssetId) throw new Error("No forked asset id found");
+      const forkedProject = await forkProject({ variables: forkVariables });
+      devLog("The forked project was created successfully with id: " + JSON.stringify(forkedProject));
+      const forkedProjectId = forkedProject.data?.produce.economicEvent?.resourceInventoriedAs?.id;
+      if (!forkedProjectId) throw new Error("No forked project id found");
 
       const processContributionName = `contribution of ${resource.name} by ${user!.name}`;
       const proposeProcessVariables = {
@@ -102,7 +102,7 @@ const CreateContribution: NextPageWithLayout = () => {
       devLog(findCreationProcessId(resource));
 
       const contributionVariables = {
-        resourceForked: forkedAssetId,
+        resourceForked: forkedProjectId,
         resourceOrigin: resource.id,
         process: processContribution.data?.createProcess.process.id,
         owner: resource.primaryAccountable.id,

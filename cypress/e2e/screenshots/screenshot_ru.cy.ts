@@ -1,5 +1,5 @@
 const pages =
-  "/ /logged_in /resources /asset/061P0XBBP4CXZ3A9T57QA3ZJ9M /create_asset /profile/my_profile /resource/:id /assets".split(
+  "/ /logged_in /resources /project/061P0XBBP4CXZ3A9T57QA3ZJ9M /create_project /profile/my_profile /resource/:id /projects".split(
     " "
   );
 

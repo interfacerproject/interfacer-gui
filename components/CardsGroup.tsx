@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AssetsFilters from "./AssetsFilters";
+import ProjectsFilters from "./ProjectsFilters";
 import Spinner from "./brickroom/Spinner";
 import cn from "classnames";
 import { AdjustmentsIcon } from "@heroicons/react/outline";
@@ -79,7 +79,7 @@ const CardsGroup = (props: CardsGroupProps) => {
             </div>
             {hideFilters && showFilter && (
               <div className="basis-96 sticky top-8">
-                <AssetsFilters hidePrimaryAccountable={hidePrimaryAccountable} />
+                <ProjectsFilters hidePrimaryAccountable={hidePrimaryAccountable} />
               </div>
             )}
           </div>
