@@ -31,7 +31,8 @@ const IfSidebarItem = ({
     "btn-disabled text-gray-400 border-0": disabled,
     // Active styles
     "border-none": !active,
-    "border-amber-200": active,
+    "border-amber-200": active && !closed,
+    "border-r-amber-200 border-r-8 pr-2": active && closed,
   });
 
   return (
