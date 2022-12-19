@@ -30,5 +30,10 @@
   "Search": "Search",
   "Search result for": "Search result for",
   "Select search type": "Select search type",
-  "Propose a contribute": "Propose a contribute"
+  "Propose a contribute": "Propose a contribute",
+  "name": "name",
+  "id": "id",
+  "location": "location",
+  "empty_state_agents": "empty_state_agents",
+  "no location provide": "no location provide"
 }
