@@ -1,4 +1,4 @@
-import { Button, Card } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Text } from "@bbtgnn/polaris-interfacer";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -32,6 +32,12 @@ export interface ProposalNotification {
   ownerName?: string;
 }
 
+export enum MessageGroup {
+  CONTRIBUTION_REQUESTS = "contributionRequests",
+  CONTRIBUTION_RESPONSES = "contributionResponses",
+  CITATIONS = "citations",
+}
+
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
   const { startReading, messages, setReadedMessages, countUnread } = useInBox();
@@ -42,6 +48,8 @@ const Notification = () => {
         setReadedMessages(messages.map(m => m.id));
       }, 20000);
   }, [messages]);
+
+  //
 
   const RenderMessagePerSubject = (props: { message: Notification.Content; sender: string; data: Date }) => {
     const _parsedMessage: ProposalNotification = props.message.message;
@@ -95,15 +103,94 @@ const Notification = () => {
     }
   };
 
+  /* Message grouping */
+
+  type Message = typeof messages[number];
+
+  const groupedMessages: Record<MessageGroup, Array<Message>> = {
+    [MessageGroup.CONTRIBUTION_REQUESTS]: [],
+    [MessageGroup.CONTRIBUTION_RESPONSES]: [],
+    [MessageGroup.CITATIONS]: [],
+  };
+
+  function clearGroupedMessages() {
+    groupedMessages.contributionRequests = [];
+    groupedMessages.contributionResponses = [];
+    groupedMessages.citations = [];
+  }
+
+  function groupMessagesBySubject(messages: Array<Message>): Record<MessageGroup, Array<Message>> {
+    // Contribution requests
+    for (let m of messages) {
+      if (m.content.subject === MessageSubject.CONTRIBUTION_REQUEST) {
+        groupedMessages.contributionRequests.push(m);
+      }
+      if (
+        m.content.subject === MessageSubject.CONTRIBUTION_ACCEPTED ||
+        m.content.subject === MessageSubject.CONTRIBUTION_REJECTED
+      ) {
+        groupedMessages.contributionResponses.push(m);
+      }
+      if (m.content.subject === "Asset cited") {
+        groupedMessages.citations.push(m);
+      }
+    }
+    //
+    return groupedMessages;
+  }
+
+  groupMessagesBySubject(messages);
+
+  useEffect(() => {
+    clearGroupedMessages();
+    groupMessagesBySubject(messages);
+  }, [messages]);
+
+  const groupsLabels: Record<MessageGroup, string> = {
+    [MessageGroup.CONTRIBUTION_REQUESTS]: t("Contribution Requests"),
+    [MessageGroup.CONTRIBUTION_RESPONSES]: t("Contribution Responses"),
+    [MessageGroup.CITATIONS]: t("Citations"),
+  };
+
+  //
+
   return (
-    <div className="mx-auto max-w-lg p-6 space-y-4">
-      {messages.map((m: any) => (
-        <Card key={m.id}>
-          <div className="p-4">
-            <RenderMessagePerSubject message={m.content} sender={m.sender} data={m.content.data} />
-          </div>
-        </Card>
-      ))}
+    <div className="flex flex-wrap mx-auto justify-center">
+      <div className="flex flex-col p-6 space-y-1 sticky top-0 self-start z-50">
+        {Object.entries(groupedMessages).map(([groupName, group]) => (
+          <Button key={groupName} url={`#${groupName}`}>
+            {/* @ts-ignore */}
+            {groupsLabels[groupName]}
+            {` (${group.length})`}
+          </Button>
+        ))}
+      </div>
+
+      <div className="max-w-lg p-6 space-y-8">
+        {Object.entries(groupedMessages).map(([groupName, group]) => (
+          <>
+            {group.length > 0 && (
+              <div key={groupName}>
+                <Text id={groupName} as="h2" variant="headingMd">
+                  {/* @ts-ignore */}
+                  {groupsLabels[groupName]}
+                  {` (${group.length})`}
+                </Text>
+
+                <div className="mt-4">
+                  {group.map((m: any) => (
+                    <Card key={m.id}>
+                      <div className="p-4">
+                        <RenderMessagePerSubject message={m.content} sender={m.sender} data={m.content.data} />
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        ))}
+      </div>
     </div>
   );
 };
