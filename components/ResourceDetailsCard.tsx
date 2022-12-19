@@ -1,7 +1,7 @@
-import { Card, Icon, Tag, Text } from "@bbtgnn/polaris-interfacer";
-import { DynamicSourceMinor } from "@shopify/polaris-icons";
+import { Card, Tag, Text } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
+import ProjectThumb from "./ProjectThumb";
 
 //
 
@@ -19,22 +19,13 @@ const ResourceDetailsCard = (props: Props) => {
 
   // Preparing data
 
-  let image = "";
-  if (resource.images && resource.images.length > 0) {
-    const imageFile = resource.images[0];
-    image = `data:${imageFile.mimeType};base64,${imageFile.bin}`;
-  }
-
   const type = resource.conformsTo?.name;
   const owner = resource.primaryAccountable?.name;
 
   return (
     <Card>
       <div className="p-4 flex flex-row items-start space-x-4">
-        <div className="w-20 h-20 rounded-md bg-gray-200 overflow-hidden flex items-center justify-center">
-          {image && <img src={image} alt="" className="w-full h-full object-cover" />}
-          {!image && <Icon color="subdued" source={DynamicSourceMinor} />}
-        </div>
+        <ProjectThumb project={resource} />
 
         <div className="grow">
           <Text as="h4" variant="headingMd" fontWeight="bold">

@@ -53,7 +53,9 @@ const Home: NextPageWithLayout = () => {
         <div className="space-y-6">
           <div className="mb-6 logo" />
 
-          <h2 className="text-3xl">{t("Building the digital infrastructure for Fab Cities")}</h2>
+          <h2 className="text-3xl" id="homeTitle">
+            {t("Building the digital infrastructure for Fab Cities")}
+          </h2>
 
           <div className="space-y-1">
             {subtitles.map(s => (

@@ -477,6 +477,12 @@ export const FETCH_RESOURCES = gql`
           metadata
           okhv
           repo
+          images {
+            hash
+            name
+            mimeType
+            bin
+          }
           version
           licensor
           license
