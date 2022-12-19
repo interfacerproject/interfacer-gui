@@ -40,5 +40,14 @@
   "control window": "Steuerungsfenster",
   "Create a new asset": "Ein neues Asset erstellen",
   "Fields marked with a red asterisk are mandatory": "Die mit einem roten Sternchen gekennzeichneten Felder sind Pflichtfelder",
-  "Make sure you read the Comunity Guidelines before you create a new asset": "Lesen Sie unbedingt die Gemeinschaftsrichtlinien, bevor Sie ein neues Asset erstellen"
+  "Make sure you read the Comunity Guidelines before you create a new asset": "Lesen Sie unbedingt die Gemeinschaftsrichtlinien, bevor Sie ein neues Asset erstellen",
+  "Include other resources": "Andere Ressourcen einbeziehen",
+  "To include other resources, search by name or Interfacer ID": "Um andere Ressourcen einzuschließen, suchen Sie nach Namen oder Interfacer ID",
+  "Search resource name": "Name der Suchressource",
+  "Set up a reasonable value for this asset": "Legen Sie einen angemessenen Wert für diesen Vermögenswert fest",
+  "Error in contribution creation": "Fehler bei der Beitragserstellung",
+  "Send contribution": "Beitrag senden",
+  "Contribution repository link or Interfacer ID": "Link zum Beitragsrepository oder Interfacer-ID",
+  "github": "github",
+  "Reference to the resource's repository or Interfacer ID of the resource": "Verweis auf das Repository der Ressource oder Interfacer-ID der Ressource"
 }
