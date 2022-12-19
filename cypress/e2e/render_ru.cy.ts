@@ -37,7 +37,7 @@ describe("when user is logged in", () => {
 
   it("Should see /asset/:id", () => {
     cy.visit("/asset/" + Cypress.env("asset_id"));
-    cy.contains("Asset");
+    cy.contains("Project");
   });
 
   it.skip("Should render html in /asset/:id", () => {
@@ -50,7 +50,7 @@ describe("when user is logged in", () => {
 
   it("Should see /create_asset", () => {
     cy.visit("/create_asset");
-    cy.contains("Create a new asset");
+    cy.contains("Create a new project");
   });
 
   it("Should see /profile/my_profile", () => {
@@ -66,6 +66,6 @@ describe("when user is logged in", () => {
 
   it("Should see /assets", () => {
     cy.visit("/assets");
-    cy.contains("Latest assets");
+    cy.contains("Latest projects");
   });
 });

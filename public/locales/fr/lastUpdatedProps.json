@@ -16,5 +16,7 @@
   "tags": "tags",
   "Contributors": "Contributeurs",
   "filters": "filtres",
-  "Type": "Type"
+  "Type": "Type",
+  "Included or cited assets": "Actifs inclus ou cités",
+  "Asset Type": "Type d'actif"
 }

@@ -17,5 +17,14 @@
   "In this markdown editor, the right box shows a preview": "In questo editor di markdown, il riquadro di destra mostra un'anteprima",
   "Location name": "Nome della località",
   "Make sure you read the Comunity Guidelines before you create a new asset": "Assicurarsi di aver letto le Linee guida della comunità prima di creare una nuova risorsa.",
-  "One of the images you selected already exists on the server, please upload a different file": "Una delle immagini selezionate esiste già sul server, si prega di caricare un altro file."
+  "One of the images you selected already exists on the server, please upload a different file": "Una delle immagini selezionate esiste già sul server, si prega di caricare un altro file.",
+  "Include other resources": "Includere altre risorse",
+  "To include other resources, search by name or Interfacer ID": "Per includere altre risorse, effettuare una ricerca per nome o per ID Interfaccia.",
+  "Search resource name": "Nome della risorsa da cercare",
+  "Set up a reasonable value for this asset": "Impostare un valore ragionevole per questa attività",
+  "Error in contribution creation": "Errore nella creazione del contributo",
+  "Send contribution": "Inviare il contributo",
+  "Contribution repository link or Interfacer ID": "Link al repository dei contributi o ID Interfacciare",
+  "github": "github",
+  "Reference to the resource's repository or Interfacer ID of the resource": "Riferimento al repository della risorsa o all'ID dell'interfaccia della risorsa."
 }

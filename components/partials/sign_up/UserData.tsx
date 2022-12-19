@@ -82,7 +82,7 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
       <h2>{t("Sign up")}</h2>
       <p>
         {t(
-          "The sign up process generates your private keys which are never communicate to the server&#46 Keep a copy of your passphrase&#46"
+          "The sign up process generates your private keys which are never communicate to the server; Keep a copy of your passphrase"
         )}
       </p>
       {/* The form */}

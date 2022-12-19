@@ -16,5 +16,7 @@
   "tags": "tags",
   "Contributors": "Mitwirkende",
   "filters": "filtert",
-  "Type": "Typ"
+  "Type": "Typ",
+  "Included or cited assets": "Enthaltene oder angeführte Vermögenswerte",
+  "Asset Type": "Asset-Typ"
 }

@@ -82,7 +82,7 @@ const Notification = () => {
                 <BrDisplayUser id={props.sender} name={_parsedMessage.proposerName} />
               </div>
               <div className="pt-3.5">
-                <span className="mr-1">{"just cited your"}</span>
+                <span className="mr-1">{t("just mentioned your")}</span>
                 <Link href={`/asset/${_parsedMessage.originalResourceID}`}>
                   <a className="text-primary hover:underline">{_parsedMessage.originalResourceName}</a>
                 </Link>
