@@ -1,9 +1,9 @@
 {
   "Building the digital infrastructure for Fab Cities": "Building the digital infrastructure for Fab Cities",
   "Welcome to Interfacer's Fabcity OS alpha staging 😎": "Welcome to Interfacer's Fabcity OS alpha staging 😎",
-  "Create or import assets and collaborate with others in digital designs or in manufacturing physical products&#46;": "Create or import assets and collaborate with others in digital designs or in manufacturing physical products.",
+  "Create or import assets and collaborate with others in digital designs or in manufacturing physical products&#46;": "Import open source hardware projects and collaborate with others in digital design and manufacturing",
   "Create": "Create",
-  "Create new assets or import from LOSH": "Create new assets or import from LOSH",
+  "Create new assets or import from LOSH": "Create new projects or import from LOSH",
   "Share": "Share",
   "Share your digital designs with the community": "Share your digital designs with the community",
   "Interact": "Interact",
@@ -22,11 +22,11 @@
   "Explore": "Explore",
   "Explore projects to find components and services": "Explore projects to find components and services",
   "Import": "Import",
-  "Import your work from existing repositories": "Import your work from existing repositories",
-  "Create or import assets and collaborate with others in digital designs or in manufacturing physical products": "Create or import assets and collaborate with others in digital designs or in manufacturing physical products",
   "Create a new asset": "Create a new asset",
   "Import a resource from LOSH": "Import a resource from LOSH",
   "Register": "Register",
   "Create a new project": "Create a new project",
-  "Import from LOSH": "Import from LOSH"
+  "Import from LOSH": "Import from LOSH",
+  "Import your work from existing repositories": "Import your work from an existing source",
+  "Create or import assets and collaborate with others in digital designs or in manufacturing physical products": "Import open source hardware projects and collaborate with others in digital design and manufacturing"
 }
