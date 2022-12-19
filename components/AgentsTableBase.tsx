@@ -1,9 +1,6 @@
-import { FetchInventoryQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 
 // Components
-import Link from "next/link";
-import AssetsTableRow from "./AssetsTableRow";
 import BrTable from "./brickroom/BrTable";
 import AgentsTableRow from "./AgentsTableRow";
 
@@ -19,7 +16,7 @@ export interface AssetsTableBaseProps {
 
 export default function AgentsTableBase(props: AssetsTableBaseProps) {
   const { data, hidePagination = false, onLoadMore = () => {} } = props;
-  const { t } = useTranslation("lastUpdatedProps");
+  const { t } = useTranslation("common");
 
   const agents = data.agents?.edges;
   const hasNextPage = data.agents?.pageInfo.hasNextPage;
@@ -29,7 +26,7 @@ export default function AgentsTableBase(props: AssetsTableBaseProps) {
 
   return (
     <div>
-      <BrTable headArray={[t(""), t("name"), t("id"), t("info")]}>
+      <BrTable headArray={[t(""), t("name"), t("id"), t("location")]}>
         {agents?.map((e: any) => (
           <AgentsTableRow agent={e} key={e.cursor} />
         ))}
@@ -38,7 +35,7 @@ export default function AgentsTableBase(props: AssetsTableBaseProps) {
       {/* Empty state */}
       {showEmptyState && (
         <div className="p-4 pt-6">
-          <p className="pt-2 pb-5 font-light text-white-700">{t("empty_state_assets")}</p>
+          <p className="pt-2 pb-5 font-light text-white-700">{t("empty_state_agents")}</p>
         </div>
       )}
 

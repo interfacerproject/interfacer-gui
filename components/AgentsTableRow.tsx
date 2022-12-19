@@ -1,12 +1,11 @@
 import React from "react";
 import Link from "next/link";
-import BrTags from "./brickroom/BrTags";
-import BrDisplayUser from "./brickroom/BrDisplayUser";
-import AvatarUsers from "./AvatarUsers";
 import Avatar from "boring-avatars";
+import { useTranslation } from "next-i18next";
 
 const AgentsTableRow = (props: any) => {
   const e = props.agent.node;
+  const { t } = useTranslation("common");
   return (
     <>
       {e && (
@@ -26,8 +25,8 @@ const AgentsTableRow = (props: any) => {
               <a>{e.name}</a>
             </Link>
           </td>
-          <td>{e.user}</td>
           <td className="max-w-[12rem]">{e.id}</td>
+          <td>{e.primaryLocation?.name || t("no location provide")}</td>
         </tr>
       )}
     </>
