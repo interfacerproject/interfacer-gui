@@ -202,7 +202,7 @@ describe("Sign up process", () => {
     cy.clearLocalStorageSnapshot();
   });
 
-  it("should see the passphrase and click login", () => {
+  it.skip("should see the passphrase and click login", () => {
     get("passphrase").should("be.visible");
     cy.get("#loginBtn").click();
   });
