@@ -1,12 +1,11 @@
-import { getResourceImage } from "lib/resourceImages";
+import { EconomicResource } from "lib/types";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import dayjs from "../lib/dayjs";
 import AvatarUsers from "./AvatarUsers";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import BrTags from "./brickroom/BrTags";
-import ResourceCardThumb from "./ResourceThumb";
-import { EconomicResource } from "../lib/types";
-import { useRouter } from "next/router";
+import ProjectThumb from "./ProjectThumb";
 
 const AssetsTableRow = (props: { asset: { node: EconomicResource } }) => {
   const e = props.asset.node;
@@ -14,7 +13,6 @@ const AssetsTableRow = (props: { asset: { node: EconomicResource } }) => {
 
   // @ts-ignore
   const data = e.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime;
-  const image = getResourceImage(e);
 
   const conformsToColors: { [key: string]: string } = {
     Design: "bg-[#E4CCE3] text-[#C18ABF] border-[#C18ABF]",
@@ -35,7 +33,7 @@ const AssetsTableRow = (props: { asset: { node: EconomicResource } }) => {
         <Link href={`/asset/${e.id}`}>
           <div className="flex items-center space-x-4">
             <div className="shrink-0">
-              <ResourceCardThumb image={image} />
+              <ProjectThumb project={e} />
             </div>
             <h3 className="break-words whitespace-normal">{e.name}</h3>
             {/* <p className="text-sm text-gray-500">{e.note}</p> */}
@@ -48,7 +46,7 @@ const AssetsTableRow = (props: { asset: { node: EconomicResource } }) => {
           onClick={() => handleCoformstoClick(e.conformsTo?.id)}
           className={`${
             conformsToColors[e.conformsTo!.name]
-          } border border-1 rounded-[4px] text-sm float-left mb-1 mr-1 px-0.5`}
+          } border-[1px] rounded-[4px] text-sm float-left mb-1 mr-1 px-0.5`}
         >
           {e.conformsTo?.name}
         </button>

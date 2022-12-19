@@ -6,7 +6,7 @@ export interface Props {
   alt?: string;
 }
 
-export default function ResourceCardThumb(props: Props) {
+export default function Thumbnail(props: Props) {
   const { image, alt = "" } = props;
 
   return (
