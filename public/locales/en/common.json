@@ -35,5 +35,15 @@
   "id": "id",
   "location": "location",
   "empty_state_agents": "empty_state_agents",
-  "no location provide": "no location provide"
+  "no location provide": "no location provide",
+  "Make a contribution": "Make a contribution",
+  "DPP copied!": "DPP copied!",
+  "Remove from list": "Remove from list",
+  "Add to list": "Add to list",
+  "Go to source": "Go to source",
+  "Copy DPP": "Copy DPP",
+  "Digital Product Passport": "Digital Product Passport",
+  "DPP": "DPP",
+  "Asset overview": "Asset overview",
+  "Assets": "Assets"
 }

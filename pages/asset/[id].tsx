@@ -27,6 +27,7 @@ const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 // Icons
 import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
+import ContributorsTable from "../../components/ContributorsTable";
 
 //
 
@@ -150,6 +151,12 @@ const Asset = () => {
                     accessibilityLabel: t("Digital Product Passport"),
                     panelID: "dpp-content",
                   },
+                  {
+                    id: "Contributors",
+                    content: t("Contributors"),
+                    accessibilityLabel: t("Contributors"),
+                    panelID: "dpp-content",
+                  },
                 ]}
                 selected={selected}
                 onSelect={handleTabChange}
@@ -174,12 +181,14 @@ const Asset = () => {
                 </div>
               )}
 
-              {/* <ContributorsTable
-                contributors={asset.metadata?.contributors}
-                title={t("Contributors")}
-                // @ts-ignore
-                data={asset.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
-              /> */}
+              {selected == 3 && (
+                <ContributorsTable
+                  contributors={asset.metadata?.contributors}
+                  title={t("Contributors")}
+                  // @ts-ignore
+                  data={asset.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
+                />
+              )}
             </Stack>
           </Stack>
         </div>
