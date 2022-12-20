@@ -57,7 +57,7 @@ const ContributionMessage = ({
         </div>
         <div className="pt-3.5">
           <span className="mr-1">{headlinesDict[subject]}</span>
-          <Link href={`/asset/${resourceId}`}>
+          <Link href={`/project/${resourceId}`}>
             <a className="text-primary hover:underline">{resourceName}</a>
           </Link>
         </div>

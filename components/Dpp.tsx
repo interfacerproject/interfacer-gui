@@ -6,35 +6,35 @@ import { useTranslation } from "next-i18next";
 import ResourceDetailsCard from "../components/ResourceDetailsCard";
 
 const Dpp = ({ dpp }: { dpp: JSON }) => {
-  const [assets, setAssets] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const { t } = useTranslation("lastUpdatedProps");
-  const findAsset = (level: any) => {
+  const findProject = (level: any) => {
     devLog("level", level);
     if (!!level?.children[0]?.children[0]?.node?.accounting_quantity_has_numerical_value) {
-      const _assets = level?.children?.map((child: any) => ({
+      const _projects = level?.children?.map((child: any) => ({
         name: child?.children[0]?.node.name,
         id: child?.children[0]?.node.id,
         description: child?.children[0]?.node.note,
       }));
-      setAssets(assets.concat(_assets));
+      setProjects(projects.concat(_projects));
     } else {
       for (let i = 0; i < level?.children?.length; i++) {
-        findAsset(level.children[i]);
+        findProject(level.children[i]);
       }
     }
   };
   useEffect(() => {
-    findAsset(dpp);
+    findProject(dpp);
   }, [dpp]);
-  devLog("assets", assets);
+  devLog("projects", projects);
   return (
     <div className="w-full mt-2">
-      <div className="font-bold text-xl mb-2">{t("Included or cited assets")}</div>
-      {assets.map(asset => (
-        <div key={asset.id} className="flex flex-column mt-2 border-b-2">
-          <Link href={`/asset/${asset.id}`}>
+      <div className="font-bold text-xl mb-2">{t("Included or cited projects")}</div>
+      {projects.map(project => (
+        <div key={project.id} className="flex flex-column mt-2 border-b-2">
+          <Link href={`/project/${project.id}`}>
             <a>
-              <ResourceDetailsCard resource={asset} />
+              <ResourceDetailsCard resource={project} />
             </a>
           </Link>
         </div>

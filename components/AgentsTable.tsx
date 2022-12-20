@@ -4,19 +4,12 @@ import { useEffect, useState } from "react";
 
 // Request
 import { useQuery } from "@apollo/client";
-import { FETCH_AGENTS, FETCH_RESOURCES } from "lib/QueryAndMutation";
-import { GetPeopleQuery, GetPeopleQueryVariables, EconomicResourceFilterParams } from "lib/types";
+import { FETCH_AGENTS } from "lib/QueryAndMutation";
 
 // Components
 import { AdjustmentsIcon } from "@heroicons/react/outline";
-import AssetsFilters from "./AssetsFilters";
-import AssetsTableBase from "./AssetsTableBase";
 import Spinner from "./brickroom/Spinner";
 import useLoadMore from "../hooks/useLoadMore";
-import SelectAssetType from "./SelectAssetType";
-import { getOptionValue } from "./brickroom/utils/BrSelectUtils";
-import SelectTags from "./SelectTags";
-import SelectContributors from "./SelectContributors";
 import AgentsTableBase from "./AgentsTableBase";
 
 //
@@ -68,7 +61,7 @@ export default function AgentsTable(props: AgentsTableProps) {
             className={cn("flex items-center py-5", { "justify-end": hideHeader }, { "justify-between": !hideHeader })}
           >
             {/* Left side */}
-            {!hideHeader && <h3>{t("Assets")}</h3>}
+            {!hideHeader && <h3>{t("Projects")}</h3>}
 
             {/* Right side */}
             <button

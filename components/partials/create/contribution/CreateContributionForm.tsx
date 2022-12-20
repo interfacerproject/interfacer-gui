@@ -93,7 +93,7 @@ export default function CreateContributionForm(props: Props) {
           helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t(
             "Type up to 2048 characters"
           )}.`}
-          subtitle={t("Short description to be displayed on the asset page")}
+          subtitle={t("Short description to be displayed on the project page")}
           onChange={({ text, html }) => {
             setValue("description", text);
           }}
@@ -114,7 +114,7 @@ export default function CreateContributionForm(props: Props) {
               onChange={onChange}
               onBlur={onBlur}
               label={t("Strenght pts that you expect from this contribution:")}
-              helpText={t("Set up a reasonable value for this asset.")}
+              helpText={t("Set up a reasonable value for this project.")}
               error={errors[name]?.message}
               requiredIndicator={isRequired(schema, name)}
             />

@@ -6,7 +6,7 @@ import AgentsTableRow from "./AgentsTableRow";
 
 //
 
-export interface AssetsTableBaseProps {
+export interface ProjectsTableBaseProps {
   data: any;
   hidePagination?: boolean;
   onLoadMore?: () => void;
@@ -14,7 +14,7 @@ export interface AssetsTableBaseProps {
 
 //
 
-export default function AgentsTableBase(props: AssetsTableBaseProps) {
+export default function AgentsTableBase(props: ProjectsTableBaseProps) {
   const { data, hidePagination = false, onLoadMore = () => {} } = props;
   const { t } = useTranslation("common");
 

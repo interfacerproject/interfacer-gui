@@ -22,7 +22,7 @@ const LoshPresentation = ({
   const { getItem } = useStorage();
 
   useEffect(() => {
-    const _list = getItem("assetsCollected");
+    const _list = getItem("projectsCollected");
     const _listParsed = _list ? JSON.parse(_list) : [];
     setInList(_listParsed.includes(economicResource?.id));
   }, [economicResource, getItem]);
@@ -74,7 +74,7 @@ const LoshPresentation = ({
                   <button
                     type="button"
                     className="mt-3 mr-8 w-72 btn btn-outline"
-                    onClick={() => HandleCollect({ asset: economicResource.id, setInList })}
+                    onClick={() => HandleCollect({ project: economicResource.id, setInList })}
                   >
                     {t(inList ? "add to list +" : "remove from list -")}
                   </button>

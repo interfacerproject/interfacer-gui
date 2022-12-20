@@ -98,8 +98,8 @@ export const CREATE_LOCATION = gql`
   }
 `;
 
-export const CREATE_ASSET = gql`
-  mutation CreateAsset(
+export const CREATE_PROJECT = gql`
+  mutation CreateProject(
     $name: String!
     $note: String!
     $metadata: JSON
@@ -146,8 +146,8 @@ export const CREATE_ASSET = gql`
   }
 `;
 
-export const TRANSFER_ASSET = gql`
-  mutation TransferAsset (
+export const TRANSFER_PROJECT = gql`
+  mutation TransferProject (
     $resource: ID!
     $name: String!
     $note: String!
@@ -272,8 +272,8 @@ export const UPDATE_METADATA = gql`
   }
 `;
 
-export const QUERY_ASSET_TYPES = gql`
-  query GetAssetTypes {
+export const QUERY_PROJECT_TYPES = gql`
+  query GetProjectTypes {
     instanceVariables {
       specs {
         specProjectDesign {
@@ -348,8 +348,8 @@ export const GET_TAGS = gql`
   }
 `;
 
-export const QUERY_ASSETS = gql`
-  query GetAssets($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
+export const QUERY_PROJECTS = gql`
+  query GetProjects($first: Int, $after: ID, $last: Int, $before: ID, $filter: ProposalFilterParams) {
     proposals(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
       pageInfo {
         startCursor
@@ -574,8 +574,8 @@ export const CREATE_PROCESS = gql`
   }
 `;
 
-export const FORK_ASSET = gql`
-  mutation ForkAsset(
+export const FORK_PROJECT = gql`
+  mutation ForkProject(
     $agent: ID! # Agent.id
     $creationTime: DateTime!
     $resource: ID! # EconomicResource.id
@@ -760,8 +760,8 @@ export const QUERY_PROPOSAL = gql`
   }
 `;
 
-export const CITE_ASSET = gql`
-  mutation citeAsset(
+export const CITE_PROJECT = gql`
+  mutation citeProject(
     $agent: ID! # Agent.id
     $creationTime: DateTime!
     $resource: ID! # EconomicResource.id

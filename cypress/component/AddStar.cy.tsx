@@ -7,20 +7,20 @@ import { UPDATE_METADATA } from "../../lib/QueryAndMutation";
 describe("AddStar.cy.tsx", () => {
   const metadata = { starred: ["777777", "888888"] };
   const id = "999999";
-  const assetId = "123456";
+  const projectId = "123456";
   const mocks = [
     {
       request: {
         query: UPDATE_METADATA,
         variables: {
-          id: assetId,
+          id: projectId,
           metadata: JSON.stringify({ starred: [...metadata.starred!, id] }),
         },
       },
       result: {
         data: {
           economicResource: {
-            id: assetId,
+            id: projectId,
           },
         },
       },
@@ -33,7 +33,7 @@ describe("AddStar.cy.tsx", () => {
     // Mounting component
     cy.mount(
       <MockedProvider addTypename={false} mocks={mocks}>
-        <AddStar id={assetId} metadata={metadata} userId={id} />
+        <AddStar id={projectId} metadata={metadata} userId={id} />
       </MockedProvider>
     );
 
@@ -44,7 +44,7 @@ describe("AddStar.cy.tsx", () => {
     cy.get("button").click();
     cy.mount(
       <MockedProvider addTypename={false} mocks={mocks}>
-        <AddStar id={assetId} metadata={{ starred: [...metadata.starred!, id] }} userId={id} />
+        <AddStar id={projectId} metadata={{ starred: [...metadata.starred!, id] }} userId={id} />
       </MockedProvider>
     );
     cy.contains("3").should("be.visible");
