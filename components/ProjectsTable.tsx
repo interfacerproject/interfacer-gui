@@ -9,13 +9,13 @@ import { EconomicResourceFilterParams, FetchInventoryQuery, FetchInventoryQueryV
 
 // Components
 import { AdjustmentsIcon } from "@heroicons/react/outline";
-import AssetsFilters from "./AssetsFilters";
-import AssetsTableBase from "./AssetsTableBase";
+import ProjectsFilters from "./ProjectsFilters";
+import ProjectsTableBase from "./ProjectsTableBase";
 import Spinner from "./brickroom/Spinner";
 
 //
 
-export interface AssetsTableProps {
+export interface ProjectsTableProps {
   filter?: EconomicResourceFilterParams;
   hideHeader?: boolean;
   hidePagination?: boolean;
@@ -26,7 +26,7 @@ export interface AssetsTableProps {
 
 //
 
-export default function AssetsTable(props: AssetsTableProps) {
+export default function ProjectsTable(props: ProjectsTableProps) {
   const { t } = useTranslation("lastUpdatedProps");
   const {
     filter = {},
@@ -66,8 +66,8 @@ export default function AssetsTable(props: AssetsTableProps) {
       }
     }
   };
-  const assets = data?.economicResources?.edges;
-  const showEmptyState = assets?.length === 0;
+  const projects = data?.economicResources?.edges;
+  const showEmptyState = projects?.length === 0;
 
   // Poll interval that works with pagination
   useEffect(() => {
@@ -99,7 +99,7 @@ export default function AssetsTable(props: AssetsTableProps) {
             className={cn("flex items-center py-5", { "justify-end": hideHeader }, { "justify-between": !hideHeader })}
           >
             {/* Left side */}
-            {!hideHeader && <h3>{t("Assets")}</h3>}
+            {!hideHeader && <h3>{t("Projects")}</h3>}
 
             {/* Right side */}
             <button
@@ -117,12 +117,12 @@ export default function AssetsTable(props: AssetsTableProps) {
           <div className="flex flex-row flex-nowrap items-start space-x-8">
             {data && (
               <div className="grow">
-                <AssetsTableBase data={data} onLoadMore={loadMore} hidePagination={hidePagination} />
+                <ProjectsTableBase data={data} onLoadMore={loadMore} hidePagination={hidePagination} />
               </div>
             )}
             {showFilter && (
               <div className="basis-96 sticky top-8">
-                <AssetsFilters hidePrimaryAccountable={hidePrimaryAccountable}>{searchFilter}</AssetsFilters>
+                <ProjectsFilters hidePrimaryAccountable={hidePrimaryAccountable}>{searchFilter}</ProjectsFilters>
               </div>
             )}
           </div>

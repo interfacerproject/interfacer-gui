@@ -7,8 +7,8 @@ import BrDisplayUser from "./brickroom/BrDisplayUser";
 import BrTags from "./brickroom/BrTags";
 import ProjectThumb from "./ProjectThumb";
 
-const AssetsTableRow = (props: { asset: { node: EconomicResource } }) => {
-  const e = props.asset.node;
+const ProjectsTableRow = (props: { project: { node: EconomicResource } }) => {
+  const e = props.project.node;
   const router = useRouter();
 
   // @ts-ignore
@@ -30,7 +30,7 @@ const AssetsTableRow = (props: { asset: { node: EconomicResource } }) => {
   return (
     <tr>
       <td className="hover:bg-gray-50 hover:cursor-pointer rounded-md">
-        <Link href={`/asset/${e.id}`}>
+        <Link href={`/project/${e.id}`}>
           <div className="flex items-center space-x-4">
             <div className="shrink-0">
               <ProjectThumb project={e} />
@@ -69,4 +69,4 @@ const AssetsTableRow = (props: { asset: { node: EconomicResource } }) => {
   );
 };
 
-export default AssetsTableRow;
+export default ProjectsTableRow;

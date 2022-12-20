@@ -1,1 +1,10 @@
-{}
+{
+  "Make a Contribution": "Make a Contribution",
+  "Contribution info": "Contribution info",
+  "Help us display your proposal correctly": {
+    "": "Help us display your contribution correctly."
+  },
+  "Parent repository": "Parent project",
+  "Resource not found": "Project not found",
+  "← Discard and go back": "← Discard and go back"
+}

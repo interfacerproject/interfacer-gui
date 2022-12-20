@@ -57,7 +57,7 @@ const Proposal = () => {
       originalResourceID: proposal.primaryIntents![0].resourceInventoriedAs?.id || "",
       proposalID: proposal.id,
       ownerName: user!.name,
-      proposerName: proposal.primaryIntents![0].resourceInventoriedAs?.primaryAccountable.name || "",
+      proposerName: user!.name,
       text: proposal.note || "",
     };
 
@@ -104,7 +104,7 @@ const Proposal = () => {
       originalResourceID: proposal.primaryIntents![0].resourceInventoriedAs?.id || "",
       proposalID: proposal.id,
       ownerName: user!.name,
-      proposerName: proposal.primaryIntents![0].resourceInventoriedAs?.primaryAccountable.name || "",
+      proposerName: user!.name,
       text: proposal.note || "",
     };
     await sendMessage(
@@ -139,7 +139,7 @@ const Proposal = () => {
             </Stack>
 
             <Stack vertical spacing="extraTight">
-              <PLabel label={t("Forked asset")} />
+              <PLabel label={t("Forked project")} />
               {/* @ts-ignore           */}
               <ResourceDetailsCard resource={proposal.primaryIntents[0].resourceInventoriedAs} />
             </Stack>

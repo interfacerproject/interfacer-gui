@@ -1,6 +1,6 @@
 import { Button } from "@bbtgnn/polaris-interfacer";
 import { CheckCircleIcon, GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
-import AssetsTable from "components/AssetsTable";
+import ProjectsTable from "components/ProjectsTable";
 import Layout from "components/layout/Layout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -43,8 +43,9 @@ const Home: NextPageWithLayout = () => {
 
   const subtitles = [
     t("Welcome to Interfacer's Fabcity OS alpha staging 😎"),
-    t("Create or import assets and collaborate with others in digital designs or in manufacturing physical products") +
-      ".",
+    t(
+      "Create or import projects and collaborate with others in digital designs or in manufacturing physical products"
+    ) + ".",
   ];
 
   return (
@@ -81,13 +82,13 @@ const Home: NextPageWithLayout = () => {
             )}
             {authenticated && (
               <>
-                <Link href="/create_asset">
+                <Link href="/create_project">
                   <Button size="large" primary>
-                    {t("Create a new asset")}
+                    {t("Create a new project")}
                   </Button>
                 </Link>
                 <Link href="/resources">
-                  <Button size="large">{t("Import a resource from LOSH")}</Button>
+                  <Button size="large">{t("Import from LOSH")}</Button>
                 </Link>
               </>
             )}
@@ -96,7 +97,7 @@ const Home: NextPageWithLayout = () => {
       </div>
 
       <div className="p-4 container mx-auto overflow-x-scroll">
-        {<AssetsTable hideHeader={true} hidePagination={true} />}
+        {<ProjectsTable hideHeader={true} hidePagination={true} />}
       </div>
 
       <div className="grid gap-16 md:pl-32 md:grid-cols-3 mt-44">

@@ -30,26 +30,26 @@ function Sidebar({ closed, setIsClosed }: { closed: boolean; setIsClosed: (c: bo
       link: "/",
       leftIcon: <HomeIcon className="w-5 h-5" />,
     },
-    // Dropdown -> My stuff
-    createAsset: {
-      text: t("Create Assets"),
-      link: "/create_asset",
-      leftIcon: <CubeIcon className="w-5 h-5" />,
-      // tag: "NEW",
-    },
-    myAssets: {
-      text: t("My Assets"),
-      link: "/profile/my_profile",
-    },
     notification: {
       text: t("Notifications"),
       link: "/notification",
       leftIcon: <BellIcon className="w-5 h-5" />,
     },
-    // Dropdown -> Assets
-    latestAssets: {
-      text: t("Assets"),
-      link: "/assets",
+    // Dropdown -> My stuff
+    createProject: {
+      text: t("Create Projects"),
+      link: "/create_project",
+      leftIcon: <CubeIcon className="w-5 h-5" />,
+      // tag: "NEW",
+    },
+    myProjects: {
+      text: t("My Projects"),
+      link: "/profile/my_profile",
+    },
+    // Dropdown -> Projects
+    latestProjects: {
+      text: t("Projects"),
+      link: "/projects",
     },
     resources: {
       text: t("Imported from LOSH"),
@@ -82,12 +82,12 @@ function Sidebar({ closed, setIsClosed }: { closed: boolean; setIsClosed: (c: bo
 
   // Dropdown items
   const drItems: Record<string, IfSidebarItemProps> = {
-    assets: {
-      text: t("Assets"),
+    projects: {
+      text: t("Projects"),
       leftIcon: <CubeIcon className="w-5 h-5" />,
     },
     myStuff: {
-      text: t("Assets"),
+      text: t("Projects"),
       leftIcon: <BriefcaseIcon className="w-5 h-5" />,
     },
   };

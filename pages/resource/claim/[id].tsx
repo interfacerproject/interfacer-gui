@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import Spinner from "components/brickroom/Spinner";
-import Layout from "components/layout/CreateAssetLayout";
+import Layout from "components/layout/CreateProjectLayout";
 import LoshPresentation from "components/LoshPresentation";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
@@ -12,13 +12,13 @@ import {
   LINK_PROPOSAL_AND_INTENT,
   QUERY_RESOURCE,
   QUERY_UNIT_AND_CURRENCY,
-  TRANSFER_ASSET,
+  TRANSFER_PROJECT,
 } from "lib/QueryAndMutation";
 import {
   CreateLocationMutation,
   EconomicResource,
   GetUnitAndCurrencyQuery,
-  TransferAssetMutationVariables,
+  TransferProjectMutationVariables,
 } from "lib/types";
 import type { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
@@ -40,7 +40,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { errorFormatter } from "../../../lib/errorFormatter";
 
-export namespace ClaimAssetNS {
+export namespace ClaimProjectNS {
   export interface Props extends CP {
     onSubmit: (data: FormValues) => void;
   }
@@ -54,7 +54,7 @@ export namespace ClaimAssetNS {
   }
 }
 
-const ClaimAsset: NextPageWithLayout = () => {
+const ClaimProject: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query;
   const { user } = useAuth();
@@ -68,7 +68,7 @@ const ClaimAsset: NextPageWithLayout = () => {
   const e = data?.economicResource;
 
   const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
-  const [transferAsset, { data: economicResource }] = useMutation(TRANSFER_ASSET);
+  const [transferProject, { data: economicResource }] = useMutation(TRANSFER_PROJECT);
   const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);
   const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
   const [linkProposalAndIntent, { data: link }] = useMutation(LINK_PROPOSAL_AND_INTENT);
@@ -76,7 +76,7 @@ const ClaimAsset: NextPageWithLayout = () => {
 
   type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
 
-  async function handleCreateLocation(formData: ClaimAssetNS.FormValues): Promise<SpatialThingRes | undefined> {
+  async function handleCreateLocation(formData: ClaimProjectNS.FormValues): Promise<SpatialThingRes | undefined> {
     try {
       const { data } = await createLocation({
         variables: {
@@ -95,7 +95,7 @@ const ClaimAsset: NextPageWithLayout = () => {
     }
   }
 
-  async function handleClaim(formData: ClaimAssetNS.FormValues) {
+  async function handleClaim(formData: ClaimProjectNS.FormValues) {
     try {
       const location = await handleCreateLocation(formData);
       // devLog is in handleCreateLocation
@@ -106,7 +106,7 @@ const ClaimAsset: NextPageWithLayout = () => {
       const metadata = JSON.stringify({ ...e!.metadata, repositoryOrId: e!.metadata.repo, contributors: contributors });
       devLog("info: metadata prepared", metadata);
 
-      const variables: TransferAssetMutationVariables = {
+      const variables: TransferProjectMutationVariables = {
         resource: e!.id,
         agent: user!.ulid,
         name: e!.name,
@@ -117,23 +117,23 @@ const ClaimAsset: NextPageWithLayout = () => {
         creationTime: dayjs().toISOString(),
         tags: tags,
       };
-      devLog("info: asset variables created", variables);
+      devLog("info: project variables created", variables);
 
-      //transfer asset
-      const { data: transferAssetData, errors } = await transferAsset({ variables });
-      if (errors) throw new Error("AssetNotTransfered");
+      //transfer project
+      const { data: transferProjectData, errors } = await transferProject({ variables });
+      if (errors) throw new Error("ProjectNotTransfered");
 
-      const economicEvent = transferAssetData?.createEconomicEvent.economicEvent!;
-      const asset = economicEvent?.toResourceInventoriedAs!;
-      devLog("success: asset transfered");
+      const economicEvent = transferProjectData?.createEconomicEvent.economicEvent!;
+      const project = economicEvent?.toResourceInventoriedAs!;
+      devLog("success: project transfered");
       devLog("info: economicEvent", economicEvent);
-      devLog("info: asset", asset);
+      devLog("info: project", project);
 
       // TODO: Send message
       // ...
 
       // Redirecting user
-      await router.replace(`/asset/${asset.id}`);
+      await router.replace(`/project/${project.id}`);
     } catch (e) {
       devLog(e);
       let err = errorFormatter(e);
@@ -141,7 +141,7 @@ const ClaimAsset: NextPageWithLayout = () => {
     }
   }
 
-  const defaultValues: ClaimAssetNS.FormValues = {
+  const defaultValues: ClaimProjectNS.FormValues = {
     tags: [],
     location: null,
     locationName: "",
@@ -164,7 +164,7 @@ const ClaimAsset: NextPageWithLayout = () => {
     })
     .required();
 
-  const form = useForm<ClaimAssetNS.FormValues>({
+  const form = useForm<ClaimProjectNS.FormValues>({
     mode: "all",
     resolver: yupResolver(schema),
     defaultValues,
@@ -177,7 +177,7 @@ const ClaimAsset: NextPageWithLayout = () => {
     <div className="pb-6">
       <div className="grid grid-cols-1 gap-2 md:grid-cols-12 pt-14">
         <div className="md:col-start-2 md:col-end-7">
-          <h2>{t("claim your ownership over this asset")}</h2>
+          <h2>{t("claim your ownership over this project")}</h2>
         </div>
       </div>
       {loading && <Spinner />}
@@ -246,7 +246,7 @@ const ClaimAsset: NextPageWithLayout = () => {
                     onBlur={onBlur}
                     label={t("Location name")}
                     placeholder={t("Cool fablab")}
-                    helpText={t("The name of the place where the asset is stored")}
+                    helpText={t("The name of the place where the project is stored")}
                     error={errors.locationName?.message}
                     requiredIndicator={isRequired(schema, name)}
                   />
@@ -274,7 +274,7 @@ const ClaimAsset: NextPageWithLayout = () => {
             </div>
             {error && (
               <Banner
-                title={t("Error in Asset Claim")}
+                title={t("Error in Project Claim")}
                 status="critical"
                 onDismiss={() => {
                   setError("");
@@ -307,8 +307,8 @@ export async function getStaticProps({ locale }: any) {
     },
   };
 }
-ClaimAsset.getLayout = function getLayout(page: ReactElement) {
+ClaimProject.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-export default ClaimAsset;
+export default ClaimProject;

@@ -1,4 +1,4 @@
-describe("Asset Detail functionality", () => {
+describe("Project Detail functionality", () => {
   before(() => {
     cy.login();
     cy.saveLocalStorage();
@@ -10,7 +10,7 @@ describe("Asset Detail functionality", () => {
   });
 
   it("Should add user id to metadata.starred then remove it", () => {
-    cy.visit(`/asset/${Cypress.env("asset_id")}`);
+    cy.visit(`/project/${Cypress.env("project_id")}`);
     cy.get("#addStar").should("exist");
     // cy.get("#addStar").then($starButton => {
     //   cy.get("#addStar").should("have.text", "Star");
@@ -24,7 +24,7 @@ describe("Asset Detail functionality", () => {
   });
 
   it("Should add to list then remove it", () => {
-    cy.visit(`/asset/${Cypress.env("asset_id")}`);
+    cy.visit(`/project/${Cypress.env("project_id")}`);
     cy.get("#addToList").should("exist");
     // .click()
     // .should("have.text", "remove from list")

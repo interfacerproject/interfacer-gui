@@ -3,12 +3,12 @@ import { useTranslation } from "next-i18next";
 
 // Components
 import Link from "next/link";
-import AssetsTableRow from "./AssetsTableRow";
+import ProjectsTableRow from "./ProjectsTableRow";
 import BrTable from "./brickroom/BrTable";
 
 //
 
-export interface AssetsTableBaseProps {
+export interface ProjectsTableBaseProps {
   data: FetchInventoryQuery;
   hidePagination?: boolean;
   onLoadMore?: () => void;
@@ -16,31 +16,31 @@ export interface AssetsTableBaseProps {
 
 //
 
-export default function AssetsTableBase(props: AssetsTableBaseProps) {
+export default function ProjectsTableBase(props: ProjectsTableBaseProps) {
   const { data, hidePagination = false, onLoadMore = () => {} } = props;
   const { t } = useTranslation("lastUpdatedProps");
 
-  const assets = data.economicResources?.edges;
+  const projects = data.economicResources?.edges;
   const hasNextPage = data.economicResources?.pageInfo.hasNextPage;
-  const showEmptyState = !Boolean(assets) || assets?.length == 0;
+  const showEmptyState = !Boolean(projects) || projects?.length == 0;
 
   //
 
   return (
     <div>
-      <BrTable headArray={[t("Asset"), t("Asset Type"), t("Last update"), t("tags"), t("Owner")]}>
-        {assets?.map((e: any) => (
-          <AssetsTableRow asset={e} key={e.cursor} />
+      <BrTable headArray={[t("Project"), t("Project Type"), t("Last update"), t("tags"), t("Owner")]}>
+        {projects?.map((e: any) => (
+          <ProjectsTableRow project={e} key={e.cursor} />
         ))}
       </BrTable>
 
       {/* Empty state */}
       {showEmptyState && (
         <div className="p-4 pt-6">
-          <h4>{t("Create a new asset")}</h4>
-          <p className="pt-2 pb-5 font-light text-white-700">{t("empty_state_assets")}</p>
-          <Link href="/create_asset">
-            <a className="btn btn-accent btn-md">{t("Create asset")}</a>
+          <h4>{t("Create a new project")}</h4>
+          <p className="pt-2 pb-5 font-light text-white-700">{t("empty_state_projects")}</p>
+          <Link href="/create_project">
+            <a className="btn btn-accent btn-md">{t("Create project")}</a>
           </Link>
         </div>
       )}
