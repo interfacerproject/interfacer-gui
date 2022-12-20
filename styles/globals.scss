@@ -51,6 +51,14 @@ p,
   @apply bg-cover;
   cursor: pointer;
 }
+.logo-mobile{
+  width: 30px;
+  height: 30px;
+  background-image: url("/logo-closed.png");
+  cursor: pointer;
+  @apply bg-right;
+  @apply bg-no-repeat
+}
 table {
   @apply table;
 }
@@ -89,4 +97,8 @@ table {
 
 .swiper-slide img {
   @apply w-full h-full block object-cover;
+}
+
+.drawer-toggle ~ .drawer-side > .drawer-overlay + * {
+@apply md:translate-x-[-82%]
 }
