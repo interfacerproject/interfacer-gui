@@ -2,8 +2,8 @@ import { useTranslation } from "next-i18next";
 
 // Request
 import { useQuery } from "@apollo/client";
-import { QUERY_ASSET_TYPES } from "lib/QueryAndMutation";
-import { GetAssetTypesQuery } from "lib/types";
+import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
+import { GetProjectTypesQuery } from "lib/types";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import { Button, Card, Spinner, Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Select, Spinner, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import BrImageUpload from "components/brickroom/BrImageUpload";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import BrRadioOption from "components/brickroom/BrRadioOption";
@@ -27,10 +27,11 @@ import { LocationLookup } from "lib/fetchLocation";
 // Other
 import { SelectOption } from "components/brickroom/utils/BrSelectUtils";
 import { isRequired } from "lib/isFieldRequired";
+import SelectResources from "../../SelectResources";
 
 //
 
-export namespace CreateAssetNS {
+export namespace CreateProjectNS {
   export interface Props extends CP {
     onSubmit: (data: FormValues) => void;
   }
@@ -39,79 +40,105 @@ export namespace CreateAssetNS {
     name: string;
     description: string;
     type: string;
-    repositoryOrId: string;
+    repo: string;
     tags: Array<SelectOption<string>>;
     location: LocationLookup.Location | null;
     locationName: string;
+    license: string;
     price: string;
     images: Array<File>;
     contributors: Array<ContributorOption>;
+    resources: Array<ContributorOption>;
   }
 }
 
 //
 
-export default function NewAssetForm(props: CreateAssetNS.Props) {
+export default function NewProjectForm(props: CreateProjectNS.Props) {
   const { onSubmit } = props;
   const { t } = useTranslation("createProjectProps");
 
   //
 
-  // Loading asset types
-  const queryAssetTypes = useQuery<GetAssetTypesQuery>(QUERY_ASSET_TYPES).data;
-  const assetTypes = queryAssetTypes && [
+  // Loading project types
+  const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES).data;
+  const projectTypes = queryProjectTypes && [
     {
       name: t("Design"),
-      id: queryAssetTypes.instanceVariables.specs.specProjectDesign.id,
-      label: t("A digital asset, like an open source hardware project or 3D model"),
+      id: queryProjectTypes.instanceVariables.specs.specProjectDesign.id,
+      label: t("A digital project, like an open source hardware project or 3D model"),
     },
     {
       name: t("Service"),
-      id: queryAssetTypes.instanceVariables.specs.specProjectService.id,
+      id: queryProjectTypes.instanceVariables.specs.specProjectService.id,
       label: t("A service, like a consultancy, training course or usage/rental of equipment"),
     },
     {
       name: t("Product"),
-      id: queryAssetTypes.instanceVariables.specs.specProjectProduct.id,
+      id: queryProjectTypes.instanceVariables.specs.specProjectProduct.id,
       label: t("A physical product that can be picked up or delivered"),
     },
   ];
+
+  const licenseTypes = [
+    "Creative Commons - Attribution",
+    "Creative Commons - Attribution - Share Alike",
+    "Creative Commons - Attribution - No Derivatives",
+    "Creative Commons - Attribution - Non-Commercial ",
+    "Creative Commons - Attribution - Non-Commercial - Share Alike",
+    "Creative Commons - Attribution - Non-commercial - No Derivatives",
+    "Creative Commons - Public Domain Dedication",
+    "GNU - GPL ",
+    "GNU - LGPL ",
+    "BSD License",
+    "CERN OSL",
+  ];
+
   //
 
-  const defaultValues: CreateAssetNS.FormValues = {
+  const defaultValues: CreateProjectNS.FormValues = {
     name: "",
     description: "",
     type: "",
-    repositoryOrId: "",
+    repo: "",
     tags: [],
     location: null,
     locationName: "",
+    license: "",
     price: "1",
     images: [], //as Array<File>
     contributors: [], // Array<{id:string, name:string}>
+    resources: [], // Array<{id:string, name:string}>
   };
 
-  const schema = yup
-    .object({
-      name: yup.string().required(),
-      description: yup.string().required(),
-      type: yup.string().required(),
-      repositoryOrId: yup.string().required(),
-      tags: yup.array(yup.object()),
-      location: yup.object().required(),
-      locationName: yup.string().required(),
-      price: yup.string().required(),
-      images: yup.array(), // Array<File & {preview: string}>
-      contributors: yup.array(
-        yup.object({
+  const schema = yup.object({
+    name: yup.string().required(),
+    description: yup.string().required(),
+    type: yup.string().required(),
+    repo: yup.string().required(),
+    tags: yup.array(yup.object()).min(1).required(),
+    location: yup.object().required(),
+    license: yup.string().oneOf(licenseTypes).required(),
+    locationName: yup.string().required(),
+    price: yup.string().required(),
+    images: yup.array(), // Array<File & {preview: string}>
+    contributors: yup.array(
+      yup
+        .object({
           id: yup.string(),
           name: yup.string(),
         })
-      ),
-    })
-    .required();
+        .required()
+    ),
+    resources: yup.array(
+      yup.object({
+        id: yup.string(),
+        name: yup.string(),
+      })
+    ),
+  });
 
-  const form = useForm<CreateAssetNS.FormValues>({
+  const form = useForm<CreateProjectNS.FormValues>({
     mode: "all",
     resolver: yupResolver(schema),
     defaultValues,
@@ -136,9 +163,9 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             autoComplete="off"
             onChange={onChange}
             onBlur={onBlur}
-            label={t("Asset name")}
+            label={t("Project name")}
             placeholder={t("Fabulaser")}
-            helpText={t("Working name of the asset, visible to the whole community")}
+            helpText={t("Working name of the project, visible to the whole community")}
             error={errors.name?.message}
             requiredIndicator={isRequired(schema, name)}
           />
@@ -151,7 +178,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         editorClass="h-60"
         label={t("General information")}
         helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t("Type up to 2048 characters")}.`}
-        subtitle={t("Short description to be displayed on the asset page")}
+        subtitle={t("Short description to be displayed on the project page")}
         onChange={({ text, html }) => {
           setValue("description", text);
         }}
@@ -174,7 +201,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
 
       <Controller
         control={control}
-        name="repositoryOrId"
+        name="repo"
         render={({ field: { onChange, onBlur, name, value } }) => (
           <TextField
             type="text"
@@ -184,23 +211,42 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             autoComplete="off"
             onChange={onChange}
             onBlur={onBlur}
-            label={t("Repository link or Interfacer ID")}
+            label={t("Repository link")}
             placeholder={t("github[dot]com/my-repo")}
-            helpText={t("Reference to the asset's repository or Interfacer ID of the asset")}
-            error={errors.repositoryOrId?.message}
+            helpText={t("Reference to the project's repository (GitHub, Thingiverse, etc.)")}
+            error={errors.repo?.message}
             requiredIndicator={isRequired(schema, name)}
           />
         )}
       />
 
+      <Controller
+        control={control}
+        name="license"
+        render={({ field: { onChange, onBlur, name, value } }) => (
+          <Select
+            options={licenseTypes}
+            id={name}
+            name={name}
+            value={value}
+            onChange={onChange}
+            onBlur={onBlur}
+            label={t("Select license type")}
+            error={errors.license?.message}
+            requiredIndicator={isRequired(schema, name)}
+            placeholder={t("Select license type")}
+          />
+        )}
+      />
+
       <PFieldInfo
-        label={`${t("Select asset type")}:`}
+        label={`${t("Select project type")}:`}
         error={errors.type?.message}
         requiredIndicator={isRequired(schema, "type")}
       >
         <Stack vertical spacing="tight">
-          {assetTypes &&
-            assetTypes.map(type => (
+          {projectTypes &&
+            projectTypes.map(type => (
               <BrRadioOption
                 id={type.id}
                 value={type.id}
@@ -227,7 +273,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             label={`${t("Tags")}:`}
             isMulti
             placeholder={t("Open-source, 3D Printing, Medical use")}
-            helpText={t("Select a tag from the list, or type to create a new one")}
+            helpText={t("Select a tag from the list, or type to create a new one | Min. 1 tag")}
             error={errors.tags?.message}
             creatable={true}
             requiredIndicator={isRequired(schema, name)}
@@ -255,6 +301,27 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         )}
       />
 
+      <Controller
+        control={control}
+        name="resources"
+        render={({ field: { onChange, onBlur, name, ref } }) => (
+          <SelectResources
+            name={name}
+            ref={ref}
+            id={name}
+            onBlur={onBlur}
+            onChange={onChange}
+            label={`${t("Include other resources")}:`}
+            isMulti
+            helpText={t("To include other resources, search by name or Interfacer ID")}
+            placeholder={t("Search resource name")}
+            error={errors.resources?.message}
+            creatable={false}
+            requiredIndicator={isRequired(schema, name)}
+          />
+        )}
+      />
+
       <div className="space-y-4">
         <Controller
           control={control}
@@ -270,7 +337,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
               onBlur={onBlur}
               label={t("Location name")}
               placeholder={t("Cool fablab")}
-              helpText={t("The name of the place where the asset is stored")}
+              helpText={t("The name of the place where the project is stored")}
               error={errors.name?.message}
               requiredIndicator={isRequired(schema, name)}
             />
@@ -304,7 +371,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         <Card>
           <div className="flex flex-col items-center justify-center p-4">
             <Spinner />
-            <p className="pt-2">{`${t("Creating asset")}...`}</p>
+            <p className="pt-2">{`${t("Creating project")}...`}</p>
           </div>
         </Card>
       )}

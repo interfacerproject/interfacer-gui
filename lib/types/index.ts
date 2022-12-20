@@ -12,6 +12,7 @@ export type Scalars = {
   Float: number;
   Base64: any;
   DateTime: any;
+  Decimal: any;
   JSON: any;
   URI: any;
   Url64: any;
@@ -270,7 +271,7 @@ export type AgreementUpdateParams = {
 export type Duration = {
   __typename?: "Duration";
   /** A number representing the duration, will be paired with a unit. */
-  numericDuration: Scalars["Float"];
+  numericDuration: Scalars["Decimal"];
   /** A unit of measure. */
   unitType: TimeUnit;
 };
@@ -315,7 +316,7 @@ export type EconomicEvent = {
   /** Defines the process to which this event is an output. */
   outputOf?: Maybe<Process>;
   previous?: Maybe<ProductionFlowItem>;
-  previousDpp?: Maybe<ProductionFlowItem>;
+  previousEvent?: Maybe<EconomicEvent>;
   /** The economic agent from whom the actual economic event is initiated. */
   provider: Agent;
   /** This economic event occurs as part of this agreement. */
@@ -525,7 +526,6 @@ export type EconomicResource = {
    */
   onhandQuantity: Measure;
   previous?: Maybe<Array<EconomicEvent>>;
-  previousDpp?: Maybe<Array<EconomicEvent>>;
   /**
    * The agent currently with primary rights and responsibilites for
    * the economic resource.  It is the agent that is associated with the
@@ -547,6 +547,8 @@ export type EconomicResource = {
    * a pass or fail event.
    */
   state?: Maybe<Action>;
+  trace?: Maybe<Array<TrackTraceItem>>;
+  traceDpp: Scalars["JSON"];
   /**
    * Sometimes called serial number, used when each item must have a traceable
    * identifier (like a computer).  Could also be used for other unique
@@ -611,13 +613,19 @@ export type EconomicResourceFilterParams = {
   classifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   conformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   custodian?: InputMaybe<Array<Scalars["ID"]>>;
-  gtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Float"]>;
+  gtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Decimal"]>;
+  id?: InputMaybe<Array<Scalars["ID"]>>;
   name?: InputMaybe<Scalars["String"]>;
+  notCustodian?: InputMaybe<Array<Scalars["ID"]>>;
+  notPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
+  note?: InputMaybe<Scalars["String"]>;
   orClassifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   orConformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   orCustodian?: InputMaybe<Array<Scalars["ID"]>>;
-  orGtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Float"]>;
+  orGtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Decimal"]>;
+  orId?: InputMaybe<Array<Scalars["ID"]>>;
   orName?: InputMaybe<Scalars["String"]>;
+  orNote?: InputMaybe<Scalars["String"]>;
   orPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
   primaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
 };
@@ -653,7 +661,7 @@ export type File = {
 /** Mutation input structure for defining time durations. */
 export type IDuration = {
   /** A number representing the duration, will be paired with a unit. */
-  numericDuration: Scalars["Float"];
+  numericDuration: Scalars["Decimal"];
   /** A unit of measure. */
   unitType: TimeUnit;
 };
@@ -676,7 +684,7 @@ export type IFile = {
  */
 export type IMeasure = {
   /** A number representing the quantity, will be paired with a unit. */
-  hasNumericalValue: Scalars["Float"];
+  hasNumericalValue: Scalars["Decimal"];
   /** (`Unit`) A unit of measure. */
   hasUnit?: InputMaybe<Scalars["ID"]>;
 };
@@ -977,7 +985,7 @@ export type IntentUpdateParams = {
 export type Measure = {
   __typename?: "Measure";
   /** A number representing the quantity, will be paired with a unit. */
-  hasNumericalValue: Scalars["Float"];
+  hasNumericalValue: Scalars["Decimal"];
   /** A unit of measure. */
   hasUnit?: Maybe<Unit>;
 };
@@ -1317,7 +1325,6 @@ export type Process = {
   /** The process with its inputs and outputs is part of the plan. */
   plannedWithin?: Maybe<Plan>;
   previous?: Maybe<Array<EconomicEvent>>;
-  previousDpp?: Maybe<Array<EconomicEvent>>;
 };
 
 export type ProcessConnection = {
@@ -1531,6 +1538,7 @@ export type Proposal = {
   primaryIntents?: Maybe<Array<Intent>>;
   publishes?: Maybe<Array<ProposedIntent>>;
   reciprocalIntents?: Maybe<Array<Intent>>;
+  status: ProposedStatus;
   /**
    * This proposal contains unit based quantities, which can be multipied to
    * create commitments; commonly seen in a price list or e-commerce.
@@ -1572,16 +1580,21 @@ export type ProposalEdge = {
 };
 
 export type ProposalFilterParams = {
+  notStatus?: InputMaybe<ProposedStatus>;
   orPrimaryIntentsResourceInventoriedAsClassifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   orPrimaryIntentsResourceInventoriedAsConformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   orPrimaryIntentsResourceInventoriedAsId?: InputMaybe<Array<Scalars["ID"]>>;
   orPrimaryIntentsResourceInventoriedAsName?: InputMaybe<Scalars["String"]>;
+  orPrimaryIntentsResourceInventoriedAsNote?: InputMaybe<Scalars["String"]>;
   orPrimaryIntentsResourceInventoriedAsPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
+  orStatus?: InputMaybe<ProposedStatus>;
   primaryIntentsResourceInventoriedAsClassifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   primaryIntentsResourceInventoriedAsConformsTo?: InputMaybe<Array<Scalars["ID"]>>;
   primaryIntentsResourceInventoriedAsId?: InputMaybe<Array<Scalars["ID"]>>;
   primaryIntentsResourceInventoriedAsName?: InputMaybe<Scalars["String"]>;
+  primaryIntentsResourceInventoriedAsNote?: InputMaybe<Scalars["String"]>;
   primaryIntentsResourceInventoriedAsPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
+  status?: InputMaybe<ProposedStatus>;
 };
 
 export type ProposalResponse = {
@@ -1634,6 +1647,13 @@ export type ProposedIntentResponse = {
   __typename?: "ProposedIntentResponse";
   proposedIntent: ProposedIntent;
 };
+
+/** The status of the proposal: pending, accepted, or refused. */
+export enum ProposedStatus {
+  Accepted = "ACCEPTED",
+  Pending = "PENDING",
+  Refused = "REFUSED",
+}
 
 /** Specifies an exchange agreement as part of a recipe. */
 export type RecipeExchange = {
@@ -2161,6 +2181,7 @@ export type RootMutationType = {
   createResourceSpecification: ResourceSpecificationResponse;
   /** Creates a role behavior. */
   createRoleBehavior: RoleBehaviorResponse;
+  createSatisfaction: SatisfactionResponse;
   createScenario: ScenarioResponse;
   createScenarioDefinition: ScenarioDefinitionResponse;
   createSpatialThing: SpatialThingResponse;
@@ -2193,6 +2214,7 @@ export type RootMutationType = {
   deleteResourceSpecification: Scalars["Boolean"];
   /** Deletes a role behavior. */
   deleteRoleBehavior: Scalars["Boolean"];
+  deleteSatisfaction: Scalars["Boolean"];
   deleteScenario: Scalars["Boolean"];
   deleteScenarioDefinition: Scalars["Boolean"];
   deleteSpatialThing: Scalars["Boolean"];
@@ -2230,6 +2252,7 @@ export type RootMutationType = {
   updateResourceSpecification: ResourceSpecificationResponse;
   /** Updates a role behavior. */
   updateRoleBehavior: RoleBehaviorResponse;
+  updateSatisfaction: SatisfactionResponse;
   updateScenario: ScenarioResponse;
   updateScenarioDefinition: ScenarioDefinitionResponse;
   updateSpatialThing: SpatialThingResponse;
@@ -2307,6 +2330,10 @@ export type RootMutationTypeCreateResourceSpecificationArgs = {
 
 export type RootMutationTypeCreateRoleBehaviorArgs = {
   roleBehavior: RoleBehaviorCreateParams;
+};
+
+export type RootMutationTypeCreateSatisfactionArgs = {
+  satisfaction: SatisfactionCreateParams;
 };
 
 export type RootMutationTypeCreateScenarioArgs = {
@@ -2398,6 +2425,10 @@ export type RootMutationTypeDeleteResourceSpecificationArgs = {
 };
 
 export type RootMutationTypeDeleteRoleBehaviorArgs = {
+  id: Scalars["ID"];
+};
+
+export type RootMutationTypeDeleteSatisfactionArgs = {
   id: Scalars["ID"];
 };
 
@@ -2512,6 +2543,10 @@ export type RootMutationTypeUpdateRoleBehaviorArgs = {
   roleBehavior: RoleBehaviorUpdateParams;
 };
 
+export type RootMutationTypeUpdateSatisfactionArgs = {
+  satisfaction: SatisfactionUpdateParams;
+};
+
 export type RootMutationTypeUpdateScenarioArgs = {
   scenario: ScenarioUpdateParams;
 };
@@ -2613,6 +2648,8 @@ export type RootQueryType = {
   resourceSpecifications?: Maybe<ResourceSpecificationConnection>;
   roleBehavior?: Maybe<RoleBehavior>;
   roleBehaviors?: Maybe<RoleBehaviorConnection>;
+  satisfaction?: Maybe<Satisfaction>;
+  satisfactions: SatisfactionConnection;
   scenario?: Maybe<Scenario>;
   scenarioDefinition?: Maybe<ScenarioDefinition>;
   scenarioDefinitions?: Maybe<ScenarioDefinitionConnection>;
@@ -2884,6 +2921,17 @@ export type RootQueryTypeRoleBehaviorsArgs = {
   last?: InputMaybe<Scalars["Int"]>;
 };
 
+export type RootQueryTypeSatisfactionArgs = {
+  id: Scalars["ID"];
+};
+
+export type RootQueryTypeSatisfactionsArgs = {
+  after?: InputMaybe<Scalars["ID"]>;
+  before?: InputMaybe<Scalars["ID"]>;
+  first?: InputMaybe<Scalars["Int"]>;
+  last?: InputMaybe<Scalars["Int"]>;
+};
+
 export type RootQueryTypeScenarioArgs = {
   id: Scalars["ID"];
 };
@@ -2926,6 +2974,93 @@ export type RootQueryTypeUnitsArgs = {
   before?: InputMaybe<Scalars["ID"]>;
   first?: InputMaybe<Scalars["Int"]>;
   last?: InputMaybe<Scalars["Int"]>;
+};
+
+/**
+ * Represents many-to-many relationships between intents and commitments
+ * or events that partially or full satisfy one or more intents.
+ */
+export type Satisfaction = {
+  __typename?: "Satisfaction";
+  /**
+   * The amount and unit of the work or use or citation effort-based
+   * action.  This is often a time duration, but also could be cycle
+   * counts or other measures of effort or usefulness.
+   */
+  effortQuantity?: Maybe<Measure>;
+  id: Scalars["ID"];
+  /** A textual description or comment. */
+  note?: Maybe<Scalars["String"]>;
+  /** The amount and unit of the economic resource counted or inventoried. */
+  resourceQuantity?: Maybe<Measure>;
+  /**
+   * An economic event fully or partially satisfying an intent.
+   *
+   * Mutually exclusive with commitment.
+   */
+  satisfiedByEvent?: Maybe<EconomicEvent>;
+  /** An intent satisfied fully or partially by an economic event or commitment. */
+  satisfies: Intent;
+};
+
+export type SatisfactionConnection = {
+  __typename?: "SatisfactionConnection";
+  edges: Array<SatisfactionEdge>;
+  pageInfo: PageInfo;
+};
+
+export type SatisfactionCreateParams = {
+  /**
+   * The amount and unit of the work or use or citation effort-based
+   * action.  This is often a time duration, but also could be cycle
+   * counts or other measures of effort or usefulness.
+   */
+  effortQuantity?: InputMaybe<IMeasure>;
+  /** A textual description or comment. */
+  note?: InputMaybe<Scalars["String"]>;
+  /** The amount and unit of the economic resource counted or inventoried. */
+  resourceQuantity?: InputMaybe<IMeasure>;
+  /**
+   * (`EconomicEvent`) An economic event fully or partially satisfying an intent.
+   *
+   * Mutually exclusive with commitment.
+   */
+  satisfiedByEvent?: InputMaybe<Scalars["ID"]>;
+  /** (`Intent`) An intent satisfied fully or partially by an economic event or commitment. */
+  satisfies: Scalars["ID"];
+};
+
+export type SatisfactionEdge = {
+  __typename?: "SatisfactionEdge";
+  cursor: Scalars["ID"];
+  node: Satisfaction;
+};
+
+export type SatisfactionResponse = {
+  __typename?: "SatisfactionResponse";
+  satisfaction: Satisfaction;
+};
+
+export type SatisfactionUpdateParams = {
+  /**
+   * The amount and unit of the work or use or citation effort-based
+   * action.  This is often a time duration, but also could be cycle
+   * counts or other measures of effort or usefulness.
+   */
+  effortQuantity?: InputMaybe<IMeasure>;
+  id: Scalars["ID"];
+  /** A textual description or comment. */
+  note?: InputMaybe<Scalars["String"]>;
+  /** The amount and unit of the economic resource counted or inventoried. */
+  resourceQuantity?: InputMaybe<IMeasure>;
+  /**
+   * (`EconomicEvent`) An economic event fully or partially satisfying an intent.
+   *
+   * Mutually exclusive with commitment.
+   */
+  satisfiedByEvent?: InputMaybe<Scalars["ID"]>;
+  /** (`Intent`) An intent satisfied fully or partially by an economic event or commitment. */
+  satisfies?: InputMaybe<Scalars["ID"]>;
 };
 
 /**
@@ -3103,12 +3238,12 @@ export type ScenarioUpdateParams = {
 export type SpatialThing = {
   __typename?: "SpatialThing";
   /** Altitude. */
-  alt?: Maybe<Scalars["Float"]>;
+  alt?: Maybe<Scalars["Decimal"]>;
   id: Scalars["ID"];
   /** Latitude. */
-  lat?: Maybe<Scalars["Float"]>;
+  lat?: Maybe<Scalars["Decimal"]>;
   /** Longitude. */
-  long?: Maybe<Scalars["Float"]>;
+  long?: Maybe<Scalars["Decimal"]>;
   /** An address that will be recognized as mappable by mapping software. */
   mappableAddress?: Maybe<Scalars["String"]>;
   /**
@@ -3128,11 +3263,11 @@ export type SpatialThingConnection = {
 
 export type SpatialThingCreateParams = {
   /** Altitude. */
-  alt?: InputMaybe<Scalars["Float"]>;
+  alt?: InputMaybe<Scalars["Decimal"]>;
   /** Latitude. */
-  lat?: InputMaybe<Scalars["Float"]>;
+  lat?: InputMaybe<Scalars["Decimal"]>;
   /** Longitude. */
-  long?: InputMaybe<Scalars["Float"]>;
+  long?: InputMaybe<Scalars["Decimal"]>;
   /** An address that will be recognized as mappable by mapping software. */
   mappableAddress?: InputMaybe<Scalars["String"]>;
   /**
@@ -3157,12 +3292,12 @@ export type SpatialThingResponse = {
 
 export type SpatialThingUpdateParams = {
   /** Altitude. */
-  alt?: InputMaybe<Scalars["Float"]>;
+  alt?: InputMaybe<Scalars["Decimal"]>;
   id: Scalars["ID"];
   /** Latitude. */
-  lat?: InputMaybe<Scalars["Float"]>;
+  lat?: InputMaybe<Scalars["Decimal"]>;
   /** Longitude. */
-  long?: InputMaybe<Scalars["Float"]>;
+  long?: InputMaybe<Scalars["Decimal"]>;
   /** An address that will be recognized as mappable by mapping software. */
   mappableAddress?: InputMaybe<Scalars["String"]>;
   /**
@@ -3184,6 +3319,8 @@ export enum TimeUnit {
   Week = "week",
   Year = "year",
 }
+
+export type TrackTraceItem = EconomicEvent | EconomicResource | Process;
 
 /**
  * Defines a unit of measurement, along with its display symbol.  From OM2
@@ -3230,103 +3367,18 @@ export type UnitUpdateParams = {
   symbol?: InputMaybe<Scalars["String"]>;
 };
 
-export type GetBellAssetsQueryVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]>;
-  after?: InputMaybe<Scalars["ID"]>;
-  last?: InputMaybe<Scalars["Int"]>;
-  before?: InputMaybe<Scalars["ID"]>;
-  filter?: InputMaybe<ProposalFilterParams>;
-}>;
-
-export type GetBellAssetsQuery = {
-  __typename?: "RootQueryType";
-  proposals: {
-    __typename?: "ProposalConnection";
-    pageInfo: {
-      __typename?: "PageInfo";
-      startCursor?: string | null;
-      endCursor?: string | null;
-      hasPreviousPage: boolean;
-      hasNextPage: boolean;
-      totalCount?: number | null;
-      pageLimit?: number | null;
-    };
-    edges: Array<{
-      __typename?: "ProposalEdge";
-      cursor: string;
-      node: {
-        __typename?: "Proposal";
-        id: string;
-        name?: string | null;
-        created: any;
-        primaryIntents?: Array<{
-          __typename?: "Intent";
-          resourceInventoriedAs?: { __typename?: "EconomicResource"; metadata?: any | null } | null;
-        }> | null;
-      };
-    }>;
-  };
-};
-
-export type FetchInventoryQueryVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]>;
-  after?: InputMaybe<Scalars["ID"]>;
-  last?: InputMaybe<Scalars["Int"]>;
-  before?: InputMaybe<Scalars["ID"]>;
+export type FetchResourcesQueryVariables = Exact<{
   filter?: InputMaybe<EconomicResourceFilterParams>;
 }>;
 
-export type FetchInventoryQuery = {
+export type FetchResourcesQuery = {
   __typename?: "RootQueryType";
   economicResources?: {
     __typename?: "EconomicResourceConnection";
-    pageInfo: {
-      __typename?: "PageInfo";
-      startCursor?: string | null;
-      endCursor?: string | null;
-      hasPreviousPage: boolean;
-      hasNextPage: boolean;
-      totalCount?: number | null;
-      pageLimit?: number | null;
-    };
     edges: Array<{
       __typename?: "EconomicResourceEdge";
       cursor: string;
-      node: {
-        __typename?: "EconomicResource";
-        id: string;
-        name: string;
-        note?: string | null;
-        metadata?: any | null;
-        okhv?: string | null;
-        repo?: string | null;
-        version?: string | null;
-        licensor?: string | null;
-        license?: string | null;
-        conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
-        currentLocation?: {
-          __typename?: "SpatialThing";
-          id: string;
-          name: string;
-          mappableAddress?: string | null;
-        } | null;
-        primaryAccountable:
-          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
-          | { __typename?: "Person"; id: string; name: string; note?: string | null };
-        custodian:
-          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
-          | { __typename?: "Person"; id: string; name: string; note?: string | null };
-        accountingQuantity: {
-          __typename?: "Measure";
-          hasNumericalValue: number;
-          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
-        };
-        onhandQuantity: {
-          __typename?: "Measure";
-          hasNumericalValue: number;
-          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
-        };
-      };
+      node: { __typename?: "EconomicResource"; id: string; name: string };
     }>;
   } | null;
 };
@@ -3352,7 +3404,10 @@ export type GetVariablesQuery = {
   };
 };
 
-export type CreateProposalMutationVariables = Exact<{ [key: string]: never }>;
+export type CreateProposalMutationVariables = Exact<{
+  name: Scalars["String"];
+  note: Scalars["String"];
+}>;
 
 export type CreateProposalMutation = {
   __typename?: "RootMutationType";
@@ -3364,7 +3419,7 @@ export type CreateIntentMutationVariables = Exact<{
   resource: Scalars["ID"];
   oneUnit: Scalars["ID"];
   currency: Scalars["ID"];
-  howMuch: Scalars["Float"];
+  howMuch: Scalars["Decimal"];
 }>;
 
 export type CreateIntentMutation = {
@@ -3388,19 +3443,19 @@ export type LinkProposalAndIntentMutation = {
 export type CreateLocationMutationVariables = Exact<{
   name: Scalars["String"];
   addr: Scalars["String"];
-  lat: Scalars["Float"];
-  lng: Scalars["Float"];
+  lat: Scalars["Decimal"];
+  lng: Scalars["Decimal"];
 }>;
 
 export type CreateLocationMutation = {
   __typename?: "RootMutationType";
   createSpatialThing: {
     __typename?: "SpatialThingResponse";
-    spatialThing: { __typename?: "SpatialThing"; id: string; lat?: number | null; long?: number | null };
+    spatialThing: { __typename?: "SpatialThing"; id: string; lat?: any | null; long?: any | null };
   };
 };
 
-export type CreateAssetMutationVariables = Exact<{
+export type CreateProjectMutationVariables = Exact<{
   name: Scalars["String"];
   note: Scalars["String"];
   metadata?: InputMaybe<Scalars["JSON"]>;
@@ -3411,21 +3466,24 @@ export type CreateAssetMutationVariables = Exact<{
   resourceSpec: Scalars["ID"];
   oneUnit: Scalars["ID"];
   images?: InputMaybe<Array<IFile> | IFile>;
+  repo?: InputMaybe<Scalars["String"]>;
+  process: Scalars["ID"];
+  license: Scalars["String"];
 }>;
 
-export type CreateAssetMutation = {
+export type CreateProjectMutation = {
   __typename?: "RootMutationType";
   createEconomicEvent: {
     __typename?: "EconomicEventResponse";
     economicEvent: {
       __typename?: "EconomicEvent";
       id: string;
-      resourceInventoriedAs?: { __typename?: "EconomicResource"; id: string } | null;
+      resourceInventoriedAs?: { __typename?: "EconomicResource"; id: string; name: string } | null;
     };
   };
 };
 
-export type TransferAssetMutationVariables = Exact<{
+export type TransferProjectMutationVariables = Exact<{
   resource: Scalars["ID"];
   name: Scalars["String"];
   note: Scalars["String"];
@@ -3437,14 +3495,14 @@ export type TransferAssetMutationVariables = Exact<{
   oneUnit: Scalars["ID"];
 }>;
 
-export type TransferAssetMutation = {
+export type TransferProjectMutation = {
   __typename?: "RootMutationType";
   createEconomicEvent: {
     __typename?: "EconomicEventResponse";
     economicEvent: {
       __typename?: "EconomicEvent";
       id: string;
-      toResourceInventoriedAs?: { __typename?: "EconomicResource"; id: string } | null;
+      toResourceInventoriedAs?: { __typename?: "EconomicResource"; id: string; name: string } | null;
     };
   };
 };
@@ -3461,21 +3519,34 @@ export type GetResourceTableQuery = {
     name: string;
     note?: string | null;
     metadata?: any | null;
+    license?: string | null;
+    traceDpp: any;
+    trace?: Array<
+      | {
+          __typename: "EconomicEvent";
+          hasPointInTime?: any | null;
+          inputOf?: { __typename?: "Process"; id: string; name: string } | null;
+          outputOf?: { __typename?: "Process"; id: string; name: string } | null;
+          action: { __typename?: "Action"; id: string; label: string; inputOutput?: string | null };
+        }
+      | { __typename: "EconomicResource"; id: string; name: string; note?: string | null }
+      | { __typename: "Process"; id: string; name: string }
+    > | null;
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     onhandQuantity: {
       __typename?: "Measure";
-      hasNumericalValue: number;
+      hasNumericalValue: any;
       hasUnit?: { __typename?: "Unit"; id: string; symbol: string; label: string } | null;
     };
     accountingQuantity: {
       __typename?: "Measure";
-      hasNumericalValue: number;
+      hasNumericalValue: any;
       hasUnit?: { __typename?: "Unit"; label: string; symbol: string } | null;
     };
     primaryAccountable:
       | { __typename?: "Organization"; id: string; name: string }
       | { __typename?: "Person"; id: string; name: string };
-    currentLocation?: { __typename?: "SpatialThing"; name: string; mappableAddress?: string | null } | null;
+    currentLocation?: { __typename?: "SpatialThing"; id: string; name: string; mappableAddress?: string | null } | null;
     images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
   } | null;
 };
@@ -3493,9 +3564,9 @@ export type UpdateMetadataMutation = {
   };
 };
 
-export type GetAssetTypesQueryVariables = Exact<{ [key: string]: never }>;
+export type GetProjectTypesQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetAssetTypesQuery = {
+export type GetProjectTypesQuery = {
   __typename?: "RootQueryType";
   instanceVariables: {
     __typename?: "InstanceVariables";
@@ -3536,7 +3607,47 @@ export type GetAgentQuery = {
   } | null;
 };
 
-export type GetAssetsQueryVariables = Exact<{
+export type GetAgentsQueryVariables = Exact<{
+  userOrName: Scalars["String"];
+  last?: InputMaybe<Scalars["Int"]>;
+}>;
+
+export type GetAgentsQuery = {
+  __typename?: "RootQueryType";
+  agents?: {
+    __typename?: "AgentConnection";
+    pageInfo: {
+      __typename?: "PageInfo";
+      startCursor?: string | null;
+      endCursor?: string | null;
+      hasPreviousPage: boolean;
+      hasNextPage: boolean;
+      totalCount?: number | null;
+      pageLimit?: number | null;
+    };
+    edges: Array<{
+      __typename?: "AgentEdge";
+      cursor: string;
+      node:
+        | {
+            __typename?: "Organization";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          }
+        | {
+            __typename?: "Person";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          };
+    }>;
+  } | null;
+};
+
+export type GetProjectsQueryVariables = Exact<{
   first?: InputMaybe<Scalars["Int"]>;
   after?: InputMaybe<Scalars["ID"]>;
   last?: InputMaybe<Scalars["Int"]>;
@@ -3544,7 +3655,7 @@ export type GetAssetsQueryVariables = Exact<{
   filter?: InputMaybe<ProposalFilterParams>;
 }>;
 
-export type GetAssetsQuery = {
+export type GetProjectsQuery = {
   __typename?: "RootQueryType";
   proposals: {
     __typename?: "ProposalConnection";
@@ -3591,7 +3702,7 @@ export type GetAssetsQuery = {
           __typename?: "Intent";
           resourceQuantity?: {
             __typename?: "Measure";
-            hasNumericalValue: number;
+            hasNumericalValue: any;
             hasUnit?: { __typename?: "Unit"; label: string; symbol: string } | null;
           } | null;
         }> | null;
@@ -3628,11 +3739,81 @@ export type GetUserQuery = {
   } | null;
 };
 
-export type GetAssetPageQueryVariables = Exact<{
+export type FetchInventoryQueryVariables = Exact<{
+  first?: InputMaybe<Scalars["Int"]>;
+  after?: InputMaybe<Scalars["ID"]>;
+  last?: InputMaybe<Scalars["Int"]>;
+  before?: InputMaybe<Scalars["ID"]>;
+  filter?: InputMaybe<EconomicResourceFilterParams>;
+}>;
+
+export type FetchInventoryQuery = {
+  __typename?: "RootQueryType";
+  economicResources?: {
+    __typename?: "EconomicResourceConnection";
+    pageInfo: {
+      __typename?: "PageInfo";
+      startCursor?: string | null;
+      endCursor?: string | null;
+      hasPreviousPage: boolean;
+      hasNextPage: boolean;
+      totalCount?: number | null;
+      pageLimit?: number | null;
+    };
+    edges: Array<{
+      __typename?: "EconomicResourceEdge";
+      cursor: string;
+      node: {
+        __typename?: "EconomicResource";
+        id: string;
+        name: string;
+        classifiedAs?: Array<any> | null;
+        note?: string | null;
+        metadata?: any | null;
+        okhv?: string | null;
+        repo?: string | null;
+        version?: string | null;
+        licensor?: string | null;
+        license?: string | null;
+        conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
+        currentLocation?: {
+          __typename?: "SpatialThing";
+          id: string;
+          name: string;
+          mappableAddress?: string | null;
+        } | null;
+        images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+        trace?: Array<
+          | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
+          | { __typename: "EconomicResource" }
+          | { __typename: "Process" }
+        > | null;
+        primaryAccountable:
+          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
+          | { __typename?: "Person"; id: string; name: string; note?: string | null };
+        custodian:
+          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
+          | { __typename?: "Person"; id: string; name: string; note?: string | null };
+        accountingQuantity: {
+          __typename?: "Measure";
+          hasNumericalValue: any;
+          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
+        };
+        onhandQuantity: {
+          __typename?: "Measure";
+          hasNumericalValue: any;
+          hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
+        };
+      };
+    }>;
+  } | null;
+};
+
+export type GetResourceDetailsQueryVariables = Exact<{
   id: Scalars["ID"];
 }>;
 
-export type GetAssetPageQuery = {
+export type GetResourceDetailsQuery = {
   __typename?: "RootQueryType";
   proposal?: {
     __typename?: "Proposal";
@@ -3659,48 +3840,198 @@ export type GetAssetPageQuery = {
   } | null;
 };
 
-export type GetNotificationAssetsQueryVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]>;
-  after?: InputMaybe<Scalars["ID"]>;
-  last?: InputMaybe<Scalars["Int"]>;
-  before?: InputMaybe<Scalars["ID"]>;
-  filter?: InputMaybe<ProposalFilterParams>;
+export type CreateProcessMutationVariables = Exact<{
+  name: Scalars["String"];
 }>;
 
-export type GetNotificationAssetsQuery = {
-  __typename?: "RootQueryType";
-  proposals: {
-    __typename?: "ProposalConnection";
-    pageInfo: {
-      __typename?: "PageInfo";
-      startCursor?: string | null;
-      endCursor?: string | null;
-      hasPreviousPage: boolean;
-      hasNextPage: boolean;
-      totalCount?: number | null;
-      pageLimit?: number | null;
+export type CreateProcessMutation = {
+  __typename?: "RootMutationType";
+  createProcess: { __typename?: "ProcessResponse"; process: { __typename?: "Process"; id: string } };
+};
+
+export type ForkProjectMutationVariables = Exact<{
+  agent: Scalars["ID"];
+  creationTime: Scalars["DateTime"];
+  resource: Scalars["ID"];
+  process: Scalars["ID"];
+  unitOne: Scalars["ID"];
+  tags?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
+  location: Scalars["ID"];
+  spec: Scalars["ID"];
+  name: Scalars["String"];
+  note?: InputMaybe<Scalars["String"]>;
+  repo?: InputMaybe<Scalars["String"]>;
+  metadata?: InputMaybe<Scalars["JSON"]>;
+}>;
+
+export type ForkProjectMutation = {
+  __typename?: "RootMutationType";
+  cite: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+  produce: {
+    __typename?: "EconomicEventResponse";
+    economicEvent: {
+      __typename?: "EconomicEvent";
+      id: string;
+      resourceInventoriedAs?: { __typename?: "EconomicResource"; id: string; name: string } | null;
     };
-    edges: Array<{
-      __typename?: "ProposalEdge";
-      cursor: string;
-      node: {
-        __typename?: "Proposal";
-        id: string;
-        name?: string | null;
-        created: any;
-        primaryIntents?: Array<{
-          __typename?: "Intent";
-          resourceInventoriedAs?: {
-            __typename?: "EconomicResource";
-            id: string;
-            name: string;
-            metadata?: any | null;
-            primaryAccountable:
-              | { __typename?: "Organization"; name: string; id: string }
-              | { __typename?: "Person"; name: string; id: string };
-          } | null;
-        }> | null;
-      };
-    }>;
   };
+};
+
+export type ProposeContributionMutationVariables = Exact<{
+  process: Scalars["ID"];
+  owner: Scalars["ID"];
+  proposer: Scalars["ID"];
+  creationTime: Scalars["DateTime"];
+  resourceForked: Scalars["ID"];
+  unitOne: Scalars["ID"];
+  resourceOrigin: Scalars["ID"];
+}>;
+
+export type ProposeContributionMutation = {
+  __typename?: "RootMutationType";
+  citeResourceForked: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+  acceptResourceOrigin: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+  modifyResourceOrigin: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+};
+
+export type LinkContributionAndProposalAndIntentMutationVariables = Exact<{
+  proposal: Scalars["ID"];
+  citeIntent: Scalars["ID"];
+  acceptIntent: Scalars["ID"];
+  modifyIntent: Scalars["ID"];
+}>;
+
+export type LinkContributionAndProposalAndIntentMutation = {
+  __typename?: "RootMutationType";
+  proposeCite: { __typename?: "ProposedIntentResponse"; proposedIntent: { __typename?: "ProposedIntent"; id: string } };
+  proposeAccept: {
+    __typename?: "ProposedIntentResponse";
+    proposedIntent: { __typename?: "ProposedIntent"; id: string };
+  };
+  proposeModify: {
+    __typename?: "ProposedIntentResponse";
+    proposedIntent: { __typename?: "ProposedIntent"; id: string };
+  };
+};
+
+export type QueryProposalQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type QueryProposalQuery = {
+  __typename?: "RootQueryType";
+  proposal?: {
+    __typename?: "Proposal";
+    id: string;
+    name?: string | null;
+    note?: string | null;
+    status: ProposedStatus;
+    primaryIntents?: Array<{
+      __typename?: "Intent";
+      id: string;
+      hasPointInTime?: any | null;
+      provider?:
+        | { __typename?: "Organization"; id: string; name: string }
+        | { __typename?: "Person"; id: string; name: string }
+        | null;
+      receiver?:
+        | { __typename?: "Organization"; id: string; name: string }
+        | { __typename?: "Person"; id: string; name: string }
+        | null;
+      inputOf?: { __typename?: "Process"; name: string; id: string } | null;
+      outputOf?: { __typename?: "Process"; id: string; name: string } | null;
+      resourceInventoriedAs?: {
+        __typename?: "EconomicResource";
+        id: string;
+        name: string;
+        repo?: string | null;
+        primaryAccountable:
+          | { __typename?: "Organization"; id: string; name: string }
+          | { __typename?: "Person"; id: string; name: string };
+        onhandQuantity: {
+          __typename?: "Measure";
+          hasNumericalValue: any;
+          hasUnit?: { __typename?: "Unit"; id: string } | null;
+        };
+      } | null;
+      resourceConformsTo?: { __typename?: "EconomicResource"; id: string; name: string } | null;
+    }> | null;
+  } | null;
+};
+
+export type CiteProjectMutationVariables = Exact<{
+  agent: Scalars["ID"];
+  creationTime: Scalars["DateTime"];
+  resource: Scalars["ID"];
+  process: Scalars["ID"];
+  unitOne: Scalars["ID"];
+}>;
+
+export type CiteProjectMutation = {
+  __typename?: "RootMutationType";
+  createEconomicEvent: {
+    __typename?: "EconomicEventResponse";
+    economicEvent: { __typename?: "EconomicEvent"; id: string };
+  };
+};
+
+export type AcceptProposalMutationVariables = Exact<{
+  process: Scalars["ID"];
+  owner: Scalars["ID"];
+  proposer: Scalars["ID"];
+  unitOne: Scalars["ID"];
+  resourceForked: Scalars["ID"];
+  resourceOrigin: Scalars["ID"];
+  creationTime: Scalars["DateTime"];
+}>;
+
+export type AcceptProposalMutation = {
+  __typename?: "RootMutationType";
+  cite: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+  accept: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+  modify: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+};
+
+export type SatisfyIntentsMutationVariables = Exact<{
+  unitOne: Scalars["ID"];
+  intentCited: Scalars["ID"];
+  intentAccepted: Scalars["ID"];
+  intentModify: Scalars["ID"];
+  eventCite: Scalars["ID"];
+  eventAccept: Scalars["ID"];
+  eventModify: Scalars["ID"];
+}>;
+
+export type SatisfyIntentsMutation = {
+  __typename?: "RootMutationType";
+  cite: { __typename?: "SatisfactionResponse"; satisfaction: { __typename?: "Satisfaction"; id: string } };
+  accept: { __typename?: "SatisfactionResponse"; satisfaction: { __typename?: "Satisfaction"; id: string } };
+  modify: { __typename?: "SatisfactionResponse"; satisfaction: { __typename?: "Satisfaction"; id: string } };
+};
+
+export type RejectProposalMutationVariables = Exact<{
+  intentCite: Scalars["ID"];
+  intentAccept: Scalars["ID"];
+  intentModify: Scalars["ID"];
+}>;
+
+export type RejectProposalMutation = {
+  __typename?: "RootMutationType";
+  cite: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+  accept: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+  modify: { __typename?: "IntentResponse"; intent: { __typename?: "Intent"; id: string } };
+};
+
+export type AskResourcePrimaryAccountableQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type AskResourcePrimaryAccountableQuery = {
+  __typename?: "RootQueryType";
+  economicResource?: {
+    __typename?: "EconomicResource";
+    primaryAccountable:
+      | { __typename?: "Organization"; id: string; name: string }
+      | { __typename?: "Person"; id: string; name: string };
+  } | null;
 };

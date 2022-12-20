@@ -112,7 +112,7 @@ const SignUp: NextPageWithLayout = () => {
 
             {/* Submit button */}
             <button className="btn btn-block btn-accent" onClick={signUp} data-test="signUpBtn">
-              {t("EndButton")}
+              {t("Register and login")}
             </button>
           </Passphrase>
         )}
@@ -120,7 +120,7 @@ const SignUp: NextPageWithLayout = () => {
         {/* Invitation to login */}
         {(step == 0 || step == 1) && (
           <div className="mt-8">
-            <BrAuthSuggestion linkText={t("Login.action")} baseText={t("Login.question")} url="/sign_in" />
+            <BrAuthSuggestion linkText={t("LogIn")} baseText={t("Do you have already an account?")} url="/sign_in" />
           </div>
         )}
       </div>

@@ -4,26 +4,27 @@ import { useState } from "react";
 
 // Select components
 import { getOptionValue } from "components/brickroom/utils/BrSelectUtils";
-import SelectAssetType from "./SelectAssetType";
+import SelectProjectType from "./SelectProjectType";
 import SelectContributors from "./SelectContributors";
 import SelectTags from "./SelectTags";
 import devLog from "../lib/devLog";
 
 //
 
-export interface AssetsFiltersProps {
+export interface ProjectsFiltersProps {
   hidePrimaryAccountable?: boolean;
+  children?: React.ReactNode;
 }
 
-export const AssetFilters = ["conformsTo", "tags", "primaryAccountable"] as const;
-export type AssetFilter = typeof AssetFilters[number];
+export const ProjectFilters = ["conformsTo", "tags", "primaryAccountable"] as const;
+export type ProjectFilter = typeof ProjectFilters[number];
 
-export type QueryFilters<T> = Record<AssetFilter, T>;
+export type QueryFilters<T> = Record<ProjectFilter, T>;
 
 //
 
-export default function AssetsFilters(props: AssetsFiltersProps) {
-  const { hidePrimaryAccountable = false } = props;
+export default function ProjectsFilters(props: ProjectsFiltersProps) {
+  const { hidePrimaryAccountable = false, children } = props;
 
   const { t } = useTranslation("lastUpdatedProps");
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
   const query = router.query as QueryFilters<string>;
 
   // Converts query value in string array
-  function getFilterValues(filter: AssetFilter): Array<string> {
+  function getFilterValues(filter: ProjectFilter): Array<string> {
     if (!query[filter]) return [];
     else return query[filter].split(",");
   }
@@ -51,7 +52,7 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
   /* Filters logic */
 
   function applyFilters() {
-    for (let f of AssetFilters) {
+    for (let f of ProjectFilters) {
       if (queryFilters[f].length > 0) query[f] = queryFilters[f].join(",");
       else delete query[f];
     }
@@ -84,7 +85,9 @@ export default function AssetsFilters(props: AssetsFiltersProps) {
 
       {/* Filters */}
       <div className="space-y-4">
-        <SelectAssetType
+        {children}
+
+        <SelectProjectType
           label={t("Type")}
           onChange={v => {
             setQueryFilters({

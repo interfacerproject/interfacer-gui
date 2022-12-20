@@ -3,6 +3,11 @@ import { AdjustmentsIcon, ClipboardListIcon, CubeIcon } from "@heroicons/react/o
 import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
 import cn from "classnames";
+import ProjectsTable from "components/ProjectsTable";
+import BrTabs from "components/brickroom/BrTabs";
+import Spinner from "components/brickroom/Spinner";
+import { useAuth } from "hooks/useAuth";
+import useStorage from "hooks/useStorage";
 import { FETCH_USER } from "lib/QueryAndMutation";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
@@ -31,15 +36,13 @@ const Profile: NextPage = () => {
   const idToBeFetch = isUser ? user?.ulid : id;
 
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
-  typeof idToBeFetch === "string"
-    ? (proposalFilter.primaryIntentsResourceInventoriedAsPrimaryAccountable = [idToBeFetch])
-    : idToBeFetch!;
-  const hasCollectedAssets = isUser && !!getItem("assetsCollected");
-  let collectedAssets: { primaryIntentsResourceInventoriedAsId: string[] } = {
-    primaryIntentsResourceInventoriedAsId: [],
+  typeof idToBeFetch === "string" ? (proposalFilter.primaryAccountable = [idToBeFetch]) : idToBeFetch!;
+  const hasCollectedProjects = isUser && !!getItem("projectsCollected");
+  let collectedProjects: { id: string[] } = {
+    id: [],
   };
-  if (hasCollectedAssets) {
-    collectedAssets["primaryIntentsResourceInventoriedAsId"] = JSON.parse(getItem("assetsCollected"));
+  if (hasCollectedProjects) {
+    collectedProjects["id"] = JSON.parse(getItem("projectsCollected"));
   }
 
   return (
@@ -91,13 +94,13 @@ const Profile: NextPage = () => {
                   title: (
                     <span className="flex items-center space-x-4">
                       <CubeIcon className="w-5 h-5 mr-1" />
-                      {t("Assets")}
+                      {t("Projects")}
                     </span>
                   ),
                   component: (
                     <div>
-                      <h3 className="my-8">{isUser ? t("My Assets") : t("Assets")}</h3>
-                      <AssetsTable filter={proposalFilter} hideHeader={true} />
+                      <h3 className="my-8">{isUser ? t("My Projects") : t("Projects")}</h3>
+                      <ProjectsTable filter={proposalFilter} hideHeader={true} />
                     </div>
                   ),
                 },
@@ -111,10 +114,10 @@ const Profile: NextPage = () => {
                   component: (
                     <div>
                       <h3 className="my-8">{isUser ? t("My List") : t("List")}</h3>
-                      <AssetsTable filter={collectedAssets} hideHeader={true} />
+                      <ProjectsTable filter={collectedProjects} hideHeader={true} />
                     </div>
                   ),
-                  disabled: hasCollectedAssets,
+                  disabled: hasCollectedProjects,
                 },
                 {
                   title: (

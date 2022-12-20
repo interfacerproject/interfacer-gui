@@ -37,8 +37,26 @@ const BrSelectSearchable = forwardRef<any, BrSelectSearchableProps>((props, ref)
 
   return (
     <PFieldInfo {...props}>
-      {!creatable && <Select defaultValue={defaultValue} {...props} ref={ref} id={id} />}
-      {creatable && <CreatableSelect defaultValue={defaultValue} {...props} ref={ref} id={id} />}
+      {!creatable && (
+        <Select
+          defaultValue={defaultValue}
+          {...props}
+          ref={ref}
+          id={id}
+          menuPortalTarget={document.body}
+          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+        />
+      )}
+      {creatable && (
+        <CreatableSelect
+          defaultValue={defaultValue}
+          {...props}
+          ref={ref}
+          menuPortalTarget={document.body}
+          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          id={id}
+        />
+      )}
     </PFieldInfo>
   );
 });

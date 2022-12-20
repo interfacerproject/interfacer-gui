@@ -5,9 +5,30 @@ import sign from "../zenflows-crypto/src/sign_graphql";
 import useStorage from "./useStorage";
 import { useEffect, useState } from "react";
 
+export declare module Notification {
+  export interface Content {
+    data: Date;
+    message: any;
+    subject: string;
+  }
+
+  export interface Message {
+    id: number;
+    sender: string;
+    content: Content;
+    read: boolean;
+  }
+
+  export interface RootObject {
+    messages: Message[];
+    request_id: number;
+    success: boolean;
+  }
+}
+
 type UseInBoxReturnValue = {
   sendMessage: (message: any, receivers: string[], subject: string) => Promise<Response>;
-  readMessages: () => Promise<{ messages?: any; request_id: number; success: boolean }>;
+  readMessages: () => Promise<Notification.RootObject>;
   countMessages: () => Promise<{ count: number; success: boolean }>;
   setMessage: (id: number, read?: boolean) => Promise<Response>;
   countUnread: number;
