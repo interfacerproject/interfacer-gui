@@ -32,6 +32,7 @@ const WatchButton = ({ id, metadata }: { id: string; metadata: any }) => {
 
   return (
     <Button
+      id="addToWatch"
       fullWidth
       size="large"
       onClick={isWatching ? handleUnwatch : handleWatch}
