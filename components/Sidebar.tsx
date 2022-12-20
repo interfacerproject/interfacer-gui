@@ -34,20 +34,20 @@ function Sidebar() {
       leftIcon: <BellIcon className="w-5 h-5" />,
     },
     // Dropdown -> My stuff
-    createAsset: {
-      text: t("Create Assets"),
-      link: "/create_asset",
+    createProject: {
+      text: t("Create Projects"),
+      link: "/create_project",
       leftIcon: <CubeIcon className="w-5 h-5" />,
       // tag: "NEW",
     },
-    myAssets: {
-      text: t("My Assets"),
+    myProjects: {
+      text: t("My Projects"),
       link: "/profile/my_profile",
     },
-    // Dropdown -> Assets
-    latestAssets: {
-      text: t("Assets"),
-      link: "/assets",
+    // Dropdown -> Projects
+    latestProjects: {
+      text: t("Projects"),
+      link: "/projects",
     },
     resources: {
       text: t("Imported from LOSH"),
@@ -80,12 +80,12 @@ function Sidebar() {
 
   // Dropdown items
   const drItems: Record<string, IfSidebarItemProps> = {
-    assets: {
-      text: t("Assets"),
+    projects: {
+      text: t("Projects"),
       leftIcon: <CubeIcon className="w-5 h-5" />,
     },
     myStuff: {
-      text: t("Assets"),
+      text: t("Projects"),
       leftIcon: <BriefcaseIcon className="w-5 h-5" />,
     },
   };
@@ -107,12 +107,12 @@ function Sidebar() {
         {/* The links */}
         <ul className="p-4 space-y-1">
           <IfSideBarLink {...items.home} />
-          <IfSideBarLink {...items.createAsset} />
+          <IfSideBarLink {...items.createProject} />
           <IfSideBarLink {...items.notification} />
 
           <IfSidebarDropdown {...drItems.myStuff}>
-            <IfSideBarLink {...items.myAssets} />
-            <IfSideBarLink {...items.latestAssets} />
+            <IfSideBarLink {...items.myProjects} />
+            <IfSideBarLink {...items.latestProjects} />
             <IfSideBarLink {...items.my_list} />
             <IfSideBarLink {...items.resources} />
           </IfSidebarDropdown>

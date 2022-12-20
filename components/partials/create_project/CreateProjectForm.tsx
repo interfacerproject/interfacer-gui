@@ -2,8 +2,8 @@ import { useTranslation } from "next-i18next";
 
 // Request
 import { useQuery } from "@apollo/client";
-import { QUERY_ASSET_TYPES } from "lib/QueryAndMutation";
-import { GetAssetTypesQuery } from "lib/types";
+import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
+import { GetProjectTypesQuery } from "lib/types";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -31,7 +31,7 @@ import SelectResources from "../../SelectResources";
 
 //
 
-export namespace CreateAssetNS {
+export namespace CreateProjectNS {
   export interface Props extends CP {
     onSubmit: (data: FormValues) => void;
   }
@@ -54,28 +54,28 @@ export namespace CreateAssetNS {
 
 //
 
-export default function NewAssetForm(props: CreateAssetNS.Props) {
+export default function NewProjectForm(props: CreateProjectNS.Props) {
   const { onSubmit } = props;
   const { t } = useTranslation("createProjectProps");
 
   //
 
-  // Loading asset types
-  const queryAssetTypes = useQuery<GetAssetTypesQuery>(QUERY_ASSET_TYPES).data;
-  const assetTypes = queryAssetTypes && [
+  // Loading project types
+  const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES).data;
+  const projectTypes = queryProjectTypes && [
     {
       name: t("Design"),
-      id: queryAssetTypes.instanceVariables.specs.specProjectDesign.id,
-      label: t("A digital asset, like an open source hardware project or 3D model"),
+      id: queryProjectTypes.instanceVariables.specs.specProjectDesign.id,
+      label: t("A digital project, like an open source hardware project or 3D model"),
     },
     {
       name: t("Service"),
-      id: queryAssetTypes.instanceVariables.specs.specProjectService.id,
+      id: queryProjectTypes.instanceVariables.specs.specProjectService.id,
       label: t("A service, like a consultancy, training course or usage/rental of equipment"),
     },
     {
       name: t("Product"),
-      id: queryAssetTypes.instanceVariables.specs.specProjectProduct.id,
+      id: queryProjectTypes.instanceVariables.specs.specProjectProduct.id,
       label: t("A physical product that can be picked up or delivered"),
     },
   ];
@@ -96,7 +96,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
 
   //
 
-  const defaultValues: CreateAssetNS.FormValues = {
+  const defaultValues: CreateProjectNS.FormValues = {
     name: "",
     description: "",
     type: "",
@@ -138,7 +138,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
     ),
   });
 
-  const form = useForm<CreateAssetNS.FormValues>({
+  const form = useForm<CreateProjectNS.FormValues>({
     mode: "all",
     resolver: yupResolver(schema),
     defaultValues,
@@ -163,9 +163,9 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             autoComplete="off"
             onChange={onChange}
             onBlur={onBlur}
-            label={t("Asset name")}
+            label={t("Project name")}
             placeholder={t("Fabulaser")}
-            helpText={t("Working name of the asset, visible to the whole community")}
+            helpText={t("Working name of the project, visible to the whole community")}
             error={errors.name?.message}
             requiredIndicator={isRequired(schema, name)}
           />
@@ -178,7 +178,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         editorClass="h-60"
         label={t("General information")}
         helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t("Type up to 2048 characters")}.`}
-        subtitle={t("Short description to be displayed on the asset page")}
+        subtitle={t("Short description to be displayed on the project page")}
         onChange={({ text, html }) => {
           setValue("description", text);
         }}
@@ -213,7 +213,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
             onBlur={onBlur}
             label={t("Repository link")}
             placeholder={t("github[dot]com/my-repo")}
-            helpText={t("Reference to the asset's repository (GitHub, Thingiverse, etc.)")}
+            helpText={t("Reference to the project's repository (GitHub, Thingiverse, etc.)")}
             error={errors.repo?.message}
             requiredIndicator={isRequired(schema, name)}
           />
@@ -240,13 +240,13 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
       />
 
       <PFieldInfo
-        label={`${t("Select asset type")}:`}
+        label={`${t("Select project type")}:`}
         error={errors.type?.message}
         requiredIndicator={isRequired(schema, "type")}
       >
         <Stack vertical spacing="tight">
-          {assetTypes &&
-            assetTypes.map(type => (
+          {projectTypes &&
+            projectTypes.map(type => (
               <BrRadioOption
                 id={type.id}
                 value={type.id}
@@ -337,7 +337,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
               onBlur={onBlur}
               label={t("Location name")}
               placeholder={t("Cool fablab")}
-              helpText={t("The name of the place where the asset is stored")}
+              helpText={t("The name of the place where the project is stored")}
               error={errors.name?.message}
               requiredIndicator={isRequired(schema, name)}
             />
@@ -371,7 +371,7 @@ export default function NewAssetForm(props: CreateAssetNS.Props) {
         <Card>
           <div className="flex flex-col items-center justify-center p-4">
             <Spinner />
-            <p className="pt-2">{`${t("Creating asset")}...`}</p>
+            <p className="pt-2">{`${t("Creating project")}...`}</p>
           </div>
         </Card>
       )}

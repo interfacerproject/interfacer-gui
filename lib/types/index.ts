@@ -3455,7 +3455,7 @@ export type CreateLocationMutation = {
   };
 };
 
-export type CreateAssetMutationVariables = Exact<{
+export type CreateProjectMutationVariables = Exact<{
   name: Scalars["String"];
   note: Scalars["String"];
   metadata?: InputMaybe<Scalars["JSON"]>;
@@ -3471,7 +3471,7 @@ export type CreateAssetMutationVariables = Exact<{
   license: Scalars["String"];
 }>;
 
-export type CreateAssetMutation = {
+export type CreateProjectMutation = {
   __typename?: "RootMutationType";
   createEconomicEvent: {
     __typename?: "EconomicEventResponse";
@@ -3483,7 +3483,7 @@ export type CreateAssetMutation = {
   };
 };
 
-export type TransferAssetMutationVariables = Exact<{
+export type TransferProjectMutationVariables = Exact<{
   resource: Scalars["ID"];
   name: Scalars["String"];
   note: Scalars["String"];
@@ -3495,7 +3495,7 @@ export type TransferAssetMutationVariables = Exact<{
   oneUnit: Scalars["ID"];
 }>;
 
-export type TransferAssetMutation = {
+export type TransferProjectMutation = {
   __typename?: "RootMutationType";
   createEconomicEvent: {
     __typename?: "EconomicEventResponse";
@@ -3564,9 +3564,9 @@ export type UpdateMetadataMutation = {
   };
 };
 
-export type GetAssetTypesQueryVariables = Exact<{ [key: string]: never }>;
+export type GetProjectTypesQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetAssetTypesQuery = {
+export type GetProjectTypesQuery = {
   __typename?: "RootQueryType";
   instanceVariables: {
     __typename?: "InstanceVariables";
@@ -3607,15 +3607,15 @@ export type GetAgentQuery = {
   } | null;
 };
 
-export type GetPeopleQueryVariables = Exact<{
+export type GetAgentsQueryVariables = Exact<{
   userOrName: Scalars["String"];
   last?: InputMaybe<Scalars["Int"]>;
 }>;
 
-export type GetPeopleQuery = {
+export type GetAgentsQuery = {
   __typename?: "RootQueryType";
-  people?: {
-    __typename?: "PersonConnection";
+  agents?: {
+    __typename?: "AgentConnection";
     pageInfo: {
       __typename?: "PageInfo";
       startCursor?: string | null;
@@ -3626,20 +3626,28 @@ export type GetPeopleQuery = {
       pageLimit?: number | null;
     };
     edges: Array<{
-      __typename?: "PersonEdge";
+      __typename?: "AgentEdge";
       cursor: string;
-      node: {
-        __typename?: "Person";
-        id: string;
-        name: string;
-        note?: string | null;
-        primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
-      };
+      node:
+        | {
+            __typename?: "Organization";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          }
+        | {
+            __typename?: "Person";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          };
     }>;
   } | null;
 };
 
-export type GetAssetsQueryVariables = Exact<{
+export type GetProjectsQueryVariables = Exact<{
   first?: InputMaybe<Scalars["Int"]>;
   after?: InputMaybe<Scalars["ID"]>;
   last?: InputMaybe<Scalars["Int"]>;
@@ -3647,7 +3655,7 @@ export type GetAssetsQueryVariables = Exact<{
   filter?: InputMaybe<ProposalFilterParams>;
 }>;
 
-export type GetAssetsQuery = {
+export type GetProjectsQuery = {
   __typename?: "RootQueryType";
   proposals: {
     __typename?: "ProposalConnection";
@@ -3774,6 +3782,7 @@ export type FetchInventoryQuery = {
           name: string;
           mappableAddress?: string | null;
         } | null;
+        images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
         trace?: Array<
           | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
           | { __typename: "EconomicResource" }
@@ -3840,7 +3849,7 @@ export type CreateProcessMutation = {
   createProcess: { __typename?: "ProcessResponse"; process: { __typename?: "Process"; id: string } };
 };
 
-export type ForkAssetMutationVariables = Exact<{
+export type ForkProjectMutationVariables = Exact<{
   agent: Scalars["ID"];
   creationTime: Scalars["DateTime"];
   resource: Scalars["ID"];
@@ -3855,7 +3864,7 @@ export type ForkAssetMutationVariables = Exact<{
   metadata?: InputMaybe<Scalars["JSON"]>;
 }>;
 
-export type ForkAssetMutation = {
+export type ForkProjectMutation = {
   __typename?: "RootMutationType";
   cite: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
   produce: {
@@ -3950,7 +3959,7 @@ export type QueryProposalQuery = {
   } | null;
 };
 
-export type CiteAssetMutationVariables = Exact<{
+export type CiteProjectMutationVariables = Exact<{
   agent: Scalars["ID"];
   creationTime: Scalars["DateTime"];
   resource: Scalars["ID"];
@@ -3958,7 +3967,7 @@ export type CiteAssetMutationVariables = Exact<{
   unitOne: Scalars["ID"];
 }>;
 
-export type CiteAssetMutation = {
+export type CiteProjectMutation = {
   __typename?: "RootMutationType";
   createEconomicEvent: {
     __typename?: "EconomicEventResponse";

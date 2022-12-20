@@ -7,11 +7,10 @@
   "Strength": "Stärke",
   "Your user id is: {{id}}": "Ihre Benutzer-ID lautet: {{id}}",
   "The user id is: {{id}}": "Die Benutzer-ID lautet: {{id}}",
-  "Assets": "Assets",
-  "My Assets": "Meine Assets",
+  "Projects": "Projects",
+  "My Projects": "Meine Projects",
   "Lists": "Listen",
   "My Lists": "Meine Listen",
-  "Hi,&nbsp;": "Hallo, &nbsp;",
   "Welcome to your Interfacer profile": "Willkommen in Ihrem Interfacer-Profil",
   "My List": "Meine Liste",
   "List": "Liste"

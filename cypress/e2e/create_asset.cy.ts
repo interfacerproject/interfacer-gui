@@ -1,14 +1,14 @@
-describe("when user visits create asset", () => {
-  it("should login, go to /create_asset, and complete the form", () => {
+describe("when user visits create project", () => {
+  it("should login, go to /create_project, and complete the form", () => {
     cy.login();
-    cy.visit("/create_asset");
+    cy.visit("/create_project");
 
     // It should display a non-clickable submit button
     cy.get("#submit").should("have.attr", "aria-disabled");
 
     // It should edit all the mandatory fields
     cy.get("#name").type("Laser");
-    cy.get("#description").find("textarea").type("The asset description");
+    cy.get("#description").find("textarea").type("The project description");
     cy.get("#repo").type("gitttt");
     cy.get(`[data-test="type-Design"]`).click();
     cy.get("#locationName").type("Cool Fablab");

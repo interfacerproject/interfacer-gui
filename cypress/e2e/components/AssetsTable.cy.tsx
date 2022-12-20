@@ -10,7 +10,7 @@ function checkTableAndContent() {
   cells.should("not.be.empty");
 }
 
-describe("When user visit Assets", () => {
+describe("When user visit Projects", () => {
   before(() => {
     cy.login();
     cy.saveLocalStorage();
@@ -19,14 +19,14 @@ describe("When user visit Assets", () => {
   it("should wait to load the table and display some items", () => {
     cy.restoreLocalStorage();
     intercept();
-    cy.visit("/assets");
+    cy.visit("/projects");
     // waitForData();
     checkTableAndContent();
   });
 
   it("should filter the table by contributor", () => {
     cy.restoreLocalStorage();
-    cy.visit("/assets");
+    cy.visit("/projects");
     cy.get(".justify-between > .gap-2").click();
 
     // Type and press enter in tags field

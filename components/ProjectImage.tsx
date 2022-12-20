@@ -4,7 +4,7 @@ interface Image {
   bin: string;
 }
 
-const AssetImage = ({ image, className }: { image: Image | string; className?: string }) => {
+const ProjectImage = ({ image, className }: { image: Image | string; className?: string }) => {
   const src = typeof image === "string" ? image : `data:${image.mimeType};base64,${image.bin}`;
   return (
     <>
@@ -13,4 +13,4 @@ const AssetImage = ({ image, className }: { image: Image | string; className?: s
   );
 };
 
-export default AssetImage;
+export default ProjectImage;

@@ -14,7 +14,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Button, Card, Frame, Icon, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
-import AssetDetailOverview from "components/AssetDetailOverview";
+import ProjectDetailOverview from "components/ProjectDetailOverview";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import Dpp from "components/Dpp";
@@ -27,16 +27,17 @@ const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 // Icons
 import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
+import ContributorsTable from "../../components/ContributorsTable";
 
 //
 
-const Asset = () => {
+const Project = () => {
   const { getItem, setItem } = useStorage();
   const router = useRouter();
   const { user } = useAuth();
   const { id } = router.query;
   const { t } = useTranslation("common");
-  const [asset, setAsset] = useState<EconomicResource | undefined>();
+  const [project, setProject] = useState<EconomicResource | undefined>();
   const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
   const { loading, data, startPolling, refetch } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
@@ -48,35 +49,35 @@ const Asset = () => {
   devLog("traceDpp", data?.economicResource.traceDpp);
 
   useEffect(() => {
-    const _asset: EconomicResource | undefined = data?.economicResource;
-    setAsset(_asset);
-    const singleImage = typeof _asset?.metadata?.image === "string";
-    const metadataImage = singleImage ? [_asset?.metadata?.image] : _asset?.metadata?.image || [];
+    const _project: EconomicResource | undefined = data?.economicResource;
+    setProject(_project);
+    const singleImage = typeof _project?.metadata?.image === "string";
+    const metadataImage = singleImage ? [_project?.metadata?.image] : _project?.metadata?.image || [];
     const _images =
-      _asset && _asset.images!.length > 0
-        ? _asset?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
+      _project && _project.images!.length > 0
+        ? _project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
         : metadataImage;
     setImages(_images);
   }, [data]);
 
   const handleCollect = () => {
-    const _list = getItem("assetsCollected");
+    const _list = getItem("projectsCollected");
     const _listParsed = _list ? JSON.parse(_list) : [];
-    if (_listParsed.includes(asset!.id)) {
-      setItem("assetsCollected", JSON.stringify(_listParsed.filter((a: string) => a !== asset!.id)));
+    if (_listParsed.includes(project!.id)) {
+      setItem("projectsCollected", JSON.stringify(_listParsed.filter((a: string) => a !== project!.id)));
       setInList(false);
     } else {
-      const _listParsedUpdated = [..._listParsed, asset?.id];
-      setItem("assetsCollected", JSON.stringify(_listParsedUpdated));
+      const _listParsedUpdated = [..._listParsed, project?.id];
+      setItem("projectsCollected", JSON.stringify(_listParsedUpdated));
       setInList(true);
     }
   };
 
   useEffect(() => {
-    const _list = getItem("assetsCollected");
+    const _list = getItem("projectsCollected");
     const _listParsed = _list ? JSON.parse(_list) : [];
-    setInList(_listParsed.includes(asset?.id));
-  }, [asset, getItem]);
+    setInList(_listParsed.includes(project?.id));
+  }, [project, getItem]);
 
   // Tabs setup
   const [selected, setSelected] = useState(0);
@@ -95,15 +96,15 @@ const Asset = () => {
   //
 
   if (loading) return <Spinner />;
-  if (!asset) return null;
+  if (!project) return null;
 
   return (
     <>
       <div className="flex flex-row p-4">
         <BrBreadcrumb
           crumbs={[
-            { name: t("Assets"), href: "/assets" },
-            { name: asset.conformsTo.name, href: `/assets?conformTo=${asset.conformsTo.id}` },
+            { name: t("Projects"), href: "/projects" },
+            { name: project.conformsTo.name, href: `/projects?conformTo=${project.conformsTo.id}` },
           ]}
         />
       </div>
@@ -117,12 +118,12 @@ const Asset = () => {
             <Stack vertical spacing="tight">
               <Text as="p" variant="bodyMd">
                 {t("This is a")}
-                <Link href={`/assets?conformTo=${asset.conformsTo.id}`}>
-                  <a className="ml-1 font-bold text-primary hover:underline">{asset.conformsTo.name}</a>
+                <Link href={`/projects?conformTo=${project.conformsTo.id}`}>
+                  <a className="ml-1 font-bold text-primary hover:underline">{project.conformsTo.name}</a>
                 </Link>
               </Text>
               <Text as="h1" variant="heading2xl">
-                {asset.name}
+                {project.name}
               </Text>
             </Stack>
 
@@ -135,7 +136,7 @@ const Asset = () => {
                   {
                     id: "overview",
                     content: t("Overview"),
-                    accessibilityLabel: t("Asset overview"),
+                    accessibilityLabel: t("Project overview"),
                     panelID: "overview-content",
                   },
                   {
@@ -150,12 +151,18 @@ const Asset = () => {
                     accessibilityLabel: t("Digital Product Passport"),
                     panelID: "dpp-content",
                   },
+                  {
+                    id: "Contributors",
+                    content: t("Contributors"),
+                    accessibilityLabel: t("Contributors"),
+                    panelID: "dpp-content",
+                  },
                 ]}
                 selected={selected}
                 onSelect={handleTabChange}
               />
 
-              {selected == 0 && <AssetDetailOverview asset={asset} />}
+              {selected == 0 && <ProjectDetailOverview project={project} />}
               {selected == 1 && <Dpp dpp={data?.economicResource.traceDpp} />}
               {selected == 2 && (
                 <div>
@@ -174,26 +181,28 @@ const Asset = () => {
                 </div>
               )}
 
-              {/* <ContributorsTable
-                contributors={asset.metadata?.contributors}
-                title={t("Contributors")}
-                // @ts-ignore
-                data={asset.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
-              /> */}
+              {selected == 3 && (
+                <ContributorsTable
+                  contributors={project.metadata?.contributors}
+                  title={t("Contributors")}
+                  // @ts-ignore
+                  data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
+                />
+              )}
             </Stack>
           </Stack>
         </div>
 
         {/* Sidebar */}
         <div>
-          {/* Asset info */}
+          {/* Project info */}
           <Card sectioned>
             <Stack vertical>
               <div>
                 <Text as="h2" variant="headingMd">
                   {"ID"}
                 </Text>
-                <p className="text-primary font-mono">{asset.id}</p>
+                <p className="text-primary font-mono">{project.id}</p>
               </div>
 
               <div className="space-y-1">
@@ -201,9 +210,9 @@ const Asset = () => {
                   {t("Owner")}
                 </Text>
                 <BrDisplayUser
-                  id={asset.primaryAccountable.id}
-                  name={asset.primaryAccountable.name}
-                  location={asset.currentLocation?.name}
+                  id={project.primaryAccountable.id}
+                  name={project.primaryAccountable.name}
+                  location={project.currentLocation?.name}
                 />
               </div>
             </Stack>
@@ -212,8 +221,8 @@ const Asset = () => {
           {/* Actions */}
           <Card sectioned>
             <Stack vertical>
-              {asset.repo && (
-                <Button url={asset.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
+              {project.repo && (
+                <Button url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
                   {t("Go to source")}
                 </Button>
               )}
@@ -222,11 +231,11 @@ const Asset = () => {
                 {inList ? t("Remove from list") : t("Add to list")}
               </Button>
 
-              <WatchButton id={asset.id} metadata={asset.metadata} />
+              <WatchButton id={project.id} metadata={project.metadata} />
 
               <AddStar
-                id={asset.id}
-                metadata={asset.metadata}
+                id={project.id}
+                metadata={project.metadata}
                 userId={user?.ulid}
                 onStarred={refetch}
                 onDestarred={refetch}
@@ -235,7 +244,7 @@ const Asset = () => {
           </Card>
 
           {/* Contributions */}
-          {asset.primaryAccountable.id != user?.ulid && (
+          {project.primaryAccountable.id != user?.ulid && (
             <Card sectioned>
               <Stack vertical>
                 <Text as="h2" variant="headingMd">
@@ -278,8 +287,8 @@ export async function getStaticProps({ locale }: any) {
   };
 }
 
-Asset.publicPage = true;
+Project.publicPage = true;
 
 //
 
-export default Asset;
+export default Project;

@@ -6,7 +6,7 @@ import CardsGroup from "./CardsGroup";
 import useLoadMore from "../hooks/useLoadMore";
 import devLog from "../lib/devLog";
 
-export interface AssetsCardsProps {
+export interface ProjectsCardsProps {
   filter?: EconomicResourceFilterParams;
   hidePagination?: boolean;
   hidePrimaryAccountable?: boolean;
@@ -14,7 +14,7 @@ export interface AssetsCardsProps {
   hideFilters?: boolean;
 }
 
-const AssetsCards = (props: AssetsCardsProps) => {
+const ProjectsCards = (props: ProjectsCardsProps) => {
   const {
     filter = {},
     hideHeader = false,
@@ -35,9 +35,9 @@ const AssetsCards = (props: AssetsCardsProps) => {
     dataQueryIdentifier,
   });
 
-  const assets = items;
+  const projects = items;
 
-  devLog("assets", assets);
+  devLog("projects", projects);
 
   return (
     <>
@@ -45,12 +45,12 @@ const AssetsCards = (props: AssetsCardsProps) => {
         onLoadMore={loadMore}
         nextPage={!!getHasNextPage}
         loading={loading}
-        header={hideHeader ? undefined : "Assets"}
+        header={hideHeader ? undefined : "Projects"}
         hidePagination={hidePagination}
         hidePrimaryAccountable={hidePrimaryAccountable}
         hideFilters={hideFilters}
       >
-        {assets?.map(({ node }: { node: EconomicResource }) => (
+        {projects?.map(({ node }: { node: EconomicResource }) => (
           <>
             <Card
               key={node.id}
@@ -60,7 +60,7 @@ const AssetsCards = (props: AssetsCardsProps) => {
               primaryFooterAction={{
                 id: "primaryFooterAction",
                 content: "View",
-                url: `/asset/${node.id}`,
+                url: `/project/${node.id}`,
               }}
               secondaryFooterActions={[
                 {
@@ -89,4 +89,4 @@ const AssetsCards = (props: AssetsCardsProps) => {
   );
 };
 
-export default AssetsCards;
+export default ProjectsCards;

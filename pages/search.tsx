@@ -5,7 +5,7 @@ import { ReactElement, useState } from "react";
 import Layout from "../components/layout/SearchLayout";
 import SearchBar from "../components/SearchBar";
 import { NextPageWithLayout } from "./_app";
-import AssetsTable from "../components/AssetsTable";
+import ProjectsTable from "../components/ProjectsTable";
 import useFilters from "../hooks/useFilters";
 import AgentsTable from "../components/AgentsTable";
 import devLog from "../lib/devLog";
@@ -13,26 +13,26 @@ import devLog from "../lib/devLog";
 const Search: NextPageWithLayout = () => {
   const { q } = useRouter().query;
   const [checked, setChecked] = useState(false);
-  const [searchType, setSearchType] = useState("assets");
+  const [searchType, setSearchType] = useState("projects");
   const { proposalFilter } = useFilters();
   const { t } = useTranslation("common");
 
   //This is an hugly hack to make the search work until we fix the boolean logic at backend
   const isNotEmptyObj = (obj: any) => Boolean(Object.keys(obj).find(key => obj[key]?.length > 0));
   delete proposalFilter.notCustodian;
-  const assetsOrFilter = {
+  const projectsOrFilter = {
     orName: q?.toString(),
     ...(!checked && { orNote: q?.toString() }),
   };
-  const assetsFilter = {
+  const projectsFilter = {
     name: q?.toString(),
     ...(!checked && { orNote: q?.toString() }),
   };
-  const filters = isNotEmptyObj(proposalFilter) ? { ...proposalFilter, ...assetsFilter } : assetsOrFilter;
+  const filters = isNotEmptyObj(proposalFilter) ? { ...proposalFilter, ...projectsFilter } : projectsOrFilter;
 
   //
 
-  const searchTypes = ["assets", "people"];
+  const searchTypes = ["projects", "people"];
   const onChangeSearch = (value: string) => {
     setSearchType(value);
   };
@@ -50,8 +50,8 @@ const Search: NextPageWithLayout = () => {
             <Checkbox label={t("do not search inside the the description")} checked={checked} onChange={setChecked} />
           </div>
         </div>
-        {searchType === "assets" && (
-          <AssetsTable
+        {searchType === "projects" && (
+          <ProjectsTable
             filter={filters}
             hideHeader
             searchFilter={
@@ -80,7 +80,7 @@ const Search: NextPageWithLayout = () => {
             }
           />
         )}
-        {/*<AssetsCards filter={Assetfilter} />*/}
+        {/*<ProjectsCards filter={Projectfilter} />*/}
         {/*<ResourcesCards filter={Resourcefilter} />*/}
       </div>
     </div>
