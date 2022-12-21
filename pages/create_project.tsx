@@ -22,6 +22,7 @@ import {
   CREATE_LOCATION,
   CREATE_PROCESS,
   QUERY_UNIT_AND_CURRENCY,
+  CONTRIBUTE_TO_PROJECT,
 } from "lib/QueryAndMutation";
 import {
   CreateProjectMutation,
@@ -37,6 +38,7 @@ import { errorFormatter } from "lib/errorFormatter";
 import { useRouter } from "next/router";
 import useInBox from "../hooks/useInBox";
 import { ProposalNotification } from "./notification";
+import { string } from "yup";
 
 //
 
@@ -68,6 +70,7 @@ const CreateProject: NextPageWithLayout = () => {
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [citeProject] = useMutation(CITE_PROJECT);
+  const [contributeToProject] = useMutation(CONTRIBUTE_TO_PROJECT);
   const [createProject] = useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CREATE_PROJECT);
   const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
   const [createProcess] = useMutation(CREATE_PROCESS);
@@ -129,6 +132,18 @@ const CreateProject: NextPageWithLayout = () => {
           text: formData.description,
         };
         await sendMessage(message, [data.economicResource.primaryAccountable.id], "Project cited");
+      }
+
+      for (const contributor of contributors) {
+        const contributeVariables = {
+          agent: contributor.id,
+          process: processData?.createProcess.process.id,
+          creationTime: new Date().toISOString(),
+          unitOne: unitAndCurrency?.units.unitOne.id!,
+          conformTo: formData.type,
+        };
+        devLog("info: contributor variables", contributeVariables);
+        await contributeToProject({ variables: contributeVariables });
       }
 
       const variables: CreateProjectMutationVariables = {
@@ -212,10 +227,6 @@ const CreateProject: NextPageWithLayout = () => {
               </Banner>
             )}
           </CreateProjectForm>
-          {/* {createdProjectId ? (
-        <Link href={createdProjectId}>
-          <a className="btn btn-accent">{t("go to the project")}</a>
-        </Link> */}
         </div>
       )}
     </>
