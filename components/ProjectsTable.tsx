@@ -12,6 +12,7 @@ import { AdjustmentsIcon } from "@heroicons/react/outline";
 import ProjectsFilters from "./ProjectsFilters";
 import ProjectsTableBase from "./ProjectsTableBase";
 import Spinner from "./brickroom/Spinner";
+import useLoadMore from "../hooks/useLoadMore";
 
 //
 
@@ -43,46 +44,23 @@ export default function ProjectsTable(props: ProjectsTableProps) {
     }
   );
 
-  const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
-    if (!fetchMoreResult) {
-      return previousResult;
-    }
+  const dataQueryIdentifier = "economicResources";
 
-    const previousEdges = previousResult.economicResources.edges;
-    const fetchMoreEdges = fetchMoreResult.economicResources.edges;
-
-    fetchMoreResult.economicResources.edges = [...previousEdges, ...fetchMoreEdges];
-
-    return { ...fetchMoreResult };
-  };
-
-  const getHasNextPage = data?.economicResources?.pageInfo.hasNextPage;
-  const loadMore = () => {
-    if (data && fetchMore) {
-      const nextPage = getHasNextPage;
-      const before = data.economicResources?.pageInfo.endCursor;
-      if (nextPage && before !== null) {
-        fetchMore({ updateQuery, variables: { before } });
-      }
-    }
-  };
-  const projects = data?.economicResources?.edges;
-  const showEmptyState = projects?.length === 0;
-
-  // Poll interval that works with pagination
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const total = data?.economicResources?.edges.length || 0;
-
-      refetch({
-        ...variables,
-        last: total,
-      });
-    }, 120000);
-    return () => clearInterval(intervalId);
-  }, [...Object.values(variables!).flat(), data?.economicResources?.pageInfo.startCursor]);
+  const { loadMore, items, showEmptyState, getHasNextPage } = useLoadMore({
+    fetchMore,
+    refetch,
+    variables,
+    data,
+    dataQueryIdentifier,
+  });
 
   const [showFilter, setShowFilter] = useState(false);
+
+  useEffect(() => {
+    const showFiltersAtRender = !!filter.conformsTo || !!filter.primaryAccountable || !!filter.classifiedAs;
+    setShowFilter(showFiltersAtRender);
+  }, [filter]);
+
   const toggleFilter = () => setShowFilter(!showFilter);
 
   return (
@@ -117,7 +95,13 @@ export default function ProjectsTable(props: ProjectsTableProps) {
           <div className="flex flex-row flex-nowrap items-start space-x-8">
             {data && (
               <div className="grow">
-                <ProjectsTableBase data={data} onLoadMore={loadMore} hidePagination={hidePagination} />
+                <ProjectsTableBase
+                  projects={items}
+                  onLoadMore={loadMore}
+                  hidePagination={hidePagination}
+                  showEmptyState={showEmptyState}
+                  hasNextPage={getHasNextPage}
+                />
               </div>
             )}
             {showFilter && (
