@@ -17,7 +17,7 @@ import AddStar from "components/AddStar";
 import ProjectDetailOverview from "components/ProjectDetailOverview";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
-import Dpp from "components/Dpp";
+import Relations from "components/Relations";
 import WatchButton from "components/WatchButton";
 import Link from "next/link";
 
@@ -163,7 +163,7 @@ const Project = () => {
               />
 
               {selected == 0 && <ProjectDetailOverview project={project} />}
-              {selected == 1 && <Dpp dpp={data?.economicResource.traceDpp} />}
+              {selected == 1 && <Relations dpp={data?.economicResource.traceDpp} />}
               {selected == 2 && (
                 <div>
                   <div className="w-full flex justify-end">
