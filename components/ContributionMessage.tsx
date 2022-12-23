@@ -33,6 +33,7 @@ const ContributionMessage = ({
     [MessageSubject.CONTRIBUTION_REQUEST]: t("wants to contribute to your"),
     [MessageSubject.CONTRIBUTION_ACCEPTED]: t("accepted ✅ your contribution to"),
     [MessageSubject.CONTRIBUTION_REJECTED]: t("rejected ❌ your contribution to"),
+    [MessageSubject.ADDED_AS_CONTRIBUTOR]: t("added you as a contributor to"),
   };
   const className = cn({
     "": subject === MessageSubject.CONTRIBUTION_REQUEST,
@@ -41,8 +42,6 @@ const ContributionMessage = ({
   });
 
   const isRequest = subject === MessageSubject.CONTRIBUTION_REQUEST;
-  const isAccept = subject === MessageSubject.CONTRIBUTION_ACCEPTED;
-  const isReject = subject === MessageSubject.CONTRIBUTION_REJECTED;
 
   return (
     <div className="space-y-3">
@@ -67,14 +66,25 @@ const ContributionMessage = ({
 
       {isRequest && <p>{`let ${userName} knows about your decision`}</p>}
 
-      <Button
-        fullWidth
-        onClick={() => {
-          router.replace(`/proposal/${proposalId}`);
-        }}
-      >
-        {t("Review")}
-      </Button>
+      {isRequest ? (
+        <Button
+          fullWidth
+          onClick={() => {
+            router.replace(`/proposal/${proposalId}`);
+          }}
+        >
+          {t("Review")}
+        </Button>
+      ) : (
+        <Button
+          fullWidth
+          onClick={() => {
+            router.replace(`/project/${resourceId}`);
+          }}
+        >
+          {t("Take me there")}
+        </Button>
+      )}
     </div>
   );
 };

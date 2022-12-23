@@ -23,6 +23,7 @@ export interface ProjectsTableProps {
   hidePrimaryAccountable?: boolean;
   id?: string[];
   searchFilter?: React.ReactNode;
+  hideFilters?: boolean;
 }
 
 //
@@ -35,6 +36,7 @@ export default function ProjectsTable(props: ProjectsTableProps) {
     hidePagination = false,
     hidePrimaryAccountable = false,
     searchFilter,
+    hideFilters = false,
   } = props;
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(
@@ -80,16 +82,18 @@ export default function ProjectsTable(props: ProjectsTableProps) {
             {!hideHeader && <h3>{t("Projects")}</h3>}
 
             {/* Right side */}
-            <button
-              onClick={toggleFilter}
-              className={cn(
-                "gap-2 text-white-700 font-normal normal-case rounded-[4px] border-1 btn btn-sm btn-outline border-white-600 bg-white-100 hover:text-accent hover:bg-white-100",
-                { "bg-accent text-white-100": showFilter },
-                { "float-right": hideHeader }
-              )}
-            >
-              <AdjustmentsIcon className="w-5 h-5" /> {t("Filter by")}
-            </button>
+            {!hideFilters && (
+              <button
+                onClick={toggleFilter}
+                className={cn(
+                  "gap-2 text-white-700 font-normal normal-case rounded-[4px] border-1 btn btn-sm btn-outline border-white-600 bg-white-100 hover:text-accent hover:bg-white-100",
+                  { "bg-accent text-white-100": showFilter },
+                  { "float-right": hideHeader }
+                )}
+              >
+                <AdjustmentsIcon className="w-5 h-5" /> {t("Filter by")}
+              </button>
+            )}
           </div>
           {/* Table and filters */}
           <div className="flex flex-row flex-nowrap items-start space-x-8">
@@ -104,7 +108,7 @@ export default function ProjectsTable(props: ProjectsTableProps) {
                 />
               </div>
             )}
-            {showFilter && (
+            {showFilter && !hideFilters && (
               <div className="basis-96 sticky top-8">
                 <ProjectsFilters hidePrimaryAccountable={hidePrimaryAccountable}>{searchFilter}</ProjectsFilters>
               </div>

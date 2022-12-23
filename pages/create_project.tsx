@@ -37,7 +37,7 @@ import devLog from "lib/devLog";
 import { errorFormatter } from "lib/errorFormatter";
 import { useRouter } from "next/router";
 import useInBox from "../hooks/useInBox";
-import { ProposalNotification } from "./notification";
+import { AddedAsContributorNotification, MessageSubject, ProposalNotification } from "./notification";
 import { string } from "yup";
 
 //
@@ -134,18 +134,6 @@ const CreateProject: NextPageWithLayout = () => {
         await sendMessage(message, [data.economicResource.primaryAccountable.id], "Project cited");
       }
 
-      for (const contributor of contributors) {
-        const contributeVariables = {
-          agent: contributor.id,
-          process: processData?.createProcess.process.id,
-          creationTime: new Date().toISOString(),
-          unitOne: unitAndCurrency?.units.unitOne.id!,
-          conformTo: formData.type,
-        };
-        devLog("info: contributor variables", contributeVariables);
-        await contributeToProject({ variables: contributeVariables });
-      }
-
       const variables: CreateProjectMutationVariables = {
         resourceSpec: formData.type,
         process: processData.createProcess.process.id,
@@ -167,8 +155,41 @@ const CreateProject: NextPageWithLayout = () => {
       const { data: createProjectData, errors } = await createProject({ variables });
       if (errors) throw new Error("ProjectNotCreated");
 
+      // Add contributors
+      for (const contributor of contributors) {
+        const contributeVariables = {
+          agent: contributor.id,
+          process: processData?.createProcess.process.id,
+          creationTime: new Date().toISOString(),
+          unitOne: unitAndCurrency?.units.unitOne.id!,
+          conformTo: formData.type,
+        };
+        devLog("info: contributor variables", contributeVariables);
+
+        const { errors } = await contributeToProject({ variables: contributeVariables });
+        if (errors) {
+          devLog(`${contributor.id} not added as contributor: ${errors}`);
+          continue;
+        }
+
+        const message: AddedAsContributorNotification = {
+          projectOwnerId: user!.ulid,
+          text: "you have been added as a contributor to a project",
+          resourceName: formData.name,
+          resourceID: createProjectData!.createEconomicEvent.economicEvent.resourceInventoriedAs!.id,
+          projectOwnerName: user!.name,
+        };
+
+        const subject = MessageSubject.ADDED_AS_CONTRIBUTOR;
+        await sendMessage(message, [contributor.id], subject);
+      }
+
       // Upload images
-      await uploadFiles(formData.images);
+      try {
+        await uploadFiles(formData.images);
+      } catch (e) {
+        devLog("error: images not uploaded", e);
+      }
       devLog("success: images uploaded");
 
       // Redirecting user
