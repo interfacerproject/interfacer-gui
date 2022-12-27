@@ -97,7 +97,7 @@ const Home: NextPageWithLayout = () => {
       </div>
 
       <div className="p-4 container mx-auto overflow-x-scroll">
-        {<ProjectsTable hideHeader={true} hidePagination={true} />}
+        {<ProjectsTable hideHeader={true} hidePagination={true} hideFilters />}
       </div>
 
       <div className="grid gap-16 md:pl-32 md:grid-cols-3 mt-44">
