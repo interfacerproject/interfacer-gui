@@ -4035,3 +4035,31 @@ export type AskResourcePrimaryAccountableQuery = {
       | { __typename?: "Person"; id: string; name: string };
   } | null;
 };
+
+export type ResourceProposalsQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type ResourceProposalsQuery = {
+  __typename?: "RootQueryType";
+  proposals: {
+    __typename?: "ProposalConnection";
+    edges: Array<{
+      __typename?: "ProposalEdge";
+      node: {
+        __typename?: "Proposal";
+        id: string;
+        status: ProposedStatus;
+        note?: string | null;
+        created: any;
+        primaryIntents?: Array<{
+          __typename?: "Intent";
+          provider?:
+            | { __typename?: "Organization"; id: string; name: string }
+            | { __typename?: "Person"; id: string; name: string }
+            | null;
+        }> | null;
+      };
+    }>;
+  };
+};
