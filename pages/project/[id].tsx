@@ -9,15 +9,16 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
+import Tree from "react-d3-tree";
 
 // Components
 import { Button, Card, Frame, Icon, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
-import ProjectDetailOverview from "components/ProjectDetailOverview";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import Dpp from "components/Dpp";
+import ProjectDetailOverview from "components/ProjectDetailOverview";
 import WatchButton from "components/WatchButton";
 import Link from "next/link";
 
@@ -98,6 +99,19 @@ const Project = () => {
   if (loading) return <Spinner />;
   if (!project) return null;
 
+  // map trace dpp to treeData
+  const dppToTreeData = (dpp: any) => {
+    return dpp.children.map((child: any) => {
+      return {
+        name: child.type,
+        children: dppToTreeData(child),
+        attributes: { name: child.node.name || child.node.action_id },
+      };
+    });
+  };
+
+  const treeData = dppToTreeData(data?.economicResource.traceDpp);
+
   return (
     <>
       <div className="flex flex-row p-4">
@@ -166,6 +180,9 @@ const Project = () => {
               {selected == 1 && <Dpp dpp={data?.economicResource.traceDpp} />}
               {selected == 2 && (
                 <div>
+                  <div>
+                    <Tree data={treeData} orientation="vertical" />
+                  </div>
                   <div className="w-full flex justify-end">
                     <Button onClick={copyDPP} icon={<Icon source={DuplicateMinor} />}>
                       {t("Copy DPP")}
