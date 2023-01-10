@@ -667,7 +667,6 @@ export const PROPOSE_CONTRIBUTION = gql`
         id
       }
     }
-
     modifyResourceOrigin: createIntent(
       intent: {
         action: "modify"
@@ -919,6 +918,27 @@ export const ASK_RESOURCE_PRIMARY_ACCOUNTABLE = gql`
       primaryAccountable {
         id
         name
+      }
+    }
+  }
+`;
+
+export const QUERY_RESOURCE_PROPOSAlS = gql`
+  query resourceProposals($id: ID!) {
+    proposals(filter: { primaryIntentsResourceInventoriedAsId: [$id] }) {
+      edges {
+        node {
+          id
+          status
+          note
+          created
+          primaryIntents {
+            provider {
+              id
+              name
+            }
+          }
+        }
       }
     }
   }

@@ -62,7 +62,7 @@ const CreateContribution: NextPageWithLayout = () => {
     else {
       const processName = `fork of ${resource.name} by ${user!.name}`;
       const processVariables = { name: processName };
-      devLog("processlVariables", processVariables);
+      devLog("processVariables", processVariables);
       const { data: processData, errors } = await createProcess({
         variables: processVariables,
       });
