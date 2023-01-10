@@ -21,6 +21,7 @@ export enum MessageSubject {
   CONTRIBUTION_REQUEST = "contributionRequest",
   CONTRIBUTION_ACCEPTED = "contributionAccepted",
   CONTRIBUTION_REJECTED = "contributionRejected",
+  ADDED_AS_CONTRIBUTOR = "addedAsContributor",
 }
 
 export interface ProposalNotification {
@@ -33,10 +34,20 @@ export interface ProposalNotification {
   ownerName?: string;
 }
 
+export interface AddedAsContributorNotification {
+  projectOwnerId: string;
+  text: string;
+  resourceName: string;
+  resourceID: string;
+  ownerName?: string;
+  projectOwnerName?: string;
+}
+
 export enum MessageGroup {
   CONTRIBUTION_REQUESTS = "contributionRequests",
   CONTRIBUTION_RESPONSES = "contributionResponses",
   CITATIONS = "citations",
+  ADDED_AS_CONTRIBUTOR = "addedAsContributor",
 }
 
 const Notification = () => {
@@ -69,6 +80,20 @@ const Notification = () => {
             userId={props.sender}
             proposalId={_parsedMessage.proposalID}
             message={_parsedMessage.text}
+            subject={props.message.subject}
+          />
+        );
+      case MessageSubject.ADDED_AS_CONTRIBUTOR:
+        const _parsedMessage2: AddedAsContributorNotification = props.message.message;
+        return (
+          <ContributionMessage
+            data={props.data}
+            resourceName={_parsedMessage2.resourceName}
+            resourceId={_parsedMessage2.resourceID}
+            userName={_parsedMessage2.projectOwnerName!}
+            userId={props.sender}
+            proposalId={_parsedMessage2.projectOwnerId}
+            message={_parsedMessage2.text}
             subject={props.message.subject}
           />
         );
@@ -112,6 +137,7 @@ const Notification = () => {
     [MessageGroup.CONTRIBUTION_REQUESTS]: [],
     [MessageGroup.CONTRIBUTION_RESPONSES]: [],
     [MessageGroup.CITATIONS]: [],
+    [MessageGroup.ADDED_AS_CONTRIBUTOR]: [],
   };
 
   function clearGroupedMessages() {
@@ -125,15 +151,15 @@ const Notification = () => {
     for (let m of messages) {
       if (m.content.subject === MessageSubject.CONTRIBUTION_REQUEST) {
         groupedMessages.contributionRequests.push(m);
-      }
-      if (
+      } else if (
         m.content.subject === MessageSubject.CONTRIBUTION_ACCEPTED ||
         m.content.subject === MessageSubject.CONTRIBUTION_REJECTED
       ) {
         groupedMessages.contributionResponses.push(m);
-      }
-      if (m.content.subject === "Project cited") {
+      } else if (m.content.subject === "Project cited") {
         groupedMessages.citations.push(m);
+      } else if (m.content.subject === MessageSubject.ADDED_AS_CONTRIBUTOR) {
+        groupedMessages.addedAsContributor.push(m);
       }
     }
     //
@@ -151,6 +177,7 @@ const Notification = () => {
     [MessageGroup.CONTRIBUTION_REQUESTS]: t("Contribution Requests"),
     [MessageGroup.CONTRIBUTION_RESPONSES]: t("Contribution Responses"),
     [MessageGroup.CITATIONS]: t("Citations"),
+    [MessageGroup.ADDED_AS_CONTRIBUTOR]: t("Added as contributor"),
   };
 
   /* Empty state */

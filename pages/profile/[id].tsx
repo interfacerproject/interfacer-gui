@@ -94,7 +94,7 @@ const Profile: NextPage = () => {
                   component: (
                     <div>
                       <h3 className="my-8">{isUser ? t("My Projects") : t("Projects")}</h3>
-                      <ProjectsTable filter={proposalFilter} hideHeader={true} />
+                      <ProjectsTable filter={proposalFilter} hideHeader={true} hideFilters={true} />
                     </div>
                   ),
                 },
@@ -108,7 +108,7 @@ const Profile: NextPage = () => {
                   component: (
                     <div>
                       <h3 className="my-8">{isUser ? t("My List") : t("List")}</h3>
-                      <ProjectsTable filter={collectedProjects} hideHeader={true} />
+                      <ProjectsTable filter={collectedProjects} hideHeader={true} hideFilters={true} />
                     </div>
                   ),
                   disabled: hasCollectedProjects,

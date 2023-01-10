@@ -17,7 +17,7 @@ const NRULayout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProp
           </Link>
         </div>
       </Topbar>
-      <div className="container bg-[#F3F3F1] min-h-screen max-w-full">
+      <div className="container bg-[#F3F3F1] max-w-full">
         <div className="grid grid-cols-1 md:grid-cols-2">
           <img
             src="https://www.interfacerproject.eu/projects/index/ABOUT.png"

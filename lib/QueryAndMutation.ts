@@ -667,7 +667,6 @@ export const PROPOSE_CONTRIBUTION = gql`
         id
       }
     }
-
     modifyResourceOrigin: createIntent(
       intent: {
         action: "modify"
@@ -777,6 +776,32 @@ export const CITE_PROJECT = gql`
         hasPointInTime: $creationTime
         resourceInventoriedAs: $resource
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+  }
+`;
+
+export const CONTRIBUTE_TO_PROJECT = gql`
+  mutation contributeToProject(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $process: ID! # Process.id
+    $unitOne: ID! # Unit.id
+    $conformTo: ID!
+  ) {
+    createEconomicEvent(
+      event: {
+        action: "work"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceConformsTo: $conformTo
+        hasPointInTime: $creationTime
+        effortQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
       }
     ) {
       economicEvent {
@@ -919,6 +944,27 @@ export const ASK_RESOURCE_PRIMARY_ACCOUNTABLE = gql`
       primaryAccountable {
         id
         name
+      }
+    }
+  }
+`;
+
+export const QUERY_RESOURCE_PROPOSAlS = gql`
+  query resourceProposals($id: ID!) {
+    proposals(filter: { primaryIntentsResourceInventoriedAsId: [$id] }) {
+      edges {
+        node {
+          id
+          status
+          note
+          created
+          primaryIntents {
+            provider {
+              id
+              name
+            }
+          }
+        }
       }
     }
   }

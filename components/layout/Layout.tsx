@@ -29,7 +29,7 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content">
             <Topbar />
-            <div className="bg-[#F3F3F1] min-h-screen max-w-full">{layoutProps?.children}</div>
+            <div className="bg-[#F3F3F1] max-w-full">{layoutProps?.children}</div>
           </div>
           <div className="drawer-side">
             <label htmlFor="my-drawer" className="drawer-overlay" />
@@ -37,7 +37,7 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
           </div>
         </div>
       ) : (
-        <div className="bg-[#F3F3F1] min-h-screen">{layoutProps?.children}</div>
+        <div className="bg-[#F3F3F1] ">{layoutProps?.children}</div>
       )}
     </>
   );

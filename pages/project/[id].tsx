@@ -28,6 +28,7 @@ const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 // Icons
 import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
+import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "../../components/ContributorsTable";
 
 //
@@ -190,6 +191,12 @@ const Project = () => {
                     accessibilityLabel: t("Contributors"),
                     panelID: "dpp-content",
                   },
+                  {
+                    id: "Contributions",
+                    content: t("Contributions"),
+                    accessibilityLabel: t("Contributions"),
+                    panelID: "contributions-content",
+                  },
                 ]}
                 selected={selected}
                 onSelect={handleTabChange}
@@ -248,6 +255,7 @@ const Project = () => {
                   data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
                 />
               )}
+              {selected == 4 && <ContributionsTable id={String(id)} />}
             </Stack>
           </Stack>
         </div>

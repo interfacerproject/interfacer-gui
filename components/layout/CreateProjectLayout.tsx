@@ -31,7 +31,7 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
             </Topbar>
 
             {/* Page contents */}
-            <div className="container bg-[#F3F3F1] min-h-screen max-w-full">{layoutProps?.children}</div>
+            <div className="container bg-[#F3F3F1] max-w-full">{layoutProps?.children}</div>
           </div>
         </div>
       </>

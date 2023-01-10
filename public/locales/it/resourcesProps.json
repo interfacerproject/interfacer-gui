@@ -11,5 +11,7 @@
   "This table will display the resources that you will have in inventory; Raise, transfer or Produce a resource and it will displayed here": "Questa tabella mostra le risorse presenti nell'inventario; se si solleva, si trasferisce o si produce una risorsa, questa viene visualizzata qui.",
   "There’s nothing to display here": "Non c'è nulla da mostrare qui",
   "This table will display the resources that you will have in inventory": "In questa tabella vengono visualizzate le risorse presenti nell'inventario.",
-  "Version": "Versione"
+  "Version": "Versione",
+  "Resources": "Risorse",
+  "Use this page to generate digital product passports of resources": "Utilizzate questa pagina per generare passaporti digitali delle risorse."
 }
