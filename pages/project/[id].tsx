@@ -14,10 +14,10 @@ import { useCallback, useEffect, useState } from "react";
 import { Button, Card, Frame, Icon, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
-import ProjectDetailOverview from "components/ProjectDetailOverview";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
-import Dpp from "components/Dpp";
+import ProjectDetailOverview from "components/ProjectDetailOverview";
+import RelationshipTree from "components/RelationshipTree";
 import WatchButton from "components/WatchButton";
 import Link from "next/link";
 
@@ -27,6 +27,7 @@ const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 // Icons
 import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
+import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "../../components/ContributorsTable";
 
 //
@@ -152,10 +153,16 @@ const Project = () => {
                     panelID: "dpp-content",
                   },
                   {
-                    id: "Contributors",
+                    id: "contributors",
                     content: t("Contributors"),
                     accessibilityLabel: t("Contributors"),
                     panelID: "dpp-content",
+                  },
+                  {
+                    id: "Contributions",
+                    content: t("Contributions"),
+                    accessibilityLabel: t("Contributions"),
+                    panelID: "contributions-content",
                   },
                 ]}
                 selected={selected}
@@ -163,7 +170,7 @@ const Project = () => {
               />
 
               {selected == 0 && <ProjectDetailOverview project={project} />}
-              {selected == 1 && <Dpp dpp={data?.economicResource.traceDpp} />}
+              {selected == 1 && <RelationshipTree dpp={data?.economicResource.traceDpp} />}
               {selected == 2 && (
                 <div>
                   <div className="w-full flex justify-end">
@@ -189,6 +196,7 @@ const Project = () => {
                   data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
                 />
               )}
+              {selected == 4 && <ContributionsTable id={String(id)} />}
             </Stack>
           </Stack>
         </div>
@@ -251,6 +259,7 @@ const Project = () => {
                   {t("Contributions")}
                 </Text>
                 <Button
+                  id="goToContribution"
                   icon={<Icon source={MergeMinor} />}
                   size="large"
                   fullWidth
