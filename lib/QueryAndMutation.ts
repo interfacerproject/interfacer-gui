@@ -785,6 +785,32 @@ export const CITE_PROJECT = gql`
   }
 `;
 
+export const CONTRIBUTE_TO_PROJECT = gql`
+  mutation contributeToProject(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $process: ID! # Process.id
+    $unitOne: ID! # Unit.id
+    $conformTo: ID!
+  ) {
+    createEconomicEvent(
+      event: {
+        action: "work"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceConformsTo: $conformTo
+        hasPointInTime: $creationTime
+        effortQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+  }
+`;
+
 export const ACCEPT_PROPOSAL = gql`
   mutation acceptProposal(
     $process: ID!

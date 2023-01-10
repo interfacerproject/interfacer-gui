@@ -11,5 +11,7 @@
   "This table will display the resources that you will have in inventory; Raise, transfer or Produce a resource and it will displayed here": "This table will display the resources that you will have in inventory; Raise, transfer or Produce a resource and it will displayed here",
   "There’s nothing to display here": "There’s nothing to display here",
   "This table will display the resources that you will have in inventory": "This table will display the resources that you will have in inventory",
-  "Version": "Version"
+  "Version": "Version",
+  "Resources": "Resources",
+  "Use this page to generate digital product passports of resources": "Use this page to generate digital product passports of resources"
 }

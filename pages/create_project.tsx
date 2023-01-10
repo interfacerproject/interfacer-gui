@@ -22,6 +22,7 @@ import {
   CREATE_LOCATION,
   CREATE_PROCESS,
   QUERY_UNIT_AND_CURRENCY,
+  CONTRIBUTE_TO_PROJECT,
 } from "lib/QueryAndMutation";
 import {
   CreateProjectMutation,
@@ -36,7 +37,8 @@ import devLog from "lib/devLog";
 import { errorFormatter } from "lib/errorFormatter";
 import { useRouter } from "next/router";
 import useInBox from "../hooks/useInBox";
-import { ProposalNotification } from "./notification";
+import { AddedAsContributorNotification, MessageSubject, ProposalNotification } from "./notification";
+import { string } from "yup";
 
 //
 
@@ -68,6 +70,7 @@ const CreateProject: NextPageWithLayout = () => {
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [citeProject] = useMutation(CITE_PROJECT);
+  const [contributeToProject] = useMutation(CONTRIBUTE_TO_PROJECT);
   const [createProject] = useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CREATE_PROJECT);
   const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
   const [createProcess] = useMutation(CREATE_PROCESS);
@@ -152,8 +155,41 @@ const CreateProject: NextPageWithLayout = () => {
       const { data: createProjectData, errors } = await createProject({ variables });
       if (errors) throw new Error("ProjectNotCreated");
 
+      // Add contributors
+      for (const contributor of contributors) {
+        const contributeVariables = {
+          agent: contributor.id,
+          process: processData?.createProcess.process.id,
+          creationTime: new Date().toISOString(),
+          unitOne: unitAndCurrency?.units.unitOne.id!,
+          conformTo: formData.type,
+        };
+        devLog("info: contributor variables", contributeVariables);
+
+        const { errors } = await contributeToProject({ variables: contributeVariables });
+        if (errors) {
+          devLog(`${contributor.id} not added as contributor: ${errors}`);
+          continue;
+        }
+
+        const message: AddedAsContributorNotification = {
+          projectOwnerId: user!.ulid,
+          text: "you have been added as a contributor to a project",
+          resourceName: formData.name,
+          resourceID: createProjectData!.createEconomicEvent.economicEvent.resourceInventoriedAs!.id,
+          projectOwnerName: user!.name,
+        };
+
+        const subject = MessageSubject.ADDED_AS_CONTRIBUTOR;
+        await sendMessage(message, [contributor.id], subject);
+      }
+
       // Upload images
-      await uploadFiles(formData.images);
+      try {
+        await uploadFiles(formData.images);
+      } catch (e) {
+        devLog("error: images not uploaded", e);
+      }
       devLog("success: images uploaded");
 
       // Redirecting user
@@ -212,10 +248,6 @@ const CreateProject: NextPageWithLayout = () => {
               </Banner>
             )}
           </CreateProjectForm>
-          {/* {createdProjectId ? (
-        <Link href={createdProjectId}>
-          <a className="btn btn-accent">{t("go to the project")}</a>
-        </Link> */}
         </div>
       )}
     </>
