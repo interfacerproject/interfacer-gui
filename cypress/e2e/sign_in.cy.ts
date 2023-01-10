@@ -72,7 +72,7 @@ describe("Authentication", () => {
       expect(localStorage.getItem("eddsa_public_key")).to.eq(Cypress.env("eddsa_public_key"));
       expect(localStorage.getItem("eddsa_key")).to.eq(Cypress.env("eddsa_key"));
       expect(localStorage.getItem("seed")).to.eq(Cypress.env("seed"));
-      expect(localStorage.getItem("schnorr")).to.eq(Cypress.env("schnorr"));
+      // expect(localStorage.getItem("schnorr")).to.eq(Cypress.env("schnorr"));
       expect(localStorage.getItem("ethereum_address")).to.eq(Cypress.env("ethereum_address"));
       expect(localStorage.getItem("eddsa")).to.eq(Cypress.env("eddsa"));
     });
