@@ -67,8 +67,8 @@ describe("Project Detail functionality", () => {
       .and("contain", Cypress.env("included_project_2"));
   });
   it("Should have the contributors tab and when it is selected, should contributors", () => {
-    cy.get("#contributors").should("exist");
-    cy.get("#contributors").click();
+    cy.get("#Contributors").should("exist");
+    cy.get("#Contributors").click();
     cy.get(".table").should("contain", Cypress.env("authName"));
   });
 });
