@@ -1,6 +1,8 @@
 import { useMutation, useQuery } from "@apollo/client";
+import { Banner, Button, TextField } from "@bbtgnn/polaris-interfacer";
+import { yupResolver } from "@hookform/resolvers/yup";
 import Spinner from "components/brickroom/Spinner";
-import Layout from "components/layout/CreateProjectLayout";
+import Layout from "components/layout/Layout";
 import LoshPresentation from "components/LoshPresentation";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
@@ -25,20 +27,18 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
-import { NextPageWithLayout } from "../../_app";
-import useInBox from "../../../hooks/useInBox";
 import { Controller, useForm } from "react-hook-form";
-import SelectTags from "../../../components/SelectTags";
-import { isRequired } from "../../../lib/isFieldRequired";
-import SelectContributors, { ContributorOption } from "../../../components/SelectContributors";
-import { Banner, Button, TextField } from "@bbtgnn/polaris-interfacer";
-import SelectLocation from "../../../components/SelectLocation";
+import * as yup from "yup";
 import { ChildrenProp as CP } from "../../../components/brickroom/types";
 import { SelectOption } from "../../../components/brickroom/utils/BrSelectUtils";
-import { LocationLookup } from "../../../lib/fetchLocation";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+import SelectContributors, { ContributorOption } from "../../../components/SelectContributors";
+import SelectLocation from "../../../components/SelectLocation";
+import SelectTags from "../../../components/SelectTags";
+import useInBox from "../../../hooks/useInBox";
 import { errorFormatter } from "../../../lib/errorFormatter";
+import { LocationLookup } from "../../../lib/fetchLocation";
+import { isRequired } from "../../../lib/isFieldRequired";
+import { NextPageWithLayout } from "../../_app";
 
 export namespace ClaimProjectNS {
   export interface Props extends CP {
