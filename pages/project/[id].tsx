@@ -8,10 +8,11 @@ import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Tree from "react-d3-tree";
 
 // Components
-import { Button, Card, Frame, Icon, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
@@ -41,6 +42,12 @@ const Project = () => {
   const [project, setProject] = useState<EconomicResource | undefined>();
   const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
+  const [selected, setSelected] = useState(0);
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
+
+  const ref = useRef(null);
+
   const { loading, data, startPolling, refetch } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id: id },
   });
@@ -59,7 +66,19 @@ const Project = () => {
         ? _project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
         : metadataImage;
     setImages(_images);
-  }, [data]);
+    if (ref.current) {
+      //@ts-ignore
+      setWidth(ref.current.offsetWidth);
+      //@ts-ignore
+      setHeight(ref.current.offsetHeight);
+    }
+  }, [data, ref, selected]);
+
+  useEffect(() => {
+    const _list = getItem("projectsCollected");
+    const _listParsed = _list ? JSON.parse(_list) : [];
+    setInList(_listParsed.includes(project?.id));
+  }, [project, getItem]);
 
   const handleCollect = () => {
     const _list = getItem("projectsCollected");
@@ -74,14 +93,7 @@ const Project = () => {
     }
   };
 
-  useEffect(() => {
-    const _list = getItem("projectsCollected");
-    const _listParsed = _list ? JSON.parse(_list) : [];
-    setInList(_listParsed.includes(project?.id));
-  }, [project, getItem]);
-
   // Tabs setup
-  const [selected, setSelected] = useState(0);
   const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
 
   //
@@ -93,6 +105,21 @@ const Project = () => {
     navigator.clipboard.writeText(JSON.stringify(data?.economicResource.traceDpp, null, 2));
     setActive(true);
   }
+
+  // map trace dpp to treeData
+  const dppToTreeData = (dpp: any) => {
+    return dpp?.children.map((child: any) => {
+      return {
+        name: child.type,
+        children: dppToTreeData(child),
+        attributes: { name: child.node.name || child.node.action_id },
+      };
+    });
+  };
+
+  // DPP Tree
+  const translate = { x: width / 2, y: 20 };
+  const treeData = dppToTreeData(data?.economicResource.traceDpp);
 
   //
 
@@ -153,7 +180,13 @@ const Project = () => {
                     panelID: "dpp-content",
                   },
                   {
-                    id: "contributors",
+                    id: "Tree Dpp",
+                    content: t("Tree Dpp"),
+                    accessibilityLabel: t("Digital Product Passport tree"),
+                    panelID: "tree-dpp-content",
+                  },
+                  {
+                    id: "Contributors",
                     content: t("Contributors"),
                     accessibilityLabel: t("Contributors"),
                     panelID: "dpp-content",
@@ -187,8 +220,34 @@ const Project = () => {
                   />
                 </div>
               )}
-
               {selected == 3 && (
+                <Modal
+                  large
+                  open={selected == 3}
+                  onClose={() => setSelected(1)}
+                  title={t("Digital Product Passport Tree")}
+                >
+                  <Modal.Section>
+                    <div className="float-right">
+                      <Link href={`https://www.valueflo.ws/`}>
+                        <a>{t("To learn terms see ValueFlows ontology")}</a>
+                      </Link>
+                    </div>
+                    <div className="h-[100vh]" ref={ref}>
+                      <Tree
+                        data={treeData}
+                        zoom={1}
+                        translate={translate}
+                        orientation="vertical"
+                        nodeSize={{ x: 300, y: 100 }}
+                        dimensions={{ width, height: height / 2 }}
+                      />
+                    </div>
+                  </Modal.Section>
+                </Modal>
+              )}
+
+              {selected == 4 && (
                 <ContributorsTable
                   contributors={project.metadata?.contributors}
                   title={t("Contributors")}
