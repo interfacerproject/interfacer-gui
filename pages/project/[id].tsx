@@ -255,7 +255,7 @@ const Project = () => {
                   data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
                 />
               )}
-              {selected == 4 && <ContributionsTable id={String(id)} />}
+              {selected == 5 && <ContributionsTable id={String(id)} />}
             </Stack>
           </Stack>
         </div>
