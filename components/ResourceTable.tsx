@@ -1,12 +1,13 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import { useEffect } from "react";
 import devLog from "../lib/devLog";
 import BrLoadMore from "./brickroom/BrLoadMore";
 import BrTable from "./brickroom/BrTable";
 import Spinner from "./brickroom/Spinner";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
+import useLoadMore from "../hooks/useLoadMore";
+import { EconomicResource } from "../lib/types";
 
 const truncate = (input: string, max: number) => (input?.length > max ? `${input.substring(0, max)}...` : input);
 
@@ -20,52 +21,26 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
   });
   devLog(error);
 
-  const updateQuery = (previousResult: any, { fetchMoreResult }: any) => {
-    if (!fetchMoreResult) {
-      return previousResult;
-    }
-    const previousEdges = previousResult.economicResources.edges;
-    const fetchMoreEdges = fetchMoreResult.economicResources.edges;
-    fetchMoreResult.economicResources.edges = [...previousEdges, ...fetchMoreEdges];
-    return { ...fetchMoreResult };
-  };
+  const dataQueryIdentifier = "economicResources";
 
-  const getHasNextPage = data?.economicResources.pageInfo.hasNextPage;
+  const { loadMore, items, showEmptyState, getHasNextPage } = useLoadMore({
+    fetchMore,
+    refetch,
+    variables,
+    data,
+    dataQueryIdentifier,
+  });
 
-  const loadMore = () => {
-    if (data && fetchMore) {
-      const nextPage = getHasNextPage;
-      const before = data.economicResources.pageInfo.endCursor;
-
-      if (nextPage && before !== null) {
-        // @ts-ignore
-        fetchMore({ updateQuery, variables: { before } });
-      }
-    }
-  };
-
-  //this is to refetch the data
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const total = data?.economicResources.edges.length || 0;
-
-      refetch({
-        ...variables,
-        last: total,
-      });
-    }, 5000);
-
-    return () => clearInterval(intervalId);
-  }, [...Object.values(variables!).flat(), data?.economicResources.pageInfo.startCursor]);
+  const economicResources: EconomicResource[] = items;
 
   return (
     <>
       {data ? (
         <>
           <BrTable headArray={[t("Resource"), t("Source"), t("License"), t("Version")]}>
-            {data?.economicResources.edges.length !== 0 && (
+            {!showEmptyState && (
               <>
-                {data?.economicResources.edges.map((e: any) => (
+                {economicResources.map((e: any) => (
                   <div className="table-row" key={e.node.id} data-test="resource-item">
                     {/* Cell 1 */}
                     <div className="table-cell">
@@ -117,7 +92,7 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
                 ))}
               </>
             )}
-            {data?.economicResources.edges.length === 0 && (
+            {showEmptyState && (
               <>
                 <div className="table-row">
                   <div className="table-cell col-span-full">

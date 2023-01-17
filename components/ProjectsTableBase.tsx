@@ -1,4 +1,4 @@
-import { FetchInventoryQuery } from "lib/types";
+import { EconomicResource, FetchInventoryQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 
 // Components
@@ -9,22 +9,18 @@ import BrTable from "./brickroom/BrTable";
 //
 
 export interface ProjectsTableBaseProps {
-  data: FetchInventoryQuery;
+  projects: EconomicResource[];
   hidePagination?: boolean;
   onLoadMore?: () => void;
+  showEmptyState?: boolean;
+  hasNextPage?: boolean;
 }
 
 //
 
 export default function ProjectsTableBase(props: ProjectsTableBaseProps) {
-  const { data, hidePagination = false, onLoadMore = () => {} } = props;
+  const { projects, hidePagination = false, onLoadMore = () => {}, showEmptyState = !projects, hasNextPage } = props;
   const { t } = useTranslation("lastUpdatedProps");
-
-  const projects = data.economicResources?.edges;
-  const hasNextPage = data.economicResources?.pageInfo.hasNextPage;
-  const showEmptyState = !Boolean(projects) || projects?.length == 0;
-
-  //
 
   return (
     <div>

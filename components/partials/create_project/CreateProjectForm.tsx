@@ -285,19 +285,52 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
         control={control}
         name="contributors"
         render={({ field: { onChange, onBlur, name, ref } }) => (
-          <SelectContributors
-            name={name}
-            ref={ref}
-            id={name}
-            onBlur={onBlur}
-            onChange={onChange}
-            label={`${t("Contributors")}:`}
-            isMulti
-            placeholder={t("Type to search for a user")}
-            error={errors.contributors?.message}
-            creatable={false}
-            requiredIndicator={isRequired(schema, name)}
-          />
+          <div>
+            <SelectContributors
+              name={name}
+              ref={ref}
+              className="mb-0"
+              id={name}
+              onBlur={onBlur}
+              onChange={onChange}
+              label={`${t("Contributors")}:`}
+              isMulti
+              placeholder={t("Type to search for a user")}
+              error={errors.contributors?.message}
+              creatable={false}
+              requiredIndicator={isRequired(schema, name)}
+            />
+            {/*{form.watch("contributors").map(contributor => (*/}
+            {/*  <div className="bg-white border-y-4 p-1" key={contributor.value.id}>*/}
+            {/*    <h4>{contributor.label}</h4>*/}
+            {/*    <div className="flex">*/}
+            {/*      <div className="flex gap-2">*/}
+            {/*        <TextField*/}
+            {/*          type="number"*/}
+            {/*          autoComplete="off"*/}
+            {/*          value="0"*/}
+            {/*          label={t("effort")}*/}
+            {/*          helpText={t("The effort in hours")}*/}
+            {/*        />*/}
+            {/*        <TextField*/}
+            {/*          type="number"*/}
+            {/*          value="0"*/}
+            {/*          autoComplete="off"*/}
+            {/*          label={t("strenght points")}*/}
+            {/*          helpText={t("Strenght points assigned")}*/}
+            {/*        />*/}
+            {/*        <TextField*/}
+            {/*          type="text"*/}
+            {/*          autoComplete="off"*/}
+            {/*          label={t("Type of contribution")}*/}
+            {/*          placeholder={t("Write documetation, design, etc")}*/}
+            {/*          helpText={t("Use imperative verbs")}*/}
+            {/*        />*/}
+            {/*      </div>*/}
+            {/*    </div>*/}
+            {/*  </div>*/}
+            {/*))}*/}
+          </div>
         )}
       />
 
