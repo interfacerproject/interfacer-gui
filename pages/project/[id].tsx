@@ -107,15 +107,12 @@ const Project = () => {
   }
 
   // map trace dpp to treeData
-  const dppToTreeData = (dpp: any) => {
-    return dpp?.children.map((child: any) => {
-      return {
-        name: child.type,
-        children: dppToTreeData(child),
-        attributes: { name: child.node.name || child.node.action_id },
-      };
-    });
-  };
+  const dppToTreeData = (dpp: any) =>
+    dpp?.children.map((child: any) => ({
+      name: child.type,
+      children: dppToTreeData(child),
+      attributes: { name: child.node.name || child.node.action_id },
+    }));
 
   // DPP Tree
   const translate = { x: width / 2, y: 20 };

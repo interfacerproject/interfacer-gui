@@ -14,12 +14,13 @@ export interface BrMdEditorProps extends PFieldInfoProps {
   subtitle?: string;
   name?: string;
   id?: string;
+  value?: string;
 }
 
 //
 
 export default function BrMdEditor(props: BrMdEditorProps) {
-  const { editorClass, subtitle, name, onChange = () => {}, id } = props;
+  const { editorClass, subtitle, name, onChange = () => {}, id, value } = props;
 
   return (
     <PFieldInfo htmlFor={id} {...props}>
@@ -32,6 +33,7 @@ export default function BrMdEditor(props: BrMdEditorProps) {
           onChange={onChange}
           name={name}
           id={id}
+          value={value}
         />
       </div>
     </PFieldInfo>

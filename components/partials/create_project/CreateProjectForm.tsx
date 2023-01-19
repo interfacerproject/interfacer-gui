@@ -26,6 +26,7 @@ import { LocationLookup } from "lib/fetchLocation";
 
 // Other
 import { SelectOption } from "components/brickroom/utils/BrSelectUtils";
+import useStorage from "hooks/useStorage";
 import { isRequired } from "lib/isFieldRequired";
 import SelectResources from "../../SelectResources";
 
@@ -57,8 +58,7 @@ export namespace CreateProjectNS {
 export default function NewProjectForm(props: CreateProjectNS.Props) {
   const { onSubmit } = props;
   const { t } = useTranslation("createProjectProps");
-
-  //
+  const { getItem, setItem } = useStorage();
 
   // Loading project types
   const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES).data;
@@ -147,10 +147,16 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
   const { formState, handleSubmit, register, control, setValue, watch } = form;
   const { isValid, errors, isSubmitting } = formState;
 
+  const getSavedField = (value: any, name: string) => (value ? value : getItem(name) || undefined);
+
   //
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full pt-12 space-y-12">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="w-full pt-12 space-y-12"
+      onChange={(f: any) => setItem(f.target.name, f.target.value)}
+    >
       <Controller
         control={control}
         name="name"
@@ -159,7 +165,7 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
             type="text"
             id={name}
             name={name}
-            value={value}
+            value={getSavedField(value, name)}
             autoComplete="off"
             onChange={onChange}
             onBlur={onBlur}
@@ -184,6 +190,7 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
         }}
         requiredIndicator={isRequired(schema, "description")}
         error={errors.description?.message}
+        value={getSavedField(watch("description"), "description")}
       />
 
       <BrImageUpload
@@ -207,7 +214,7 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
             type="text"
             id={name}
             name={name}
-            value={value}
+            value={getSavedField(value, name)}
             autoComplete="off"
             onChange={onChange}
             onBlur={onBlur}
@@ -228,7 +235,7 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
             options={licenseTypes}
             id={name}
             name={name}
-            value={value}
+            value={getSavedField(value, name)}
             onChange={onChange}
             onBlur={onBlur}
             label={t("Select license type")}
@@ -263,7 +270,7 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
       <Controller
         control={control}
         name="tags"
-        render={({ field: { onChange, onBlur, name, ref } }) => (
+        render={({ field: { onChange, onBlur, name, ref, value } }) => (
           <SelectTags
             name={name}
             id={name}
@@ -277,6 +284,7 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
             error={errors.tags?.message}
             creatable={true}
             requiredIndicator={isRequired(schema, name)}
+            value={getSavedField(value, name)}
           />
         )}
       />
@@ -337,7 +345,7 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
       <Controller
         control={control}
         name="resources"
-        render={({ field: { onChange, onBlur, name, ref } }) => (
+        render={({ field: { onChange, onBlur, name, ref, value } }) => (
           <SelectResources
             name={name}
             ref={ref}
@@ -351,6 +359,7 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
             error={errors.resources?.message}
             creatable={false}
             requiredIndicator={isRequired(schema, name)}
+            value={getSavedField(value, name)}
           />
         )}
       />
@@ -364,7 +373,7 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
               type="text"
               id={name}
               name={name}
-              value={value}
+              value={getSavedField(value, name)}
               autoComplete="off"
               onChange={onChange}
               onBlur={onBlur}
