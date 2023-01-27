@@ -19,6 +19,7 @@ import { GetUnitAndCurrencyQuery, ProposedStatus, QueryProposalQuery, QueryPropo
 import useInBox from "../../hooks/useInBox";
 import { ProposalType, ProposalNotification, MessageSubject } from "../notification";
 import MdParser from "../../lib/MdParser";
+import useWallet from "hooks/useWallet";
 
 const Proposal = () => {
   const router = useRouter();
@@ -29,6 +30,7 @@ const Proposal = () => {
     variables: { id: id?.toString() || "" },
   });
   const { sendMessage } = useInBox();
+  const { addStrengthsPoints, addIdeaPoints } = useWallet();
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [acceptProposal] = useMutation(ACCEPT_PROPOSAL);
@@ -112,6 +114,11 @@ const Proposal = () => {
       [proposal.primaryIntents![0].resourceInventoriedAs!.primaryAccountable.id],
       MessageSubject.CONTRIBUTION_ACCEPTED
     );
+
+    //economic system: points assignments
+    addStrengthsPoints(proposal.primaryIntents![0].resourceInventoriedAs!.primaryAccountable.id, 1);
+    addIdeaPoints(user!.ulid, 1);
+
     await refetch();
   };
 

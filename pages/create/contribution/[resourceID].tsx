@@ -26,6 +26,7 @@ import Layout from "components/layout/Layout";
 import CreateContributionFrom from "components/partials/create/contribution/CreateContributionForm";
 import PLabel from "components/polaris/PLabel";
 import ResourceDetailsCard from "components/ResourceDetailsCard";
+import useWallet from "hooks/useWallet";
 
 //
 
@@ -38,6 +39,7 @@ const CreateContribution: NextPageWithLayout = () => {
   const id = resourceID?.toString() || "";
   const { user } = useAuth();
   const { sendMessage } = useInBox();
+  const { addStrengthsPoints, addIdeaPoints } = useWallet();
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [createProcess] = useMutation(CREATE_PROCESS);
@@ -132,6 +134,11 @@ const CreateContribution: NextPageWithLayout = () => {
         ownerName: resource.primaryAccountable.name,
       };
       sendMessage(message, [resource.primaryAccountable.id], MessageSubject.CONTRIBUTION_REQUEST);
+
+      //economic system: points assignments
+      addIdeaPoints(resource.primaryAccountable.id, 1);
+      addStrengthsPoints(user!.ulid, 1);
+
       router.push(`/proposal/${proposal.data?.createProposal.proposal.id}`);
     }
   };

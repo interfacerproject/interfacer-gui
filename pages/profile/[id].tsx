@@ -124,7 +124,6 @@ const Profile: NextPage = () => {
 };
 
 const StatValue = ({ stat, id }: { stat: string; id: string }) => {
-  console.log("sssssssss", stat);
   const { t } = useTranslation("ProfileProps");
   const trend = Math.floor(Math.random() * 100) - 50;
   const positive = trend > 0;
