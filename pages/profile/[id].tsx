@@ -3,11 +3,12 @@ import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
 import cn from "classnames";
-import ProjectsTable from "components/ProjectsTable";
 import BrTabs from "components/brickroom/BrTabs";
 import Spinner from "components/brickroom/Spinner";
+import ProjectsTable from "components/ProjectsTable";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
+import useWallet, { Token } from "hooks/useWallet";
 import { FETCH_USER } from "lib/QueryAndMutation";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
@@ -27,7 +28,7 @@ const Profile: NextPage = () => {
   const { user } = useAuth();
 
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
-  const idToBeFetch = isUser ? user?.ulid : id;
+  const idToBeFetch = isUser ? user?.ulid : String(id);
 
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
   typeof idToBeFetch === "string" ? (proposalFilter.primaryAccountable = [idToBeFetch]) : idToBeFetch!;
@@ -74,8 +75,8 @@ const Profile: NextPage = () => {
                   </h4>
                 </div>
                 <div className="my-4 shadow md:mr-20 stats stats-vertical">
-                  <StatValue title={t("Goals")} value={42} trend={12} />
-                  <StatValue title={t("Strength")} value="58%" trend={2.02} />
+                  <StatValue stat={t(Token.Idea)} id={idToBeFetch!} />
+                  <StatValue stat={t(Token.Strengths)} id={idToBeFetch!} />
                 </div>
               </div>
             </div>
@@ -122,9 +123,13 @@ const Profile: NextPage = () => {
   );
 };
 
-const StatValue = ({ title, value, trend }: { title: string; value: number | string; trend: number }) => {
+const StatValue = ({ stat, id }: { stat: string; id: string }) => {
+  console.log("sssssssss", stat);
   const { t } = useTranslation("ProfileProps");
+  const trend = Math.floor(Math.random() * 100) - 50;
   const positive = trend > 0;
+  const { getIdeaPoints, getStrengthsPoints } = useWallet(id);
+  const value = stat === Token.Idea ? getIdeaPoints : getStrengthsPoints;
 
   return (
     <div className="stat">
@@ -143,7 +148,7 @@ const StatValue = ({ title, value, trend }: { title: string; value: number | str
           <span>{trend}%</span>
         </span>
       </div>
-      <div className="stat-title">{title}</div>
+      <div className="stat-title capitalize">{t(`${stat} points`)}</div>
       <div className="text-2xl font-semibold stat-value text-primary font-display">{value}&nbsp;</div>
     </div>
   );
