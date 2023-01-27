@@ -117,23 +117,31 @@ const CreateProject: NextPageWithLayout = () => {
       devLog("info: contributors prepared", contributors);
 
       for (const resource of formData.resources) {
+        const resourceId = resource.value.id;
+
         const citeVariables = {
           agent: user!.ulid,
-          resource: resource.value.id,
+          resource: resourceId,
           process: processData?.createProcess.process.id,
           creationTime: new Date().toISOString(),
           unitOne: unitAndCurrency?.units.unitOne.id!,
         };
         await citeProject({ variables: citeVariables });
-        const { data } = await refetch({ id: resource.value.id });
+
+        const { data } = await refetch({ id: resourceId });
+        const resourceOwner = data.economicResource.primaryAccountable.id;
         const message: ProposalNotification = {
-          proposalID: resource.value.id,
+          proposalID: resourceId,
           proposerName: user!.name,
-          originalResourceID: resource.value.id,
+          originalResourceID: resourceId,
           originalResourceName: resource.value.name,
           text: formData.description,
         };
-        await sendMessage(message, [data.economicResource.primaryAccountable.id], "Project cited");
+        await sendMessage(message, [resourceOwner], "Project cited");
+
+        //economic system: points assignments
+        addIdeaPoints(user!.ulid, IdeaPoints.OnCite);
+        addStrengthsPoints(resourceOwner, StrengthsPoints.OnCite);
       }
 
       const variables: CreateProjectMutationVariables = {
