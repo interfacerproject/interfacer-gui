@@ -1,3 +1,4 @@
+import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
@@ -136,8 +137,8 @@ const CreateContribution: NextPageWithLayout = () => {
       sendMessage(message, [resource.primaryAccountable.id], MessageSubject.CONTRIBUTION_REQUEST);
 
       //economic system: points assignments
-      addIdeaPoints(resource.primaryAccountable.id, 1);
-      addStrengthsPoints(user!.ulid, 1);
+      addIdeaPoints(resource.primaryAccountable.id, IdeaPoints.OnFork);
+      addStrengthsPoints(user!.ulid, StrengthsPoints.OnFork);
 
       router.push(`/proposal/${proposal.data?.createProposal.proposal.id}`);
     }

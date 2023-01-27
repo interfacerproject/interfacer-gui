@@ -1,3 +1,4 @@
+import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { ReactElement, useState } from "react";
@@ -18,27 +19,27 @@ import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
 import {
   ASK_RESOURCE_PRIMARY_ACCOUNTABLE,
   CITE_PROJECT,
-  CREATE_PROJECT,
+  CONTRIBUTE_TO_PROJECT,
   CREATE_LOCATION,
   CREATE_PROCESS,
+  CREATE_PROJECT,
   QUERY_UNIT_AND_CURRENCY,
-  CONTRIBUTE_TO_PROJECT,
 } from "lib/QueryAndMutation";
 import {
-  CreateProjectMutation,
-  CreateProjectMutationVariables,
   CreateLocationMutation,
   CreateLocationMutationVariables,
+  CreateProjectMutation,
+  CreateProjectMutationVariables,
   GetUnitAndCurrencyQuery,
 } from "lib/types";
 
 // Utils
+import useWallet from "hooks/useWallet";
 import devLog from "lib/devLog";
 import { errorFormatter } from "lib/errorFormatter";
 import { useRouter } from "next/router";
 import useInBox from "../hooks/useInBox";
 import { AddedAsContributorNotification, MessageSubject, ProposalNotification } from "./notification";
-import { string } from "yup";
 
 //
 
@@ -64,6 +65,7 @@ const CreateProject: NextPageWithLayout = () => {
   const router = useRouter();
   const { sendMessage } = useInBox();
   const { getItem } = useStorage();
+  const { addIdeaPoints, addStrengthsPoints } = useWallet();
   const [error, setError] = useState<string>("");
 
   /* Getting all the needed mutations */
@@ -155,6 +157,10 @@ const CreateProject: NextPageWithLayout = () => {
       const { data: createProjectData, errors } = await createProject({ variables });
       if (errors) throw new Error("ProjectNotCreated");
 
+      //economic system: points assignments
+      addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
+      addStrengthsPoints(user!.ulid, StrengthsPoints.OnCreate);
+
       // Add contributors
       for (const contributor of contributors) {
         const contributeVariables = {
@@ -182,6 +188,10 @@ const CreateProject: NextPageWithLayout = () => {
 
         const subject = MessageSubject.ADDED_AS_CONTRIBUTOR;
         await sendMessage(message, [contributor.id], subject);
+
+        //economic system: points assignments
+        addIdeaPoints(user!.ulid, IdeaPoints.OnContributions);
+        addStrengthsPoints(contributor.id, StrengthsPoints.OnContributions);
       }
 
       // Upload images
