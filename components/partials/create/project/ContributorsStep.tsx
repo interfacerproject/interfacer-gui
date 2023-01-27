@@ -3,17 +3,19 @@ import { useQuery } from "@apollo/client";
 import { SEARCH_AGENTS } from "lib/QueryAndMutation";
 import { SearchAgentsQuery, SearchAgentsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // Components
-import { Autocomplete, Icon, Text } from "@bbtgnn/polaris-interfacer";
-import { SearchMinor } from "@shopify/polaris-icons";
+import { Autocomplete, Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { CancelMinor, SearchMinor } from "@shopify/polaris-icons";
+import Avatar from "boring-avatars";
 
 //
 
 export interface SelectOption {
   value: string;
   label: string;
+  media?: React.ReactElement;
 }
 
 export interface Props {
@@ -27,6 +29,8 @@ export default function ContributorsStep(props: Props) {
   const { t } = useTranslation();
 
   const [inputValue, setInputValue] = useState("");
+  const handleInputChange = useCallback((value: string) => setInputValue(value), []);
+
   const [options, setOptions] = useState<Array<SelectOption>>([]);
   const [selection, setSelection] = useState<Array<string>>([]);
 
@@ -45,6 +49,14 @@ export default function ContributorsStep(props: Props) {
         return {
           value: agent.node.id,
           label: agent.node.name,
+          media: (
+            <Avatar
+              size={50}
+              name={agent.node.name}
+              variant="beam"
+              colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
+            />
+          ),
         };
       });
 
@@ -63,37 +75,74 @@ export default function ContributorsStep(props: Props) {
     setSelection([...selection, ...selected]);
   }
 
+  function removeSelected(id: string) {
+    const newSelection = selection.filter(item => item !== id);
+    setSelection(newSelection);
+  }
+
   //
 
   const textField = (
     <Autocomplete.TextField
-      onChange={value => {
-        setInputValue(value);
-      }}
+      onChange={handleInputChange}
       autoComplete="off"
-      label="Contributors"
+      label={t("Search for a user")}
       value={inputValue}
       prefix={<Icon source={SearchMinor} color="base" />}
-      placeholder="Search"
+      placeholder="John Johnson"
     />
   );
 
+  //
+
   return (
     <>
-      <Text variant="heading3xl" as="h1">
-        {t("Contributors")}
-      </Text>
-      <Text variant="bodyMd" as="p">
-        {t("Tell us who contributed to this project and how.")}
-      </Text>
-      <Autocomplete
-        options={options}
-        selected={selection}
-        onSelect={updateSelection}
-        loading={loading}
-        textField={textField}
-      />
-      {JSON.stringify(selection)}
+      <Stack vertical spacing="extraLoose">
+        <Stack vertical spacing="extraTight">
+          <Text variant="heading3xl" as="h1">
+            {t("Contributors")}
+          </Text>
+          <Text variant="bodyMd" as="p">
+            {t("Tell us who contributed to this project and how.")}
+          </Text>
+        </Stack>
+
+        <Autocomplete
+          options={options}
+          selected={selection}
+          onSelect={updateSelection}
+          loading={loading}
+          textField={textField}
+        />
+
+        {selection.length && (
+          <Stack vertical spacing="tight">
+            <Text variant="bodyMd" as="p">
+              {t("Selected contributors")}
+            </Text>
+            {selection.map(contributorID => (
+              <Card sectioned key={contributorID}>
+                <Stack>
+                  <Avatar
+                    size={50}
+                    name={contributorID}
+                    variant="beam"
+                    colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
+                  />
+                  <p>{contributorID}</p>
+                  <Button
+                    icon={<Icon source={CancelMinor} color="base" />}
+                    accessibilityLabel="Remove contributor"
+                    onClick={() => {
+                      removeSelected(contributorID);
+                    }}
+                  />
+                </Stack>
+              </Card>
+            ))}
+          </Stack>
+        )}
+      </Stack>
     </>
     // <div className="contributors-step">
     // <div className="contributors-step__header">
