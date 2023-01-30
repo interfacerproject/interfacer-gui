@@ -102,74 +102,41 @@ export default function ContributorsStep(props: Props) {
   //
 
   return (
-    <>
-      <Stack vertical spacing="extraLoose">
-        <Stack vertical spacing="extraTight">
-          <Text variant="heading3xl" as="h1">
-            {t("Contributors")}
-          </Text>
-          <Text variant="bodyMd" as="p">
-            {t("Tell us who contributed to this project and how.")}
-          </Text>
-        </Stack>
-
-        <Autocomplete
-          options={options}
-          selected={[]}
-          onSelect={updateSelection}
-          loading={loading}
-          textField={textField}
-        />
-
-        {selection.length && (
-          <Stack vertical spacing="tight">
-            <Text variant="bodyMd" as="p">
-              {t("Selected contributors")}
-            </Text>
-            {selection.map(contributor => (
-              <PCardWithAction
-                key={contributor.id}
-                onClick={() => {
-                  removeSelected(contributor.id);
-                }}
-              >
-                <BrUserDisplay user={contributor} />
-              </PCardWithAction>
-              // <Card sectioned key={contributor.id}>
-              //   <Stack>
-              //     <Button
-              //       icon={<Icon source={CancelMinor} color="base" />}
-              //       accessibilityLabel="Remove contributor"
-              //       onClick={() => {
-              //         removeSelected(contributor.id);
-              //       }}
-              //     />
-              //   </Stack>
-              // </Card>
-            ))}
-          </Stack>
-        )}
+    <Stack vertical spacing="extraLoose">
+      <Stack vertical spacing="extraTight">
+        <Text variant="heading3xl" as="h1">
+          {t("Contributors")}
+        </Text>
+        <Text variant="bodyMd" as="p">
+          {t("Tell us who contributed to this project and how.")}
+        </Text>
       </Stack>
-    </>
-    // <div className="contributors-step">
-    // <div className="contributors-step__header">
-    //     <h2 className="contributors-step__title">{t('create_project.contributors.title')}</h2>
-    //     <p className="contributors-step__description">{t('create_project.contributors.description')}</p>
-    // </div>
-    // <div className="contributors-step__content">
-    //     <div className="contributors-step__list">
-    //     {contributors.map((contributor) => (
-    //         <ContributorItem
-    //         key={contributor.id}
-    //         contributor={contributor}
-    //         onRemove={handleRemoveContributor}
-    //         />
-    //     ))}
-    //     </div>
-    //     <div className="contributors-step__add">
-    //     <AddContributorForm onAdd={handleAddContributor} />
-    //     </div>
-    // </div>
-    // </div>
+
+      <Autocomplete
+        options={options}
+        selected={[]}
+        onSelect={updateSelection}
+        loading={loading}
+        textField={textField}
+      />
+
+      {selection.length && (
+        <Stack vertical spacing="tight">
+          <Text variant="bodyMd" as="p">
+            {t("Selected contributors")}
+          </Text>
+          {selection.map(contributor => (
+            <PCardWithAction
+              key={contributor.id}
+              onClick={() => {
+                removeSelected(contributor.id);
+              }}
+            >
+              <BrUserDisplay user={contributor} />
+            </PCardWithAction>
+          ))}
+        </Stack>
+      )}
+    </Stack>
   );
 }
