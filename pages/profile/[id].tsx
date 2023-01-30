@@ -1,14 +1,13 @@
 import { useQuery } from "@apollo/client";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
-import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
 import Avatar from "boring-avatars";
-import cn from "classnames";
 import BrTabs from "components/brickroom/BrTabs";
 import Spinner from "components/brickroom/Spinner";
 import ProjectsTable from "components/ProjectsTable";
+import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
-import useWallet, { Token } from "hooks/useWallet";
+import { Token } from "hooks/useWallet";
 import { FETCH_USER } from "lib/QueryAndMutation";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
@@ -75,8 +74,8 @@ const Profile: NextPage = () => {
                   </h4>
                 </div>
                 <div className="my-4 shadow md:mr-20 stats stats-vertical">
-                  <StatValue stat={t(Token.Idea)} id={idToBeFetch!} />
-                  <StatValue stat={t(Token.Strengths)} id={idToBeFetch!} />
+                  <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} />
+                  <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} />
                 </div>
               </div>
             </div>
@@ -120,36 +119,6 @@ const Profile: NextPage = () => {
         </>
       )}
     </>
-  );
-};
-
-const StatValue = ({ stat, id }: { stat: string; id: string }) => {
-  const { t } = useTranslation("ProfileProps");
-  const trend = Math.floor(Math.random() * 100) - 50;
-  const positive = trend > 0;
-  const { getIdeaPoints, getStrengthsPoints } = useWallet(id);
-  const value = stat === Token.Idea ? getIdeaPoints : getStrengthsPoints;
-
-  return (
-    <div className="stat">
-      <div className="stat-figure">
-        <span
-          className={cn("flex rounded-full space-x-2 py-1 px-2 items-center", {
-            "bg-green-100": positive,
-            "bg-red-100": !positive,
-          })}
-        >
-          {positive ? (
-            <ArrowSmUpIcon className="w-5 h-5 text-green-500" />
-          ) : (
-            <ArrowSmDownIcon className="w-5 h-5 text-red-500" />
-          )}
-          <span>{trend}%</span>
-        </span>
-      </div>
-      <div className="stat-title capitalize">{t(`${stat} points`)}</div>
-      <div className="text-2xl font-semibold stat-value text-primary font-display">{value}&nbsp;</div>
-    </div>
   );
 };
 
