@@ -1,5 +1,12 @@
-import { useRouter } from "next/router";
 import { useMutation, useQuery } from "@apollo/client";
+import { Button, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import Spinner from "components/brickroom/Spinner";
+import PLabel from "components/polaris/PLabel";
+import ResourceDetailsCard from "components/ResourceDetailsCard";
+import { useAuth } from "hooks/useAuth";
+import useWallet from "hooks/useWallet";
+import devLog from "lib/devLog";
+import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import {
   ACCEPT_PROPOSAL,
   QUERY_PROPOSAL,
@@ -7,18 +14,12 @@ import {
   REJECT_PROPOSAL,
   SATISFY_INTENTS,
 } from "lib/QueryAndMutation";
-import { Stack, Text, Button } from "@bbtgnn/polaris-interfacer";
-import PLabel from "components/polaris/PLabel";
-import ResourceDetailsCard from "components/ResourceDetailsCard";
-import { useTranslation } from "next-i18next";
-import Spinner from "components/brickroom/Spinner";
-import devLog from "lib/devLog";
-import React from "react";
-import { useAuth } from "hooks/useAuth";
 import { GetUnitAndCurrencyQuery, ProposedStatus, QueryProposalQuery, QueryProposalQueryVariables } from "lib/types";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import useInBox from "../../hooks/useInBox";
-import { ProposalType, ProposalNotification, MessageSubject } from "../notification";
 import MdParser from "../../lib/MdParser";
+import { MessageSubject, ProposalNotification } from "../notification";
 
 const Proposal = () => {
   const router = useRouter();
@@ -29,6 +30,7 @@ const Proposal = () => {
     variables: { id: id?.toString() || "" },
   });
   const { sendMessage } = useInBox();
+  const { addStrengthsPoints, addIdeaPoints } = useWallet();
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [acceptProposal] = useMutation(ACCEPT_PROPOSAL);
@@ -112,6 +114,11 @@ const Proposal = () => {
       [proposal.primaryIntents![0].resourceInventoriedAs!.primaryAccountable.id],
       MessageSubject.CONTRIBUTION_ACCEPTED
     );
+
+    //economic system: points assignments
+    addStrengthsPoints(proposal.primaryIntents![0].resourceInventoriedAs!.primaryAccountable.id, IdeaPoints.OnAccept);
+    addIdeaPoints(user!.ulid, StrengthsPoints.OnAccept);
+
     await refetch();
   };
 
