@@ -977,6 +977,11 @@ export const SEARCH_AGENTS = gql`
         node {
           id
           name
+          note
+          primaryLocation {
+            id
+            name
+          }
         }
       }
     }

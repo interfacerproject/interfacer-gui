@@ -1,14 +1,16 @@
 // Logic
 import { useQuery } from "@apollo/client";
 import { SEARCH_AGENTS } from "lib/QueryAndMutation";
-import { SearchAgentsQuery, SearchAgentsQueryVariables } from "lib/types";
+import { Agent, SearchAgentsQuery, SearchAgentsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
 
 // Components
-import { Autocomplete, Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
-import { CancelMinor, SearchMinor } from "@shopify/polaris-icons";
-import Avatar from "boring-avatars";
+import { Autocomplete, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { SearchMinor } from "@shopify/polaris-icons";
+import BrUserAvatar from "components/brickroom/BrUserAvatar";
+import BrUserDisplay from "components/brickroom/BrUserDisplay";
+import PCardWithAction from "components/polaris/PCardWithAction";
 
 //
 
@@ -32,7 +34,7 @@ export default function ContributorsStep(props: Props) {
   const handleInputChange = useCallback((value: string) => setInputValue(value), []);
 
   const [options, setOptions] = useState<Array<SelectOption>>([]);
-  const [selection, setSelection] = useState<Array<string>>([]);
+  const [selection, setSelection] = useState<Array<Agent>>([]);
 
   //
 
@@ -45,24 +47,17 @@ export default function ContributorsStep(props: Props) {
   useEffect(() => {
     if (data && data.agents) {
       // Preparing options
-      const options = data.agents.edges.map(agent => {
+      const options: Array<SelectOption> = data.agents.edges.map(agent => {
         return {
           value: agent.node.id,
           label: agent.node.name,
-          media: (
-            <Avatar
-              size={50}
-              name={agent.node.name}
-              variant="beam"
-              colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
-            />
-          ),
+          media: <BrUserAvatar name={agent.node.name} size={24} />,
         };
       });
 
       // Filtering already selected options
       const filteredOptions = options.filter(option => {
-        return !selection.includes(option.value);
+        return !selection.map(a => a.id).includes(option.value);
       });
 
       setOptions(filteredOptions);
@@ -71,12 +66,23 @@ export default function ContributorsStep(props: Props) {
     }
   }, [data, selection]);
 
+  //
+
+  function getAgentFromData(id: string): Agent | undefined {
+    const agent = data?.agents?.edges.find(agent => agent.node.id === id);
+    return agent?.node;
+  }
+
   function updateSelection(selected: Array<string>) {
-    setSelection([...selection, ...selected]);
+    const id = selected[0];
+    if (!id) return;
+    const agent = getAgentFromData(id);
+    if (!agent) return;
+    setSelection([...selection, agent]);
   }
 
   function removeSelected(id: string) {
-    const newSelection = selection.filter(item => item !== id);
+    const newSelection = selection.filter(item => item.id !== id);
     setSelection(newSelection);
   }
 
@@ -109,7 +115,7 @@ export default function ContributorsStep(props: Props) {
 
         <Autocomplete
           options={options}
-          selected={selection}
+          selected={[]}
           onSelect={updateSelection}
           loading={loading}
           textField={textField}
@@ -120,25 +126,26 @@ export default function ContributorsStep(props: Props) {
             <Text variant="bodyMd" as="p">
               {t("Selected contributors")}
             </Text>
-            {selection.map(contributorID => (
-              <Card sectioned key={contributorID}>
-                <Stack>
-                  <Avatar
-                    size={50}
-                    name={contributorID}
-                    variant="beam"
-                    colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
-                  />
-                  <p>{contributorID}</p>
-                  <Button
-                    icon={<Icon source={CancelMinor} color="base" />}
-                    accessibilityLabel="Remove contributor"
-                    onClick={() => {
-                      removeSelected(contributorID);
-                    }}
-                  />
-                </Stack>
-              </Card>
+            {selection.map(contributor => (
+              <PCardWithAction
+                key={contributor.id}
+                onClick={() => {
+                  removeSelected(contributor.id);
+                }}
+              >
+                <BrUserDisplay user={contributor} />
+              </PCardWithAction>
+              // <Card sectioned key={contributor.id}>
+              //   <Stack>
+              //     <Button
+              //       icon={<Icon source={CancelMinor} color="base" />}
+              //       accessibilityLabel="Remove contributor"
+              //       onClick={() => {
+              //         removeSelected(contributor.id);
+              //       }}
+              //     />
+              //   </Stack>
+              // </Card>
             ))}
           </Stack>
         )}

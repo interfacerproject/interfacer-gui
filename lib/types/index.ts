@@ -4097,8 +4097,20 @@ export type SearchAgentsQuery = {
     edges: Array<{
       __typename?: "AgentEdge";
       node:
-        | { __typename?: "Organization"; id: string; name: string }
-        | { __typename?: "Person"; id: string; name: string };
+        | {
+            __typename?: "Organization";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          }
+        | {
+            __typename?: "Person";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          };
     }>;
   } | null;
 };
