@@ -20,7 +20,7 @@ type UseWalletReturnValue = {
 const useWallet = (id?: string): UseWalletReturnValue => {
   const [ideaPoints, setIdeaPoints] = useState(0);
   const [strengthsPoints, setStrengthsPoints] = useState(0);
-  const { signedPost } = useSignedPost();
+  const { signedPost } = useSignedPost(true);
 
   useEffect(() => {
     if (!id) return;
