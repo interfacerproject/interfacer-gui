@@ -1,9 +1,7 @@
-import { useAuth } from "./useAuth";
 import dayjs from "dayjs";
-import { zencode_exec } from "zenroom";
-import sign from "../zenflows-crypto/src/sign_graphql";
-import useStorage from "./useStorage";
 import { useEffect, useState } from "react";
+import { useAuth } from "./useAuth";
+import useSignedPost from "./useSignedPost";
 
 export declare module Notification {
   export interface Content {
@@ -45,7 +43,7 @@ const useInBox = (): UseInBoxReturnValue => {
   const [startFetch, setStartFetch] = useState(false);
   const [readedMessages, setReadedMessages] = useState<number[]>([]);
   const { user } = useAuth();
-  const { getItem } = useStorage();
+  const { signedPost } = useSignedPost();
   useEffect(() => {
     readedMessages.forEach(id => {
       setMessage(id, true);
@@ -73,24 +71,6 @@ const useInBox = (): UseInBoxReturnValue => {
       });
     }, 120000);
   }, [startFetch, readedMessages]);
-
-  const signRequest = async (json: string) => {
-    const data = `{"gql": "${Buffer.from(json, "utf8").toString("base64")}"}`;
-    const keys = `{"keyring": {"eddsa": "${getItem("eddsa_key")}"}}`;
-    const { result } = await zencode_exec(sign(), { data, keys });
-    return {
-      "zenflows-sign": JSON.parse(result).eddsa_signature,
-    };
-  };
-  const signedPost = async (url: string, request: any) => {
-    const requestJSON = JSON.stringify(request);
-    const requestHeaders = await signRequest(requestJSON);
-    return await fetch(url, {
-      method: "POST",
-      headers: requestHeaders,
-      body: JSON.stringify(request),
-    });
-  };
 
   const sendMessage = async (message: any, receivers: string[], subject: string = "Subject"): Promise<Response> => {
     const request = {
