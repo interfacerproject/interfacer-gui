@@ -1,8 +1,12 @@
-import { Button, Card, ChoiceList, Link, Stack, Text, TextField } from "@bbtgnn/polaris-interfacer";
-import PCardWithAction from "components/polaris/PCardWithAction";
-import PFieldInfo from "components/polaris/PFieldInfo";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
+
+// Components
+import { Button, ChoiceList, Icon, Link, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { PlusMinor } from "@shopify/polaris-icons";
+import AddLink, { Link as ILink } from "components/AddLink";
+import PCardWithAction from "components/polaris/PCardWithAction";
+import PFieldInfo from "components/polaris/PFieldInfo";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,12 +18,7 @@ import * as yup from "yup";
 export interface FormValues {
   repairable: string;
   recyclable: string;
-  certifications: Array<Link>;
-}
-
-export interface Link {
-  url: string;
-  label: string;
+  certifications: Array<ILink>;
 }
 
 export interface Props {}
@@ -70,26 +69,26 @@ export default function DeclarationsStep(props: Props) {
 
   // Links to certifications
 
-  const [certifications, setCertifications] = useState<Array<Link>>([]);
+  const [certifications, setCertifications] = useState<Array<ILink>>([]);
 
-  const [url, setUrl] = useState("");
-  const handleUrlChange = useCallback((value: string) => setUrl(value), []);
+  const [showAddLink, setShowAddLink] = useState(false);
 
-  const [label, setLabel] = useState("");
-  const handleLabelChange = useCallback((value: string) => setLabel(value), []);
-
-  const [addingMore, setAddingMore] = useState(false);
-
-  function addCertification() {
-    if (!url || !label) return;
-    setCertifications([...certifications, { url, label }]);
-    setUrl("");
-    setLabel("");
-    setAddingMore(false);
+  function handleShowAddLink() {
+    setShowAddLink(true);
   }
 
-  function addMore() {
-    setAddingMore(true);
+  function handleDiscard() {
+    setShowAddLink(false);
+  }
+
+  function addCertification(link: ILink) {
+    if (!link) return;
+    setCertifications([...certifications, link]);
+    setShowAddLink(false);
+  }
+
+  function removeCertification(certification: ILink) {
+    setCertifications(certifications.filter(c => c !== certification));
   }
 
   //
@@ -108,7 +107,7 @@ export default function DeclarationsStep(props: Props) {
       <hr />
 
       <Stack vertical spacing="extraTight">
-        <Text variant="headingXl" as="h1">
+        <Text variant="headingXl" as="h2">
           {t("Consumer services")}
         </Text>
         <Text variant="bodyMd" as="p">
@@ -157,51 +156,38 @@ export default function DeclarationsStep(props: Props) {
       <hr />
 
       <Stack vertical spacing="extraTight">
-        <Text variant="headingXl" as="h1">
+        <Text variant="headingXl" as="h2">
           {t("Links to certifications")}
         </Text>
         <Text variant="bodyMd" as="p">
-          {t("Lorem ipsum dolor sit amet.")}
+          {t("(Optional field)")}
         </Text>
       </Stack>
 
+      {!showAddLink && (
+        <Button onClick={handleShowAddLink} fullWidth icon={<Icon source={PlusMinor} />}>
+          {t("Add a certification")}
+        </Button>
+      )}
+
+      {showAddLink && <AddLink onDiscard={handleDiscard} onSubmit={addCertification} />}
+
       {certifications.length && (
         <Stack spacing="tight" vertical>
-          {certifications.map((certification, index) => (
-            <PCardWithAction key={index}>
-              <Link url={certification.url} external>
-                {certification.label}
+          {certifications.map((c, i) => (
+            <PCardWithAction
+              key={c.url}
+              onClick={() => {
+                removeCertification(c);
+              }}
+            >
+              <Link url={c.url} external>
+                {c.label}
               </Link>
             </PCardWithAction>
           ))}
         </Stack>
       )}
-
-      {(!certifications.length || addingMore) && (
-        <Card sectioned>
-          <Stack vertical spacing="loose">
-            <TextField
-              label={t("Link title")}
-              helpText={t("A short text to clearly name the certification")}
-              autoComplete="off"
-              onChange={handleLabelChange}
-              value={label}
-            />
-            <TextField
-              label={t("External link")}
-              autoComplete="off"
-              type="url"
-              value={url}
-              onChange={handleUrlChange}
-            />
-            <div className="flex justify-end pt-4">
-              <Button onClick={addCertification}>{t("Add link")}</Button>
-            </div>
-          </Stack>
-        </Card>
-      )}
-
-      {certifications.length && !addingMore && <Button onClick={addMore}>{t("Add more links")}</Button>}
     </Stack>
   );
 }
