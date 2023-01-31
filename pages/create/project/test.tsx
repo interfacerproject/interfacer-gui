@@ -21,7 +21,11 @@ const CreateTest: NextPageWithLayout = () => {
 //
 
 CreateTest.getLayout = function getLayout(page: ReactElement) {
-  return <Layout>{page}</Layout>;
+  return (
+    <Layout>
+      <div className="max-w-xl mx-auto p-4">{page}</div>
+    </Layout>
+  );
 };
 
 export default CreateTest;
