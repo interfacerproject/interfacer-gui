@@ -14,16 +14,18 @@ export default function PTitleSubtitle(props: Props) {
     h2: "headingXl",
   };
 
-  <Stack vertical spacing="extraTight">
-    {title && (
-      <Text variant={titleVariant[titleTag]} as={titleTag}>
-        {title}
-      </Text>
-    )}
-    {subtitle && (
-      <Text variant="bodyMd" as="p">
-        {subtitle}
-      </Text>
-    )}
-  </Stack>;
+  return (
+    <Stack vertical spacing="extraTight">
+      {title && (
+        <Text variant={titleVariant[titleTag]} as={titleTag}>
+          {title}
+        </Text>
+      )}
+      {subtitle && (
+        <Text variant="bodyMd" as="p">
+          {subtitle}
+        </Text>
+      )}
+    </Stack>
+  );
 }
