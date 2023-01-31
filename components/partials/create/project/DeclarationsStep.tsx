@@ -2,12 +2,13 @@ import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
 // Components
-import { Button, Icon, Link, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Icon, Link, Stack } from "@bbtgnn/polaris-interfacer";
 import { PlusMinor } from "@shopify/polaris-icons";
 import AddLink, { Link as ILink } from "components/AddLink";
 import PButtonRadio from "components/polaris/PButtonRadio";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PFieldInfo from "components/polaris/PFieldInfo";
+import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -97,27 +98,15 @@ export default function DeclarationsStep(props: Props) {
 
   //
 
+  const hr = <hr className="border-t-[1px] border-t-border-neutral-subdued" />;
+
   return (
     <Stack vertical spacing="extraLoose">
-      <Stack vertical spacing="extraTight">
-        <Text variant="heading3xl" as="h1">
-          {t("Self declarations")}
-        </Text>
-        <Text variant="bodyMd" as="p">
-          {t("Lorem ipsum dolor sit amet.")}
-        </Text>
-      </Stack>
+      <PTitleSubtitle title={t("Self declarations")} subtitle={t("Lorem ipsum dolor sit amet.")} />
 
-      <hr />
+      {hr}
 
-      <Stack vertical spacing="extraTight">
-        <Text variant="headingXl" as="h2">
-          {t("Consumer services")}
-        </Text>
-        <Text variant="bodyMd" as="p">
-          {t("Lorem ipsum dolor sit amet.")}
-        </Text>
-      </Stack>
+      <PTitleSubtitle title={t("Consumer services")} subtitle={t("Lorem ipsum dolor sit amet.")} titleTag="h2" />
 
       <PFieldInfo
         label={t("Availability for repairing")}
@@ -139,16 +128,9 @@ export default function DeclarationsStep(props: Props) {
         </div>
       </PFieldInfo>
 
-      <hr />
+      {hr}
 
-      <Stack vertical spacing="extraTight">
-        <Text variant="headingXl" as="h2">
-          {t("Links to certifications")}
-        </Text>
-        <Text variant="bodyMd" as="p">
-          {t("(Optional field)")}
-        </Text>
-      </Stack>
+      <PTitleSubtitle title={t("Links to certifications")} subtitle={t("(Optional field)")} titleTag="h2" />
 
       {!showAddLink && (
         <Button onClick={handleShowAddLink} fullWidth icon={<Icon source={PlusMinor} />}>
