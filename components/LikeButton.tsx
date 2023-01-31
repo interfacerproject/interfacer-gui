@@ -20,9 +20,9 @@ const LikeButton = ({ id }: { id: string }) => {
       fullWidth
       disabled={hasAlreadyLiked}
       size="large"
-      icon={<Icon source={hasAlreadyLiked ? ThumbsDownMajor : ThumbsUpMajor} />}
+      icon={<Icon source={ThumbsUpMajor} />}
     >
-      {`${hasAlreadyLiked ? t("Unlike") : t("Like")}`}
+      {`${hasAlreadyLiked ? t("You like it!") : t("Like")}`}
     </Button>
   );
 };
