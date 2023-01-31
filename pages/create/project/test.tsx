@@ -1,11 +1,16 @@
 import Layout from "components/layout/Layout";
+import RelationsStep from "components/partials/create/project/RelationsStep";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
 //
 
 const CreateTest: NextPageWithLayout = () => {
-  return <></>;
+  return (
+    <>
+      <RelationsStep />
+    </>
+  );
 };
 
 //
