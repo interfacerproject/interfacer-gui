@@ -8,13 +8,9 @@ import { ReactElement } from "react";
 
 const CreateTest: NextPageWithLayout = () => {
   return (
-    <div>
-      <div className=" max-w-lg mx-auto">
-        <Card sectioned>
-          <ContributorsStep />
-        </Card>
-      </div>
-    </div>
+    <Card sectioned>
+      <ContributorsStep />
+    </Card>
   );
 };
 
