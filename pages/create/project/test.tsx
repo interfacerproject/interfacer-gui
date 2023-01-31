@@ -8,7 +8,7 @@ import { ReactElement } from "react";
 const CreateTest: NextPageWithLayout = () => {
   return (
     <>
-      <DeclarationsStep></DeclarationsStep>
+      <DeclarationsStep />
     </>
   );
 };
