@@ -29,6 +29,7 @@ const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
+import LikeButton from "components/LikeButton";
 import ContributorsTable from "../../components/ContributorsTable";
 
 //
@@ -299,6 +300,8 @@ const Project = () => {
               </Button>
 
               <WatchButton id={project.id} metadata={project.metadata} owner={project.primaryAccountable.id} />
+
+              <LikeButton id={project.id} />
 
               <AddStar
                 id={project.id}
