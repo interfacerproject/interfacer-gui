@@ -11,6 +11,7 @@ import { SearchMinor } from "@shopify/polaris-icons";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import BrUserDisplay from "components/brickroom/BrUserDisplay";
 import PCardWithAction from "components/polaris/PCardWithAction";
+import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
 //
 
@@ -103,14 +104,7 @@ export default function ContributorsStep(props: Props) {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <Stack vertical spacing="extraTight">
-        <Text variant="heading3xl" as="h1">
-          {t("Contributors")}
-        </Text>
-        <Text variant="bodyMd" as="p">
-          {t("Tell us who contributed to this project and how.")}
-        </Text>
-      </Stack>
+      <PTitleSubtitle title={t("Contributors")} subtitle={t("Tell us who contributed to this project.")} />
 
       <Autocomplete
         options={options}
