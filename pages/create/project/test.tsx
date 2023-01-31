@@ -1,11 +1,16 @@
 import Layout from "components/layout/Layout";
+import DeclarationsStep from "components/partials/create/project/DeclarationsStep";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
 //
 
 const CreateTest: NextPageWithLayout = () => {
-  return <></>;
+  return (
+    <>
+      <DeclarationsStep></DeclarationsStep>
+    </>
+  );
 };
 
 //
