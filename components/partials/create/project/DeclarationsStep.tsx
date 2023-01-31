@@ -1,16 +1,17 @@
 import { useTranslation } from "next-i18next";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
 // Components
-import { Button, ChoiceList, Icon, Link, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Icon, Link, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { PlusMinor } from "@shopify/polaris-icons";
 import AddLink, { Link as ILink } from "components/AddLink";
+import PButtonRadio from "components/polaris/PButtonRadio";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PFieldInfo from "components/polaris/PFieldInfo";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 //
@@ -51,25 +52,25 @@ export default function DeclarationsStep(props: Props) {
     defaultValues,
   });
 
-  const { formState, handleSubmit, register, control, setValue, watch } = form;
+  const { formState, setValue, watch } = form;
   const { isValid, errors, isSubmitting } = formState;
 
   // Consumer services
 
-  const [repair, setRepair] = useState(["yes"]);
-  const handleRepairChange = useCallback((value: Array<string>) => setRepair(value), []);
-
-  const [recycle, setRecycle] = useState(["yes"]);
-  const handleRecycleChange = useCallback((value: Array<string>) => setRecycle(value), []);
-
   const choices = [
-    { label: "Yes", value: "true" },
-    { label: "No", value: "false" },
+    { label: "Yes", value: "yes" },
+    { label: "No", value: "no" },
   ];
 
-  // Links to certifications
+  function setRepairable(value: string) {
+    setValue("repairable", value);
+  }
 
-  const [certifications, setCertifications] = useState<Array<ILink>>([]);
+  function setRecyclable(value: string) {
+    setValue("recyclable", value);
+  }
+
+  // Links to certifications
 
   const [showAddLink, setShowAddLink] = useState(false);
 
@@ -83,12 +84,15 @@ export default function DeclarationsStep(props: Props) {
 
   function addCertification(link: ILink) {
     if (!link) return;
-    setCertifications([...certifications, link]);
+    setValue("certifications", [...watch("certifications"), link]);
     setShowAddLink(false);
   }
 
   function removeCertification(certification: ILink) {
-    setCertifications(certifications.filter(c => c !== certification));
+    setValue(
+      "certifications",
+      watch("certifications").filter(c => c !== certification)
+    );
   }
 
   //
@@ -118,39 +122,21 @@ export default function DeclarationsStep(props: Props) {
       <PFieldInfo
         label={t("Availability for repairing")}
         helpText={t("Refer to the standards we want to follow for this field")}
+        requiredIndicator
       >
-        <Controller
-          control={control}
-          name="repairable"
-          render={({ field: { onChange, value } }) => (
-            <ChoiceList
-              title={t("Availability for repairing")}
-              choices={choices}
-              selected={[value]}
-              onChange={onChange}
-              titleHidden
-            />
-          )}
-        />
+        <div className="py-1">
+          <PButtonRadio options={choices} onChange={setRepairable} />
+        </div>
       </PFieldInfo>
 
       <PFieldInfo
         label={t("Availability for recycling")}
         helpText={t("Refer to the standards we want to follow for this field")}
+        requiredIndicator
       >
-        <Controller
-          control={control}
-          name="recyclable"
-          render={({ field: { onChange, value } }) => (
-            <ChoiceList
-              title={t("Availability for recycling")}
-              choices={choices}
-              selected={[value]}
-              onChange={onChange}
-              titleHidden
-            />
-          )}
-        />
+        <div className="py-1">
+          <PButtonRadio options={choices} onChange={setRecyclable} />
+        </div>
       </PFieldInfo>
 
       <hr />
@@ -172,9 +158,9 @@ export default function DeclarationsStep(props: Props) {
 
       {showAddLink && <AddLink onDiscard={handleDiscard} onSubmit={addCertification} />}
 
-      {certifications.length && (
+      {watch("certifications").length && (
         <Stack spacing="tight" vertical>
-          {certifications.map((c, i) => (
+          {watch("certifications").map((c, i) => (
             <PCardWithAction
               key={c.url}
               onClick={() => {
