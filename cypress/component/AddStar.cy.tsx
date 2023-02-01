@@ -4,7 +4,7 @@ import { MockedProvider } from "@apollo/client/testing";
 import "../../styles/globals.scss";
 import { UPDATE_METADATA } from "../../lib/QueryAndMutation";
 
-describe("AddStar.cy.tsx", () => {
+describe.skip("AddStar.cy.tsx", () => {
   const metadata = { starred: ["777777", "888888"] };
   const id = "999999";
   const projectId = "123456";

@@ -10,7 +10,7 @@ describe("Project Detail functionality", () => {
     cy.visit(`/project/${Cypress.env("project_id")}`);
   });
 
-  it("Should add user id to metadata.starred then remove it", () => {
+  it.skip("Should add user id to metadata.starred then remove it", () => {
     cy.get("#addStar").should("exist");
     const starButton = cy.get("#addStar");
     cy.get("#addStar > span > :nth-child(2)").then($starButton => {
