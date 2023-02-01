@@ -55,8 +55,6 @@ export default function SearchProjects(props: Props) {
     variables,
   });
 
-  console.log(data);
-
   function createOptionsFromData(data: SearchProjectsQuery | undefined): Array<SelectOption> {
     if (!data?.economicResources) return [];
 
