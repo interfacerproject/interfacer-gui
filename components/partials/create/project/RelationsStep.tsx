@@ -3,8 +3,10 @@ import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
 // Components
-import { Stack } from "@bbtgnn/polaris-interfacer";
+import { Stack, Text } from "@bbtgnn/polaris-interfacer";
+import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import ProjectDisplay from "components/ProjectDisplay";
 import SearchProjects, { SearchedProject } from "components/SearchProjects";
 
 //
@@ -32,21 +34,12 @@ export default function RelationsStep(props: Props) {
 
   function handleSelect(value: SearchedProject) {
     setSelection([...selection, value]);
-    console.log(selection);
   }
 
-  // function updateSelection(selected: Array<string>) {
-  //   const id = selected[0];
-  //   if (!id) return;
-  //   const agent = getAgentFromData(id);
-  //   if (!agent) return;
-  //   setSelection([...selection, agent]);
-  // }
-
-  // function removeSelected(id: string) {
-  //   const newSelection = selection.filter(item => item.id !== id);
-  //   setSelection(newSelection);
-  // }
+  function removeSelected(id: string) {
+    const newSelection = selection.filter(item => item.id !== id);
+    setSelection(newSelection);
+  }
 
   //
 
@@ -56,25 +49,24 @@ export default function RelationsStep(props: Props) {
 
       <SearchProjects onSelect={handleSelect} excludeIDs={excludeIDs} />
 
-      <pre>{JSON.stringify(selection)}</pre>
-
-      {/* {selection.length && (
+      {selection.length && (
         <Stack vertical spacing="tight">
           <Text variant="bodyMd" as="p">
-            {t("Selected contributors")}
+            {t("Selected projects")}
           </Text>
-          {selection.map(contributor => (
+          {selection.map(project => (
             <PCardWithAction
-              key={contributor.id}
+              key={project.id}
               onClick={() => {
-                removeSelected(contributor.id);
+                removeSelected(project.id);
               }}
             >
-              <BrUserDisplay user={contributor} />
+              {/* @ts-ignore */}
+              <ProjectDisplay project={project} />
             </PCardWithAction>
           ))}
         </Stack>
-      )} */}
+      )}
     </Stack>
   );
 }
