@@ -1,5 +1,3 @@
-
-
 <div align="center">
 
 # Interfacer GUI
@@ -65,8 +63,8 @@ To know more [DOWNLOAD THE WHITEPAPER](https://www.interfacerproject.eu/assets/n
 
 </div>
 
+---
 
-***
 ## 🎮 Quick start
 
 To start using Interfacer GUI run the following commands
@@ -80,7 +78,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 **[🔝 back to top](#toc)**
 
-***
+---
+
 ## 💾 Install
 
 ```bash
@@ -98,11 +97,13 @@ pnpm dev
 pnpm build
 pnpm start
 ```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 **[🔝 back to top](#toc)**
 
-***
+---
+
 ## 🐋 Docker
 
 ```bash
@@ -111,11 +112,11 @@ docker pull ghcr.io/interfacerproject/interfacer-gui:main
 
 **[🔝 back to top](#toc)**
 
-***
+---
+
 ## 🔧 Configuration
 
 Default values are available on the [`.env.example`](.env.example) of this repository.
-
 
 - DEEPL_API_KEY Deepl key api used in i18n module for auto-translation
 - BASE_URL the federated instance of the gateway
@@ -124,6 +125,7 @@ Default values are available on the [`.env.example`](.env.example) of this repos
 - NEXT_PUBLIC_INVITATION_KEY The invitation key needed to register new users
 
 The next are derived services (endpoints of the instance microservice)
+
 - NEXT_PUBLIC_ZENFLOWS_URL=$BASE_URL/zenflows/api
 - NEXT_PUBLIC_ZENFLOWS_FILE_URL=$BASE_URL/zenflows/api/file
 - NEXT_PUBLIC_LOCATION_AUTOCOMPLETE=$BASE_URL/location-autocomplete/
@@ -133,10 +135,12 @@ The next are derived services (endpoints of the instance microservice)
 - NEXT_PUBLIC_INBOX_COUNT_UNREAD=$BASE_URL/inbox/count-unread
 - NEXT_PUBLIC_INBOX_SET_READ=$BASE_URL/inbox/set-read
 - NEXT_PUBLIC_WALLET=$BASE_URL/wallet/token
+- NEXT_PUBLIC_SOCIAL=$BASE_URL/inbox/social
+- NEXT_PUBLIC_SOCIAL_ECONOMIC_RESOURCE=$BASE_URL/inbox/economicresource
 
 **[🔝 back to top](#toc)**
 
-***
+---
 
 ## 📋 Testing
 
@@ -150,7 +154,8 @@ pnpm e2e
 ```
 
 **[🔝 back to top](#toc)**
-***
+
+---
 
 ## 🔡 translations
 
@@ -158,14 +163,16 @@ pnpm e2e
 
 **[🔝 back to top](#toc)**
 
-***
+---
+
 ## 🐛 Troubleshooting & debugging
 
 Available bugs are reported in the [Issues page](../../issues)
 
 **[🔝 back to top](#toc)**
 
-***
+---
+
 ## 😍 Acknowledgements
 
 <a href="https://dyne.org">
@@ -178,7 +185,8 @@ Designed, written and maintained by Ennio Donato, Micol Salomone, Giovanni Abbat
 
 **[🔝 back to top](#toc)**
 
-***
+---
+
 ## 🌐 Links
 
 https://www.interfacer.eu/
@@ -187,7 +195,8 @@ https://dyne.org/
 
 **[🔝 back to top](#toc)**
 
-***
+---
+
 ## 👤 Contributing
 
 1.  🔀 [FORK IT](../../fork)
@@ -197,11 +206,12 @@ https://dyne.org/
 5.  Create a new Pull Request
 6.  🙏 Thank you
 
-
 **[🔝 back to top](#toc)**
 
-***
+---
+
 ## 💼 License
+
     Interfacer GUI - Interfacer's Progressive Web App client
     Copyleft (ɔ) 2022 Dyne.org foundation
 
