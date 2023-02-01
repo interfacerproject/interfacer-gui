@@ -1,53 +1,34 @@
-import { useMutation } from "@apollo/client";
-import { useTranslation } from "next-i18next";
-import { UPDATE_METADATA } from "../lib/QueryAndMutation";
-
-// Components
 import { Button, Icon } from "@bbtgnn/polaris-interfacer";
 import { StarFilledMinor, StarOutlineMinor } from "@shopify/polaris-icons";
+import useSocial from "hooks/useSocial";
+import useWallet from "hooks/useWallet";
+import { IdeaPoints } from "lib/PointsDistribution";
+import { useTranslation } from "next-i18next";
 
 //
 
-const AddStar = ({
-  id,
-  metadata,
-  userId,
-  onStarred,
-  onDestarred,
-}: {
-  id: string;
-  metadata: { starred?: string[] };
-  userId?: string;
-  onStarred?: () => void;
-  onDestarred?: () => void;
-}) => {
-  const [updateEconomicResource] = useMutation(UPDATE_METADATA);
-  const hasAlreadyStarred = metadata?.starred?.includes(userId!);
+const AddStar = ({ id, owner }: { id: string; owner: string }) => {
+  const { likeObject, isLiked } = useSocial();
+  const hasAlreadyStarred = isLiked(id);
   const { t } = useTranslation("common");
-  const disabled = !metadata;
-  const handleClick = () => {
-    if (!hasAlreadyStarred) {
-      const _metadata = { ...metadata, starred: !!metadata?.starred ? [...metadata.starred!, userId] : [userId] };
-      updateEconomicResource({ variables: { id: id, metadata: JSON.stringify(_metadata) } }).then(
-        () => onDestarred && onDestarred()
-      );
-    } else {
-      const _metadata = { ...metadata, starred: metadata.starred!.filter(star => star !== userId) };
-      updateEconomicResource({ variables: { id: id, metadata: JSON.stringify(_metadata) } }).then(
-        () => onStarred && onStarred()
-      );
-    }
+  const { addIdeaPoints } = useWallet();
+  const handleClick = async () => {
+    await likeObject(id);
+
+    //economic system: points assignments
+    addIdeaPoints(owner, IdeaPoints.OnStar);
   };
+
   return (
     <Button
-      id="addStar"
+      id="likeButton"
       onClick={handleClick}
-      disabled={disabled}
       fullWidth
+      disabled={hasAlreadyStarred}
       size="large"
       icon={<Icon source={hasAlreadyStarred ? StarFilledMinor : StarOutlineMinor} />}
     >
-      {`${hasAlreadyStarred ? t("Unstar") : t("Star")} (${metadata?.starred?.length || 0})`}
+      {`${hasAlreadyStarred ? t("You already star it!") : t("Star")}`}
     </Button>
   );
 };
