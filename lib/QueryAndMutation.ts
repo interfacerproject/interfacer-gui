@@ -969,21 +969,3 @@ export const QUERY_RESOURCE_PROPOSAlS = gql`
     }
   }
 `;
-
-export const SEARCH_AGENTS = gql`
-  query searchAgents($text: String!, $last: Int) {
-    agents(last: $last, filter: { name: $text }) {
-      edges {
-        node {
-          id
-          name
-          note
-          primaryLocation {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`;
