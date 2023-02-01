@@ -1,15 +1,16 @@
 import { gql, useQuery } from "@apollo/client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
-import { CfSearchProjectsQuery, CfSearchProjectsQueryVariables } from "lib/types";
+import { SearchProjectsQuery, SearchProjectsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import * as yup from "yup";
+import ProjectThumb from "./ProjectThumb";
 
 //
 
 export interface Props {
-  onSelect?: (value: string) => void;
+  onSelect?: (value: SearchedProject) => void;
   excludeIDs?: Array<string>;
 }
 
@@ -24,69 +25,70 @@ export default function SearchProjects(props: Props) {
     setInputValue(value);
   }, []);
 
-  const [variables, setVariables] = useState<CfSearchProjectsQueryVariables>({
-    last: 5,
-  });
-
-  useEffect(() => {
+  function createVariablesFromInput(input: string): SearchProjectsQueryVariables {
     try {
+      // Checking if input is an Interfacer ID
       yup
         .string()
         .matches(/[0-7][0-9A-HJKMNP-TV-Z]{25}/)
         .required()
-        .validateSync(inputValue);
-      setVariables({
+        .validateSync(input);
+      return {
         last: 5,
-        IDs: [inputValue],
-      });
+        IDs: [input],
+      };
     } catch (e) {
-      setVariables({
+      // If not, searching by name
+      return {
         last: 5,
-        name: inputValue,
-      });
+        name: input,
+      };
     }
-  }, [inputValue]);
+  }
+
+  const variables = createVariablesFromInput(inputValue);
 
   /* Loading projects */
 
   // Loading projects (re-runs based on variables change)
-  const { data, loading } = useQuery<CfSearchProjectsQuery, CfSearchProjectsQueryVariables>(CF_SEARCH_PROJECTS, {
+  const { data, loading } = useQuery<SearchProjectsQuery, SearchProjectsQueryVariables>(SEARCH_PROJECTS, {
     variables,
   });
 
-  const [options, setOptions] = useState<Array<SelectOption>>([]);
+  console.log(data);
 
-  // When data changes, update options listed in the autocomplete
-  useEffect(() => {
-    // Guard
-    if (!data?.economicResources) return setOptions([]);
+  function createOptionsFromData(data: SearchProjectsQuery | undefined): Array<SelectOption> {
+    if (!data?.economicResources) return [];
 
-    // Preparing options
-    const options: Array<SelectOption> = data.economicResources.edges.map(agent => {
+    const options: Array<SelectOption> = data.economicResources.edges.map(resource => {
       return {
-        value: agent.node.id,
-        label: agent.node.name,
-        // media: <BrUserAvatar name={agent.node.name} size={24} />,
+        value: resource.node.id,
+        label: `${resource.node.name} @${resource.node.primaryAccountable.name}`,
+        // @ts-ignore
+        media: <ProjectThumb project={resource.node} size="xs" />,
       };
     });
 
-    // Filtering already selected options
     const filteredOptions = options.filter(option => {
       return !excludeIDs.includes(option.value);
     });
 
-    setOptions(filteredOptions);
-  }, [data]);
+    return filteredOptions;
+  }
+
+  const options = createOptionsFromData(data);
 
   /* Handling selection */
 
-  // function getAgentFromData(id: string): Agent | undefined {
-  //   const agent = data?.agents?.edges.find(agent => agent.node.id === id);
-  //   return agent?.node;
-  // }
+  function getProjectFromData(id: string): SearchedProject | undefined {
+    const project = data?.economicResources?.edges.find(project => project.node.id === id);
+    return project?.node;
+  }
 
   function handleSelect(selected: string[]) {
-    onSelect(selected[0]);
+    const project = getProjectFromData(selected[0]);
+    if (!project) return;
+    onSelect(project);
     setInputValue("");
   }
 
@@ -116,13 +118,30 @@ export interface SelectOption {
   media?: React.ReactElement;
 }
 
-export const CF_SEARCH_PROJECTS = gql`
-  query CFSearchProjects($last: Int, $IDs: [ID!], $name: String) {
+export type SearchedProject = NonNullable<SearchProjectsQuery["economicResources"]>["edges"][number]["node"];
+
+export const SEARCH_PROJECTS = gql`
+  query SearchProjects($last: Int, $IDs: [ID!], $name: String) {
     economicResources(last: $last, filter: { id: $IDs, name: $name }) {
       edges {
         node {
           id
           name
+          metadata
+          conformsTo {
+            id
+            name
+          }
+          primaryAccountable {
+            id
+            name
+          }
+          images {
+            hash
+            name
+            mimeType
+            bin
+          }
         }
       }
     }

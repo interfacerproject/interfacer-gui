@@ -5,7 +5,7 @@ import { useState } from "react";
 // Components
 import { Stack } from "@bbtgnn/polaris-interfacer";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import SearchProjects from "components/SearchProjects";
+import SearchProjects, { SearchedProject } from "components/SearchProjects";
 
 //
 
@@ -25,11 +25,12 @@ export default function RelationsStep(props: Props) {
   const { onSubmit = () => {} } = props;
   const { t } = useTranslation();
 
-  const [selection, setSelection] = useState<Array<string>>([]);
+  const [selection, setSelection] = useState<Array<SearchedProject>>([]);
+  const excludeIDs = selection.map(item => item.id);
 
   //
 
-  function handleSelect(value: string) {
+  function handleSelect(value: SearchedProject) {
     setSelection([...selection, value]);
     console.log(selection);
   }
@@ -53,7 +54,7 @@ export default function RelationsStep(props: Props) {
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle title={t("Relations")} subtitle={t("Please read our Documentation Guidelines.")} />
 
-      <SearchProjects onSelect={handleSelect} excludeIDs={selection} />
+      <SearchProjects onSelect={handleSelect} excludeIDs={excludeIDs} />
 
       <pre>{JSON.stringify(selection)}</pre>
 

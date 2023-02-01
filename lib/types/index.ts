@@ -3372,6 +3372,33 @@ export type UnitUpdateParams = {
   symbol?: InputMaybe<Scalars["String"]>;
 };
 
+export type SearchProjectsQueryVariables = Exact<{
+  last?: InputMaybe<Scalars["Int"]>;
+  IDs?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
+  name?: InputMaybe<Scalars["String"]>;
+}>;
+
+export type SearchProjectsQuery = {
+  __typename?: "RootQueryType";
+  economicResources?: {
+    __typename?: "EconomicResourceConnection";
+    edges: Array<{
+      __typename?: "EconomicResourceEdge";
+      node: {
+        __typename?: "EconomicResource";
+        id: string;
+        name: string;
+        metadata?: any | null;
+        conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
+        primaryAccountable:
+          | { __typename?: "Organization"; id: string; name: string }
+          | { __typename?: "Person"; id: string; name: string };
+        images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+      };
+    }>;
+  } | null;
+};
+
 export type FetchResourcesQueryVariables = Exact<{
   filter?: InputMaybe<EconomicResourceFilterParams>;
 }>;
@@ -4083,21 +4110,4 @@ export type ResourceProposalsQuery = {
       };
     }>;
   };
-};
-
-export type CfSearchProjectsQueryVariables = Exact<{
-  last?: InputMaybe<Scalars["Int"]>;
-  IDs?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
-  name?: InputMaybe<Scalars["String"]>;
-}>;
-
-export type CfSearchProjectsQuery = {
-  __typename?: "RootQueryType";
-  economicResources?: {
-    __typename?: "EconomicResourceConnection";
-    edges: Array<{
-      __typename?: "EconomicResourceEdge";
-      node: { __typename?: "EconomicResource"; id: string; name: string };
-    }>;
-  } | null;
 };
