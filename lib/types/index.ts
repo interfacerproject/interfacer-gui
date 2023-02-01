@@ -4246,3 +4246,33 @@ export type ResourceProposalsQuery = {
     }>;
   };
 };
+
+export type SearchAgentsQueryVariables = Exact<{
+  text: Scalars["String"];
+  last?: InputMaybe<Scalars["Int"]>;
+}>;
+
+export type SearchAgentsQuery = {
+  __typename?: "RootQueryType";
+  agents?: {
+    __typename?: "AgentConnection";
+    edges: Array<{
+      __typename?: "AgentEdge";
+      node:
+        | {
+            __typename?: "Organization";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          }
+        | {
+            __typename?: "Person";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          };
+    }>;
+  } | null;
+};
