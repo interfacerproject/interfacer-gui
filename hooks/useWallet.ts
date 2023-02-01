@@ -44,8 +44,8 @@ const useWallet = (id?: string): UseWalletReturnValue => {
   };
 
   return {
-    getIdeaPoints: ideaPoints,
-    getStrengthsPoints: strengthsPoints,
+    getIdeaPoints: ideaPoints / 10,
+    getStrengthsPoints: strengthsPoints / 10,
     addIdeaPoints: async (id: string, amount?: number) => await addPoints(amount, id, Token.Idea),
     addStrengthsPoints: async (id: string, amount?: number) => await addPoints(amount, id, Token.Strengths),
   };
