@@ -4,7 +4,6 @@ export enum IdeaPoints {
   OnContributions = 100,
   OnStar = 10,
   OnWatch = 10,
-  OnLike = 10,
   OnAccept = 100,
   OnCite = 100,
 }
@@ -14,7 +13,6 @@ export enum StrengthsPoints {
   OnContributions = 100,
   OnStar = 10,
   OnWatch = 10,
-  OnLike = 10,
   OnAccept = 100,
   OnCite = 100,
 }
