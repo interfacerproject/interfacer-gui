@@ -1,5 +1,7 @@
 import Layout from "components/layout/Layout";
 import RelationsStep from "components/partials/create/project/RelationsStep";
+import DeclarationsStep from "components/partials/create/project/DeclarationsStep";
+import ContributorsStep from "components/partials/create/project/ContributorsStep";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
@@ -9,6 +11,8 @@ const CreateTest: NextPageWithLayout = () => {
   return (
     <>
       <RelationsStep />
+      <DeclarationsStep />
+      <ContributorsStep />
     </>
   );
 };
