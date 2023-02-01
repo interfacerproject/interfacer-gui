@@ -1,5 +1,8 @@
 import Layout from "components/layout/Layout";
-import LocationStepProduct from "components/partials/create/project/LocationStep";
+import LocationStep from "components/partials/create/project/LocationStep";
+import RelationsStep from "components/partials/create/project/RelationsStep";
+import DeclarationsStep from "components/partials/create/project/DeclarationsStep";
+import ContributorsStep from "components/partials/create/project/ContributorsStep";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
@@ -8,7 +11,10 @@ import { ReactElement } from "react";
 const CreateTest: NextPageWithLayout = () => {
   return (
     <>
-      <LocationStepProduct projectType="product" />
+      <LocationStep projectType="product" />
+      <RelationsStep />
+      <DeclarationsStep />
+      <ContributorsStep />
     </>
   );
 };
