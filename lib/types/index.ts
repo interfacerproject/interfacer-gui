@@ -784,7 +784,7 @@ export type Intent = {
    * potential economic resource.  A resource will have only one, as this
    * specifies exactly what the resource is.
    */
-  resourceConformsTo?: Maybe<EconomicResource>;
+  resourceConformsTo?: Maybe<ResourceSpecification>;
   /**
    * When a specific `EconomicResource` is known which can service the
    * `Intent`, this defines that resource.
@@ -1118,6 +1118,8 @@ export type PageInfo = {
 /** A natural person. */
 export type Person = Agent & {
   __typename?: "Person";
+  /** bitcoin public key, encoded by zenroom */
+  bitcoinPublicKey?: Maybe<Scalars["String"]>;
   /** ecdh public key, encoded by zenroom */
   ecdhPublicKey?: Maybe<Scalars["String"]>;
   /** eddsa public key, encoded by zenroom */
@@ -1142,8 +1144,6 @@ export type Person = Agent & {
   primaryLocation?: Maybe<SpatialThing>;
   /** reflow public key, encoded by zenroom */
   reflowPublicKey?: Maybe<Scalars["String"]>;
-  /** schnorr public key, encoded by zenroom */
-  schnorrPublicKey?: Maybe<Scalars["String"]>;
   /** Username of the agent.  Implies uniqueness. */
   user: Scalars["String"];
 };
@@ -1155,6 +1155,8 @@ export type PersonConnection = {
 };
 
 export type PersonCreateParams = {
+  /** bitcoin public key, encoded by zenroom */
+  bitcoinPublicKey?: InputMaybe<Scalars["String"]>;
   /** ecdh public key, encoded by zenroom */
   ecdhPublicKey?: InputMaybe<Scalars["String"]>;
   /** eddsa public key, encoded by zenroom */
@@ -1178,8 +1180,6 @@ export type PersonCreateParams = {
   primaryLocation?: InputMaybe<Scalars["ID"]>;
   /** reflow public key, encoded by zenroom */
   reflowPublicKey?: InputMaybe<Scalars["String"]>;
-  /** schnorr public key, encoded by zenroom */
-  schnorrPublicKey?: InputMaybe<Scalars["String"]>;
   /** Username of the agent.  Implies uniqueness. */
   user: Scalars["String"];
 };
@@ -2157,6 +2157,7 @@ export type RoleBehaviorUpdateParams = {
 
 export type RootMutationType = {
   __typename?: "RootMutationType";
+  claimPerson: Scalars["JSON"];
   createAgentRelationship: AgentRelationshipResponse;
   createAgentRelationshipRole: AgentRelationshipRoleResponse;
   createAgreement: AgreementResponse;
@@ -2257,6 +2258,10 @@ export type RootMutationType = {
   updateScenarioDefinition: ScenarioDefinitionResponse;
   updateSpatialThing: SpatialThingResponse;
   updateUnit: UnitResponse;
+};
+
+export type RootMutationTypeClaimPersonArgs = {
+  id: Scalars["ID"];
 };
 
 export type RootMutationTypeCreateAgentRelationshipArgs = {
@@ -3954,7 +3959,7 @@ export type QueryProposalQuery = {
           hasUnit?: { __typename?: "Unit"; id: string } | null;
         };
       } | null;
-      resourceConformsTo?: { __typename?: "EconomicResource"; id: string; name: string } | null;
+      resourceConformsTo?: { __typename?: "ResourceSpecification"; id: string; name: string } | null;
     }> | null;
   } | null;
 };
@@ -3968,6 +3973,22 @@ export type CiteProjectMutationVariables = Exact<{
 }>;
 
 export type CiteProjectMutation = {
+  __typename?: "RootMutationType";
+  createEconomicEvent: {
+    __typename?: "EconomicEventResponse";
+    economicEvent: { __typename?: "EconomicEvent"; id: string };
+  };
+};
+
+export type ContributeToProjectMutationVariables = Exact<{
+  agent: Scalars["ID"];
+  creationTime: Scalars["DateTime"];
+  process: Scalars["ID"];
+  unitOne: Scalars["ID"];
+  conformTo: Scalars["ID"];
+}>;
+
+export type ContributeToProjectMutation = {
   __typename?: "RootMutationType";
   createEconomicEvent: {
     __typename?: "EconomicEventResponse";
@@ -4062,4 +4083,34 @@ export type ResourceProposalsQuery = {
       };
     }>;
   };
+};
+
+export type SearchAgentsQueryVariables = Exact<{
+  text: Scalars["String"];
+  last?: InputMaybe<Scalars["Int"]>;
+}>;
+
+export type SearchAgentsQuery = {
+  __typename?: "RootQueryType";
+  agents?: {
+    __typename?: "AgentConnection";
+    edges: Array<{
+      __typename?: "AgentEdge";
+      node:
+        | {
+            __typename?: "Organization";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          }
+        | {
+            __typename?: "Person";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          };
+    }>;
+  } | null;
 };
