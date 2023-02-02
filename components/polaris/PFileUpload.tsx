@@ -1,7 +1,8 @@
 import { Banner, Button, DropZone, Icon, List, Stack, Text, Thumbnail } from "@bbtgnn/polaris-interfacer";
 import { CancelMinor } from "@shopify/polaris-icons";
 import { useTranslation } from "next-i18next";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import PHelp from "./PHelp";
 
 //
 
@@ -9,7 +10,11 @@ export interface Props {
   maxFiles?: number;
   maxSize?: number;
   accept?: "image" | "file";
-  validators?: Array<FileValidator>;
+  allowDuplicates?: boolean;
+  customValidators?: Array<FileValidator>;
+  onUpdate?: (files: Array<File>) => void;
+  actionTitle?: string;
+  helpText?: string;
 }
 
 type FileValidator = (file: File) => { valid: boolean; message: string };
@@ -17,6 +22,16 @@ type FileValidator = (file: File) => { valid: boolean; message: string };
 //
 
 export default function PFileUpload(props: Props) {
+  const {
+    maxFiles,
+    maxSize,
+    accept = "file",
+    allowDuplicates = false,
+    customValidators = [],
+    onUpdate = () => {},
+    actionTitle = "Click here to upload or Drag and drop",
+    helpText = "",
+  } = props;
   const { t } = useTranslation();
 
   //
@@ -30,7 +45,15 @@ export default function PFileUpload(props: Props) {
   const handleDrop = useCallback(
     (_droppedFiles: Array<File>, acceptedFiles: Array<File>, rejectedFiles: Array<File>) => {
       setShowError(true);
-      setFiles(files => [...files, ...acceptedFiles]);
+
+      if (maxFiles) {
+        const filesToDrop = maxFiles - files.length;
+        if (acceptedFiles.length > filesToDrop) setFiles(files => [...files, ...acceptedFiles.slice(0, filesToDrop)]);
+      }
+      //
+      else {
+        setFiles(files => [...files, ...acceptedFiles]);
+      }
       setRejectedFiles(rejectedFiles);
     },
     []
@@ -40,33 +63,38 @@ export default function PFileUpload(props: Props) {
     setFiles(files => files.filter(f => f !== file));
   }
 
+  useEffect(() => {
+    onUpdate(files);
+  }, [files, onUpdate]);
+
   // Validators
 
   const validators: Array<FileValidator> = [
     file => {
       return {
-        valid: !files.some(f => f.name === file.name),
+        valid: allowDuplicates ? true : !files.some(f => f.name === file.name),
         message: t("File already existing"),
       };
     },
     file => {
       return {
-        valid: file.size <= 2 * 1024 * 1024 + 10,
+        valid: maxSize ? file.size <= maxSize : true,
         message: t("File size over limit"),
       };
     },
     file => {
       return {
-        valid: file.type.startsWith("image/"),
+        valid: accept == "image" ? file.type.startsWith("image/") : true,
         message: t("File type invalid"),
       };
     },
     file => {
       return {
-        valid: files.length < 10,
+        valid: maxFiles ? files.length < maxFiles : true,
         message: t("File number over limit"),
       };
     },
+    ...customValidators,
   ];
 
   function customValidator(file: unknown): boolean {
@@ -150,8 +178,9 @@ export default function PFileUpload(props: Props) {
     <Stack vertical spacing="tight">
       <DropZone onDrop={handleDrop} customValidator={customValidator}>
         {files.length > 0 && uploadedFiles}
-        {!files.length && <DropZone.FileUpload />}
+        {!files.length && <DropZone.FileUpload actionTitle={actionTitle} />}
       </DropZone>
+      {helpText && <PHelp helpText={helpText} />}
 
       {hasError && showError && errorBanner}
     </Stack>
