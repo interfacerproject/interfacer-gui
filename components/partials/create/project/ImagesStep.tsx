@@ -17,6 +17,7 @@ export default function ImagesStep() {
         onUpdate={files => {
           console.log(files);
         }}
+        accept="image"
         maxSize={2000000}
         helpText={t("Max 10 images | Max file size 2MB | Accepted formats: JPG, PNG, GIF, SVG")}
       />

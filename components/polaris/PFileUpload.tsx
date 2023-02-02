@@ -43,29 +43,28 @@ export default function PFileUpload(props: Props) {
   const [showError, setShowError] = useState(false);
 
   const handleDrop = useCallback(
-    (_droppedFiles: Array<File>, acceptedFiles: Array<File>, rejectedFiles: Array<File>) => {
+    (_droppedFiles: Array<File>, _acceptedFiles: Array<File>, _rejectedFiles: Array<File>) => {
       setShowError(true);
-
-      if (maxFiles) {
-        const filesToDrop = maxFiles - files.length;
-        if (acceptedFiles.length > filesToDrop) setFiles(files => [...files, ...acceptedFiles.slice(0, filesToDrop)]);
-      }
-      //
-      else {
-        setFiles(files => [...files, ...acceptedFiles]);
-      }
-      setRejectedFiles(rejectedFiles);
+      setFiles(files => [...files, ..._acceptedFiles]);
+      setRejectedFiles(_rejectedFiles);
     },
     []
   );
 
-  function removeImage(file: File) {
+  function handleRemoveFile(file: File) {
     setFiles(files => files.filter(f => f !== file));
   }
 
   useEffect(() => {
     onUpdate(files);
   }, [files, onUpdate]);
+
+  useEffect(() => {
+    if (maxFiles && files.length > maxFiles) {
+      setRejectedFiles(r => [...r, ...files.slice(maxFiles, files.length)]);
+      setFiles(files => files.slice(0, maxFiles));
+    }
+  }, [files, maxFiles]);
 
   // Validators
 
@@ -98,7 +97,7 @@ export default function PFileUpload(props: Props) {
   ];
 
   function customValidator(file: unknown): boolean {
-    if (!(file instanceof File)) return true;
+    if (!(file instanceof File)) return true; // Needed to skip dropzone hover event
     return validators.map(validator => validator(file)).every(result => result.valid);
   }
 
@@ -109,7 +108,7 @@ export default function PFileUpload(props: Props) {
       .map(result => result.message);
   }
 
-  //
+  /* Rendering */
 
   const fileDisplay = (file: File) => (
     <div className="flex flex-row justify-between" key={file.name}>
@@ -129,7 +128,7 @@ export default function PFileUpload(props: Props) {
       <div
         onClick={event => {
           event.stopPropagation();
-          removeImage(file);
+          handleRemoveFile(file);
         }}
       >
         <Button icon={<Icon source={CancelMinor} />} />

@@ -10,12 +10,12 @@ import { ReactElement } from "react";
 
 const CreateTest: NextPageWithLayout = () => {
   return (
-    <>
+    <div className="space-y-12">
       <ImagesStep />
       <RelationsStep />
       <DeclarationsStep />
       <ContributorsStep />
-    </>
+    </div>
   );
 };
 
