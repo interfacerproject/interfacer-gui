@@ -15,7 +15,7 @@ export interface Option {
 }
 
 export interface Props {
-  onSelect?: (value: License) => void;
+  onSelect?: (value: string) => void;
   requiredIndicator?: boolean;
   error?: string;
 }
@@ -63,13 +63,21 @@ export default function SearchLicense(props: Props) {
         return matchedOption && matchedOption.label;
       });
 
+      console.log(selected);
+
       setSelectedOptions(selected);
-      if (selectedValue[0]) setInputValue(selectedValue[0]);
+      if (selectedValue[0]) {
+        onSelect(selected[0]);
+        setInputValue(selectedValue[0]);
+      }
     },
-    [options]
+    [options, onSelect]
   );
 
-  const handleClearButtonClick = useCallback(() => setInputValue(""), []);
+  const handleClearButtonClick = useCallback(() => {
+    setInputValue("");
+    onSelect("");
+  }, [onSelect]);
 
   //
 

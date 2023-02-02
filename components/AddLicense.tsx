@@ -3,25 +3,25 @@ import { useTranslation } from "next-i18next";
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
 import { isRequired } from "lib/isFieldRequired";
-import { url } from "lib/regex";
+import { License } from "lib/licenses/types";
+import { getLicenseById, licensesIDs } from "lib/licenses/utils";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
 import { Button, Card, Icon, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import { CancelMinor, PlusMinor } from "@shopify/polaris-icons";
-import { License } from "lib/licenses/types";
 import SearchLicense from "./SearchLicense";
 
 //
 
-interface ScopedLicense {
+export interface ScopedLicense {
   scope: string;
   license: License;
 }
 
 export interface Props {
-  onSubmit?: (value: ScopedLicense) => void;
+  onAdd?: (value: ScopedLicense) => void;
   onDiscard?: () => void;
 }
 
@@ -29,16 +29,16 @@ export interface Props {
 
 export default function AddLicense(props: Props) {
   const { t } = useTranslation();
-  const { onSubmit = () => {}, onDiscard = () => {} } = props;
+  const { onAdd = () => {}, onDiscard = () => {} } = props;
 
   const defaultValues = {
-    url: "",
-    label: "",
+    scope: "",
+    licenseID: "",
   };
 
   const schema = yup.object().shape({
-    url: yup.string().matches(url, t("URL shape is not valid")).required(),
-    label: yup.string().required(),
+    scope: yup.string().required(),
+    licenseID: yup.string().oneOf(licensesIDs).required(),
   });
 
   const form = useForm({
@@ -47,11 +47,16 @@ export default function AddLicense(props: Props) {
     defaultValues,
   });
 
-  const { formState, control, watch, reset } = form;
-  const { isValid, errors, isSubmitting } = formState;
+  const { formState, control, reset } = form;
+  const { isValid, errors } = formState;
 
-  function submit() {
-    // onSubmit();
+  function handleAdd() {
+    onAdd({ scope: form.getValues("scope"), license: getLicenseById(form.getValues("licenseID"))! });
+    reset();
+  }
+
+  function handleDiscard() {
+    onDiscard();
     reset();
   }
 
@@ -62,27 +67,38 @@ export default function AddLicense(props: Props) {
       <Stack vertical spacing="loose">
         <Controller
           control={control}
-          name="label"
+          name="scope"
           render={({ field: { onChange, onBlur, name, value } }) => (
             <TextField
-              label={t("Link title")}
+              label={t("License scope")}
               autoComplete="off"
               onChange={onChange}
               onBlur={onBlur}
               value={value}
               error={errors[name]?.message}
               requiredIndicator={isRequired(schema, name)}
+              placeholder={t("Documentation, code, hardware, etc.")}
             />
           )}
         />
 
-        <SearchLicense></SearchLicense>
+        <Controller
+          control={control}
+          name="licenseID"
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <SearchLicense
+              onSelect={onChange}
+              requiredIndicator={isRequired(schema, name)}
+              error={errors[name]?.message}
+            />
+          )}
+        />
 
         <div className="flex justify-end pt-4 space-x-2">
-          <Button onClick={onDiscard} icon={<Icon source={CancelMinor} />}>
+          <Button onClick={handleDiscard} icon={<Icon source={CancelMinor} />}>
             {t("Discard")}
           </Button>
-          <Button onClick={submit} disabled={!isValid || isSubmitting} icon={<Icon source={PlusMinor} />}>
+          <Button onClick={handleAdd} disabled={!isValid} icon={<Icon source={PlusMinor} />}>
             {t("Add license")}
           </Button>
         </div>

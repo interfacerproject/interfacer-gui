@@ -1,31 +1,43 @@
-import { Button, Icon, Stack } from "@bbtgnn/polaris-interfacer";
-import { PlusMinor } from "@shopify/polaris-icons";
-import AddLicense from "components/AddLicense";
-import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
-export interface Props {}
+// Components
+import { Button, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { PlusMinor } from "@shopify/polaris-icons";
+import AddLicense, { ScopedLicense } from "components/AddLicense";
+import LicenseDisplay from "components/LicenseDisplay";
+import PCardWithAction from "components/polaris/PCardWithAction";
+import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
-interface License {
-  for: string;
-  name: string;
-}
+//
+
+export interface Props {}
 
 export default function LicenseStep(props: Props) {
   const { t } = useTranslation();
 
   const [showAdd, setShowAdd] = useState(false);
 
-  const [licenses, setLicenses] = useState<Array<License>>([]);
+  const [licenses, setLicenses] = useState<Array<ScopedLicense>>([]);
 
   function handleShowAdd() {
     setShowAdd(true);
   }
 
+  function handleAdd(license: ScopedLicense) {
+    setLicenses([...licenses, license]);
+    setShowAdd(false);
+  }
+
   function handleDiscard() {
     setShowAdd(false);
   }
+
+  function removeLicense(license: ScopedLicense) {
+    setLicenses(licenses.filter(l => l !== license));
+  }
+
+  //
 
   return (
     <Stack vertical spacing="extraLoose">
@@ -37,23 +49,23 @@ export default function LicenseStep(props: Props) {
         </Button>
       )}
 
-      {showAdd && <AddLicense />}
+      {showAdd && <AddLicense onAdd={handleAdd} onDiscard={handleDiscard} />}
 
       {licenses.length && (
         <Stack spacing="tight" vertical>
-          {JSON.stringify(licenses)}
-          {/* {licenses.map((c, i) => (
-              <PCardWithAction
-                key={c.url}
-                onClick={() => {
-                  removeCertification(c);
-                }}
-              >
-                <Link url={c.url} external>
-                  {c.label}
-                </Link>
-              </PCardWithAction>
-            ))} */}
+          <Text variant="bodyMd" as="p">
+            {t("Selected licenses")}
+          </Text>
+          {licenses.map((l, i) => (
+            <PCardWithAction
+              key={l.license.licenseId}
+              onClick={() => {
+                removeLicense(l);
+              }}
+            >
+              <LicenseDisplay license={l.license} label={l.scope} />
+            </PCardWithAction>
+          ))}
         </Stack>
       )}
     </Stack>
