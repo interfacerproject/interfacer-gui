@@ -315,7 +315,12 @@ export type EconomicEvent = {
   note?: Maybe<Scalars["String"]>;
   /** Defines the process to which this event is an output. */
   outputOf?: Maybe<Process>;
+  /** Used to implement the trace algorithm. */
   previous?: Maybe<ProductionFlowItem>;
+  /**
+   * Used to implement the trace algorithm.  It is described in
+   * the algorithms section of Valueflow's website.
+   */
   previousEvent?: Maybe<EconomicEvent>;
   /** The economic agent from whom the actual economic event is initiated. */
   provider: Agent;
@@ -525,6 +530,7 @@ export type EconomicResource = {
    * affecting the resource.
    */
   onhandQuantity: Measure;
+  /** Used to implement the trace algorithm. */
   previous?: Maybe<Array<EconomicEvent>>;
   /**
    * The agent currently with primary rights and responsibilites for
@@ -627,7 +633,9 @@ export type EconomicResourceFilterParams = {
   orName?: InputMaybe<Scalars["String"]>;
   orNote?: InputMaybe<Scalars["String"]>;
   orPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
+  orRepo?: InputMaybe<Scalars["String"]>;
   primaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
+  repo?: InputMaybe<Scalars["String"]>;
 };
 
 export type EconomicResourceResponse = {
@@ -1540,7 +1548,7 @@ export type Proposal = {
   reciprocalIntents?: Maybe<Array<Intent>>;
   status: ProposedStatus;
   /**
-   * This proposal contains unit based quantities, which can be multipied to
+   * This proposal contains unit based quantities, which can be multiplied to
    * create commitments; commonly seen in a price list or e-commerce.
    */
   unitBased?: Maybe<Scalars["Boolean"]>;
@@ -1567,7 +1575,7 @@ export type ProposalCreateParams = {
   /** A textual description or comment. */
   note?: InputMaybe<Scalars["String"]>;
   /**
-   * This proposal contains unit based quantities, which can be multipied to
+   * This proposal contains unit based quantities, which can be multiplied to
    * create commitments; commonly seen in a price list or e-commerce.
    */
   unitBased?: InputMaybe<Scalars["Boolean"]>;
@@ -1618,7 +1626,7 @@ export type ProposalUpdateParams = {
   /** A textual description or comment. */
   note?: InputMaybe<Scalars["String"]>;
   /**
-   * This proposal contains unit based quantities, which can be multipied to
+   * This proposal contains unit based quantities, which can be multiplied to
    * create commitments; commonly seen in a price list or e-commerce.
    */
   unitBased?: InputMaybe<Scalars["Boolean"]>;
@@ -3376,6 +3384,7 @@ export type SearchProjectsQueryVariables = Exact<{
   last?: InputMaybe<Scalars["Int"]>;
   IDs?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
   name?: InputMaybe<Scalars["String"]>;
+  conformsTo?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
 }>;
 
 export type SearchProjectsQuery = {
@@ -3395,6 +3404,36 @@ export type SearchProjectsQuery = {
           | { __typename?: "Person"; id: string; name: string };
         images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
       };
+    }>;
+  } | null;
+};
+
+export type SearchAgentsQueryVariables = Exact<{
+  text: Scalars["String"];
+  last?: InputMaybe<Scalars["Int"]>;
+}>;
+
+export type SearchAgentsQuery = {
+  __typename?: "RootQueryType";
+  agents?: {
+    __typename?: "AgentConnection";
+    edges: Array<{
+      __typename?: "AgentEdge";
+      node:
+        | {
+            __typename?: "Organization";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          }
+        | {
+            __typename?: "Person";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          };
     }>;
   } | null;
 };
@@ -4110,34 +4149,4 @@ export type ResourceProposalsQuery = {
       };
     }>;
   };
-};
-
-export type SearchAgentsQueryVariables = Exact<{
-  text: Scalars["String"];
-  last?: InputMaybe<Scalars["Int"]>;
-}>;
-
-export type SearchAgentsQuery = {
-  __typename?: "RootQueryType";
-  agents?: {
-    __typename?: "AgentConnection";
-    edges: Array<{
-      __typename?: "AgentEdge";
-      node:
-        | {
-            __typename?: "Organization";
-            id: string;
-            name: string;
-            note?: string | null;
-            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
-          }
-        | {
-            __typename?: "Person";
-            id: string;
-            name: string;
-            note?: string | null;
-            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
-          };
-    }>;
-  } | null;
 };

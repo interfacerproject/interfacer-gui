@@ -1,6 +1,7 @@
 import Layout from "components/layout/Layout";
 import ContributorsStep from "components/partials/create/project/ContributorsStep";
 import DeclarationsStep from "components/partials/create/project/DeclarationsStep";
+import LinkDesign from "components/partials/create/project/LinkDesign";
 import MainStep from "components/partials/create/project/MainStep";
 import RelationsStep from "components/partials/create/project/RelationsStep";
 import { NextPageWithLayout } from "pages/_app";
@@ -10,12 +11,13 @@ import { ReactElement } from "react";
 
 const CreateTest: NextPageWithLayout = () => {
   return (
-    <>
+    <div className="space-y-12">
+      <LinkDesign />
       <MainStep projectType="product" />
       <RelationsStep />
       <DeclarationsStep />
       <ContributorsStep />
-    </>
+    </div>
   );
 };
 

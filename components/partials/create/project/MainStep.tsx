@@ -53,7 +53,11 @@ export default function MainStep(props: Props) {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("Create a new project")} subtitle={t("Make sure you read the Community Guidelines.")} />
+      <PTitleSubtitle
+        title={t("Create a new project")}
+        subtitle={t("Make sure you read the Community Guidelines.")}
+        titleTag="h2"
+      />
 
       <Controller
         control={control}
@@ -67,6 +71,7 @@ export default function MainStep(props: Props) {
             autoComplete="off"
             onChange={onChange}
             onBlur={onBlur}
+            placeholder={t("My new project")}
             label={t("Title")}
             error={errors[name]?.message}
             requiredIndicator={isRequired(schema, name)}
