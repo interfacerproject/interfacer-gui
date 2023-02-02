@@ -21,7 +21,7 @@ export interface Props {
 }
 
 export default function SearchLicense(props: Props) {
-  const { onSelect = () => {}, requiredIndicator = false, error = " " } = props;
+  const { onSelect = () => {}, requiredIndicator = false, error = "" } = props;
   const { t } = useTranslation();
 
   const licenses = licensesJSON.licenses as Array<License>;
