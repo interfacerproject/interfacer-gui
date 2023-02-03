@@ -3551,6 +3551,7 @@ export type SearchProjectsQueryVariables = Exact<{
   last?: InputMaybe<Scalars["Int"]>;
   IDs?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
   name?: InputMaybe<Scalars["String"]>;
+  conformsTo?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
 }>;
 
 export type SearchProjectsQuery = {
@@ -3570,6 +3571,36 @@ export type SearchProjectsQuery = {
           | { __typename?: "Person"; id: string; name: string };
         images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
       };
+    }>;
+  } | null;
+};
+
+export type SearchAgentsQueryVariables = Exact<{
+  text: Scalars["String"];
+  last?: InputMaybe<Scalars["Int"]>;
+}>;
+
+export type SearchAgentsQuery = {
+  __typename?: "RootQueryType";
+  agents?: {
+    __typename?: "AgentConnection";
+    edges: Array<{
+      __typename?: "AgentEdge";
+      node:
+        | {
+            __typename?: "Organization";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          }
+        | {
+            __typename?: "Person";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          };
     }>;
   } | null;
 };
@@ -4272,34 +4303,4 @@ export type ResourceProposalsQuery = {
       };
     }>;
   };
-};
-
-export type SearchAgentsQueryVariables = Exact<{
-  text: Scalars["String"];
-  last?: InputMaybe<Scalars["Int"]>;
-}>;
-
-export type SearchAgentsQuery = {
-  __typename?: "RootQueryType";
-  agents?: {
-    __typename?: "AgentConnection";
-    edges: Array<{
-      __typename?: "AgentEdge";
-      node:
-        | {
-            __typename?: "Organization";
-            id: string;
-            name: string;
-            note?: string | null;
-            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
-          }
-        | {
-            __typename?: "Person";
-            id: string;
-            name: string;
-            note?: string | null;
-            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
-          };
-    }>;
-  } | null;
 };

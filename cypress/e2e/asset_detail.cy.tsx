@@ -25,7 +25,6 @@ describe("Project Detail functionality", () => {
     cy.restoreLocalStorage();
     cy.visit(`/project/${Cypress.env("project_id")}`);
   });
-
   it.skip("Should star resource", () => {
     cy.get("#addStar").should("exist");
     const starButton = cy.get("#addStar");

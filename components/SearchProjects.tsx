@@ -1,7 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
-import { SearchProjectsQuery, SearchProjectsQueryVariables } from "lib/types";
+import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
+import { GetProjectTypesQuery, SearchProjectsQuery, SearchProjectsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
 import * as yup from "yup";
@@ -9,14 +10,27 @@ import ProjectThumb from "./ProjectThumb";
 
 //
 
+export type ProjectType = "design" | "service" | "product";
+
 export interface Props {
   onSelect?: (value: SearchedProject) => void;
   excludeIDs?: Array<string>;
+  label?: string;
+  conformsTo?: Array<ProjectType>;
 }
 
 export default function SearchProjects(props: Props) {
-  const { onSelect = () => {}, excludeIDs = [] } = props;
   const { t } = useTranslation();
+  const { onSelect = () => {}, excludeIDs = [], label = t("Search for a project"), conformsTo = [] } = props;
+
+  /* Getting project types */
+
+  const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES).data;
+  const projectTypes: Record<ProjectType, string> | undefined = queryProjectTypes && {
+    design: queryProjectTypes.instanceVariables.specs.specProjectDesign.id,
+    service: queryProjectTypes.instanceVariables.specs.specProjectService.id,
+    product: queryProjectTypes.instanceVariables.specs.specProjectProduct.id,
+  };
 
   /* Formatting GraphQL query variables based on input */
 
@@ -24,6 +38,11 @@ export default function SearchProjects(props: Props) {
   const handleInputChange = useCallback((value: string) => {
     setInputValue(value);
   }, []);
+
+  let baseVariables: SearchProjectsQueryVariables = {
+    last: 5,
+    ...(conformsTo.length && projectTypes && { conformsTo: conformsTo.map(type => projectTypes[type]) }),
+  };
 
   function createVariablesFromInput(input: string): SearchProjectsQueryVariables {
     try {
@@ -34,13 +53,13 @@ export default function SearchProjects(props: Props) {
         .required()
         .validateSync(input);
       return {
-        last: 5,
+        ...baseVariables,
         IDs: [input],
       };
     } catch (e) {
       // If not, searching by name
       return {
-        last: 5,
+        ...baseVariables,
         name: input,
       };
     }
@@ -96,7 +115,7 @@ export default function SearchProjects(props: Props) {
     <Autocomplete.TextField
       onChange={handleInputChange}
       autoComplete="off"
-      label={t("Search for a project")}
+      label={label}
       value={inputValue}
       prefix={<Icon source={SearchMinor} color="base" />}
       placeholder="Project name or Interfacer ID"
@@ -119,8 +138,8 @@ export interface SelectOption {
 export type SearchedProject = NonNullable<SearchProjectsQuery["economicResources"]>["edges"][number]["node"];
 
 export const SEARCH_PROJECTS = gql`
-  query SearchProjects($last: Int, $IDs: [ID!], $name: String) {
-    economicResources(last: $last, filter: { id: $IDs, name: $name }) {
+  query SearchProjects($last: Int, $IDs: [ID!], $name: String, $conformsTo: [ID!]) {
+    economicResources(last: $last, filter: { id: $IDs, name: $name, conformsTo: $conformsTo }) {
       edges {
         node {
           id
