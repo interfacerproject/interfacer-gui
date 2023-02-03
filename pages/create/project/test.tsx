@@ -2,7 +2,6 @@ import Layout from "components/layout/Layout";
 import ImportDesign from "components/partials/create/project/ImportDesign";
 import LinkDesign from "components/partials/create/project/LinkDesign";
 import MainStep from "components/partials/create/project/MainStep";
-import LocationStep from "components/partials/create/project/LocationStep";
 import RelationsStep from "components/partials/create/project/RelationsStep";
 import DeclarationsStep from "components/partials/create/project/DeclarationsStep";
 import ContributorsStep from "components/partials/create/project/ContributorsStep";
