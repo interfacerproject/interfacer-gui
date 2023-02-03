@@ -1,4 +1,5 @@
 import { Gitlab } from "Gitlab";
+import devLog from "lib/devLog";
 import { Octokit } from "octokit";
 import { useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
@@ -59,72 +60,88 @@ const useAutoImport = (): AutoImportReturnValue => {
   const findImagesInReadme = (readme: string) => readme.match(/(https?:\/\/.*\.(?:png|jpe?g))/i);
 
   const analyze = async (repo: string) => {
-    try {
-      const request = { method: "POST", body: JSON.stringify({ repo: repo }) };
-      const result = await (await fetch(`${process.env.NEXT_PUBLIC_OSH}/analyze`, request)).json();
-      if (result.err) return result.err;
-      setMetadata(result.ok);
-    } catch (e) {
-      return e;
-    }
+    const request = { method: "POST", body: JSON.stringify({ repo: repo }) };
+    const result = await (await fetch(`${process.env.NEXT_PUBLIC_OSH}/analyze`, request)).json();
+    if (result.err) devLog(result.err);
+    return result.ok;
   };
 
   const getGhMetadata = async () => {
-    const metadata = await o.rest.repos.get({ owner: githubUsername, repo: githubRepo });
-    setRepo(metadata.data.html_url);
-    setName(metadata.data.name);
-    setDescription(metadata.data.description || "");
-    setLicense(metadata.data.license?.spdx_id || "UNLICENSED");
-    setTags(metadata.data.topics?.map(t => t) || []);
-    const osh_metadata = await analyze(metadata.data.html_url);
-    setMetadata(osh_metadata);
+    try {
+      const metadata = await o.rest.repos.get({ owner: githubUsername, repo: githubRepo });
+      setRepo(metadata.data.html_url);
+      setName(metadata.data.name);
+      setDescription(metadata.data.description || "");
+      setLicense(metadata.data.license?.spdx_id || "UNLICENSED");
+      setTags(metadata.data.topics?.map(t => t) || []);
+      const osh_metadata = await analyze(metadata.data.html_url);
+      setMetadata(osh_metadata);
+    } catch (e) {
+      devLog(e);
+    }
   };
 
   const getGhReadme = async () => {
-    const readme = await o.rest.repos.getReadme({ owner: githubUsername, repo: githubRepo });
-    const readmeFile = await o.rest.repos.getContent({
-      mediaType: {
-        format: "raw",
-      },
-      owner: githubUsername,
-      repo: githubRepo,
-      path: readme.data.path,
-    });
-    setReadme(readmeFile.data.toString());
-    const images = findImagesInReadme(readmeFile.data.toString());
-    setImages(images as string[]);
+    try {
+      const readme = await o.rest.repos.getReadme({ owner: githubUsername, repo: githubRepo });
+      const readmeFile = await o.rest.repos.getContent({
+        mediaType: {
+          format: "raw",
+        },
+        owner: githubUsername,
+        repo: githubRepo,
+        path: readme.data.path,
+      });
+      setReadme(readmeFile.data.toString());
+      const images = findImagesInReadme(readmeFile.data.toString());
+      setImages(images as string[]);
+    } catch (e) {
+      devLog(e);
+    }
   };
 
   const getGhContributors = async () => {
-    const contributors = await o.request("GET /repos/{owner}/{repo}/contributors{?anon,per_page,page}", {
-      owner: githubUsername,
-      repo: githubRepo,
-    });
-    setContributors(contributors.data.map((c: any) => c.login));
+    try {
+      const contributors = await o.request("GET /repos/{owner}/{repo}/contributors{?anon,per_page,page}", {
+        owner: githubUsername,
+        repo: githubRepo,
+      });
+      setContributors(contributors.data.map((c: any) => c.login));
+    } catch (e) {
+      devLog(e);
+    }
   };
 
   const getGhResources = async () => {
-    const pulls = await o.rest.pulls.list({
-      owner: githubUsername,
-      repo: githubRepo,
-      state: "closed",
-    });
-    const filteredPulls = pulls.data.filter(p => p.head.repo?.fork)?.map(p => p.head.repo.html_url);
-    setResources(filteredPulls);
+    try {
+      const pulls = await o.rest.pulls.list({
+        owner: githubUsername,
+        repo: githubRepo,
+        state: "closed",
+      });
+      const filteredPulls = pulls.data.filter(p => p.head.repo?.fork)?.map(p => p.head.repo.html_url);
+      setResources(filteredPulls);
+    } catch (e) {
+      devLog(e);
+    }
   };
 
   const getGlMetadata = async () => {
-    const metadata = await gl.Projects.show(gitlabId!);
-    setRepo(metadata.web_url);
-    setName(metadata.name);
-    setDescription(metadata.description || "");
-    setTags(metadata.tag_list?.map(t => t) || []);
-    const readmePath = metadata.readme_url?.split("/").pop() || "README.md";
-    const readme = await gl.RepositoryFiles.show(gitlabId!, readmePath, metadata.default_branch);
-    const readmeFile = await decodeBase64(readme.content);
-    setReadme(readmeFile);
-    const images = findImagesInReadme(readmeFile);
-    setImages(images as string[]);
+    try {
+      const metadata = await gl.Projects.show(gitlabId!);
+      setRepo(metadata.web_url);
+      setName(metadata.name);
+      setDescription(metadata.description || "");
+      setTags(metadata.tag_list?.map(t => t) || []);
+      const readmePath = metadata.readme_url?.split("/").pop() || "README.md";
+      const readme = await gl.RepositoryFiles.show(gitlabId!, readmePath, metadata.default_branch);
+      const readmeFile = await decodeBase64(readme.content);
+      setReadme(readmeFile);
+      const images = findImagesInReadme(readmeFile);
+      setImages(images as string[]);
+    } catch (e) {
+      devLog(e);
+    }
   };
 
   useEffect(() => {
@@ -132,7 +149,7 @@ const useAutoImport = (): AutoImportReturnValue => {
       Promise.all([getGhMetadata(), getGhReadme(), getGhContributors(), getGhResources()]);
     }
     if (service === "gitlab") {
-      Promise.all([getGlMetadata()]);
+      Promise.resolve(getGlMetadata());
     }
   }, [service]);
 
