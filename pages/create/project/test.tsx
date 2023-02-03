@@ -6,6 +6,9 @@ import LocationStep from "components/partials/create/project/LocationStep";
 import RelationsStep from "components/partials/create/project/RelationsStep";
 import DeclarationsStep from "components/partials/create/project/DeclarationsStep";
 import ContributorsStep from "components/partials/create/project/ContributorsStep";
+import ImagesStep from "components/partials/create/project/ImagesStep";
+import LocationStep from "components/partials/create/project/LocationStep";
+import LicenseStep from "components/partials/create/project/LicenseStep";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
@@ -17,6 +20,8 @@ const CreateTest: NextPageWithLayout = () => {
       <ImportDesign />
       <LinkDesign />
       <MainStep projectType="product" />
+      <ImagesStep />
+      <LicenseStep />
       <LocationStep projectType="product" />
       <RelationsStep />
       <DeclarationsStep />
