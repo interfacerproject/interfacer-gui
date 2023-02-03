@@ -8,6 +8,8 @@ import { useTranslation } from "next-i18next";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
+type ProjectType = "service" | "design" | "product";
+
 export interface Values {
   title: string;
   description: string;
@@ -16,13 +18,14 @@ export interface Values {
 }
 
 export interface Props {
-  projectType: "service" | "design" | "product";
+  projectType: ProjectType;
   onValid?: (values: Values) => void;
+  title?: string;
 }
 
 export default function MainStep(props: Props) {
-  const { projectType, onValid = () => {} } = props;
   const { t } = useTranslation();
+  const { projectType, onValid = () => {}, title = t("Create a new project") } = props;
 
   const defaultValues: Values = {
     title: "",
@@ -53,11 +56,7 @@ export default function MainStep(props: Props) {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle
-        title={t("Create a new project")}
-        subtitle={t("Make sure you read the Community Guidelines.")}
-        titleTag="h2"
-      />
+      <PTitleSubtitle title={title} subtitle={t("Make sure you read the Community Guidelines.")} titleTag="h2" />
 
       <Controller
         control={control}
