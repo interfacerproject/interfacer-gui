@@ -3,6 +3,8 @@ import ContributorsStep from "components/partials/create/project/ContributorsSte
 import DeclarationsStep from "components/partials/create/project/DeclarationsStep";
 import ImagesStep from "components/partials/create/project/ImagesStep";
 import RelationsStep from "components/partials/create/project/RelationsStep";
+import LocationStep from "components/partials/create/project/LocationStep";
+import LicenseStep from "components/partials/create/project/LicenseStep";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
@@ -12,6 +14,8 @@ const CreateTest: NextPageWithLayout = () => {
   return (
     <div className="space-y-12">
       <ImagesStep />
+      <LicenseStep />
+      <LocationStep projectType="product" />
       <RelationsStep />
       <DeclarationsStep />
       <ContributorsStep />
