@@ -1,4 +1,5 @@
 import Layout from "components/layout/Layout";
+import LocationStep from "components/partials/create/project/LocationStep";
 import RelationsStep from "components/partials/create/project/RelationsStep";
 import DeclarationsStep from "components/partials/create/project/DeclarationsStep";
 import ContributorsStep from "components/partials/create/project/ContributorsStep";
@@ -10,6 +11,7 @@ import { ReactElement } from "react";
 const CreateTest: NextPageWithLayout = () => {
   return (
     <>
+      <LocationStep projectType="product" />
       <RelationsStep />
       <DeclarationsStep />
       <ContributorsStep />
