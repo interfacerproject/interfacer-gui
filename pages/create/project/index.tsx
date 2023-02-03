@@ -1,34 +1,40 @@
 import { Card, Icon, Stack } from "@bbtgnn/polaris-interfacer";
-import { ReferralMajor } from "@shopify/polaris-icons";
+import { ArrowRightMinor } from "@shopify/polaris-icons";
 import Layout from "components/layout/Layout";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { useTranslation } from "next-i18next";
 import { NextPageWithLayout } from "pages/_app";
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
+
+// Icons
+import Link from "next/link";
+import DesignIcon from "public/project-icons/design.svg";
+import ProductIcon from "public/project-icons/product.svg";
+import ServiceIcon from "public/project-icons/service.svg";
 
 //
 
 const CreateProject: NextPageWithLayout = () => {
   const { t } = useTranslation();
 
-  const sections: Array<{ title: string; description: string; icon: React.ReactNode; url: string }> = [
+  const sections: Array<{ title: string; description: string; icon: string; url: string }> = [
     {
       title: t("Design"),
       description: t("A digital project, like an open source hardware project or 3D model"),
       url: "/create/project/design",
-      icon: <Icon source={ReferralMajor} />,
+      icon: DesignIcon.src,
     },
     {
       title: t("Product"),
       description: t("A physical product that can be picked up or delivered"),
       url: "/create/project/product",
-      icon: <Icon source={ReferralMajor} />,
+      icon: ProductIcon.src,
     },
     {
       title: t("Service"),
       description: t("A service, like a consultancy, training course or usage/rental of equipment"),
       url: "/create/project/service",
-      icon: <Icon source={ReferralMajor} />,
+      icon: ServiceIcon.src,
     },
   ];
 
@@ -38,10 +44,21 @@ const CreateProject: NextPageWithLayout = () => {
       <Stack vertical>
         {sections.map(s => (
           <Card key={s.url}>
-            <div className="flex flex-row flex-nowrap p-6">
-              <div className="w-20">{s.icon}</div>
-              <PTitleSubtitle title={s.title} subtitle={s.description} titleTag="h2" />
-            </div>
+            <Link href={s.url}>
+              <div
+                className="
+                flex flex-row flex-nowrap items-center p-6 rounded-lg
+                hover:cursor-pointer hover:outline hover:outline-2 hover:outline-primary"
+              >
+                <img className="mr-6" src={s.icon} alt={`${s.title} icon`} />
+                <div className="grow">
+                  <PTitleSubtitle title={s.title} subtitle={s.description} titleTag="h2" />
+                </div>
+                <div className="ml-6">
+                  <Icon color="subdued" source={ArrowRightMinor} />
+                </div>
+              </div>
+            </Link>
           </Card>
         ))}
       </Stack>
