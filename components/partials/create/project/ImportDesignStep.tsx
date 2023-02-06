@@ -6,13 +6,23 @@ import { useTranslation } from "next-i18next";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
+//
+
+export type ImportedData = {
+  title: string;
+  description: string;
+  licenses: string[];
+} | null;
+
 export interface Props {
-  onImport?: (repoUrl: string) => void;
+  onImport?: (data: ImportedData) => void;
 }
 
 export interface FormValues {
   repoUrl: string;
 }
+
+//
 
 export default function ImportDesign(props: Props) {
   const { t } = useTranslation();
@@ -36,11 +46,18 @@ export default function ImportDesign(props: Props) {
     defaultValues,
   });
 
-  const { formState, handleSubmit, register, control, setValue, watch } = form;
-  const { isValid, errors, isSubmitting } = formState;
+  const { formState, control, watch } = form;
+  const { isValid } = formState;
+
+  function importData(url: string): ImportedData {
+    return null;
+  }
 
   function handleImport() {
-    onImport(watch("repoUrl"));
+    // TODO: display full-screen loading
+    const data = importData(watch("repoUrl"));
+    onImport(data);
+    // TOO: hide loading
   }
 
   //
@@ -50,7 +67,6 @@ export default function ImportDesign(props: Props) {
       <PTitleSubtitle
         title={t("Import from external source")}
         subtitle={t("Import a project from Github, Thingiverse, LOSH or Git")}
-        titleTag="h2"
       />
 
       <Controller
