@@ -1,24 +1,14 @@
-import Layout from "components/layout/Layout";
-import ContributorsStep from "components/partials/create/project/ContributorsStep";
-import DeclarationsStep from "components/partials/create/project/DeclarationsStep";
-import LicenseStep from "components/partials/create/project/LicenseStep";
-import LocationStep from "components/partials/create/project/LocationStep";
-import RelationsStep from "components/partials/create/project/RelationsStep";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
+
+// Components
+import Layout from "components/layout/Layout";
+import CreateProjectForm from "components/partials/create/project/CreateProjectForm";
 
 //
 
 const CreateDesign: NextPageWithLayout = () => {
-  return (
-    <div className="space-y-12">
-      <LicenseStep />
-      <LocationStep projectType="product" />
-      <RelationsStep />
-      <DeclarationsStep />
-      <ContributorsStep />
-    </div>
-  );
+  return <CreateProjectForm projectType="design" />;
 };
 
 //
