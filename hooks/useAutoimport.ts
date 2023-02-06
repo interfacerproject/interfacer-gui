@@ -1,4 +1,4 @@
-import { Gitlab } from "Gitlab";
+import { Gitlab } from "@gitbeaker/browser";
 import devLog from "lib/devLog";
 import { Octokit } from "octokit";
 import { useEffect, useState } from "react";
@@ -134,7 +134,7 @@ const useAutoImport = (): AutoImportReturnValue => {
       setDescription(metadata.description || "");
       setTags(metadata.tag_list?.map(t => t) || []);
       const readmePath = metadata.readme_url?.split("/").pop() || "README.md";
-      const readme = await gl.RepositoryFiles.show(gitlabId!, readmePath, metadata.default_branch);
+      const readme = await gl.RepositoryFiles.show(gitlabId!, readmePath, metadata.default_branch || "master");
       const readmeFile = await decodeBase64(readme.content);
       setReadme(readmeFile);
       const images = findImagesInReadme(readmeFile);

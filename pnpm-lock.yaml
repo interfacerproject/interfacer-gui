@@ -5,6 +5,7 @@ specifiers:
   '@babel/core': ^7.19.3
   '@bbtgnn/polaris-interfacer': ^0.1.0
   '@bbtgnn/polaris-interfacer-tokens': ^6.3.0
+  '@gitbeaker/browser': ^35.8.0
   '@graphql-codegen/cli': ^2.13.7
   '@graphql-codegen/typescript': ^2.7.4
   '@graphql-codegen/typescript-operations': ^2.5.4
@@ -43,7 +44,6 @@ specifiers:
   eslint-plugin-prettier: ^4.2.1
   eslint-plugin-promise: ^6.0.0
   eslint-plugin-react: ^7.31.8
-  gitlab: ^14.2.2
   graphql: ^15.0.0
   husky: ^8.0.1
   lint-staged: ^13.0.3
@@ -87,6 +87,7 @@ dependencies:
   '@babel/core': 7.20.2
   '@bbtgnn/polaris-interfacer': 0.1.0_biqbaboplfbrettd7655fr4n2y
   '@bbtgnn/polaris-interfacer-tokens': 6.3.0
+  '@gitbeaker/browser': 35.8.0
   '@graphql-codegen/cli': 2.13.12_p5f6mevuc2csew42at7bqdjpce
   '@graphql-codegen/typescript': 2.8.2_graphql@15.8.0
   '@graphql-codegen/typescript-operations': 2.5.7_graphql@15.8.0
@@ -115,7 +116,6 @@ dependencies:
   daisyui: 2.41.0_l5bzpxvjbqhurjfyo5fybuhvfy
   dayjs: 1.11.6
   eslint-plugin-i18next: 6.0.0-6
-  gitlab: 14.2.2
   graphql: 15.8.0
   husky: 8.0.2
   lint-staged: 13.0.3
@@ -1170,6 +1170,37 @@ packages:
     resolution: {integrity: sha512-kt/tg1oip9OAH1xjCTcx1OpcUpu9rjDw3GKJ/rEhUqhO7QyJWfrHU0DpLTNsH67+JyFL5Kv9X1utsXwKFVtyEQ==}
     dependencies:
       '@floating-ui/core': 1.0.2
+    dev: false
+
+  /@gitbeaker/browser/35.8.0:
+    resolution: {integrity: sha512-VR02nu/y7PE6y5Xk8vAuDD23kUp7p3L4hMrDgw+nshpn/vsKKlDqp+zTJl+B4i1DlCqz+wL0H9J7jcc4b9XULg==}
+    engines: {node: '>=14.2.0'}
+    dependencies:
+      '@gitbeaker/core': 35.8.0
+      '@gitbeaker/requester-utils': 35.8.0
+      delay: 5.0.0
+      ky: 0.28.7
+    dev: false
+
+  /@gitbeaker/core/35.8.0:
+    resolution: {integrity: sha512-l/LgTmPFeUBnqyxU/VbFmqKsanCITBBMp7A0yXVbiTQCvNWSV6JJyUL3ILR3q825RRU/AzRm40FFli0AgBpXTw==}
+    engines: {node: '>=14.2.0'}
+    dependencies:
+      '@gitbeaker/requester-utils': 35.8.0
+      form-data: 4.0.0
+      li: 1.3.0
+      mime: 3.0.0
+      query-string: 7.1.3
+      xcase: 2.0.1
+    dev: false
+
+  /@gitbeaker/requester-utils/35.8.0:
+    resolution: {integrity: sha512-d/cseQQUvj1V02jXo6HBpuMarf6e6GdrxEaiWrjAiS2nDEQFRGxDGtPHzqgU84aN11nEBFnFa0vaSMqcZG/+9w==}
+    engines: {node: '>=14.2.0'}
+    dependencies:
+      form-data: 4.0.0
+      qs: 6.11.0
+      xcase: 2.0.1
     dev: false
 
   /@graphql-codegen/cli/2.13.12_p5f6mevuc2csew42at7bqdjpce:
@@ -3325,14 +3356,6 @@ packages:
       supports-color: 5.5.0
     dev: false
 
-  /chalk/3.0.0:
-    resolution: {integrity: sha512-4D3B6Wf41KOYRFdszmDqMCGq5VV/uMAB273JILmO+3jAlh8X4qDtdtgCR3fxtbLEMzSx22QdhnDcJvu2u1fVwg==}
-    engines: {node: '>=8'}
-    dependencies:
-      ansi-styles: 4.3.0
-      supports-color: 7.2.0
-    dev: false
-
   /chalk/4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
@@ -4012,6 +4035,11 @@ packages:
 
   /defined/1.0.1:
     resolution: {integrity: sha512-hsBd2qSVCRE+5PmNdHt1uzyrFu5d3RwmFDKzyNZMFq/EwDNJF7Ee5+D5oEKF0hU6LhtoUF1macFvOe4AskQC1Q==}
+    dev: false
+
+  /delay/5.0.0:
+    resolution: {integrity: sha512-ReEBKkIfe4ya47wlPYf/gu5ib6yUG0/Aez0JQZQz94kiWtRQvZIQbTiehsnwHvLSWJnQdhVeqYue7Id1dKr0qw==}
+    engines: {node: '>=10'}
     dev: false
 
   /delayed-stream/1.0.0:
@@ -4891,6 +4919,15 @@ packages:
       mime-types: 2.1.35
     dev: false
 
+  /form-data/4.0.0:
+    resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
+    engines: {node: '>= 6'}
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      mime-types: 2.1.35
+    dev: false
+
   /formdata-node/4.4.1:
     resolution: {integrity: sha512-0iirZp3uVDjVGt9p49aTaqjk84TrglENEDuqfdlZQ1roC9CWlPk6Avf8EEnZNcAqPonwkG35x4n3ww/1THYAeQ==}
     engines: {node: '>= 12.20'}
@@ -4998,25 +5035,6 @@ packages:
 
   /github-slugger/1.5.0:
     resolution: {integrity: sha512-wIh+gKBI9Nshz2o46B0B3f5k/W+WI9ZAv6y5Dn5WJ5SK1t0TnDimB4WE5rmTD05ZAIn8HALCZVmCsvj0w0v0lw==}
-    dev: false
-
-  /gitlab/14.2.2:
-    resolution: {integrity: sha512-MVLGXLFk5erJCeDnDtV+srDHogadVV8y94G4mAulukCwdCwh+IUqsU4ESZksZvBis8VTJsK9Mj01lRJ1JrxVsg==}
-    engines: {node: '>=10.0.0'}
-    deprecated: 'The gitlab package has found a new home in the @gitbeaker organization. For the latest gitlab node library, check out @gitbeaker/node. A full list of the features can be found here: https://github.com/jdalrymple/gitbeaker#readme'
-    hasBin: true
-    dependencies:
-      chalk: 3.0.0
-      form-data: 3.0.1
-      ky: 0.16.2
-      ky-universal: 0.3.0_ky@0.16.2
-      li: 1.3.0
-      ora: 4.1.1
-      query-string: 6.14.1
-      sywac: 1.3.0
-      xcase: 2.0.1
-    transitivePeerDependencies:
-      - encoding
     dev: false
 
   /glob-parent/5.1.2:
@@ -5942,22 +5960,9 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /ky-universal/0.3.0_ky@0.16.2:
-    resolution: {integrity: sha512-CM4Bgb2zZZpsprcjI6DNYTaH3oGHXL2u7BU4DK+lfCuC4snkt9/WRpMYeKbBbXscvKkeqBwzzjFX2WwmKY5K/A==}
-    engines: {node: '>=8'}
-    peerDependencies:
-      ky: '>=0.12.0'
-    dependencies:
-      abort-controller: 3.0.0
-      ky: 0.16.2
-      node-fetch: 2.6.7
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
-  /ky/0.16.2:
-    resolution: {integrity: sha512-4/Xcb0hqeueNX9sa+G2jREiam9yb+I2Y3p3J42lIeitAenHXUZwpyejEgeQcQsaGl+hbuA0s7c3u+nlcIYFtog==}
-    engines: {node: '>=8'}
+  /ky/0.28.7:
+    resolution: {integrity: sha512-a23i6qSr/ep15vdtw/zyEQIDLoUaKDg9Jf04CYl/0ns/wXNYna26zJpI+MeIFaPeDvkrjLPrKtKOiiI3IE53RQ==}
+    engines: {node: '>=12'}
     dev: false
 
   /language-subtag-registry/0.3.22:
@@ -6131,13 +6136,6 @@ packages:
 
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-
-  /log-symbols/3.0.0:
-    resolution: {integrity: sha512-dSkNGuI7iG3mfvDzUuYZyvk5dD9ocYCYzNU6CYDE6+Xqd+gwme6Z00NS3dUh8mq/73HaEtT7m6W+yUPtU6BZnQ==}
-    engines: {node: '>=8'}
-    dependencies:
-      chalk: 2.4.2
-    dev: false
 
   /log-symbols/4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
@@ -6670,6 +6668,12 @@ packages:
       mime-db: 1.52.0
     dev: false
 
+  /mime/3.0.0:
+    resolution: {integrity: sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==}
+    engines: {node: '>=10.0.0'}
+    hasBin: true
+    dev: false
+
   /mimic-fn/2.1.0:
     resolution: {integrity: sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==}
     engines: {node: '>=6'}
@@ -6999,20 +7003,6 @@ packages:
       type-check: 0.4.0
       word-wrap: 1.2.3
     dev: true
-
-  /ora/4.1.1:
-    resolution: {integrity: sha512-sjYP8QyVWBpBZWD6Vr1M/KwknSw6kJOz41tvGMlwWeClHBtYKTbHMki1PsLZnxKpXMPbTKv9b3pjQu3REib96A==}
-    engines: {node: '>=8'}
-    dependencies:
-      chalk: 3.0.0
-      cli-cursor: 3.1.0
-      cli-spinners: 2.7.0
-      is-interactive: 1.0.0
-      log-symbols: 3.0.0
-      mute-stream: 0.0.8
-      strip-ansi: 6.0.1
-      wcwidth: 1.0.1
-    dev: false
 
   /ora/5.4.1:
     resolution: {integrity: sha512-5b6Y85tPxZZ7QytO+BQzysW31HJku27cRIlkbAXaNx+BdcVi+LlRFmVXzeF6a7JCwJpyw5c4b+YSVImQIrBpuQ==}
@@ -7730,13 +7720,20 @@ packages:
     resolution: {integrity: sha1-ys6GOG9ZoNuAUPqQ2baw6IoeNk8=}
     dev: false
 
+  /qs/6.11.0:
+    resolution: {integrity: sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==}
+    engines: {node: '>=0.6'}
+    dependencies:
+      side-channel: 1.0.4
+    dev: false
+
   /qs/6.5.3:
     resolution: {integrity: sha512-qxXIEh4pCGfHICj1mAJQ2/2XVZkjCDTcEgfoSQxc/fYivUZxTkk7L3bDBJSoNrEzXI17oUO5Dp07ktqE5KzczA==}
     engines: {node: '>=0.6'}
     dev: false
 
-  /query-string/6.14.1:
-    resolution: {integrity: sha512-XDxAeVmpfu1/6IjyT/gXHOl+S0vQ9owggJ30hhWKdHAsNPOcasn5o9BW0eejZqL2e4vMjhAxoW3jVHcD6mbcYw==}
+  /query-string/7.1.3:
+    resolution: {integrity: sha512-hh2WYhq4fi8+b+/2Kg9CEge4fDPvHS534aOOvOZeQ3+Vf2mCFsaFBYj0i+iXcAq6I9Vzp5fjMFBlONvayDC1qg==}
     engines: {node: '>=6'}
     dependencies:
       decode-uri-component: 0.2.2
@@ -8640,11 +8637,6 @@ packages:
   /symbol-observable/4.0.0:
     resolution: {integrity: sha512-b19dMThMV4HVFynSAM1++gBHAbk2Tc/osgLIBZMKsyqh34jb2e8Os7T6ZW/Bt3pJFdBTd2JwAnAAEQV7rSNvcQ==}
     engines: {node: '>=0.10'}
-    dev: false
-
-  /sywac/1.3.0:
-    resolution: {integrity: sha512-LDt2stNTp4bVPMgd70Jj9PWrSa4batl+bv+Ea5NLNGT7ufc4oQPtRfQ73wbddNV6RilaPqnEt6y1Wkm5FVTNEg==}
-    engines: {node: '>=4'}
     dev: false
 
   /tailwindcss/3.2.4_ts-node@10.9.1:
