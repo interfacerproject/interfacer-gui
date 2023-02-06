@@ -1,7 +1,7 @@
 import { Checkbox, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import SelectLocation from "components/SelectLocation";
+import SelectLocation2 from "components/SelectLocation2";
 import { LocationLookup } from "lib/fetchLocation";
 import { isRequired } from "lib/isFieldRequired";
 import { useTranslation } from "next-i18next";
@@ -17,7 +17,7 @@ export interface Values {
 }
 
 export interface Props {
-  onValid?: (values: Values) => void;
+  onValid?: (values: Values | null) => void;
   projectType?: "product" | "service";
 }
 
@@ -37,7 +37,7 @@ export default function LocationStepProduct(props: Props) {
 
   const serviceSchema = yup.object().shape({
     locationName: yup.string(),
-    location: yup.object(),
+    location: yup.object().nullable(),
     remote: yup.boolean(),
   });
   const projectSchema = yup.object().shape({
@@ -57,6 +57,7 @@ export default function LocationStepProduct(props: Props) {
   const { errors, isValid } = formState;
 
   if (isValid) onValid(form.getValues());
+  if (!isValid) onValid(null);
 
   //
 
@@ -89,7 +90,7 @@ export default function LocationStepProduct(props: Props) {
         control={control}
         name="location"
         render={({ field: { onChange, onBlur, name, ref } }) => (
-          <SelectLocation
+          <SelectLocation2
             id={name}
             name={name}
             ref={ref}
@@ -100,6 +101,7 @@ export default function LocationStepProduct(props: Props) {
             error={errors[name]?.message ? locationError : ""}
             creatable={false}
             requiredIndicator={isRequired(schema, name)}
+            isClearable
           />
         )}
       />
