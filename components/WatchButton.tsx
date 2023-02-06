@@ -6,7 +6,7 @@ import { IdeaPoints } from "lib/PointsDistribution";
 import { useTranslation } from "next-i18next";
 
 const WatchButton = ({ id, owner }: { id: string; owner: string }) => {
-  const { followActivity, isWatched } = useSocial(id);
+  const { followActivity, isWatched, erFollowerLength } = useSocial(id);
   const { t } = useTranslation("common");
   const { addIdeaPoints } = useWallet();
   const watched = isWatched();
@@ -25,7 +25,7 @@ const WatchButton = ({ id, owner }: { id: string; owner: string }) => {
       disabled={watched}
       icon={<Icon source={watched ? HideMinor : ViewMinor} />}
     >
-      {t("Watch")}
+      {t("Watch")!} {"(" + erFollowerLength + ")"}
     </Button>
   );
 };

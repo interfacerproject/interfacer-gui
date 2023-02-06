@@ -1,4 +1,3 @@
-import devLog from "lib/devLog";
 import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
 import useSignedPost from "./useSignedPost";
@@ -24,6 +23,7 @@ const useSocial = (economicResource?: string) => {
     getERFollows();
   }, [user, flag]);
 
+  //provisional, to be updated as soon as inBox has implemented NEXT_PUBLIC_SOCIAL_ECONOMIC_RESOURCE}/${economicResource}/likes
   const getLikes = async () => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_SOCIAL_PERSON}/${user!.ulid}/liked`);
     const data = await response.json();
@@ -39,15 +39,14 @@ const useSocial = (economicResource?: string) => {
   const getERFollows = async () => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_SOCIAL_ECONOMIC_RESOURCE}/${economicResource}/follower`);
     const data = await response.json();
-    setERFollows(data.data.map((f:string) => f.split("person/")[1]));
-    devLog("erFollows");
+    setERFollows(data.data?.map((f: string) => f.split("person/")[1]));
     return data.data;
   };
 
   const getUserFollows = async () => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_SOCIAL_PERSON}/${user!.ulid}/following`);
     const data = await response.json();
-    const followers = data.data.map((f:string) => f.split("economicresource/")[1]);
+    const followers = data.data?.map((f: string) => f.split("economicresource/")[1]);
     setUserFollows(followers);
     return data.data;
   };
@@ -87,6 +86,8 @@ const useSocial = (economicResource?: string) => {
     isWatched: isFollowed,
     getERFollows,
     getUserFollows,
+    userFollows,
+    erFollowerLength: erFollows?.length || 0,
   };
 };
 
