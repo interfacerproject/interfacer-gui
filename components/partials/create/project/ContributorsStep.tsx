@@ -18,14 +18,16 @@ export interface SelectOption {
   media?: React.ReactElement;
 }
 
+export type Values = Array<Agent>;
+
 export interface Props {
-  onSubmit?: (contributorsIDs: Array<string>) => void;
+  onUpdate?: (contributors: Values) => void;
 }
 
 //
 
 export default function ContributorsStep(props: Props) {
-  const { onSubmit = () => {} } = props;
+  const { onUpdate = () => {} } = props;
   const { t } = useTranslation();
 
   const [selection, setSelection] = useState<Array<Agent>>([]);
@@ -39,6 +41,8 @@ export default function ContributorsStep(props: Props) {
     const newSelection = selection.filter(item => item.id !== id);
     setSelection(newSelection);
   }
+
+  onUpdate(selection);
 
   //
 

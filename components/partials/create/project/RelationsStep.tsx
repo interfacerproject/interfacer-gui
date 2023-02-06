@@ -8,11 +8,14 @@ import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectDisplay from "components/ProjectDisplay";
 import SearchProjects, { SearchedProject } from "components/SearchProjects";
+import { EconomicResource } from "lib/types";
 
 //
 
+export type Values = Array<Partial<EconomicResource>>;
+
 export interface Props {
-  onSubmit?: (contributorsIDs: Array<string>) => void;
+  onUpdate?: (projects: Values) => void;
 }
 
 export interface SelectOption {
@@ -24,7 +27,7 @@ export interface SelectOption {
 //
 
 export default function RelationsStep(props: Props) {
-  const { onSubmit = () => {} } = props;
+  const { onUpdate = () => {} } = props;
   const { t } = useTranslation();
 
   const [selection, setSelection] = useState<Array<SearchedProject>>([]);
@@ -40,6 +43,8 @@ export default function RelationsStep(props: Props) {
     const newSelection = selection.filter(item => item.id !== id);
     setSelection(newSelection);
   }
+
+  onUpdate(selection as Values);
 
   //
 

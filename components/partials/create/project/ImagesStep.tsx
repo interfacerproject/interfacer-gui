@@ -1,9 +1,20 @@
+import { useTranslation } from "next-i18next";
+
+// Components
 import { Stack } from "@bbtgnn/polaris-interfacer";
 import PFileUpload from "components/polaris/PFileUpload";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import { useTranslation } from "next-i18next";
 
-export default function ImagesStep() {
+//
+
+export type Values = Array<File>;
+
+export interface Props {
+  onUpdate?: (images: Values) => void;
+}
+
+export default function ImagesStep(props: Props) {
+  const { onUpdate = () => {} } = props;
   const { t } = useTranslation();
 
   return (
@@ -14,9 +25,7 @@ export default function ImagesStep() {
       />
       <PFileUpload
         maxFiles={10}
-        onUpdate={files => {
-          console.log(files);
-        }}
+        onUpdate={onUpdate}
         accept="image"
         maxSize={2000000}
         helpText={t("Max 10 images | Max file size 2MB | Accepted formats: JPG, PNG, GIF, SVG")}

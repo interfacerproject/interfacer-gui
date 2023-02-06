@@ -17,20 +17,23 @@ import * as yup from "yup";
 
 //
 
-export interface FormValues {
+export interface Values {
   repairable: string;
   recyclable: string;
   certifications: Array<ILink>;
 }
 
-export interface Props {}
+export interface Props {
+  onValid?: (values: Values | null) => void;
+}
 
 export default function DeclarationsStep(props: Props) {
+  const { onValid = () => {} } = props;
   const { t } = useTranslation();
 
   //
 
-  const defaultValues: FormValues = {
+  const defaultValues: Values = {
     repairable: "yes",
     recyclable: "yes",
     certifications: [],
@@ -47,7 +50,7 @@ export default function DeclarationsStep(props: Props) {
     ),
   });
 
-  const form = useForm<FormValues>({
+  const form = useForm<Values>({
     mode: "all",
     resolver: yupResolver(schema),
     defaultValues,
@@ -55,6 +58,9 @@ export default function DeclarationsStep(props: Props) {
 
   const { formState, setValue, watch } = form;
   const { isValid, errors, isSubmitting } = formState;
+
+  if (isValid) onValid(watch());
+  if (!isValid) onValid(null);
 
   // Consumer services
 
@@ -98,37 +104,39 @@ export default function DeclarationsStep(props: Props) {
 
   //
 
-  const hr = <hr className="border-t-[1px] border-t-border-neutral-subdued" />;
+  const spacer = <div className="h-4" />;
 
   return (
-    <Stack vertical spacing="extraLoose">
+    <Stack vertical spacing="loose">
       <PTitleSubtitle title={t("Self declarations")} subtitle={t("Lorem ipsum dolor sit amet.")} />
 
-      {hr}
+      {spacer}
 
-      <PTitleSubtitle title={t("Consumer services")} subtitle={t("Lorem ipsum dolor sit amet.")} titleTag="h2" />
+      <Stack vertical spacing="extraLoose">
+        <PTitleSubtitle title={t("Consumer services")} subtitle={t("Lorem ipsum dolor sit amet.")} titleTag="h2" />
 
-      <PFieldInfo
-        label={t("Availability for repairing")}
-        helpText={t("Refer to the standards we want to follow for this field")}
-        requiredIndicator
-      >
-        <div className="py-1">
-          <PButtonRadio options={choices} onChange={setRepairable} />
-        </div>
-      </PFieldInfo>
+        <PFieldInfo
+          label={t("Availability for repairing")}
+          helpText={t("Refer to the standards we want to follow for this field")}
+          requiredIndicator
+        >
+          <div className="py-1">
+            <PButtonRadio options={choices} onChange={setRepairable} />
+          </div>
+        </PFieldInfo>
 
-      <PFieldInfo
-        label={t("Availability for recycling")}
-        helpText={t("Refer to the standards we want to follow for this field")}
-        requiredIndicator
-      >
-        <div className="py-1">
-          <PButtonRadio options={choices} onChange={setRecyclable} />
-        </div>
-      </PFieldInfo>
+        <PFieldInfo
+          label={t("Availability for recycling")}
+          helpText={t("Refer to the standards we want to follow for this field")}
+          requiredIndicator
+        >
+          <div className="py-1">
+            <PButtonRadio options={choices} onChange={setRecyclable} />
+          </div>
+        </PFieldInfo>
+      </Stack>
 
-      {hr}
+      {spacer}
 
       <PTitleSubtitle title={t("Links to certifications")} subtitle={t("(Optional field)")} titleTag="h2" />
 

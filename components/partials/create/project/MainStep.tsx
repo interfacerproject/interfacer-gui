@@ -4,11 +4,12 @@ import BrMdEditor from "components/brickroom/BrMdEditor";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SelectTags from "components/SelectTags";
 import { isRequired } from "lib/isFieldRequired";
+import { url } from "lib/regex";
 import { useTranslation } from "next-i18next";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
-type ProjectType = "service" | "design" | "product";
+//
 
 export interface Values {
   title: string;
@@ -18,14 +19,14 @@ export interface Values {
 }
 
 export interface Props {
-  projectType: ProjectType;
-  onValid?: (values: Values) => void;
-  title?: string;
+  onValid?: (values: Values | null) => void;
 }
+
+//
 
 export default function MainStep(props: Props) {
   const { t } = useTranslation();
-  const { projectType, onValid = () => {}, title = t("Create a new project") } = props;
+  const { onValid = () => {} } = props;
 
   const defaultValues: Values = {
     title: "",
@@ -36,7 +37,7 @@ export default function MainStep(props: Props) {
 
   const schema = yup.object({
     title: yup.string().required(),
-    link: yup.string().required(),
+    link: yup.string().matches(url, t("Invalid URL")).required(),
     tags: yup.array(),
     description: yup.string(),
   });
@@ -51,12 +52,13 @@ export default function MainStep(props: Props) {
   const { isValid, errors } = formState;
 
   if (isValid) onValid(watch());
+  if (!isValid) onValid(null);
 
   //
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={title} subtitle={t("Make sure you read the Community Guidelines.")} titleTag="h2" />
+      <PTitleSubtitle title={t("General information")} />
 
       <Controller
         control={control}
