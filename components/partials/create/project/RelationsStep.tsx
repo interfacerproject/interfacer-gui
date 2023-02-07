@@ -9,6 +9,13 @@ import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectDisplay from "components/ProjectDisplay";
 import SearchProjects from "components/SearchProjects";
 import { EconomicResource } from "lib/types";
+import * as yup from "yup";
+
+//
+
+export type RelationsStepValues = Array<string>;
+export const relationsStepSchema = yup.array().of(yup.string());
+export const relationsStepDefaultValues: RelationsStepValues = [];
 
 //
 

@@ -6,22 +6,20 @@ import SearchProjects from "components/SearchProjects";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
+import * as yup from "yup";
 
 //
 
-export type LinkDesignStepData = Partial<EconomicResource> | null;
-
-export interface Props {
-  onChange?: (values: LinkDesignStepData) => void;
-}
+export type LinkDesignStepValues = string;
+export const linkDesignStepSchema = yup.string();
+export const linkDesignStepDefaultValues: LinkDesignStepValues = "";
 
 //
 
-export default function LinkDesign(props: Props) {
+export default function LinkDesign() {
   const { t } = useTranslation();
-  const { onChange = () => {} } = props;
 
-  const [selected, setSelected] = useState<LinkDesignStepData>(null);
+  const [selected, setSelected] = useState<LinkDesignStepValues>(null);
 
   function handleSelect(value: Partial<EconomicResource>) {
     setSelected(value);
@@ -29,8 +27,6 @@ export default function LinkDesign(props: Props) {
   function handleRemove() {
     setSelected(null);
   }
-
-  onChange(selected);
 
   //
 

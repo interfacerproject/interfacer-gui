@@ -9,6 +9,13 @@ import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SearchUsers from "components/SearchUsers";
 import { Agent } from "lib/types";
+import * as yup from "yup";
+
+//
+
+export type ContributorsStepValues = Array<string>;
+export const contributorsStepSchema = yup.array().of(yup.string());
+export const contributorsStepDefaultValues: ContributorsStepValues = [];
 
 //
 
@@ -18,16 +25,9 @@ export interface SelectOption {
   media?: React.ReactElement;
 }
 
-export type ContributorsStepData = Array<Agent>;
-
-export interface Props {
-  onUpdate?: (contributors: ContributorsStepData) => void;
-}
-
 //
 
-export default function ContributorsStep(props: Props) {
-  const { onUpdate = () => {} } = props;
+export default function ContributorsStep() {
   const { t } = useTranslation();
 
   const [selection, setSelection] = useState<Array<Agent>>([]);
@@ -41,8 +41,6 @@ export default function ContributorsStep(props: Props) {
     const newSelection = selection.filter(item => item.id !== id);
     setSelection(newSelection);
   }
-
-  onUpdate(selection);
 
   //
 
