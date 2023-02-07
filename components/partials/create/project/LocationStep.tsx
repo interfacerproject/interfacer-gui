@@ -58,8 +58,7 @@ export default function LocationStepProduct(props: Props) {
   const { formState, control, watch } = form;
   const { errors, isValid } = formState;
 
-  if (isValid) onValid(form.getValues());
-  if (!isValid) onValid(null);
+  onValid(isValid ? watch() : null);
 
   //
 
