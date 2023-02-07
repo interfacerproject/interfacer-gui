@@ -20,7 +20,7 @@ type UseWalletReturnValue = {
 const useWallet = (id?: string): UseWalletReturnValue => {
   const [ideaPoints, setIdeaPoints] = useState(0);
   const [strengthsPoints, setStrengthsPoints] = useState(0);
-  const { signedPost } = useSignedPost();
+  const { signedPost } = useSignedPost(true);
 
   useEffect(() => {
     if (!id) return;
@@ -44,8 +44,8 @@ const useWallet = (id?: string): UseWalletReturnValue => {
   };
 
   return {
-    getIdeaPoints: ideaPoints,
-    getStrengthsPoints: strengthsPoints,
+    getIdeaPoints: ideaPoints / 10,
+    getStrengthsPoints: strengthsPoints / 10,
     addIdeaPoints: async (id: string, amount?: number) => await addPoints(amount, id, Token.Idea),
     addStrengthsPoints: async (id: string, amount?: number) => await addPoints(amount, id, Token.Strengths),
   };
