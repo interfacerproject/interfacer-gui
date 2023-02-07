@@ -17,13 +17,32 @@ import * as yup from "yup";
 
 //
 
-export interface FormValues {
+export interface DeclarationsStepValues {
   repairable: string;
   recyclable: string;
   certifications: Array<ILink>;
 }
 
-export type DeclarationsStepData = FormValues | null;
+export const declarationsStepSchema = yup.object().shape({
+  repairable: yup.string().oneOf(["yes", "no"]).required(),
+  recyclable: yup.string().oneOf(["yes", "no"]).required(),
+  certifications: yup.array().of(
+    yup.object().shape({
+      url: yup.string().url().required(),
+      label: yup.string().required(),
+    })
+  ),
+});
+
+export const declarationsStepDefaultValues: DeclarationsStepValues = {
+  repairable: "yes",
+  recyclable: "yes",
+  certifications: [],
+};
+
+//
+
+export type DeclarationsStepData = DeclarationsStepValues | null;
 
 export interface Props {
   onValid?: (values: DeclarationsStepData) => void;
@@ -35,26 +54,15 @@ export default function DeclarationsStep(props: Props) {
 
   //
 
-  const defaultValues: FormValues = {
+  const defaultValues: DeclarationsStepValues = {
     repairable: "yes",
     recyclable: "yes",
     certifications: [],
   };
 
-  const schema = yup.object().shape({
-    repairable: yup.string().oneOf(["yes", "no"]).required(),
-    recyclable: yup.string().oneOf(["yes", "no"]).required(),
-    certifications: yup.array().of(
-      yup.object().shape({
-        url: yup.string().url().required(),
-        label: yup.string().required(),
-      })
-    ),
-  });
-
-  const form = useForm<FormValues>({
+  const form = useForm<DeclarationsStepValues>({
     mode: "all",
-    resolver: yupResolver(schema),
+    resolver: yupResolver(declarationsStepSchema),
     defaultValues,
   });
 

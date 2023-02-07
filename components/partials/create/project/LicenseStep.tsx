@@ -8,32 +8,32 @@ import AddLicense, { ScopedLicense } from "components/AddLicense";
 import LicenseDisplay from "components/LicenseDisplay";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import { useFormContext } from "react-hook-form";
+import * as yup from "yup";
+import { CreateProjectValues } from "./CreateProjectForm";
 
 //
 
-export type LicenseStepData = Array<ScopedLicense>;
-
-export interface Props {
-  onChange?: (data: LicenseStepData) => void;
-}
+export type LicenseStepValues = Array<ScopedLicense>;
+export const licenseStepSchema = yup.array();
+export const licenseStepDefaultValues: LicenseStepValues = [];
 
 //
 
-export default function LicenseStep(props: Props) {
+export default function LicenseStep() {
   const { t } = useTranslation();
-  const { onChange = () => {} } = props;
 
+  const { setValue, getValues } = useFormContext<CreateProjectValues>();
   //
 
   const [showAdd, setShowAdd] = useState(false);
-  const [licenses, setLicenses] = useState<Array<ScopedLicense>>([]);
 
   function handleShowAdd() {
     setShowAdd(true);
   }
 
   function handleAdd(license: ScopedLicense) {
-    setLicenses([...licenses, license]);
+    setValue("licenses", [...getValues().licenses, license]);
     setShowAdd(false);
   }
 
@@ -42,10 +42,8 @@ export default function LicenseStep(props: Props) {
   }
 
   function removeLicense(license: ScopedLicense) {
-    setLicenses(licenses.filter(l => l !== license));
+    // setLicenses(licenses.filter(l => l !== license));
   }
-
-  onChange(licenses);
 
   //
 
@@ -61,12 +59,12 @@ export default function LicenseStep(props: Props) {
 
       {showAdd && <AddLicense onAdd={handleAdd} onDiscard={handleDiscard} />}
 
-      {licenses.length && (
+      {getValues().licenses.length && (
         <Stack spacing="tight" vertical>
           <Text variant="bodyMd" as="p">
             {t("Selected licenses")}
           </Text>
-          {licenses.map((l, i) => (
+          {getValues().licenses.map((l, i) => (
             <PCardWithAction
               key={l.license.licenseId}
               onClick={() => {

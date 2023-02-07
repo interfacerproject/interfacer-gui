@@ -1,59 +1,43 @@
 import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
-import { yupResolver } from "@hookform/resolvers/yup";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SelectTags from "components/SelectTags";
-import { isRequired } from "lib/isFieldRequired";
 import { url } from "lib/regex";
 import { useTranslation } from "next-i18next";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import * as yup from "yup";
+import { CreateProjectValues } from "./CreateProjectForm";
 
 //
 
-export interface FormValues {
+export interface MainStepValues {
   title: string;
   description: string;
   link: string;
   tags: Array<string>;
 }
 
-export type MainStepData = FormValues | null;
+export const mainStepDefaultValues: MainStepValues = {
+  title: "",
+  description: "",
+  link: "",
+  tags: [],
+};
 
-export interface Props {
-  onValid?: (values: MainStepData) => void;
-}
+export const mainStepSchema = yup.object({
+  title: yup.string().required(),
+  link: yup.string().matches(url, "Invalid URL").required(),
+  tags: yup.array(),
+  description: yup.string(),
+});
 
 //
 
-export default function MainStep(props: Props) {
+export default function MainStep() {
   const { t } = useTranslation();
-  const { onValid = () => {} } = props;
 
-  const defaultValues: FormValues = {
-    title: "",
-    description: "",
-    link: "",
-    tags: [],
-  };
-
-  const schema = yup.object({
-    title: yup.string().required(),
-    link: yup.string().matches(url, t("Invalid URL")).required(),
-    tags: yup.array(),
-    description: yup.string(),
-  });
-
-  const form = useForm<FormValues>({
-    mode: "all",
-    resolver: yupResolver(schema),
-    defaultValues,
-  });
-
-  const { formState, control, setValue, watch } = form;
-  const { isValid, errors } = formState;
-
-  onValid(isValid ? watch() : null);
+  const { formState, control, setValue, watch } = useFormContext<CreateProjectValues>();
+  const { errors } = formState;
 
   //
 
@@ -61,9 +45,11 @@ export default function MainStep(props: Props) {
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle title={t("General information")} />
 
+      <pre>{JSON.stringify(errors)}</pre>
+
       <Controller
         control={control}
-        name="title"
+        name="main.title"
         render={({ field: { onChange, onBlur, name, value } }) => (
           <TextField
             type="text"
@@ -75,15 +61,15 @@ export default function MainStep(props: Props) {
             onBlur={onBlur}
             placeholder={t("My new project")}
             label={t("Title")}
-            error={errors[name]?.message}
-            requiredIndicator={isRequired(schema, name)}
+            // error={errors['main']['title'].message}
+            // requiredIndicator={isRequired(schema, name)}
           />
         )}
       />
 
       <Controller
         control={control}
-        name="link"
+        name="main.link"
         render={({ field: { onChange, onBlur, name, value } }) => (
           <TextField
             type="text"
@@ -95,8 +81,8 @@ export default function MainStep(props: Props) {
             onBlur={onBlur}
             label={t("External link")}
             placeholder={t("projectsite.com/info")}
-            error={errors[name]?.message}
-            requiredIndicator={isRequired(schema, name)}
+            // error={errors[name]?.message}
+            // requiredIndicator={isRequired(schema, name)}
           />
         )}
       />
@@ -109,15 +95,15 @@ export default function MainStep(props: Props) {
         helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t("Type up to 2048 characters")}.`}
         subtitle={t("Short description to be displayed on the project page")}
         onChange={({ text, html }) => {
-          setValue("description", text);
+          setValue("main.description", text);
         }}
-        requiredIndicator={isRequired(schema, "description")}
-        error={errors.description?.message}
+        // requiredIndicator={isRequired(schema, "description")}
+        // error={errors.description?.message}
       />
 
       <Controller
         control={control}
-        name="tags"
+        name="main.tags"
         render={({ field: { onChange, onBlur, name, ref } }) => (
           <SelectTags
             name={name}
@@ -129,9 +115,9 @@ export default function MainStep(props: Props) {
             isMulti
             placeholder={t("Open-source, 3D Printing, Medical use")}
             helpText={t("Select a tag from the list, or type to create a new one")}
-            error={errors[name]?.message}
             creatable={true}
-            requiredIndicator={isRequired(schema, name)}
+            // error={errors[name]?.message}
+            // requiredIndicator={isRequired(schema, name)}
           />
         )}
       />

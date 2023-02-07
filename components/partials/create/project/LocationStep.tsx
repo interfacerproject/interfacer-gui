@@ -7,14 +7,37 @@ import { isRequired } from "lib/isFieldRequired";
 import { useTranslation } from "next-i18next";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
+import { ProjectType } from "./CreateProjectForm";
 
 //
 
-export interface FormValues {
+export interface LocationStepValues {
   locationName: string;
   location: LocationLookup.Location | null;
   remote: boolean;
 }
+
+export const locationStepDefaultValues: LocationStepValues = {
+  locationName: "",
+  location: null,
+  remote: false,
+};
+
+export const locationStepSchema = yup.object().shape({
+  locationName: yup.string(),
+  location: yup
+    .object()
+    .when("$projectType", ([projectType], schema) =>
+      projectType == "product" ? schema.required() : schema.nullable()
+    ),
+  remote: yup.boolean(),
+});
+
+export interface LocationStepSchemaContext {
+  projectType: ProjectType;
+}
+
+//
 
 export type LocationStepData = FormValues | null;
 
