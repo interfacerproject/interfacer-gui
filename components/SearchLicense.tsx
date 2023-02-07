@@ -63,8 +63,6 @@ export default function SearchLicense(props: Props) {
         return matchedOption && matchedOption.label;
       });
 
-      console.log(selected);
-
       setSelectedOptions(selected);
       if (selectedValue[0]) {
         onSelect(selected[0]);
