@@ -11,15 +11,17 @@ import * as yup from "yup";
 
 //
 
-export interface Values {
+export interface FormValues {
   title: string;
   description: string;
   link: string;
   tags: Array<string>;
 }
 
+export type MainStepData = FormValues | null;
+
 export interface Props {
-  onValid?: (values: Values | null) => void;
+  onValid?: (values: MainStepData) => void;
 }
 
 //
@@ -28,7 +30,7 @@ export default function MainStep(props: Props) {
   const { t } = useTranslation();
   const { onValid = () => {} } = props;
 
-  const defaultValues: Values = {
+  const defaultValues: FormValues = {
     title: "",
     description: "",
     link: "",
@@ -42,7 +44,7 @@ export default function MainStep(props: Props) {
     description: yup.string(),
   });
 
-  const form = useForm<Values>({
+  const form = useForm<FormValues>({
     mode: "all",
     resolver: yupResolver(schema),
     defaultValues,
@@ -51,8 +53,7 @@ export default function MainStep(props: Props) {
   const { formState, control, setValue, watch } = form;
   const { isValid, errors } = formState;
 
-  if (isValid) onValid(watch());
-  if (!isValid) onValid(null);
+  onValid(isValid ? watch() : null);
 
   //
 

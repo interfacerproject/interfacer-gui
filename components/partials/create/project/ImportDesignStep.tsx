@@ -8,14 +8,16 @@ import * as yup from "yup";
 
 //
 
-export type ImportedData = {
+export interface ImportedData {
   title: string;
   description: string;
   licenses: string[];
-} | null;
+}
+
+export type ImportDesignStepData = ImportedData | null;
 
 export interface Props {
-  onImport?: (data: ImportedData) => void;
+  onImport?: (data: ImportDesignStepData) => void;
 }
 
 export interface FormValues {
@@ -49,7 +51,7 @@ export default function ImportDesign(props: Props) {
   const { formState, control, watch } = form;
   const { isValid } = formState;
 
-  function importData(url: string): ImportedData {
+  function importData(url: string): ImportDesignStepData {
     return null;
   }
 

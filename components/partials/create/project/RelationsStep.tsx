@@ -7,15 +7,15 @@ import { Stack, Text } from "@bbtgnn/polaris-interfacer";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectDisplay from "components/ProjectDisplay";
-import SearchProjects, { SearchedProject } from "components/SearchProjects";
+import SearchProjects from "components/SearchProjects";
 import { EconomicResource } from "lib/types";
 
 //
 
-export type Values = Array<Partial<EconomicResource>>;
+export type RelationsStepData = Array<Partial<EconomicResource>>;
 
 export interface Props {
-  onUpdate?: (projects: Values) => void;
+  onUpdate?: (projects: RelationsStepData) => void;
 }
 
 export interface SelectOption {
@@ -30,12 +30,12 @@ export default function RelationsStep(props: Props) {
   const { onUpdate = () => {} } = props;
   const { t } = useTranslation();
 
-  const [selection, setSelection] = useState<Array<SearchedProject>>([]);
-  const excludeIDs = selection.map(item => item.id);
+  const [selection, setSelection] = useState<RelationsStepData>([]);
+  const excludeIDs = selection.map(item => item.id!);
 
   //
 
-  function handleSelect(value: SearchedProject) {
+  function handleSelect(value: Partial<EconomicResource>) {
     setSelection([...selection, value]);
   }
 
@@ -44,7 +44,7 @@ export default function RelationsStep(props: Props) {
     setSelection(newSelection);
   }
 
-  onUpdate(selection as Values);
+  onUpdate(selection);
 
   //
 
@@ -63,7 +63,7 @@ export default function RelationsStep(props: Props) {
             <PCardWithAction
               key={project.id}
               onClick={() => {
-                removeSelected(project.id);
+                removeSelected(project.id!);
               }}
             >
               {/* @ts-ignore */}

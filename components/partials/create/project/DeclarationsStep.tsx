@@ -17,14 +17,16 @@ import * as yup from "yup";
 
 //
 
-export interface Values {
+export interface FormValues {
   repairable: string;
   recyclable: string;
   certifications: Array<ILink>;
 }
 
+export type DeclarationsStepData = FormValues | null;
+
 export interface Props {
-  onValid?: (values: Values | null) => void;
+  onValid?: (values: DeclarationsStepData) => void;
 }
 
 export default function DeclarationsStep(props: Props) {
@@ -33,7 +35,7 @@ export default function DeclarationsStep(props: Props) {
 
   //
 
-  const defaultValues: Values = {
+  const defaultValues: FormValues = {
     repairable: "yes",
     recyclable: "yes",
     certifications: [],
@@ -50,7 +52,7 @@ export default function DeclarationsStep(props: Props) {
     ),
   });
 
-  const form = useForm<Values>({
+  const form = useForm<FormValues>({
     mode: "all",
     resolver: yupResolver(schema),
     defaultValues,
@@ -59,8 +61,7 @@ export default function DeclarationsStep(props: Props) {
   const { formState, setValue, watch } = form;
   const { isValid, errors, isSubmitting } = formState;
 
-  if (isValid) onValid(watch());
-  if (!isValid) onValid(null);
+  onValid(isValid ? watch() : null);
 
   // Consumer services
 

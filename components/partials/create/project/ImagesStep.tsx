@@ -7,11 +7,13 @@ import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
 //
 
-export type Values = Array<File>;
+export type ImagesStepData = Array<File>;
 
 export interface Props {
-  onUpdate?: (images: Values) => void;
+  onUpdate?: (images: ImagesStepData) => void;
 }
+
+//
 
 export default function ImagesStep(props: Props) {
   const { onUpdate = () => {} } = props;

@@ -1,15 +1,15 @@
 import { useTranslation } from "next-i18next";
 
 // Steps
-import ContributorsStep, { Values as ContributorsStepValues } from "./ContributorsStep";
-import DeclarationsStep, { Values as DeclarationsStepValues } from "./DeclarationsStep";
-import ImagesStep, { Values as ImagesStepValues } from "./ImagesStep";
-import ImportDesignStep, { ImportedData } from "./ImportDesignStep";
+import ContributorsStep, { ContributorsStepData } from "./ContributorsStep";
+import DeclarationsStep, { DeclarationsStepData } from "./DeclarationsStep";
+import ImagesStep, { ImagesStepData } from "./ImagesStep";
+import ImportDesignStep, { ImportDesignStepData } from "./ImportDesignStep";
 import LicenseStep from "./LicenseStep";
-import LinkDesignStep, { Values as LinkDesignValues } from "./LinkDesignStep";
-import LocationStep, { Values as LocationStepValues } from "./LocationStep";
-import MainStep, { Values as MainStepValues } from "./MainStep";
-import RelationsStep, { Values as RelationsStepValues } from "./RelationsStep";
+import LinkDesignStep, { LinkDesignStepData } from "./LinkDesignStep";
+import LocationStep, { LocationStepData } from "./LocationStep";
+import MainStep, { MainStepData } from "./MainStep";
+import RelationsStep, { RelationsStepData } from "./RelationsStep";
 
 // Components
 import PDivider from "components/polaris/PDivider";
@@ -27,13 +27,13 @@ export interface Props {
 }
 
 export interface ProjectData {
-  main: MainStepValues | null;
-  linkedDesign: LinkDesignValues;
-  location: LocationStepValues | null;
-  images: ImagesStepValues;
-  declarations: DeclarationsStepValues | null;
-  contributors: ContributorsStepValues;
-  relations: RelationsStepValues;
+  main: MainStepData;
+  linkedDesign: LinkDesignStepData;
+  location: LocationStepData;
+  images: ImagesStepData;
+  declarations: DeclarationsStepData;
+  contributors: ContributorsStepData;
+  relations: RelationsStepData;
 }
 
 //
@@ -42,30 +42,30 @@ export default function CreateProjectForm(props: Props) {
   const { t } = useTranslation();
   const { projectType } = props;
 
-  function handleImport(data: ImportedData) {
+  function handleImport(data: ImportDesignStepData) {
     console.log(data);
     // TODO: set values
   }
 
-  function handleMain(values: MainStepValues | null) {
+  function handleMain(values: MainStepData) {
     console.log(values);
   }
-  function handleLinkDesign(values: any) {
+  function handleLinkDesign(values: LinkDesignStepData) {
     console.log(values);
   }
-  function handleLocation(values: LocationStepValues | null) {
+  function handleLocation(values: LocationStepData) {
     console.log(values);
   }
-  function handleImages(values: ImagesStepValues) {
+  function handleImages(values: ImagesStepData) {
     console.log(values);
   }
-  function handleDeclarations(values: DeclarationsStepValues | null) {
+  function handleDeclarations(values: DeclarationsStepData) {
     console.log(values);
   }
-  function handleContributors(values: ContributorsStepValues) {
+  function handleContributors(values: ContributorsStepData) {
     console.log(values);
   }
-  function handleRelations(values: RelationsStepValues) {
+  function handleRelations(values: RelationsStepData) {
     console.log(values);
   }
 
