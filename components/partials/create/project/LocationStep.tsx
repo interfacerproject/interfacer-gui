@@ -10,14 +10,16 @@ import * as yup from "yup";
 
 //
 
-export interface Values {
+export interface FormValues {
   locationName: string;
   location: LocationLookup.Location | null;
   remote: boolean;
 }
 
+export type LocationStepData = FormValues | null;
+
 export interface Props {
-  onValid?: (values: Values | null) => void;
+  onValid?: (values: LocationStepData) => void;
   projectType?: "product" | "service";
 }
 
@@ -27,7 +29,7 @@ export default function LocationStepProduct(props: Props) {
   const { onValid = () => {}, projectType = "service" } = props;
   const { t } = useTranslation();
 
-  const defaultValues: Values = {
+  const defaultValues: FormValues = {
     locationName: "",
     location: null,
     remote: false,
@@ -47,7 +49,7 @@ export default function LocationStepProduct(props: Props) {
   });
   const schema = projectType == "service" ? serviceSchema : projectSchema;
 
-  const form = useForm<Values>({
+  const form = useForm<FormValues>({
     mode: "all",
     resolver: yupResolver(schema),
     defaultValues,

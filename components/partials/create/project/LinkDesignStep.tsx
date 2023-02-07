@@ -2,17 +2,17 @@ import { Stack, Text } from "@bbtgnn/polaris-interfacer";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectDisplay from "components/ProjectDisplay";
-import SearchProjects, { SearchedProject } from "components/SearchProjects";
-import { EconomicEvent } from "lib/types";
+import SearchProjects from "components/SearchProjects";
+import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
 //
 
-export type Values = Partial<EconomicEvent> | null;
+export type LinkDesignStepData = Partial<EconomicResource> | null;
 
 export interface Props {
-  onChange?: (values: Values) => void;
+  onChange?: (values: LinkDesignStepData) => void;
 }
 
 //
@@ -21,10 +21,10 @@ export default function LinkDesign(props: Props) {
   const { t } = useTranslation();
   const { onChange = () => {} } = props;
 
-  const [selected, setSelected] = useState<Values>(null);
+  const [selected, setSelected] = useState<LinkDesignStepData>(null);
 
-  function handleSelect(value: SearchedProject) {
-    setSelected(value as Partial<EconomicEvent>);
+  function handleSelect(value: Partial<EconomicResource>) {
+    setSelected(value);
   }
   function handleRemove() {
     setSelected(null);
@@ -46,7 +46,6 @@ export default function LinkDesign(props: Props) {
             {t("Linked design")}
           </Text>
           <PCardWithAction onClick={handleRemove}>
-            {/* @ts-ignore */}
             <ProjectDisplay project={selected} />
           </PCardWithAction>
         </Stack>

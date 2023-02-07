@@ -18,10 +18,10 @@ export interface SelectOption {
   media?: React.ReactElement;
 }
 
-export type Values = Array<Agent>;
+export type ContributorsStepData = Array<Agent>;
 
 export interface Props {
-  onUpdate?: (contributors: Values) => void;
+  onUpdate?: (contributors: ContributorsStepData) => void;
 }
 
 //

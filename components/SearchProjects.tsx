@@ -2,7 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
 import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
-import { GetProjectTypesQuery, SearchProjectsQuery, SearchProjectsQueryVariables } from "lib/types";
+import { EconomicResource, GetProjectTypesQuery, SearchProjectsQuery, SearchProjectsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
 import * as yup from "yup";
@@ -13,7 +13,7 @@ import ProjectThumb from "./ProjectThumb";
 export type ProjectType = "design" | "service" | "product";
 
 export interface Props {
-  onSelect?: (value: SearchedProject) => void;
+  onSelect?: (value: Partial<EconomicResource>) => void;
   excludeIDs?: Array<string>;
   label?: string;
   conformsTo?: Array<ProjectType>;
@@ -97,9 +97,9 @@ export default function SearchProjects(props: Props) {
 
   /* Handling selection */
 
-  function getProjectFromData(id: string): SearchedProject | undefined {
+  function getProjectFromData(id: string): Partial<EconomicResource> | undefined {
     const project = data?.economicResources?.edges.find(project => project.node.id === id);
-    return project?.node;
+    return project?.node as Partial<EconomicResource>;
   }
 
   function handleSelect(selected: string[]) {
@@ -134,8 +134,6 @@ export interface SelectOption {
   label: string;
   media?: React.ReactElement;
 }
-
-export type SearchedProject = NonNullable<SearchProjectsQuery["economicResources"]>["edges"][number]["node"];
 
 export const SEARCH_PROJECTS = gql`
   query SearchProjects($last: Int, $IDs: [ID!], $name: String, $conformsTo: [ID!]) {
