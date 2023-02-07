@@ -5,18 +5,16 @@ import ContributorsStep, { ContributorsStepData } from "./ContributorsStep";
 import DeclarationsStep, { DeclarationsStepData } from "./DeclarationsStep";
 import ImagesStep, { ImagesStepData } from "./ImagesStep";
 import ImportDesignStep, { ImportDesignStepData } from "./ImportDesignStep";
-import LicenseStep from "./LicenseStep";
+import LicenseStep, { LicenseStepData } from "./LicenseStep";
 import LinkDesignStep, { LinkDesignStepData } from "./LinkDesignStep";
 import LocationStep, { LocationStepData } from "./LocationStep";
 import MainStep, { MainStepData } from "./MainStep";
 import RelationsStep, { RelationsStepData } from "./RelationsStep";
 
 // Components
+import { Stack } from "@bbtgnn/polaris-interfacer";
 import PDivider from "components/polaris/PDivider";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-
-// Layout
-import { Stack } from "@bbtgnn/polaris-interfacer";
 
 //
 
@@ -54,6 +52,9 @@ export default function CreateProjectForm(props: Props) {
     console.log(values);
   }
   function handleLocation(values: LocationStepData) {
+    console.log(values);
+  }
+  function handleLicense(values: LicenseStepData) {
     console.log(values);
   }
   function handleImages(values: ImagesStepData) {
@@ -97,7 +98,7 @@ export default function CreateProjectForm(props: Props) {
       {isProduct && <LinkDesignStep onChange={handleLinkDesign} />}
 
       <PDivider />
-      {isDesign && <LicenseStep />}
+      {isDesign && <LicenseStep onChange={handleLicense} />}
       {isService && <LocationStep projectType="service" onValid={handleLocation} />}
       {isProduct && <LocationStep projectType="product" onValid={handleLocation} />}
 

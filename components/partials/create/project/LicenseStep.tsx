@@ -11,13 +11,21 @@ import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
 //
 
-export interface Props {}
+export type LicenseStepData = Array<ScopedLicense>;
+
+export interface Props {
+  onChange?: (data: LicenseStepData) => void;
+}
+
+//
 
 export default function LicenseStep(props: Props) {
   const { t } = useTranslation();
+  const { onChange = () => {} } = props;
+
+  //
 
   const [showAdd, setShowAdd] = useState(false);
-
   const [licenses, setLicenses] = useState<Array<ScopedLicense>>([]);
 
   function handleShowAdd() {
@@ -36,6 +44,8 @@ export default function LicenseStep(props: Props) {
   function removeLicense(license: ScopedLicense) {
     setLicenses(licenses.filter(l => l !== license));
   }
+
+  onChange(licenses);
 
   //
 
