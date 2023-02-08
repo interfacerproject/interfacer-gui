@@ -25,15 +25,15 @@ export interface DeclarationsStepValues {
   certifications: Array<ILink>;
 }
 
-export const declarationsStepSchema = yup.object().shape({
+export const declarationsStepSchema = yup.object({
   repairable: yup
     .string()
-    .oneOf([...YES_NO])
-    .required(),
+    .required()
+    .oneOf([...YES_NO]),
   recyclable: yup
     .string()
-    .oneOf([...YES_NO])
-    .required(),
+    .required()
+    .oneOf([...YES_NO]),
   certifications: yup.array().of(
     yup.object().shape({
       url: yup.string().url().required(),
@@ -70,11 +70,11 @@ export default function DeclarationsStep(props: Props) {
   ];
 
   function setRepairable(value: string) {
-    setValue("declarations.repairable", value);
+    setValue("declarations.repairable", value, { shouldValidate: true });
   }
 
   function setRecyclable(value: string) {
-    setValue("declarations.recyclable", value);
+    setValue("declarations.recyclable", value, { shouldValidate: true });
   }
 
   // Links to certifications
