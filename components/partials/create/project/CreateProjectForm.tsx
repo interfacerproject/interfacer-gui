@@ -29,7 +29,7 @@ import MainStep, { mainStepDefaultValues, mainStepSchema, MainStepValues } from 
 import RelationsStep, { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./RelationsStep";
 
 // Components
-import { Stack } from "@bbtgnn/polaris-interfacer";
+import { Button, Stack } from "@bbtgnn/polaris-interfacer";
 import PDivider from "components/polaris/PDivider";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
@@ -98,7 +98,7 @@ export default function CreateProjectForm(props: Props) {
 
   //
 
-  const methods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
+  const formMethods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",
     resolver: yupResolver(createProjectSchema),
     defaultValues: createProjectDefaultValues,
@@ -106,6 +106,13 @@ export default function CreateProjectForm(props: Props) {
       projectType,
     },
   });
+
+  const { handleSubmit, formState } = formMethods;
+  const { isValid } = formState;
+
+  function onSubmit(values: CreateProjectValues) {
+    console.log(values);
+  }
 
   //
 
@@ -122,8 +129,8 @@ export default function CreateProjectForm(props: Props) {
   //
 
   return (
-    <FormProvider {...methods}>
-      <form>
+    <FormProvider {...formMethods}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Stack vertical spacing="extraLoose">
           <PTitleSubtitle title={titles[projectType]} subtitle={t("Make sure you read the Community Guidelines.")} />
 
@@ -153,6 +160,14 @@ export default function CreateProjectForm(props: Props) {
           <PDivider />
           <RelationsStep />
         </Stack>
+
+        <div className="fixed w-screen bottom-0 right-0 z-50 bg-background p-3 border-1 border-t-border-subdued">
+          <div className="flex flex-row justify-end">
+            <Button submit primary disabled={!isValid}>
+              {t("Submit!")}
+            </Button>
+          </div>
+        </div>
       </form>
     </FormProvider>
   );
