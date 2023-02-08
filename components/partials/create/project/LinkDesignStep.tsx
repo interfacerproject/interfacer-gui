@@ -1,12 +1,12 @@
 import { Stack, Text } from "@bbtgnn/polaris-interfacer";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import ProjectDisplay from "components/ProjectDisplay";
 import SearchProjects from "components/SearchProjects";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
+import { CreateProjectValues } from "./CreateProjectForm";
 
 //
 
@@ -19,13 +19,14 @@ export const linkDesignStepDefaultValues: LinkDesignStepValues = "";
 export default function LinkDesign() {
   const { t } = useTranslation();
 
-  const [selected, setSelected] = useState<LinkDesignStepValues>(null);
+  const { setValue, getValues } = useFormContext<CreateProjectValues>();
+  const selected = getValues("linkedDesign");
 
   function handleSelect(value: Partial<EconomicResource>) {
-    setSelected(value);
+    setValue("linkedDesign", value.id!);
   }
   function handleRemove() {
-    setSelected(null);
+    setValue("linkedDesign", "");
   }
 
   //
@@ -42,7 +43,8 @@ export default function LinkDesign() {
             {t("Linked design")}
           </Text>
           <PCardWithAction onClick={handleRemove}>
-            <ProjectDisplay project={selected} />
+            <pre>{JSON.stringify(selected)}</pre>
+            {/* <ProjectDisplay project={selected} /> */}
           </PCardWithAction>
         </Stack>
       )}
