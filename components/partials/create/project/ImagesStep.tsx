@@ -23,7 +23,7 @@ export default function ImagesStep() {
   const images = getValues("images");
 
   function handleUpdate(images: Array<File>) {
-    setValue("images", images);
+    setValue("images", images, { shouldValidate: true });
   }
 
   return (
