@@ -72,13 +72,23 @@ export const createProjectDefaultValues: CreateProjectValues = {
 export const createProjectSchema = yup.object({
   main: mainStepSchema,
   linkedDesign: linkDesignStepSchema,
-  location: locationStepSchema,
+  location: yup
+    .object()
+    .when("$projectType", (projectType: ProjectType, schema) =>
+      projectType == "design" ? schema : locationStepSchema
+    ),
   images: imagesStepSchema,
-  declarations: declarationsStepSchema,
+  declarations: yup
+    .object()
+    .when("$projectType", (projectType: ProjectType, schema) =>
+      projectType == "product" ? declarationsStepSchema : schema
+    ),
   contributors: contributorsStepSchema,
   relations: relationsStepSchema,
   licenses: licenseStepSchema,
 });
+
+export type CreateProjectSchemaContext = LocationStepSchemaContext;
 
 //
 
@@ -88,7 +98,7 @@ export default function CreateProjectForm(props: Props) {
 
   //
 
-  const methods = useForm<CreateProjectValues, LocationStepSchemaContext>({
+  const methods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",
     resolver: yupResolver(createProjectSchema),
     defaultValues: createProjectDefaultValues,
@@ -96,8 +106,6 @@ export default function CreateProjectForm(props: Props) {
       projectType,
     },
   });
-
-  const { watch } = methods;
 
   //
 
@@ -115,10 +123,6 @@ export default function CreateProjectForm(props: Props) {
 
   return (
     <FormProvider {...methods}>
-      <div className="fixed right-0 top-0 p-3 bg-white w-[500px]">
-        <pre>{JSON.stringify(watch(), null, 2)}</pre>
-        <pre>{JSON.stringify(watch("images"), null, 2)}</pre>
-      </div>
       <form>
         <Stack vertical spacing="extraLoose">
           <PTitleSubtitle title={titles[projectType]} subtitle={t("Make sure you read the Community Guidelines.")} />
