@@ -1,6 +1,7 @@
 import { Stack, Text } from "@bbtgnn/polaris-interfacer";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import ProjectDisplay from "components/ProjectDisplay";
 import SearchProjects from "components/SearchProjects";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -43,8 +44,7 @@ export default function LinkDesign() {
             {t("Linked design")}
           </Text>
           <PCardWithAction onClick={handleRemove}>
-            <pre>{JSON.stringify(selected)}</pre>
-            {/* <ProjectDisplay project={selected} /> */}
+            <ProjectDisplay projectId={selected} />
           </PCardWithAction>
         </Stack>
       )}
