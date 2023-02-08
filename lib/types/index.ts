@@ -3380,6 +3380,21 @@ export type UnitUpdateParams = {
   symbol?: InputMaybe<Scalars["String"]>;
 };
 
+export type SearchProjectQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type SearchProjectQuery = {
+  __typename?: "RootQueryType";
+  economicResource?: {
+    __typename?: "EconomicResource";
+    id: string;
+    name: string;
+    conformsTo: { __typename?: "ResourceSpecification"; name: string };
+    primaryAccountable: { __typename?: "Organization"; name: string } | { __typename?: "Person"; name: string };
+  } | null;
+};
+
 export type SearchProjectsQueryVariables = Exact<{
   last?: InputMaybe<Scalars["Int"]>;
   IDs?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;

@@ -1,6 +1,5 @@
 // Logic
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
 
 // Components
 import { Stack, Text } from "@bbtgnn/polaris-interfacer";
@@ -9,49 +8,34 @@ import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectDisplay from "components/ProjectDisplay";
 import SearchProjects from "components/SearchProjects";
 import { EconomicResource } from "lib/types";
+import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
+import { CreateProjectValues } from "./CreateProjectForm";
 
 //
 
 export type RelationsStepValues = Array<string>;
-export const relationsStepSchema = yup.array().of(yup.string());
+export const relationsStepSchema = yup.array().of(yup.string().required());
 export const relationsStepDefaultValues: RelationsStepValues = [];
 
 //
 
-export type RelationsStepData = Array<Partial<EconomicResource>>;
-
-export interface Props {
-  onUpdate?: (projects: RelationsStepData) => void;
-}
-
-export interface SelectOption {
-  value: string;
-  label: string;
-  media?: React.ReactElement;
-}
-
-//
-
-export default function RelationsStep(props: Props) {
-  const { onUpdate = () => {} } = props;
+export default function RelationsStep() {
   const { t } = useTranslation();
+  const { getValues, setValue } = useFormContext<CreateProjectValues>();
 
-  const [selection, setSelection] = useState<RelationsStepData>([]);
-  const excludeIDs = selection.map(item => item.id!);
-
-  //
+  const RELATIONS_FORM_KEY = "relations";
+  const relations = getValues(RELATIONS_FORM_KEY);
 
   function handleSelect(value: Partial<EconomicResource>) {
-    setSelection([...selection, value]);
+    setValue(RELATIONS_FORM_KEY, [...relations, value.id!]);
   }
-
-  function removeSelected(id: string) {
-    const newSelection = selection.filter(item => item.id !== id);
-    setSelection(newSelection);
+  function handleRemove(id: string) {
+    setValue(
+      RELATIONS_FORM_KEY,
+      relations.filter(item => item !== id)
+    );
   }
-
-  onUpdate(selection);
 
   //
 
@@ -59,22 +43,21 @@ export default function RelationsStep(props: Props) {
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle title={t("Relations")} subtitle={t("Please read our Documentation Guidelines.")} />
 
-      <SearchProjects onSelect={handleSelect} excludeIDs={excludeIDs} />
+      <SearchProjects onSelect={handleSelect} excludeIDs={relations} />
 
-      {selection.length && (
+      {relations.length && (
         <Stack vertical spacing="tight">
           <Text variant="bodyMd" as="p">
             {t("Selected projects")}
           </Text>
-          {selection.map(project => (
+          {relations.map(projectId => (
             <PCardWithAction
-              key={project.id}
+              key={projectId}
               onClick={() => {
-                removeSelected(project.id!);
+                handleRemove(projectId);
               }}
             >
-              {/* @ts-ignore */}
-              <ProjectDisplay project={project} />
+              <ProjectDisplay projectId={projectId} />
             </PCardWithAction>
           ))}
         </Stack>
