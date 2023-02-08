@@ -3625,6 +3625,28 @@ export type GetTagsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
 
+export type SearchAgentQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type SearchAgentQuery = {
+  __typename?: "RootQueryType";
+  agent?:
+    | {
+        __typename?: "Organization";
+        id: string;
+        name: string;
+        primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+      }
+    | {
+        __typename?: "Person";
+        id: string;
+        name: string;
+        primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+      }
+    | null;
+};
+
 export type GetVariablesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetVariablesQuery = {
