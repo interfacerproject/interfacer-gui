@@ -1,13 +1,12 @@
 import { Checkbox, Stack, TextField } from "@bbtgnn/polaris-interfacer";
-import { yupResolver } from "@hookform/resolvers/yup";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SelectLocation2 from "components/SelectLocation2";
 import { LocationLookup } from "lib/fetchLocation";
 import { isRequired } from "lib/isFieldRequired";
 import { useTranslation } from "next-i18next";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import * as yup from "yup";
-import { ProjectType } from "./CreateProjectForm";
+import { CreateProjectValues, ProjectType } from "./CreateProjectForm";
 
 //
 
@@ -39,49 +38,20 @@ export interface LocationStepSchemaContext {
 
 //
 
-export type LocationStepData = FormValues | null;
-
 export interface Props {
-  onValid?: (values: LocationStepData) => void;
   projectType?: "product" | "service";
 }
 
 //
 
 export default function LocationStepProduct(props: Props) {
-  const { onValid = () => {}, projectType = "service" } = props;
+  const { projectType = "service" } = props;
   const { t } = useTranslation();
 
-  const defaultValues: FormValues = {
-    locationName: "",
-    location: null,
-    remote: false,
-  };
+  const { setValue, control, formState, watch } = useFormContext<CreateProjectValues>();
+  const { errors } = formState;
 
-  const locationError = t("Please search for a location");
-
-  const serviceSchema = yup.object().shape({
-    locationName: yup.string(),
-    location: yup.object().nullable(),
-    remote: yup.boolean(),
-  });
-  const projectSchema = yup.object().shape({
-    locationName: yup.string(),
-    location: yup.object().required(locationError),
-    remote: yup.boolean(),
-  });
-  const schema = projectType == "service" ? serviceSchema : projectSchema;
-
-  const form = useForm<FormValues>({
-    mode: "all",
-    resolver: yupResolver(schema),
-    defaultValues,
-  });
-
-  const { formState, control, watch } = form;
-  const { errors, isValid } = formState;
-
-  onValid(isValid ? watch() : null);
+  const locationError = t("Please select a location");
 
   //
 
@@ -91,7 +61,7 @@ export default function LocationStepProduct(props: Props) {
 
       <Controller
         control={control}
-        name="locationName"
+        name="location.locationName"
         render={({ field: { onChange, onBlur, name, value } }) => (
           <TextField
             type="text"
@@ -104,8 +74,8 @@ export default function LocationStepProduct(props: Props) {
             label={t("Location name")}
             placeholder={t("Cool fablab")}
             helpText={t("The name of the place where the project is stored")}
-            error={errors[name]?.message}
-            requiredIndicator={isRequired(schema, name)}
+            error={errors.location?.locationName?.message}
+            requiredIndicator={isRequired(locationStepSchema, name)}
           />
         )}
       />
@@ -122,9 +92,9 @@ export default function LocationStepProduct(props: Props) {
             onChange={onChange}
             label={t("Search the full address")}
             placeholder={t("Hamburg, Boxhagener Str. 3")}
-            error={errors[name]?.message ? locationError : ""}
+            error={errors.location?.location ? locationError : ""}
             creatable={false}
-            requiredIndicator={isRequired(schema, name)}
+            requiredIndicator={isRequired(locationStepSchema, name)}
             isClearable
           />
         )}
@@ -134,10 +104,10 @@ export default function LocationStepProduct(props: Props) {
         <Checkbox
           id="remote"
           name="remote"
-          onChange={value => form.setValue("remote", value)}
-          checked={watch("remote")}
+          onChange={value => setValue("location.remote", value)}
+          checked={watch("location.remote")}
           label={t("This service happens remotely / online")}
-          error={errors["remote"]?.message}
+          error={errors.location?.remote?.message}
         />
       )}
     </Stack>
