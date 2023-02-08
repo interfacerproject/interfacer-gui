@@ -40,7 +40,7 @@ To know more [DOWNLOAD THE WHITEPAPER](https://www.interfacerproject.eu/assets/n
 
 {screenshot}
 
-# [LIVE DEMO](https://https://interfacer-gui-staging.dyne.org/)
+# [LIVE DEMO](https://interfacer-gui-staging.dyne.org/)
 
 <br>
 
