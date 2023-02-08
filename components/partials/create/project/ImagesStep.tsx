@@ -5,6 +5,8 @@ import * as yup from "yup";
 import { Stack } from "@bbtgnn/polaris-interfacer";
 import PFileUpload from "components/polaris/PFileUpload";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import { useFormContext } from "react-hook-form";
+import { CreateProjectValues } from "./CreateProjectForm";
 
 //
 
@@ -17,6 +19,13 @@ export const imagesStepDefaultValues: ImagesStepValues = [];
 export default function ImagesStep() {
   const { t } = useTranslation();
 
+  const { setValue, getValues } = useFormContext<CreateProjectValues>();
+  const images = getValues("images");
+
+  function handleUpdate(images: Array<File>) {
+    setValue("images", images);
+  }
+
   return (
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle
@@ -25,6 +34,8 @@ export default function ImagesStep() {
       />
       <PFileUpload
         maxFiles={10}
+        files={images}
+        onUpdate={handleUpdate}
         accept="image"
         maxSize={2000000}
         helpText={t("Max 10 images | Max file size 2MB | Accepted formats: JPG, PNG, GIF, SVG")}
