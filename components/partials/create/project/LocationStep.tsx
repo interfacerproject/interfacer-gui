@@ -26,8 +26,8 @@ export const locationStepSchema = yup.object().shape({
   locationName: yup.string(),
   location: yup
     .object()
-    .when("$projectType", ([projectType], schema) =>
-      projectType == "product" ? schema.required() : schema.nullable()
+    .when("$projectType", (projectType: ProjectType, schema) =>
+      projectType === "product" ? schema.required() : schema.nullable()
     ),
   remote: yup.boolean(),
 });
@@ -39,13 +39,13 @@ export interface LocationStepSchemaContext {
 //
 
 export interface Props {
-  projectType?: "product" | "service";
+  projectType?: Exclude<ProjectType, "design">;
 }
 
 //
 
 export default function LocationStepProduct(props: Props) {
-  const { projectType = "service" } = props;
+  const { projectType = "product" } = props;
   const { t } = useTranslation();
 
   const { setValue, control, formState, watch } = useFormContext<CreateProjectValues>();
@@ -82,7 +82,7 @@ export default function LocationStepProduct(props: Props) {
 
       <Controller
         control={control}
-        name="location"
+        name="location.location"
         render={({ field: { onChange, onBlur, name, ref } }) => (
           <SelectLocation2
             id={name}
@@ -94,7 +94,7 @@ export default function LocationStepProduct(props: Props) {
             placeholder={t("Hamburg, Boxhagener Str. 3")}
             error={errors.location?.location ? locationError : ""}
             creatable={false}
-            requiredIndicator={isRequired(locationStepSchema, name)}
+            requiredIndicator={projectType == "product"}
             isClearable
           />
         )}
