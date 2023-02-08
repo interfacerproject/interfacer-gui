@@ -7,12 +7,15 @@ import PHelp from "./PHelp";
 //
 
 export interface Props {
+  files?: Array<File>;
+  onUpdate?: (files: Array<File>) => void;
+
   maxFiles?: number;
   maxSize?: number;
   accept?: "image" | "file";
   allowDuplicates?: boolean;
   customValidators?: Array<FileValidator>;
-  onUpdate?: (files: Array<File>) => void;
+
   actionTitle?: string;
   helpText?: string;
 }
@@ -23,12 +26,15 @@ type FileValidator = (file: File) => { valid: boolean; message: string };
 
 export default function PFileUpload(props: Props) {
   const {
+    files = [],
+    onUpdate = () => {},
+
     maxFiles,
     maxSize,
     accept = "file",
     allowDuplicates = false,
     customValidators = [],
-    onUpdate = () => {},
+
     actionTitle = "Click here to upload or Drag and drop",
     helpText = "",
   } = props;
@@ -36,7 +42,6 @@ export default function PFileUpload(props: Props) {
 
   //
 
-  const [files, setFiles] = useState<Array<File>>([]);
   const [rejectedFiles, setRejectedFiles] = useState<Array<File>>([]);
 
   const hasError = rejectedFiles.length > 0;
@@ -45,26 +50,22 @@ export default function PFileUpload(props: Props) {
   const handleDrop = useCallback(
     (_droppedFiles: Array<File>, _acceptedFiles: Array<File>, _rejectedFiles: Array<File>) => {
       setShowError(true);
-      setFiles(files => [...files, ..._acceptedFiles]);
+      onUpdate([...files, ..._acceptedFiles]);
       setRejectedFiles(_rejectedFiles);
     },
-    []
+    [onUpdate, files]
   );
 
   function handleRemoveFile(file: File) {
-    setFiles(files => files.filter(f => f !== file));
+    onUpdate(files.filter(f => f !== file));
   }
-
-  useEffect(() => {
-    onUpdate(files);
-  }, [files, onUpdate]);
 
   useEffect(() => {
     if (maxFiles && files.length > maxFiles) {
       setRejectedFiles(r => [...r, ...files.slice(maxFiles, files.length)]);
-      setFiles(files => files.slice(0, maxFiles));
+      onUpdate(files.slice(0, maxFiles));
     }
-  }, [files, maxFiles]);
+  }, [files, maxFiles, onUpdate]);
 
   // Validators
 
@@ -157,20 +158,22 @@ export default function PFileUpload(props: Props) {
   );
 
   const errorBanner = (
-    <Banner
-      title={t("The following files couldn’t be uploaded:")}
-      status="critical"
-      onDismiss={() => {
-        setShowError(false);
-      }}
-    >
-      <div className="spacer h-2" />
-      <List type="bullet">
-        {rejectedFiles.map((file: File, index) => (
-          <List.Item key={index}>{fileError(file)}</List.Item>
-        ))}
-      </List>
-    </Banner>
+    <div className="pt-4">
+      <Banner
+        title={t("The following files couldn’t be uploaded:")}
+        status="critical"
+        onDismiss={() => {
+          setShowError(false);
+        }}
+      >
+        <div className="spacer h-2" />
+        <List type="bullet">
+          {rejectedFiles.map((file: File, index) => (
+            <List.Item key={index}>{fileError(file)}</List.Item>
+          ))}
+        </List>
+      </Banner>
+    </div>
   );
 
   return (
