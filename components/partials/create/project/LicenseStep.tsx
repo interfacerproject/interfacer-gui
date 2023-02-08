@@ -14,8 +14,8 @@ import { CreateProjectValues } from "./CreateProjectForm";
 
 //
 
-export type LicenseStepValues = Array<ScopedLicense>;
-export const licenseStepSchema = yup.array();
+export type LicenseStepValues = Array<{ scope: string; licenseId: string }>;
+export const licenseStepSchema = yup.array().of(yup.object().shape({ scope: yup.string(), licenseId: yup.string() }));
 export const licenseStepDefaultValues: LicenseStepValues = [];
 
 //
@@ -24,7 +24,6 @@ export default function LicenseStep() {
   const { t } = useTranslation();
 
   const { setValue, getValues } = useFormContext<CreateProjectValues>();
-  //
 
   const [showAdd, setShowAdd] = useState(false);
 
@@ -32,17 +31,25 @@ export default function LicenseStep() {
     setShowAdd(true);
   }
 
-  function handleAdd(license: ScopedLicense) {
-    setValue("licenses", [...getValues().licenses, license]);
-    setShowAdd(false);
-  }
-
   function handleDiscard() {
     setShowAdd(false);
   }
 
-  function removeLicense(license: ScopedLicense) {
-    // setLicenses(licenses.filter(l => l !== license));
+  const LICENSES_FORM_KEY = "licenses";
+
+  function handleAdd(license: ScopedLicense) {
+    setValue(LICENSES_FORM_KEY, [
+      ...getValues(LICENSES_FORM_KEY),
+      { licenseId: license.license.licenseId, scope: license.scope },
+    ]);
+    setShowAdd(false);
+  }
+
+  function removeLicense(licenseId: string) {
+    setValue(
+      LICENSES_FORM_KEY,
+      getValues(LICENSES_FORM_KEY).filter(l => l.licenseId !== licenseId)
+    );
   }
 
   //
@@ -59,19 +66,19 @@ export default function LicenseStep() {
 
       {showAdd && <AddLicense onAdd={handleAdd} onDiscard={handleDiscard} />}
 
-      {getValues().licenses.length && (
+      {getValues(LICENSES_FORM_KEY).length && (
         <Stack spacing="tight" vertical>
           <Text variant="bodyMd" as="p">
             {t("Selected licenses")}
           </Text>
-          {getValues().licenses.map((l, i) => (
+          {getValues(LICENSES_FORM_KEY).map((l, i) => (
             <PCardWithAction
-              key={l.license.licenseId}
+              key={l.licenseId}
               onClick={() => {
-                removeLicense(l);
+                removeLicense(l.licenseId);
               }}
             >
-              <LicenseDisplay license={l.license} label={l.scope} />
+              <LicenseDisplay licenseId={l.licenseId} label={l.scope} />
             </PCardWithAction>
           ))}
         </Stack>
