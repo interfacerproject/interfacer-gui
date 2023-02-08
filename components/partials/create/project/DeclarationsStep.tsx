@@ -11,11 +11,13 @@ import PFieldInfo from "components/polaris/PFieldInfo";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
 // Form
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
+import { CreateProjectValues } from "./CreateProjectForm";
 
 //
+
+const YES_NO = ["yes", "no"] as const;
 
 export interface DeclarationsStepValues {
   repairable: string;
@@ -24,8 +26,14 @@ export interface DeclarationsStepValues {
 }
 
 export const declarationsStepSchema = yup.object().shape({
-  repairable: yup.string().oneOf(["yes", "no"]).required(),
-  recyclable: yup.string().oneOf(["yes", "no"]).required(),
+  repairable: yup
+    .string()
+    .oneOf([...YES_NO])
+    .required(),
+  recyclable: yup
+    .string()
+    .oneOf([...YES_NO])
+    .required(),
   certifications: yup.array().of(
     yup.object().shape({
       url: yup.string().url().required(),
@@ -35,8 +43,8 @@ export const declarationsStepSchema = yup.object().shape({
 });
 
 export const declarationsStepDefaultValues: DeclarationsStepValues = {
-  repairable: "yes",
-  recyclable: "yes",
+  repairable: "",
+  recyclable: "",
   certifications: [],
 };
 
@@ -49,41 +57,24 @@ export interface Props {
 }
 
 export default function DeclarationsStep(props: Props) {
-  const { onValid = () => {} } = props;
   const { t } = useTranslation();
 
-  //
-
-  const defaultValues: DeclarationsStepValues = {
-    repairable: "yes",
-    recyclable: "yes",
-    certifications: [],
-  };
-
-  const form = useForm<DeclarationsStepValues>({
-    mode: "all",
-    resolver: yupResolver(declarationsStepSchema),
-    defaultValues,
-  });
-
-  const { formState, setValue, watch } = form;
-  const { isValid, errors, isSubmitting } = formState;
-
-  onValid(isValid ? watch() : null);
+  const { formState, setValue, getValues, watch } = useFormContext<CreateProjectValues>();
+  const { errors } = formState;
 
   // Consumer services
 
   const choices = [
-    { label: "Yes", value: "yes" },
-    { label: "No", value: "no" },
+    { label: "Yes", value: YES_NO[0] },
+    { label: "No", value: YES_NO[1] },
   ];
 
   function setRepairable(value: string) {
-    setValue("repairable", value);
+    setValue("declarations.repairable", value);
   }
 
   function setRecyclable(value: string) {
-    setValue("recyclable", value);
+    setValue("declarations.recyclable", value);
   }
 
   // Links to certifications
@@ -98,16 +89,17 @@ export default function DeclarationsStep(props: Props) {
     setShowAddLink(false);
   }
 
+  const CERTIFICATIONS_FORM_KEY = "declarations.certifications";
+
   function addCertification(link: ILink) {
-    if (!link) return;
-    setValue("certifications", [...watch("certifications"), link]);
+    setValue(CERTIFICATIONS_FORM_KEY, [...getValues(CERTIFICATIONS_FORM_KEY), link]);
     setShowAddLink(false);
   }
 
   function removeCertification(certification: ILink) {
     setValue(
-      "certifications",
-      watch("certifications").filter(c => c !== certification)
+      CERTIFICATIONS_FORM_KEY,
+      getValues(CERTIFICATIONS_FORM_KEY).filter(c => c !== certification)
     );
   }
 
@@ -127,20 +119,22 @@ export default function DeclarationsStep(props: Props) {
         <PFieldInfo
           label={t("Availability for repairing")}
           helpText={t("Refer to the standards we want to follow for this field")}
+          error={errors.declarations?.repairable?.message}
           requiredIndicator
         >
           <div className="py-1">
-            <PButtonRadio options={choices} onChange={setRepairable} />
+            <PButtonRadio options={choices} onChange={setRepairable} selected={getValues("declarations.repairable")} />
           </div>
         </PFieldInfo>
 
         <PFieldInfo
           label={t("Availability for recycling")}
           helpText={t("Refer to the standards we want to follow for this field")}
+          error={errors.declarations?.recyclable?.message}
           requiredIndicator
         >
           <div className="py-1">
-            <PButtonRadio options={choices} onChange={setRecyclable} />
+            <PButtonRadio options={choices} onChange={setRecyclable} selected={getValues("declarations.recyclable")} />
           </div>
         </PFieldInfo>
       </Stack>
@@ -157,9 +151,9 @@ export default function DeclarationsStep(props: Props) {
 
       {showAddLink && <AddLink onDiscard={handleDiscard} onSubmit={addCertification} />}
 
-      {watch("certifications").length && (
+      {watch(CERTIFICATIONS_FORM_KEY).length && (
         <Stack spacing="tight" vertical>
-          {watch("certifications").map((c, i) => (
+          {watch(CERTIFICATIONS_FORM_KEY).map((c, i) => (
             <PCardWithAction
               key={c.url}
               onClick={() => {
