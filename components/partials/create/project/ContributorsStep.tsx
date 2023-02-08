@@ -1,6 +1,5 @@
 // Logic
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
 
 // Components
 import { Stack, Text } from "@bbtgnn/polaris-interfacer";
@@ -9,37 +8,33 @@ import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SearchUsers from "components/SearchUsers";
 import { Agent } from "lib/types";
+import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
+import { CreateProjectValues } from "./CreateProjectForm";
 
 //
 
 export type ContributorsStepValues = Array<string>;
-export const contributorsStepSchema = yup.array().of(yup.string());
+export const contributorsStepSchema = yup.array().of(yup.string().required());
 export const contributorsStepDefaultValues: ContributorsStepValues = [];
-
-//
-
-export interface SelectOption {
-  value: string;
-  label: string;
-  media?: React.ReactElement;
-}
 
 //
 
 export default function ContributorsStep() {
   const { t } = useTranslation();
+  const { setValue, getValues } = useFormContext<CreateProjectValues>();
 
-  const [selection, setSelection] = useState<Array<Agent>>([]);
-  const excludeIDs = selection.map(item => item.id);
+  const CONTRIBUTORS_FORM_KEY = "contributors";
+  const contributors = getValues(CONTRIBUTORS_FORM_KEY);
 
-  function handleSelect(selected: Agent) {
-    setSelection([...selection, selected]);
+  function handleSelect(option: Partial<Agent>) {
+    setValue("contributors", [...contributors, option.id!]);
   }
-
-  function removeSelected(id: string) {
-    const newSelection = selection.filter(item => item.id !== id);
-    setSelection(newSelection);
+  function handleRemove(contributorId: string) {
+    setValue(
+      CONTRIBUTORS_FORM_KEY,
+      contributors.filter(id => id !== contributorId)
+    );
   }
 
   //
@@ -48,21 +43,21 @@ export default function ContributorsStep() {
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle title={t("Contributors")} subtitle={t("Tell us who contributed to this project.")} />
 
-      <SearchUsers onSelect={handleSelect} excludeIDs={excludeIDs} />
+      <SearchUsers onSelect={handleSelect} excludeIDs={contributors} />
 
-      {selection.length && (
+      {contributors.length && (
         <Stack vertical spacing="tight">
           <Text variant="bodyMd" as="p">
             {t("Selected contributors")}
           </Text>
-          {selection.map(contributor => (
+          {contributors.map(contributorId => (
             <PCardWithAction
-              key={contributor.id}
+              key={contributorId}
               onClick={() => {
-                removeSelected(contributor.id);
+                handleRemove(contributorId);
               }}
             >
-              <BrUserDisplay user={contributor} />
+              <BrUserDisplay userId={contributorId} />
             </PCardWithAction>
           ))}
         </Stack>
