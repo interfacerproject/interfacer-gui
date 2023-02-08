@@ -1,42 +1,32 @@
-import { ArrowLeftIcon } from "@heroicons/react/outline";
-import { useRouter } from "next/router";
-import React, { ReactNode } from "react";
-import Topbar from "../Topbar";
+import { Link as PLink } from "@bbtgnn/polaris-interfacer";
+import { ProjectType } from "components/partials/create/project/CreateProjectForm";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 
-type layoutProps = {
-  children: ReactNode;
-  cta?: ReactNode;
+type LayoutProps = {
+  children: React.ReactNode;
+  projectType: ProjectType;
 };
 
-const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
-  const router = useRouter();
-  const { t } = useTranslation("common");
+const CreateProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: LayoutProps) => {
+  const { t } = useTranslation();
+  const { children } = layoutProps;
 
   return (
-    <>
-      <>
-        <div className="drawer drawer-mobile">
-          <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-          <div className="drawer-content">
-            {/* Topbar */}
-            <Topbar search={false} userMenu={false} cta={layoutProps.cta}>
-              <div className="hidden w-auto h-16 p-4 mx-2 border-r md:block">
-                <div className="mx-auto logo" />
-              </div>
-              <button className="btn btn-primary btn-outline" id="back" onClick={() => router.back()}>
-                <ArrowLeftIcon className="w-5 h-5" />
-                <p className="ml-2">{t("Go back and discard")}</p>
-              </button>
-            </Topbar>
-
-            {/* Page contents */}
-            <div className="container bg-[#F3F3F1] max-w-full">{layoutProps?.children}</div>
-          </div>
-        </div>
-      </>
-    </>
+    <div className="">
+      <div className="p-4">
+        <Link href="/create/project">
+          <PLink>
+            <span className="text-text-primary">
+              {"← "}
+              {t("Back to Project Creation")}
+            </span>
+          </PLink>
+        </Link>
+      </div>
+      <div className="mx-auto p-4">{children}</div>
+    </div>
   );
 };
 
-export default Layout;
+export default CreateProjectLayout;
