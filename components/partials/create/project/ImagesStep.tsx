@@ -1,7 +1,5 @@
 import { useTranslation } from "next-i18next";
-import { useFieldArray, useFormContext } from "react-hook-form";
 import * as yup from "yup";
-import { CreateProjectValues } from "./CreateProjectForm";
 
 // Components
 import { Stack } from "@bbtgnn/polaris-interfacer";
@@ -18,12 +16,6 @@ export const imagesStepDefaultValues: ImagesStepValues = [];
 
 export default function ImagesStep() {
   const { t } = useTranslation();
-  const { setValue } = useFormContext<CreateProjectValues>();
-  const { replace } = useFieldArray<CreateProjectValues>({ name: "licenses" });
-
-  function handleUpdate(values: Array<File>) {
-    replace(values);
-  }
 
   return (
     <Stack vertical spacing="extraLoose">
@@ -33,7 +25,6 @@ export default function ImagesStep() {
       />
       <PFileUpload
         maxFiles={10}
-        onUpdate={handleUpdate}
         accept="image"
         maxSize={2000000}
         helpText={t("Max 10 images | Max file size 2MB | Accepted formats: JPG, PNG, GIF, SVG")}
