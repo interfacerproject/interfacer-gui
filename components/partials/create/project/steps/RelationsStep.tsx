@@ -10,7 +10,7 @@ import SearchProjects from "components/SearchProjects";
 import { EconomicResource } from "lib/types";
 import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
-import { CreateProjectValues } from "./CreateProjectForm";
+import { CreateProjectValues } from "../CreateProjectForm";
 
 //
 

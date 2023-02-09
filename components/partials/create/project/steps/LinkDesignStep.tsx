@@ -7,7 +7,7 @@ import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
-import { CreateProjectValues } from "./CreateProjectForm";
+import { CreateProjectValues } from "../CreateProjectForm";
 
 //
 

@@ -10,7 +10,7 @@ import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
-import { CreateProjectValues } from "./CreateProjectForm";
+import { CreateProjectValues } from "../CreateProjectForm";
 
 //
 
