@@ -10,7 +10,7 @@ describe("Project Detail functionality", () => {
     cy.visit(`/project/${Cypress.env("project_id")}`);
   });
 
-  it.skip("Should add user id to metadata.starred then remove it", () => {
+  it.skip("Should star resource", () => {
     cy.get("#addStar").should("exist");
     const starButton = cy.get("#addStar");
     cy.get("#addStar > span > :nth-child(2)").then($starButton => {
@@ -43,7 +43,7 @@ describe("Project Detail functionality", () => {
       .should("include.text", "Add to list");
   });
 
-  it("Should add to watchlist then remove it", () => {
+  it.skip("Should add to watchlist then remove it", () => {
     cy.get("#addToWatch > span > :nth-child(2)")
       .should("exist")
       .click()

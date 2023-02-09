@@ -8,13 +8,12 @@ import { useTranslation } from "next-i18next";
 //
 
 const AddStar = ({ id, owner }: { id: string; owner: string }) => {
-  const { likeObject, isLiked } = useSocial();
+  const { likeER, isLiked } = useSocial(id);
   const hasAlreadyStarred = isLiked(id);
   const { t } = useTranslation("common");
   const { addIdeaPoints } = useWallet();
   const handleClick = async () => {
-    await likeObject(id);
-
+    await likeER();
     //economic system: points assignments
     addIdeaPoints(owner, IdeaPoints.OnStar);
   };
