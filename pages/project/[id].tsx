@@ -298,7 +298,7 @@ const Project = () => {
                 {inList ? t("Remove from list") : t("Add to list")}
               </Button>
 
-              <WatchButton id={project.id} metadata={project.metadata} owner={project.primaryAccountable.id} />
+              <WatchButton id={project.id} owner={project.primaryAccountable.id} />
 
               <AddStar id={project.id} owner={project.primaryAccountable.id} />
             </Stack>
