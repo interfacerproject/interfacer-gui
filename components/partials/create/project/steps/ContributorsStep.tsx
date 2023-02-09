@@ -22,13 +22,13 @@ export const contributorsStepDefaultValues: ContributorsStepValues = [];
 
 export default function ContributorsStep() {
   const { t } = useTranslation();
-  const { setValue, getValues } = useFormContext<CreateProjectValues>();
+  const { setValue, watch } = useFormContext<CreateProjectValues>();
 
   const CONTRIBUTORS_FORM_KEY = "contributors";
-  const contributors = getValues(CONTRIBUTORS_FORM_KEY);
+  const contributors = watch(CONTRIBUTORS_FORM_KEY);
 
   function handleSelect(option: Partial<Agent>) {
-    setValue("contributors", [...contributors, option.id!]);
+    setValue(CONTRIBUTORS_FORM_KEY, [...contributors, option.id!]);
   }
   function handleRemove(contributorId: string) {
     setValue(
@@ -42,9 +42,7 @@ export default function ContributorsStep() {
   return (
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle title={t("Contributors")} subtitle={t("Tell us who contributed to this project.")} />
-
       <SearchUsers onSelect={handleSelect} excludeIDs={contributors} />
-
       {contributors.length && (
         <Stack vertical spacing="tight">
           <Text variant="bodyMd" as="p">

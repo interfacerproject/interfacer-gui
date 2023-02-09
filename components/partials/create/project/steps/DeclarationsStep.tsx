@@ -59,7 +59,7 @@ export interface Props {
 export default function DeclarationsStep(props: Props) {
   const { t } = useTranslation();
 
-  const { formState, setValue, getValues, watch } = useFormContext<CreateProjectValues>();
+  const { formState, setValue, watch } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
 
   // Consumer services
@@ -70,11 +70,11 @@ export default function DeclarationsStep(props: Props) {
   ];
 
   function setRepairable(value: string) {
-    setValue("declarations.repairable", value, { shouldValidate: true });
+    setValue("declarations.repairable", value);
   }
 
   function setRecyclable(value: string) {
-    setValue("declarations.recyclable", value, { shouldValidate: true });
+    setValue("declarations.recyclable", value);
   }
 
   // Links to certifications
@@ -90,16 +90,17 @@ export default function DeclarationsStep(props: Props) {
   }
 
   const CERTIFICATIONS_FORM_KEY = "declarations.certifications";
+  const certifications = watch(CERTIFICATIONS_FORM_KEY);
 
   function addCertification(link: ILink) {
-    setValue(CERTIFICATIONS_FORM_KEY, [...getValues(CERTIFICATIONS_FORM_KEY), link]);
+    setValue(CERTIFICATIONS_FORM_KEY, [...certifications, link]);
     setShowAddLink(false);
   }
 
   function removeCertification(certification: ILink) {
     setValue(
       CERTIFICATIONS_FORM_KEY,
-      getValues(CERTIFICATIONS_FORM_KEY).filter(c => c !== certification)
+      certifications.filter(c => c !== certification)
     );
   }
 
@@ -123,7 +124,7 @@ export default function DeclarationsStep(props: Props) {
           requiredIndicator
         >
           <div className="py-1">
-            <PButtonRadio options={choices} onChange={setRepairable} selected={getValues("declarations.repairable")} />
+            <PButtonRadio options={choices} onChange={setRepairable} selected={watch("declarations.repairable")} />
           </div>
         </PFieldInfo>
 
@@ -134,7 +135,7 @@ export default function DeclarationsStep(props: Props) {
           requiredIndicator
         >
           <div className="py-1">
-            <PButtonRadio options={choices} onChange={setRecyclable} selected={getValues("declarations.recyclable")} />
+            <PButtonRadio options={choices} onChange={setRecyclable} selected={watch("declarations.recyclable")} />
           </div>
         </PFieldInfo>
       </Stack>
@@ -151,9 +152,9 @@ export default function DeclarationsStep(props: Props) {
 
       {showAddLink && <AddLink onDiscard={handleDiscard} onSubmit={addCertification} />}
 
-      {watch(CERTIFICATIONS_FORM_KEY).length && (
+      {certifications.length && (
         <Stack spacing="tight" vertical>
-          {watch(CERTIFICATIONS_FORM_KEY).map((c, i) => (
+          {certifications.map((c, i) => (
             <PCardWithAction
               key={c.url}
               onClick={() => {

@@ -19,11 +19,11 @@ export const imagesStepDefaultValues: ImagesStepValues = [];
 export default function ImagesStep() {
   const { t } = useTranslation();
 
-  const { setValue, getValues } = useFormContext<CreateProjectValues>();
-  const images = getValues("images");
+  const { setValue, watch } = useFormContext<CreateProjectValues>();
+  const images = watch("images");
 
   function handleUpdate(images: Array<File>) {
-    setValue("images", images, { shouldValidate: true });
+    setValue("images", images);
   }
 
   return (

@@ -22,10 +22,10 @@ export const relationsStepDefaultValues: RelationsStepValues = [];
 
 export default function RelationsStep() {
   const { t } = useTranslation();
-  const { getValues, setValue } = useFormContext<CreateProjectValues>();
+  const { watch, setValue } = useFormContext<CreateProjectValues>();
 
   const RELATIONS_FORM_KEY = "relations";
-  const relations = getValues(RELATIONS_FORM_KEY);
+  const relations = watch(RELATIONS_FORM_KEY);
 
   function handleSelect(value: Partial<EconomicResource>) {
     setValue(RELATIONS_FORM_KEY, [...relations, value.id!]);
