@@ -111,7 +111,7 @@ export default function CreateProjectForm(props: Props) {
             <CreateProjectNav projectType={projectType} />
           </div>
         </div>
-        <div className="max-w-xl">
+        <div className="max-w-xl pb-24">
           <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
         </div>
       </div>
