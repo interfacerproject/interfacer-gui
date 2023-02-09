@@ -20,8 +20,8 @@ export const linkDesignStepDefaultValues: LinkDesignStepValues = "";
 export default function LinkDesign() {
   const { t } = useTranslation();
 
-  const { setValue, getValues } = useFormContext<CreateProjectValues>();
-  const selected = getValues("linkedDesign");
+  const { setValue, watch } = useFormContext<CreateProjectValues>();
+  const selected = watch("linkedDesign");
 
   function handleSelect(value: Partial<EconomicResource>) {
     setValue("linkedDesign", value.id!);

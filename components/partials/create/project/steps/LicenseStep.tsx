@@ -23,7 +23,7 @@ export const licenseStepDefaultValues: LicenseStepValues = [];
 export default function LicenseStep() {
   const { t } = useTranslation();
 
-  const { setValue, getValues } = useFormContext<CreateProjectValues>();
+  const { setValue, watch } = useFormContext<CreateProjectValues>();
 
   const [showAdd, setShowAdd] = useState(false);
 
@@ -36,19 +36,17 @@ export default function LicenseStep() {
   }
 
   const LICENSES_FORM_KEY = "licenses";
+  const licenses = watch(LICENSES_FORM_KEY);
 
   function handleAdd(license: ScopedLicense) {
-    setValue(LICENSES_FORM_KEY, [
-      ...getValues(LICENSES_FORM_KEY),
-      { licenseId: license.license.licenseId, scope: license.scope },
-    ]);
+    setValue(LICENSES_FORM_KEY, [...licenses, { licenseId: license.license.licenseId, scope: license.scope }]);
     setShowAdd(false);
   }
 
   function removeLicense(licenseId: string) {
     setValue(
       LICENSES_FORM_KEY,
-      getValues(LICENSES_FORM_KEY).filter(l => l.licenseId !== licenseId)
+      licenses.filter(l => l.licenseId !== licenseId)
     );
   }
 
@@ -66,12 +64,12 @@ export default function LicenseStep() {
 
       {showAdd && <AddLicense onAdd={handleAdd} onDiscard={handleDiscard} />}
 
-      {getValues(LICENSES_FORM_KEY).length && (
+      {licenses.length && (
         <Stack spacing="tight" vertical>
           <Text variant="bodyMd" as="p">
             {t("Selected licenses")}
           </Text>
-          {getValues(LICENSES_FORM_KEY).map((l, i) => (
+          {licenses.map((l, i) => (
             <PCardWithAction
               key={l.licenseId}
               onClick={() => {
