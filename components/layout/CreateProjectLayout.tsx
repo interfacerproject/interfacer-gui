@@ -24,7 +24,7 @@ const CreateProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: 
           </PLink>
         </Link>
       </div>
-      <div className="mx-auto p-4">{children}</div>
+      <div className="mx-auto">{children}</div>
     </div>
   );
 };
