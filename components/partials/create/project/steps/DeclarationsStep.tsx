@@ -13,7 +13,7 @@ import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 // Form
 import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
-import { CreateProjectValues } from "./CreateProjectForm";
+import { CreateProjectValues } from "../CreateProjectForm";
 
 //
 

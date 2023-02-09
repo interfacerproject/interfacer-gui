@@ -6,7 +6,7 @@ import { Stack } from "@bbtgnn/polaris-interfacer";
 import PFileUpload from "components/polaris/PFileUpload";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { useFormContext } from "react-hook-form";
-import { CreateProjectValues } from "./CreateProjectForm";
+import { CreateProjectValues } from "../CreateProjectForm";
 
 //
 

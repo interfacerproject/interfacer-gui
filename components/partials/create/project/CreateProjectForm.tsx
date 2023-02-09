@@ -1,37 +1,30 @@
-import { useTranslation } from "next-i18next";
-
 // Steps
-import ContributorsStep, {
+import {
   contributorsStepDefaultValues,
   contributorsStepSchema,
   ContributorsStepValues,
-} from "./ContributorsStep";
-import DeclarationsStep, {
+} from "./steps/ContributorsStep";
+import {
   declarationsStepDefaultValues,
   declarationsStepSchema,
   DeclarationsStepValues,
-} from "./DeclarationsStep";
-import ImagesStep, { imagesStepDefaultValues, imagesStepSchema, ImagesStepValues } from "./ImagesStep";
-import ImportDesignStep from "./ImportDesignStep";
-import LicenseStep, { licenseStepDefaultValues, licenseStepSchema, LicenseStepValues } from "./LicenseStep";
-import LinkDesignStep, {
-  linkDesignStepDefaultValues,
-  linkDesignStepSchema,
-  LinkDesignStepValues,
-} from "./LinkDesignStep";
-import LocationStep, {
+} from "./steps/DeclarationsStep";
+import { imagesStepDefaultValues, imagesStepSchema, ImagesStepValues } from "./steps/ImagesStep";
+import { licenseStepDefaultValues, licenseStepSchema, LicenseStepValues } from "./steps/LicenseStep";
+import { linkDesignStepDefaultValues, linkDesignStepSchema, LinkDesignStepValues } from "./steps/LinkDesignStep";
+import {
   locationStepDefaultValues,
   locationStepSchema,
   LocationStepSchemaContext,
   LocationStepValues,
-} from "./LocationStep";
-import MainStep, { mainStepDefaultValues, mainStepSchema, MainStepValues } from "./MainStep";
-import RelationsStep, { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./RelationsStep";
+} from "./steps/LocationStep";
+import { mainStepDefaultValues, mainStepSchema, MainStepValues } from "./steps/MainStep";
+import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep";
 
 // Components
-import { Button, Stack } from "@bbtgnn/polaris-interfacer";
-import PDivider from "components/polaris/PDivider";
-import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import CreateProjectFields from "./parts/CreateProjectFields";
+import CreateProjectNav from "./parts/CreateProjectNav";
+import CreateProjectSubmit from "./parts/CreateProjectSubmit";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormProvider, useForm } from "react-hook-form";
@@ -93,10 +86,7 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 //
 
 export default function CreateProjectForm(props: Props) {
-  const { t } = useTranslation();
   const { projectType } = props;
-
-  //
 
   const formMethods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",
@@ -107,68 +97,25 @@ export default function CreateProjectForm(props: Props) {
     },
   });
 
-  const { handleSubmit, formState } = formMethods;
-  const { isValid } = formState;
-
   function onSubmit(values: CreateProjectValues) {
     console.log(values);
   }
 
   //
 
-  const isProduct = projectType == "product";
-  const isService = projectType == "service";
-  const isDesign = projectType == "design";
-
-  const titles: Record<ProjectType, string> = {
-    service: t("Create a new service"),
-    product: t("Create a new product"),
-    design: t("Create a new design"),
-  };
-
-  //
-
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack vertical spacing="extraLoose">
-          <PTitleSubtitle title={titles[projectType]} subtitle={t("Make sure you read the Community Guidelines.")} />
-
-          {isDesign && <PDivider />}
-          {isDesign && <ImportDesignStep />}
-
-          <PDivider />
-          <MainStep />
-
-          {isProduct && <PDivider />}
-          {isProduct && <LinkDesignStep />}
-
-          <PDivider />
-          {isDesign && <LicenseStep />}
-          {isService && <LocationStep projectType="service" />}
-          {isProduct && <LocationStep projectType="product" />}
-
-          <PDivider />
-          <ImagesStep />
-
-          {isProduct && <PDivider />}
-          {isProduct && <DeclarationsStep />}
-
-          <PDivider />
-          <ContributorsStep />
-
-          <PDivider />
-          <RelationsStep />
-        </Stack>
-
-        <div className="fixed w-screen bottom-0 right-0 z-50 bg-background p-3 border-1 border-t-border-subdued">
-          <div className="flex flex-row justify-end">
-            <Button submit primary disabled={!isValid}>
-              {t("Submit!")}
-            </Button>
+      <div className="flex flex-row justify-center space-x-6 md:space-x-16 lg:space-x-24 p-6">
+        <div className="max-w-xs">
+          <div className="sticky top-8">
+            <CreateProjectNav projectType={projectType} />
           </div>
         </div>
-      </form>
+        <div className="max-w-xl">
+          <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
+        </div>
+      </div>
+      <CreateProjectSubmit />
     </FormProvider>
   );
 }
