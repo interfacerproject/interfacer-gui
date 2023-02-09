@@ -5,10 +5,10 @@ import { useTranslation } from "next-i18next";
 
 const TokensResume = ({ stat, id }: { stat: string; id: string }) => {
   const { t } = useTranslation("ProfileProps");
-  const trend = Math.floor(Math.random() * 100) - 50;
-  const positive = trend > 0;
-  const { getIdeaPoints, getStrengthsPoints } = useWallet(id);
+  const { getIdeaPoints, getStrengthsPoints, ideaTrend, strengthsTrend } = useWallet(id);
   const value = stat === Token.Idea ? getIdeaPoints : getStrengthsPoints;
+  const trendValue = stat === Token.Idea ? ideaTrend : strengthsTrend;
+  const positive = trendValue > 0;
 
   return (
     <div className="stat">
@@ -24,7 +24,7 @@ const TokensResume = ({ stat, id }: { stat: string; id: string }) => {
           ) : (
             <ArrowSmDownIcon className="w-5 h-5 text-red-500" />
           )}
-          <span>{trend}%</span>
+          <span>{trendValue}%</span>
         </span>
       </div>
       <div className="stat-title capitalize">{t(`${stat} points`)}</div>
