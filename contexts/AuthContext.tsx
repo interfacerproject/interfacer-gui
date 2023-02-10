@@ -53,11 +53,19 @@ export const AuthContext = createContext(
       user,
       email,
       eddsaPublicKey,
+      ethereumAddress,
+      ecdhPublicKey,
+      reflowPublicKey,
+      bitcoinPublicKey,
     }: {
       name: string;
       user: string;
       email: string;
       eddsaPublicKey: string;
+      ethereumAddress: string;
+      ecdhPublicKey: string;
+      reflowPublicKey: string;
+      bitcoinPublicKey: string;
     }) => Promise<void>;
   }
 );
@@ -85,14 +93,14 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   };
 
   useEffect(() => {
-    const privateKey = getItem("eddsa_key");
+    const privateKey = getItem("eddsaPrivateKey");
     const username = getItem("authUsername");
 
     if (Boolean(privateKey) && Boolean(username)) {
       const ulid = getItem("authId") as string;
       const name = getItem("authName") as string;
       const email = getItem("authEmail") as string;
-      const publicKey = getItem("eddsa_public_key") as string;
+      const publicKey = getItem("eddsaPublicKey") as string;
       setAuthenticated(true);
       setUser({
         ulid,
@@ -117,7 +125,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     if (authenticated) return;
 
     const client = createApolloClient(false);
-    const publicKey = getItem("eddsa_public_key") as string;
+    const publicKey = getItem("eddsaPublicKey") as string;
     const SignInMutation = gql`
       query ($email: String!, $pubkey: String!) {
         personCheck(email: $email, eddsaPublicKey: $pubkey) {
@@ -144,7 +152,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
           email,
           username: data?.personCheck.user,
           name: data?.personCheck.name,
-          privateKey: getItem("eddsa_key") as string,
+          privateKey: getItem("eddsaPrivateKey") as string,
           publicKey,
         });
       });
@@ -199,13 +207,17 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
 
     return await zencode_exec(keypairoomClient, { data: zenData }).then(({ result }) => {
       const res = JSON.parse(result);
-      setItem("eddsa_public_key", res.eddsa_public_key);
-      setItem("eddsa_key", res.keyring.eddsa);
-      setItem("ethereum_address", res.keyring.ethereum);
-      setItem("reflow", res.keyring.reflow);
-      setItem("schnorr", res.keyring.schnorr);
-      setItem("eddsa", res.keyring.eddsa);
+      setItem("eddsaPrivateKey", res.keyring.eddsa);
+      setItem("ethereumPrivateKey", res.keyring.ethereum);
+      setItem("reflowPrivateKey", res.keyring.reflow);
+      setItem("bitcoinPrivateKey", res.keyring.bitcoin);
+      setItem("ecdhPrivateKey", res.keyring.ecdh);
       setItem("seed", res.seed);
+      setItem("ecdhPublicKey", res.eddsa_public_key);
+      setItem("bitcoinPublicKey", res.bitcoin_public_key);
+      setItem("eddsaPublicKey", res.eddsa_public_key);
+      setItem("reflowPublicKey", res.reflow_public_key);
+      setItem("ethereumAddress", res.ethereum_address);
     });
   };
 
@@ -214,11 +226,19 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     user,
     email,
     eddsaPublicKey,
+    ethereumAddress,
+    ecdhPublicKey,
+    reflowPublicKey,
+    bitcoinPublicKey,
   }: {
     name: string;
     user: string;
     email: string;
     eddsaPublicKey: string;
+    reflowPublicKey: string;
+    ethereumAddress: string;
+    ecdhPublicKey: string;
+    bitcoinPublicKey: string;
   }) => {
     const client = createApolloClient(false);
     const SignUpMutation = gql`mutation  {
@@ -227,6 +247,10 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
                 user: "${user}"
                 email: "${email}"
                 eddsaPublicKey: "${eddsaPublicKey}"
+                reflowPublicKey: "${reflowPublicKey}"
+                ethereumAddress: "${ethereumAddress}"
+                ecdhPublicKey: "${ecdhPublicKey}"
+                bitcoinPublicKey: "${bitcoinPublicKey}"
               }) {
               agent{
                 id
