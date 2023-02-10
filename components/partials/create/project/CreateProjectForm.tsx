@@ -105,7 +105,7 @@ export default function CreateProjectForm(props: Props) {
 
   return (
     <FormProvider {...formMethods}>
-      <div className="flex flex-row justify-center space-x-6 md:space-x-16 lg:space-x-24 p-6">
+      <div className="flex flex-row justify-center space-x-8 md:space-x-16 lg:space-x-24 p-6">
         <div className="max-w-xs">
           <div className="sticky top-8">
             <CreateProjectNav projectType={projectType} />

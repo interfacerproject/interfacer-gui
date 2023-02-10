@@ -3,22 +3,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { url } from "lib/regex";
 import { useTranslation } from "next-i18next";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useFormContext } from "react-hook-form";
 import * as yup from "yup";
+import { CreateProjectValues } from "../CreateProjectForm";
 
 //
-
-export interface ImportedData {
-  title: string;
-  description: string;
-  licenses: string[];
-}
-
-export type ImportDesignStepData = ImportedData | null;
-
-export interface Props {
-  onImport?: (data: ImportDesignStepData) => void;
-}
 
 export interface FormValues {
   repoUrl: string;
@@ -26,9 +15,10 @@ export interface FormValues {
 
 //
 
-export default function ImportDesign(props: Props) {
+export default function ImportDesign() {
   const { t } = useTranslation();
-  const { onImport = () => {} } = props;
+
+  /* Form handling */
 
   const defaultValues: FormValues = {
     repoUrl: "",
@@ -48,18 +38,20 @@ export default function ImportDesign(props: Props) {
     defaultValues,
   });
 
-  const { formState, control, watch } = form;
+  const { formState, control } = form;
   const { isValid } = formState;
 
-  function importData(url: string): ImportDesignStepData {
-    return null;
-  }
+  /* Setting data in the "main" form */
+
+  const { setValue, getValues, watch } = useFormContext<CreateProjectValues>();
 
   function handleImport() {
-    // TODO: display full-screen loading
-    const data = importData(watch("repoUrl"));
-    onImport(data);
-    // TOO: hide loading
+    // Qui bisogna prima fare il fetch dei dati, secondo l'interfaccia CreateProjectValues
+    // const data = import(getValues("repoUrl"))
+    // e poi settare i valori nel form principale in questo modo:
+    // setValue("main", data.main);
+    // setValue("images", data.images);
+    // ...
   }
 
   //
