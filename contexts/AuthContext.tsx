@@ -213,7 +213,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
       setItem("bitcoinPrivateKey", res.keyring.bitcoin);
       setItem("ecdhPrivateKey", res.keyring.ecdh);
       setItem("seed", res.seed);
-      setItem("ecdhPublicKey", res.eddsa_public_key);
+      setItem("ecdhPublicKey", res.ecdh_public_key);
       setItem("bitcoinPublicKey", res.bitcoin_public_key);
       setItem("eddsaPublicKey", res.eddsa_public_key);
       setItem("reflowPublicKey", res.reflow_public_key);
