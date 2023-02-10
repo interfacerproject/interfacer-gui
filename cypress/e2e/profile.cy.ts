@@ -35,7 +35,7 @@ describe("When user visit the profile page", () => {
     cy.contains("My List");
   });
   it("The profile page should render slightly differently for other user", function () {
-    cy.visit(`/profile/${Cypress.env("other_user_id")}`);
+    cy.visit(`/profile/${Cypress.env("otherUserId")}`);
     cy.contains("The user id is:");
     cy.contains("Projects");
     cy.get("a.tab.tab-bordered.pb-9").eq(1).click();

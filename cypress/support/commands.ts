@@ -53,7 +53,7 @@
 // }
 // @ts-ignore
 Cypress.Commands.add("login", () => {
-  const attrs = "authName authId eddsa_public_key eddsa_key authUsername seed authEmail eddsa".split(" ");
+  const attrs = "authName authId eddsaPublicKey eddsaPrivateKey authUsername seed authEmail".split(" ");
   for (const attr of attrs) {
     cy.setLocalStorage(attr, Cypress.env(attr));
   }
