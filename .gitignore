@@ -40,7 +40,7 @@ next-env.d.ts
 cypress.env.json
 
 # IDE
-# .vscode
+.vscode/
 
 # translate
 .json-autotranslate-cache/
