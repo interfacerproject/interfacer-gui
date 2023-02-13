@@ -1,6 +1,8 @@
 import { Button, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import useAutoimport from "hooks/useAutoimport";
+import devLog from "lib/devLog";
 import { url } from "lib/regex";
 import { useTranslation } from "next-i18next";
 import { Controller, useForm, useFormContext } from "react-hook-form";
@@ -38,20 +40,22 @@ export default function ImportDesign() {
     defaultValues,
   });
 
-  const { formState, control } = form;
+  const { formState, control, watch } = form;
   const { isValid } = formState;
 
   /* Setting data in the "main" form */
 
-  const { setValue, getValues, watch } = useFormContext<CreateProjectValues>();
+  const { setValue, getValues } = useFormContext<CreateProjectValues>();
 
-  function handleImport() {
-    // Qui bisogna prima fare il fetch dei dati, secondo l'interfaccia CreateProjectValues
-    // const data = import(getValues("repoUrl"))
-    // e poi settare i valori nel form principale in questo modo:
-    // setValue("main", data.main);
-    // setValue("images", data.images);
-    // ...
+  const { importFromGithub, name, description, tags } = useAutoimport();
+
+  async function handleImport() {
+    const url = watch("repoUrl");
+    const importedValue = await importFromGithub(url);
+    devLog("importedValue", importedValue);
+    setValue("main", importedValue.main!);
+    // setValue("images", importedValue.images!);
+    setValue("licenses", importedValue.licenses!);
   }
 
   //

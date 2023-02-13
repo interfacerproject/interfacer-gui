@@ -3,17 +3,7 @@ import devLog from "lib/devLog";
 import { Octokit } from "octokit";
 import { useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
-
-export const analyze = async (repo: string) => {
-  try {
-    const request = { method: "POST", body: JSON.stringify({ repo: repo }) };
-    const result = await (await fetch(`${process.env.NEXT_PUBLIC_OSH}/analyze`, request)).json();
-    if (result.err) return result.err;
-    return result.ok;
-  } catch (e) {
-    return e;
-  }
-};
+import { CreateProjectValues } from "./../components/partials/create/project/CreateProjectForm";
 
 const decodeBase64 = async (s: string) => {
   const contract = `Given I have a 'base64' named 'content'
@@ -33,8 +23,9 @@ type AutoImportReturnValue = {
   resources: string[];
   metadata: any;
   readme: string;
-  importFromGithub: (u: { owner: string; repo: string }) => void;
+  importFromGithub: (url: string) => Promise<Partial<CreateProjectValues>>;
   importFromGitlab: (projectId: number, host?: string) => void;
+  loading: boolean;
 };
 
 const useAutoImport = (): AutoImportReturnValue => {
@@ -53,6 +44,7 @@ const useAutoImport = (): AutoImportReturnValue => {
   const [gitlabId, setGitlabId] = useState<number | undefined>();
   const [gitlabHost, setGitlabHost] = useState<string>("https://gitlab.com");
   const [service, setService] = useState<"github" | "gitlab" | undefined>(undefined);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const o = new Octokit();
   const gl = new Gitlab({ host: gitlabHost });
@@ -60,30 +52,43 @@ const useAutoImport = (): AutoImportReturnValue => {
   const findImagesInReadme = (readme: string) => readme.match(/(https?:\/\/.*\.(?:png|jpe?g))/i);
 
   const analyze = async (repo: string) => {
-    const request = { method: "POST", body: JSON.stringify({ repo: repo }) };
-    const result = await (await fetch(`${process.env.NEXT_PUBLIC_OSH}/analyze`, request)).json();
-    if (result.err) devLog(result.err);
-    return result.ok;
+    try {
+      const request = { method: "POST", body: JSON.stringify({ repo: repo }) };
+      const result = await (await fetch(`${process.env.NEXT_PUBLIC_OSH}/analyze`, request)).json();
+      setMetadata(result.ok);
+      return result.ok;
+    } catch (e) {
+      devLog("error fetching osh metadata", e);
+    }
   };
 
-  const getGhMetadata = async () => {
+  const getGhMetadata = async (u?: { owner: string; repo: string }) => {
     try {
-      const metadata = await o.rest.repos.get({ owner: githubUsername, repo: githubRepo });
-      setRepo(metadata.data.html_url);
-      setName(metadata.data.name);
-      setDescription(metadata.data.description || "");
-      setLicense(metadata.data.license?.spdx_id || "UNLICENSED");
-      setTags(metadata.data.topics?.map(t => t) || []);
-      const osh_metadata = await analyze(metadata.data.html_url);
-      setMetadata(osh_metadata);
+      devLog("fetching metadata", u);
+      const metadata = await o.rest.repos.get({ owner: u?.owner || githubUsername, repo: u?.repo || githubRepo });
+      const _data = metadata.data;
+      setRepo(_data.html_url);
+      setName(_data.name);
+      setDescription(_data.description || "");
+      setTags(_data.topics?.map(t => t) || []);
+    } catch (e) {
+      devLog("error fetching metadata", e);
+    }
+  };
+
+  const getGhLicenses = async (u?: { owner: string; repo: string }) => {
+    try {
+      const licenses = await o.rest.licenses.getForRepo(u || { owner: githubUsername, repo: githubRepo });
+      devLog("licenses", licenses);
+      setLicense(licenses.data.license?.spdx_id || "UNLICENSED");
     } catch (e) {
       devLog(e);
     }
   };
 
-  const getGhReadme = async () => {
+  const getGhReadme = async (u?: { owner: string; repo: string }) => {
     try {
-      const readme = await o.rest.repos.getReadme({ owner: githubUsername, repo: githubRepo });
+      const readme = await o.rest.repos.getReadme(u || { owner: githubUsername, repo: githubRepo });
       const readmeFile = await o.rest.repos.getContent({
         mediaType: {
           format: "raw",
@@ -100,19 +105,22 @@ const useAutoImport = (): AutoImportReturnValue => {
     }
   };
 
-  const getGhContributors = async () => {
+  const getGhContributors = async (u?: { owner: string; repo: string }) => {
     try {
-      const contributors = await o.request("GET /repos/{owner}/{repo}/contributors{?anon,per_page,page}", {
-        owner: githubUsername,
-        repo: githubRepo,
-      });
+      const contributors = await o.request(
+        "GET /repos/{owner}/{repo}/contributors{?anon,per_page,page}",
+        u || {
+          owner: githubUsername,
+          repo: githubRepo,
+        }
+      );
       setContributors(contributors.data.map((c: any) => c.login));
     } catch (e) {
       devLog(e);
     }
   };
 
-  const getGhResources = async () => {
+  const getGhResources = async (u?: { owner: string; repo: string }) => {
     try {
       const pulls = await o.rest.pulls.list({
         owner: githubUsername,
@@ -145,20 +153,45 @@ const useAutoImport = (): AutoImportReturnValue => {
   };
 
   useEffect(() => {
-    if (service === "github") {
-      Promise.all([getGhMetadata(), getGhReadme(), getGhContributors(), getGhResources()]);
-    }
+    // if (service === "github") {
+    //   Promise.all([getGhMetadata(), getGhReadme(), getGhContributors(), getGhResources()]);
+    // }
     if (service === "gitlab") {
       Promise.resolve(getGlMetadata());
     }
   }, [service]);
 
-  const importFromGithub = (u: { owner: string; repo: string }) => {
-    setGithubUsername(u.owner);
-    setGithubRepo(u.repo);
+  const importFromGithub = async (url: string): Promise<Partial<CreateProjectValues>> => {
+    const owner = url.split("/")[3];
+    const repoName = url.split("/")[4];
+    const u = { owner, repo: repoName };
+    setGithubUsername(owner);
+    setGithubRepo(repo);
     setService("github");
+    setLoading(true);
+    await Promise.all([getGhMetadata(u), getGhReadme(u), getGhContributors(u), getGhResources(u), getGhLicenses(u)])
+      .catch(err => {
+        devLog("error", err);
+      })
+      .finally(() => {
+        setLoading(false);
+        devLog("done");
+      });
+    return {
+      main: {
+        title: name,
+        description: description.length > 0 ? description : readme,
+        tags: tags.map(tag => ({ value: tag, label: tag })),
+        link: url,
+      },
+      linkedDesign: "",
+      images: [],
+      contributors: contributors,
+      relations: resources,
+      licenses: [{ scope: "general", licenseId: license }],
+    };
   };
-  const importFromGitlab = (projectId: number, host?: string) => {
+  const importFromGitlab = async (projectId: number, host?: string) => {
     setGitlabId(projectId);
     setGitlabHost(host || "https://gitlab.com");
     setService("gitlab");
@@ -177,6 +210,7 @@ const useAutoImport = (): AutoImportReturnValue => {
     metadata,
     importFromGithub,
     importFromGitlab,
+    loading,
   };
 };
 
