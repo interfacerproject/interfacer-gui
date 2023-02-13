@@ -21,7 +21,7 @@ export const relationsStepDefaultValues: RelationsStepValues = [];
 //
 
 export default function RelationsStep() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { watch, setValue } = useFormContext<CreateProjectValues>();
 
   const RELATIONS_FORM_KEY = "relations";
@@ -41,7 +41,7 @@ export default function RelationsStep() {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("Relations")} subtitle={t("Please read our Documentation Guidelines.")} />
+      <PTitleSubtitle title={t("Relations")} subtitle={t("Please read our Documentation Guidelines")} />
 
       <SearchProjects onSelect={handleSelect} excludeIDs={relations} />
 

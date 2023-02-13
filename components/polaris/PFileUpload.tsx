@@ -38,7 +38,7 @@ export default function PFileUpload(props: Props) {
     actionTitle = "Click here to upload or Drag and drop",
     helpText = "",
   } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   //
 
@@ -160,7 +160,7 @@ export default function PFileUpload(props: Props) {
   const errorBanner = (
     <div className="pt-4">
       <Banner
-        title={t("The following files couldn’t be uploaded:")}
+        title={t("The following files couldn’t be uploaded") + ":"}
         status="critical"
         onDismiss={() => {
           setShowError(false);

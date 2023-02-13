@@ -57,7 +57,7 @@ export interface Props {
 }
 
 export default function DeclarationsStep(props: Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const { formState, setValue, watch } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
@@ -110,12 +110,12 @@ export default function DeclarationsStep(props: Props) {
 
   return (
     <Stack vertical spacing="loose">
-      <PTitleSubtitle title={t("Self declarations")} subtitle={t("Lorem ipsum dolor sit amet.")} />
+      <PTitleSubtitle title={t("Self declarations")} subtitle={t("Lorem ipsum dolor sit amet")} />
 
       {spacer}
 
       <Stack vertical spacing="extraLoose">
-        <PTitleSubtitle title={t("Consumer services")} subtitle={t("Lorem ipsum dolor sit amet.")} titleTag="h2" />
+        <PTitleSubtitle title={t("Consumer services")} subtitle={t("Lorem ipsum dolor sit amet")} titleTag="h2" />
 
         <PFieldInfo
           label={t("Availability for repairing")}
@@ -142,7 +142,7 @@ export default function DeclarationsStep(props: Props) {
 
       {spacer}
 
-      <PTitleSubtitle title={t("Links to certifications")} subtitle={t("(Optional field)")} titleTag="h2" />
+      <PTitleSubtitle title={t("Links to certifications")} subtitle={"(" + t("Optional field" + ")")} titleTag="h2" />
 
       {!showAddLink && (
         <Button onClick={handleShowAddLink} fullWidth icon={<Icon source={PlusMinor} />}>

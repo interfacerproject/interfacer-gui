@@ -20,7 +20,7 @@ export interface Props {
 }
 
 export default function SearchProjects(props: Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { onSelect = () => {}, excludeIDs = [], label = t("Search for a project"), conformsTo = [] } = props;
 
   /* Getting project types */

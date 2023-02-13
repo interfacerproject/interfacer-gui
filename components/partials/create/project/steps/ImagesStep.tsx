@@ -17,7 +17,7 @@ export const imagesStepDefaultValues: ImagesStepValues = [];
 //
 
 export default function ImagesStep() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const { setValue, watch } = useFormContext<CreateProjectValues>();
   const images = watch("images");

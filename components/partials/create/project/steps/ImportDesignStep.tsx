@@ -16,7 +16,7 @@ export interface FormValues {
 //
 
 export default function ImportDesign() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   /* Form handling */
 
@@ -60,7 +60,7 @@ export default function ImportDesign() {
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle
         title={t("Import from external source")}
-        subtitle={t("Import a project from Github, Thingiverse, LOSH or Git")}
+        subtitle={t("Import a project from Github Thingiverse LOSH or Git")}
       />
 
       <Controller

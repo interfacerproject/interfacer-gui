@@ -11,11 +11,25 @@ import Link from "next/link";
 import DesignIcon from "public/project-icons/design.svg";
 import ProductIcon from "public/project-icons/product.svg";
 import ServiceIcon from "public/project-icons/service.svg";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 //
 
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, [
+        "createProjectProps",
+        "signInProps",
+        "SideBarProps",
+        "BrImageUploadProps",
+      ])),
+    },
+  };
+}
+
 const CreateProject: NextPageWithLayout = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const sections: Array<{ title: string; description: string; icon: string; url: string }> = [
     {

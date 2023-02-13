@@ -9,7 +9,7 @@ type LayoutProps = {
 };
 
 const CreateProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: LayoutProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { children } = layoutProps;
 
   return (

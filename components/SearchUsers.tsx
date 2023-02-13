@@ -15,7 +15,7 @@ export interface Props {
 
 export default function SearchUsers(props: Props) {
   const { onSelect = () => {}, excludeIDs = [] } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   /* Polaris field logic */
 

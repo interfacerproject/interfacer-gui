@@ -28,7 +28,7 @@ export interface Props {
 //
 
 export default function AddLicense(props: Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectScope");
   const { onAdd = () => {}, onDiscard = () => {} } = props;
 
   const defaultValues = {
@@ -77,7 +77,7 @@ export default function AddLicense(props: Props) {
               value={value}
               error={errors[name]?.message}
               requiredIndicator={isRequired(schema, name)}
-              placeholder={t("Documentation, code, hardware, etc.")}
+              placeholder={t("Documentation, code, hardware, etc")}
             />
           )}
         />

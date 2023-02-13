@@ -46,7 +46,7 @@ export interface Props {
 
 export default function LocationStepProduct(props: Props) {
   const { projectType = "product" } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const { setValue, control, formState, watch } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
@@ -57,7 +57,7 @@ export default function LocationStepProduct(props: Props) {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("Set location")} subtitle={t("Please read our Documentation Guidelines.")} />
+      <PTitleSubtitle title={t("Set location")} subtitle={t("Please read our Documentation Guidelines")} />
 
       <Controller
         control={control}

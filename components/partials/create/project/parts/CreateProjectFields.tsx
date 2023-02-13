@@ -107,7 +107,7 @@ export function getSectionByProjectType(projectType: ProjectType): Array<FormSec
 //
 
 export default function CreateProjectFields(props: Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { projectType, onSubmit = () => {} } = props;
   const { handleSubmit } = useFormContext<CreateProjectValues>();
 
@@ -122,7 +122,7 @@ export default function CreateProjectFields(props: Props) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack vertical spacing="extraLoose">
-        <PTitleSubtitle title={titles[projectType]} subtitle={t("Make sure you read the Community Guidelines.")} />
+        <PTitleSubtitle title={titles[projectType]} subtitle={t("Make sure you read the Community Guidelines")} />
 
         {formSections.map((section, index) => {
           if (!section.for || section.for.includes(projectType)) {

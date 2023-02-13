@@ -36,7 +36,7 @@ export const mainStepSchema = yup.object({
 //
 
 export default function MainStep() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const { formState, control, setValue } = useFormContext<CreateProjectValues>();
   const { errors } = formState;

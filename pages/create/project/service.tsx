@@ -5,6 +5,7 @@ import { ReactElement } from "react";
 import CreateProjectLayout from "components/layout/CreateProjectLayout";
 import Layout from "components/layout/Layout";
 import CreateProjectForm from "components/partials/create/project/CreateProjectForm";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 //
 
@@ -21,5 +22,18 @@ CreateService.getLayout = function getLayout(page: ReactElement) {
     </Layout>
   );
 };
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, [
+        "createProjectProps",
+        "signInProps",
+        "SideBarProps",
+        "BrImageUploadProps",
+      ])),
+    },
+  };
+}
 
 export default CreateService;

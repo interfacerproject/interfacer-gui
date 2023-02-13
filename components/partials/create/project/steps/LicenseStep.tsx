@@ -21,7 +21,7 @@ export const licenseStepDefaultValues: LicenseStepValues = [];
 //
 
 export default function LicenseStep() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const { setValue, watch } = useFormContext<CreateProjectValues>();
 

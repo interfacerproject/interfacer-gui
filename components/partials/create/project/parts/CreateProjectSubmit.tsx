@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useFormContext } from "react-hook-form";
 
 export default function CreateProjectSubmit() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { formState } = useFormContext();
   const { isValid } = formState;
 
@@ -11,7 +11,7 @@ export default function CreateProjectSubmit() {
     <div className="sticky bottom-0 right-0 z-50 bg-background p-3 border-1 border-t-border-subdued">
       <div className="flex flex-row justify-end">
         <Button submit primary disabled={!isValid}>
-          {t("Submit!")}
+          {t("Submit")}
         </Button>
       </div>
     </div>

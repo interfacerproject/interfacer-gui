@@ -21,7 +21,7 @@ export const contributorsStepDefaultValues: ContributorsStepValues = [];
 //
 
 export default function ContributorsStep() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { setValue, watch } = useFormContext<CreateProjectValues>();
 
   const CONTRIBUTORS_FORM_KEY = "contributors";
@@ -41,7 +41,7 @@ export default function ContributorsStep() {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("Contributors")} subtitle={t("Tell us who contributed to this project.")} />
+      <PTitleSubtitle title={t("Contributors")} subtitle={t("Tell us who contributed to this project")} />
       <SearchUsers onSelect={handleSelect} excludeIDs={contributors} />
       {contributors.length && (
         <Stack vertical spacing="tight">

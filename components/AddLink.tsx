@@ -27,7 +27,7 @@ export interface Props {
 //
 
 export default function AddLink(props: Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { onSubmit = () => {}, onDiscard = () => {} } = props;
 
   const defaultValues: Link = {
