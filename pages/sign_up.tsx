@@ -93,7 +93,11 @@ const SignUp: NextPageWithLayout = () => {
     try {
       await signup({
         ...signUpData,
-        eddsaPublicKey: getItem("eddsa_public_key"),
+        eddsaPublicKey: getItem("eddsaPublicKey"),
+        ethereumAddress: getItem("ethereumAddress"),
+        bitcoinPublicKey: getItem("bitcoinPublicKey"),
+        ecdhPublicKey: getItem("ecdhPublicKey"),
+        reflowPublicKey: getItem("reflowPublicKey"),
       });
       await login({ email: signUpData.email });
       router.push("/");
