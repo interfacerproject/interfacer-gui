@@ -1,7 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
-import { ProjectType } from "components/types";
+import { ProjectType, SelectOption } from "components/types";
 import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
 import { EconomicResource, GetProjectTypesQuery, SearchProjectsQuery, SearchProjectsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -127,12 +127,6 @@ export default function SearchProjects(props: Props) {
 }
 
 //
-
-export interface SelectOption {
-  value: string;
-  label: string;
-  media?: React.ReactElement;
-}
 
 export const SEARCH_PROJECTS = gql`
   query SearchProjects($last: Int, $IDs: [ID!], $name: String, $conformsTo: [ID!]) {
