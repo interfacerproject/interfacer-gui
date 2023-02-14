@@ -125,7 +125,7 @@ const CreateProject: NextPageWithLayout = () => {
 
       const location = await handleCreateLocation(formData);
       // devLog is in handleCreateLocation
-      const images = await prepFilesForZenflows(formData.images, getItem("eddsa"));
+      const images = await prepFilesForZenflows(formData.images, getItem("eddsaPivateKey")!);
       devLog("info: images prepared", images);
       const tags = formData.tags.map(t => encodeURI(t.value));
       devLog("info: tags prepared", tags);

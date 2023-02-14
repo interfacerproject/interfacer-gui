@@ -28,7 +28,7 @@ interface FetchHttpOptions {
 const useAuthAndFetch = async (uri: RequestInfo, options: RequestInit) => {
   const { getItem } = useStorage();
   const signRequest = async (body: string) => {
-    const zenKeys = JSON.stringify({ keyring: { eddsa: getItem("eddsa_key") } });
+    const zenKeys = JSON.stringify({ keyring: { eddsa: getItem("eddsaPrivateKey") } });
     const zenData = JSON.stringify({ gql: Buffer.from(body, "utf8").toString("base64") });
     return await zencode_exec(sign(), { data: zenData, keys: zenKeys });
   };

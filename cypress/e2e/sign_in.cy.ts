@@ -36,6 +36,7 @@ describe("Authentication", () => {
     intercept({
       method: "POST",
     });
+    cy.visit("/sign_in");
 
     get("email").clear().type(Cypress.env("authEmail"));
     cy.get("#submit")
@@ -84,13 +85,17 @@ describe("Authentication", () => {
     cy.get("#submit").click();
     cy.get("#loginBtn").click();
     cy.url().should(() => {
-      expect(localStorage.getItem("reflow")).to.eq(Cypress.env("reflow"));
-      expect(localStorage.getItem("eddsa_public_key")).to.eq(Cypress.env("eddsa_public_key"));
-      expect(localStorage.getItem("eddsa_key")).to.eq(Cypress.env("eddsa_key"));
+      expect(localStorage.getItem("reflowPrivateKey")).to.eq(Cypress.env("reflowPrivateKey"));
+      expect(localStorage.getItem("reflowPublicKey")).to.eq(Cypress.env("reflowPublicKey"));
+      expect(localStorage.getItem("eddsaPublicKey")).to.eq(Cypress.env("eddsaPublicKey"));
+      expect(localStorage.getItem("eddsaPrivateKey")).to.eq(Cypress.env("eddsaPrivateKey"));
       expect(localStorage.getItem("seed")).to.eq(Cypress.env("seed"));
-      // expect(localStorage.getItem("schnorr")).to.eq(Cypress.env("schnorr"));
-      expect(localStorage.getItem("ethereum_address")).to.eq(Cypress.env("ethereum_address"));
-      expect(localStorage.getItem("eddsa")).to.eq(Cypress.env("eddsa"));
+      expect(localStorage.getItem("ethereumAddress")).to.eq(Cypress.env("ethereumAddress"));
+      expect(localStorage.getItem("ethereumPrivateKey")).to.eq(Cypress.env("ethereumPrivateKey"));
+      expect(localStorage.getItem("ecdhPublicKey")).to.eq(Cypress.env("ecdhPublicKey"));
+      expect(localStorage.getItem("ecdhPrivateKey")).to.eq(Cypress.env("ecdhPrivateKey"));
+      expect(localStorage.getItem("bitcoinPrivateKey")).to.eq(Cypress.env("bitcoinPrivateKey"));
+      expect(localStorage.getItem("bitcoinPublicKey")).to.eq(Cypress.env("bitcoinPublicKey"));
     });
   });
 });

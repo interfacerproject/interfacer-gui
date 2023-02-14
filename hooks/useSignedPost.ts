@@ -24,7 +24,7 @@ const useSignedPost = (idInHeader?: boolean) => {
   const { user } = useAuth();
   const signRequest = async (json: string) => {
     const data = `{"gql": "${Buffer.from(json, "utf8").toString("base64")}"}`;
-    const keys = `{"keyring": {"eddsa": "${getItem("eddsa_key")}"}}`;
+    const keys = `{"keyring": {"eddsa": "${getItem("eddsaPrivateKey")}"}}`;
     const { result } = await zencode_exec(sign(), { data, keys });
     const headers: { "zenflows-sign": string; "zenflows-id"?: string } = {
       "zenflows-sign": JSON.parse(result).eddsa_signature,
