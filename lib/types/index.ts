@@ -1,19 +1,3 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -30,6 +14,7 @@ export type Scalars = {
   DateTime: any;
   Decimal: any;
   JSON: any;
+  JSONObject: any;
   URI: any;
   Url64: any;
 };
@@ -331,7 +316,12 @@ export type EconomicEvent = {
   note?: Maybe<Scalars["String"]>;
   /** Defines the process to which this event is an output. */
   outputOf?: Maybe<Process>;
+  /** Used to implement the trace algorithm. */
   previous?: Maybe<ProductionFlowItem>;
+  /**
+   * Used to implement the trace algorithm.  It is described in
+   * the algorithms section of Valueflow's website.
+   */
   previousEvent?: Maybe<EconomicEvent>;
   /** The economic agent from whom the actual economic event is initiated. */
   provider: Agent;
@@ -352,6 +342,8 @@ export type EconomicEvent = {
   resourceConformsTo?: Maybe<ResourceSpecification>;
   /** Economic resource involved in the economic event. */
   resourceInventoriedAs?: Maybe<EconomicResource>;
+  /** Metadata of the project. */
+  resourceMetadata?: Maybe<Scalars["JSONObject"]>;
   /**
    * The amount and unit of the economic resource counted or inventoried.
    * This is the quantity that could be used to increment or decrement a
@@ -427,6 +419,8 @@ export type EconomicEventCreateParams = {
   resourceConformsTo?: InputMaybe<Scalars["ID"]>;
   /** (`EconomicResource`) Economic resource involved in the economic event. */
   resourceInventoriedAs?: InputMaybe<Scalars["ID"]>;
+  /** Metadata of the project. */
+  resourceMetadata?: InputMaybe<Scalars["JSONObject"]>;
   /**
    * The amount and unit of the economic resource counted or inventoried.
    * This is the quantity that could be used to increment or decrement a
@@ -524,7 +518,7 @@ export type EconomicResource = {
    */
   lot?: Maybe<ProductBatch>;
   /** Metadata of the project. */
-  metadata?: Maybe<Scalars["JSON"]>;
+  metadata?: Maybe<Scalars["JSONObject"]>;
   /**
    * An informal or formal textual identifier for an item.  Does not imply
    * uniqueness.
@@ -541,6 +535,7 @@ export type EconomicResource = {
    * affecting the resource.
    */
   onhandQuantity: Measure;
+  /** Used to implement the trace algorithm. */
   previous?: Maybe<Array<EconomicEvent>>;
   /**
    * The agent currently with primary rights and responsibilites for
@@ -596,8 +591,6 @@ export type EconomicResourceCreateParams = {
    * can be of the same lot.
    */
   lot?: InputMaybe<Scalars["ID"]>;
-  /** Metadata of the project. */
-  metadata?: InputMaybe<Scalars["JSON"]>;
   /**
    * An informal or formal textual identifier for an item.  Does not imply
    * uniqueness.
@@ -643,7 +636,9 @@ export type EconomicResourceFilterParams = {
   orName?: InputMaybe<Scalars["String"]>;
   orNote?: InputMaybe<Scalars["String"]>;
   orPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
+  orRepo?: InputMaybe<Scalars["String"]>;
   primaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
+  repo?: InputMaybe<Scalars["String"]>;
 };
 
 export type EconomicResourceResponse = {
@@ -652,9 +647,17 @@ export type EconomicResourceResponse = {
 };
 
 export type EconomicResourceUpdateParams = {
+  /**
+   * References one or more concepts in a common taxonomy or other
+   * classification scheme for purposes of categorization or grouping.
+   */
+  classifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   id: Scalars["ID"];
-  /** Metadata of the project. */
-  metadata?: InputMaybe<Scalars["JSON"]>;
+  /**
+   * An informal or formal textual identifier for an item.  Does not imply
+   * uniqueness.
+   */
+  name?: InputMaybe<Scalars["String"]>;
   /** A textual description or comment. */
   note?: InputMaybe<Scalars["String"]>;
 };
@@ -800,7 +803,7 @@ export type Intent = {
    * potential economic resource.  A resource will have only one, as this
    * specifies exactly what the resource is.
    */
-  resourceConformsTo?: Maybe<EconomicResource>;
+  resourceConformsTo?: Maybe<ResourceSpecification>;
   /**
    * When a specific `EconomicResource` is known which can service the
    * `Intent`, this defines that resource.
@@ -1134,6 +1137,8 @@ export type PageInfo = {
 /** A natural person. */
 export type Person = Agent & {
   __typename?: "Person";
+  /** bitcoin public key, encoded by zenroom */
+  bitcoinPublicKey?: Maybe<Scalars["String"]>;
   /** ecdh public key, encoded by zenroom */
   ecdhPublicKey?: Maybe<Scalars["String"]>;
   /** eddsa public key, encoded by zenroom */
@@ -1158,8 +1163,6 @@ export type Person = Agent & {
   primaryLocation?: Maybe<SpatialThing>;
   /** reflow public key, encoded by zenroom */
   reflowPublicKey?: Maybe<Scalars["String"]>;
-  /** schnorr public key, encoded by zenroom */
-  schnorrPublicKey?: Maybe<Scalars["String"]>;
   /** Username of the agent.  Implies uniqueness. */
   user: Scalars["String"];
 };
@@ -1171,6 +1174,8 @@ export type PersonConnection = {
 };
 
 export type PersonCreateParams = {
+  /** bitcoin public key, encoded by zenroom */
+  bitcoinPublicKey?: InputMaybe<Scalars["String"]>;
   /** ecdh public key, encoded by zenroom */
   ecdhPublicKey?: InputMaybe<Scalars["String"]>;
   /** eddsa public key, encoded by zenroom */
@@ -1194,8 +1199,6 @@ export type PersonCreateParams = {
   primaryLocation?: InputMaybe<Scalars["ID"]>;
   /** reflow public key, encoded by zenroom */
   reflowPublicKey?: InputMaybe<Scalars["String"]>;
-  /** schnorr public key, encoded by zenroom */
-  schnorrPublicKey?: InputMaybe<Scalars["String"]>;
   /** Username of the agent.  Implies uniqueness. */
   user: Scalars["String"];
 };
@@ -1324,6 +1327,13 @@ export type Process = {
    * goal has been met, and indicates that no more will be done.
    */
   finished: Scalars["Boolean"];
+  /**
+   * A ProcessGroup, to which this Process belongs.
+   *
+   * It also implies that the ProcessGroup to which this Process belongs
+   * holds nothing but only Processes.
+   */
+  groupedIn?: Maybe<ProcessGroup>;
   /** The planned beginning of the process. */
   hasBeginning?: Maybe<Scalars["DateTime"]>;
   /** The planned end of the process. */
@@ -1362,6 +1372,13 @@ export type ProcessCreateParams = {
    * goal has been met, and indicates that no more will be done.
    */
   finished?: InputMaybe<Scalars["Boolean"]>;
+  /**
+   * (`ProcessGroup`) A ProcessGroup, to which this Process belongs.
+   *
+   * It also implies that the ProcessGroup to which this Process belongs
+   * holds nothing but only Processes.
+   */
+  groupedIn?: InputMaybe<Scalars["ID"]>;
   /** The planned beginning of the process. */
   hasBeginning?: InputMaybe<Scalars["DateTime"]>;
   /** The planned end of the process. */
@@ -1383,6 +1400,113 @@ export type ProcessEdge = {
   __typename?: "ProcessEdge";
   cursor: Scalars["ID"];
   node: Process;
+};
+
+/** A filesystem-like structure to hold a group of Processes. */
+export type ProcessGroup = {
+  __typename?: "ProcessGroup";
+  /**
+   * A ProcessGroup, to which this ProcessGroup belongs.
+   *
+   * It also implies that the ProcessGroup to which this ProcessGroup
+   * belongs holds nothing but only ProcessGroups.
+   *
+   * A ProcessGroup cannot be in the group of itself.
+   */
+  groupedIn?: Maybe<ProcessGroup>;
+  /**
+   * The Processes xor ProgessGroups which this ProcessGroup groups
+   * (holds/contains).
+   *
+   * The resolved data can only be Processes XOR ProcessGroups.
+   */
+  groups?: Maybe<ProcessOrProcessGroupConnection>;
+  id: Scalars["ID"];
+  /**
+   * An informal or formal textual identifier for a process group.  Does
+   * not imply uniqueness.
+   */
+  name: Scalars["String"];
+  /** A textual description or comment. */
+  note?: Maybe<Scalars["String"]>;
+};
+
+/** A filesystem-like structure to hold a group of Processes. */
+export type ProcessGroupGroupsArgs = {
+  after?: InputMaybe<Scalars["ID"]>;
+  before?: InputMaybe<Scalars["ID"]>;
+  first?: InputMaybe<Scalars["Int"]>;
+  last?: InputMaybe<Scalars["Int"]>;
+};
+
+export type ProcessGroupConnection = {
+  __typename?: "ProcessGroupConnection";
+  edges: Array<ProcessGroupEdge>;
+  pageInfo: PageInfo;
+};
+
+export type ProcessGroupCreateParams = {
+  /**
+   * (`ProcessGroup`) A ProcessGroup, to which this ProcessGroup belongs.
+   *
+   * It also implies that the ProcessGroup to which this ProcessGroup
+   * belongs holds nothing but only ProcessGroups.
+   *
+   * A ProcessGroup cannot be in the group of itself.
+   */
+  groupedIn?: InputMaybe<Scalars["ID"]>;
+  /**
+   * An informal or formal textual identifier for a process group.  Does
+   * not imply uniqueness.
+   */
+  name: Scalars["String"];
+  /** A textual description or comment. */
+  note?: InputMaybe<Scalars["String"]>;
+};
+
+export type ProcessGroupEdge = {
+  __typename?: "ProcessGroupEdge";
+  cursor: Scalars["ID"];
+  node: ProcessGroup;
+};
+
+export type ProcessGroupResponse = {
+  __typename?: "ProcessGroupResponse";
+  processGroup: ProcessGroup;
+};
+
+export type ProcessGroupUpdateParams = {
+  /**
+   * (`ProcessGroup`) A ProcessGroup, to which this ProcessGroup belongs.
+   *
+   * It also implies that the ProcessGroup to which this ProcessGroup
+   * belongs holds nothing but only ProcessGroups.
+   *
+   * A ProcessGroup cannot be in the group of itself.
+   */
+  groupedIn?: InputMaybe<Scalars["ID"]>;
+  id: Scalars["ID"];
+  /**
+   * An informal or formal textual identifier for a process group.  Does
+   * not imply uniqueness.
+   */
+  name?: InputMaybe<Scalars["String"]>;
+  /** A textual description or comment. */
+  note?: InputMaybe<Scalars["String"]>;
+};
+
+export type ProcessOrProcessGroup = Process | ProcessGroup;
+
+export type ProcessOrProcessGroupConnection = {
+  __typename?: "ProcessOrProcessGroupConnection";
+  edges: Array<ProcessOrProcessGroupEdge>;
+  pageInfo: PageInfo;
+};
+
+export type ProcessOrProcessGroupEdge = {
+  __typename?: "ProcessOrProcessGroupEdge";
+  cursor: Scalars["ID"];
+  node: ProcessOrProcessGroup;
 };
 
 export type ProcessResponse = {
@@ -1454,6 +1578,13 @@ export type ProcessUpdateParams = {
    * goal has been met, and indicates that no more will be done.
    */
   finished?: InputMaybe<Scalars["Boolean"]>;
+  /**
+   * (`ProcessGroup`) A ProcessGroup, to which this Process belongs.
+   *
+   * It also implies that the ProcessGroup to which this Process belongs
+   * holds nothing but only Processes.
+   */
+  groupedIn?: InputMaybe<Scalars["ID"]>;
   /** The planned beginning of the process. */
   hasBeginning?: InputMaybe<Scalars["DateTime"]>;
   /** The planned end of the process. */
@@ -1556,7 +1687,7 @@ export type Proposal = {
   reciprocalIntents?: Maybe<Array<Intent>>;
   status: ProposedStatus;
   /**
-   * This proposal contains unit based quantities, which can be multipied to
+   * This proposal contains unit based quantities, which can be multiplied to
    * create commitments; commonly seen in a price list or e-commerce.
    */
   unitBased?: Maybe<Scalars["Boolean"]>;
@@ -1583,7 +1714,7 @@ export type ProposalCreateParams = {
   /** A textual description or comment. */
   note?: InputMaybe<Scalars["String"]>;
   /**
-   * This proposal contains unit based quantities, which can be multipied to
+   * This proposal contains unit based quantities, which can be multiplied to
    * create commitments; commonly seen in a price list or e-commerce.
    */
   unitBased?: InputMaybe<Scalars["Boolean"]>;
@@ -1634,7 +1765,7 @@ export type ProposalUpdateParams = {
   /** A textual description or comment. */
   note?: InputMaybe<Scalars["String"]>;
   /**
-   * This proposal contains unit based quantities, which can be multipied to
+   * This proposal contains unit based quantities, which can be multiplied to
    * create commitments; commonly seen in a price list or e-commerce.
    */
   unitBased?: InputMaybe<Scalars["Boolean"]>;
@@ -2173,6 +2304,7 @@ export type RoleBehaviorUpdateParams = {
 
 export type RootMutationType = {
   __typename?: "RootMutationType";
+  claimPerson: Scalars["JSON"];
   createAgentRelationship: AgentRelationshipResponse;
   createAgentRelationshipRole: AgentRelationshipRoleResponse;
   createAgreement: AgreementResponse;
@@ -2187,6 +2319,7 @@ export type RootMutationType = {
   createPerson: PersonResponse;
   createPlan: PlanResponse;
   createProcess: ProcessResponse;
+  createProcessGroup: ProcessGroupResponse;
   createProcessSpecification: ProcessSpecificationResponse;
   createProductBatch: ProductBatchResponse;
   createProposal: ProposalResponse;
@@ -2219,6 +2352,7 @@ export type RootMutationType = {
   deletePerson: Scalars["Boolean"];
   deletePlan: Scalars["Boolean"];
   deleteProcess: Scalars["Boolean"];
+  deleteProcessGroup: Scalars["Boolean"];
   deleteProcessSpecification: Scalars["Boolean"];
   deleteProductBatch: Scalars["Boolean"];
   deleteProposal: Scalars["Boolean"];
@@ -2258,6 +2392,7 @@ export type RootMutationType = {
   updatePerson: PersonResponse;
   updatePlan: PlanResponse;
   updateProcess: ProcessResponse;
+  updateProcessGroup: ProcessGroupResponse;
   updateProcessSpecification: ProcessSpecificationResponse;
   updateProductBatch: ProductBatchResponse;
   updateProposal: ProposalResponse;
@@ -2273,6 +2408,10 @@ export type RootMutationType = {
   updateScenarioDefinition: ScenarioDefinitionResponse;
   updateSpatialThing: SpatialThingResponse;
   updateUnit: UnitResponse;
+};
+
+export type RootMutationTypeClaimPersonArgs = {
+  id: Scalars["ID"];
 };
 
 export type RootMutationTypeCreateAgentRelationshipArgs = {
@@ -2310,6 +2449,10 @@ export type RootMutationTypeCreatePlanArgs = {
 
 export type RootMutationTypeCreateProcessArgs = {
   process: ProcessCreateParams;
+};
+
+export type RootMutationTypeCreateProcessGroupArgs = {
+  processGroup: ProcessGroupCreateParams;
 };
 
 export type RootMutationTypeCreateProcessSpecificationArgs = {
@@ -2401,6 +2544,10 @@ export type RootMutationTypeDeletePlanArgs = {
 };
 
 export type RootMutationTypeDeleteProcessArgs = {
+  id: Scalars["ID"];
+};
+
+export type RootMutationTypeDeleteProcessGroupArgs = {
   id: Scalars["ID"];
 };
 
@@ -2523,6 +2670,10 @@ export type RootMutationTypeUpdateProcessArgs = {
   process: ProcessUpdateParams;
 };
 
+export type RootMutationTypeUpdateProcessGroupArgs = {
+  processGroup: ProcessGroupUpdateParams;
+};
+
 export type RootMutationTypeUpdateProcessSpecificationArgs = {
   processSpecification: ProcessSpecificationUpdateParams;
 };
@@ -2641,6 +2792,8 @@ export type RootQueryType = {
   plan?: Maybe<Plan>;
   plans?: Maybe<PlanConnection>;
   process?: Maybe<Process>;
+  processGroup?: Maybe<ProcessGroup>;
+  processGroups?: Maybe<ProcessGroupConnection>;
   processSpecification?: Maybe<ProcessSpecification>;
   processSpecifications: ProcessSpecificationConnection;
   processes?: Maybe<ProcessConnection>;
@@ -2817,6 +2970,17 @@ export type RootQueryTypePlansArgs = {
 
 export type RootQueryTypeProcessArgs = {
   id: Scalars["ID"];
+};
+
+export type RootQueryTypeProcessGroupArgs = {
+  id: Scalars["ID"];
+};
+
+export type RootQueryTypeProcessGroupsArgs = {
+  after?: InputMaybe<Scalars["ID"]>;
+  before?: InputMaybe<Scalars["ID"]>;
+  first?: InputMaybe<Scalars["Int"]>;
+  last?: InputMaybe<Scalars["Int"]>;
 };
 
 export type RootQueryTypeProcessSpecificationArgs = {
@@ -3474,7 +3638,7 @@ export type CreateLocationMutation = {
 export type CreateProjectMutationVariables = Exact<{
   name: Scalars["String"];
   note: Scalars["String"];
-  metadata?: InputMaybe<Scalars["JSON"]>;
+  metadata?: InputMaybe<Scalars["JSONObject"]>;
   agent: Scalars["ID"];
   creationTime: Scalars["DateTime"];
   location: Scalars["ID"];
@@ -3503,7 +3667,7 @@ export type TransferProjectMutationVariables = Exact<{
   resource: Scalars["ID"];
   name: Scalars["String"];
   note: Scalars["String"];
-  metadata?: InputMaybe<Scalars["JSON"]>;
+  metadata?: InputMaybe<Scalars["JSONObject"]>;
   agent: Scalars["ID"];
   creationTime: Scalars["DateTime"];
   location: Scalars["ID"];
@@ -3565,19 +3729,6 @@ export type GetResourceTableQuery = {
     currentLocation?: { __typename?: "SpatialThing"; id: string; name: string; mappableAddress?: string | null } | null;
     images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
   } | null;
-};
-
-export type UpdateMetadataMutationVariables = Exact<{
-  metadata: Scalars["JSON"];
-  id: Scalars["ID"];
-}>;
-
-export type UpdateMetadataMutation = {
-  __typename?: "RootMutationType";
-  updateEconomicResource: {
-    __typename?: "EconomicResourceResponse";
-    economicResource: { __typename?: "EconomicResource"; id: string; metadata?: any | null };
-  };
 };
 
 export type GetProjectTypesQueryVariables = Exact<{ [key: string]: never }>;
@@ -3877,7 +4028,7 @@ export type ForkProjectMutationVariables = Exact<{
   name: Scalars["String"];
   note?: InputMaybe<Scalars["String"]>;
   repo?: InputMaybe<Scalars["String"]>;
-  metadata?: InputMaybe<Scalars["JSON"]>;
+  metadata?: InputMaybe<Scalars["JSONObject"]>;
 }>;
 
 export type ForkProjectMutation = {
@@ -3970,7 +4121,7 @@ export type QueryProposalQuery = {
           hasUnit?: { __typename?: "Unit"; id: string } | null;
         };
       } | null;
-      resourceConformsTo?: { __typename?: "EconomicResource"; id: string; name: string } | null;
+      resourceConformsTo?: { __typename?: "ResourceSpecification"; id: string; name: string } | null;
     }> | null;
   } | null;
 };
@@ -3984,6 +4135,22 @@ export type CiteProjectMutationVariables = Exact<{
 }>;
 
 export type CiteProjectMutation = {
+  __typename?: "RootMutationType";
+  createEconomicEvent: {
+    __typename?: "EconomicEventResponse";
+    economicEvent: { __typename?: "EconomicEvent"; id: string };
+  };
+};
+
+export type ContributeToProjectMutationVariables = Exact<{
+  agent: Scalars["ID"];
+  creationTime: Scalars["DateTime"];
+  process: Scalars["ID"];
+  unitOne: Scalars["ID"];
+  conformTo: Scalars["ID"];
+}>;
+
+export type ContributeToProjectMutation = {
   __typename?: "RootMutationType";
   createEconomicEvent: {
     __typename?: "EconomicEventResponse";
