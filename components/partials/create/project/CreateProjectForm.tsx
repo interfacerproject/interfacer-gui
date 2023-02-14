@@ -1,3 +1,5 @@
+import { ProjectType } from "components/types";
+
 // Steps
 import {
   contributorsStepDefaultValues,
@@ -26,13 +28,12 @@ import CreateProjectFields from "./parts/CreateProjectFields";
 import CreateProjectNav from "./parts/CreateProjectNav";
 import CreateProjectSubmit from "./parts/CreateProjectSubmit";
 
+// Form
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 //
-
-export type ProjectType = "service" | "product" | "design";
 
 export interface Props {
   projectType: ProjectType;
@@ -68,13 +69,13 @@ export const createProjectSchema = yup.object({
   location: yup
     .object()
     .when("$projectType", (projectType: ProjectType, schema) =>
-      projectType == "design" ? schema : locationStepSchema
+      projectType == ProjectType.DESIGN ? schema : locationStepSchema
     ),
   images: imagesStepSchema,
   declarations: yup
     .object()
     .when("$projectType", (projectType: ProjectType, schema) =>
-      projectType == "product" ? declarationsStepSchema : schema
+      projectType == ProjectType.PRODUCT ? declarationsStepSchema : schema
     ),
   contributors: contributorsStepSchema,
   relations: relationsStepSchema,

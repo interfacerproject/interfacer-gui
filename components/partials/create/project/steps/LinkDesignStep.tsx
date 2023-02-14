@@ -3,6 +3,7 @@ import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectDisplay from "components/ProjectDisplay";
 import SearchProjects from "components/SearchProjects";
+import { ProjectType } from "components/types";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useFormContext } from "react-hook-form";
@@ -36,7 +37,7 @@ export default function LinkDesign() {
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle title={t("Design source")} subtitle={t("Tell us from which design your product is based on.")} />
 
-      <SearchProjects label="Search for a design" conformsTo={["design"]} onSelect={handleSelect} />
+      <SearchProjects label="Search for a design" conformsTo={[ProjectType.DESIGN]} onSelect={handleSelect} />
 
       {selected && (
         <Stack vertical spacing="extraTight">
