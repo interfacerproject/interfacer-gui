@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
+import { ProjectType } from "components/types";
 import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
 import { EconomicResource, GetProjectTypesQuery, SearchProjectsQuery, SearchProjectsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -9,8 +10,6 @@ import * as yup from "yup";
 import ProjectThumb from "./ProjectThumb";
 
 //
-
-export type ProjectType = "design" | "service" | "product";
 
 export interface Props {
   onSelect?: (value: Partial<EconomicResource>) => void;

@@ -1,7 +1,8 @@
+import { ProjectType } from "components/types";
 import { useTranslation } from "next-i18next";
 import React from "react";
 import { useFormContext } from "react-hook-form";
-import { CreateProjectValues, ProjectType } from "../CreateProjectForm";
+import { CreateProjectValues } from "../CreateProjectForm";
 
 // Steps
 import ContributorsStep from "../steps/ContributorsStep";
@@ -43,19 +44,19 @@ export const formSections: Array<FormSection> = [
     navLabel: "Import design",
     id: "importDesign",
     component: <ImportDesignStep />,
-    for: ["design"],
+    for: [ProjectType.DESIGN],
   },
   {
     navLabel: "General info",
     id: "main",
     component: <MainStep />,
-    required: ["product", "service", "design"],
+    required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN],
   },
   {
     navLabel: "Design source",
     id: "linkedDesign",
     component: <LinkDesignStep />,
-    for: ["product"],
+    for: [ProjectType.PRODUCT],
   },
   {
     navLabel: "Images",
@@ -65,28 +66,28 @@ export const formSections: Array<FormSection> = [
   {
     navLabel: "Location",
     id: "location",
-    component: <LocationStep projectType="product" />,
-    for: ["product"],
-    required: ["product"],
+    component: <LocationStep projectType={ProjectType.PRODUCT} />,
+    for: [ProjectType.PRODUCT],
+    required: [ProjectType.PRODUCT],
   },
   {
     navLabel: "Location",
     id: "location",
-    component: <LocationStep projectType="service" />,
-    for: ["service"],
+    component: <LocationStep projectType={ProjectType.SERVICE} />,
+    for: [ProjectType.SERVICE],
   },
   {
     navLabel: "Certifications",
     id: "declarations",
     component: <DeclarationsStep />,
-    for: ["product"],
-    required: ["product"],
+    for: [ProjectType.PRODUCT],
+    required: [ProjectType.PRODUCT],
   },
   {
     navLabel: "Licenses",
     id: "licenses",
     component: <LicenseStep />,
-    for: ["design"],
+    for: [ProjectType.DESIGN],
   },
   {
     navLabel: "Contributors",

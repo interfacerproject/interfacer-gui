@@ -1,3 +1,4 @@
+import { ProjectType } from "components/types";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
@@ -9,7 +10,7 @@ import CreateProjectForm from "components/partials/create/project/CreateProjectF
 //
 
 const CreateDesign: NextPageWithLayout = () => {
-  return <CreateProjectForm projectType="design" />;
+  return <CreateProjectForm projectType={ProjectType.DESIGN} />;
 };
 
 //
@@ -17,7 +18,7 @@ const CreateDesign: NextPageWithLayout = () => {
 CreateDesign.getLayout = function getLayout(page: ReactElement) {
   return (
     <Layout>
-      <CreateProjectLayout projectType="design">{page}</CreateProjectLayout>
+      <CreateProjectLayout>{page}</CreateProjectLayout>
     </Layout>
   );
 };

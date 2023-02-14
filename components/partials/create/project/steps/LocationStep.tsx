@@ -1,12 +1,13 @@
 import { Checkbox, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SelectLocation2 from "components/SelectLocation2";
+import { ProjectType } from "components/types";
 import { LocationLookup } from "lib/fetchLocation";
 import { isRequired } from "lib/isFieldRequired";
 import { useTranslation } from "next-i18next";
 import { Controller, useFormContext } from "react-hook-form";
 import * as yup from "yup";
-import { CreateProjectValues, ProjectType } from "../CreateProjectForm";
+import { CreateProjectValues } from "../CreateProjectForm";
 
 //
 
@@ -27,7 +28,7 @@ export const locationStepSchema = yup.object().shape({
   location: yup
     .object()
     .when("$projectType", (projectType: ProjectType, schema) =>
-      projectType === "product" ? schema.required() : schema.nullable()
+      projectType === ProjectType.PRODUCT ? schema.required() : schema.nullable()
     ),
   remote: yup.boolean(),
 });
@@ -39,7 +40,7 @@ export interface LocationStepSchemaContext {
 //
 
 export interface Props {
-  projectType?: Exclude<ProjectType, "design">;
+  projectType?: Exclude<ProjectType, ProjectType.DESIGN>;
 }
 
 //
