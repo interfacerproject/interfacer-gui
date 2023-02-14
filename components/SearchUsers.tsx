@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
+import { SelectOption } from "components/types";
 import { Agent, SearchAgentsQuery, SearchAgentsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
@@ -84,12 +85,6 @@ export default function SearchUsers(props: Props) {
 }
 
 //
-
-export interface SelectOption {
-  value: string;
-  label: string;
-  media?: React.ReactElement;
-}
 
 export type FoundAgent = NonNullable<SearchAgentsQuery["agents"]>["edges"][number]["node"];
 

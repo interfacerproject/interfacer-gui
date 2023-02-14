@@ -15,13 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { Link as PLink } from "@bbtgnn/polaris-interfacer";
-import { ProjectType } from "components/partials/create/project/CreateProjectForm";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 
 type LayoutProps = {
   children: React.ReactNode;
-  projectType: ProjectType;
 };
 
 const CreateProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: LayoutProps) => {

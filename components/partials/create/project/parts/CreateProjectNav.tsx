@@ -1,6 +1,6 @@
 import TableOfContents from "components/TableOfContents";
+import { ProjectType } from "components/types";
 import { useTranslation } from "next-i18next";
-import { ProjectType } from "../CreateProjectForm";
 import { getSectionByProjectType } from "./CreateProjectFields";
 
 export interface Props {
