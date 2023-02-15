@@ -27,6 +27,7 @@ import CreateProjectNav from "./parts/CreateProjectNav";
 import CreateProjectSubmit from "./parts/CreateProjectSubmit";
 
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useProjectCreation } from "hooks/useProjectCreation";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -87,6 +88,7 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
+  const { handleProjectCreation } = useProjectCreation();
 
   const formMethods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",
@@ -99,6 +101,7 @@ export default function CreateProjectForm(props: Props) {
 
   function onSubmit(values: CreateProjectValues) {
     console.log(values);
+    handleProjectCreation(values, projectType);
   }
 
   //

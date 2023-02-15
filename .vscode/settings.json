@@ -34,5 +34,6 @@
     "schnorr",
     "topbar",
     "zenflows"
-  ]
+  ],
+  "i18n-ally.localesPaths": ["public/locales"]
 }

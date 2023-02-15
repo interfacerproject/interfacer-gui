@@ -15,7 +15,7 @@ import MainStep from "../steps/MainStep";
 import RelationsStep from "../steps/RelationsStep";
 
 // Components
-import { Stack } from "@bbtgnn/polaris-interfacer";
+import { Button, Stack } from "@bbtgnn/polaris-interfacer";
 import PDivider from "components/polaris/PDivider";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
@@ -135,6 +135,9 @@ export default function CreateProjectFields(props: Props) {
           }
         })}
       </Stack>
+      <Button submit primary>
+        {t("Submit")}
+      </Button>
     </form>
   );
 }
