@@ -11,22 +11,23 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Tree from "react-d3-tree";
 
+// Partials
+import ActionsCard from "components/partials/project/ActionsCard";
+
 // Components
 import { Button, Card, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor } from "@shopify/polaris-icons";
-import AddStar from "components/AddStar";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import ProjectDetailOverview from "components/ProjectDetailOverview";
 import RelationshipTree from "components/RelationshipTree";
-import WatchButton from "components/WatchButton";
 import Link from "next/link";
 
 import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
-import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
+import { MergeMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "../../components/ContributorsTable";
@@ -40,7 +41,6 @@ const Project = () => {
   const { id } = router.query;
   const { t } = useTranslation("common");
   const [project, setProject] = useState<EconomicResource | undefined>();
-  const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
   const [selected, setSelected] = useState(0);
   const [width, setWidth] = useState(0);
@@ -73,25 +73,6 @@ const Project = () => {
       setHeight(ref.current.offsetHeight);
     }
   }, [data, ref, selected]);
-
-  useEffect(() => {
-    const _list = getItem("projectsCollected");
-    const _listParsed = _list ? JSON.parse(_list) : [];
-    setInList(_listParsed.includes(project?.id));
-  }, [project, getItem]);
-
-  const handleCollect = () => {
-    const _list = getItem("projectsCollected");
-    const _listParsed = _list ? JSON.parse(_list) : [];
-    if (_listParsed.includes(project!.id)) {
-      setItem("projectsCollected", JSON.stringify(_listParsed.filter((a: string) => a !== project!.id)));
-      setInList(false);
-    } else {
-      const _listParsedUpdated = [..._listParsed, project?.id];
-      setItem("projectsCollected", JSON.stringify(_listParsedUpdated));
-      setInList(true);
-    }
-  };
 
   // Tabs setup
   const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
@@ -286,23 +267,7 @@ const Project = () => {
           </Card>
 
           {/* Actions */}
-          <Card sectioned>
-            <Stack vertical>
-              {project.repo && (
-                <Button url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
-                  {t("Go to source")}
-                </Button>
-              )}
-
-              <Button id="addToList" size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>
-                {inList ? t("Remove from list") : t("Add to list")}
-              </Button>
-
-              <WatchButton id={project.id} owner={project.primaryAccountable.id} />
-
-              <AddStar id={project.id} owner={project.primaryAccountable.id} />
-            </Stack>
-          </Card>
+          <ActionsCard project={project} />
 
           {/* Contributions */}
           {project.primaryAccountable.id != user?.ulid && (
