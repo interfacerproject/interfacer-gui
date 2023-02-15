@@ -12,13 +12,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Tree from "react-d3-tree";
 
 // Partials
-import ActionsCard from "components/partials/project/ActionsCard";
+import ActionsCard from "components/partials/project/actionsCard/ActionsCard";
 
 // Components
 import { Button, Card, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor } from "@shopify/polaris-icons";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
-import BrDisplayUser from "components/brickroom/BrDisplayUser";
+
 import ProjectDetailOverview from "components/ProjectDetailOverview";
 import RelationshipTree from "components/RelationshipTree";
 import Link from "next/link";
@@ -251,17 +251,6 @@ const Project = () => {
                   {"ID"}
                 </Text>
                 <p className="text-primary font-mono">{project.id}</p>
-              </div>
-
-              <div className="space-y-1">
-                <Text as="h2" variant="headingMd">
-                  {t("Owner")}
-                </Text>
-                <BrDisplayUser
-                  id={project.primaryAccountable.id}
-                  name={project.primaryAccountable.name}
-                  location={project.currentLocation?.name}
-                />
               </div>
             </Stack>
           </Card>
