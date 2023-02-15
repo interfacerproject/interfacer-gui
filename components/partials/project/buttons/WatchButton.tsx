@@ -1,11 +1,21 @@
-import { Button, Icon } from "@bbtgnn/polaris-interfacer";
-import { HideMinor, ViewMinor } from "@shopify/polaris-icons";
 import useSocial from "hooks/useSocial";
 import useWallet from "hooks/useWallet";
 import { IdeaPoints } from "lib/PointsDistribution";
 import { useTranslation } from "next-i18next";
 
-const WatchButton = ({ id, owner }: { id: string; owner: string }) => {
+// Components
+import { Button, Icon } from "@bbtgnn/polaris-interfacer";
+import { HideMinor, ViewMinor } from "@shopify/polaris-icons";
+
+//
+
+export interface WatchButtonProps {
+  id: string;
+  owner: string;
+}
+
+export default function WatchButton(props: WatchButtonProps) {
+  const { id, owner } = props;
   const { followActivity, isWatched, erFollowerLength } = useSocial(id);
   const { t } = useTranslation("common");
   const { addIdeaPoints } = useWallet();
@@ -20,7 +30,6 @@ const WatchButton = ({ id, owner }: { id: string; owner: string }) => {
     <Button
       id="addToWatch"
       fullWidth
-      size="large"
       onClick={handleWatch}
       disabled={watched}
       icon={<Icon source={watched ? HideMinor : ViewMinor} />}
@@ -28,6 +37,4 @@ const WatchButton = ({ id, owner }: { id: string; owner: string }) => {
       {t("Watch")!} {"(" + erFollowerLength + ")"}
     </Button>
   );
-};
-
-export default WatchButton;
+}
