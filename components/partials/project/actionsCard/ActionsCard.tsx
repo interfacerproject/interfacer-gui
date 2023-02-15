@@ -7,6 +7,7 @@ import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import AddToListButton from "./buttons/AddToListButton";
 import StarButton from "./buttons/StarButton";
 import WatchButton from "./buttons/WatchButton";
+import LicensesDisplay from "./LicensesDisplay";
 
 // Components
 import { Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
@@ -56,7 +57,7 @@ export default function ActionsCard(props: ActionsCardProps) {
           />
         </Stack>
 
-        {/* Licenses */}
+        <LicensesDisplay label={t("Licenses")} scopedLicenses={licenses} />
 
         {/* Source */}
       </Stack>
