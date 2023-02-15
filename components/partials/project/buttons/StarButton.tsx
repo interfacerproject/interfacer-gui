@@ -1,13 +1,21 @@
-import { Button, Icon } from "@bbtgnn/polaris-interfacer";
-import { StarFilledMinor, StarOutlineMinor } from "@shopify/polaris-icons";
 import useSocial from "hooks/useSocial";
 import useWallet from "hooks/useWallet";
 import { IdeaPoints } from "lib/PointsDistribution";
 import { useTranslation } from "next-i18next";
 
+// Components
+import { Button, Icon } from "@bbtgnn/polaris-interfacer";
+import { StarFilledMinor, StarOutlineMinor } from "@shopify/polaris-icons";
+
 //
 
-const AddStar = ({ id, owner }: { id: string; owner: string }) => {
+export interface StarButtonProps {
+  id: string;
+  owner: string;
+}
+
+export default function StarButton(props: StarButtonProps) {
+  const { id, owner } = props;
   const { likeER, isLiked } = useSocial(id);
   const hasAlreadyStarred = isLiked(id);
   const { t } = useTranslation("common");
@@ -24,12 +32,9 @@ const AddStar = ({ id, owner }: { id: string; owner: string }) => {
       onClick={handleClick}
       fullWidth
       disabled={hasAlreadyStarred}
-      size="large"
       icon={<Icon source={hasAlreadyStarred ? StarFilledMinor : StarOutlineMinor} />}
     >
       {`${hasAlreadyStarred ? t("You already star it!") : t("Star")}`}
     </Button>
   );
-};
-
-export default AddStar;
+}
