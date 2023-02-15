@@ -242,7 +242,7 @@ const Project = () => {
         </div>
 
         {/* Sidebar */}
-        <div>
+        <div className="max-w-xs">
           {/* Project info */}
           <Card sectioned>
             <Stack vertical>
