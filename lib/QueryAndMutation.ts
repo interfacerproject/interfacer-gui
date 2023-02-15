@@ -102,7 +102,7 @@ export const CREATE_PROJECT = gql`
   mutation CreateProject(
     $name: String!
     $note: String!
-    $metadata: JSON
+    $metadata: JSONObject
     $agent: ID!
     $creationTime: DateTime!
     $location: ID!
@@ -125,15 +125,9 @@ export const CREATE_PROJECT = gql`
         resourceConformsTo: $resourceSpec
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
         toLocation: $location
+        resourceMetadata: $metadata
       }
-      newInventoriedResource: {
-        name: $name
-        note: $note
-        images: $images
-        metadata: $metadata
-        repo: $repo
-        license: $license
-      }
+      newInventoriedResource: { name: $name, note: $note, images: $images, repo: $repo, license: $license }
     ) {
       economicEvent {
         id
@@ -151,7 +145,7 @@ export const TRANSFER_PROJECT = gql`
     $resource: ID!
     $name: String!
     $note: String!
-    $metadata: JSON
+    $metadata: JSONObject
     $agent: ID!
     $creationTime: DateTime!
     $location: ID!
@@ -168,8 +162,9 @@ export const TRANSFER_PROJECT = gql`
         resourceClassifiedAs: $tags
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
         toLocation: $location
+        resourceMetadata: $metadata
       }
-      newInventoriedResource: { name: $name, note: $note, metadata: $metadata}
+      newInventoriedResource: { name: $name, note: $note}
     ) {
       economicEvent {
         id
@@ -256,17 +251,6 @@ export const QUERY_RESOURCE = gql`
         name
         mimeType
         bin
-      }
-    }
-  }
-`;
-
-export const UPDATE_METADATA = gql`
-  mutation UpdateMetadata($metadata: JSON!, $id: ID!) {
-    updateEconomicResource(resource: { id: $id, metadata: $metadata }) {
-      economicResource {
-        id
-        metadata
       }
     }
   }
@@ -587,7 +571,7 @@ export const FORK_PROJECT = gql`
     $name: String!
     $note: String
     $repo: String
-    $metadata: JSON
+    $metadata: JSONObject
   ) {
     cite: createEconomicEvent(
       event: {
@@ -615,8 +599,9 @@ export const FORK_PROJECT = gql`
         resourceConformsTo: $spec
         toLocation: $location
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+        resourceMetadata: $metadata
       }
-      newInventoriedResource: { name: $name, note: $note, repo: $repo, metadata: $metadata }
+      newInventoriedResource: { name: $name, note: $note, repo: $repo }
     ) {
       economicEvent {
         id
