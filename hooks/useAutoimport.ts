@@ -135,7 +135,7 @@ const useAutoImport = (): AutoImportReturnValue => {
     const license = await getGhLicenses(u);
     const readme = await getGhReadme(u);
     let licenses = [];
-    if (license) licenses.push({ scope: "general", licenseID: license });
+    if (license) licenses.push({ scope: "general", licenseId: license });
     if (main) main.description = readme || main!.description || "";
     return { main, licenses };
   };
