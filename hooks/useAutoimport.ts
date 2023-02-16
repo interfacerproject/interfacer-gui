@@ -61,24 +61,24 @@ const useAutoImport = (): AutoImportReturnValue => {
     }
   };
 
-  // const getGhReadme = async (u: { owner: string; repo: string }) => {
-  //   try {
-  //     const readme = await o.rest.repos.getReadme(u);
-  //     const readmeFile = await o.rest.repos.getContent({
-  //       mediaType: {
-  //         format: "raw",
-  //       },
-  //       owner: u.owner,
-  //       repo: u.repo,
-  //       path: readme.data.path,
-  //     });
-  //     // setReadme(readmeFile.data.toString());
-  //     const images = findImagesInReadme(readmeFile.data.toString());
-  //     // setImages(images as string[]);
-  //   } catch (e) {
-  //     devLog(e);
-  //   }
-  // };
+  const getGhReadme = async (u: { owner: string; repo: string }) => {
+    try {
+      const readme = await o.rest.repos.getReadme(u);
+      const readmeFile = await o.rest.repos.getContent({
+        mediaType: {
+          format: "raw",
+        },
+        owner: u.owner,
+        repo: u.repo,
+        path: readme.data.path,
+      });
+      // const images = findImagesInReadme(readmeFile.data.toString());
+      // setImages(images as string[]);
+      return readmeFile.data.toString();
+    } catch (e) {
+      devLog(e);
+    }
+  };
 
   // const getGhContributors = async (u: { owner: string; repo: string }) => {
   //   try {
@@ -134,6 +134,8 @@ const useAutoImport = (): AutoImportReturnValue => {
     const u = { owner, repo: repoName };
     const main = await getGhMetadata(u);
     const license = await getGhLicenses(u);
+    const readme = await getGhReadme(u);
+    if (main) main.description = readme || main!.description || "";
     return { main, licenses: [{ scope: "general", licenseID: license }] };
   };
 
