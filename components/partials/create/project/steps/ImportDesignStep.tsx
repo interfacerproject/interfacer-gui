@@ -27,15 +27,13 @@ export default function ImportDesign() {
     defaultValues: autoimportDefaultValues,
   });
 
-  const { formState, control, watch, setValue, trigger } = form;
+  const { formState, control, watch, setValue } = form;
   const { isValid, errors } = formState;
 
   /* Setting data in the "main" form */
 
   function handleImport() {
-    console.log(watch());
-    // Qui bisogna prima fare il fetch dei dati, secondo l'interfaccia CreateProjectValues
-    // const data = import(getValues("repoUrl"))
+    const inputValues = watch();
     // e poi settare i valori nel form principale in questo modo:
     // setValue("main", data.main);
     // setValue("images", data.images);
@@ -122,9 +120,11 @@ export default function ImportDesign() {
         </Stack>
       )}
 
-      <Button primary fullWidth onClick={handleImport}>
-        {t("Import repo")}
-      </Button>
+      {isValid && (
+        <Button primary fullWidth onClick={handleImport}>
+          {t("Import repo")}
+        </Button>
+      )}
     </Stack>
   );
 }
