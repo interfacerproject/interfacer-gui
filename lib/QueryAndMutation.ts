@@ -201,6 +201,7 @@ export const QUERY_RESOURCE = gql`
       note
       metadata
       license
+      repo
       traceDpp
       trace {
         __typename
