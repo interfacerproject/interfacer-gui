@@ -1,5 +1,6 @@
 import { Button, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
+import LoadingOverlay from "components/LoadingOverlay";
 import PButtonRadio from "components/polaris/PButtonRadio";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import {
@@ -12,6 +13,7 @@ import {
 } from "hooks/useAutoimportDefs";
 import { isRequired } from "lib/isFieldRequired";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 //
@@ -32,12 +34,14 @@ export default function ImportDesign() {
 
   /* Setting data in the "main" form */
 
-  function handleImport() {
+  const [loading, setLoading] = useState(false);
+
+  async function handleImport() {
+    setLoading(true);
     const inputValues = watch();
-    // e poi settare i valori nel form principale in questo modo:
-    // setValue("main", data.main);
-    // setValue("images", data.images);
-    // ...
+    // TODO #1: chiamare funzione
+    // TODO #2: impostare valori nel form
+    setLoading(true);
   }
 
   const autoimportOptions = [
@@ -125,6 +129,8 @@ export default function ImportDesign() {
           {t("Import repo")}
         </Button>
       )}
+
+      {loading && <LoadingOverlay />}
     </Stack>
   );
 }
