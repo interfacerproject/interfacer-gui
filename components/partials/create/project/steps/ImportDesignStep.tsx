@@ -3,6 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import LoadingOverlay from "components/LoadingOverlay";
 import PButtonRadio from "components/polaris/PButtonRadio";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import useAutoimport from "hooks/useAutoimport";
 import {
   autoimportDefaultValues,
   AutoimportInput,
@@ -35,13 +36,15 @@ export default function ImportDesign() {
   /* Setting data in the "main" form */
 
   const [loading, setLoading] = useState(false);
+  const { importRepository } = useAutoimport();
 
   async function handleImport() {
     setLoading(true);
     const inputValues = watch();
-    // TODO #1: chiamare funzione
+    const result = await importRepository(inputValues);
+    console.log(result);
     // TODO #2: impostare valori nel form
-    setLoading(true);
+    setLoading(false);
   }
 
   const autoimportOptions = [
