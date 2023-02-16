@@ -1,30 +1,52 @@
 import { Button } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import LoadingOverlay from "components/LoadingOverlay";
-import MainStep, {
-  mainStepDefaultValues,
-  mainStepSchema,
-  MainStepValues,
-} from "components/partials/create/project/steps/MainStep";
+import MainStep, { mainStepSchema, MainStepValues } from "components/partials/create/project/steps/MainStep";
+import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 //
 
-export default function EditProject() {
+export interface EditMainProps {
+  project: Partial<EconomicResource>;
+}
+
+export interface EditMainValues {
+  main: MainStepValues;
+}
+
+export default function EditMain({ project }: EditMainProps) {
   const { t } = useTranslation();
 
-  const formMethods = useForm<MainStepValues>({
+  console.log(project);
+
+  const defaultValues: EditMainValues = {
+    main: {
+      title: project.name || "",
+      description: project.note || "",
+      link: project.repo || "",
+      tags: (project.classifiedAs || []).map(tag => ({
+        label: decodeURIComponent(tag),
+        value: tag,
+      })),
+    },
+  };
+
+  console.log(defaultValues);
+
+  const formMethods = useForm<EditMainValues>({
     mode: "all",
     resolver: yupResolver(mainStepSchema),
-    defaultValues: mainStepDefaultValues,
+    defaultValues,
   });
-  const { handleSubmit } = formMethods;
+  const { handleSubmit, formState, watch } = formMethods;
+  const { isValid } = formState;
 
   const [loading, setLoading] = useState(false);
 
-  async function onSubmit(values: MainStepValues) {
+  async function onSubmit(values: EditMainValues) {
     setLoading(true);
     console.log(values);
     setLoading(false);
@@ -32,11 +54,14 @@ export default function EditProject() {
 
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <MainStep />
-        <Button primary submit>
-          {t("Update")}
-        </Button>
+        <div className="flex justify-end">
+          <Button primary submit disabled={!isValid}>
+            {t("Update")}
+          </Button>
+        </div>
+        <pre>{JSON.stringify(watch(), null, 2)}</pre>
       </form>
 
       {loading && <LoadingOverlay />}

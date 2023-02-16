@@ -24,6 +24,9 @@ import { useRouter } from "next/router";
 // Components
 import { Spinner } from "@bbtgnn/polaris-interfacer";
 
+// Partials
+import EditMain from "components/partials/project/edit/EditMain";
+
 //
 
 const EditProject = () => {
@@ -42,9 +45,11 @@ const EditProject = () => {
   if (!project) return null;
 
   return (
-    <>
-      <div>{"Edit!"}</div>
-    </>
+    <div className="px-6 py-10">
+      <div className="mx-auto max-w-xl">
+        <EditMain project={project} />
+      </div>
+    </div>
   );
 };
 
