@@ -45,7 +45,7 @@ const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
-import ContributorsTable from "../../components/ContributorsTable";
+import ContributorsTable from "components/ContributorsTable";
 
 import FullWidthBanner from "components/FullWidthBanner";
 
