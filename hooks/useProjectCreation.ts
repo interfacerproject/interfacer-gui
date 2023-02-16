@@ -211,8 +211,12 @@ export const useProjectCreation = () => {
     devLog("success: images uploaded");
   };
 
-  const handleProjectCreation = async (formData: CreateProjectValues, projectType: string) => {
+  const handleProjectCreation = async (
+    formData: CreateProjectValues,
+    projectType: string
+  ): Promise<string | undefined> => {
     setLoading(true);
+    let projectID: string | undefined = undefined;
     try {
       const processName = `creation of ${formData.main.title} by ${user!.name}`;
       const { data: processData } = await createProcess({ variables: { name: processName } });
@@ -272,6 +276,8 @@ export const useProjectCreation = () => {
       const { data: createProjectData, errors } = await createProject({ variables });
       if (errors) throw new Error("ProjectNotCreated");
 
+      projectID = createProjectData?.createEconomicEvent.economicEvent.id;
+
       //economic system: points assignments
       addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
       addStrengthsPoints(user!.ulid, StrengthsPoints.OnCreate);
@@ -293,6 +299,7 @@ export const useProjectCreation = () => {
       setError(err);
     }
     setLoading(false);
+    return projectID;
   };
 
   return {
