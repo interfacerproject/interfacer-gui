@@ -1,5 +1,7 @@
+// @ts-ignore
 import { Gitlab } from "@gitbeaker/browser";
 import devLog from "lib/devLog";
+// @ts-ignore
 import { Octokit } from "octokit";
 import { useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
@@ -70,7 +72,7 @@ const useAutoImport = (): AutoImportReturnValue => {
       setRepo(_data.html_url);
       setName(_data.name);
       setDescription(_data.description || "");
-      setTags(_data.topics?.map(t => t) || []);
+      setTags(_data.topics?.map((t: any) => t) || []);
     } catch (e) {
       devLog("error fetching metadata", e);
     }
@@ -127,7 +129,7 @@ const useAutoImport = (): AutoImportReturnValue => {
         repo: githubRepo,
         state: "closed",
       });
-      const filteredPulls = pulls.data.filter(p => p.head.repo?.fork)?.map(p => p.head.repo.html_url);
+      const filteredPulls = pulls.data.filter((p: any) => p.head.repo?.fork)?.map((p: any) => p.head.repo.html_url);
       setResources(filteredPulls);
     } catch (e) {
       devLog(e);
@@ -140,7 +142,7 @@ const useAutoImport = (): AutoImportReturnValue => {
       setRepo(metadata.web_url);
       setName(metadata.name);
       setDescription(metadata.description || "");
-      setTags(metadata.tag_list?.map(t => t) || []);
+      setTags(metadata.tag_list?.map((t: any) => t) || []);
       const readmePath = metadata.readme_url?.split("/").pop() || "README.md";
       const readme = await gl.RepositoryFiles.show(gitlabId!, readmePath, metadata.default_branch || "master");
       const readmeFile = await decodeBase64(readme.content);
