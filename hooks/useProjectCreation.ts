@@ -276,7 +276,7 @@ export const useProjectCreation = () => {
       const { data: createProjectData, errors } = await createProject({ variables });
       if (errors) throw new Error("ProjectNotCreated");
 
-      projectID = createProjectData?.createEconomicEvent.economicEvent.id;
+      projectID = createProjectData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
 
       //economic system: points assignments
       addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
