@@ -38,7 +38,7 @@ export const mainStepSchema = yup.object({
 export default function MainStep() {
   const { t } = useTranslation();
 
-  const { formState, control, setValue } = useFormContext<CreateProjectValues>();
+  const { formState, control, setValue, watch } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
 
   //
@@ -79,8 +79,8 @@ export default function MainStep() {
             autoComplete="off"
             onChange={onChange}
             onBlur={onBlur}
-            label={t("External link")}
             placeholder={t("projectsite.com/info")}
+            label={t("External link")}
             error={errors.main?.link?.message}
             requiredIndicator={isRequired(mainStepSchema, "link")}
           />
@@ -91,6 +91,7 @@ export default function MainStep() {
         id="description"
         name="description"
         editorClass="h-60"
+        value={watch("main.description")}
         label={t("General information")}
         helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t("Type up to 2048 characters")}.`}
         subtitle={t("Short description to be displayed on the project page")}
