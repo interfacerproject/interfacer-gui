@@ -53,9 +53,8 @@ const useAutoImport = (): AutoImportReturnValue => {
   const getGhLicenses = async (u: { owner: string; repo: string }) => {
     try {
       const licenses = await o.rest.licenses.getForRepo(u);
-      devLog("licenses", licenses);
       // setLicense(licenses.data.license?.spdx_id || "UNLICENSED");
-      return licenses.data.license?.spdx_id || "UNLICENSED";
+      return licenses.data.license?.spdx_id;
     } catch (e) {
       devLog(e);
     }
@@ -135,8 +134,10 @@ const useAutoImport = (): AutoImportReturnValue => {
     const main = await getGhMetadata(u);
     const license = await getGhLicenses(u);
     const readme = await getGhReadme(u);
+    let licenses = [];
+    if (license) licenses.push({ scope: "general", licenseID: license });
     if (main) main.description = readme || main!.description || "";
-    return { main, licenses: [{ scope: "general", licenseID: license }] };
+    return { main, licenses };
   };
 
   const importFromGitlab = async (projectId: string, host?: string) => {
