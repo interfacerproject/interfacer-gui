@@ -15,7 +15,8 @@ import {
 import { isRequired } from "lib/isFieldRequired";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useFormContext } from "react-hook-form";
+import { CreateProjectValues } from "../CreateProjectForm";
 
 //
 
@@ -33,7 +34,18 @@ export default function ImportDesign() {
   const { formState, control, watch, setValue } = form;
   const { isValid, errors } = formState;
 
+  const autoimportOptions = [
+    { label: "GitHub", value: AutoimportSource.GITHUB },
+    { label: "GitLab", value: AutoimportSource.GITLAB },
+  ];
+
+  function handleSourceChange(value: string) {
+    setValue("source", value as AutoimportSource);
+  }
+
   /* Setting data in the "main" form */
+
+  const { setValue: setProjectValues } = useFormContext<CreateProjectValues>();
 
   const [loading, setLoading] = useState(false);
   const { importRepository } = useAutoimport();
@@ -42,18 +54,14 @@ export default function ImportDesign() {
     setLoading(true);
     const inputValues = watch();
     const result = await importRepository(inputValues);
-    console.log(result);
-    // TODO #2: impostare valori nel form
+    if (result) setFormValues(result);
     setLoading(false);
   }
 
-  const autoimportOptions = [
-    { label: "GitHub", value: AutoimportSource.GITHUB },
-    { label: "GitLab", value: AutoimportSource.GITLAB },
-  ];
-
-  function handleSourceChange(value: string) {
-    setValue("source", value as AutoimportSource);
+  function setFormValues(values: Partial<CreateProjectValues>) {
+    for (const [key, value] of Object.entries(values)) {
+      setProjectValues(key as keyof CreateProjectValues, value);
+    }
   }
 
   //
