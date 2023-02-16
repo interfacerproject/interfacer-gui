@@ -32,8 +32,7 @@ import CreateProjectNav from "./parts/CreateProjectNav";
 import CreateProjectSubmit from "./parts/CreateProjectSubmit";
 
 // Components
-import { Card, Spinner } from "@bbtgnn/polaris-interfacer";
-import ScreenOverlay from "components/ScreenOverlay";
+import LoadingOverlay from "components/LoadingOverlay";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -135,15 +134,7 @@ export default function CreateProjectForm(props: Props) {
         <CreateProjectSubmit />
       </form>
 
-      {loading && (
-        <ScreenOverlay>
-          <Card sectioned>
-            <div className="p-4">
-              <Spinner />
-            </div>
-          </Card>
-        </ScreenOverlay>
-      )}
+      {loading && <LoadingOverlay />}
     </FormProvider>
   );
 }
