@@ -14,9 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import { useAuth } from "hooks/useAuth";
-import { QUERY_RESOURCE } from "lib/QueryAndMutation";
 import { EconomicResource } from "lib/types";
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -32,7 +31,9 @@ const EditProject = () => {
   const { id } = router.query;
   const { user } = useAuth();
 
-  const { loading, data } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
+  // TODO: Send away if user not owner
+
+  const { loading, data } = useQuery<{ economicResource: EconomicResource }>(GET_PROJECT_TO_EDIT, {
     variables: { id },
   });
   const project = data?.economicResource;
@@ -64,6 +65,35 @@ export async function getStaticProps({ locale }: any) {
   };
 }
 
+export default EditProject;
+
 //
 
-export default EditProject;
+export const GET_PROJECT_TO_EDIT = gql`
+  query getProjectToEdit($id: ID!) {
+    economicResource(id: $id) {
+      id
+      name
+      note
+      metadata
+      license
+      repo
+      classifiedAs
+      primaryAccountable {
+        id
+        name
+      }
+      currentLocation {
+        id
+        name
+        mappableAddress
+      }
+      images {
+        hash
+        name
+        mimeType
+        bin
+      }
+    }
+  }
+`;

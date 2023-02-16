@@ -3796,6 +3796,7 @@ export type GetResourceTableQuery = {
     metadata?: any | null;
     license?: string | null;
     traceDpp: any;
+    repo?: string | null;
     trace?: Array<
       | {
           __typename: "EconomicEvent";
