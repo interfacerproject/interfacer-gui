@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
+import { ProjectType } from "components/types";
 import { CreateProjectValues } from "components/partials/create/project/CreateProjectForm";
 import useInBox from "hooks/useInBox";
 import useWallet from "hooks/useWallet";
@@ -22,6 +23,7 @@ import {
   CreateProjectMutationVariables,
   GetProjectTypesQuery,
   GetUnitAndCurrencyQuery,
+  IFile,
 } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { AddedAsContributorNotification, MessageSubject, ProposalNotification } from "pages/notification";
@@ -51,7 +53,7 @@ export const useProjectCreation = () => {
 
   const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
   const specs = queryProjectTypes.data?.instanceVariables.specs;
-  const projectTypes = specs && {
+  const projectTypes: { [key in ProjectType]: string } | undefined = specs && {
     design: specs.specProjectDesign.id,
     service: specs.specProjectService.id,
     product: specs.specProjectProduct.id,
@@ -168,7 +170,7 @@ export const useProjectCreation = () => {
     processId: string;
     title: string;
     projectId: string;
-    projectType: string;
+    projectType: ProjectType;
   }) => {
     for (const contributor of contributors) {
       const contributeVariables = {
@@ -176,7 +178,6 @@ export const useProjectCreation = () => {
         process: processId,
         creationTime: new Date().toISOString(),
         unitOne: unitAndCurrency?.units.unitOne.id!,
-        // @ts-ignore
         conformTo: projectTypes![projectType],
       };
       devLog("info: contributor variables", contributeVariables);
@@ -213,7 +214,7 @@ export const useProjectCreation = () => {
 
   const handleProjectCreation = async (
     formData: CreateProjectValues,
-    projectType: string
+    projectType: ProjectType
   ): Promise<string | undefined> => {
     setLoading(true);
     let projectID: string | undefined = undefined;
@@ -224,10 +225,16 @@ export const useProjectCreation = () => {
 
       const processId = processData?.createProcess.process.id;
 
-      const location = await handleCreateLocation(formData, projectType === "design");
+      const location = await handleCreateLocation(formData, projectType === ProjectType.DESIGN);
 
-      const images = await prepFilesForZenflows(formData.images, getItem("eddsa"));
-      devLog("info: images prepared", images);
+      let images: IFile[] = [];
+      try {
+        images = await prepFilesForZenflows(formData.images, getItem("eddsa"));
+        devLog("info: images prepared", images);
+      } catch (e) {
+        devLog("error: images not prepared", e);
+      }
+
       const tags = formData.main.tags.map(t => encodeURI(t.value));
       devLog("info: tags prepared", tags);
 
@@ -251,7 +258,6 @@ export const useProjectCreation = () => {
       }
 
       const variables: CreateProjectMutationVariables = {
-        //@ts-ignore
         resourceSpec: projectTypes![projectType],
         process: processData.createProcess.process.id,
         agent: user?.ulid!,
@@ -268,6 +274,7 @@ export const useProjectCreation = () => {
           contributors: formData.contributors,
           licenses: formData.licenses,
           relations: formData.relations,
+          declarations: formData.declarations,
         }),
       };
       devLog("info: project variables created", variables);
