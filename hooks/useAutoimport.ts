@@ -118,7 +118,7 @@ const useAutoImport = (): AutoImportReturnValue => {
         main: {
           title: metadata.name,
           link: metadata.web_url,
-          description: metadata.description || readmeFile,
+          description: readmeFile || metadata.description || "",
           tags: metadata.tag_list?.map((t: any) => t) || [],
         },
       };
