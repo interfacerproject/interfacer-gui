@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import Avatar from "boring-avatars";
 import BrTabs from "components/brickroom/BrTabs";
@@ -44,6 +44,10 @@ const Profile: NextPage = () => {
 
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
   const idToBeFetch = isUser ? user?.ulid : String(id);
+
+  const [claimPerson] = useMutation(gql`mutation {
+    claimPerson(id:"${idToBeFetch}") 
+  }`);
 
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
   typeof idToBeFetch === "string" ? (proposalFilter.primaryAccountable = [idToBeFetch]) : idToBeFetch!;
@@ -88,6 +92,9 @@ const Profile: NextPage = () => {
                       ? t("Your user id is: {{id}}", { id: person?.id })
                       : t("The user id is: {{id}}", { id: person?.id })}{" "}
                   </h4>
+                  <a href={`https://explorer.did.dyne.org/details/${getItem("didId")}`}>
+                    <h4 className="mt-2">{t("Go to distributed identity explorer")}</h4>
+                  </a>
                 </div>
                 <div className="my-4 shadow md:mr-20 stats stats-vertical">
                   <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} />
