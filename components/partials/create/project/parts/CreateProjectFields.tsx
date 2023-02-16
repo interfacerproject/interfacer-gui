@@ -1,7 +1,6 @@
 import { ProjectType } from "components/types";
 import { useTranslation } from "next-i18next";
 import React from "react";
-import { useFormContext } from "react-hook-form";
 import { CreateProjectValues } from "../CreateProjectForm";
 
 // Steps
@@ -110,7 +109,6 @@ export function getSectionByProjectType(projectType: ProjectType): Array<FormSec
 export default function CreateProjectFields(props: Props) {
   const { t } = useTranslation();
   const { projectType, onSubmit = () => {} } = props;
-  const { handleSubmit } = useFormContext<CreateProjectValues>();
 
   const titles: Record<ProjectType, string> = {
     service: t("Create a new service"),
@@ -121,21 +119,19 @@ export default function CreateProjectFields(props: Props) {
   //
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Stack vertical spacing="extraLoose">
-        <PTitleSubtitle title={titles[projectType]} subtitle={t("Make sure you read the Community Guidelines.")} />
+    <Stack vertical spacing="extraLoose">
+      <PTitleSubtitle title={titles[projectType]} subtitle={t("Make sure you read the Community Guidelines.")} />
 
-        {formSections.map((section, index) => {
-          if (!section.for || section.for.includes(projectType)) {
-            return (
-              <Stack vertical key={index} spacing="extraLoose">
-                <PDivider id={section.id} />
-                {section.component}
-              </Stack>
-            );
-          }
-        })}
-      </Stack>
-    </form>
+      {formSections.map((section, index) => {
+        if (!section.for || section.for.includes(projectType)) {
+          return (
+            <Stack vertical key={index} spacing="extraLoose">
+              <PDivider id={section.id} />
+              {section.component}
+            </Stack>
+          );
+        }
+      })}
+    </Stack>
   );
 }

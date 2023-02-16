@@ -1,4 +1,7 @@
 import { ProjectType } from "components/types";
+import { useProjectCreation } from "hooks/useProjectCreation";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 // Steps
 import {
@@ -23,10 +26,13 @@ import {
 import { mainStepDefaultValues, mainStepSchema, MainStepValues } from "./steps/MainStep";
 import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep";
 
-// Components
+// Partials
 import CreateProjectFields from "./parts/CreateProjectFields";
 import CreateProjectNav from "./parts/CreateProjectNav";
 import CreateProjectSubmit from "./parts/CreateProjectSubmit";
+
+// Components
+import LoadingOverlay from "components/LoadingOverlay";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -88,6 +94,9 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
+  const { handleProjectCreation } = useProjectCreation();
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const formMethods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",
@@ -98,25 +107,34 @@ export default function CreateProjectForm(props: Props) {
     },
   });
 
-  function onSubmit(values: CreateProjectValues) {
-    console.log(values);
+  const { handleSubmit } = formMethods;
+
+  async function onSubmit(values: CreateProjectValues) {
+    setLoading(true);
+    const projectID = await handleProjectCreation(values, projectType);
+    if (projectID) await router.replace(`/project/${projectID}?created=true`);
+    setLoading(false);
   }
 
   //
 
   return (
     <FormProvider {...formMethods}>
-      <div className="flex flex-row justify-center space-x-8 md:space-x-16 lg:space-x-24 p-6">
-        <div className="max-w-xs">
-          <div className="sticky top-8">
-            <CreateProjectNav projectType={projectType} />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-row justify-center space-x-8 md:space-x-16 lg:space-x-24 p-6">
+          <div className="max-w-xs">
+            <div className="sticky top-8">
+              <CreateProjectNav projectType={projectType} />
+            </div>
+          </div>
+          <div className="max-w-xl pb-24">
+            <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
           </div>
         </div>
-        <div className="max-w-xl pb-24">
-          <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
-        </div>
-      </div>
-      <CreateProjectSubmit />
+        <CreateProjectSubmit />
+      </form>
+
+      {loading && <LoadingOverlay />}
     </FormProvider>
   );
 }

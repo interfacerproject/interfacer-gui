@@ -29,7 +29,7 @@ export const mainStepDefaultValues: MainStepValues = {
 export const mainStepSchema = yup.object({
   title: yup.string().required(),
   link: yup.string().matches(url, "Invalid URL").required(),
-  tags: yup.array(),
+  tags: yup.array().required().min(1),
   description: yup.string(),
 });
 
