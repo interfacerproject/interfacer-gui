@@ -666,6 +666,8 @@ export type EconomicResourceUpdateParams = {
   name?: InputMaybe<Scalars["String"]>;
   /** A textual description or comment. */
   note?: InputMaybe<Scalars["String"]>;
+  /** A URL to the repository of the project. */
+  repo?: InputMaybe<Scalars["String"]>;
 };
 
 export type File = {
@@ -3683,6 +3685,7 @@ export type EditMainMutationVariables = Exact<{
   classifiedAs?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
   note?: InputMaybe<Scalars["String"]>;
   name?: InputMaybe<Scalars["String"]>;
+  repo?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type EditMainMutation = {

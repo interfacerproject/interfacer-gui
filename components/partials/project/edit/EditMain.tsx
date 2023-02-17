@@ -49,6 +49,7 @@ export default function EditMain({ project }: EditMainProps) {
       id: project.id!,
       name: values.main.title,
       note: values.main.description,
+      repo: values.main.link,
       classifiedAs: values.main.tags,
     };
   }
@@ -69,8 +70,8 @@ export default function EditMain({ project }: EditMainProps) {
 //
 
 export const EDIT_MAIN = gql`
-  mutation EditMain($id: ID!, $classifiedAs: [URI!], $note: String, $name: String) {
-    updateEconomicResource(resource: { id: $id, classifiedAs: $classifiedAs, name: $name, note: $note }) {
+  mutation EditMain($id: ID!, $classifiedAs: [URI!], $note: String, $name: String, $repo: String) {
+    updateEconomicResource(resource: { id: $id, classifiedAs: $classifiedAs, name: $name, note: $note, repo: $repo }) {
       economicResource {
         id
       }
