@@ -1,20 +1,32 @@
 import { gql, useQuery } from "@apollo/client";
-import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
-import { SearchMinor } from "@shopify/polaris-icons";
+import { ActionListItemDescriptor, Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
+import { CirclePlusMinor, SearchMinor } from "@shopify/polaris-icons";
 import { SearchTagsQuery, SearchTagsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
+import { FieldInfoProps } from "./polaris/types";
 import { SelectOption } from "./types";
 
 //
 
-export interface Props {
+export interface Props extends Partial<FieldInfoProps> {
   exclude?: Array<string>;
+  onSelect?: (value: string) => void;
+  creatable?: boolean;
+  fieldInfo?: FieldInfoProps;
 }
 
+export const defaultFieldInfo = {};
+
 export default function SearchTags(props: Props) {
-  const { exclude = [] } = props;
   const { t } = useTranslation();
+  const {
+    exclude = [],
+    onSelect = () => {},
+    creatable = false,
+    label = t("Search for a tag or create one"),
+    placeholder = t("software, hardware, 3D printing, etc."),
+  } = props;
 
   /* Polaris field logic */
 
@@ -29,8 +41,6 @@ export default function SearchTags(props: Props) {
   const { data, loading } = useQuery<SearchTagsQuery, SearchTagsQueryVariables>(SEARCH_TAGS, {
     variables: { text: inputValue },
   });
-
-  console.log(data);
 
   function createOptionsFromData(data: SearchTagsQuery | undefined): Array<SelectOption> {
     const tags = data?.economicResourceClassifications;
@@ -53,24 +63,46 @@ export default function SearchTags(props: Props) {
   const options = createOptionsFromData(data);
 
   function handleSelect(values: Array<string>) {
-    console.log(values);
+    onSelect(values[0]);
   }
 
   /* Rendering */
+
+  const action: ActionListItemDescriptor = {
+    accessibilityLabel: "Action label",
+    content: t(`Create '{{tag}}'`, { tag: inputValue }),
+    icon: CirclePlusMinor,
+    onAction: () => {
+      onSelect(inputValue);
+      setInputValue("");
+    },
+  };
+
+  const displayAction = options.length === 0 && !loading && creatable;
 
   const textField = (
     <Autocomplete.TextField
       onChange={handleInputChange}
       autoComplete="off"
-      label={t("Search for a tag or create one")}
       value={inputValue}
       prefix={<Icon source={SearchMinor} color="base" />}
-      placeholder="software, hardware, 3D printing, etc."
+      label={label}
+      requiredIndicator={props.requiredIndicator}
+      placeholder={placeholder}
+      error={props.error}
+      helpText={props.helpText}
     />
   );
 
   return (
-    <Autocomplete options={options} selected={[]} onSelect={handleSelect} loading={loading} textField={textField} />
+    <Autocomplete
+      options={options}
+      selected={[]}
+      onSelect={handleSelect}
+      loading={loading}
+      textField={textField}
+      actionBefore={displayAction ? action : undefined}
+    />
   );
 }
 
