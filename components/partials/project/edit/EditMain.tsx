@@ -2,6 +2,7 @@ import { Button } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import LoadingOverlay from "components/LoadingOverlay";
 import MainStep, { mainStepSchema, MainStepValues } from "components/partials/create/project/steps/MainStep";
+import SearchTags from "components/SearchTags";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
@@ -61,6 +62,7 @@ export default function EditMain({ project }: EditMainProps) {
             {t("Update")}
           </Button>
         </div>
+        <SearchTags></SearchTags>
         <pre>{JSON.stringify(watch(), null, 2)}</pre>
       </form>
 
