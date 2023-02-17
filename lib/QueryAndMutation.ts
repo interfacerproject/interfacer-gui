@@ -121,7 +121,7 @@ export const CREATE_PROJECT = gql`
     $metadata: JSONObject
     $agent: ID!
     $creationTime: DateTime!
-    $location: ID!
+    $location: ID
     $tags: [URI!]
     $resourceSpec: ID!
     $oneUnit: ID!
@@ -201,6 +201,7 @@ export const QUERY_RESOURCE = gql`
       note
       metadata
       license
+      repo
       traceDpp
       trace {
         __typename
