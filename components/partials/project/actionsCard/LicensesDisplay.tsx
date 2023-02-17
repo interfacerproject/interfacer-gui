@@ -26,12 +26,12 @@ export default function LicensesDisplay(props: LicensesDisplayProps) {
   });
 
   return (
-    <>
+    <div className="border-1 border-border-disabled rounded-md p-1">
       {licensesData.length != 0 && (
         <table>
           {licensesData.map(ld => {
             return (
-              <tr key={ld.id} className="border-1 border-border-subdued">
+              <tr key={ld.id}>
                 <td className="px-2 py-1 align-top">
                   <Text as="span" variant="bodySm" fontWeight="bold">
                     {capitalizeFirstLetter(ld.scope)}
@@ -56,8 +56,12 @@ export default function LicensesDisplay(props: LicensesDisplayProps) {
       )}
 
       {licensesData.length == 0 && (
-        <div className="border-1 border-border-subdued px-2 py-1">{t("No licenses found")}</div>
+        <div className="px-2 py-1 flex justify-center text-text-subdued">
+          <Text as="span" variant="bodySm">
+            {t("No licenses available")}
+          </Text>
+        </div>
       )}
-    </>
+    </div>
   );
 }

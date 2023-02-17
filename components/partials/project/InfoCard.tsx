@@ -31,7 +31,7 @@ export default function InfoCard(props: InfoCardProps) {
         <Stack vertical spacing="loose">
           <div>
             <Text as="p" variant="bodyMd" fontWeight="medium">
-              {"ID"}
+              {t("Project ID")}
             </Text>
             <p className="text-primary font-mono">{project.id}</p>
           </div>
