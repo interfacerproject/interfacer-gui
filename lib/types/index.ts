@@ -572,6 +572,12 @@ export type EconomicResource = {
   version?: Maybe<Scalars["String"]>;
 };
 
+export type EconomicResourceClassificationsFilterParams = {
+  notUri?: InputMaybe<Scalars["URI"]>;
+  orUri?: InputMaybe<Scalars["URI"]>;
+  uri?: InputMaybe<Scalars["URI"]>;
+};
+
 export type EconomicResourceConnection = {
   __typename?: "EconomicResourceConnection";
   edges: Array<EconomicResourceEdge>;
@@ -2893,6 +2899,10 @@ export type RootQueryTypeEconomicResourceArgs = {
   id: Scalars["ID"];
 };
 
+export type RootQueryTypeEconomicResourceClassificationsArgs = {
+  filter?: InputMaybe<EconomicResourceClassificationsFilterParams>;
+};
+
 export type RootQueryTypeEconomicResourcesArgs = {
   after?: InputMaybe<Scalars["ID"]>;
   before?: InputMaybe<Scalars["ID"]>;
@@ -3590,6 +3600,12 @@ export type SearchProjectsQuery = {
   } | null;
 };
 
+export type SearchTagsQueryVariables = Exact<{
+  text: Scalars["URI"];
+}>;
+
+export type SearchTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
+
 export type SearchAgentsQueryVariables = Exact<{
   text: Scalars["String"];
   last?: InputMaybe<Scalars["Int"]>;
@@ -3736,7 +3752,7 @@ export type CreateProjectMutationVariables = Exact<{
   metadata?: InputMaybe<Scalars["JSONObject"]>;
   agent: Scalars["ID"];
   creationTime: Scalars["DateTime"];
-  location: Scalars["ID"];
+  location?: InputMaybe<Scalars["ID"]>;
   tags?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
   resourceSpec: Scalars["ID"];
   oneUnit: Scalars["ID"];
@@ -3795,6 +3811,7 @@ export type GetResourceTableQuery = {
     note?: string | null;
     metadata?: any | null;
     license?: string | null;
+    repo?: string | null;
     traceDpp: any;
     trace?: Array<
       | {
