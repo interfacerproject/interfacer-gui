@@ -17,8 +17,8 @@ export interface EditFormLayoutProps<T extends FieldValues> {
 //
 
 export default function EditFormLayout<T extends FieldValues>(props: EditFormLayoutProps<T>) {
-  const router = useRouter();
   const { children, formMethods, onSubmit = () => {} } = props;
+  const router = useRouter();
   const { handleSubmit } = formMethods;
   const [loading, setLoading] = useState(false);
 
@@ -30,9 +30,8 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
 
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(onSubmitWrapper)} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmitWrapper)}>
         <SubmitChangesBar />
-
         <div className="mx-auto max-w-xl p-6 pb-24">{children}</div>
       </form>
 

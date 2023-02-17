@@ -1,14 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
 import { yupResolver } from "@hookform/resolvers/yup";
-import LoadingOverlay from "components/LoadingOverlay";
 import MainStep, { mainStepSchema, MainStepValues } from "components/partials/create/project/steps/MainStep";
 import { EconomicResource, EditMainMutation, EditMainMutationVariables } from "lib/types";
-import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import SubmitChangesBar from "./SubmitChangesBar";
+import EditFormLayout from "./EditFormLayout";
 
 //
 
@@ -20,11 +16,10 @@ export interface EditMainValues {
   main: MainStepValues;
 }
 
-export default function EditMain({ project }: EditMainProps) {
-  const { t } = useTranslation();
-  const router = useRouter();
+//
 
-  const [editMainMutation] = useMutation<EditMainMutation, EditMainMutationVariables>(EDIT_MAIN);
+export default function EditMain({ project }: EditMainProps) {
+  /* Form setup */
 
   const defaultValues: EditMainValues = {
     main: {
@@ -44,12 +39,12 @@ export default function EditMain({ project }: EditMainProps) {
     resolver: yupResolver(schema),
     defaultValues,
   });
-  const { handleSubmit, formState, watch } = formMethods;
-  const { isValid, errors } = formState;
 
-  const [loading, setLoading] = useState(false);
+  /* Submit logic */
 
-  function convertValues(values: EditMainValues): EditMainMutationVariables {
+  const [editMainMutation] = useMutation<EditMainMutation, EditMainMutationVariables>(EDIT_MAIN);
+
+  function valuesToVariables(values: EditMainValues): EditMainMutationVariables {
     return {
       id: project.id!,
       name: values.main.title,
@@ -59,23 +54,15 @@ export default function EditMain({ project }: EditMainProps) {
   }
 
   async function onSubmit(values: EditMainValues) {
-    setLoading(true);
-    await editMainMutation({ variables: convertValues(values) });
-    router.reload();
+    await editMainMutation({ variables: valuesToVariables(values) });
   }
 
+  /* Render */
+
   return (
-    <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <SubmitChangesBar />
-
-        <div className="mx-auto max-w-xl p-6 pb-24">
-          <MainStep />
-        </div>
-      </form>
-
-      {loading && <LoadingOverlay />}
-    </FormProvider>
+    <EditFormLayout formMethods={formMethods} onSubmit={onSubmit}>
+      <MainStep />
+    </EditFormLayout>
   );
 }
 
