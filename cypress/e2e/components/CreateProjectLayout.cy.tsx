@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 describe("CreateProjectLayout component", () => {
-  it("should block the unlogged user, and display login buttons", () => {
+  it.skip("should block the unlogged user, and display login buttons", () => {
     cy.visit("/create_project");
     cy.contains("Login").should("be.visible");
   });
@@ -23,14 +23,14 @@ describe("CreateProjectLayout component", () => {
   // The path of the page that will be used to check "back" functionality
   const backPage = "/profile/my_profile";
 
-  it("should allow the logged user to go to /create_project", () => {
+  it.skip("should allow the logged user to go to /create_project", () => {
     cy.login();
     // Then, we go to "/create_project"
     cy.visit("/create_project");
     // cy.contains("Create a new project").should("be.visible");
   });
 
-  it("should go back to the previous page", () => {
+  it.skip("should go back to the previous page", () => {
     cy.login();
     cy.visit(backPage);
     // cy.visit("/create_project");

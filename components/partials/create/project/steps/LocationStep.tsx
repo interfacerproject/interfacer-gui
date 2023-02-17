@@ -3,7 +3,6 @@ import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SelectLocation2 from "components/SelectLocation2";
 import { ProjectType } from "components/types";
 import { LocationLookup } from "lib/fetchLocation";
-import { isRequired } from "lib/isFieldRequired";
 import { useTranslation } from "next-i18next";
 import { Controller, useFormContext } from "react-hook-form";
 import * as yup from "yup";
@@ -24,7 +23,11 @@ export const locationStepDefaultValues: LocationStepValues = {
 };
 
 export const locationStepSchema = yup.object().shape({
-  locationName: yup.string(),
+  locationName: yup
+    .string()
+    .when("$projectType", (projectType: ProjectType, schema) =>
+      projectType === ProjectType.PRODUCT ? schema.required() : schema.nullable()
+    ),
   location: yup
     .object()
     .when("$projectType", (projectType: ProjectType, schema) =>
@@ -76,7 +79,7 @@ export default function LocationStepProduct(props: Props) {
             placeholder={t("Cool fablab")}
             helpText={t("The name of the place where the project is stored")}
             error={errors.location?.locationName?.message}
-            requiredIndicator={isRequired(locationStepSchema, name)}
+            requiredIndicator={projectType == ProjectType.PRODUCT}
           />
         )}
       />
@@ -95,7 +98,7 @@ export default function LocationStepProduct(props: Props) {
             placeholder={t("Hamburg, Boxhagener Str. 3")}
             error={errors.location?.location ? locationError : ""}
             creatable={false}
-            requiredIndicator={projectType == "product"}
+            requiredIndicator={projectType == ProjectType.PRODUCT}
             isClearable
           />
         )}

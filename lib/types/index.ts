@@ -3752,7 +3752,7 @@ export type CreateProjectMutationVariables = Exact<{
   metadata?: InputMaybe<Scalars["JSONObject"]>;
   agent: Scalars["ID"];
   creationTime: Scalars["DateTime"];
-  location: Scalars["ID"];
+  location?: InputMaybe<Scalars["ID"]>;
   tags?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
   resourceSpec: Scalars["ID"];
   oneUnit: Scalars["ID"];
@@ -3811,6 +3811,7 @@ export type GetResourceTableQuery = {
     note?: string | null;
     metadata?: any | null;
     license?: string | null;
+    repo?: string | null;
     traceDpp: any;
     trace?: Array<
       | {

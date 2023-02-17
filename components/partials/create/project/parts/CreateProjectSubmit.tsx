@@ -8,7 +8,7 @@ export default function CreateProjectSubmit() {
   const { isValid } = formState;
 
   return (
-    <div className="sticky bottom-0 right-0 z-50 bg-background p-3 border-1 border-t-border-subdued">
+    <div className="sticky bottom-0 right-0 z-30 bg-background p-3 border-1 border-t-border-subdued">
       <div className="flex flex-row justify-end">
         <Button submit primary disabled={!isValid}>
           {t("Submit!")}

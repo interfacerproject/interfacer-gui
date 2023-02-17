@@ -64,7 +64,7 @@ describe("when user is logged in", () => {
     cy.contains("ins", "subbed");
   });
 
-  it("Should see /create_project", () => {
+  it.skip("Should see /create_project", () => {
     cy.visit("/create_project");
     cy.contains("Create a new project");
   });

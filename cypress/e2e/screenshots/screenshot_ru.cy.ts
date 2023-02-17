@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 const pages =
-  "/ /logged_in /resources /project/061P0XBBP4CXZ3A9T57QA3ZJ9M /create_project /profile/my_profile /resource/:id /projects".split(
+  "/ /logged_in /resources /project/061P0XBBP4CXZ3A9T57QA3ZJ9M /create/project /profile/my_profile /resource/:id /projects".split(
     " "
   );
 

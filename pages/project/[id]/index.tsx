@@ -33,6 +33,7 @@ import { DuplicateMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
+import FullWidthBanner from "components/FullWidthBanner";
 import ProjectDetailOverview from "components/ProjectDetailOverview";
 import RelationshipTree from "components/RelationshipTree";
 import WatchButton from "components/WatchButton";
@@ -46,8 +47,6 @@ import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
-
-import FullWidthBanner from "components/FullWidthBanner";
 
 //
 

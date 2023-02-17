@@ -39,7 +39,7 @@ export default function SearchTags(props: Props) {
 
   // Loading tags (updates dynamically based on inputValue)
   const { data, loading } = useQuery<SearchTagsQuery, SearchTagsQueryVariables>(SEARCH_TAGS, {
-    variables: { text: inputValue },
+    variables: { text: encodeURIComponent(inputValue) },
   });
 
   function createOptionsFromData(data: SearchTagsQuery | undefined): Array<SelectOption> {
@@ -70,15 +70,16 @@ export default function SearchTags(props: Props) {
 
   const action: ActionListItemDescriptor = {
     accessibilityLabel: "Action label",
-    content: t(`Create '{{tag}}'`, { tag: inputValue }),
+    content: `${t("Create")}: "${inputValue.trim()}"`,
     icon: CirclePlusMinor,
     onAction: () => {
-      onSelect(inputValue);
+      onSelect(encodeURIComponent(inputValue.trim()));
       setInputValue("");
     },
   };
 
-  const displayAction = options.length === 0 && !loading && creatable;
+  const isInputValid = inputValue.trim().length > 0;
+  const displayAction = options.length === 0 && !loading && creatable && isInputValid;
 
   const textField = (
     <Autocomplete.TextField

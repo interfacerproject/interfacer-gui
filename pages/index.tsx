@@ -16,8 +16,8 @@
 
 import { Button } from "@bbtgnn/polaris-interfacer";
 import { CheckCircleIcon, GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
-import ProjectsTable from "components/ProjectsTable";
 import Layout from "components/layout/Layout";
+import ProjectsTable from "components/ProjectsTable";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -98,7 +98,7 @@ const Home: NextPageWithLayout = () => {
             )}
             {authenticated && (
               <>
-                <Link href="/create_project">
+                <Link href="/create/project">
                   <Button size="large" primary>
                     {t("Create a new project")}
                   </Button>

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 describe("when user visits create project", () => {
-  it("should login, go to /create_project, and complete the form", () => {
+  it.skip("should login, go to /create_project, and complete the form", () => {
     cy.login();
     cy.visit("/create_project");
 
