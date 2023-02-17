@@ -4,16 +4,17 @@ import { getLicenseById } from "lib/licenses/utils";
 
 // Components
 import { Link, Text } from "@bbtgnn/polaris-interfacer";
+import { useTranslation } from "next-i18next";
 
 //
 
 export interface LicensesDisplayProps {
-  label: string;
   scopedLicenses: LicenseStepValues;
 }
 
 export default function LicensesDisplay(props: LicensesDisplayProps) {
-  const { label, scopedLicenses } = props;
+  const { t } = useTranslation();
+  const { scopedLicenses } = props;
   const licensesData = scopedLicenses.map(sl => {
     const license = getLicenseById(sl.licenseId);
     return {
@@ -25,11 +26,7 @@ export default function LicensesDisplay(props: LicensesDisplayProps) {
   });
 
   return (
-    <div className="space-y-1">
-      <Text as="p" variant="bodyMd" fontWeight="medium">
-        {label}
-      </Text>
-
+    <>
       {licensesData.length != 0 && (
         <table>
           {licensesData.map(ld => {
@@ -57,6 +54,10 @@ export default function LicensesDisplay(props: LicensesDisplayProps) {
           })}
         </table>
       )}
-    </div>
+
+      {licensesData.length == 0 && (
+        <div className="border-1 border-border-subdued px-2 py-1">{t("No licenses found")}</div>
+      )}
+    </>
   );
 }

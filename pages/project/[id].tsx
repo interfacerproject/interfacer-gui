@@ -30,6 +30,7 @@ const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 import { MergeMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
+import InfoCard from "components/partials/project/InfoCard";
 import ContributorsTable from "../../components/ContributorsTable";
 
 //
@@ -242,21 +243,9 @@ const Project = () => {
         </div>
 
         {/* Sidebar */}
-        <div className="max-w-xs">
-          {/* Project info */}
-          <Card sectioned>
-            <Stack vertical>
-              <div>
-                <Text as="h2" variant="headingMd">
-                  {"ID"}
-                </Text>
-                <p className="text-primary font-mono">{project.id}</p>
-              </div>
-            </Stack>
-          </Card>
-
-          {/* Actions */}
+        <div className="max-w-[300px]">
           <ActionsCard project={project} />
+          <InfoCard project={project} />
 
           {/* Contributions */}
           {project.primaryAccountable.id != user?.ulid && (
