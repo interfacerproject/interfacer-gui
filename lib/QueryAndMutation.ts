@@ -970,3 +970,9 @@ export const QUERY_RESOURCE_PROPOSAlS = gql`
     }
   }
 `;
+
+export const CLAIM_DID = gql`
+  mutation claimDID($id: ID!) {
+    claimPerson(id: $id)
+  }
+`;
