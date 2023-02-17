@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { EconomicResource, FetchInventoryQuery } from "lib/types";
+import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 
 // Components
 import Link from "next/link";
-import ProjectsTableRow from "./ProjectsTableRow";
 import BrTable from "./brickroom/BrTable";
+import ProjectsTableRow from "./ProjectsTableRow";
 
 //
 
@@ -51,7 +51,7 @@ export default function ProjectsTableBase(props: ProjectsTableBaseProps) {
         <div className="p-4 pt-6">
           <h4>{t("Create a new project")}</h4>
           <p className="pt-2 pb-5 font-light text-white-700">{t("empty_state_projects")}</p>
-          <Link href="/create_project">
+          <Link href="/create/project">
             <a className="btn btn-accent btn-md">{t("Create project")}</a>
           </Link>
         </div>

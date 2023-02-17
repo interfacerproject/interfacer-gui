@@ -14,13 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import React from "react";
 import Link from "next/link";
 
 const CreateProjectButton = ({ className, text = "Create a new project" }: { className?: string; text?: string }) => {
   return (
     <>
-      <Link href="/create_project">
+      <Link href="/create/project">
         <a className={`btn normal-case btn-accent ${className}`}>{text}</a>
       </Link>
     </>

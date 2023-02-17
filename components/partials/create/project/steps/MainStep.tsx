@@ -1,8 +1,7 @@
 import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import SelectTags from "components/SelectTags";
-import { SelectOption } from "components/types";
+import SelectTags2 from "components/SelectTags2";
 import { isRequired } from "lib/isFieldRequired";
 import { url } from "lib/regex";
 import { useTranslation } from "next-i18next";
@@ -16,7 +15,7 @@ export interface MainStepValues {
   title: string;
   description: string;
   link: string;
-  tags: Array<SelectOption>;
+  tags: Array<string>;
 }
 
 export const mainStepDefaultValues: MainStepValues = {
@@ -29,7 +28,7 @@ export const mainStepDefaultValues: MainStepValues = {
 export const mainStepSchema = yup.object({
   title: yup.string().required(),
   link: yup.string().matches(url, "Invalid URL").required(),
-  tags: yup.array().required().min(1),
+  tags: yup.array().of(yup.string()).required().min(1),
   description: yup.string(),
 });
 
@@ -38,7 +37,7 @@ export const mainStepSchema = yup.object({
 export default function MainStep() {
   const { t } = useTranslation();
 
-  const { formState, control, setValue } = useFormContext<CreateProjectValues>();
+  const { formState, control, setValue, watch } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
 
   //
@@ -79,8 +78,8 @@ export default function MainStep() {
             autoComplete="off"
             onChange={onChange}
             onBlur={onBlur}
-            label={t("External link")}
             placeholder={t("projectsite.com/info")}
+            label={t("External link")}
             error={errors.main?.link?.message}
             requiredIndicator={isRequired(mainStepSchema, "link")}
           />
@@ -91,6 +90,7 @@ export default function MainStep() {
         id="description"
         name="description"
         editorClass="h-60"
+        value={watch("main.description")}
         label={t("General information")}
         helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t("Type up to 2048 characters")}.`}
         subtitle={t("Short description to be displayed on the project page")}
@@ -101,25 +101,13 @@ export default function MainStep() {
         error={errors.main?.description?.message}
       />
 
-      <Controller
-        control={control}
-        name="main.tags"
-        render={({ field: { onChange, onBlur, name, ref } }) => (
-          <SelectTags
-            name={name}
-            id={name}
-            ref={ref}
-            onBlur={onBlur}
-            onChange={onChange}
-            label={t("Tags")}
-            isMulti
-            placeholder={t("Open-source, 3D Printing, Medical use")}
-            helpText={t("Select a tag from the list, or type to create a new one")}
-            creatable={true}
-            error={errors.main?.tags?.message}
-            requiredIndicator={isRequired(mainStepSchema, "tags")}
-          />
-        )}
+      <SelectTags2
+        tags={watch("main.tags")}
+        setTags={tags => {
+          setValue("main.tags", tags);
+        }}
+        error={errors.main?.tags?.message}
+        requiredIndicator={isRequired(mainStepSchema, "tags")}
       />
     </Stack>
   );

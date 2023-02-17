@@ -1,17 +1,22 @@
 import { Button, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
+import LoadingOverlay from "components/LoadingOverlay";
+import PButtonRadio from "components/polaris/PButtonRadio";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import { url } from "lib/regex";
+import useAutoimport from "hooks/useAutoimport";
+import {
+  autoimportDefaultValues,
+  AutoimportInput,
+  autoimportInputSchema,
+  AutoimportSource,
+  githubAutoimportInputSchema,
+  gitlabAutoimportInputSchema,
+} from "hooks/useAutoimportDefs";
+import { isRequired } from "lib/isFieldRequired";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
 import { Controller, useForm, useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
-
-//
-
-export interface FormValues {
-  repoUrl: string;
-}
 
 //
 
@@ -20,38 +25,43 @@ export default function ImportDesign() {
 
   /* Form handling */
 
-  const defaultValues: FormValues = {
-    repoUrl: "",
-  };
-
-  const schema = yup.object().shape({
-    repoUrl: yup
-      .string()
-      .matches(url, t("Invalid URL"))
-      .matches(/github.com/, t("Url does not match a GitHub repo"))
-      .required(),
-  });
-
-  const form = useForm<FormValues>({
+  const form = useForm<AutoimportInput>({
     mode: "all",
-    resolver: yupResolver(schema),
-    defaultValues,
+    resolver: yupResolver(autoimportInputSchema),
+    defaultValues: autoimportDefaultValues,
   });
 
-  const { formState, control } = form;
-  const { isValid } = formState;
+  const { formState, control, watch, setValue } = form;
+  const { isValid, errors } = formState;
+
+  const autoimportOptions = [
+    { label: "GitHub", value: AutoimportSource.GITHUB },
+    { label: "GitLab", value: AutoimportSource.GITLAB },
+  ];
+
+  function handleSourceChange(value: string) {
+    setValue("source", value as AutoimportSource);
+  }
 
   /* Setting data in the "main" form */
 
-  const { setValue, getValues, watch } = useFormContext<CreateProjectValues>();
+  const { setValue: setProjectValues } = useFormContext<CreateProjectValues>();
 
-  function handleImport() {
-    // Qui bisogna prima fare il fetch dei dati, secondo l'interfaccia CreateProjectValues
-    // const data = import(getValues("repoUrl"))
-    // e poi settare i valori nel form principale in questo modo:
-    // setValue("main", data.main);
-    // setValue("images", data.images);
-    // ...
+  const [loading, setLoading] = useState(false);
+  const { importRepository } = useAutoimport();
+
+  async function handleImport() {
+    setLoading(true);
+    const inputValues = watch();
+    const result = await importRepository(inputValues);
+    if (result) setFormValues(result);
+    setLoading(false);
+  }
+
+  function setFormValues(values: Partial<CreateProjectValues>) {
+    for (const [key, value] of Object.entries(values)) {
+      setProjectValues(key as keyof CreateProjectValues, value);
+    }
   }
 
   //
@@ -63,28 +73,75 @@ export default function ImportDesign() {
         subtitle={t("Import a project from Github, Thingiverse, LOSH or Git")}
       />
 
-      <Controller
-        control={control}
-        name="repoUrl"
-        render={({ field: { onChange, onBlur, name, value } }) => (
-          <TextField
-            type="url"
-            label={t("Repo URL")}
-            placeholder={"github.com/username/repo"}
-            autoComplete="off"
-            helpText={t("Note: Currently only GitHub is supported")}
-            onBlur={onBlur}
-            onChange={onChange}
-            value={value}
+      <PButtonRadio options={autoimportOptions} onChange={handleSourceChange} selected={watch("source")} />
+
+      {watch("source") === AutoimportSource.GITHUB && (
+        <Controller
+          control={control}
+          name="github.url"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextField
+              type="url"
+              label={t("Repo URL")}
+              placeholder={"github.com/username/repo"}
+              autoComplete="off"
+              onBlur={onBlur}
+              onChange={onChange}
+              value={value}
+              error={errors.github?.url?.message}
+              requiredIndicator={isRequired(githubAutoimportInputSchema, "url")}
+            />
+          )}
+        />
+      )}
+
+      {watch("source") === AutoimportSource.GITLAB && (
+        <Stack vertical spacing="baseTight">
+          <Controller
+            control={control}
+            name="gitlab.host"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextField
+                type="url"
+                label={t("Gitlab host")}
+                placeholder={"gitlab.com"}
+                autoComplete="off"
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value}
+                error={errors.gitlab?.host?.message}
+                requiredIndicator={isRequired(gitlabAutoimportInputSchema, "host")}
+              />
+            )}
           />
-        )}
-      />
+
+          <Controller
+            control={control}
+            name="gitlab.projectId"
+            render={({ field: { onChange, onBlur, value, name } }) => (
+              <TextField
+                type="url"
+                label={t("Repo ID")}
+                placeholder={"12345678"}
+                autoComplete="off"
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value}
+                error={errors.gitlab?.projectId?.message}
+                requiredIndicator={isRequired(gitlabAutoimportInputSchema, name.split(".")[1])}
+              />
+            )}
+          />
+        </Stack>
+      )}
 
       {isValid && (
         <Button primary fullWidth onClick={handleImport}>
           {t("Import repo")}
         </Button>
       )}
+
+      {loading && <LoadingOverlay />}
     </Stack>
   );
 }
