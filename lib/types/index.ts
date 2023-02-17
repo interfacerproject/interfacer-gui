@@ -3547,6 +3547,79 @@ export type UnitUpdateParams = {
   symbol?: InputMaybe<Scalars["String"]>;
 };
 
+export type SearchProjectQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type SearchProjectQuery = {
+  __typename?: "RootQueryType";
+  economicResource?: {
+    __typename?: "EconomicResource";
+    id: string;
+    name: string;
+    conformsTo: { __typename?: "ResourceSpecification"; name: string };
+    primaryAccountable: { __typename?: "Organization"; name: string } | { __typename?: "Person"; name: string };
+  } | null;
+};
+
+export type SearchProjectsQueryVariables = Exact<{
+  last?: InputMaybe<Scalars["Int"]>;
+  IDs?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
+  name?: InputMaybe<Scalars["String"]>;
+  conformsTo?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
+}>;
+
+export type SearchProjectsQuery = {
+  __typename?: "RootQueryType";
+  economicResources?: {
+    __typename?: "EconomicResourceConnection";
+    edges: Array<{
+      __typename?: "EconomicResourceEdge";
+      node: {
+        __typename?: "EconomicResource";
+        id: string;
+        name: string;
+        metadata?: any | null;
+        conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
+        primaryAccountable:
+          | { __typename?: "Organization"; id: string; name: string }
+          | { __typename?: "Person"; id: string; name: string };
+        images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+      };
+    }>;
+  } | null;
+};
+
+export type SearchAgentsQueryVariables = Exact<{
+  text: Scalars["String"];
+  last?: InputMaybe<Scalars["Int"]>;
+}>;
+
+export type SearchAgentsQuery = {
+  __typename?: "RootQueryType";
+  agents?: {
+    __typename?: "AgentConnection";
+    edges: Array<{
+      __typename?: "AgentEdge";
+      node:
+        | {
+            __typename?: "Organization";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          }
+        | {
+            __typename?: "Person";
+            id: string;
+            name: string;
+            note?: string | null;
+            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+          };
+    }>;
+  } | null;
+};
+
 export type FetchResourcesQueryVariables = Exact<{
   filter?: InputMaybe<EconomicResourceFilterParams>;
 }>;
@@ -3566,6 +3639,28 @@ export type FetchResourcesQuery = {
 export type GetTagsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
+
+export type SearchAgentQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type SearchAgentQuery = {
+  __typename?: "RootQueryType";
+  agent?:
+    | {
+        __typename?: "Organization";
+        id: string;
+        name: string;
+        primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+      }
+    | {
+        __typename?: "Person";
+        id: string;
+        name: string;
+        primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+      }
+    | null;
+};
 
 export type GetVariablesQueryVariables = Exact<{ [key: string]: never }>;
 
