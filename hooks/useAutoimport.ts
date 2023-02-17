@@ -1,4 +1,5 @@
 import devLog from "lib/devLog";
+// @ts-ignore
 import { Octokit } from "octokit";
 import { useState } from "react";
 import { zencode_exec } from "zenroom";
