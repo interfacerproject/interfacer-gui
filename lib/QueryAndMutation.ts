@@ -121,7 +121,7 @@ export const CREATE_PROJECT = gql`
     $metadata: JSONObject
     $agent: ID!
     $creationTime: DateTime!
-    $location: ID!
+    $location: ID
     $tags: [URI!]
     $resourceSpec: ID!
     $oneUnit: ID!

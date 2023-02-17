@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { ProjectType } from "components/types";
 import { CreateProjectValues } from "components/partials/create/project/CreateProjectForm";
+import { ProjectType } from "components/types";
 import useInBox from "hooks/useInBox";
 import useWallet from "hooks/useWallet";
 import { errorFormatter } from "lib/errorFormatter";
@@ -65,7 +65,11 @@ export const useProjectCreation = () => {
   ): Promise<SpatialThingRes | undefined> {
     const remote = formData.location.remote || design;
     devLog("remote", remote);
-    const name = remote ? "remote" : formData.location.locationName;
+    const label =
+      formData.location.locationName.length > 0
+        ? formData.location.locationName
+        : formData.location.location!.address.label;
+    const name = remote ? "remote" : label;
     const addr = remote ? "remote" : formData.location.location?.address.label;
     const position = formData.location.location?.position;
     try {
@@ -225,7 +229,10 @@ export const useProjectCreation = () => {
 
       const processId = processData?.createProcess.process.id;
 
-      const location = await handleCreateLocation(formData, projectType === ProjectType.DESIGN);
+      let location;
+      if (formData.location.location || formData.location.remote) {
+        location = await handleCreateLocation(formData, projectType === ProjectType.DESIGN);
+      }
 
       let images: IFile[] = [];
       try {
