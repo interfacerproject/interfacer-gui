@@ -44,13 +44,7 @@ const EditProject = () => {
   if (loading) return <Spinner />;
   if (!project) return null;
 
-  return (
-    <div className="px-6 py-10">
-      <div className="mx-auto max-w-xl">
-        <EditMain project={project} />
-      </div>
-    </div>
-  );
+  return <EditMain project={project} />;
 };
 
 //

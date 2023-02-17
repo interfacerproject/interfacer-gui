@@ -3678,6 +3678,21 @@ export type SearchAgentQuery = {
     | null;
 };
 
+export type EditMainMutationVariables = Exact<{
+  id: Scalars["ID"];
+  classifiedAs?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
+  note?: InputMaybe<Scalars["String"]>;
+  name?: InputMaybe<Scalars["String"]>;
+}>;
+
+export type EditMainMutation = {
+  __typename?: "RootMutationType";
+  updateEconomicResource: {
+    __typename?: "EconomicResourceResponse";
+    economicResource: { __typename?: "EconomicResource"; id: string };
+  };
+};
+
 export type GetVariablesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetVariablesQuery = {

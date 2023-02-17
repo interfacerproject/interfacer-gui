@@ -63,6 +63,7 @@
     "graphql": "^15.0.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
+    "lodash": "^4.17.21",
     "markdown-it": "^13.0.1",
     "markdown-it-abbr": "^1.0.4",
     "markdown-it-deflist": "^2.1.0",
@@ -97,6 +98,7 @@
     "zenroom": "2.2.3-f0193d51"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.191",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "cypress": "^10.7.0",
     "cypress-fail-fast": "^5.0.1",
