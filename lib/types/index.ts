@@ -4358,3 +4358,9 @@ export type ResourceProposalsQuery = {
     }>;
   };
 };
+
+export type ClaimDidMutationVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type ClaimDidMutation = { __typename?: "RootMutationType"; claimPerson: any };
