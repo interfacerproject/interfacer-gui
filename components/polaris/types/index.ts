@@ -29,3 +29,11 @@ export interface HtmlForProp {
 export interface TestProp {
   testID?: string;
 }
+
+export interface FieldInfoProps {
+  label: string;
+  error?: string;
+  requiredIndicator?: boolean;
+  placeholder?: string;
+  helpText?: string;
+}

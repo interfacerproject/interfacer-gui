@@ -1,5 +1,5 @@
-import { Gitlab } from "@gitbeaker/browser";
 import devLog from "lib/devLog";
+// @ts-ignore
 import { Octokit } from "octokit";
 import { useState } from "react";
 import { zencode_exec } from "zenroom";
@@ -21,7 +21,6 @@ const useAutoImport = (): AutoImportReturnValue => {
   const [gitlabHost, setGitlabHost] = useState<string>("https://gitlab.com");
 
   const o = new Octokit();
-  const gl = new Gitlab({ host: gitlabHost });
 
   // const findImagesInReadme = (readme: string) => readme.match(/(https?:\/\/.*\.(?:png|jpe?g))/i);
 
@@ -108,12 +107,14 @@ const useAutoImport = (): AutoImportReturnValue => {
   const getGlMetadata = async (id: string) => {
     devLog("fetching metadata", id);
     try {
-      const metadata = await gl.Projects.show(id);
-      const readmePath = metadata.readme_url?.split("/").pop() || "README.md";
-      const readme = await gl.RepositoryFiles.show(id, readmePath, metadata.default_branch || "master");
+      const metadata = await fetch(`${gitlabHost}/api/v4/projects/${id}`).then(r => r.json());
+      const readmePath = metadata.readme_url?.split(`${metadata.default_branch}/`)[1];
+      const readme = await fetch(
+        `${gitlabHost}/api/v4/projects/${id}/repository/files/${readmePath}?ref=${metadata.default_branch || "master"}`
+      ).then(r => r.json());
       const readmeFile = await decodeBase64(readme.content);
       // const images = findImagesInReadme(readmeFile);
-      const data = {
+      const data: Partial<CreateProjectValues> = {
         main: {
           title: metadata.name,
           link: metadata.web_url,
@@ -140,19 +141,13 @@ const useAutoImport = (): AutoImportReturnValue => {
     return { main, licenses };
   };
 
-  const importFromGitlab = async (projectId: string, host?: string) => {
-    setGitlabHost(host || "https://gitlab.com");
-    const data: Partial<CreateProjectValues> | undefined = await getGlMetadata(projectId);
-    return data;
-  };
-
   const importRepository = async (data: AutoimportInput) => {
-    devLog("importing", data);
     if (data.source === AutoimportSource.GITHUB) {
       const ghData: Partial<CreateProjectValues> = await importFromGithub(data[AutoimportSource.GITHUB].url);
       return ghData;
     } else {
-      return await importFromGitlab(data[AutoimportSource.GITLAB].projectId, data[AutoimportSource.GITLAB].host);
+      setGitlabHost(data[AutoimportSource.GITLAB].host || "https://gitlab.com");
+      return await getGlMetadata(data[AutoimportSource.GITLAB].projectId);
     }
   };
   return {
