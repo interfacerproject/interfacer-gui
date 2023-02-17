@@ -43,6 +43,7 @@ describe("When user visit Projects", () => {
   it("should filter the table by contributor", () => {
     cy.restoreLocalStorage();
     cy.visit("/projects");
+    cy.viewport("macbook-13");
     cy.get(".justify-between > .gap-2").click();
 
     // Type and press enter in tags field
