@@ -30,7 +30,6 @@
     "@babel/core": "^7.19.3",
     "@bbtgnn/polaris-interfacer": "^0.1.0",
     "@bbtgnn/polaris-interfacer-tokens": "^6.3.0",
-    "@gitbeaker/browser": "^35.8.0",
     "@graphql-codegen/cli": "^2.13.7",
     "@graphql-codegen/typescript": "^2.7.4",
     "@graphql-codegen/typescript-operations": "^2.5.4",
