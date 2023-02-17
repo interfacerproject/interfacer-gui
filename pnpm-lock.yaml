@@ -33,6 +33,7 @@ specifiers:
   cypress: ^10.7.0
   cypress-fail-fast: ^5.0.1
   cypress-localstorage-commands: ^2.2.1
+  cypress-wait-until: ^1.7.2
   daisyui: ^2.25.0
   dayjs: ^1.11.5
   devmoji: ^2.3.0
@@ -114,6 +115,7 @@ dependencies:
   classnames: 2.3.2
   cypress: 10.11.0
   cypress-localstorage-commands: 2.2.1_cypress@10.11.0
+  cypress-wait-until: 1.7.2
   daisyui: 2.41.0_l5bzpxvjbqhurjfyo5fybuhvfy
   dayjs: 1.11.6
   eslint-plugin-i18next: 6.0.0-6
@@ -3765,6 +3767,10 @@ packages:
       cypress: '>=2.1.0'
     dependencies:
       cypress: 10.11.0
+    dev: false
+
+  /cypress-wait-until/1.7.2:
+    resolution: {integrity: sha512-uZ+M8/MqRcpf+FII/UZrU7g1qYZ4aVlHcgyVopnladyoBrpoaMJ4PKZDrdOJ05H5RHbr7s9Tid635X3E+ZLU/Q==}
     dev: false
 
   /cypress/10.11.0:
