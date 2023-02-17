@@ -41,7 +41,6 @@ export interface Props extends CP {
 export interface FormValues {
   contributionRepositoryID: string; // also: url
   description: string;
-  strengthPoints: string;
 }
 
 //
@@ -55,14 +54,12 @@ export default function CreateContributionForm(props: Props) {
   const defaultValues: FormValues = {
     contributionRepositoryID: "",
     description: "",
-    strengthPoints: "0",
   };
 
   const schema = yup
     .object({
       contributionRepositoryID: yup.string().required(),
       description: yup.string().required(),
-      strengthPoints: yup.number().integer(),
     })
     .required();
 
@@ -105,36 +102,17 @@ export default function CreateContributionForm(props: Props) {
           id="description"
           name="description"
           editorClass="h-60"
+          value={watch("description")}
           label={t("General information")}
           helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t(
             "Type up to 2048 characters"
           )}.`}
           subtitle={t("Short description to be displayed on the project page")}
-          onChange={({ text, html }) => {
+          onChange={({ text }) => {
             setValue("description", text);
           }}
           requiredIndicator={isRequired(schema, "description")}
           error={errors.description?.message}
-        />
-
-        <Controller
-          control={control}
-          name="strengthPoints"
-          render={({ field: { onChange, onBlur, name, value } }) => (
-            <TextField
-              type="number"
-              id={name}
-              name={name}
-              value={value}
-              autoComplete="off"
-              onChange={onChange}
-              onBlur={onBlur}
-              label={t("Strenght pts that you expect from this contribution:")}
-              helpText={t("Set up a reasonable value for this project.")}
-              error={errors[name]?.message}
-              requiredIndicator={isRequired(schema, name)}
-            />
-          )}
         />
 
         {/* Slot to display errors, for example */}
@@ -159,7 +137,7 @@ export default function CreateContributionForm(props: Props) {
           </Card>
         )}
 
-        <Button size="large" primary fullWidth submit disabled={!isValid || isSubmitting} id="submit">
+        <Button size="large" primary fullWidth submit id="submit">
           {t("Send contribution")}
         </Button>
       </Stack>
