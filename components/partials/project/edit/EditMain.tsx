@@ -28,10 +28,7 @@ export default function EditMain({ project }: EditMainProps) {
       title: project.name || "",
       description: project.note || "",
       link: project.repo || "",
-      tags: (project.classifiedAs || []).map(tag => ({
-        label: decodeURIComponent(tag),
-        value: tag,
-      })),
+      tags: project.classifiedAs || [],
     },
   };
 
