@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import Link from "next/link";
 import React, { ReactNode } from "react";
 import Topbar from "../Topbar";
-import Link from "next/link";
 
 type layoutProps = {
   children: ReactNode;
@@ -35,10 +35,7 @@ const NRULayout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProp
       </Topbar>
       <div className="container bg-[#F3F3F1] max-w-full">
         <div className="grid grid-cols-1 md:grid-cols-2">
-          <img
-            src="https://www.interfacerproject.eu/projects/index/ABOUT.png"
-            className={"w-full h-full object-cover md:h-screen hidden md:block"}
-          />
+          <img src="/ABOUT.png" className={"w-full h-full object-cover md:h-screen hidden md:block"} />
           <div className="h-full">{layoutProps?.children}</div>
         </div>
       </div>

@@ -15,7 +15,6 @@ describe("When user want to contribute", () => {
     cy.wait(2000);
     cy.get("#contributionRepositoryID").type("testRepo");
     cy.get("#description").click().find("textarea").type("testDescription");
-    cy.get("#strengthPoints").click().type("2");
     cy.get("#submit").should("be.enabled").click();
     cy.url().should("include", "proposal");
   });

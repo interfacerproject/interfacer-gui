@@ -52,7 +52,7 @@ function Sidebar() {
     // Dropdown -> My stuff
     createProject: {
       text: t("Create Projects"),
-      link: "/create_project",
+      link: "/create/project",
       leftIcon: <CubeIcon className="w-5 h-5" />,
       // tag: "NEW",
     },

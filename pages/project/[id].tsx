@@ -47,6 +47,8 @@ import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "../../components/ContributorsTable";
 
+import FullWidthBanner from "components/FullWidthBanner";
+
 //
 
 const Project = () => {
@@ -139,11 +141,32 @@ const Project = () => {
 
   //
 
+  // Check if project has been just created
+  const isCreated = router.query.created === "true";
+
+  const [viewCreatedBanner, setViewCreatedBanner] = useState(false);
+
+  useEffect(() => {
+    setViewCreatedBanner(isCreated);
+  }, [isCreated]);
+
+  const closeBanner = () => {
+    setViewCreatedBanner(false);
+  };
+
+  //
+
   if (loading) return <Spinner />;
   if (!project) return null;
 
   return (
     <>
+      <FullWidthBanner open={viewCreatedBanner} onClose={closeBanner}>
+        <Text as="p" variant="bodyMd">
+          {t("Project succesfully created!")}
+        </Text>
+      </FullWidthBanner>
+
       <div className="flex flex-row p-4">
         <BrBreadcrumb
           crumbs={[
