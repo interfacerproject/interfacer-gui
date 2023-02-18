@@ -19,12 +19,9 @@ import { BellIcon } from "@heroicons/react/outline";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
-import BrDisplayUser from "../components/brickroom/BrDisplayUser";
 import ContributionMessage from "../components/ContributionMessage";
-import useInBox, { Notification } from "../hooks/useInBox";
-import dayjs from "../lib/dayjs";
+import useInBox from "../hooks/useInBox";
 
 export enum ProposalType {
   HARDWARE_IMPROVEMENT = "Hardware Improvement",
@@ -38,6 +35,7 @@ export enum MessageSubject {
   CONTRIBUTION_ACCEPTED = "contributionAccepted",
   CONTRIBUTION_REJECTED = "contributionRejected",
   ADDED_AS_CONTRIBUTOR = "addedAsContributor",
+  PROJECT_CITED = "Project cited",
 }
 
 export interface ProposalNotification {
@@ -76,74 +74,6 @@ const Notification = () => {
         setReadedMessages(messages.map(m => m.id));
       }, 20000);
   }, [messages]);
-
-  //
-
-  const RenderMessagePerSubject = (props: { message: Notification.Content; sender: string; data: Date }) => {
-    const _parsedMessage: ProposalNotification = props.message.message;
-    const router = useRouter();
-
-    switch (props.message.subject) {
-      case MessageSubject.CONTRIBUTION_REQUEST:
-      case MessageSubject.CONTRIBUTION_ACCEPTED:
-      case MessageSubject.CONTRIBUTION_REJECTED:
-        return (
-          <ContributionMessage
-            data={props.data}
-            resourceName={_parsedMessage.originalResourceName}
-            resourceId={_parsedMessage.originalResourceID}
-            userName={_parsedMessage.proposerName}
-            userId={props.sender}
-            proposalId={_parsedMessage.proposalID}
-            message={_parsedMessage.text}
-            subject={props.message.subject}
-          />
-        );
-      case MessageSubject.ADDED_AS_CONTRIBUTOR:
-        const _parsedMessage2: AddedAsContributorNotification = props.message.message;
-        return (
-          <ContributionMessage
-            data={props.data}
-            resourceName={_parsedMessage2.resourceName}
-            resourceId={_parsedMessage2.resourceID}
-            userName={_parsedMessage2.projectOwnerName!}
-            userId={props.sender}
-            proposalId={_parsedMessage2.projectOwnerId}
-            message={_parsedMessage2.text}
-            subject={props.message.subject}
-          />
-        );
-      case "Project cited":
-        return (
-          <div>
-            <p className="mr-1">{dayjs(props.data).fromNow()}</p>
-            <p className="text-xs">{dayjs(props.data).format("HH:mm DD/MM/YYYY")}</p>
-            <div className="flex flex-row my-2 center">
-              <div className="mr-2">
-                <BrDisplayUser id={props.sender} name={_parsedMessage.proposerName} />
-              </div>
-              <div className="pt-3.5">
-                <span className="mr-1">{t("just mentioned your")}</span>
-                <Link href={`/project/${_parsedMessage.originalResourceID}`}>
-                  <a className="text-primary hover:underline">{_parsedMessage.originalResourceName}</a>
-                </Link>
-              </div>
-            </div>
-            <p className="text-xs bg-[#E0E0E0] p-2 my-2">{_parsedMessage.text}</p>
-            <Button
-              fullWidth
-              onClick={() => {
-                router.push(`/project/${_parsedMessage.proposalID}`);
-              }}
-            >
-              {t("take me there")}
-            </Button>
-          </div>
-        );
-      default:
-        return <div />;
-    }
-  };
 
   /* Message grouping */
 
@@ -241,7 +171,7 @@ const Notification = () => {
                   {group.map((m: any) => (
                     <Card key={m.id}>
                       <div className="p-4">
-                        <RenderMessagePerSubject message={m.content} sender={m.sender} data={m.content.data} />
+                        <ContributionMessage message={m.content} sender={m.sender} data={m.content.data} />
                       </div>
                     </Card>
                   ))}
