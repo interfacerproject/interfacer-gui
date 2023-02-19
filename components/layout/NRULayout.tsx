@@ -26,7 +26,7 @@ type layoutProps = {
 const NRULayout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
   return (
     <>
-      <Topbar search={false} userMenu={false} cta={layoutProps.cta}>
+      <Topbar search={false} userMenu={false} cta={layoutProps.cta} burger={false}>
         <div className="flex hidden w-auto p-4 mx-2 align-middle border-r md:block">
           <Link href="/">
             <div className="mx-auto logo" />
