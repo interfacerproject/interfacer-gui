@@ -666,6 +666,8 @@ export type EconomicResourceUpdateParams = {
   name?: InputMaybe<Scalars["String"]>;
   /** A textual description or comment. */
   note?: InputMaybe<Scalars["String"]>;
+  /** A URL to the repository of the project. */
+  repo?: InputMaybe<Scalars["String"]>;
 };
 
 export type File = {
@@ -4062,11 +4064,6 @@ export type FetchInventoryQuery = {
           mappableAddress?: string | null;
         } | null;
         images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
-        trace?: Array<
-          | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
-          | { __typename: "EconomicResource" }
-          | { __typename: "Process" }
-        > | null;
         primaryAccountable:
           | { __typename?: "Organization"; id: string; name: string; note?: string | null }
           | { __typename?: "Person"; id: string; name: string; note?: string | null };
