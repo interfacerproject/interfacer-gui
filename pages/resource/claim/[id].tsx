@@ -85,10 +85,6 @@ const ClaimProject: NextPageWithLayout = () => {
 
   const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
   const [transferProject, { data: economicResource }] = useMutation(TRANSFER_PROJECT);
-  const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);
-  const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
-  const [linkProposalAndIntent, { data: link }] = useMutation(LINK_PROPOSAL_AND_INTENT);
-  const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
 
   type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
 
@@ -131,7 +127,7 @@ const ClaimProject: NextPageWithLayout = () => {
         location: location?.id!,
         oneUnit: e!.onhandQuantity.hasUnit!.id,
         creationTime: dayjs().toISOString(),
-        tags: tags,
+        tags: tags.length > 0 ? tags : undefined,
       };
       devLog("info: project variables created", variables);
 
