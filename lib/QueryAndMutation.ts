@@ -487,12 +487,6 @@ export const FETCH_RESOURCES = gql`
           version
           licensor
           license
-          trace {
-            __typename
-            ... on EconomicEvent {
-              hasPointInTime
-            }
-          }
           primaryAccountable {
             id
             name
