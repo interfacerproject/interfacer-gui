@@ -37,7 +37,7 @@ export default function ImportDesign() {
   ];
 
   function handleSourceChange(value: string) {
-    setValue("source", value as AutoimportSource);
+    setValue("source", value as AutoimportSource, { shouldValidate: true });
   }
 
   /* Setting data in the "main" form */

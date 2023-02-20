@@ -28,12 +28,13 @@ export default function ContributorsStep() {
   const contributors = watch(CONTRIBUTORS_FORM_KEY);
 
   function handleSelect(option: Partial<Agent>) {
-    setValue(CONTRIBUTORS_FORM_KEY, [...contributors, option.id!]);
+    setValue(CONTRIBUTORS_FORM_KEY, [...contributors, option.id!], { shouldValidate: true });
   }
   function handleRemove(contributorId: string) {
     setValue(
       CONTRIBUTORS_FORM_KEY,
-      contributors.filter(id => id !== contributorId)
+      contributors.filter(id => id !== contributorId),
+      { shouldValidate: true }
     );
   }
 

@@ -108,7 +108,7 @@ export default function LocationStepProduct(props: Props) {
         <Checkbox
           id="remote"
           name="remote"
-          onChange={value => setValue("location.remote", value)}
+          onChange={value => setValue("location.remote", value, { shouldValidate: true })}
           checked={watch("location.remote")}
           label={t("This service happens remotely / online")}
           error={errors.location?.remote?.message}
