@@ -20,7 +20,6 @@ import { EconomicResource } from "lib/types";
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import React, { FunctionComponent } from "react";
 
 // Components
 import { Spinner } from "@bbtgnn/polaris-interfacer";
@@ -32,24 +31,12 @@ import EditMain from "components/partials/project/edit/EditMain";
 
 const EditProject = () => {
   const router = useRouter();
-  const { id, section: sectionParam } = router.query;
+  const { id } = router.query;
 
   /* Auth */
 
   // TODO: Send away if user not owner
   const { user } = useAuth();
-
-  /* Dynamic routing */
-
-  const sections: Record<string, FunctionComponent<{ project: EconomicResource }>> = {
-    main: EditMain,
-  };
-  const sectionsKeys = Object.keys(sections);
-
-  let sectionName = "main";
-  if (sectionParam && sectionsKeys.includes(sectionParam[0])) {
-    sectionName = sectionParam[0];
-  }
 
   /* Fetch project */
 
@@ -63,7 +50,7 @@ const EditProject = () => {
 
   /* Render */
 
-  return React.createElement(sections[sectionName], { project });
+  return <EditMain project={project} />;
 };
 
 //
