@@ -24,23 +24,29 @@ const TokensResume = ({ stat, id }: { stat: string; id: string }) => {
   const { getIdeaPoints, getStrengthsPoints, ideaTrend, strengthsTrend } = useWallet(id);
   const value = stat === Token.Idea ? getIdeaPoints : getStrengthsPoints;
   const trendValue = stat === Token.Idea ? ideaTrend : strengthsTrend;
-  const positive = trendValue >= 0;
+  const positive = Number(trendValue) > 0;
+  const trendNotANumber = Number.isNaN(Number(trendValue)) || trendValue === "0";
 
   return (
     <div className="stat">
       <div className="stat-figure">
         <span
           className={cn("flex rounded-full space-x-2 py-1 px-2 items-center", {
-            "bg-green-100": positive,
-            "bg-red-100": !positive,
+            "bg-green-100": positive && !trendNotANumber,
+            "bg-red-100": !positive && !trendNotANumber,
+            "bg-grey-100": trendNotANumber,
           })}
         >
-          {positive ? (
-            <ArrowSmUpIcon className="w-5 h-5 text-green-500" />
-          ) : (
-            <ArrowSmDownIcon className="w-5 h-5 text-red-500" />
+          {!trendNotANumber && (
+            <>
+              {positive ? (
+                <ArrowSmUpIcon className="w-5 h-5 text-green-500" />
+              ) : (
+                <ArrowSmDownIcon className="w-5 h-5 text-red-500" />
+              )}
+            </>
           )}
-          <span>{trendValue}%</span>
+          <span>{trendValue}</span>
         </span>
       </div>
       <div className="stat-title capitalize">{t(`${stat} points`)}</div>

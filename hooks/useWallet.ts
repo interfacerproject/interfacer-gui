@@ -31,16 +31,16 @@ export enum Token {
 type UseWalletReturnValue = {
   getIdeaPoints: number;
   getStrengthsPoints: number;
-  ideaTrend: number;
-  strengthsTrend: number;
+  ideaTrend: string;
+  strengthsTrend: string;
   addIdeaPoints: (id: string, amount?: number) => Promise<Response>;
   addStrengthsPoints: (id: string, amount?: number) => Promise<Response>;
 };
 const useWallet = (id?: string): UseWalletReturnValue => {
   const [ideaPoints, setIdeaPoints] = useState<number>(0);
   const [strengthsPoints, setStrengthsPoints] = useState<number>(0);
-  const [ideaTrend, setIdeaTrend] = useState<number>(0);
-  const [strengthsTrend, setStrengthsTrend] = useState<number>(0);
+  const [ideaTrend, setIdeaTrend] = useState<string>("0");
+  const [strengthsTrend, setStrengthsTrend] = useState<string>("0");
 
   const { signedPost } = useSignedPost(true);
 
@@ -58,7 +58,7 @@ const useWallet = (id?: string): UseWalletReturnValue => {
     return data.success === true ? data.amount : 0;
   };
 
-  const getTrends = async (id: string, type: Token): Promise<number> => {
+  const getTrends = async (id: string, type: Token): Promise<string> => {
     const yesterday = dayjs().subtract(1, "day").valueOf();
     const response = await fetch(`${process.env.NEXT_PUBLIC_WALLET}/${type}/${id}?until=${yesterday}`);
     const data = await response.json();
@@ -66,8 +66,9 @@ const useWallet = (id?: string): UseWalletReturnValue => {
     const todayData = await today.json();
     const todayPoints = todayData.success === true ? todayData.amount : 0;
     const yesterdayPoints = data.success === true ? data.amount : 0;
+    if (yesterdayPoints === 0) return "N.a.";
     const trend = (todayPoints - yesterdayPoints) / yesterdayPoints;
-    return Number((trend * 100).toFixed(2));
+    return (trend * 100).toFixed(2);
   };
 
   const addPoints = async (amount = 1, id: string, token: Token): Promise<Response> => {
