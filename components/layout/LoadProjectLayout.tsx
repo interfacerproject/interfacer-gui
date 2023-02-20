@@ -17,32 +17,37 @@
 import { gql, useQuery } from "@apollo/client";
 import { Banner } from "@bbtgnn/polaris-interfacer";
 import LoadingOverlay from "components/LoadingOverlay";
-import ProjectContext from "contexts/ProjectContext";
+import { projectContext } from "contexts/ProjectContext";
 import { EconomicResource, QueryProjectLayoutQuery, QueryProjectLayoutQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useContext } from "react";
 
 //
 
 interface LayoutProps {
   children: ReactNode;
+  projectIdParam?: string;
 }
 
 //
 
 const LoadProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: LayoutProps) => {
-  const { children } = layoutProps;
+  const { children, projectIdParam = "id" } = layoutProps;
   const { t } = useTranslation();
 
   const router = useRouter();
-  const { id } = router.query;
+  const id = router.query[projectIdParam];
 
   if (!id) router.push("/projects");
 
+  const [project, setProject] = useContext(projectContext);
+
+  const isAlreadyLoaded = project.id === id;
+
   const { data, loading, error } = useQuery<QueryProjectLayoutQuery, QueryProjectLayoutQueryVariables>(
     QUERY_PROJECT_LAYOUT,
-    { variables: { id: id as string } }
+    { variables: { id: id as string }, skip: isAlreadyLoaded }
   );
 
   if (loading) return <LoadingOverlay />;
@@ -54,9 +59,9 @@ const LoadProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: La
       </Banner>
     );
 
-  const project = data?.economicResource as Partial<EconomicResource>;
+  if (!isAlreadyLoaded && data?.economicResource) setProject(data?.economicResource as Partial<EconomicResource>);
 
-  return <ProjectContext.Provider value={project}>{children}</ProjectContext.Provider>;
+  return <>{children}</>;
 };
 
 //

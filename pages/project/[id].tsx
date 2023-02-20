@@ -33,7 +33,7 @@ import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import ProjectDetailOverview from "components/ProjectDetailOverview";
 import RelationshipTree from "components/RelationshipTree";
 import WatchButton from "components/WatchButton";
-import ProjectContext from "contexts/ProjectContext";
+import { projectContext } from "contexts/ProjectContext";
 import Link from "next/link";
 
 import dynamic from "next/dynamic";
@@ -66,7 +66,7 @@ const Project: NextPageWithLayout = () => {
 
   const ref = useRef(null);
 
-  const project = useContext(ProjectContext);
+  const [project, setProject] = useContext(projectContext);
 
   devLog("trace", project.trace);
   devLog("traceDpp", project.traceDpp);

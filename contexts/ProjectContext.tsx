@@ -1,6 +1,20 @@
 import { EconomicResource } from "lib/types";
-import { createContext } from "react";
+import { createContext, Dispatch, SetStateAction, useState } from "react";
 
-const ProjectContext = createContext<Partial<EconomicResource>>({});
+//
 
-export default ProjectContext;
+export type ProjectContext = [Partial<EconomicResource>, Dispatch<SetStateAction<Partial<EconomicResource>>>];
+export const projectContext = createContext<ProjectContext>([{}, () => {}]);
+
+//
+
+export interface ProjectProviderProps {
+  children: React.ReactNode;
+}
+
+export const ProjectProvider = (props: ProjectProviderProps) => {
+  const { children } = props;
+  const context = useState<Partial<EconomicResource>>({});
+
+  return <projectContext.Provider value={context}>{children}</projectContext.Provider>;
+};
