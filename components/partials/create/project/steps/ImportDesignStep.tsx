@@ -80,7 +80,8 @@ export default function ImportDesign() {
             <TextField
               type="url"
               label={t("Repo URL")}
-              placeholder={"github.com/username/repo"}
+              placeholder={"https://github.com/username/repo"}
+              helpText={t("Please include the protocol (https://...) in the URL")}
               autoComplete="off"
               onBlur={onBlur}
               onChange={onChange}
@@ -100,7 +101,8 @@ export default function ImportDesign() {
               <TextField
                 type="url"
                 label={t("Gitlab host")}
-                placeholder={"gitlab.com"}
+                placeholder={"https://gitlab.com"}
+                helpText={t("Please include the protocol (https://...) in the URL")}
                 autoComplete="off"
                 onBlur={onBlur}
                 onChange={onChange}
