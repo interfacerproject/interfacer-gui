@@ -321,30 +321,36 @@ const Project = () => {
                   location={project.currentLocation?.name}
                 />
               </div>
-            </Stack>
-          </Card>
-
-          {/* Actions */}
-          <Card sectioned>
-            <Stack vertical>
               {project.repo && (
                 <Button url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
                   {t("Go to source")}
                 </Button>
               )}
-
-              <Button id="addToList" size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>
-                {inList ? t("Remove from list") : t("Add to list")}
-              </Button>
-
-              <WatchButton id={project.id} owner={project.primaryAccountable.id} />
-
-              <AddStar id={project.id} owner={project.primaryAccountable.id} />
             </Stack>
           </Card>
 
+          {/* Actions */}
+          {user && (
+            <Card sectioned>
+              <Stack vertical>
+                <Button
+                  id="addToList"
+                  size="large"
+                  onClick={handleCollect}
+                  fullWidth
+                  icon={<Icon source={PlusMinor} />}
+                >
+                  {inList ? t("Remove from list") : t("Add to list")}
+                </Button>
+
+                <WatchButton id={project.id} owner={project.primaryAccountable.id} />
+
+                <AddStar id={project.id} owner={project.primaryAccountable.id} />
+              </Stack>
+            </Card>
+          )}
           {/* Contributions */}
-          {project.primaryAccountable.id != user?.ulid && (
+          {user && project.primaryAccountable.id != user?.ulid && (
             <Card sectioned>
               <Stack vertical>
                 <Text as="h2" variant="headingMd">
