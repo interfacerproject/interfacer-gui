@@ -14,9 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import dayjs from "../lib/dayjs";
 import BrTable from "./brickroom/BrTable";
-import { useTranslation } from "next-i18next";
 import BrUserDisplay from "./brickroom/BrUserDisplay";
 
 const ContributorsTable = ({ contributors, title, data }: { contributors?: string[]; title?: string; data: any }) => {
@@ -29,7 +30,11 @@ const ContributorsTable = ({ contributors, title, data }: { contributors?: strin
           contributors.map(contributor => (
             <tr key={contributor}>
               <td>
-                <BrUserDisplay userId={contributor} />
+                <Link href={`/profile/${contributor}`}>
+                  <a>
+                    <BrUserDisplay userId={contributor} />
+                  </a>
+                </Link>
               </td>
               <td>
                 <p className="mr-1">{dayjs(data).fromNow()}</p>

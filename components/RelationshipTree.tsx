@@ -42,15 +42,17 @@ const RelationshipTree = ({ dpp }: { dpp: JSON }) => {
   return (
     <div className="w-full mt-2" id="relationshipTree">
       <div className="font-bold text-xl mb-2">{t("Included or cited projects")}</div>
-      {projects.map(project => (
-        <div key={project.id} className="flex flex-column mt-2 border-b-2">
-          <Link href={`/project/${project.id}`}>
-            <a>
-              <ResourceDetailsCard resource={project} />
-            </a>
-          </Link>
-        </div>
-      ))}
+      {projects
+        .filter(project => Boolean(project.name))
+        .map(project => (
+          <div key={project.id} className="flex flex-column mt-2 border-b-2">
+            <Link href={`/project/${project.id}`}>
+              <a>
+                <ResourceDetailsCard resource={project} />
+              </a>
+            </Link>
+          </div>
+        ))}
     </div>
   );
 };
