@@ -42,7 +42,7 @@ const useAutoImport = (): AutoImportReturnValue => {
         title: _data.name,
         link: _data.html_url,
         description: _data.description || "",
-        tags: _data.topics?.map((t: any) => t) || [],
+        tags: _data.topics || [],
       };
     } catch (e) {
       devLog("error fetching metadata", e);
@@ -119,7 +119,7 @@ const useAutoImport = (): AutoImportReturnValue => {
           title: metadata.name,
           link: metadata.web_url,
           description: readmeFile || metadata.description || "",
-          tags: metadata.tag_list?.map((t: any) => t) || [],
+          tags: metadata.tag_list || [],
         },
       };
       return data;

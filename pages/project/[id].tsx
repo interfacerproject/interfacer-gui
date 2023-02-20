@@ -74,6 +74,11 @@ const Project = () => {
   devLog("trace", data?.economicResource.trace);
   devLog("traceDpp", data?.economicResource.traceDpp);
 
+  // (Temp) Redirect if project is LOSH owned
+  if (process.env.NEXT_PUBLIC_LOSH_ID == data?.economicResource?.primaryAccountable?.id) {
+    router.push(`/resource/${id}`);
+  }
+
   useEffect(() => {
     const _project: EconomicResource | undefined = data?.economicResource;
     setProject(_project);

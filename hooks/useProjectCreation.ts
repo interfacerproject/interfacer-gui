@@ -237,7 +237,7 @@ export const useProjectCreation = () => {
       const images: IFile[] = await prepFilesForZenflows(formData.images, getItem("eddsaPrivateKey"));
       devLog("info: images prepared", images);
 
-      const tags = formData.main.tags;
+      const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
       devLog("info: tags prepared", tags);
 
       const linkedDesign = formData.linkedDesign ? formData.linkedDesign : null;
