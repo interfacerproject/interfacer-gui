@@ -57,7 +57,7 @@ export default function ImportDesign() {
 
   function setFormValues(values: Partial<CreateProjectValues>) {
     for (const [key, value] of Object.entries(values)) {
-      setProjectValues(key as keyof CreateProjectValues, value);
+      setProjectValues(key as keyof CreateProjectValues, value, { shouldValidate: true });
     }
   }
 
