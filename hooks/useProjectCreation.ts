@@ -242,7 +242,7 @@ export const useProjectCreation = () => {
         devLog("error: images not prepared", e);
       }
 
-      const tags = formData.main.tags.map(t => encodeURI(t));
+      const tags = formData.main.tags;
       devLog("info: tags prepared", tags);
 
       const linkedDesign = formData.linkedDesign ? formData.linkedDesign : null;
