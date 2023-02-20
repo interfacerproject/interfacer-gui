@@ -4135,7 +4135,7 @@ export type ForkProjectMutationVariables = Exact<{
   process: Scalars["ID"];
   unitOne: Scalars["ID"];
   tags?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
-  location: Scalars["ID"];
+  location?: InputMaybe<Scalars["ID"]>;
   spec: Scalars["ID"];
   name: Scalars["String"];
   note?: InputMaybe<Scalars["String"]>;

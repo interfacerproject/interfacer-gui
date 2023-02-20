@@ -583,7 +583,7 @@ export const FORK_PROJECT = gql`
     $process: ID! # Process.id
     $unitOne: ID! # Unit.id
     $tags: [URI!]
-    $location: ID! # SpatialThing.id
+    $location: ID # SpatialThing.id
     $spec: ID! # ResourceSpecification.id
     $name: String!
     $note: String
