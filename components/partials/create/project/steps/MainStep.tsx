@@ -29,7 +29,16 @@ export const mainStepSchema = yup.object({
   title: yup.string().required(),
   link: yup.string().matches(url, "Invalid URL").required(),
   tags: yup.array().of(yup.string()).required().min(1),
-  description: yup.string(),
+  description: yup
+    .string()
+    .test(
+      "size-check",
+      "Description length must be less than 2048 characters. If it's longer, please use the 'external link' field to reference it.",
+      value => {
+        if (value) return new Blob([value]).size < 2048;
+        else return true;
+      }
+    ),
 });
 
 //
