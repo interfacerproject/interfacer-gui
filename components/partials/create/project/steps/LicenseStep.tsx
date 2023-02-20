@@ -39,14 +39,17 @@ export default function LicenseStep() {
   const licenses = watch(LICENSES_FORM_KEY);
 
   function handleAdd(license: ScopedLicense) {
-    setValue(LICENSES_FORM_KEY, [...licenses, { licenseId: license.license.licenseId, scope: license.scope }]);
+    setValue(LICENSES_FORM_KEY, [...licenses, { licenseId: license.license.licenseId, scope: license.scope }], {
+      shouldValidate: true,
+    });
     setShowAdd(false);
   }
 
   function removeLicense(licenseId: string) {
     setValue(
       LICENSES_FORM_KEY,
-      licenses.filter(l => l.licenseId !== licenseId)
+      licenses.filter(l => l.licenseId !== licenseId),
+      { shouldValidate: true }
     );
   }
 

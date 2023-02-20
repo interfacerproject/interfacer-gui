@@ -78,12 +78,11 @@ export const createProjectSchema = yup.object({
       projectType == ProjectType.DESIGN ? schema : locationStepSchema
     ),
   images: imagesStepSchema,
-  declarations: yup.object(),
-  // removing the code below prevent a bug in the product form:
-  // https://github.com/interfacerproject/interfacer-gui/issues/416
-  // .when("$projectType", (projectType: ProjectType, schema) =>
-  //   projectType == ProjectType.PRODUCT ? declarationsStepSchema : schema
-  // ),
+  declarations: yup
+    .object()
+    .when("$projectType", (projectType: ProjectType, schema) =>
+      projectType == ProjectType.PRODUCT ? declarationsStepSchema : schema
+    ),
   contributors: contributorsStepSchema,
   relations: relationsStepSchema,
   licenses: licenseStepSchema,
