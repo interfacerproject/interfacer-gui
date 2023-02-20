@@ -28,8 +28,17 @@ export const mainStepDefaultValues: MainStepValues = {
 export const mainStepSchema = yup.object({
   title: yup.string().required(),
   link: yup.string().matches(url, "Invalid URL").required(),
-  tags: yup.array().of(yup.string()).required().min(1),
-  description: yup.string(),
+  tags: yup.array().of(yup.string()),
+  description: yup
+    .string()
+    .test(
+      "size-check",
+      "Description length must be less than 2048 characters. If it's longer, please use the 'external link' field to reference it.",
+      value => {
+        if (value) return new Blob([value]).size < 2048;
+        else return true;
+      }
+    ),
 });
 
 //
@@ -37,7 +46,7 @@ export const mainStepSchema = yup.object({
 export default function MainStep() {
   const { t } = useTranslation();
 
-  const { formState, control, setValue, watch } = useFormContext<CreateProjectValues>();
+  const { formState, control, setValue, watch, trigger } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
 
   //
@@ -95,7 +104,7 @@ export default function MainStep() {
         helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t("Type up to 2048 characters")}.`}
         subtitle={t("Short description to be displayed on the project page")}
         onChange={({ text, html }) => {
-          setValue("main.description", text);
+          setValue("main.description", text, { shouldValidate: true });
         }}
         requiredIndicator={isRequired(mainStepSchema, "description")}
         error={errors.main?.description?.message}
@@ -104,7 +113,8 @@ export default function MainStep() {
       <SelectTags2
         tags={watch("main.tags")}
         setTags={tags => {
-          setValue("main.tags", tags);
+          setValue("main.tags", tags, { shouldValidate: true });
+          trigger("main.tags");
         }}
         error={errors.main?.tags?.message}
         requiredIndicator={isRequired(mainStepSchema, "tags")}

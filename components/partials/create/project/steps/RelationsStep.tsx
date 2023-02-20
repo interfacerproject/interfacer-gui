@@ -28,12 +28,13 @@ export default function RelationsStep() {
   const relations = watch(RELATIONS_FORM_KEY);
 
   function handleSelect(value: Partial<EconomicResource>) {
-    setValue(RELATIONS_FORM_KEY, [...relations, value.id!]);
+    setValue(RELATIONS_FORM_KEY, [...relations, value.id!], { shouldValidate: true });
   }
   function handleRemove(id: string) {
     setValue(
       RELATIONS_FORM_KEY,
-      relations.filter(item => item !== id)
+      relations.filter(item => item !== id),
+      { shouldValidate: true }
     );
   }
 
