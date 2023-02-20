@@ -24,7 +24,7 @@ const TokensResume = ({ stat, id }: { stat: string; id: string }) => {
   const { getIdeaPoints, getStrengthsPoints, ideaTrend, strengthsTrend } = useWallet(id);
   const value = stat === Token.Idea ? getIdeaPoints : getStrengthsPoints;
   const trendValue = stat === Token.Idea ? ideaTrend : strengthsTrend;
-  const positive = trendValue > 0;
+  const positive = trendValue >= 0;
 
   return (
     <div className="stat">
