@@ -25,10 +25,10 @@ export default function LinkDesign() {
   const selected = watch("linkedDesign");
 
   function handleSelect(value: Partial<EconomicResource>) {
-    setValue("linkedDesign", value.id!);
+    setValue("linkedDesign", value.id!, { shouldValidate: true });
   }
   function handleRemove() {
-    setValue("linkedDesign", "");
+    setValue("linkedDesign", "", { shouldValidate: true });
   }
 
   //

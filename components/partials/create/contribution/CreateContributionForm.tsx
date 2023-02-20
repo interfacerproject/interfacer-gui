@@ -109,7 +109,7 @@ export default function CreateContributionForm(props: Props) {
           )}.`}
           subtitle={t("Short description to be displayed on the project page")}
           onChange={({ text }) => {
-            setValue("description", text);
+            setValue("description", text, { shouldValidate: true });
           }}
           requiredIndicator={isRequired(schema, "description")}
           error={errors.description?.message}

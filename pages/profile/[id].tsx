@@ -100,7 +100,7 @@ const Profile: NextPage = () => {
                       ? t("Your user id is: {{id}}", { id: person?.id })
                       : t("The user id is: {{id}}", { id: person?.id })}{" "}
                   </h4>
-                  <a href={didUrl}>
+                  <a href={didUrl} target="_blank" rel="noreferrer">
                     <h4 className="mt-2 flex flex-row">
                       <Icon source={LinkMinor} backdrop />
                       {t("Go to distributed identity explorer")}

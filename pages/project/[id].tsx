@@ -71,6 +71,11 @@ const Project: NextPageWithLayout = () => {
   devLog("trace", project.trace);
   devLog("traceDpp", project.traceDpp);
 
+  // (Temp) Redirect if project is LOSH owned
+  if (process.env.NEXT_PUBLIC_LOSH_ID == data?.economicResource?.primaryAccountable?.id) {
+    router.push(`/resource/${id}`);
+  }
+
   useEffect(() => {
     const singleImage = typeof project?.metadata?.image === "string";
     const metadataImage = singleImage ? [project?.metadata?.image] : project?.metadata?.image || [];
