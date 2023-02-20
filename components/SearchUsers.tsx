@@ -2,7 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
 import { SelectOption } from "components/types";
-import { Agent, SearchAgentsQuery, SearchAgentsQueryVariables } from "lib/types";
+import { Person, PersonFilterParams, SearchPeopleQuery, SearchPeopleQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
@@ -10,7 +10,7 @@ import BrUserAvatar from "./brickroom/BrUserAvatar";
 //
 
 export interface Props {
-  onSelect?: (value: FoundAgent) => void;
+  onSelect?: (value: Partial<Person>) => void;
   excludeIDs?: Array<string>;
 }
 
@@ -27,19 +27,25 @@ export default function SearchUsers(props: Props) {
 
   /* Loading projects */
 
-  // Loading agents (updates dynamically based on inputValue)
-  const { data, loading } = useQuery<SearchAgentsQuery, SearchAgentsQueryVariables>(SEARCH_AGENTS, {
-    variables: { text: inputValue, last: 5 },
+  const filter: PersonFilterParams = {
+    userOrName: inputValue,
+  };
+
+  const { data, loading } = useQuery<SearchPeopleQuery, SearchPeopleQueryVariables>(SEARCH_PEOPLE, {
+    variables: {
+      last: 5,
+      filter: inputValue ? filter : undefined,
+    },
   });
 
-  function createOptionsFromData(data: SearchAgentsQuery | undefined): Array<SelectOption> {
-    if (!data?.agents) return [];
+  function createOptionsFromData(data: SearchPeopleQuery | undefined): Array<SelectOption> {
+    if (!data?.people) return [];
 
-    const options: Array<SelectOption> = data.agents.edges.map(agent => {
+    const options: Array<SelectOption> = data.people.edges.map(person => {
       return {
-        value: agent.node.id,
-        label: agent.node.name,
-        media: <BrUserAvatar name={agent.node.name} size={24} />,
+        value: person.node.id,
+        label: `${person.node.user} (${person.node.name})`,
+        media: <BrUserAvatar name={person.node.name} size={24} />,
       };
     });
 
@@ -54,15 +60,15 @@ export default function SearchUsers(props: Props) {
 
   /* Handling selection */
 
-  function getAgentFromData(id: string): Agent | undefined {
-    const agent = data?.agents?.edges.find(agent => agent.node.id === id);
-    return agent?.node;
+  function getPersonFromData(id: string): Partial<Person> | undefined {
+    const person = data?.people?.edges.find(person => person.node.id === id);
+    return person?.node;
   }
 
   function handleSelect(selected: string[]) {
-    const agent = getAgentFromData(selected[0]);
-    if (!agent) return;
-    onSelect(agent);
+    const person = getPersonFromData(selected[0]);
+    if (!person) return;
+    onSelect(person);
     setInputValue("");
   }
 
@@ -80,21 +86,23 @@ export default function SearchUsers(props: Props) {
   );
 
   return (
-    <Autocomplete options={options} selected={[]} onSelect={handleSelect} loading={loading} textField={textField} />
+    <>
+      <Autocomplete options={options} selected={[]} onSelect={handleSelect} loading={loading} textField={textField} />
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </>
   );
 }
 
 //
 
-export type FoundAgent = NonNullable<SearchAgentsQuery["agents"]>["edges"][number]["node"];
-
-export const SEARCH_AGENTS = gql`
-  query SearchAgents($text: String!, $last: Int) {
-    agents(last: $last, filter: { name: $text }) {
+export const SEARCH_PEOPLE = gql`
+  query SearchPeople($filter: PersonFilterParams, $last: Int) {
+    people(last: $last, filter: $filter) {
       edges {
         node {
           id
           name
+          user
           note
           primaryLocation {
             id
