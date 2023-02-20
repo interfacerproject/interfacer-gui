@@ -115,7 +115,11 @@ const ClaimProject: NextPageWithLayout = () => {
       devLog("info: tags prepared", tags);
       const contributors = formData.contributors.map(c => c.value);
       devLog("info: contributors prepared", contributors);
-      const metadata = JSON.stringify({ ...e!.metadata, repositoryOrId: e!.metadata.repo, contributors: contributors });
+      const metadata = JSON.stringify({
+        ...e!.metadata,
+        repositoryOrId: e!.metadata.repo,
+        contributors: contributors.map(c => c.id),
+      });
       devLog("info: metadata prepared", metadata);
 
       const variables: TransferProjectMutationVariables = {
