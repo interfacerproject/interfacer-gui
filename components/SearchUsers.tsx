@@ -86,10 +86,7 @@ export default function SearchUsers(props: Props) {
   );
 
   return (
-    <>
-      <Autocomplete options={options} selected={[]} onSelect={handleSelect} loading={loading} textField={textField} />
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </>
+    <Autocomplete options={options} selected={[]} onSelect={handleSelect} loading={loading} textField={textField} />
   );
 }
 
