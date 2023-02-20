@@ -9,10 +9,7 @@ import {
   AutoimportInput,
   autoimportInputSchema,
   AutoimportSource,
-  githubAutoimportInputSchema,
-  gitlabAutoimportInputSchema,
 } from "hooks/useAutoimportDefs";
-import { isRequired } from "lib/isFieldRequired";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { Controller, useForm, useFormContext } from "react-hook-form";
@@ -89,7 +86,6 @@ export default function ImportDesign() {
               onChange={onChange}
               value={value}
               error={errors.github?.url?.message}
-              requiredIndicator={isRequired(githubAutoimportInputSchema, "url")}
             />
           )}
         />
@@ -110,7 +106,6 @@ export default function ImportDesign() {
                 onChange={onChange}
                 value={value}
                 error={errors.gitlab?.host?.message}
-                requiredIndicator={isRequired(gitlabAutoimportInputSchema, "host")}
               />
             )}
           />
@@ -128,7 +123,6 @@ export default function ImportDesign() {
                 onChange={onChange}
                 value={value}
                 error={errors.gitlab?.projectId?.message}
-                requiredIndicator={isRequired(gitlabAutoimportInputSchema, name.split(".")[1])}
               />
             )}
           />
