@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Functionality
+import { useMutation } from "@apollo/client";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import { useTranslation } from "next-i18next";
@@ -36,6 +37,8 @@ import UserData, { UserDataNS } from "components/partials/sign_up/UserData";
 // Components
 import BrAuthSuggestion from "components/brickroom/BrAuthSuggestion";
 import BrError from "components/brickroom/BrError";
+import devLog from "lib/devLog";
+import { CLAIM_DID } from "lib/QueryAndMutation";
 
 export async function getStaticProps({ locale }: any) {
   return {
@@ -49,9 +52,19 @@ export async function getStaticProps({ locale }: any) {
 
 const SignUp: NextPageWithLayout = () => {
   const { signup, login, register } = useAuth();
-  const { getItem } = useStorage();
+  const { setItem, getItem } = useStorage();
   const router = useRouter();
   const { t } = useTranslation("signUpProps");
+  const [claimPerson] = useMutation(CLAIM_DID);
+
+  const claim = async (id: string) => {
+    try {
+      const { data } = await claimPerson({ variables: { id } });
+      setItem("didId", data?.claimPerson.did.result.didDocument.id);
+    } catch (err) {
+      devLog("signUp", "claim", err);
+    }
+  };
 
   //
 
@@ -99,7 +112,9 @@ const SignUp: NextPageWithLayout = () => {
         ecdhPublicKey: getItem("ecdhPublicKey"),
         reflowPublicKey: getItem("reflowPublicKey"),
       });
+
       await login({ email: signUpData.email });
+      await claim(getItem("authId"));
       router.push("/");
     } catch (err) {
       setError(JSON.stringify(err));

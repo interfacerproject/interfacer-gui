@@ -14,8 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
+import { Icon } from "@bbtgnn/polaris-interfacer";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
+import { LinkMinor } from "@shopify/polaris-icons";
 import Avatar from "boring-avatars";
 import BrTabs from "components/brickroom/BrTabs";
 import Spinner from "components/brickroom/Spinner";
@@ -24,18 +26,20 @@ import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import { Token } from "hooks/useWallet";
-import { FETCH_USER } from "lib/QueryAndMutation";
+import { CLAIM_DID, FETCH_USER } from "lib/QueryAndMutation";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import useFilters from "../../hooks/useFilters";
 
 //
 
 const Profile: NextPage = () => {
   const { getItem } = useStorage();
+  const [didUrl, setDidUrl] = useState<string>(process.env.NEXT_PUBLIC_DID_EXPLORER!);
   const router = useRouter();
   const { id, tab } = router.query;
   const { t } = useTranslation("ProfileProps");
@@ -44,6 +48,8 @@ const Profile: NextPage = () => {
 
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
   const idToBeFetch = isUser ? user?.ulid : String(id);
+
+  const [claimPerson] = useMutation(CLAIM_DID);
 
   const person = useQuery(FETCH_USER, { variables: { id: idToBeFetch } }).data?.person;
   typeof idToBeFetch === "string" ? (proposalFilter.primaryAccountable = [idToBeFetch]) : idToBeFetch!;
@@ -54,6 +60,12 @@ const Profile: NextPage = () => {
   if (hasCollectedProjects) {
     collectedProjects["id"] = JSON.parse(getItem("projectsCollected"));
   }
+
+  useEffect(() => {
+    claimPerson({ variables: { id: idToBeFetch } }).then(data => {
+      setDidUrl(`${process.env.NEXT_PUBLIC_DID_EXPLORER!}details/${data.data.claimPerson.did.didDocument.id}`);
+    });
+  }, []);
 
   return (
     <>
@@ -88,6 +100,12 @@ const Profile: NextPage = () => {
                       ? t("Your user id is: {{id}}", { id: person?.id })
                       : t("The user id is: {{id}}", { id: person?.id })}{" "}
                   </h4>
+                  <a href={didUrl}>
+                    <h4 className="mt-2 flex flex-row">
+                      <Icon source={LinkMinor} backdrop />
+                      {t("Go to distributed identity explorer")}
+                    </h4>
+                  </a>
                 </div>
                 <div className="my-4 shadow md:mr-20 stats stats-vertical">
                   <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} />
