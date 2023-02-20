@@ -37,7 +37,7 @@ export default function ImportDesign() {
   ];
 
   function handleSourceChange(value: string) {
-    setValue("source", value as AutoimportSource);
+    setValue("source", value as AutoimportSource, { shouldValidate: true });
   }
 
   /* Setting data in the "main" form */
@@ -57,7 +57,7 @@ export default function ImportDesign() {
 
   function setFormValues(values: Partial<CreateProjectValues>) {
     for (const [key, value] of Object.entries(values)) {
-      setProjectValues(key as keyof CreateProjectValues, value);
+      setProjectValues(key as keyof CreateProjectValues, value, { shouldValidate: true });
     }
   }
 

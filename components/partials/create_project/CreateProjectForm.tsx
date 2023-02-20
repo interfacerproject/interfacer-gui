@@ -196,7 +196,7 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
         helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t("Type up to 2048 characters")}.`}
         subtitle={t("Short description to be displayed on the project page")}
         onChange={({ text, html }) => {
-          setValue("description", text);
+          setValue("description", text, { shouldValidate: true });
         }}
         requiredIndicator={isRequired(schema, "description")}
         error={errors.description?.message}
@@ -209,7 +209,7 @@ export default function NewProjectForm(props: CreateProjectNS.Props) {
         id="images"
         onDrop={acceptedFiles => {
           console.log(acceptedFiles);
-          setValue("images", acceptedFiles);
+          setValue("images", acceptedFiles, { shouldValidate: true });
         }}
         error={errors.images?.message}
         requiredIndicator={isRequired(schema, "images")}

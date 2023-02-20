@@ -70,11 +70,11 @@ export default function DeclarationsStep(props: Props) {
   ];
 
   function setRepairable(value: string) {
-    setValue("declarations.repairable", value);
+    setValue("declarations.repairable", value, { shouldValidate: true });
   }
 
   function setRecyclable(value: string) {
-    setValue("declarations.recyclable", value);
+    setValue("declarations.recyclable", value, { shouldValidate: true });
   }
 
   // Links to certifications
@@ -93,14 +93,15 @@ export default function DeclarationsStep(props: Props) {
   const certifications = watch(CERTIFICATIONS_FORM_KEY);
 
   function addCertification(link: ILink) {
-    setValue(CERTIFICATIONS_FORM_KEY, [...certifications, link]);
+    setValue(CERTIFICATIONS_FORM_KEY, [...certifications, link], { shouldValidate: true });
     setShowAddLink(false);
   }
 
   function removeCertification(certification: ILink) {
     setValue(
       CERTIFICATIONS_FORM_KEY,
-      certifications.filter(c => c !== certification)
+      certifications.filter(c => c !== certification),
+      { shouldValidate: true }
     );
   }
 
