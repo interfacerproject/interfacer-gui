@@ -267,11 +267,6 @@ const Project = () => {
                   title={t("Digital Product Passport Tree")}
                 >
                   <Modal.Section>
-                    <div className="float-right">
-                      <Link href={`https://www.valueflo.ws/`}>
-                        <a>{t("To learn terms see ValueFlows ontology")}</a>
-                      </Link>
-                    </div>
                     <div className="h-[100vh]" ref={ref}>
                       <Tree
                         data={treeData}
