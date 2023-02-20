@@ -14,21 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import devLog from "lib/devLog";
-import { QUERY_RESOURCE } from "lib/QueryAndMutation";
-import { EconomicResource } from "lib/types";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import Tree from "react-d3-tree";
 
 // Components
-import { Button, Card, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Frame, Icon, Modal, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
@@ -36,6 +33,7 @@ import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import ProjectDetailOverview from "components/ProjectDetailOverview";
 import RelationshipTree from "components/RelationshipTree";
 import WatchButton from "components/WatchButton";
+import ProjectContext from "contexts/ProjectContext";
 import Link from "next/link";
 
 import dynamic from "next/dynamic";
@@ -48,16 +46,18 @@ import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "../../components/ContributorsTable";
 
 import FullWidthBanner from "components/FullWidthBanner";
+import Layout from "components/layout/Layout";
+import LoadProjectLayout from "components/layout/LoadProjectLayout";
+import { NextPageWithLayout } from "pages/_app";
 
 //
 
-const Project = () => {
+const Project: NextPageWithLayout = () => {
   const { getItem, setItem } = useStorage();
   const router = useRouter();
   const { user } = useAuth();
   const { id } = router.query;
   const { t } = useTranslation("common");
-  const [project, setProject] = useState<EconomicResource | undefined>();
   const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
   const [selected, setSelected] = useState(0);
@@ -66,22 +66,17 @@ const Project = () => {
 
   const ref = useRef(null);
 
-  const { loading, data, startPolling, refetch } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
-    variables: { id: id },
-  });
-  startPolling(120000);
+  const project = useContext(ProjectContext);
 
-  devLog("trace", data?.economicResource.trace);
-  devLog("traceDpp", data?.economicResource.traceDpp);
+  devLog("trace", project.trace);
+  devLog("traceDpp", project.traceDpp);
 
   useEffect(() => {
-    const _project: EconomicResource | undefined = data?.economicResource;
-    setProject(_project);
-    const singleImage = typeof _project?.metadata?.image === "string";
-    const metadataImage = singleImage ? [_project?.metadata?.image] : _project?.metadata?.image || [];
+    const singleImage = typeof project?.metadata?.image === "string";
+    const metadataImage = singleImage ? [project?.metadata?.image] : project?.metadata?.image || [];
     const _images =
-      _project && _project.images!.length > 0
-        ? _project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
+      project && project.images!.length > 0
+        ? project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
         : metadataImage;
     setImages(_images);
     if (ref.current) {
@@ -90,7 +85,7 @@ const Project = () => {
       //@ts-ignore
       setHeight(ref.current.offsetHeight);
     }
-  }, [data, ref, selected]);
+  }, [project, ref, selected]);
 
   useEffect(() => {
     const _list = getItem("projectsCollected");
@@ -120,7 +115,7 @@ const Project = () => {
   const toggleActive = useCallback(() => setActive(active => !active), []);
 
   function copyDPP() {
-    navigator.clipboard.writeText(JSON.stringify(data?.economicResource.traceDpp, null, 2));
+    navigator.clipboard.writeText(JSON.stringify(project.traceDpp, null, 2));
     setActive(true);
   }
 
@@ -137,7 +132,7 @@ const Project = () => {
 
   // DPP Tree
   const translate = { x: width / 2, y: 20 };
-  const treeData = dppToTreeData(data?.economicResource.traceDpp);
+  const treeData = dppToTreeData(project.traceDpp);
 
   //
 
@@ -154,11 +149,6 @@ const Project = () => {
     setViewCreatedBanner(false);
   };
 
-  //
-
-  if (loading) return <Spinner />;
-  if (!project) return null;
-
   return (
     <>
       <FullWidthBanner open={viewCreatedBanner} onClose={closeBanner}>
@@ -171,7 +161,7 @@ const Project = () => {
         <BrBreadcrumb
           crumbs={[
             { name: t("Projects"), href: "/projects" },
-            { name: project.conformsTo.name, href: `/projects?conformTo=${project.conformsTo.id}` },
+            { name: project.conformsTo?.name!, href: `/projects?conformTo=${project.conformsTo?.id}` },
           ]}
         />
       </div>
@@ -185,8 +175,8 @@ const Project = () => {
             <Stack vertical spacing="tight">
               <Text as="p" variant="bodyMd">
                 {t("This is a")}
-                <Link href={`/projects?conformTo=${project.conformsTo.id}`}>
-                  <a className="ml-1 font-bold text-primary hover:underline">{project.conformsTo.name}</a>
+                <Link href={`/projects?conformTo=${project.conformsTo?.id}`}>
+                  <a className="ml-1 font-bold text-primary hover:underline">{project.conformsTo?.name}</a>
                 </Link>
               </Text>
               <Text as="h1" variant="heading2xl">
@@ -242,7 +232,7 @@ const Project = () => {
               />
 
               {selected == 0 && <ProjectDetailOverview project={project} />}
-              {selected == 1 && <RelationshipTree dpp={data?.economicResource.traceDpp} />}
+              {selected == 1 && <RelationshipTree dpp={project.traceDpp} />}
               {selected == 2 && (
                 <div>
                   <div className="w-full flex justify-end">
@@ -251,7 +241,7 @@ const Project = () => {
                     </Button>
                   </div>
                   <DynamicReactJson
-                    src={data?.economicResource.traceDpp}
+                    src={project.traceDpp}
                     collapsed={3}
                     enableClipboard={true}
                     displayDataTypes={false}
@@ -316,8 +306,8 @@ const Project = () => {
                   {t("Owner")}
                 </Text>
                 <BrDisplayUser
-                  id={project.primaryAccountable.id}
-                  name={project.primaryAccountable.name}
+                  id={project.primaryAccountable?.id!}
+                  name={project.primaryAccountable?.name!}
                   location={project.currentLocation?.name}
                 />
               </div>
@@ -343,14 +333,14 @@ const Project = () => {
                   {inList ? t("Remove from list") : t("Add to list")}
                 </Button>
 
-                <WatchButton id={project.id} owner={project.primaryAccountable.id} />
+                <WatchButton id={project.id!} owner={project.primaryAccountable?.id!} />
 
-                <AddStar id={project.id} owner={project.primaryAccountable.id} />
+                <AddStar id={project.id!} owner={project.primaryAccountable?.id!} />
               </Stack>
             </Card>
           )}
           {/* Contributions */}
-          {user && project.primaryAccountable.id != user?.ulid && (
+          {user && project.primaryAccountable?.id != user?.ulid && (
             <Card sectioned>
               <Stack vertical>
                 <Text as="h2" variant="headingMd">
@@ -393,6 +383,12 @@ export async function getStaticProps({ locale }: any) {
     },
   };
 }
+
+Project.getLayout = page => (
+  <Layout>
+    <LoadProjectLayout>{page}</LoadProjectLayout>
+  </Layout>
+);
 
 Project.publicPage = true;
 

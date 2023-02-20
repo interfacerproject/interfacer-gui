@@ -20,7 +20,7 @@ import MdParser from "../lib/MdParser";
 import { EconomicResource } from "../lib/types";
 import BrTags from "./brickroom/BrTags";
 
-const ProjectDetailOverview = ({ project }: { project: EconomicResource }) => {
+const ProjectDetailOverview = ({ project }: { project: Partial<EconomicResource> }) => {
   const { t } = useTranslation("common");
 
   const license = project?.license;
