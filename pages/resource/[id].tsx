@@ -38,6 +38,11 @@ const Resource: NextPage = () => {
   const m = e?.metadata;
   !loading && loading !== undefined && console.log("e", e);
 
+  // (Temp)) Redirect if is not a reosurce owned by Losh
+  if (e && process.env.NEXT_PUBLIC_LOSH_ID != e?.primaryAccountable?.id) {
+    router.push(`/project/${id}`);
+  }
+
   const handleClaim = () => router.push(`/resource/claim/${id}`);
   const claimable = e?.accountingQuantity.hasNumericalValue > 0;
 
