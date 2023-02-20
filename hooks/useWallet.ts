@@ -66,7 +66,7 @@ const useWallet = (id?: string): UseWalletReturnValue => {
     const todayData = await today.json();
     const todayPoints = todayData.success === true ? todayData.amount : 0;
     const yesterdayPoints = data.success === true ? data.amount : 0;
-    if (yesterdayPoints === 0) return "N.a.";
+    if (yesterdayPoints === 0) return "N/A";
     const trend = (todayPoints - yesterdayPoints) / yesterdayPoints;
     return (trend * 100).toFixed(2);
   };

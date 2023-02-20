@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/outline";
+import { ArrowSmUpIcon } from "@heroicons/react/outline";
 import cn from "classnames";
 import useWallet, { Token } from "hooks/useWallet";
 import { useTranslation } from "next-i18next";
@@ -39,11 +39,12 @@ const TokensResume = ({ stat, id }: { stat: string; id: string }) => {
         >
           {!trendNotANumber && (
             <>
-              {positive ? (
-                <ArrowSmUpIcon className="w-5 h-5 text-green-500" />
-              ) : (
-                <ArrowSmDownIcon className="w-5 h-5 text-red-500" />
-              )}
+              <ArrowSmUpIcon
+                className={cn("w-5 h-5", {
+                  "text-green-500": positive,
+                  "text-red-500 rotate-180": !positive,
+                })}
+              />
             </>
           )}
           <span>{trendValue}</span>
