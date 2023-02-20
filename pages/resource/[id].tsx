@@ -16,13 +16,13 @@
 
 import { useQuery } from "@apollo/client";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
+import { QUERY_RESOURCE } from "lib/QueryAndMutation";
 import { EconomicResource } from "lib/types";
 import type { GetStaticPaths, NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import Spinner from "../../components/brickroom/Spinner";
-import { QUERY_RESOURCE } from "lib/QueryAndMutation";
 import LoshPresentation from "../../components/LoshPresentation";
 import devLog from "../../lib/devLog";
 
@@ -39,6 +39,7 @@ const Resource: NextPage = () => {
   !loading && loading !== undefined && console.log("e", e);
 
   const handleClaim = () => router.push(`/resource/claim/${id}`);
+  const claimable = e?.accountingQuantity.hasNumericalValue > 0;
 
   return (
     <div>
@@ -56,7 +57,7 @@ const Resource: NextPage = () => {
               />
             </div>
           </div>
-          <LoshPresentation economicResource={data?.economicResource} goToClaim={handleClaim} />
+          <LoshPresentation economicResource={data?.economicResource} goToClaim={handleClaim} canClaim={claimable} />
         </>
       )}
     </div>

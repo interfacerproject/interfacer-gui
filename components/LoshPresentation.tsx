@@ -28,9 +28,11 @@ import useStorage from "../hooks/useStorage";
 const LoshPresentation = ({
   economicResource,
   goToClaim,
+  canClaim = true,
 }: {
   economicResource?: EconomicResource;
   goToClaim?: () => void;
+  canClaim?: boolean;
 }) => {
   const { t } = useTranslation("ResourceProps");
   const [inList, setInList] = useState<boolean>(false);
@@ -82,7 +84,7 @@ const LoshPresentation = ({
               </span>
               {m?.okhv}
 
-              {goToClaim && (
+              {canClaim && (
                 <>
                   <button type="button" className="mt-16 mr-8 w-72 btn btn-accent" onClick={goToClaim}>
                     {t("CLAIM OWNERSHIP")}
