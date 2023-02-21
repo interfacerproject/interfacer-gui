@@ -8,6 +8,7 @@ import AddLicense, { ScopedLicense } from "components/AddLicense";
 import LicenseDisplay from "components/LicenseDisplay";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
@@ -39,9 +40,11 @@ export default function LicenseStep() {
   const licenses = watch(LICENSES_FORM_KEY);
 
   function handleAdd(license: ScopedLicense) {
-    setValue(LICENSES_FORM_KEY, [...licenses, { licenseId: license.license.licenseId, scope: license.scope }], {
-      shouldValidate: true,
-    });
+    setValue(
+      LICENSES_FORM_KEY,
+      [...licenses, { licenseId: license.license.licenseId, scope: license.scope }],
+      formSetValueOptions
+    );
     setShowAdd(false);
   }
 
@@ -49,7 +52,7 @@ export default function LicenseStep() {
     setValue(
       LICENSES_FORM_KEY,
       licenses.filter(l => l.licenseId !== licenseId),
-      { shouldValidate: true }
+      formSetValueOptions
     );
   }
 

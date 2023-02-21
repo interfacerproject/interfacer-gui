@@ -4,6 +4,7 @@ import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectDisplay from "components/ProjectDisplay";
 import SearchProjects from "components/SearchProjects";
 import { ProjectType } from "components/types";
+import { formSetValueOptions } from "lib/formSetValueOptions";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useFormContext } from "react-hook-form";
@@ -25,10 +26,10 @@ export default function LinkDesign() {
   const selected = watch("linkedDesign");
 
   function handleSelect(value: Partial<EconomicResource>) {
-    setValue("linkedDesign", value.id!, { shouldValidate: true });
+    setValue("linkedDesign", value.id!, formSetValueOptions);
   }
   function handleRemove() {
-    setValue("linkedDesign", "", { shouldValidate: true });
+    setValue("linkedDesign", "", formSetValueOptions);
   }
 
   //
