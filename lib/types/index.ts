@@ -3666,6 +3666,29 @@ export type GetPersonQuery = {
   } | null;
 };
 
+export type GetProjectLayoutQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type GetProjectLayoutQuery = {
+  __typename?: "RootQueryType";
+  economicResource?: {
+    __typename?: "EconomicResource";
+    id: string;
+    name: string;
+    note?: string | null;
+    metadata?: any | null;
+    license?: string | null;
+    repo?: string | null;
+    classifiedAs?: Array<any> | null;
+    primaryAccountable:
+      | { __typename?: "Organization"; id: string; name: string }
+      | { __typename?: "Person"; id: string; name: string };
+    currentLocation?: { __typename?: "SpatialThing"; id: string; name: string; mappableAddress?: string | null } | null;
+    images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+  } | null;
+};
+
 export type GetVariablesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetVariablesQuery = {
@@ -4347,3 +4370,19 @@ export type ClaimDidMutationVariables = Exact<{
 }>;
 
 export type ClaimDidMutation = { __typename?: "RootMutationType"; claimPerson: any };
+
+export type EditMainMutationVariables = Exact<{
+  id: Scalars["ID"];
+  classifiedAs?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
+  note?: InputMaybe<Scalars["String"]>;
+  name?: InputMaybe<Scalars["String"]>;
+  repo?: InputMaybe<Scalars["String"]>;
+}>;
+
+export type EditMainMutation = {
+  __typename?: "RootMutationType";
+  updateEconomicResource: {
+    __typename?: "EconomicResourceResponse";
+    economicResource: { __typename?: "EconomicResource"; id: string };
+  };
+};
