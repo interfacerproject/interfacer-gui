@@ -15,6 +15,7 @@ import {
   CREATE_PROJECT,
   QUERY_PROJECT_TYPES,
   QUERY_UNIT_AND_CURRENCY,
+  UPDATE_METADATA,
 } from "lib/QueryAndMutation";
 import {
   CreateLocationMutation,
@@ -29,6 +30,13 @@ import { useTranslation } from "next-i18next";
 import { AddedAsContributorNotification, MessageSubject, ProposalNotification } from "pages/notification";
 import { useState } from "react";
 import devLog from "../lib/devLog";
+import { QUERY_PROJECT_FOR_METADATA_UPDATE } from "./../lib/QueryAndMutation";
+import {
+  QueryProjectForMetadataUpdateQuery,
+  QueryProjectForMetadataUpdateQueryVariables,
+  UpdateMetadataMutation,
+  UpdateMetadataMutationVariables,
+} from "./../lib/types/index";
 import { useAuth } from "./useAuth";
 import useStorage from "./useStorage";
 
@@ -46,7 +54,7 @@ export const useProjectCreation = () => {
   const [contributeToProject] = useMutation(CONTRIBUTE_TO_PROJECT);
   const [createProject] = useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CREATE_PROJECT);
   const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
-  const [createProcess] = useMutation(CREATE_PROCESS);
+  const [createProcessMutation] = useMutation(CREATE_PROCESS);
   const { refetch } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
 
   type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
@@ -224,7 +232,7 @@ export const useProjectCreation = () => {
     let projectID: string | undefined = undefined;
     try {
       const processName = `creation of ${formData.main.title} by ${user!.name}`;
-      const { data: processData } = await createProcess({ variables: { name: processName } });
+      const { data: processData } = await createProcessMutation({ variables: { name: processName } });
       devLog("success: process created", processData);
 
       const processId = processData?.createProcess.process.id;
@@ -310,10 +318,57 @@ export const useProjectCreation = () => {
     setLoading(false);
     return projectID;
   };
+  const createProcess = async (name: string): Promise<string> => {
+    const { data } = await createProcessMutation({ variables: { name } });
+    return data?.createProcess.process.id;
+  };
+  const { refetch: projectRefetch } = useQuery<
+    QueryProjectForMetadataUpdateQuery,
+    QueryProjectForMetadataUpdateQueryVariables
+  >(QUERY_PROJECT_FOR_METADATA_UPDATE);
+  const [updateMetadataMutation] = useMutation<UpdateMetadataMutation, UpdateMetadataMutationVariables>(
+    UPDATE_METADATA
+  );
+
+  const updateMetadata = async (
+    projectId: string,
+    metadata: Record<string, unknown>,
+    processName = "metadata update"
+  ) => {
+    const { data } = await projectRefetch({ id: projectId });
+    const project = data?.economicResource;
+    if (!project) throw new Error("Project not found");
+    if (project.primaryAccountable.id !== user?.ulid) throw new Error("NotAuthorized");
+    const newMetadata = { ...project.metadata, ...metadata };
+    const processId = await createProcess(`${processName} for ${project.name}`);
+    const quantity = project.accountingQuantity;
+    const variables: UpdateMetadataMutationVariables = {
+      process: processId,
+      metadata: JSON.stringify(newMetadata),
+      agent: user!.ulid,
+      now: new Date().toISOString(),
+      resource: projectId,
+      quantity: { hasNumericalValue: quantity.hasNumericalValue, hasUnit: quantity.hasUnit?.id },
+    };
+    devLog("info: metadata variables created", variables);
+    const { errors } = await updateMetadataMutation({ variables });
+    if (errors) throw new Error(`Metadata not updated: ${errors}`);
+  };
+
+  const updateLicenses = async (projectId: string, licenses: Array<{ scope: string; licenseId: string }>) => {
+    try {
+      await updateMetadata(projectId, { licenses }, "update licenses");
+      devLog("success: licenses updated");
+    } catch (e) {
+      devLog("error: licenses not updated", e);
+      throw e;
+    }
+  };
 
   return {
     handleProjectCreation,
     error,
     loading,
+    updateLicenses,
   };
 };
