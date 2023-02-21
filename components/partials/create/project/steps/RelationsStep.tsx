@@ -7,6 +7,7 @@ import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectDisplay from "components/ProjectDisplay";
 import SearchProjects from "components/SearchProjects";
+import { formSetValueOptions } from "lib/formSetValueOptions";
 import { EconomicResource } from "lib/types";
 import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
@@ -28,13 +29,13 @@ export default function RelationsStep() {
   const relations = watch(RELATIONS_FORM_KEY);
 
   function handleSelect(value: Partial<EconomicResource>) {
-    setValue(RELATIONS_FORM_KEY, [...relations, value.id!], { shouldValidate: true });
+    setValue(RELATIONS_FORM_KEY, [...relations, value.id!], formSetValueOptions);
   }
   function handleRemove(id: string) {
     setValue(
       RELATIONS_FORM_KEY,
       relations.filter(item => item !== id),
-      { shouldValidate: true }
+      formSetValueOptions
     );
   }
 
