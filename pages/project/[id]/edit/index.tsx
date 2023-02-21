@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import { EconomicResource, EditMainMutation, EditMainMutationVariables } from "lib/types";
+import { EditMainMutation, EditMainMutationVariables } from "lib/types";
 import { NextPageWithLayout } from "pages/_app";
 
 // Form
@@ -16,15 +16,9 @@ import EditFormLayout from "components/partials/project/edit/EditFormLayout";
 
 //
 
-export interface EditMainProps {
-  project: Partial<EconomicResource>;
-}
-
 export interface EditMainValues {
   main: MainStepValues;
 }
-
-//
 
 const EditMain: NextPageWithLayout = () => {
   const project = useProject();
