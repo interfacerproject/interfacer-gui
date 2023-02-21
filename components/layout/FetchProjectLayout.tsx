@@ -48,6 +48,10 @@ export const GET_PROJECT_LAYOUT = gql`
       license
       repo
       classifiedAs
+      conformsTo {
+        id
+        name
+      }
       primaryAccountable {
         id
         name

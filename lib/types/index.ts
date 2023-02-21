@@ -3681,6 +3681,7 @@ export type GetProjectLayoutQuery = {
     license?: string | null;
     repo?: string | null;
     classifiedAs?: Array<any> | null;
+    conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     primaryAccountable:
       | { __typename?: "Organization"; id: string; name: string }
       | { __typename?: "Person"; id: string; name: string };

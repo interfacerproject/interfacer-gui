@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import { Tag, Text } from "@bbtgnn/polaris-interfacer";
+import { Spinner, Tag, Text } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource, SearchProjectQuery, SearchProjectQueryVariables } from "lib/types";
 import ProjectThumb from "./ProjectThumb";
 
@@ -13,11 +13,12 @@ export default function ProjectDisplay(props: Props) {
 
   let p: Partial<EconomicResource>;
 
-  const { data } = useQuery<SearchProjectQuery, SearchProjectQueryVariables>(SEARCH_PROJECT, {
+  const { data, loading } = useQuery<SearchProjectQuery, SearchProjectQueryVariables>(SEARCH_PROJECT, {
     variables: { id: projectId! },
     skip: !projectId,
   });
 
+  if (loading) return <Spinner />;
   if (project) p = project;
   else if (projectId && data?.economicResource) p = data?.economicResource as Partial<EconomicResource>;
   else return <></>;
