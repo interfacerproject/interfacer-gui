@@ -54,9 +54,9 @@ export const useProjectCreation = () => {
   const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
   const specs = queryProjectTypes.data?.instanceVariables.specs;
   const projectTypes: { [key in ProjectType]: string } | undefined = specs && {
-    design: specs.specProjectDesign.id,
-    service: specs.specProjectService.id,
-    product: specs.specProjectProduct.id,
+    [ProjectType.DESIGN]: specs.specProjectDesign.id,
+    [ProjectType.SERVICE]: specs.specProjectService.id,
+    [ProjectType.PRODUCT]: specs.specProjectProduct.id,
   };
 
   async function handleCreateLocation(

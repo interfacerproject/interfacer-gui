@@ -26,9 +26,9 @@ export default function SearchProjects(props: Props) {
 
   const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES).data;
   const projectTypes: Record<ProjectType, string> | undefined = queryProjectTypes && {
-    design: queryProjectTypes.instanceVariables.specs.specProjectDesign.id,
-    service: queryProjectTypes.instanceVariables.specs.specProjectService.id,
-    product: queryProjectTypes.instanceVariables.specs.specProjectProduct.id,
+    [ProjectType.DESIGN]: queryProjectTypes.instanceVariables.specs.specProjectDesign.id,
+    [ProjectType.SERVICE]: queryProjectTypes.instanceVariables.specs.specProjectService.id,
+    [ProjectType.PRODUCT]: queryProjectTypes.instanceVariables.specs.specProjectProduct.id,
   };
 
   /* Formatting GraphQL query variables based on input */
