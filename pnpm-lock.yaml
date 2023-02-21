@@ -49,7 +49,6 @@ specifiers:
   graphql: ^15.0.0
   husky: ^8.0.1
   lint-staged: ^13.0.3
-  lodash: ^4.17.21
   markdown-it: ^13.0.1
   markdown-it-abbr: ^1.0.4
   markdown-it-deflist: ^2.1.0
@@ -123,7 +122,6 @@ dependencies:
   graphql: 15.8.0
   husky: 8.0.2
   lint-staged: 13.0.3
-  lodash: 4.17.21
   markdown-it: 13.0.1
   markdown-it-abbr: 1.0.4
   markdown-it-deflist: 2.1.0

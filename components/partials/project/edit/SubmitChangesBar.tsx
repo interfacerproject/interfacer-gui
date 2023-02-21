@@ -1,6 +1,5 @@
 import { Button, Icon, Text } from "@bbtgnn/polaris-interfacer";
 import { CancelMinor, EditMinor } from "@shopify/polaris-icons";
-import _ from "lodash";
 import { useTranslation } from "next-i18next";
 import { useFormContext } from "react-hook-form";
 
@@ -8,10 +7,8 @@ export interface SubmitChangesProps {}
 
 export default function SubmitChangesBar(props: SubmitChangesProps) {
   const { t } = useTranslation();
-  const { formState, reset, watch } = useFormContext();
-  const { isValid, defaultValues } = formState;
-
-  const hasChanged = !_.isEqual(defaultValues, watch());
+  const { formState, reset } = useFormContext();
+  const { isValid, isDirty } = formState;
 
   function handleReset() {
     reset();
@@ -19,7 +16,7 @@ export default function SubmitChangesBar(props: SubmitChangesProps) {
 
   return (
     <>
-      {hasChanged && (
+      {isDirty && (
         <div className="bg-yellow-100 border-b-1 border-b-border-warning-subdued p-4 flex justify-end items-center space-x-6 sticky top-0">
           <Text variant="bodyMd" as="p">
             {t("You have unsaved changes")}
