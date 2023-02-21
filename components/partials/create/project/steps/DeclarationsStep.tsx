@@ -11,6 +11,7 @@ import PFieldInfo from "components/polaris/PFieldInfo";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
 // Form
+import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
@@ -70,11 +71,11 @@ export default function DeclarationsStep(props: Props) {
   ];
 
   function setRepairable(value: string) {
-    setValue("declarations.repairable", value);
+    setValue("declarations.repairable", value, formSetValueOptions);
   }
 
   function setRecyclable(value: string) {
-    setValue("declarations.recyclable", value);
+    setValue("declarations.recyclable", value, formSetValueOptions);
   }
 
   // Links to certifications
@@ -93,14 +94,15 @@ export default function DeclarationsStep(props: Props) {
   const certifications = watch(CERTIFICATIONS_FORM_KEY);
 
   function addCertification(link: ILink) {
-    setValue(CERTIFICATIONS_FORM_KEY, [...certifications, link]);
+    setValue(CERTIFICATIONS_FORM_KEY, [...certifications, link], formSetValueOptions);
     setShowAddLink(false);
   }
 
   function removeCertification(certification: ILink) {
     setValue(
       CERTIFICATIONS_FORM_KEY,
-      certifications.filter(c => c !== certification)
+      certifications.filter(c => c !== certification),
+      formSetValueOptions
     );
   }
 

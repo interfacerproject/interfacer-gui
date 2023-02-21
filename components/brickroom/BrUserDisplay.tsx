@@ -1,26 +1,28 @@
 import { gql, useQuery } from "@apollo/client";
-import { Icon, Text } from "@bbtgnn/polaris-interfacer";
+import { Icon, Spinner, Text } from "@bbtgnn/polaris-interfacer";
 import { LocationsMinor } from "@shopify/polaris-icons";
-import { Agent, SearchAgentQuery, SearchAgentQueryVariables } from "lib/types";
+import { GetPersonQuery, GetPersonQueryVariables, Person } from "lib/types";
 import BrUserAvatar from "./BrUserAvatar";
 
 export interface Props {
-  user?: Agent;
+  user?: Person;
   userId?: string;
 }
 
 export default function BrUserDisplay(props: Props) {
   const { user, userId } = props;
 
-  let u: Agent;
+  let u: Partial<Person>;
 
-  const { data } = useQuery<SearchAgentQuery, SearchAgentQueryVariables>(SEARCH_AGENT, {
+  const { data, loading } = useQuery<GetPersonQuery, GetPersonQueryVariables>(SEARCH_PERSON, {
     variables: { id: userId! },
     skip: !userId,
   });
 
+  if (loading) return <Spinner />;
+
   if (user) u = user;
-  if (userId && data?.agent) u = data.agent;
+  if (userId && data?.person) u = data.person;
   else return <></>;
 
   return (
@@ -30,8 +32,9 @@ export default function BrUserDisplay(props: Props) {
       </div>
 
       <div className="ml-4">
-        <Text as="p" variant="bodyMd" fontWeight="bold">
-          {u.name}
+        <Text as="p" variant="bodyMd">
+          <span className="font-medium">{u.user}</span>
+          {u.name != u.user && <span className="ml-1 text-text-subdued">{`(${u.name})`}</span>}
         </Text>
         {u.primaryLocation && (
           <div className="flex items-center text-primary">
@@ -46,11 +49,12 @@ export default function BrUserDisplay(props: Props) {
   );
 }
 
-export const SEARCH_AGENT = gql`
-  query SearchAgent($id: ID!) {
-    agent(id: $id) {
+export const SEARCH_PERSON = gql`
+  query getPerson($id: ID!) {
+    person(id: $id) {
       id
       name
+      user
       primaryLocation {
         id
         name

@@ -97,6 +97,7 @@
     "zenroom": "2.2.3-f0193d51"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.191",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "cypress": "^10.7.0",
     "cypress-fail-fast": "^5.0.1",

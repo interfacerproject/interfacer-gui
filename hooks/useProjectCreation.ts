@@ -234,15 +234,10 @@ export const useProjectCreation = () => {
         location = await handleCreateLocation(formData, projectType === ProjectType.DESIGN);
       }
 
-      let images: IFile[] = [];
-      try {
-        images = await prepFilesForZenflows(formData.images, getItem("eddsa"));
-        devLog("info: images prepared", images);
-      } catch (e) {
-        devLog("error: images not prepared", e);
-      }
+      const images: IFile[] = await prepFilesForZenflows(formData.images, getItem("eddsaPrivateKey"));
+      devLog("info: images prepared", images);
 
-      const tags = formData.main.tags.map(t => encodeURI(t));
+      const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
       devLog("info: tags prepared", tags);
 
       const linkedDesign = formData.linkedDesign ? formData.linkedDesign : null;

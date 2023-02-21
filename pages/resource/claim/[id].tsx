@@ -23,21 +23,8 @@ import LoshPresentation from "components/LoshPresentation";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
 import devLog from "lib/devLog";
-import {
-  CREATE_INTENT,
-  CREATE_LOCATION,
-  CREATE_PROPOSAL,
-  LINK_PROPOSAL_AND_INTENT,
-  QUERY_RESOURCE,
-  QUERY_UNIT_AND_CURRENCY,
-  TRANSFER_PROJECT,
-} from "lib/QueryAndMutation";
-import {
-  CreateLocationMutation,
-  EconomicResource,
-  GetUnitAndCurrencyQuery,
-  TransferProjectMutationVariables,
-} from "lib/types";
+import { CREATE_LOCATION, QUERY_RESOURCE, TRANSFER_PROJECT } from "lib/QueryAndMutation";
+import { CreateLocationMutation, EconomicResource, TransferProjectMutationVariables } from "lib/types";
 import type { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -85,10 +72,6 @@ const ClaimProject: NextPageWithLayout = () => {
 
   const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
   const [transferProject, { data: economicResource }] = useMutation(TRANSFER_PROJECT);
-  const [createProposal, { data: proposal }] = useMutation(CREATE_PROPOSAL);
-  const [createIntent, { data: intent }] = useMutation(CREATE_INTENT);
-  const [linkProposalAndIntent, { data: link }] = useMutation(LINK_PROPOSAL_AND_INTENT);
-  const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
 
   type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
 
@@ -119,7 +102,11 @@ const ClaimProject: NextPageWithLayout = () => {
       devLog("info: tags prepared", tags);
       const contributors = formData.contributors.map(c => c.value);
       devLog("info: contributors prepared", contributors);
-      const metadata = JSON.stringify({ ...e!.metadata, repositoryOrId: e!.metadata.repo, contributors: contributors });
+      const metadata = JSON.stringify({
+        ...e!.metadata,
+        repositoryOrId: e!.metadata.repo,
+        contributors: contributors.map(c => c.id),
+      });
       devLog("info: metadata prepared", metadata);
 
       const variables: TransferProjectMutationVariables = {
@@ -131,7 +118,7 @@ const ClaimProject: NextPageWithLayout = () => {
         location: location?.id!,
         oneUnit: e!.onhandQuantity.hasUnit!.id,
         creationTime: dayjs().toISOString(),
-        tags: tags,
+        tags: tags.length > 0 ? tags : undefined,
       };
       devLog("info: project variables created", variables);
 
@@ -186,7 +173,7 @@ const ClaimProject: NextPageWithLayout = () => {
     defaultValues,
   });
 
-  const { formState, handleSubmit, register, control, setValue, watch } = form;
+  const { formState, handleSubmit, control } = form;
   const { isValid, errors, isSubmitting } = formState;
 
   return (

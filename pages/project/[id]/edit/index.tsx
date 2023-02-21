@@ -1,69 +1,103 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import { gql, useMutation } from "@apollo/client";
+import { EconomicResource, EditMainMutation, EditMainMutationVariables } from "lib/types";
+import { NextPageWithLayout } from "pages/_app";
 
-import { useQuery } from "@apollo/client";
-import { useAuth } from "hooks/useAuth";
-import { QUERY_RESOURCE } from "lib/QueryAndMutation";
-import { EconomicResource } from "lib/types";
-import { GetStaticPaths } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useRouter } from "next/router";
+// Form
+import { yupResolver } from "@hookform/resolvers/yup";
+import MainStep, { mainStepSchema, MainStepValues } from "components/partials/create/project/steps/MainStep";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
 
 // Components
-import { Spinner } from "@bbtgnn/polaris-interfacer";
+import EditProjectLayout from "components/layout/EditProjectLayout";
+import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
+import Layout from "components/layout/Layout";
+import EditFormLayout from "components/partials/project/edit/EditFormLayout";
 
 //
 
-const EditProject = () => {
-  const router = useRouter();
-  const { id } = router.query;
-  const { user } = useAuth();
+export interface EditMainProps {
+  project: Partial<EconomicResource>;
+}
 
-  const { loading, data } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
-    variables: { id },
+export interface EditMainValues {
+  main: MainStepValues;
+}
+
+//
+
+const EditMain: NextPageWithLayout = () => {
+  const project = useProject();
+
+  /* Form setup */
+
+  const defaultValues: EditMainValues = {
+    main: {
+      title: project.name || "",
+      description: project.note || "",
+      link: project.repo || "",
+      tags: project.classifiedAs || [],
+    },
+  };
+
+  const schema = yup.object({
+    main: mainStepSchema,
   });
-  const project = data?.economicResource;
 
-  if (loading) return <Spinner />;
-  if (!project) return null;
+  const formMethods = useForm<EditMainValues>({
+    mode: "all",
+    resolver: yupResolver(schema),
+    defaultValues,
+  });
+
+  /* Submit logic */
+
+  const [editMainMutation] = useMutation<EditMainMutation, EditMainMutationVariables>(EDIT_MAIN);
+
+  function valuesToVariables(values: EditMainValues): EditMainMutationVariables {
+    const classifiedAs = values.main.tags.length ? values.main.tags : undefined;
+    return {
+      id: project.id!,
+      name: values.main.title,
+      note: values.main.description,
+      repo: values.main.link,
+      classifiedAs,
+    };
+  }
+
+  async function onSubmit(values: EditMainValues) {
+    await editMainMutation({ variables: valuesToVariables(values) });
+  }
+
+  /* Render */
 
   return (
-    <>
-      <div>{"Edit!"}</div>
-    </>
+    <EditFormLayout formMethods={formMethods} onSubmit={onSubmit}>
+      <MainStep />
+    </EditFormLayout>
   );
 };
 
 //
 
-export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: "blocking", //indicates the type of fallback
-  };
-};
+EditMain.getLayout = page => (
+  <Layout>
+    <FetchProjectLayout>
+      <EditProjectLayout>{page}</EditProjectLayout>
+    </FetchProjectLayout>
+  </Layout>
+);
 
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common", "signInProps", "SideBarProps"])),
-    },
-  };
-}
+export default EditMain;
 
 //
 
-export default EditProject;
+export const EDIT_MAIN = gql`
+  mutation EditMain($id: ID!, $classifiedAs: [URI!], $note: String, $name: String, $repo: String) {
+    updateEconomicResource(resource: { id: $id, classifiedAs: $classifiedAs, name: $name, note: $note, repo: $repo }) {
+      economicResource {
+        id
+      }
+    }
+  }
+`;

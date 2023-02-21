@@ -487,12 +487,6 @@ export const FETCH_RESOURCES = gql`
           version
           licensor
           license
-          trace {
-            __typename
-            ... on EconomicEvent {
-              hasPointInTime
-            }
-          }
           primaryAccountable {
             id
             name
@@ -583,7 +577,7 @@ export const FORK_PROJECT = gql`
     $process: ID! # Process.id
     $unitOne: ID! # Unit.id
     $tags: [URI!]
-    $location: ID! # SpatialThing.id
+    $location: ID # SpatialThing.id
     $spec: ID! # ResourceSpecification.id
     $name: String!
     $note: String
@@ -969,5 +963,11 @@ export const QUERY_RESOURCE_PROPOSAlS = gql`
         }
       }
     }
+  }
+`;
+
+export const CLAIM_DID = gql`
+  mutation claimDID($id: ID!) {
+    claimPerson(id: $id)
   }
 `;

@@ -5,6 +5,7 @@ import * as yup from "yup";
 import { Stack } from "@bbtgnn/polaris-interfacer";
 import PFileUpload from "components/polaris/PFileUpload";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useFormContext } from "react-hook-form";
 import { CreateProjectValues } from "../CreateProjectForm";
 
@@ -23,7 +24,7 @@ export default function ImagesStep() {
   const images = watch("images");
 
   function handleUpdate(images: Array<File>) {
-    setValue("images", images);
+    setValue("images", images, formSetValueOptions);
   }
 
   return (

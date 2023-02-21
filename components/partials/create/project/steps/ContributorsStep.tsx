@@ -7,7 +7,8 @@ import BrUserDisplay from "components/brickroom/BrUserDisplay";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SearchUsers from "components/SearchUsers";
-import { Agent } from "lib/types";
+import { formSetValueOptions } from "lib/formSetValueOptions";
+import { Person } from "lib/types";
 import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
@@ -27,13 +28,14 @@ export default function ContributorsStep() {
   const CONTRIBUTORS_FORM_KEY = "contributors";
   const contributors = watch(CONTRIBUTORS_FORM_KEY);
 
-  function handleSelect(option: Partial<Agent>) {
-    setValue(CONTRIBUTORS_FORM_KEY, [...contributors, option.id!]);
+  function handleSelect(option: Partial<Person>) {
+    setValue(CONTRIBUTORS_FORM_KEY, [...contributors, option.id!], formSetValueOptions);
   }
   function handleRemove(contributorId: string) {
     setValue(
       CONTRIBUTORS_FORM_KEY,
-      contributors.filter(id => id !== contributorId)
+      contributors.filter(id => id !== contributorId),
+      formSetValueOptions
     );
   }
 

@@ -25,9 +25,10 @@ type topbarProps = {
   search?: boolean;
   children?: React.ReactNode;
   cta?: React.ReactNode;
+  burger?: boolean;
 };
 
-function Topbar({ search = true, children, userMenu = true, cta }: topbarProps) {
+function Topbar({ search = true, children, userMenu = true, cta, burger = true }: topbarProps) {
   const router = useRouter();
   const path = router.asPath;
   const { t } = useTranslation("common");
@@ -38,16 +39,18 @@ function Topbar({ search = true, children, userMenu = true, cta }: topbarProps) 
     <div className="navbar bg-[#F3F3F1] px-2 py-1 h-16 border-b border-text-primary">
       <div className="navbar-start">
         {children}
-        <label htmlFor="my-drawer" className="btn btn-square btn-ghost drawer-button mr-2" id="sidebarOpener">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="inline-block w-5 h-5 stroke-current"
-          >
-            <path d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </label>
+        {burger && (
+          <label htmlFor="my-drawer" className="btn btn-square btn-ghost drawer-button mr-2" id="sidebarOpener">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="inline-block w-5 h-5 stroke-current"
+            >
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </label>
+        )}
         {search && <SearchBar />}
       </div>
       <div className="navbar-end">

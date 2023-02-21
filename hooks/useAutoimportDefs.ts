@@ -1,4 +1,3 @@
-import { url } from "lib/regex";
 import * as yup from "yup";
 
 //
@@ -31,14 +30,14 @@ export interface AutoimportInput {
 export const githubAutoimportInputSchema = yup.object({
   url: yup
     .string()
-    .matches(url, "Invalid URL")
+    .url()
     .matches(/github.com/, "Url does not match a GitHub repo")
     .required(),
 });
 
 export const gitlabAutoimportInputSchema = yup.object({
   projectId: yup.string().required(),
-  host: yup.string().required().matches(url, "Invalid URL"),
+  host: yup.string().required().url(),
 });
 
 export const autoimportInputSchema = yup.object({

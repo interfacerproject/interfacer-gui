@@ -35,7 +35,7 @@ export default function SelectTags2(props: SelectTags2Props) {
       />
 
       <div className="flex space-x-2">
-        {tags.map(tag => (
+        {tags?.map(tag => (
           <Tag
             key={tag}
             onRemove={() => {
