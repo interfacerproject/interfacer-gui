@@ -3608,32 +3608,25 @@ export type SearchTagsQueryVariables = Exact<{
 
 export type SearchTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
 
-export type SearchAgentsQueryVariables = Exact<{
-  text: Scalars["String"];
+export type SearchPeopleQueryVariables = Exact<{
+  filter?: InputMaybe<PersonFilterParams>;
   last?: InputMaybe<Scalars["Int"]>;
 }>;
 
-export type SearchAgentsQuery = {
+export type SearchPeopleQuery = {
   __typename?: "RootQueryType";
-  agents?: {
-    __typename?: "AgentConnection";
+  people?: {
+    __typename?: "PersonConnection";
     edges: Array<{
-      __typename?: "AgentEdge";
-      node:
-        | {
-            __typename?: "Organization";
-            id: string;
-            name: string;
-            note?: string | null;
-            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
-          }
-        | {
-            __typename?: "Person";
-            id: string;
-            name: string;
-            note?: string | null;
-            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
-          };
+      __typename?: "PersonEdge";
+      node: {
+        __typename?: "Person";
+        id: string;
+        name: string;
+        user: string;
+        note?: string | null;
+        primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+      };
     }>;
   } | null;
 };
@@ -3658,26 +3651,19 @@ export type GetTagsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
 
-export type SearchAgentQueryVariables = Exact<{
+export type GetPersonQueryVariables = Exact<{
   id: Scalars["ID"];
 }>;
 
-export type SearchAgentQuery = {
+export type GetPersonQuery = {
   __typename?: "RootQueryType";
-  agent?:
-    | {
-        __typename?: "Organization";
-        id: string;
-        name: string;
-        primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
-      }
-    | {
-        __typename?: "Person";
-        id: string;
-        name: string;
-        primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
-      }
-    | null;
+  person?: {
+    __typename?: "Person";
+    id: string;
+    name: string;
+    user: string;
+    primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+  } | null;
 };
 
 export type EditMainMutationVariables = Exact<{
@@ -4080,11 +4066,6 @@ export type FetchInventoryQuery = {
           mappableAddress?: string | null;
         } | null;
         images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
-        trace?: Array<
-          | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
-          | { __typename: "EconomicResource" }
-          | { __typename: "Process" }
-        > | null;
         primaryAccountable:
           | { __typename?: "Organization"; id: string; name: string; note?: string | null }
           | { __typename?: "Person"; id: string; name: string; note?: string | null };
@@ -4153,7 +4134,7 @@ export type ForkProjectMutationVariables = Exact<{
   process: Scalars["ID"];
   unitOne: Scalars["ID"];
   tags?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
-  location: Scalars["ID"];
+  location?: InputMaybe<Scalars["ID"]>;
   spec: Scalars["ID"];
   name: Scalars["String"];
   note?: InputMaybe<Scalars["String"]>;
@@ -4376,3 +4357,9 @@ export type ResourceProposalsQuery = {
     }>;
   };
 };
+
+export type ClaimDidMutationVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type ClaimDidMutation = { __typename?: "RootMutationType"; claimPerson: any };

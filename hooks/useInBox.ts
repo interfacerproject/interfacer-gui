@@ -85,7 +85,7 @@ const useInBox = (): UseInBoxReturnValue => {
           }, 30000);
         }
       });
-    }, 120000);
+    }, Number(process.env.NEXT_PUBLIC_INBOX_COUNT_INTERVAL));
   }, [startFetch, readedMessages]);
 
   const sendMessage = async (message: any, receivers: string[], subject: string = "Subject"): Promise<Response> => {

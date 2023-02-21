@@ -1,7 +1,7 @@
 import { ProjectType } from "components/types";
 import { useProjectCreation } from "hooks/useProjectCreation";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Steps
 import {
@@ -78,12 +78,11 @@ export const createProjectSchema = yup.object({
       projectType == ProjectType.DESIGN ? schema : locationStepSchema
     ),
   images: imagesStepSchema,
-  declarations: yup.object(),
-  // removing the code below prevent a bug in the product form:
-  // https://github.com/interfacerproject/interfacer-gui/issues/416
-  // .when("$projectType", (projectType: ProjectType, schema) =>
-  //   projectType == ProjectType.PRODUCT ? declarationsStepSchema : schema
-  // ),
+  declarations: yup
+    .object()
+    .when("$projectType", (projectType: ProjectType, schema) =>
+      projectType == ProjectType.PRODUCT ? declarationsStepSchema : schema
+    ),
   contributors: contributorsStepSchema,
   relations: relationsStepSchema,
   licenses: licenseStepSchema,
@@ -116,6 +115,13 @@ export default function CreateProjectForm(props: Props) {
     if (projectID) await router.replace(`/project/${projectID}?created=true`);
     setLoading(false);
   }
+
+  // Focus on first element
+  useEffect(() => {
+    if (projectType == ProjectType.DESIGN) return;
+    const field = document.getElementById("main.title");
+    field?.focus();
+  }, [projectType]);
 
   //
 

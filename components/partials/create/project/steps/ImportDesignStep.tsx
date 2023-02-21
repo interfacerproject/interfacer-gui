@@ -9,10 +9,7 @@ import {
   AutoimportInput,
   autoimportInputSchema,
   AutoimportSource,
-  githubAutoimportInputSchema,
-  gitlabAutoimportInputSchema,
 } from "hooks/useAutoimportDefs";
-import { isRequired } from "lib/isFieldRequired";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { Controller, useForm, useFormContext } from "react-hook-form";
@@ -40,7 +37,7 @@ export default function ImportDesign() {
   ];
 
   function handleSourceChange(value: string) {
-    setValue("source", value as AutoimportSource);
+    setValue("source", value as AutoimportSource, { shouldValidate: true });
   }
 
   /* Setting data in the "main" form */
@@ -60,7 +57,7 @@ export default function ImportDesign() {
 
   function setFormValues(values: Partial<CreateProjectValues>) {
     for (const [key, value] of Object.entries(values)) {
-      setProjectValues(key as keyof CreateProjectValues, value);
+      setProjectValues(key as keyof CreateProjectValues, value, { shouldValidate: true });
     }
   }
 
@@ -83,13 +80,13 @@ export default function ImportDesign() {
             <TextField
               type="url"
               label={t("Repo URL")}
-              placeholder={"github.com/username/repo"}
+              placeholder={"https://github.com/username/repo"}
+              helpText={t("Please include the protocol (https://...) in the URL")}
               autoComplete="off"
               onBlur={onBlur}
               onChange={onChange}
               value={value}
               error={errors.github?.url?.message}
-              requiredIndicator={isRequired(githubAutoimportInputSchema, "url")}
             />
           )}
         />
@@ -104,13 +101,13 @@ export default function ImportDesign() {
               <TextField
                 type="url"
                 label={t("Gitlab host")}
-                placeholder={"gitlab.com"}
+                placeholder={"https://gitlab.com"}
+                helpText={t("Please include the protocol (https://...) in the URL")}
                 autoComplete="off"
                 onBlur={onBlur}
                 onChange={onChange}
                 value={value}
                 error={errors.gitlab?.host?.message}
-                requiredIndicator={isRequired(gitlabAutoimportInputSchema, "host")}
               />
             )}
           />
@@ -128,7 +125,6 @@ export default function ImportDesign() {
                 onChange={onChange}
                 value={value}
                 error={errors.gitlab?.projectId?.message}
-                requiredIndicator={isRequired(gitlabAutoimportInputSchema, name.split(".")[1])}
               />
             )}
           />
