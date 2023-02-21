@@ -971,3 +971,76 @@ export const CLAIM_DID = gql`
     claimPerson(id: $id)
   }
 `;
+
+export const UPDATE_METADATA = gql`
+  mutation updateMetadata(
+    $process: ID!
+    $agent: ID!
+    $resource: ID!
+    $quantity: IMeasure!
+    $now: DateTime!
+    $metadata: JSONObject!
+  ) {
+    accept: createEconomicEvent(
+      event: {
+        action: "accept"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceInventoriedAs: $resource
+        resourceQuantity: $quantity
+        hasPointInTime: $now
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+
+    modify: createEconomicEvent(
+      event: {
+        action: "modify"
+        outputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceInventoriedAs: $resource
+        resourceQuantity: $quantity
+        resourceMetadata: $metadata
+        hasPointInTime: $now
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+  }
+`;
+
+export const QUERY_PROJECT_FOR_METADATA_UPDATE = gql`
+  query queryProjectForMetadataUpdate($id: ID!) {
+    economicResource(id: $id) {
+      id
+      name
+      metadata
+      onhandQuantity {
+        hasUnit {
+          id
+          symbol
+          label
+        }
+        hasNumericalValue
+      }
+      accountingQuantity {
+        hasUnit {
+          id
+          label
+          symbol
+        }
+        hasNumericalValue
+      }
+      primaryAccountable {
+        id
+      }
+    }
+  }
+`;

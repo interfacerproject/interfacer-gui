@@ -40,7 +40,7 @@ export enum MessageSubject {
 
 export interface ProposalNotification {
   proposalID: string;
-  text: string;
+  text?: string;
   type?: ProposalType;
   originalResourceName: string;
   originalResourceID: string;

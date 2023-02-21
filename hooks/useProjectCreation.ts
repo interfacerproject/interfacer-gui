@@ -3,6 +3,7 @@ import { CreateProjectValues } from "components/partials/create/project/CreatePr
 import { ProjectType } from "components/types";
 import useInBox from "hooks/useInBox";
 import useWallet from "hooks/useWallet";
+import { arrayEquals, getNewElements } from "lib/arrayOperations";
 import { errorFormatter } from "lib/errorFormatter";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
 import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
@@ -15,12 +16,14 @@ import {
   CREATE_PROJECT,
   QUERY_PROJECT_TYPES,
   QUERY_UNIT_AND_CURRENCY,
+  UPDATE_METADATA,
 } from "lib/QueryAndMutation";
 import {
   CreateLocationMutation,
   CreateLocationMutationVariables,
   CreateProjectMutation,
   CreateProjectMutationVariables,
+  EconomicResource,
   GetProjectTypesQuery,
   GetUnitAndCurrencyQuery,
   IFile,
@@ -29,6 +32,13 @@ import { useTranslation } from "next-i18next";
 import { AddedAsContributorNotification, MessageSubject, ProposalNotification } from "pages/notification";
 import { useState } from "react";
 import devLog from "../lib/devLog";
+import { QUERY_PROJECT_FOR_METADATA_UPDATE } from "./../lib/QueryAndMutation";
+import {
+  QueryProjectForMetadataUpdateQuery,
+  QueryProjectForMetadataUpdateQueryVariables,
+  UpdateMetadataMutation,
+  UpdateMetadataMutationVariables,
+} from "./../lib/types/index";
 import { useAuth } from "./useAuth";
 import useStorage from "./useStorage";
 
@@ -46,7 +56,7 @@ export const useProjectCreation = () => {
   const [contributeToProject] = useMutation(CONTRIBUTE_TO_PROJECT);
   const [createProject] = useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CREATE_PROJECT);
   const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
-  const [createProcess] = useMutation(CREATE_PROCESS);
+  const [createProcessMutation] = useMutation(CREATE_PROCESS);
   const { refetch } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
 
   type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
@@ -58,6 +68,20 @@ export const useProjectCreation = () => {
     [ProjectType.SERVICE]: specs.specProjectService.id,
     [ProjectType.PRODUCT]: specs.specProjectProduct.id,
   };
+
+  const createProcess = async (name: string): Promise<string> => {
+    const { data } = await createProcessMutation({ variables: { name } });
+    return data?.createProcess.process.id;
+  };
+
+  const { refetch: queryProjectForMetadataUpdate } = useQuery<
+    QueryProjectForMetadataUpdateQuery,
+    QueryProjectForMetadataUpdateQueryVariables
+  >(QUERY_PROJECT_FOR_METADATA_UPDATE);
+
+  const [updateMetadataMutation] = useMutation<UpdateMetadataMutation, UpdateMetadataMutationVariables>(
+    UPDATE_METADATA
+  );
 
   async function handleCreateLocation(
     formData: CreateProjectValues,
@@ -123,20 +147,10 @@ export const useProjectCreation = () => {
     addStrengthsPoints(resourceOwner, StrengthsPoints.OnCite);
   };
 
-  const addRelations = async ({
-    resource,
-    description,
-    processId,
-    resourceName,
-  }: {
-    resource: string;
-    description: string;
-    processId: string;
-    resourceName: string;
-  }) => {
+  const addRelation = async (resourceId: string, processId: string, resourceName: string) => {
     const citeVariables = {
       agent: user!.ulid,
-      resource: resource,
+      resource: resourceId,
       process: processId,
       creationTime: new Date().toISOString(),
       unitOne: unitAndCurrency?.units.unitOne.id!,
@@ -144,14 +158,13 @@ export const useProjectCreation = () => {
     try {
       await citeProject({ variables: citeVariables });
 
-      const { data } = await refetch({ id: resource });
+      const { data } = await refetch({ id: resourceId });
       const resourceOwner = data.economicResource.primaryAccountable.id;
       const message: ProposalNotification = {
-        proposalID: resource,
+        proposalID: resourceId,
         proposerName: user!.name,
-        originalResourceID: resource,
+        originalResourceID: resourceId,
         originalResourceName: resourceName,
-        text: description,
       };
       await sendMessage(message, [resourceOwner], "Project cited");
 
@@ -224,19 +237,14 @@ export const useProjectCreation = () => {
     let projectID: string | undefined = undefined;
     try {
       const processName = `creation of ${formData.main.title} by ${user!.name}`;
-      const { data: processData } = await createProcess({ variables: { name: processName } });
-      devLog("success: process created", processData);
-
-      const processId = processData?.createProcess.process.id;
-
+      const processId = await createProcess(processName);
+      devLog("success: process created", processName, processId);
       let location;
       if (formData.location.location || formData.location.remote) {
         location = await handleCreateLocation(formData, projectType === ProjectType.DESIGN);
       }
-
       const images: IFile[] = await prepFilesForZenflows(formData.images, getItem("eddsaPrivateKey"));
       devLog("info: images prepared", images);
-
       const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
       devLog("info: tags prepared", tags);
 
@@ -251,17 +259,12 @@ export const useProjectCreation = () => {
       }
 
       for (const resource of formData.relations) {
-        await addRelations({
-          resource,
-          description: formData.main.description,
-          processId: processId,
-          resourceName: formData.main.title,
-        });
+        await addRelation(resource, processId, formData.main.title);
       }
 
       const variables: CreateProjectMutationVariables = {
         resourceSpec: projectTypes![projectType],
-        process: processData.createProcess.process.id,
+        process: processId,
         agent: user?.ulid!,
         name: formData.main.title,
         note: formData.main.description,
@@ -311,9 +314,100 @@ export const useProjectCreation = () => {
     return projectID;
   };
 
+  const getProjectForMetadataUpdate = async (projectId: string): Promise<Partial<EconomicResource>> => {
+    const { data, errors } = await queryProjectForMetadataUpdate({ id: projectId });
+    if (errors) throw new Error("ProjectNotFound");
+    return data?.economicResource as Partial<EconomicResource>;
+  };
+
+  const updateMetadata = async (
+    project: Partial<EconomicResource>,
+    metadata: Record<string, unknown>,
+    processId: string
+  ) => {
+    if (project.primaryAccountable?.id !== user?.ulid) throw new Error("NotAuthorized");
+    const newMetadata = { ...project.metadata, ...metadata };
+    const quantity = project.accountingQuantity;
+    const variables: UpdateMetadataMutationVariables = {
+      process: processId,
+      metadata: JSON.stringify(newMetadata),
+      agent: user!.ulid,
+      now: new Date().toISOString(),
+      resource: project.id!,
+      quantity: { hasNumericalValue: quantity?.hasNumericalValue, hasUnit: quantity?.hasUnit?.id },
+    };
+    devLog("info: metadata variables created", variables);
+    const { errors } = await updateMetadataMutation({ variables });
+    if (errors) throw new Error(`Metadata not updated: ${errors}`);
+  };
+
+  const updateLicenses = async (projectId: string, licenses: Array<{ scope: string; licenseId: string }>) => {
+    try {
+      const project = await getProjectForMetadataUpdate(projectId);
+      const processId = await createProcess(`licenses update @ ${project.name}`);
+      await updateMetadata(project, { licenses }, processId);
+      devLog("success: licenses updated");
+    } catch (e) {
+      devLog("error: licenses not updated", e);
+      throw e;
+    }
+  };
+
+  const updateContributors = async (projectId: string, contributors: string[]) => {
+    try {
+      const project = await getProjectForMetadataUpdate(projectId);
+      const oldContributors = project.metadata.contributors;
+      if (arrayEquals(oldContributors, contributors)) return;
+      const processName = `contributors update @ ${project.name}`;
+      const processId = await createProcess(processName);
+      devLog("success: process created", processName, processId);
+      //
+      const contributorsToCreate = getNewElements(project.metadata.contributors, contributors);
+      if (contributorsToCreate.length > 0)
+        await addContributors({
+          contributors: contributorsToCreate,
+          processId,
+          title: projectId,
+          projectId,
+          projectType: ProjectType.DESIGN,
+        });
+      //
+      await updateMetadata(project, { contributors }, processId);
+      devLog("success: contributors updated");
+    } catch (e) {
+      devLog("error: contributors not updated", e);
+      throw e;
+    }
+  };
+
+  const addRelations = async (relations: string[], processId: string) => {
+    for (const relation of relations) {
+      await addRelation(relation, processId, relation);
+    }
+  };
+
+  const updateRelations = async (projectId: string, relations: string[]) => {
+    try {
+      const project = await getProjectForMetadataUpdate(projectId);
+      const processName = `relations update @ ${project.name}`;
+      const processId = await createProcess(processName);
+      devLog("success: process created", processName, processId);
+      //
+      const relationsToCreate = getNewElements(project.metadata.relations, relations);
+      if (relationsToCreate.length > 0) await addRelations(relationsToCreate, processId);
+      //
+    } catch (e) {
+      devLog("error: relations not updated", e);
+      throw e;
+    }
+  };
+
   return {
     handleProjectCreation,
     error,
     loading,
+    updateLicenses,
+    updateContributors,
+    // updateRelations,
   };
 };
