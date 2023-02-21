@@ -108,12 +108,12 @@ export function getSectionByProjectType(projectType: ProjectType): Array<FormSec
 
 export default function CreateProjectFields(props: Props) {
   const { t } = useTranslation();
-  const { projectType, onSubmit = () => {} } = props;
+  const { projectType } = props;
 
   const titles: Record<ProjectType, string> = {
-    service: t("Create a new service"),
-    product: t("Create a new product"),
-    design: t("Create a new design"),
+    [ProjectType.SERVICE]: t("Create a new service"),
+    [ProjectType.PRODUCT]: t("Create a new product"),
+    [ProjectType.DESIGN]: t("Create a new design"),
   };
 
   //

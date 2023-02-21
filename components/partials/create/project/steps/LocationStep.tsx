@@ -105,7 +105,7 @@ export default function LocationStepProduct(props: Props) {
         )}
       />
 
-      {projectType == "service" && (
+      {projectType == ProjectType.SERVICE && (
         <Checkbox
           id="remote"
           name="remote"
