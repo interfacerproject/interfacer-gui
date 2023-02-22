@@ -4266,7 +4266,7 @@ export type ContributeToProjectMutationVariables = Exact<{
   creationTime: Scalars["DateTime"];
   process: Scalars["ID"];
   unitOne: Scalars["ID"];
-  conformTo: Scalars["ID"];
+  conformsTo: Scalars["ID"];
 }>;
 
 export type ContributeToProjectMutation = {
@@ -4385,6 +4385,22 @@ export type UpdateMetadataMutation = {
   __typename?: "RootMutationType";
   accept: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
   modify: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+};
+
+export type UpdateContributionMutationVariables = Exact<{
+  process: Scalars["ID"];
+  agent: Scalars["ID"];
+  resource: Scalars["ID"];
+  quantity: IMeasure;
+  now: Scalars["DateTime"];
+  metadata: Scalars["JSONObject"];
+  conformsTo: Scalars["ID"];
+  unitOne: Scalars["ID"];
+}>;
+
+export type UpdateContributionMutation = {
+  __typename?: "RootMutationType";
+  contribute: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
 };
 
 export type QueryProjectForMetadataUpdateQueryVariables = Exact<{

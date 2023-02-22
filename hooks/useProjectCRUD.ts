@@ -32,17 +32,17 @@ import { useTranslation } from "next-i18next";
 import { AddedAsContributorNotification, MessageSubject, ProposalNotification } from "pages/notification";
 import { useState } from "react";
 import devLog from "../lib/devLog";
-import { QUERY_PROJECT_FOR_METADATA_UPDATE } from "./../lib/QueryAndMutation";
+import { QUERY_PROJECT_FOR_METADATA_UPDATE } from "../lib/QueryAndMutation";
 import {
   QueryProjectForMetadataUpdateQuery,
   QueryProjectForMetadataUpdateQueryVariables,
   UpdateMetadataMutation,
   UpdateMetadataMutationVariables,
-} from "./../lib/types/index";
+} from "../lib/types/index";
 import { useAuth } from "./useAuth";
 import useStorage from "./useStorage";
 
-export const useProjectCreation = () => {
+export const useProjectCRUD = () => {
   const { user } = useAuth();
   const { sendMessage } = useInBox();
   const { addIdeaPoints, addStrengthsPoints } = useWallet();
@@ -114,57 +114,23 @@ export const useProjectCreation = () => {
     }
   }
 
-  const linkDesign = async ({
-    design,
-    process,
-    description,
-  }: {
-    design: string;
-    process: string;
-    description: string;
-  }) => {
+  const addRelation = async (projectId: string, processId: string, originalProjectId: string) => {
     const citeVariables = {
       agent: user!.ulid,
-      resource: design,
-      process: process,
-      creationTime: new Date().toISOString(),
-      unitOne: unitAndCurrency?.units.unitOne.id!,
-    };
-    await citeProject({ variables: citeVariables });
-
-    const { data } = await refetch({ id: design });
-    const resourceOwner = data.economicResource.primaryAccountable.id;
-    const message: ProposalNotification = {
-      proposalID: design,
-      proposerName: user!.name,
-      originalResourceID: design,
-      originalResourceName: data.economicResource.name,
-      text: description,
-    };
-    await sendMessage(message, [resourceOwner], "Project cited");
-    //economic system: points assignments
-    addIdeaPoints(user!.ulid, IdeaPoints.OnCite);
-    addStrengthsPoints(resourceOwner, StrengthsPoints.OnCite);
-  };
-
-  const addRelation = async (resourceId: string, processId: string, resourceName: string) => {
-    const citeVariables = {
-      agent: user!.ulid,
-      resource: resourceId,
+      resource: projectId,
       process: processId,
       creationTime: new Date().toISOString(),
       unitOne: unitAndCurrency?.units.unitOne.id!,
     };
     try {
       await citeProject({ variables: citeVariables });
-
-      const { data } = await refetch({ id: resourceId });
+      const { data } = await refetch({ id: projectId });
       const resourceOwner = data.economicResource.primaryAccountable.id;
       const message: ProposalNotification = {
-        proposalID: resourceId,
+        proposalID: projectId,
         proposerName: user!.name,
-        originalResourceID: resourceId,
-        originalResourceName: resourceName,
+        originalResourceID: originalProjectId,
+        originalResourceName: originalProjectId,
       };
       await sendMessage(message, [resourceOwner], "Project cited");
 
@@ -176,47 +142,54 @@ export const useProjectCreation = () => {
     }
   };
 
-  const addContributors = async ({
-    contributors,
-    processId,
-    title,
-    projectId,
-    projectType,
+  const linkDesign = async ({
+    design,
+    process,
+    originalProjectId,
   }: {
-    contributors: string[];
-    processId: string;
-    title: string;
-    projectId: string;
-    projectType: ProjectType;
+    design: string;
+    process: string;
+    originalProjectId: string;
   }) => {
+    await addRelation(design, process, originalProjectId);
+  };
+
+  const addRelations = async (projectId: string, relations: string[], processId: string) => {
+    for (const relation of relations) {
+      await addRelation(relation, processId, projectId);
+    }
+  };
+
+  const addContributor = async (contributor: string, processId: string, projectId: string) => {
+    const contributeVariables = {
+      agent: contributor,
+      process: processId,
+      creationTime: new Date().toISOString(),
+      unitOne: unitAndCurrency?.units.unitOne.id!,
+      // we need some system variables for contributions types
+      conformsTo: projectTypes![ProjectType.DESIGN],
+    };
+    devLog("info: contributor variables", contributeVariables);
+    const { errors } = await contributeToProject({ variables: contributeVariables });
+    if (errors) {
+      devLog(`${contributor} not added as contributor: ${errors}`);
+    }
+    const message: AddedAsContributorNotification = {
+      projectOwnerId: user!.ulid,
+      text: "you have been added as a contributor to a project",
+      resourceName: projectId,
+      resourceID: projectId,
+      projectOwnerName: user!.name,
+    };
+    await sendMessage(message, [contributor], MessageSubject.ADDED_AS_CONTRIBUTOR);
+    //economic system: points assignments
+    addIdeaPoints(user!.ulid, IdeaPoints.OnContributions);
+    addStrengthsPoints(contributor, StrengthsPoints.OnContributions);
+  };
+
+  const addContributors = async (projectId: string, contributors: string[], processId: string) => {
     for (const contributor of contributors) {
-      const contributeVariables = {
-        agent: contributor,
-        process: processId,
-        creationTime: new Date().toISOString(),
-        unitOne: unitAndCurrency?.units.unitOne.id!,
-        conformTo: projectTypes![projectType],
-      };
-      devLog("info: contributor variables", contributeVariables);
-      const { errors } = await contributeToProject({ variables: contributeVariables });
-      if (errors) {
-        devLog(`${contributor} not added as contributor: ${errors}`);
-        continue;
-      }
-
-      const message: AddedAsContributorNotification = {
-        projectOwnerId: user!.ulid,
-        text: "you have been added as a contributor to a project",
-        resourceName: title,
-        resourceID: projectId,
-        projectOwnerName: user!.name,
-      };
-
-      const subject = MessageSubject.ADDED_AS_CONTRIBUTOR;
-      await sendMessage(message, [contributor], subject);
-      //economic system: points assignments
-      addIdeaPoints(user!.ulid, IdeaPoints.OnContributions);
-      addStrengthsPoints(contributor, StrengthsPoints.OnContributions);
+      await addContributor(contributor, processId, projectId);
     }
   };
 
@@ -234,7 +207,7 @@ export const useProjectCreation = () => {
     projectType: ProjectType
   ): Promise<string | undefined> => {
     setLoading(true);
-    let projectID: string | undefined = undefined;
+    let projectId: string | undefined;
     try {
       const processName = `creation of ${formData.main.title} by ${user!.name}`;
       const processId = await createProcess(processName);
@@ -247,20 +220,6 @@ export const useProjectCreation = () => {
       devLog("info: images prepared", images);
       const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
       devLog("info: tags prepared", tags);
-
-      const linkedDesign = formData.linkedDesign ? formData.linkedDesign : null;
-
-      if (linkedDesign) {
-        await linkDesign({
-          design: linkedDesign,
-          process: processId,
-          description: formData.main.description,
-        });
-      }
-
-      for (const resource of formData.relations) {
-        await addRelation(resource, processId, formData.main.title);
-      }
 
       const variables: CreateProjectMutationVariables = {
         resourceSpec: projectTypes![projectType],
@@ -288,19 +247,32 @@ export const useProjectCreation = () => {
       const { data: createProjectData, errors } = await createProject({ variables });
       if (errors) throw new Error("ProjectNotCreated");
 
-      projectID = createProjectData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
+      projectId = createProjectData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
+      if (!projectId) throw new Error("ProjectNotCreated");
 
       //economic system: points assignments
       addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
       addStrengthsPoints(user!.ulid, StrengthsPoints.OnCreate);
 
-      await addContributors({
-        contributors: formData.contributors,
-        processId: processId,
-        title: formData.main.title,
-        projectId: createProjectData!.createEconomicEvent.economicEvent.resourceInventoriedAs!.id,
-        projectType,
-      });
+      const linkedDesign = formData.linkedDesign ? formData.linkedDesign : null;
+
+      if (linkedDesign) {
+        await linkDesign({
+          design: linkedDesign,
+          process: processId,
+          originalProjectId: projectId,
+        });
+      }
+
+      for (const resource of formData.relations) {
+        await addRelation(resource, processId, projectId);
+      }
+
+      await addContributors(
+        createProjectData!.createEconomicEvent.economicEvent.resourceInventoriedAs!.id,
+        formData.contributors,
+        processId
+      );
 
       await uploadImages(formData.images);
     } catch (e) {
@@ -311,7 +283,7 @@ export const useProjectCreation = () => {
       setError(err);
     }
     setLoading(false);
-    return projectID;
+    return projectId;
   };
 
   const getProjectForMetadataUpdate = async (projectId: string): Promise<Partial<EconomicResource>> => {
@@ -353,51 +325,22 @@ export const useProjectCreation = () => {
     }
   };
 
-  const updateContributors = async (projectId: string, contributors: string[]) => {
+  type CbUpdateFunction = (projectId: string, array: Array<string>, processId: string) => Promise<void>;
+
+  const updateMetdataArray = async (projectId: string, array: string[], key: string, cb: CbUpdateFunction) => {
     try {
       const project = await getProjectForMetadataUpdate(projectId);
-      const oldContributors = project.metadata.contributors;
-      if (arrayEquals(oldContributors, contributors)) return;
-      const processName = `contributors update @ ${project.name}`;
+      const oldArray = project.metadata[key];
+      if (arrayEquals(oldArray, array)) return;
+      const processName = `${key} update @ ${project.name}`;
       const processId = await createProcess(processName);
       devLog("success: process created", processName, processId);
-      //
-      const contributorsToCreate = getNewElements(project.metadata.contributors, contributors);
-      if (contributorsToCreate.length > 0)
-        await addContributors({
-          contributors: contributorsToCreate,
-          processId,
-          title: projectId,
-          projectId,
-          projectType: ProjectType.DESIGN,
-        });
-      //
-      await updateMetadata(project, { contributors }, processId);
-      devLog("success: contributors updated");
+      const newArray = getNewElements(project.metadata[key], array);
+      if (newArray.length > 0) await cb(projectId, newArray, processId);
+      await updateMetadata(project, { [key]: array }, processId);
+      devLog(`success: ${key} updated`);
     } catch (e) {
-      devLog("error: contributors not updated", e);
-      throw e;
-    }
-  };
-
-  const addRelations = async (relations: string[], processId: string) => {
-    for (const relation of relations) {
-      await addRelation(relation, processId, relation);
-    }
-  };
-
-  const updateRelations = async (projectId: string, relations: string[]) => {
-    try {
-      const project = await getProjectForMetadataUpdate(projectId);
-      const processName = `relations update @ ${project.name}`;
-      const processId = await createProcess(processName);
-      devLog("success: process created", processName, processId);
-      //
-      const relationsToCreate = getNewElements(project.metadata.relations, relations);
-      if (relationsToCreate.length > 0) await addRelations(relationsToCreate, processId);
-      //
-    } catch (e) {
-      devLog("error: relations not updated", e);
+      devLog(`error: ${key} not updated`, e);
       throw e;
     }
   };
@@ -407,7 +350,9 @@ export const useProjectCreation = () => {
     error,
     loading,
     updateLicenses,
-    updateContributors,
-    // updateRelations,
+    updateContributors: (projectId: string, contributors: Array<string>) =>
+      updateMetdataArray(projectId, contributors, "contributors", addContributors),
+    updateRelations: (projectId: string, relations: Array<string>) =>
+      updateMetdataArray(projectId, relations, "relations", addRelations),
   };
 };

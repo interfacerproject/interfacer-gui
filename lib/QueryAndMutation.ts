@@ -787,7 +787,7 @@ export const CONTRIBUTE_TO_PROJECT = gql`
     $creationTime: DateTime!
     $process: ID! # Process.id
     $unitOne: ID! # Unit.id
-    $conformTo: ID!
+    $conformsTo: ID!
   ) {
     createEconomicEvent(
       event: {
@@ -795,7 +795,7 @@ export const CONTRIBUTE_TO_PROJECT = gql`
         inputOf: $process
         provider: $agent
         receiver: $agent
-        resourceConformsTo: $conformTo
+        resourceConformsTo: $conformsTo
         hasPointInTime: $creationTime
         effortQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
       }
@@ -996,7 +996,6 @@ export const UPDATE_METADATA = gql`
         id
       }
     }
-
     modify: createEconomicEvent(
       event: {
         action: "modify"
@@ -1007,6 +1006,35 @@ export const UPDATE_METADATA = gql`
         resourceQuantity: $quantity
         resourceMetadata: $metadata
         hasPointInTime: $now
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+  }
+`;
+
+export const UPDATE_CONTRIBUTION = gql`
+  mutation updateContribution(
+    $process: ID!
+    $agent: ID!
+    $resource: ID!
+    $quantity: IMeasure!
+    $now: DateTime!
+    $metadata: JSONObject!
+    $conformsTo: ID!
+    $unitOne: ID!
+  ) {
+    contribute: createEconomicEvent(
+      event: {
+        action: "work"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceConformsTo: $conformsTo
+        hasPointInTime: $now
+        effortQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
       }
     ) {
       economicEvent {
