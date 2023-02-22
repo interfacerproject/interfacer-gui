@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { CreateProjectValues } from "components/partials/create/project/CreateProjectForm";
+import { DeclarationsStepValues } from "components/partials/create/project/steps/DeclarationsStep";
 import { ProjectType } from "components/types";
 import useInBox from "hooks/useInBox";
 import useWallet from "hooks/useWallet";
@@ -324,10 +325,21 @@ export const useProjectCRUD = () => {
       throw e;
     }
   };
+  const updateDeclarations = async (projectId: string, declarations: DeclarationsStepValues) => {
+    try {
+      const project = await getProjectForMetadataUpdate(projectId);
+      const processId = await createProcess(`declarations update @ ${project.name}`);
+      await updateMetadata(project, { declarations }, processId);
+      devLog("success: declarations updated");
+    } catch (e) {
+      devLog("error: declarations not updated", e);
+      throw e;
+    }
+  };
 
   type CbUpdateFunction = (projectId: string, array: Array<string>, processId: string) => Promise<void>;
 
-  const updateMetdataArray = async (projectId: string, array: string[], key: string, cb: CbUpdateFunction) => {
+  const updateMetadataArray = async (projectId: string, array: string[], key: string, cb: CbUpdateFunction) => {
     try {
       const project = await getProjectForMetadataUpdate(projectId);
       const oldArray = project.metadata[key];
@@ -350,9 +362,10 @@ export const useProjectCRUD = () => {
     error,
     loading,
     updateLicenses,
+    updateDeclarations,
     updateContributors: (projectId: string, contributors: Array<string>) =>
-      updateMetdataArray(projectId, contributors, "contributors", addContributors),
+      updateMetadataArray(projectId, contributors, "contributors", addContributors),
     updateRelations: (projectId: string, relations: Array<string>) =>
-      updateMetdataArray(projectId, relations, "relations", addRelations),
+      updateMetadataArray(projectId, relations, "relations", addRelations),
   };
 };
