@@ -4332,6 +4332,7 @@ export type AskResourcePrimaryAccountableQuery = {
   __typename?: "RootQueryType";
   economicResource?: {
     __typename?: "EconomicResource";
+    name: string;
     primaryAccountable:
       | { __typename?: "Organization"; id: string; name: string }
       | { __typename?: "Person"; id: string; name: string };
