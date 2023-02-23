@@ -41,6 +41,7 @@ import {
   UpdateMetadataMutation,
   UpdateMetadataMutationVariables,
 } from "../lib/types/index";
+import { LocationStepValues } from "./../components/partials/create/project/steps/LocationStep";
 import { RelocateProjectMutation, RelocateProjectMutationVariables } from "./../lib/types/index";
 import { useAuth } from "./useAuth";
 import useStorage from "./useStorage";
@@ -87,18 +88,14 @@ export const useProjectCRUD = () => {
   );
 
   async function handleCreateLocation(
-    formData: CreateProjectValues,
+    location: LocationStepValues,
     design: boolean
-  ): Promise<SpatialThingRes | undefined> {
-    const remote = formData.location.remote || design;
-    devLog("remote", remote);
-    const label =
-      formData.location.locationName.length > 0
-        ? formData.location.locationName
-        : formData.location.location!.address.label;
-    const name = remote ? "remote" : label;
-    const addr = remote ? "remote" : formData.location.location?.address.label;
-    const position = formData.location.location?.position;
+  ): Promise<{ remote: boolean; st: SpatialThingRes | undefined }> {
+    const remote = location.remote || design;
+    const name = location.locationName;
+    const addr = location.location?.address.label;
+    const position = location.location?.position;
+    if (!name || name.length == 0) return { st: undefined, remote: remote };
     try {
       const { data } = await createLocation({
         variables: {
@@ -110,7 +107,7 @@ export const useProjectCRUD = () => {
       });
       const st = data?.createSpatialThing.spatialThing;
       devLog("success: location created", st);
-      return st;
+      return { st: st, remote: remote };
     } catch (e) {
       devLog("error: location not created", e);
       throw e;
@@ -217,7 +214,7 @@ export const useProjectCRUD = () => {
       devLog("success: process created", processName, processId);
       let location;
       if (formData.location.location || formData.location.remote) {
-        location = await handleCreateLocation(formData, projectType === ProjectType.DESIGN);
+        location = await handleCreateLocation(formData.location, projectType === ProjectType.DESIGN);
       }
       const images: IFile[] = await prepFilesForZenflows(formData.images, getItem("eddsaPrivateKey"));
       devLog("info: images prepared", images);
@@ -230,7 +227,7 @@ export const useProjectCRUD = () => {
         agent: user?.ulid!,
         name: formData.main.title,
         note: formData.main.description,
-        location: location?.id!,
+        location: location?.st?.id!,
         oneUnit: unitAndCurrency?.units.unitOne.id!,
         creationTime: new Date().toISOString(),
         repo: formData.main.link,
@@ -242,6 +239,7 @@ export const useProjectCRUD = () => {
           licenses: formData.licenses,
           relations: formData.relations,
           declarations: formData.declarations,
+          remote: location?.remote,
         }),
       };
       devLog("info: project variables created", variables);
@@ -302,7 +300,7 @@ export const useProjectCRUD = () => {
   ) => {
     if (project.primaryAccountable?.id !== user?.ulid) throw new Error("NotAuthorized");
     const newMetadata = { ...project.metadata, ...metadata };
-    const quantity = project.accountingQuantity;
+    const quantity = project.onhandQuantity;
     const variables: UpdateMetadataMutationVariables = {
       process: processId,
       metadata: JSON.stringify(newMetadata),
@@ -362,14 +360,23 @@ export const useProjectCRUD = () => {
     RELOCATE_PROJECT
   );
 
-  const relocateProject = async (project: Partial<EconomicResource>, location: string) => {
+  const relocateProject = async (project: Partial<EconomicResource>, locationValues: LocationStepValues) => {
     if (project.primaryAccountable?.id !== user?.ulid) throw new Error("NotAuthorized");
     const processId = await createProcess(`relocate project @ ${project.name}`);
+    if (locationValues.remote !== project.metadata.remote)
+      await updateMetadata(project, { remote: locationValues.remote }, processId);
+    if (
+      !locationValues.location ||
+      (locationValues.location?.address.label === project.currentLocation?.mappableAddress &&
+        locationValues.locationName === project.currentLocation?.name)
+    )
+      return;
+    const location = await handleCreateLocation(locationValues, project.conformsTo?.name === ProjectType.DESIGN);
     const quantity = project.onhandQuantity;
     const variables: RelocateProjectMutationVariables = {
       process: processId,
       agent: user!.ulid,
-      location: location,
+      location: location.st!.id,
       now: new Date().toISOString(),
       resource: project.id!,
       quantity: { hasNumericalValue: quantity?.hasNumericalValue, hasUnit: quantity?.hasUnit?.id },
