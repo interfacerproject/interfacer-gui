@@ -9,9 +9,9 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
+import RestrictedProjectLayout, { notOwner } from "components/layout/RestrictedProjectLayout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
 
 //
@@ -74,13 +74,17 @@ const EditMain: NextPageWithLayout = () => {
 
 //
 
-EditMain.getLayout = page => (
-  <Layout>
-    <FetchProjectLayout>
-      <EditProjectLayout>{page}</EditProjectLayout>
-    </FetchProjectLayout>
-  </Layout>
-);
+EditMain.getLayout = page => {
+  return (
+    <Layout>
+      <FetchProjectLayout>
+        <RestrictedProjectLayout restrictions={[notOwner]} defaultRedirect="/projects">
+          {page}
+        </RestrictedProjectLayout>
+      </FetchProjectLayout>
+    </Layout>
+  );
+};
 
 export default EditMain;
 
