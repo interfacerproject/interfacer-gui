@@ -14,6 +14,7 @@ import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
+import { useProjectCRUD } from "hooks/useProjectCRUD";
 
 //
 
@@ -42,22 +43,10 @@ const EditMain: NextPageWithLayout = () => {
 
   /* Submit logic */
 
-  // const [editMainMutation] = useMutation<EditMainMutation, EditMainMutationVariables>(EDIT_MAIN);
-
-  function valuesToVariables(values: EditRelationsValues) {
-    // const classifiedAs = values.main.tags.length ? values.main.tags : undefined;
-    // return {
-    //   id: project.id!,
-    //   name: values.main.title,
-    //   note: values.main.description,
-    //   repo: values.main.link,
-    //   classifiedAs,
-    // };
-  }
+  const { updateRelations } = useProjectCRUD();
 
   async function onSubmit(values: EditRelationsValues) {
-    console.log(values);
-    // await editMainMutation({ variables: valuesToVariables(values) });
+    await updateRelations(project.id!, values.relations);
   }
 
   /* Render */
