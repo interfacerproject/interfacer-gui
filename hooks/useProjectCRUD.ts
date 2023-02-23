@@ -17,6 +17,7 @@ import {
   CREATE_PROJECT,
   QUERY_PROJECT_TYPES,
   QUERY_UNIT_AND_CURRENCY,
+  RELOCATE_PROJECT,
   UPDATE_METADATA,
 } from "lib/QueryAndMutation";
 import {
@@ -40,6 +41,7 @@ import {
   UpdateMetadataMutation,
   UpdateMetadataMutationVariables,
 } from "../lib/types/index";
+import { RelocateProjectMutation, RelocateProjectMutationVariables } from "./../lib/types/index";
 import { useAuth } from "./useAuth";
 import useStorage from "./useStorage";
 
@@ -356,6 +358,26 @@ export const useProjectCRUD = () => {
       throw e;
     }
   };
+  const [relocateProjectMutation] = useMutation<RelocateProjectMutation, RelocateProjectMutationVariables>(
+    RELOCATE_PROJECT
+  );
+
+  const relocateProject = async (project: Partial<EconomicResource>, location: string) => {
+    if (project.primaryAccountable?.id !== user?.ulid) throw new Error("NotAuthorized");
+    const processId = await createProcess(`relocate project @ ${project.name}`);
+    const quantity = project.onhandQuantity;
+    const variables: RelocateProjectMutationVariables = {
+      process: processId,
+      agent: user!.ulid,
+      location: location,
+      now: new Date().toISOString(),
+      resource: project.id!,
+      quantity: { hasNumericalValue: quantity?.hasNumericalValue, hasUnit: quantity?.hasUnit?.id },
+    };
+    devLog("info: metadata variables created", variables);
+    const { errors } = await relocateProjectMutation({ variables });
+    if (errors) throw new Error(`Metadata not updated: ${errors}`);
+  };
 
   return {
     handleProjectCreation,
@@ -367,5 +389,6 @@ export const useProjectCRUD = () => {
       updateMetadataArray(projectId, contributors, "contributors", addContributors),
     updateRelations: (projectId: string, relations: Array<string>) =>
       updateMetadataArray(projectId, relations, "relations", addRelations),
+    relocateProject,
   };
 };
