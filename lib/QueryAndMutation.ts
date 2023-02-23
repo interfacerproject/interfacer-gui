@@ -1073,3 +1073,46 @@ export const QUERY_PROJECT_FOR_METADATA_UPDATE = gql`
     }
   }
 `;
+
+export const RELOCATE_PROJECT = gql`
+  mutation relocateProject(
+    $process: ID!
+    $agent: ID!
+    $resource: ID!
+    $quantity: IMeasure!
+    $now: DateTime!
+    $location: ID!
+  ) {
+    pickup: createEconomicEvent(
+      event: {
+        action: "pickup"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceInventoriedAs: $resource
+        resourceQuantity: $quantity
+        hasPointInTime: $now
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+    dropoff: createEconomicEvent(
+      event: {
+        action: "dropoff"
+        outputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceInventoriedAs: $resource
+        resourceQuantity: $quantity
+        toLocation: $location
+        hasPointInTime: $now
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+  }
+`;
