@@ -1,5 +1,5 @@
 import { ProjectType } from "components/types";
-import { useProjectCreation } from "hooks/useProjectCreation";
+import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -94,7 +94,7 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
-  const { handleProjectCreation } = useProjectCreation();
+  const { handleProjectCreation } = useProjectCRUD();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
