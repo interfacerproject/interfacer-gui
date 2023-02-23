@@ -4429,6 +4429,21 @@ export type QueryProjectForMetadataUpdateQuery = {
   } | null;
 };
 
+export type RelocateProjectMutationVariables = Exact<{
+  process: Scalars["ID"];
+  agent: Scalars["ID"];
+  resource: Scalars["ID"];
+  quantity: IMeasure;
+  now: Scalars["DateTime"];
+  location: Scalars["ID"];
+}>;
+
+export type RelocateProjectMutation = {
+  __typename?: "RootMutationType";
+  pickup: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+  dropoff: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+};
+
 export type EditMainMutationVariables = Exact<{
   id: Scalars["ID"];
   classifiedAs?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
