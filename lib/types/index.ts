@@ -4266,7 +4266,7 @@ export type ContributeToProjectMutationVariables = Exact<{
   creationTime: Scalars["DateTime"];
   process: Scalars["ID"];
   unitOne: Scalars["ID"];
-  conformTo: Scalars["ID"];
+  conformsTo: Scalars["ID"];
 }>;
 
 export type ContributeToProjectMutation = {
@@ -4332,6 +4332,7 @@ export type AskResourcePrimaryAccountableQuery = {
   __typename?: "RootQueryType";
   economicResource?: {
     __typename?: "EconomicResource";
+    name: string;
     primaryAccountable:
       | { __typename?: "Organization"; id: string; name: string }
       | { __typename?: "Person"; id: string; name: string };
@@ -4371,6 +4372,62 @@ export type ClaimDidMutationVariables = Exact<{
 }>;
 
 export type ClaimDidMutation = { __typename?: "RootMutationType"; claimPerson: any };
+
+export type UpdateMetadataMutationVariables = Exact<{
+  process: Scalars["ID"];
+  agent: Scalars["ID"];
+  resource: Scalars["ID"];
+  quantity: IMeasure;
+  now: Scalars["DateTime"];
+  metadata: Scalars["JSONObject"];
+}>;
+
+export type UpdateMetadataMutation = {
+  __typename?: "RootMutationType";
+  accept: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+  modify: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+};
+
+export type UpdateContributionMutationVariables = Exact<{
+  process: Scalars["ID"];
+  agent: Scalars["ID"];
+  resource: Scalars["ID"];
+  quantity: IMeasure;
+  now: Scalars["DateTime"];
+  metadata: Scalars["JSONObject"];
+  conformsTo: Scalars["ID"];
+  unitOne: Scalars["ID"];
+}>;
+
+export type UpdateContributionMutation = {
+  __typename?: "RootMutationType";
+  contribute: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+};
+
+export type QueryProjectForMetadataUpdateQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type QueryProjectForMetadataUpdateQuery = {
+  __typename?: "RootQueryType";
+  economicResource?: {
+    __typename?: "EconomicResource";
+    id: string;
+    name: string;
+    metadata?: any | null;
+    onhandQuantity: {
+      __typename?: "Measure";
+      hasNumericalValue: any;
+      hasUnit?: { __typename?: "Unit"; id: string; symbol: string; label: string } | null;
+    };
+    accountingQuantity: {
+      __typename?: "Measure";
+      hasNumericalValue: any;
+      hasUnit?: { __typename?: "Unit"; id: string; label: string; symbol: string } | null;
+    };
+    primaryAccountable: { __typename?: "Organization"; id: string } | { __typename?: "Person"; id: string };
+  } | null;
+};
 
 export type EditMainMutationVariables = Exact<{
   id: Scalars["ID"];
