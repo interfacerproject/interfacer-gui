@@ -14,6 +14,7 @@ import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
+import { useProjectCRUD } from "hooks/useProjectCRUD";
 
 //
 
@@ -42,23 +43,10 @@ const EditLicenses: NextPageWithLayout = () => {
 
   /* Submit logic */
 
-  // const [editMainMutation] = useMutation<EditMainMutation, EditMainMutationVariables>(EDIT_MAIN);
+  const { updateLicenses } = useProjectCRUD();
 
-  function valuesToVariables(values: EditLicensesValues) {
-    console.log(values);
-    // const classifiedAs = values.main.tags.length ? values.main.tags : undefined;
-    // return {
-    //   id: project.id!,
-    //   name: values.main.title,
-    //   note: values.main.description,
-    //   repo: values.main.link,
-    //   classifiedAs,
-    // };
-  }
-
-  async function onSubmit(values: any) {
-    console.log(values);
-    // await editMainMutation({ variables: valuesToVariables(values) });
+  async function onSubmit(values: EditLicensesValues) {
+    await updateLicenses(project.id!, values.licenses);
   }
 
   /* Render */
