@@ -7,6 +7,7 @@ import BrUserDisplay from "components/brickroom/BrUserDisplay";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SearchUsers from "components/SearchUsers";
+import { formSetValueOptions } from "lib/formSetValueOptions";
 import { Person } from "lib/types";
 import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
@@ -28,13 +29,13 @@ export default function ContributorsStep() {
   const contributors = watch(CONTRIBUTORS_FORM_KEY);
 
   function handleSelect(option: Partial<Person>) {
-    setValue(CONTRIBUTORS_FORM_KEY, [...contributors, option.id!], { shouldValidate: true });
+    setValue(CONTRIBUTORS_FORM_KEY, [...contributors, option.id!], formSetValueOptions);
   }
   function handleRemove(contributorId: string) {
     setValue(
       CONTRIBUTORS_FORM_KEY,
       contributors.filter(id => id !== contributorId),
-      { shouldValidate: true }
+      formSetValueOptions
     );
   }
 

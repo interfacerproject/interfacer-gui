@@ -787,7 +787,7 @@ export const CONTRIBUTE_TO_PROJECT = gql`
     $creationTime: DateTime!
     $process: ID! # Process.id
     $unitOne: ID! # Unit.id
-    $conformTo: ID!
+    $conformsTo: ID!
   ) {
     createEconomicEvent(
       event: {
@@ -795,7 +795,7 @@ export const CONTRIBUTE_TO_PROJECT = gql`
         inputOf: $process
         provider: $agent
         receiver: $agent
-        resourceConformsTo: $conformTo
+        resourceConformsTo: $conformsTo
         hasPointInTime: $creationTime
         effortQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
       }
@@ -937,6 +937,7 @@ export const REJECT_PROPOSAL = gql`
 export const ASK_RESOURCE_PRIMARY_ACCOUNTABLE = gql`
   query askResourcePrimaryAccountable($id: ID!) {
     economicResource(id: $id) {
+      name
       primaryAccountable {
         id
         name
@@ -969,5 +970,149 @@ export const QUERY_RESOURCE_PROPOSAlS = gql`
 export const CLAIM_DID = gql`
   mutation claimDID($id: ID!) {
     claimPerson(id: $id)
+  }
+`;
+
+export const UPDATE_METADATA = gql`
+  mutation updateMetadata(
+    $process: ID!
+    $agent: ID!
+    $resource: ID!
+    $quantity: IMeasure!
+    $now: DateTime!
+    $metadata: JSONObject!
+  ) {
+    accept: createEconomicEvent(
+      event: {
+        action: "accept"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceInventoriedAs: $resource
+        resourceQuantity: $quantity
+        hasPointInTime: $now
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+    modify: createEconomicEvent(
+      event: {
+        action: "modify"
+        outputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceInventoriedAs: $resource
+        resourceQuantity: $quantity
+        resourceMetadata: $metadata
+        hasPointInTime: $now
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+  }
+`;
+
+export const UPDATE_CONTRIBUTION = gql`
+  mutation updateContribution(
+    $process: ID!
+    $agent: ID!
+    $resource: ID!
+    $quantity: IMeasure!
+    $now: DateTime!
+    $metadata: JSONObject!
+    $conformsTo: ID!
+    $unitOne: ID!
+  ) {
+    contribute: createEconomicEvent(
+      event: {
+        action: "work"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceConformsTo: $conformsTo
+        hasPointInTime: $now
+        effortQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+  }
+`;
+
+export const QUERY_PROJECT_FOR_METADATA_UPDATE = gql`
+  query queryProjectForMetadataUpdate($id: ID!) {
+    economicResource(id: $id) {
+      id
+      name
+      metadata
+      onhandQuantity {
+        hasUnit {
+          id
+          symbol
+          label
+        }
+        hasNumericalValue
+      }
+      accountingQuantity {
+        hasUnit {
+          id
+          label
+          symbol
+        }
+        hasNumericalValue
+      }
+      primaryAccountable {
+        id
+      }
+    }
+  }
+`;
+
+export const RELOCATE_PROJECT = gql`
+  mutation relocateProject(
+    $process: ID!
+    $agent: ID!
+    $resource: ID!
+    $quantity: IMeasure!
+    $now: DateTime!
+    $location: ID!
+  ) {
+    pickup: createEconomicEvent(
+      event: {
+        action: "pickup"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceInventoriedAs: $resource
+        resourceQuantity: $quantity
+        hasPointInTime: $now
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+    dropoff: createEconomicEvent(
+      event: {
+        action: "dropoff"
+        outputOf: $process
+        provider: $agent
+        receiver: $agent
+        resourceInventoriedAs: $resource
+        resourceQuantity: $quantity
+        toLocation: $location
+        hasPointInTime: $now
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
   }
 `;

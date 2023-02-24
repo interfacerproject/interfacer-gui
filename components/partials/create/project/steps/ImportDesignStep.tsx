@@ -10,6 +10,7 @@ import {
   autoimportInputSchema,
   AutoimportSource,
 } from "hooks/useAutoimportDefs";
+import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { Controller, useForm, useFormContext } from "react-hook-form";
@@ -37,7 +38,7 @@ export default function ImportDesign() {
   ];
 
   function handleSourceChange(value: string) {
-    setValue("source", value as AutoimportSource, { shouldValidate: true });
+    setValue("source", value as AutoimportSource, formSetValueOptions);
   }
 
   /* Setting data in the "main" form */
@@ -57,7 +58,7 @@ export default function ImportDesign() {
 
   function setFormValues(values: Partial<CreateProjectValues>) {
     for (const [key, value] of Object.entries(values)) {
-      setProjectValues(key as keyof CreateProjectValues, value, { shouldValidate: true });
+      setProjectValues(key as keyof CreateProjectValues, value, formSetValueOptions);
     }
   }
 

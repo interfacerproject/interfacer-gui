@@ -14,27 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { useQuery } from "@apollo/client";
 import { Button } from "@bbtgnn/polaris-interfacer";
 import cn from "classnames";
 import { Notification } from "hooks/useInBox";
 import MdParser from "lib/MdParser";
+import { ASK_RESOURCE_PRIMARY_ACCOUNTABLE } from "lib/QueryAndMutation";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import dayjs from "../lib/dayjs";
-import { AddedAsContributorNotification, MessageSubject } from "../pages/notification";
+import { MessageSubject } from "../pages/notification";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 
-type ContributionMessageProps = {
-  data: Date;
-  userName: string;
-  userId: string;
-  resourceId: string;
-  resourceName: string;
-  proposalId: string;
-  message: string;
-  subject: MessageSubject;
-};
 const ContributionMessage = ({
   message,
   sender,
@@ -44,14 +37,35 @@ const ContributionMessage = ({
   sender: string;
   data: Date;
 }) => {
+  const [ownerName, setOwnerName] = useState("");
+  const [userId, setUserId] = useState("");
+  const [originalResourceId, setOriginalResourceId] = useState("");
+  const [originalResourceName, setOriginalResourceName] = useState("");
   const router = useRouter();
   const { t } = useTranslation("notificationProps");
   const { message: parsedMessage } = message;
+  useEffect(() => {
+    if (message.subject !== MessageSubject.ADDED_AS_CONTRIBUTOR) findResourceData(parsedMessage.originalResourceID);
+    else {
+      findResourceData(message.message.resourceID);
+    }
+  }, [parsedMessage.originalResourceID]);
+
+  const { refetch: fetchUser } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
+  const findResourceData = async (id: string) => {
+    const { data } = await fetchUser({ id });
+    const economicResource = data?.economicResource;
+    if (!economicResource) return;
+    setOwnerName(economicResource.primaryAccountable.name);
+    setUserId(economicResource.primaryAccountable.id);
+    setOriginalResourceId(economicResource.id);
+    setOriginalResourceName(economicResource.name);
+  };
   const commonProps = {
     data,
     userId: sender,
     message: parsedMessage.text,
-    resourceName: parsedMessage.originalResourceName,
+    resourceName: originalResourceName,
     resourceId: parsedMessage.originalResourceID,
     userName: parsedMessage.proposerName,
     proposalId: parsedMessage.proposalID,
@@ -64,13 +78,12 @@ const ContributionMessage = ({
         const { message: addedAsContributorMessage } = message;
         return {
           ...commonProps,
-          resourceName: addedAsContributorMessage.resourceName,
+          resourceName: originalResourceName,
           resourceId: addedAsContributorMessage.resourceID,
-          userName: addedAsContributorMessage.projectOwnerName!,
-          proposalId: addedAsContributorMessage.projectOwnerId,
+          userName: ownerName,
+          proposalId: userId,
         };
       case MessageSubject.PROJECT_CITED:
-        return commonProps;
       case MessageSubject.CONTRIBUTION_REQUEST:
       case MessageSubject.CONTRIBUTION_ACCEPTED:
       case MessageSubject.CONTRIBUTION_REJECTED:
@@ -93,7 +106,7 @@ const ContributionMessage = ({
     "bg-error": m.subject === MessageSubject.CONTRIBUTION_REJECTED,
   });
 
-  const hasMessage = m.subject === MessageSubject.CONTRIBUTION_REQUEST || m.subject === MessageSubject.PROJECT_CITED;
+  const hasMessage = Boolean(m.message);
   const request = MessageSubject.CONTRIBUTION_REQUEST === m.subject;
 
   return (

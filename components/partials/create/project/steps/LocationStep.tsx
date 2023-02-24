@@ -3,6 +3,7 @@ import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SelectLocation2 from "components/SelectLocation2";
 import { ProjectType } from "components/types";
 import { LocationLookup } from "lib/fetchLocation";
+import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useTranslation } from "next-i18next";
 import { Controller, useFormContext } from "react-hook-form";
 import * as yup from "yup";
@@ -104,11 +105,11 @@ export default function LocationStepProduct(props: Props) {
         )}
       />
 
-      {projectType == "service" && (
+      {projectType == ProjectType.SERVICE && (
         <Checkbox
           id="remote"
           name="remote"
-          onChange={value => setValue("location.remote", value, { shouldValidate: true })}
+          onChange={value => setValue("location.remote", value, formSetValueOptions)}
           checked={watch("location.remote")}
           label={t("This service happens remotely / online")}
           error={errors.location?.remote?.message}

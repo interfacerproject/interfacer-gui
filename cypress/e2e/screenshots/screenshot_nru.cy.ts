@@ -13,22 +13,25 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import { skipOn } from "@cypress/skip-test";
 
 const Nru_pages = "/ /sign_up /sign_in".split(" ");
 
-describe.skip("Screenshot nru", () => {
+describe("Screenshot nru", () => {
   beforeEach(() => {
+    skipOn(Cypress.env("isTest"));
     cy.viewport("macbook-13");
   });
-  after(() => {
-    cy.exec("mv cypress/screenshots/ci/screenshots/screenshot_nru.cy.ts cypress/screenshots/ci/screenshot_nru/");
-  });
+  // after(() => {
+  //   cy.exec("mv cypress/screenshots/ci/screenshots/screenshot_nru.cy.ts cypress/screenshots/ci/screenshot_nru/");
+  // });
 
   Nru_pages.forEach(page => {
     it(`should take a screenshot of ${page}`, () => {
       cy.visit(`https://interfacer-gui-staging.dyne.org${page}`);
       cy.wait(5000);
-      cy.screenshot(`nru_${page}`);
+      //@ts-ignore
+      cy.screenshot(`nru_${page.replaceAll("/", "")}`, { overwrite: true });
     });
   });
 });

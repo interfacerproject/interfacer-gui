@@ -27,6 +27,7 @@ import BrMdEditor from "components/brickroom/BrMdEditor";
 import { ChildrenProp as CP } from "components/brickroom/types";
 
 // Other
+import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
 import React from "react";
 
@@ -109,7 +110,7 @@ export default function CreateContributionForm(props: Props) {
           )}.`}
           subtitle={t("Short description to be displayed on the project page")}
           onChange={({ text }) => {
-            setValue("description", text, { shouldValidate: true });
+            setValue("description", text, formSetValueOptions);
           }}
           requiredIndicator={isRequired(schema, "description")}
           error={errors.description?.message}

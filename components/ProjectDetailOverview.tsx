@@ -29,8 +29,7 @@ const ProjectDetailOverview = ({ project }: { project: EconomicResource }) => {
 
   return (
     <Stack vertical>
-      {text && <div dangerouslySetInnerHTML={{ __html: MdParser.render(text) }} />}
-
+      {text && <div className="prose" dangerouslySetInnerHTML={{ __html: MdParser.render(text) }} />}
       {tags && (
         <div>
           <Text as="h2" variant="headingMd">

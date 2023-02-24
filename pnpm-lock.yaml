@@ -5,6 +5,7 @@ specifiers:
   '@babel/core': ^7.19.3
   '@bbtgnn/polaris-interfacer': ^0.1.0
   '@bbtgnn/polaris-interfacer-tokens': ^6.3.0
+  '@cypress/skip-test': ^2.6.1
   '@graphql-codegen/cli': ^2.13.7
   '@graphql-codegen/typescript': ^2.7.4
   '@graphql-codegen/typescript-operations': ^2.5.4
@@ -15,6 +16,7 @@ specifiers:
   '@testing-library/cypress': ^8.0.3
   '@types/base45': ^2.0.0
   '@types/crypto-js': ^4.1.1
+  '@types/lodash': ^4.14.191
   '@types/markdown-it': ^12.2.3
   '@types/node': 18.7.15
   '@types/react': 18.0.18
@@ -88,6 +90,7 @@ dependencies:
   '@babel/core': 7.20.2
   '@bbtgnn/polaris-interfacer': 0.1.0_biqbaboplfbrettd7655fr4n2y
   '@bbtgnn/polaris-interfacer-tokens': 6.3.0
+  '@cypress/skip-test': 2.6.1
   '@graphql-codegen/cli': 2.13.12_p5f6mevuc2csew42at7bqdjpce
   '@graphql-codegen/typescript': 2.8.2_graphql@15.8.0
   '@graphql-codegen/typescript-operations': 2.5.7_graphql@15.8.0
@@ -155,6 +158,7 @@ dependencies:
   zenroom: 2.2.3-f0193d51
 
 devDependencies:
+  '@types/lodash': 4.14.191
   '@typescript-eslint/eslint-plugin': 5.43.0_nqj4bdx4ekws7aecttskpih4py
   cypress-fail-fast: 5.0.1_cypress@10.11.0
   devmoji: 2.3.0
@@ -1041,6 +1045,10 @@ packages:
       tough-cookie: 2.5.0
       tunnel-agent: 0.6.0
       uuid: 8.3.2
+    dev: false
+
+  /@cypress/skip-test/2.6.1:
+    resolution: {integrity: sha512-X+ibefBiuOmC5gKG91wRIT0/OqXeETYvu7zXktjZ3yLeO186Y8ia0K7/gQUpAwuUi28DuqMd1+7tBQVtPkzbPA==}
     dev: false
 
   /@cypress/xvfb/1.2.4:
@@ -2402,9 +2410,8 @@ packages:
     resolution: {integrity: sha512-HZQYqbiFVWufzCwexrvh694SOim8z2d+xJl5UNamcvQFejLY/2YUtzXHYi3cHdI7PMlS8ejH2slRAOJQ32aNbA==}
     dev: false
 
-  /@types/lodash/4.14.189:
-    resolution: {integrity: sha512-kb9/98N6X8gyME9Cf7YaqIMvYGnBSWqEci6tiettE6iJWH1XdJz/PO8LB0GtLCG7x8dU3KWhZT+lA1a35127tA==}
-    dev: false
+  /@types/lodash/4.14.191:
+    resolution: {integrity: sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==}
 
   /@types/lru-cache/5.1.1:
     resolution: {integrity: sha512-ssE3Vlrys7sdIzs5LOxCzTVMsU7i9oa/IaW92wF32JFb3CVczqOkru2xspuKczHEbG3nvmPY7IFqVmGGHdNbYw==}
@@ -9274,7 +9281,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       '@babel/runtime': 7.20.1
-      '@types/lodash': 4.14.189
+      '@types/lodash': 4.14.191
       lodash: 4.17.21
       lodash-es: 4.17.21
       nanoclone: 0.2.1

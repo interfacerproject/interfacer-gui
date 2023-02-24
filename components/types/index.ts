@@ -11,9 +11,9 @@ export interface SelectOption {
 //
 
 export enum ProjectType {
-  DESIGN = "design",
-  PRODUCT = "product",
-  SERVICE = "service",
+  DESIGN = "Design",
+  PRODUCT = "Product",
+  SERVICE = "Service",
 }
 
 export const projectTypes = Object.values(ProjectType);
