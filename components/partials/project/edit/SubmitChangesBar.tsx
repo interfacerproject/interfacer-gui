@@ -17,7 +17,7 @@ export default function SubmitChangesBar(props: SubmitChangesProps) {
   return (
     <>
       {isDirty && (
-        <div className="bg-yellow-100 border-b-1 border-b-border-warning-subdued p-4 flex justify-end items-center space-x-6 sticky top-0 z-10">
+        <div className="bg-yellow-100 border-t-1 border-t-border-warning-subdued p-4 flex justify-end items-center space-x-6 sticky bottom-0 z-20">
           <Text variant="bodyMd" as="p">
             {t("You have unsaved changes")}
           </Text>
