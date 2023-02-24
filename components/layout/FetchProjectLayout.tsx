@@ -60,6 +60,8 @@ export const GET_PROJECT_LAYOUT = gql`
         id
         name
         mappableAddress
+        lat
+        long
       }
       images {
         hash
