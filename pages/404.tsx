@@ -59,7 +59,12 @@ FourOhFour.getLayout = function getLayout(page: ReactElement) {
     <Layout>
       <div className="container bg-[#F3F3F1] max-w-full">
         <div className="grid grid-cols-1 md:grid-cols-2">
-          <img src="/404bg.png" className={"w-full h-full object-contain bg-[#013026] md:h-screen hidden md:block"} />
+          <img
+            id="sideBgImage"
+            alt="404"
+            src="/404bg.png"
+            className={"w-full h-full object-contain bg-[#013026] md:h-screen hidden md:block"}
+          />
           <div className="h-full">{page}</div>
         </div>
       </div>
