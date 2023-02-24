@@ -357,7 +357,8 @@ export const useProjectCRUD = () => {
     RELOCATE_PROJECT
   );
 
-  const relocateProject = async (project: Partial<EconomicResource>, locationValues: LocationStepValues) => {
+  const relocateProject = async (projectId: string, locationValues: LocationStepValues) => {
+    const project = await getProjectForMetadataUpdate(projectId);
     if (project.primaryAccountable?.id !== user?.ulid) throw new Error("NotAuthorized");
     const processId = await createProcess(`relocate project @ ${project.name}`);
     if (locationValues.remote !== project.metadata.remote)

@@ -65,7 +65,7 @@ const EditLocation: NextPageWithLayout = () => {
   const { relocateProject } = useProjectCRUD();
 
   async function onSubmit(values: EditLocationValues) {
-    await relocateProject(project, values.location);
+    await relocateProject(project.id!, values.location);
   }
 
   /* Render */
