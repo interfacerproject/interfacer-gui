@@ -35,7 +35,7 @@ export const projectSections: Array<ProjectSection> = [
     id: "main",
     component: <MainStep />,
     required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN],
-    editPage: "/edit",
+    editPage: "edit",
   },
   {
     navLabel: "Design source",
@@ -54,14 +54,14 @@ export const projectSections: Array<ProjectSection> = [
     component: <LocationStep projectType={ProjectType.PRODUCT} />,
     for: [ProjectType.PRODUCT],
     required: [ProjectType.PRODUCT],
-    editPage: "/edit/location",
+    editPage: "edit/location",
   },
   {
     navLabel: "Location",
     id: "location",
     component: <LocationStep projectType={ProjectType.SERVICE} />,
     for: [ProjectType.SERVICE],
-    editPage: "/edit/location",
+    editPage: "edit/location",
   },
   {
     navLabel: "Certifications",
@@ -69,26 +69,26 @@ export const projectSections: Array<ProjectSection> = [
     component: <DeclarationsStep />,
     for: [ProjectType.PRODUCT],
     required: [ProjectType.PRODUCT],
-    editPage: "/edit/declarations",
+    editPage: "edit/declarations",
   },
   {
     navLabel: "Licenses",
     id: "licenses",
     component: <LicenseStep />,
     for: [ProjectType.DESIGN],
-    editPage: "/edit/licenses",
+    editPage: "edit/licenses",
   },
   {
     navLabel: "Contributors",
     id: "contributors",
     component: <ContributorsStep />,
-    editPage: "/edit/contributors",
+    editPage: "edit/contributors",
   },
   {
     navLabel: "Relations",
     id: "relations",
     component: <RelationsStep />,
-    editPage: "/edit/relations",
+    editPage: "edit/relations",
   },
 ];
 
@@ -96,4 +96,12 @@ export const projectSections: Array<ProjectSection> = [
 
 export function getSectionsByProjectType(projectType: ProjectType): Array<ProjectSection> {
   return projectSections.filter(section => !section.for || section.for.includes(projectType));
+}
+
+export function getEditSectionsByProjectType(projectType: ProjectType): Array<ProjectSection> {
+  return getSectionsByProjectType(projectType).filter(section => section.editPage);
+}
+
+export function isEditRouteAllowed(projectType: ProjectType, editRoute: string): boolean {
+  return getEditSectionsByProjectType(projectType).some(section => section.editPage === editRoute);
 }

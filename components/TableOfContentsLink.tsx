@@ -15,10 +15,10 @@ export default function TableOfContentsLink(props: Props) {
   });
 
   return (
-    <div className={classes}>
-      <Link href={href}>
-        <a className="">{label}</a>
-      </Link>
-    </div>
+    <Link href={href}>
+      <div className={classes}>
+        <a>{label}</a>
+      </div>
+    </Link>
   );
 }
