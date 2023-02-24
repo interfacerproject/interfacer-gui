@@ -57,6 +57,7 @@ const EditLocation: NextPageWithLayout = () => {
     defaultValues,
     context: {
       projectType,
+      isEdit: true,
     },
   });
 
@@ -72,7 +73,7 @@ const EditLocation: NextPageWithLayout = () => {
 
   return (
     <EditFormLayout formMethods={formMethods} onSubmit={onSubmit}>
-      <LocationStep projectType={projectType} />
+      <LocationStep projectType={projectType} isEdit />
     </EditFormLayout>
   );
 };

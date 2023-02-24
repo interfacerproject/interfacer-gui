@@ -30,6 +30,10 @@ function requiredWhenLocationName(locationName: string, schema: yup.AnySchema) {
   return Boolean(locationName) ? schema.required() : schema.nullable();
 }
 
+function requiredWhenEdit(isEdit: boolean, schema: yup.AnySchema) {
+  return isEdit ? schema.required() : schema.nullable();
+}
+
 export const locationStepSchema = yup.object().shape({
   locationName: yup.string().when("$projectType", requiredWhenProduct),
   locationData: yup
@@ -39,28 +43,32 @@ export const locationStepSchema = yup.object().shape({
       lng: yup.number().required(),
     })
     .when("$projectType", requiredWhenProduct)
-    .when("locationName", requiredWhenLocationName),
+    .when("locationName", requiredWhenLocationName)
+    .when("$isEdit", requiredWhenEdit),
   remote: yup.boolean(),
 });
 
 export interface LocationStepSchemaContext {
   projectType: ProjectType;
+  isEdit: boolean;
 }
 
 //
 
-export interface Props {
+export interface Props extends Partial<LocationStepSchemaContext> {
   projectType: ProjectType.PRODUCT | ProjectType.SERVICE;
 }
 
 //
 
 export default function LocationStepProduct(props: Props) {
-  const { projectType } = props;
+  const { projectType, isEdit = false } = props;
   const { t } = useTranslation();
 
   const { setValue, control, formState, watch, trigger } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
+
+  const isLocationRequired = projectType == ProjectType.PRODUCT || Boolean(watch("location.locationName")) || isEdit;
 
   //
 
@@ -78,8 +86,12 @@ export default function LocationStepProduct(props: Props) {
             name={name}
             value={value}
             autoComplete="off"
-            onChange={onChange}
-            onBlur={onBlur}
+            onChange={value => {
+              onChange(value), trigger("location.locationData");
+            }}
+            onBlur={() => {
+              onBlur(), trigger("location.locationData");
+            }}
             label={t("Location name")}
             placeholder={t("Cool fablab")}
             helpText={t("The name of the place where the project is stored")}
@@ -93,7 +105,7 @@ export default function LocationStepProduct(props: Props) {
         location={watch("location.locationData")}
         setLocation={value => setValue("location.locationData", value, formSetValueOptions)}
         error={errors.location?.locationData?.message}
-        requiredIndicator={projectType == ProjectType.PRODUCT || Boolean(watch("location.locationName"))}
+        requiredIndicator={isLocationRequired}
       />
 
       {projectType == ProjectType.SERVICE && (

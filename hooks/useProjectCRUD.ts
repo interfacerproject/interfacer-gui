@@ -96,7 +96,7 @@ export const useProjectCRUD = () => {
     try {
       const { data } = await createLocation({
         variables: {
-          name: location.locationName,
+          name: location.locationName || location.locationData?.address!,
           addr: location.locationData?.address!,
           lat: location.locationData?.lat || 0,
           lng: location.locationData?.lng || 0,
