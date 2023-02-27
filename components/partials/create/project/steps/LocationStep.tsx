@@ -1,8 +1,7 @@
 import { Checkbox, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import SelectLocation2 from "components/SelectLocation2";
+import SelectLocation2, { SelectedLocation } from "components/SelectLocation2";
 import { ProjectType } from "components/types";
-import { LocationLookup } from "lib/fetchLocation";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useTranslation } from "next-i18next";
 import { Controller, useFormContext } from "react-hook-form";
@@ -13,50 +12,63 @@ import { CreateProjectValues } from "../CreateProjectForm";
 
 export interface LocationStepValues {
   locationName: string;
-  location: LocationLookup.Location | null;
+  locationData: SelectedLocation | null;
   remote: boolean;
 }
 
 export const locationStepDefaultValues: LocationStepValues = {
   locationName: "",
-  location: null,
+  locationData: null,
   remote: false,
 };
 
+function requiredWhenProduct(projectType: ProjectType, schema: yup.AnySchema) {
+  return projectType === ProjectType.PRODUCT ? schema.required() : schema.nullable();
+}
+
+function requiredWhenLocationName(locationName: string, schema: yup.AnySchema) {
+  return Boolean(locationName) ? schema.required() : schema.nullable();
+}
+
+function requiredWhenEdit(isEdit: boolean, schema: yup.AnySchema) {
+  return isEdit ? schema.required() : schema.nullable();
+}
+
 export const locationStepSchema = yup.object().shape({
-  locationName: yup
-    .string()
-    .when("$projectType", (projectType: ProjectType, schema) =>
-      projectType === ProjectType.PRODUCT ? schema.required() : schema.nullable()
-    ),
-  location: yup
-    .object()
-    .when("$projectType", (projectType: ProjectType, schema) =>
-      projectType === ProjectType.PRODUCT ? schema.required() : schema.nullable()
-    ),
+  locationName: yup.string().when("$projectType", requiredWhenProduct),
+  locationData: yup
+    .object({
+      address: yup.string().required(),
+      lat: yup.number().required(),
+      lng: yup.number().required(),
+    })
+    .when("$projectType", requiredWhenProduct)
+    .when("locationName", requiredWhenLocationName)
+    .when("$isEdit", requiredWhenEdit),
   remote: yup.boolean(),
 });
 
 export interface LocationStepSchemaContext {
   projectType: ProjectType;
+  isEdit: boolean;
 }
 
 //
 
-export interface Props {
-  projectType?: Exclude<ProjectType, ProjectType.DESIGN>;
+export interface Props extends Partial<LocationStepSchemaContext> {
+  projectType: ProjectType.PRODUCT | ProjectType.SERVICE;
 }
 
 //
 
 export default function LocationStepProduct(props: Props) {
-  const { projectType = "product" } = props;
+  const { projectType, isEdit = false } = props;
   const { t } = useTranslation();
 
-  const { setValue, control, formState, watch } = useFormContext<CreateProjectValues>();
+  const { setValue, control, formState, watch, trigger } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
 
-  const locationError = t("Please select a location");
+  const isLocationRequired = projectType == ProjectType.PRODUCT || Boolean(watch("location.locationName")) || isEdit;
 
   //
 
@@ -74,8 +86,12 @@ export default function LocationStepProduct(props: Props) {
             name={name}
             value={value}
             autoComplete="off"
-            onChange={onChange}
-            onBlur={onBlur}
+            onChange={value => {
+              onChange(value), trigger("location.locationData");
+            }}
+            onBlur={() => {
+              onBlur(), trigger("location.locationData");
+            }}
             label={t("Location name")}
             placeholder={t("Cool fablab")}
             helpText={t("The name of the place where the project is stored")}
@@ -85,24 +101,11 @@ export default function LocationStepProduct(props: Props) {
         )}
       />
 
-      <Controller
-        control={control}
-        name="location.location"
-        render={({ field: { onChange, onBlur, name, ref } }) => (
-          <SelectLocation2
-            id={name}
-            name={name}
-            ref={ref}
-            onBlur={onBlur}
-            onChange={onChange}
-            label={t("Search the full address")}
-            placeholder={t("Hamburg, Boxhagener Str. 3")}
-            error={errors.location?.location ? locationError : ""}
-            creatable={false}
-            requiredIndicator={projectType == ProjectType.PRODUCT}
-            isClearable
-          />
-        )}
+      <SelectLocation2
+        location={watch("location.locationData")}
+        setLocation={value => setValue("location.locationData", value, formSetValueOptions)}
+        error={errors.location?.locationData?.message}
+        requiredIndicator={isLocationRequired}
       />
 
       {projectType == ProjectType.SERVICE && (

@@ -104,6 +104,7 @@ export default function CreateProjectForm(props: Props) {
     defaultValues: createProjectDefaultValues,
     context: {
       projectType,
+      isEdit: false,
     },
   });
 

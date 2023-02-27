@@ -92,17 +92,14 @@ export const useProjectCRUD = () => {
     design: boolean
   ): Promise<{ remote: boolean; st: SpatialThingRes | undefined }> {
     const remote = location.remote || design;
-    const name = location.locationName;
-    const addr = location.location?.address.label;
-    const position = location.location?.position;
-    if (!name || name.length == 0) return { st: undefined, remote: remote };
+    if (!location.locationData) return { st: undefined, remote: remote };
     try {
       const { data } = await createLocation({
         variables: {
-          name: name,
-          addr: addr!,
-          lat: position?.lat || 0,
-          lng: position?.lng || 0,
+          name: location.locationName || location.locationData?.address!,
+          addr: location.locationData?.address!,
+          lat: location.locationData?.lat || 0,
+          lng: location.locationData?.lng || 0,
         },
       });
       const st = data?.createSpatialThing.spatialThing;
@@ -213,7 +210,7 @@ export const useProjectCRUD = () => {
       const processId = await createProcess(processName);
       devLog("success: process created", processName, processId);
       let location;
-      if (formData.location.location || formData.location.remote) {
+      if (formData.location.locationData || formData.location.remote) {
         location = await handleCreateLocation(formData.location, projectType === ProjectType.DESIGN);
       }
       const images: IFile[] = await prepFilesForZenflows(formData.images, getItem("eddsaPrivateKey"));
@@ -360,14 +357,15 @@ export const useProjectCRUD = () => {
     RELOCATE_PROJECT
   );
 
-  const relocateProject = async (project: Partial<EconomicResource>, locationValues: LocationStepValues) => {
+  const relocateProject = async (projectId: string, locationValues: LocationStepValues) => {
+    const project = await getProjectForMetadataUpdate(projectId);
     if (project.primaryAccountable?.id !== user?.ulid) throw new Error("NotAuthorized");
     const processId = await createProcess(`relocate project @ ${project.name}`);
     if (locationValues.remote !== project.metadata.remote)
       await updateMetadata(project, { remote: locationValues.remote }, processId);
     if (
-      !locationValues.location ||
-      (locationValues.location?.address.label === project.currentLocation?.mappableAddress &&
+      !locationValues.locationData ||
+      (locationValues.locationData?.address === project.currentLocation?.mappableAddress &&
         locationValues.locationName === project.currentLocation?.name)
     )
       return;

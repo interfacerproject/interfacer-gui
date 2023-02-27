@@ -1,47 +1,57 @@
-import { SelectOnChange, SelectOption } from "components/brickroom/utils/BrSelectUtils";
-import { FetchLocation, getLocationOptions, LocationLookup, lookupLocation } from "lib/fetchLocation";
-import { forwardRef } from "react";
-
-// Components
-import BrSelectSearchableAsync, { BrSelectSearchableAsyncProps } from "./brickroom/BrSelectSearchableAsync";
+import PCardWithAction from "components/polaris/PCardWithAction";
+import { LocationLookup } from "lib/fetchLocation";
+import { PFieldInfoProps } from "./polaris/PFieldInfo";
+import SearchLocation from "./SearchLocation";
 
 //
 
-export type OnChangeBaseType = SelectOnChange<SelectOption<FetchLocation.Location>>;
+export interface SelectedLocation {
+  address: string;
+  lat: number;
+  lng: number;
+}
 
-export interface SelectLocationProps extends BrSelectSearchableAsyncProps, BrSelectSearchableAsyncProps {
-  onChange?: (location: LocationLookup.Location | null) => void;
+interface Props extends Partial<PFieldInfoProps> {
+  location?: SelectedLocation | null;
+  setLocation?: (location: SelectedLocation | null) => void;
 }
 
 //
 
-const SelectLocation2 = forwardRef<any, SelectLocationProps>((props, ref) => {
-  const { onChange = () => {} } = props;
-  const promiseOptions = (inputValue: string) => getLocationOptions(inputValue);
+export default function SelectLocation2(props: Props) {
+  const { location = null, setLocation = () => {} } = props;
 
-  // Custom onChange fetches location with coordinates
-  const handleChange: OnChangeBaseType = async (newValue, actionMeta) => {
-    if (!newValue) {
-      onChange(null);
-    } else {
-      const location = await lookupLocation(newValue.value.id);
-      onChange(location);
-    }
-  };
+  function handleSelect(loc: LocationLookup.Location | null) {
+    setLocation(loc ? { address: loc.title, lat: loc.position.lat, lng: loc.position.lng } : null);
+  }
+
+  function handleRemove() {
+    setLocation(null);
+  }
 
   return (
-    <BrSelectSearchableAsync
-      {...props}
-      cacheOptions
-      loadOptions={promiseOptions}
-      defaultOptions
-      onChange={handleChange} // Has to be after {...props} in order to being not overwritten by spread props
-      ref={ref}
-    />
+    <div className="space-y-3">
+      <SearchLocation
+        onSelect={handleSelect}
+        label={props.label}
+        error={props.error}
+        helpText={props.helpText}
+        requiredIndicator={props.requiredIndicator}
+      />
+      {location && (
+        <PCardWithAction onClick={handleRemove}>
+          <div>
+            <p>{location.address}</p>
+            <p className="font-mono">
+              <span className="font-bold">{"Lat: "}</span>
+              <span>{location.lat}</span>
+              <span>{" | "}</span>
+              <span className="font-bold">{"Lng :"}</span>
+              <span>{location.lng}</span>
+            </p>
+          </div>
+        </PCardWithAction>
+      )}
+    </div>
   );
-});
-
-//
-
-SelectLocation2.displayName = "SelectLocation2";
-export default SelectLocation2;
+}
