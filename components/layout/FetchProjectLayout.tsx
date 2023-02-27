@@ -28,7 +28,14 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
   const project = data?.economicResource as Partial<EconomicResource>;
 
   //   if (!id) router.push("/projects");
-  if (loading) return <Spinner />;
+  if (loading)
+    return (
+      <div className="flex pt-40 items-center">
+        <div className="mx-auto">
+          <Spinner />
+        </div>
+      </div>
+    );
   if (!project) return null;
 
   return <ProjectContext.Provider value={project}>{children}</ProjectContext.Provider>;
