@@ -67,7 +67,7 @@ describe("Project Detail functionality", () => {
       .should("have.text", "Watch");
   });
   it("Should click on contribute and go to contribution page", () => {
-    cy.get("#goToContribution").should("exist").click().url().should("include", "create/contribution/");
+    cy.get("#contribute").should("exist").click().url().should("include", "create/contribution/");
   });
   it("Should have Dpp tab and when it is selected, should have a Json object inside", () => {
     cy.get("#dpp").should("exist");

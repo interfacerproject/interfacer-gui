@@ -335,7 +335,7 @@ const Project = () => {
                   data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
                 />
               )}
-              {selected == 5 && <ContributionsTable id={String(id)} title={t("Contributoions")} />}
+              {selected == 5 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
             </Stack>
           </Stack>
         </div>
@@ -371,7 +371,7 @@ const Project = () => {
           </Card>
 
           {/* Actions */}
-          {user && (
+          {project.metadata.licenses && (
             <Card sectioned>
               <Stack vertical spacing="loose">
                 <ProjectLicenses project={project} />
@@ -385,7 +385,7 @@ const Project = () => {
                 {t("Contributions")}
               </Text>
               <Text color="success" as="p" variant="bodyMd">
-                {t("{{contributors}} contributors", { contributors: project.metadata.contributors.length })}
+                {t("{{contributors}} contributors", { contributors: project.metadata.contributors?.length || 0 })}
               </Text>
               <ProjectContributors projectNode={project} />
               <Text color="success" as="p" variant="bodyMd">
@@ -420,7 +420,7 @@ const Project = () => {
                 {t("Relations")}
               </Text>
               <Text color="success" as="p" variant="bodyMd">
-                {t("{{related}} related projects", { related: project.metadata.relations.length })}
+                {t("{{related}} related projects", { related: project.metadata.relations?.length || 0 })}
               </Text>
               <Button
                 id="seeRelations"

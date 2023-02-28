@@ -25,7 +25,7 @@ export interface Props {
 export default function ProjectThumb(props: Props) {
   const { project, size = "md" } = props;
   const image =
-    project.images?.[0] ||
+    project?.images?.[0] ||
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mPkFFxcDwACJgE+S4F7fQAAAABJRU5ErkJggg==";
   const src = typeof image === "string" ? image : `data:${image?.mimeType};base64,${image?.bin}`;
 

@@ -29,7 +29,7 @@ const RelationshipTree = ({ project }: { project: EconomicResource | undefined }
   };
   return (
     <div className="w-full mt-2" id="relationshipTree">
-      <PTitleCounter title={t("Relations")} length={relatedProjects.length} />
+      <PTitleCounter title={t("Relations")} length={relatedProjects?.length ?? 0} />
       <ProjectsCards filter={proposalFilter} tiny />
     </div>
   );
