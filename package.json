@@ -14,7 +14,7 @@
     "check-lint": "eslint . --ext ts --ext tsx --ext js",
     "reload": "pm2 startOrGracefulReload ecosystem.config.js",
     "cypress": "cypress open",
-    "cypress:headless": "cypress run --config videoRecording=false",
+    "cypress:headless": "cypress run --config video=false",
     "test:component": "cypress run-ct --record",
     "screenshots": "cypress run --env isTest=false --spec 'cypress/e2e/screenshots/*.cy.ts' --config baseUrl='https://interfacer-gui-staging.dyne.org/'",
     "e2e": "pnpm build && start-server-and-test start http://localhost:3000 cypress",

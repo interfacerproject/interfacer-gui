@@ -26,29 +26,33 @@ describe("LocationMenu component", () => {
     // Getting "fr" language
     // (The order of languages in included in LocationMenu.tsx)
     getMenu().select(2);
-    cy.wait(2000);
+    cy.wait(3000);
     cy.url().should("include", "/fr");
   });
 
   it("should check that text between two languages is different", () => {
     // Getting text from a button
-    const item = "#homeTitle";
+    const item = ".Polaris-Button__Text";
 
-    cy.get(item).then(el => {
-      // Saving text from an item, in order to check its change
-      const text = el.text();
+    cy.get(item)
+      .first()
+      .then(el => {
+        // Saving text from an item, in order to check its change
+        const text = el.text();
 
-      // Getting "de" lang
-      getMenu().select(1);
-      cy.wait(2000);
-      cy.url().should("include", "/de");
+        // Getting "de" lang
+        getMenu().select(1);
+        cy.wait(2000);
+        cy.url().should("include", "/de");
 
-      // Getting text again from the same item
-      cy.get(item).then(el => {
-        // Checking that they're different
-        expect(el.text()).not.to.eq(text);
+        // Getting text again from the same item
+        cy.get(item)
+          .first()
+          .then(el => {
+            // Checking that they're different
+            expect(el.text()).not.to.eq(text);
+          });
       });
-    });
   });
 });
 
