@@ -19,12 +19,13 @@ import Link from "next/link";
 import dayjs from "../lib/dayjs";
 import BrTable from "./brickroom/BrTable";
 import BrUserDisplay from "./brickroom/BrUserDisplay";
+import PTitleCounter from "./polaris/PTitleCounter";
 
 const ContributorsTable = ({ contributors, title, data }: { contributors?: string[]; title?: string; data: any }) => {
   const { t } = useTranslation("common");
   return (
     <>
-      {title && <h3 className="my-2 my-6">{title}</h3>}
+      <PTitleCounter title={title} length={contributors?.length} />
       <BrTable headArray={[t("Username"), t("Date")]}>
         {contributors &&
           contributors.map(contributor => (

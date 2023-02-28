@@ -16,26 +16,24 @@
 
 import { useQuery } from "@apollo/client";
 import dayjs from "dayjs";
-import devLog from "lib/devLog";
 import { QUERY_RESOURCE_PROPOSAlS } from "lib/QueryAndMutation";
 import { ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import BrTable from "./brickroom/BrTable";
+import PTitleCounter from "./polaris/PTitleCounter";
 
 const ContributionsTable = ({ id, title }: { id: string; title?: string }) => {
   const { t } = useTranslation("common");
   const { data } = useQuery<ResourceProposalsQuery, ResourceProposalsQueryVariables>(QUERY_RESOURCE_PROPOSAlS, {
     variables: { id: id },
   });
-  devLog("resource proposals", data);
   const proposals = data?.proposals.edges;
-  devLog("proposals", proposals);
 
   return (
     <>
-      {title && <h3 className="my-6">{title}</h3>}
+      <PTitleCounter title={title} length={proposals?.length} />
       <BrTable headArray={[t("Username"), t("Description"), t("Last update"), t("Status")]}>
         {proposals &&
           proposals.map(proposal => (

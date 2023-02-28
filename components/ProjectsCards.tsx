@@ -16,6 +16,7 @@
 
 import { useQuery } from "@apollo/client";
 import { Text } from "@bbtgnn/polaris-interfacer";
+import { useAuth } from "hooks/useAuth";
 import Link from "next/link";
 import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
@@ -49,6 +50,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     tiny = false,
   } = props;
   const dataQueryIdentifier = "economicResources";
+  const { user } = useAuth();
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
     variables: { last: 6, filter: filter },
@@ -78,7 +80,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
               <div className="flex flex-col space-y-3">
                 <div className="flex justify-between">
                   <ProjectTime projectNode={node} />
-                  <AddStar id={node.id} owner={node.primaryAccountable.id} tiny />
+                  {user && <AddStar id={node.id} owner={node.primaryAccountable.id} tiny />}
                 </div>
                 <Link href={`/project/${node.id}`}>
                   <a>

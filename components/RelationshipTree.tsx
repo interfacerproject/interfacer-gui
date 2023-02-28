@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Text } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
+import PTitleCounter from "./polaris/PTitleCounter";
 import ProjectsCards from "./ProjectsCards";
 
 const RelationshipTree = ({ project }: { project: EconomicResource | undefined }) => {
@@ -29,9 +29,7 @@ const RelationshipTree = ({ project }: { project: EconomicResource | undefined }
   };
   return (
     <div className="w-full mt-2" id="relationshipTree">
-      <Text as="h2" variant="heading2xl">
-        {t("Relations")}
-      </Text>
+      <PTitleCounter title={t("Relations")} length={relatedProjects.length} />
       <ProjectsCards filter={proposalFilter} tiny />
     </div>
   );

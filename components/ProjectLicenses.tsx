@@ -1,5 +1,4 @@
 import { Text } from "@bbtgnn/polaris-interfacer";
-import useFilters from "hooks/useFilters";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import LicenseDisplay from "./LicenseDisplay";
@@ -13,7 +12,7 @@ const ProjectLicenses = ({ project }: { project: EconomicResource }) => {
     <>
       {licenses && (
         <>
-          <Text as="h3" variant="headingLg">
+          <Text as="h3" variant="headingMd">
             {t("Licenses")}
           </Text>
           {licenses.map((l, i) => (
