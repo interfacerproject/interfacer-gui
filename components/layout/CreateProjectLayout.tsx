@@ -27,7 +27,7 @@ const CreateProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: 
   const { children } = layoutProps;
 
   return (
-    <div className="">
+    <div className="h-full">
       <div className="p-4">
         <Link href="/create/project">
           <PLink>
