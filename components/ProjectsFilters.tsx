@@ -21,7 +21,9 @@ import { useState } from "react";
 // Select components
 import { Button, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { getOptionValue } from "components/brickroom/utils/BrSelectUtils";
-import SelectContributors from "./SelectContributors";
+import BrUserDisplay from "./brickroom/BrUserDisplay";
+import PCardWithAction from "./polaris/PCardWithAction";
+import SearchUsers from "./SearchUsers";
 import SelectProjectType from "./SelectProjectType";
 import SelectTags2 from "./SelectTags2";
 
@@ -129,19 +131,37 @@ export default function ProjectsFilters(props: ProjectsFiltersProps) {
         />
 
         {!hidePrimaryAccountable && (
-          <SelectContributors
-            label={t("Contributors")}
-            onChange={v => {
+          <SearchUsers
+            onSelect={c => {
               setQueryFilters({
                 ...queryFilters,
                 // @ts-ignore
-                primaryAccountable: v.map(e => e.value.id),
+                primaryAccountable: [...queryFilters.primaryAccountable, c.id],
               });
             }}
-            isMulti
-            defaultValueRaw={queryFilters.primaryAccountable}
-            id="primaryAccountable"
+            excludeIDs={queryFilters.primaryAccountable}
           />
+        )}
+        {queryFilters.primaryAccountable.length && (
+          <Stack vertical spacing="tight">
+            <Text variant="bodyMd" as="p">
+              {t("Selected contributors")}
+            </Text>
+            {queryFilters.primaryAccountable.map(contributorId => (
+              <PCardWithAction
+                key={contributorId}
+                onClick={() => {
+                  setQueryFilters({
+                    ...queryFilters,
+                    // @ts-ignore
+                    primaryAccountable: queryFilters.primaryAccountable.filter(e => e !== contributorId),
+                  });
+                }}
+              >
+                <BrUserDisplay userId={contributorId} />
+              </PCardWithAction>
+            ))}
+          </Stack>
         )}
 
         {/* Control buttons */}
