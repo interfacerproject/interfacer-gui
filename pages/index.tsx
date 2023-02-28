@@ -28,7 +28,13 @@ export async function getStaticProps({ locale }: any) {
   return {
     props: {
       publicPage: true,
-      ...(await serverSideTranslations(locale, ["signInProps", "homeProps", "SideBarProps", "lastUpdatedProps"])),
+      ...(await serverSideTranslations(locale, [
+        "common",
+        "signInProps",
+        "homeProps",
+        "SideBarProps",
+        "lastUpdatedProps",
+      ])),
     },
   };
 }
