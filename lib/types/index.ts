@@ -3685,7 +3685,14 @@ export type GetProjectLayoutQuery = {
     primaryAccountable:
       | { __typename?: "Organization"; id: string; name: string }
       | { __typename?: "Person"; id: string; name: string };
-    currentLocation?: { __typename?: "SpatialThing"; id: string; name: string; mappableAddress?: string | null } | null;
+    currentLocation?: {
+      __typename?: "SpatialThing";
+      id: string;
+      name: string;
+      mappableAddress?: string | null;
+      lat?: any | null;
+      long?: any | null;
+    } | null;
     images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
   } | null;
 };
@@ -4231,6 +4238,7 @@ export type QueryProposalQuery = {
         id: string;
         name: string;
         repo?: string | null;
+        metadata?: any | null;
         primaryAccountable:
           | { __typename?: "Organization"; id: string; name: string }
           | { __typename?: "Person"; id: string; name: string };
@@ -4285,6 +4293,7 @@ export type AcceptProposalMutationVariables = Exact<{
   resourceForked: Scalars["ID"];
   resourceOrigin: Scalars["ID"];
   creationTime: Scalars["DateTime"];
+  metadata?: InputMaybe<Scalars["JSONObject"]>;
 }>;
 
 export type AcceptProposalMutation = {

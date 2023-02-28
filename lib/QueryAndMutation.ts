@@ -735,6 +735,7 @@ export const QUERY_PROPOSAL = gql`
           id
           name
           repo
+          metadata
           primaryAccountable {
             id
             name
@@ -816,6 +817,7 @@ export const ACCEPT_PROPOSAL = gql`
     $resourceForked: ID!
     $resourceOrigin: ID!
     $creationTime: DateTime!
+    $metadata: JSONObject
   ) {
     cite: createEconomicEvent(
       event: {
@@ -858,6 +860,7 @@ export const ACCEPT_PROPOSAL = gql`
         resourceInventoriedAs: $resourceOrigin
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
         hasPointInTime: $creationTime
+        resourceMetadata: $metadata
       }
     ) {
       economicEvent {
