@@ -42,7 +42,7 @@ import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
-import { Cube, ListBoxes, MagicWand, ParentChild, Purchase, Table } from "@carbon/icons-react";
+import { Cube, ListBoxes, MagicWand, ParentChild, Purchase } from "@carbon/icons-react";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
@@ -270,7 +270,7 @@ const Project = () => {
                     id: "Contributions",
                     content: (
                       <span className="flex items-center gap-2">
-                        <Table />
+                        <ListBoxes />
                         {t("Contributions")}
                       </span>
                     ),
@@ -349,7 +349,7 @@ const Project = () => {
           <Card sectioned>
             <Stack vertical>
               {project.repo && (
-                <Button url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
+                <Button primary url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
                   {t("Go to source")}
                 </Button>
               )}
@@ -392,7 +392,7 @@ const Project = () => {
                 {t("{{contributions}} contributions", { contributions: contributions?.proposals.edges.length })}
               </Text>
               <Button
-                id="goToContribution"
+                id="contribute"
                 icon={<MagicWand />}
                 size="large"
                 fullWidth
@@ -402,12 +402,12 @@ const Project = () => {
                 {t("Make a contribution")}
               </Button>
               <Button
-                id="goToContribution"
+                id="seeContributions"
                 icon={<ListBoxes />}
                 size="large"
                 fullWidth
                 monochrome
-                onClick={() => router.push(`/create/contribution/${id}`)}
+                onClick={() => setSelected(5)}
               >
                 {t("All contributions")}
               </Button>
@@ -422,6 +422,16 @@ const Project = () => {
               <Text color="success" as="p" variant="bodyMd">
                 {t("{{related}} related projects", { related: project.metadata.relations.length })}
               </Text>
+              <Button
+                id="seeRelations"
+                icon={<ParentChild />}
+                size="large"
+                fullWidth
+                monochrome
+                onClick={() => setSelected(1)}
+              >
+                {t("All relations")}
+              </Button>
             </Stack>
           </Card>
         </div>
