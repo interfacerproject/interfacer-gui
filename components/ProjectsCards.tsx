@@ -14,13 +14,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Card } from "@bbtgnn/polaris-interfacer";
-import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 import { useQuery } from "@apollo/client";
-import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
-import CardsGroup from "./CardsGroup";
+import { Text } from "@bbtgnn/polaris-interfacer";
+import Link from "next/link";
 import useLoadMore from "../hooks/useLoadMore";
 import devLog from "../lib/devLog";
+import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
+import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
+import AddStar from "./AddStar";
+import BrDisplayUser from "./brickroom/BrDisplayUser";
+import BrTags from "./brickroom/BrTags";
+import CardsGroup from "./CardsGroup";
+import ProjectContributors from "./ProjectContributors";
+import ProjectImage from "./ProjectImage";
+import ProjectTime from "./ProjectTime";
+import ProjectTypeChip from "./ProjectTypeChip";
 
 export interface ProjectsCardsProps {
   filter?: EconomicResourceFilterParams;
@@ -41,7 +49,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
   const dataQueryIdentifier = "economicResources";
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
-    variables: { last: 10, filter: filter },
+    variables: { last: 6, filter: filter },
   });
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
@@ -61,44 +69,36 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
         onLoadMore={loadMore}
         nextPage={!!getHasNextPage}
         loading={loading}
-        header={hideHeader ? undefined : "Projects"}
+        header={hideHeader ? undefined : "Latest projects"}
         hidePagination={hidePagination}
-        hidePrimaryAccountable={hidePrimaryAccountable}
-        hideFilters={hideFilters}
       >
         {projects?.map(({ node }: { node: EconomicResource }) => (
-          <>
-            <Card
-              key={node.id}
-              title={node.name}
-              footerActionAlignment={"right"}
-              sectioned
-              primaryFooterAction={{
-                id: "primaryFooterAction",
-                content: "View",
-                url: `/project/${node.id}`,
-              }}
-              secondaryFooterActions={[
-                {
-                  id: "watch",
-                  content: "Watch",
-                  url: "/watch",
-                },
-                {
-                  id: "share",
-                  content: "Share",
-                  url: "/share",
-                },
-                {
-                  id: "Add to list",
-                  content: "Add to list +",
-                  url: "/add-to-list",
-                },
-              ]}
-            >
-              <p className="w-64">{node.note}</p>
-            </Card>
-          </>
+          <div className="p-4 rounded-lg overflow-hidden bg-white shadow mx-2 lg:mx-0 " key={node.id}>
+            <div className="flex flex-col space-y-3">
+              <div className="flex justify-between">
+                <ProjectTime projectNode={node} />
+                <AddStar id={node.id} owner={node.primaryAccountable.id} tiny />
+              </div>
+              <Link href={`/project/${node.id}`}>
+                <a>
+                  <ProjectImage image={node?.images?.[0]} className="rounded-lg object-scale-down max-h-60 w-full" />
+                </a>
+              </Link>
+              <Link href={`/project/${node.id}`}>
+                <a>
+                  <Text variant="headingXl" as="h4">
+                    {node.name}
+                  </Text>
+                </a>
+              </Link>
+              <div className="flex justify-between">
+                <ProjectTypeChip projectNode={node} />
+                <BrDisplayUser id={node.primaryAccountable.id} name={node.primaryAccountable.name} />
+              </div>
+              <BrTags tags={node.classifiedAs || []} />
+              <ProjectContributors projectNode={node} />
+            </div>
+          </div>
         ))}
       </CardsGroup>
     </>

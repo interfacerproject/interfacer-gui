@@ -32,6 +32,7 @@
 // Import commands.js using ES2015 syntax:
 import "./commands";
 import "cypress-localstorage-commands";
+import "cypress-fail-fast";
 
 declare global {
   namespace Cypress {

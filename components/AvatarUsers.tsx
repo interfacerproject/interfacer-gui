@@ -14,33 +14,38 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import React from "react";
-import Link from "next/link";
 import Avatar from "boring-avatars";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
 
-const AvatarUsers = ({ users }: { users: Array<{ name: string; id: string }> }) => {
+const AvatarUsers = ({ users, size = 4 }: { users: Array<string>; size?: number }) => {
+  const length = users?.length;
+  const overflow = length > size;
+  const cut = overflow ? users.slice(0, length) : users;
+  const { t } = useTranslation("common");
+
   return (
-    <div className="avatar-group -space-x-6 h-20 w-32">
-      {users?.map((u, i) => (
-        <>
-          {i < 4 && (
-            <Link key={u?.id} href={`/profile/${u?.id}`}>
-              <a>
-                <div className="avatar">
-                  <div className="w-9 hover:w-14">
-                    <Avatar
-                      size={"full"}
-                      name={u.name}
-                      variant="beam"
-                      colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
-                    />
-                  </div>
+    <div className="flex">
+      <div className="avatar-group -space-x-4 h-11">
+        {cut?.map((u, i) => (
+          <Link key={u} href={`/profile/${u}`}>
+            <a>
+              <div className="avatar">
+                <div className="w-9">
+                  <Avatar name={u} variant="beam" colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]} />
                 </div>
-              </a>
-            </Link>
-          )}
-        </>
-      ))}
+              </div>
+            </a>
+          </Link>
+        ))}
+      </div>
+      {overflow && (
+        <div className="-ml-4 z-50 w-10 h-10 rounded-full bg-base-200 grid place-items-center">
+          <span>
+            {t("+")} {length - size}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

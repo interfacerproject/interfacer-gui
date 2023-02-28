@@ -17,7 +17,7 @@
 import { Button, ButtonGroup, Text } from "@bbtgnn/polaris-interfacer";
 import { GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
 import Layout from "components/layout/Layout";
-import ProjectsTable from "components/ProjectsTable";
+import ProjectsCards from "components/ProjectsCards";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -120,8 +120,54 @@ const Home: NextPageWithLayout = () => {
         </div>
       </div>
 
-      <div className="p-4 container mx-auto overflow-x-scroll">
-        {<ProjectsTable hideHeader={true} hidePagination={true} hideFilters />}
+      <div className="container mx-auto mb-24">
+        <ProjectsCards />
+      </div>
+
+      <div className="container mx-auto flex items-center justify-center bg-[#f8f7f4] w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
+          <div>
+            <img src="/hero_1.png" alt="" className="contain w-full" />
+          </div>
+          <div className="space-y-6 p-2 lg:p-8 order-first lg:order-last">
+            <Text variant="heading4xl" as="h1">
+              {t("Sign-in to browse the library")}
+            </Text>
+
+            <Text variant="bodyMd" as="p">
+              {t(
+                "Our platform brings together makers, designers, and engineers from all over the world, creating a space for collaboration and innovation. Whether you're looking for inspiration, need help with a project, or want to showcase your latest creation, together, we can push the boundaries of what's possible and create a more open and sustainable future for all."
+              )}
+            </Text>
+
+            <div className="flex space-x-2">
+              {!authenticated && (
+                <ButtonGroup>
+                  <Link href="/sign_in">
+                    <Button size="large" primary>
+                      {t("Log In")}
+                    </Button>
+                  </Link>
+                  <Link href="/sign_up">
+                    <Button size="large">{t("Register")}</Button>
+                  </Link>
+                </ButtonGroup>
+              )}
+              {authenticated && (
+                <ButtonGroup>
+                  <Link href="/create/project">
+                    <Button size="large" primary>
+                      {t("Create a new project")}
+                    </Button>
+                  </Link>
+                  <Link href="/resources">
+                    <Button size="large">{t("Import from LOSH")}</Button>
+                  </Link>
+                </ButtonGroup>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="container mx-auto flex items-center justify-center bg-[#f8f7f4] w-full">
