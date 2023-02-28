@@ -63,7 +63,7 @@ const Profile: NextPage = () => {
 
   useEffect(() => {
     claimPerson({ variables: { id: idToBeFetch } }).then(data => {
-      setDidUrl(`${process.env.NEXT_PUBLIC_DID_EXPLORER!}details/${data.data.claimPerson.did.didDocument.id}`);
+      setDidUrl(`${process.env.NEXT_PUBLIC_DID_EXPLORER!}details/${data.data.claimPerson.did.didDocument?.id}`);
     });
   }, []);
 

@@ -14,7 +14,7 @@
     "check-lint": "eslint . --ext ts --ext tsx --ext js",
     "reload": "pm2 startOrGracefulReload ecosystem.config.js",
     "cypress": "cypress open",
-    "cypress:headless": "cypress run --config videoRecording=false",
+    "cypress:headless": "cypress run --config video=false",
     "test:component": "cypress run-ct --record",
     "screenshots": "cypress run --env isTest=false --spec 'cypress/e2e/screenshots/*.cy.ts' --config baseUrl='https://interfacer-gui-staging.dyne.org/'",
     "e2e": "pnpm build && start-server-and-test start http://localhost:3000 cypress",
@@ -30,6 +30,7 @@
     "@babel/core": "^7.19.3",
     "@bbtgnn/polaris-interfacer": "^0.1.0",
     "@bbtgnn/polaris-interfacer-tokens": "^6.3.0",
+    "@carbon/icons-react": "^11.16.1",
     "@cypress/skip-test": "^2.6.1",
     "@graphql-codegen/cli": "^2.13.7",
     "@graphql-codegen/typescript": "^2.7.4",
@@ -98,6 +99,7 @@
     "zenroom": "2.2.3-f0193d51"
   },
   "devDependencies": {
+    "@types/carbon__icons-react": "^11.15.0",
     "@types/lodash": "^4.14.191",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "cypress": "^10.7.0",

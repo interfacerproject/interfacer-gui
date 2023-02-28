@@ -16,6 +16,7 @@
 
 import { Button, Icon } from "@bbtgnn/polaris-interfacer";
 import { StarFilledMinor, StarOutlineMinor } from "@shopify/polaris-icons";
+import classNames from "classnames";
 import useSocial from "hooks/useSocial";
 import useWallet from "hooks/useWallet";
 import { IdeaPoints } from "lib/PointsDistribution";
@@ -23,7 +24,7 @@ import { useTranslation } from "next-i18next";
 
 //
 
-const AddStar = ({ id, owner }: { id: string; owner: string }) => {
+const AddStar = ({ id, owner, tiny = false }: { id: string; owner: string; tiny?: boolean }) => {
   const { likeER, isLiked } = useSocial(id);
   const hasAlreadyStarred = isLiked(id);
   const { t } = useTranslation("common");
@@ -35,16 +36,28 @@ const AddStar = ({ id, owner }: { id: string; owner: string }) => {
   };
 
   return (
-    <Button
-      id="likeButton"
-      onClick={handleClick}
-      fullWidth
-      disabled={hasAlreadyStarred}
-      size="large"
-      icon={<Icon source={hasAlreadyStarred ? StarFilledMinor : StarOutlineMinor} />}
-    >
-      {`${hasAlreadyStarred ? t("You already star it!") : t("Star")}`}
-    </Button>
+    <>
+      {tiny && (
+        <div
+          className={classNames("text-primary hover:cursor-pointer", { "hover:cursor-not-allowed": hasAlreadyStarred })}
+          onClick={handleClick}
+        >
+          <Icon source={hasAlreadyStarred ? StarFilledMinor : StarOutlineMinor} color="primary" />
+        </div>
+      )}
+      {!tiny && (
+        <Button
+          id="likeButton"
+          onClick={handleClick}
+          fullWidth
+          disabled={hasAlreadyStarred}
+          size="large"
+          icon={<Icon source={hasAlreadyStarred ? StarFilledMinor : StarOutlineMinor} />}
+        >
+          {hasAlreadyStarred ? t("You already star it!") : t("Star")}
+        </Button>
+      )}
+    </>
   );
 };
 
