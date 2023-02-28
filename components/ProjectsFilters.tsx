@@ -19,11 +19,11 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 
 // Select components
+import { Button, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { getOptionValue } from "components/brickroom/utils/BrSelectUtils";
-import SelectProjectType from "./SelectProjectType";
 import SelectContributors from "./SelectContributors";
-import SelectTags from "./SelectTags";
-import devLog from "../lib/devLog";
+import SelectProjectType from "./SelectProjectType";
+import SelectTags2 from "./SelectTags2";
 
 //
 
@@ -95,14 +95,14 @@ export default function ProjectsFilters(props: ProjectsFiltersProps) {
   /* */
 
   return (
-    <div className="p-4 bg-white border rounded-lg shadow space-y-6">
-      {/* Heading */}
-      <h4 className="text-xl font-bold capitalize">{t("filters")}:</h4>
-
-      {/* Filters */}
-      <div className="space-y-4">
+    <Card sectioned>
+      <Stack vertical>
+        {/* Heading */}
+        <Text as="h2" variant="heading2xl">
+          {t("filters") + ":"}
+        </Text>
+        {/* Filters */}
         {children}
-
         <SelectProjectType
           label={t("Type")}
           onChange={v => {
@@ -117,18 +117,15 @@ export default function ProjectsFilters(props: ProjectsFiltersProps) {
           id="type"
         />
 
-        <SelectTags
+        <SelectTags2
           label={t("Tags")}
-          onChange={v => {
+          tags={queryFilters.tags}
+          setTags={tags => {
             setQueryFilters({
               ...queryFilters,
-              // @ts-ignore
-              tags: v.map(getOptionValue),
+              tags: tags.map(decodeURI),
             });
           }}
-          isMulti
-          defaultValueRaw={queryFilters.tags}
-          id="tags"
         />
 
         {!hidePrimaryAccountable && (
@@ -146,17 +143,17 @@ export default function ProjectsFilters(props: ProjectsFiltersProps) {
             id="primaryAccountable"
           />
         )}
-      </div>
 
-      {/* Control buttons */}
-      <div className="grid grid-cols-2 gap-2">
-        <button data-test="btn-reset" className="btn btn-outline btn-error btn-block" onClick={clearFilters}>
-          {t("reset")}
-        </button>
-        <button data-test="btn-apply" onClick={applyFilters} className="btn btn-accent btn-block">
-          {t("apply")}
-        </button>
-      </div>
-    </div>
+        {/* Control buttons */}
+        <div className="flex gap-2">
+          <Button data-test="btn-reset" onClick={clearFilters} size="large" fullWidth>
+            {t("reset")}
+          </Button>
+          <Button primary data-test="btn-apply" onClick={applyFilters} size="large" fullWidth>
+            {t("apply")}
+          </Button>
+        </div>
+      </Stack>
+    </Card>
   );
 }
