@@ -203,34 +203,7 @@ export const QUERY_RESOURCE = gql`
       license
       repo
       traceDpp
-      trace {
-        __typename
-        ... on Process {
-          id
-          name
-        }
-        ... on EconomicEvent {
-          inputOf {
-            id
-            name
-          }
-          outputOf {
-            id
-            name
-          }
-          hasPointInTime
-          action {
-            id
-            label
-            inputOutput
-          }
-        }
-        ... on EconomicResource {
-          id
-          name
-          note
-        }
-      }
+      classifiedAs
       conformsTo {
         id
         name

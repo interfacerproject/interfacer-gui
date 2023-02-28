@@ -43,10 +43,12 @@ import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
+import { Cube, ParentChild, Purchase, Table } from "@carbon/icons-react";
 import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
+import ProjectTypeChip from "components/ProjectTypeChip";
 
 //
 
@@ -171,31 +173,26 @@ const Project = () => {
         </Text>
       </FullWidthBanner>
 
-      <div className="flex flex-row p-4">
-        <BrBreadcrumb
-          crumbs={[
-            { name: t("Projects"), href: "/projects" },
-            { name: project.conformsTo.name, href: `/projects?conformTo=${project.conformsTo.id}` },
-          ]}
-        />
-      </div>
-
       {/* Main */}
-      <div className="p-4 sm:max-w-xl mx-auto md:max-w-none md:flex md:flex-row md:space-x-12 md:justify-center">
+      <div className="p-4 container mx-auto grid grid-cols-4 max-w-6xl">
         {/* Content */}
-        <div className="grow max-w-xl mb-16 md:mb-0">
+        <div className="col-span-3">
           <Stack vertical spacing="extraLoose">
             {/* Title */}
             <Stack vertical spacing="tight">
-              <Text as="p" variant="bodyMd">
-                {t("This is a")}
-                <Link href={`/projects?conformTo=${project.conformsTo.id}`}>
-                  <a className="ml-1 font-bold text-primary hover:underline">{project.conformsTo.name}</a>
-                </Link>
-              </Text>
+              <BrBreadcrumb
+                crumbs={[
+                  { name: t("Projects"), href: "/projects" },
+                  { name: project.conformsTo.name, href: `/projects?conformTo=${project.conformsTo.id}` },
+                ]}
+              />
+              <ProjectTypeChip projectNode={project} />
               <Text as="h1" variant="heading2xl">
                 {project.name}
               </Text>
+              <p className="text-primary font-mono">
+                {t("ID:")} {project.id}
+              </p>
             </Stack>
 
             <BrThumbinailsGallery images={images} />
@@ -206,19 +203,34 @@ const Project = () => {
                 tabs={[
                   {
                     id: "overview",
-                    content: t("Overview"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <Cube />
+                        {t("Overview")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Project overview"),
                     panelID: "overview-content",
                   },
                   {
                     id: "relationships",
-                    content: t("Relationship tree"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <ParentChild />
+                        {t("Relationship tree")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Relationship tree"),
                     panelID: "relationships-content",
                   },
                   {
                     id: "dpp",
-                    content: t("DPP"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <Purchase />
+                        {t("DPP")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Digital Product Passport"),
                     panelID: "dpp-content",
                   },
@@ -236,7 +248,12 @@ const Project = () => {
                   },
                   {
                     id: "Contributions",
-                    content: t("Contributions"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <Table />
+                        {t("Contributions")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Contributions"),
                     panelID: "contributions-content",
                   },
@@ -304,20 +321,25 @@ const Project = () => {
         </div>
 
         {/* Sidebar */}
-        <div>
+        <div className="col-span-1">
           {/* Project info */}
+          <div className="w-full justify-end flex pb-3">
+            <AddStar id={project.id} owner={project.primaryAccountable.id} />
+          </div>
           <Card sectioned>
             <Stack vertical>
-              <div>
-                <Text as="h2" variant="headingMd">
-                  {"ID"}
-                </Text>
-                <p className="text-primary font-mono">{project.id}</p>
-              </div>
-
+              {project.repo && (
+                <Button url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
+                  {t("Go to source")}
+                </Button>
+              )}
+              <Button id="addToList" size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>
+                {inList ? t("Remove from list") : t("Add to list")}
+              </Button>
+              <WatchButton id={project.id} owner={project.primaryAccountable.id} />
               <div className="space-y-1">
-                <Text as="h2" variant="headingMd">
-                  {t("Owner")}
+                <Text as="p" variant="bodyMd">
+                  {t("By:")}
                 </Text>
                 <BrDisplayUser
                   id={project.primaryAccountable.id}
@@ -325,32 +347,13 @@ const Project = () => {
                   location={project.currentLocation?.name}
                 />
               </div>
-              {project.repo && (
-                <Button url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
-                  {t("Go to source")}
-                </Button>
-              )}
             </Stack>
           </Card>
 
           {/* Actions */}
           {user && (
             <Card sectioned>
-              <Stack vertical>
-                <Button
-                  id="addToList"
-                  size="large"
-                  onClick={handleCollect}
-                  fullWidth
-                  icon={<Icon source={PlusMinor} />}
-                >
-                  {inList ? t("Remove from list") : t("Add to list")}
-                </Button>
-
-                <WatchButton id={project.id} owner={project.primaryAccountable.id} />
-
-                <AddStar id={project.id} owner={project.primaryAccountable.id} />
-              </Stack>
+              <Stack vertical></Stack>
             </Card>
           )}
           {/* Contributions */}

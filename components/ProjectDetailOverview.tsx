@@ -19,33 +19,29 @@ import { useTranslation } from "next-i18next";
 import MdParser from "../lib/MdParser";
 import { EconomicResource } from "../lib/types";
 import BrTags from "./brickroom/BrTags";
+import LicenseDisplay from "./LicenseDisplay";
+import { LicenseStepValues } from "./partials/create/project/steps/LicenseStep";
 
 const ProjectDetailOverview = ({ project }: { project: EconomicResource }) => {
   const { t } = useTranslation("common");
 
-  const license = project?.license;
   const tags = project?.classifiedAs;
   const text = project?.note;
+  const licenses: LicenseStepValues = project?.metadata?.licenses;
 
   return (
     <Stack vertical>
       {text && <div className="prose" dangerouslySetInnerHTML={{ __html: MdParser.render(text) }} />}
-      {tags && (
-        <div>
-          <Text as="h2" variant="headingMd">
-            {t("Tags")}
+      {tags && <BrTags tags={tags} />}
+      {licenses && (
+        <>
+          <Text as="h3" variant="headingLg">
+            {t("Licenses")}
           </Text>
-          <BrTags tags={tags} />
-        </div>
-      )}
-
-      {license && (
-        <div>
-          <Text as="h2" variant="headingMd">
-            {t("License")}
-          </Text>
-          <p>{license}</p>
-        </div>
+          {licenses.map((l, i) => (
+            <LicenseDisplay licenseId={l.licenseId} label={l.scope} key={i} />
+          ))}
+        </>
       )}
     </Stack>
   );
