@@ -10,8 +10,8 @@ const icons: any = {
   Service: <Collaborate />,
 };
 
-const ProjectTypeChip = (props: { projectNode: EconomicResource }) => {
-  const name = props.projectNode.conformsTo.name;
+const ProjectTypeChip = (props: { projectNode: Partial<EconomicResource> }) => {
+  const name = props.projectNode.conformsTo?.name || "Design";
   const { t } = useTranslation("common");
 
   const router = useRouter();

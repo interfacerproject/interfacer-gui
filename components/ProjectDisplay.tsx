@@ -2,6 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import { Spinner, Tag, Text } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource, SearchProjectQuery, SearchProjectQueryVariables } from "lib/types";
 import ProjectThumb from "./ProjectThumb";
+import ProjectTypeChip from "./ProjectTypeChip";
 
 export interface Props {
   project?: Partial<EconomicResource>;
@@ -31,7 +32,7 @@ export default function ProjectDisplay(props: Props) {
           <Text as="p" variant="bodyMd" fontWeight="bold">
             {p.name}
           </Text>
-          <Tag>{p.conformsTo?.name}</Tag>
+          <ProjectTypeChip projectNode={p} />
         </div>
         <div className="font-mono">
           <Text as="p" variant="bodyMd">
@@ -53,6 +54,10 @@ export const SEARCH_PROJECT = gql`
     economicResource(id: $id) {
       id
       name
+      images {
+        bin
+        mimeType
+      }
       conformsTo {
         name
       }

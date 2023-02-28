@@ -15,14 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { Stack } from "@bbtgnn/polaris-interfacer";
-import { useTranslation } from "next-i18next";
 import MdParser from "../lib/MdParser";
 import { EconomicResource } from "../lib/types";
 import BrTags from "./brickroom/BrTags";
 
 const ProjectDetailOverview = ({ project }: { project: EconomicResource }) => {
-  const { t } = useTranslation("common");
-
   const tags = project?.classifiedAs;
   const text = project?.note;
 

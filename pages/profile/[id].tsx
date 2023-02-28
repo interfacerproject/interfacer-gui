@@ -26,7 +26,6 @@ import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import { Token } from "hooks/useWallet";
-import devLog from "lib/devLog";
 import { CLAIM_DID, FETCH_USER } from "lib/QueryAndMutation";
 import type { NextPage } from "next";
 import { GetStaticPaths } from "next";
@@ -66,7 +65,6 @@ const Profile: NextPage = () => {
     claimPerson({ variables: { id: idToBeFetch } }).then(data => {
       setDidUrl(`${process.env.NEXT_PUBLIC_DID_EXPLORER!}details/${data.data.claimPerson.did.didDocument?.id}`);
     });
-    devLog("PERSON", person);
   }, []);
 
   return (

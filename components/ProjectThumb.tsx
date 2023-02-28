@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { getResourceImage } from "lib/resourceImages";
 import type { EconomicResource } from "lib/types";
 import Thumbnail, { Size } from "./Thumbnail";
 
@@ -25,7 +24,10 @@ export interface Props {
 
 export default function ProjectThumb(props: Props) {
   const { project, size = "md" } = props;
-  const image = getResourceImage(project);
+  const image =
+    project.images?.[0] ||
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mPkFFxcDwACJgE+S4F7fQAAAABJRU5ErkJggg==";
+  const src = typeof image === "string" ? image : `data:${image?.mimeType};base64,${image?.bin}`;
 
-  return <Thumbnail image={image} size={size} />;
+  return <Thumbnail image={src} size={size} />;
 }

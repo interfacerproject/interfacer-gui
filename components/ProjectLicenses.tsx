@@ -1,4 +1,5 @@
 import { Text } from "@bbtgnn/polaris-interfacer";
+import useFilters from "hooks/useFilters";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import LicenseDisplay from "./LicenseDisplay";

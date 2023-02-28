@@ -175,7 +175,7 @@ const Project = () => {
       </FullWidthBanner>
 
       {/* Main */}
-      <div className="p-4 container mx-auto grid grid-cols-4 max-w-6xl">
+      <div className="p-4 container mx-auto grid grid-cols-4 max-w-5xl bg-[#f8f7f4]">
         {/* Content */}
         <div className="col-span-3">
           <Stack vertical spacing="extraLoose">
@@ -264,7 +264,7 @@ const Project = () => {
               />
 
               {selected == 0 && <ProjectDetailOverview project={project} />}
-              {selected == 1 && <RelationshipTree dpp={data?.economicResource.traceDpp} />}
+              {selected == 1 && <RelationshipTree project={data?.economicResource} />}
               {selected == 2 && (
                 <div>
                   <div className="w-full flex justify-end">
