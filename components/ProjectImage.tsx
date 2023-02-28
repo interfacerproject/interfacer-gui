@@ -14,17 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-interface Image {
-  hash: string;
-  mimeType: string;
-  bin: string;
-}
+import { File } from "lib/types";
 
-const ProjectImage = ({ image, className }: { image: Image | string; className?: string }) => {
-  const src = typeof image === "string" ? image : `data:${image.mimeType};base64,${image.bin}`;
+const ProjectImage = ({ image, className }: { image: File | string | undefined; className?: string }) => {
+  if (!image) return <div className="w-full h-80 bg-base-300 rounded-lg"></div>;
+
+  const src = typeof image === "string" ? image : `data:${image?.mimeType};base64,${image?.bin}`;
   return (
     <>
-      <img src={src} className={className} />
+      <img src={src} className={className} alt="" />
     </>
   );
 };

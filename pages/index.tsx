@@ -17,6 +17,7 @@
 import { Button, ButtonGroup, Text } from "@bbtgnn/polaris-interfacer";
 import { GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
 import Layout from "components/layout/Layout";
+import ProjectsCards from "components/ProjectsCards";
 import ProjectsTable from "components/ProjectsTable";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -112,6 +113,10 @@ const Home: NextPageWithLayout = () => {
             <img src="/hero.png" alt="" className="contain w-full" />
           </div>
         </div>
+      </div>
+
+      <div className="container mx-auto">
+        <ProjectsCards />
       </div>
 
       <div className="p-4 container mx-auto overflow-x-scroll">

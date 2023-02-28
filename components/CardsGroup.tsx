@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useState } from "react";
-import ProjectsFilters from "./ProjectsFilters";
-import Spinner from "./brickroom/Spinner";
-import cn from "classnames";
 import { AdjustmentsIcon } from "@heroicons/react/outline";
+import cn from "classnames";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
+import Spinner from "./brickroom/Spinner";
+import ProjectsFilters from "./ProjectsFilters";
 
 export interface CardsGroupProps {
   hidePagination?: boolean;
@@ -52,7 +52,7 @@ const CardsGroup = (props: CardsGroupProps) => {
   return (
     <>
       {loading && (
-        <div className="w-full">
+        <div className="w-full mt-10">
           <Spinner />
         </div>
       )}
@@ -78,9 +78,9 @@ const CardsGroup = (props: CardsGroupProps) => {
               )}
             </div>
           )}
-          <div className="flex flex-row flex-nowrap items-start space-x-8">
+          <div className="flex flex-row flex-nowrap items-start space-x-8 w-full">
             <div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                 {/* CARDS */}
                 {children}
               </div>
