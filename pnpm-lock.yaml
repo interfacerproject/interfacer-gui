@@ -103,6 +103,7 @@ dependencies:
   '@tailwindcss/typography': 0.5.8_tailwindcss@3.2.4
   '@testing-library/cypress': 8.0.7_cypress@10.11.0
   '@types/base45': 2.0.0
+  '@types/carbon__icons-react': 11.15.0
   '@types/crypto-js': 4.1.1
   '@types/markdown-it': 12.2.3
   '@types/node': 18.7.15
@@ -161,7 +162,6 @@ dependencies:
   zenroom: 2.2.3-f0193d51
 
 devDependencies:
-  '@types/carbon__icons-react': 11.15.0
   '@types/lodash': 4.14.191
   '@typescript-eslint/eslint-plugin': 5.43.0_nqj4bdx4ekws7aecttskpih4py
   cypress-fail-fast: 5.0.1_cypress@10.11.0
@@ -2373,7 +2373,7 @@ packages:
 
   /@types/carbon__icons-react/11.15.0:
     resolution: {integrity: sha512-uloptmjZg1J2Yd6AA4UGvfeuhZmr5jvM0P/2vdPrs6TJOHxqVvhFCJFDKo7IoM+Zbj5jCyeCZX0R0eON+AvWeA==}
-    dev: true
+    dev: false
 
   /@types/crypto-js/4.1.1:
     resolution: {integrity: sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA==}
