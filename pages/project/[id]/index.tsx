@@ -48,6 +48,7 @@ import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
+import ProjectLicenses from "components/ProjectLicenses";
 import ProjectTypeChip from "components/ProjectTypeChip";
 
 //
@@ -353,7 +354,9 @@ const Project = () => {
           {/* Actions */}
           {user && (
             <Card sectioned>
-              <Stack vertical></Stack>
+              <Stack vertical spacing="loose">
+                <ProjectLicenses project={project} />
+              </Stack>
             </Card>
           )}
           {/* Contributions */}

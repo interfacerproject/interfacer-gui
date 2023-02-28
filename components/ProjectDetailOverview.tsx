@@ -14,35 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Stack } from "@bbtgnn/polaris-interfacer";
 import { useTranslation } from "next-i18next";
 import MdParser from "../lib/MdParser";
 import { EconomicResource } from "../lib/types";
 import BrTags from "./brickroom/BrTags";
-import LicenseDisplay from "./LicenseDisplay";
-import { LicenseStepValues } from "./partials/create/project/steps/LicenseStep";
 
 const ProjectDetailOverview = ({ project }: { project: EconomicResource }) => {
   const { t } = useTranslation("common");
 
   const tags = project?.classifiedAs;
   const text = project?.note;
-  const licenses: LicenseStepValues = project?.metadata?.licenses;
 
   return (
     <Stack vertical>
       {text && <div className="prose" dangerouslySetInnerHTML={{ __html: MdParser.render(text) }} />}
       {tags && <BrTags tags={tags} />}
-      {licenses && (
-        <>
-          <Text as="h3" variant="headingLg">
-            {t("Licenses")}
-          </Text>
-          {licenses.map((l, i) => (
-            <LicenseDisplay licenseId={l.licenseId} label={l.scope} key={i} />
-          ))}
-        </>
-      )}
     </Stack>
   );
 };
