@@ -35,7 +35,7 @@ const useFilters = () => {
     setProposalFilter({
       conformsTo: conformToList,
       primaryAccountable: primaryAccountableList,
-      classifiedAs: tagsList,
+      classifiedAs: tagsList?.map(tag => encodeURI(tag)),
       notCustodian: [process.env.NEXT_PUBLIC_LOSH_ID!],
     });
     setResourceFilter({ ...resourceFilter, conformsTo: conformToList });
