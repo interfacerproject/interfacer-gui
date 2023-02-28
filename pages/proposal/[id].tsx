@@ -145,7 +145,8 @@ const Proposal = () => {
   };
 
   const renderActions =
-    user?.ulid !== proposal?.primaryIntents?.[0].resourceInventoriedAs?.primaryAccountable.id &&
+    user?.ulid === proposal?.primaryIntents?.[1].resourceInventoriedAs?.primaryAccountable.id &&
+    user?.ulid === proposal?.primaryIntents?.[2].resourceInventoriedAs?.primaryAccountable.id &&
     proposal?.status === ProposedStatus.Pending;
 
   return (
@@ -194,15 +195,6 @@ const Proposal = () => {
                 {proposal!.primaryIntents![0].resourceInventoriedAs?.repo}
               </Text>
             </Stack>
-
-            {/*<Stack vertical spacing="tight">*/}
-            {/*  <Text as="h2" variant="headingLg">*/}
-            {/*    {t("Proposed Income")}*/}
-            {/*  </Text>*/}
-            {/*  /!*<Text as="p" variant="bodyMd">*!/*/}
-            {/*  /!*  {proposal.primaryIntents[1]?.resourceInventoriedAs.onhandQuantity.numericValue}*!/*/}
-            {/*  /!*</Text>*!/*/}
-            {/*</Stack>*/}
 
             {renderActions && (
               <Stack vertical spacing="tight">
