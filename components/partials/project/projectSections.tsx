@@ -54,12 +54,14 @@ export const projectSections: Array<ProjectSection> = [
     component: <LocationStep projectType={ProjectType.PRODUCT} />,
     for: [ProjectType.PRODUCT],
     required: [ProjectType.PRODUCT],
+    editPage: "edit/location",
   },
   {
     navLabel: "Location",
     id: "location",
     component: <LocationStep projectType={ProjectType.SERVICE} />,
     for: [ProjectType.SERVICE],
+    editPage: "edit/location",
   },
   {
     navLabel: "Certifications",
