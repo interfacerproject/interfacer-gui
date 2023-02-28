@@ -29,7 +29,7 @@ import Tree from "react-d3-tree";
 
 // Components
 import { Button, Card, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
-import { DuplicateMinor } from "@shopify/polaris-icons";
+import { DuplicateMinor, MaximizeMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
@@ -139,6 +139,8 @@ const Project = () => {
     });
   };
 
+  const [activeTree, setActiveTree] = useState(false);
+
   // DPP Tree
   const translate = { x: width / 2, y: 20 };
   const treeData = dppToTreeData(data?.economicResource.traceDpp);
@@ -238,12 +240,6 @@ const Project = () => {
                     panelID: "dpp-content",
                   },
                   {
-                    id: "Tree Dpp",
-                    content: t("Tree Dpp"),
-                    accessibilityLabel: t("Digital Product Passport tree"),
-                    panelID: "tree-dpp-content",
-                  },
-                  {
                     id: "Contributors",
                     content: t("Contributors"),
                     accessibilityLabel: t("Contributors"),
@@ -263,47 +259,78 @@ const Project = () => {
               {selected == 0 && <ProjectDetailOverview project={project} />}
               {selected == 1 && <RelationshipTree dpp={data?.economicResource.traceDpp} />}
               {selected == 2 && (
-                <div>
-                  <div className="w-full flex justify-end">
-                    <Button onClick={copyDPP} icon={<Icon source={DuplicateMinor} />}>
-                      {t("Copy DPP")}
-                    </Button>
-                  </div>
-                  <DynamicReactJson
-                    src={data?.economicResource.traceDpp}
-                    collapsed={3}
-                    enableClipboard={true}
-                    displayDataTypes={false}
-                    sortKeys={true}
-                  />
-                </div>
-              )}
-              {selected == 3 && (
-                <Modal
-                  large
-                  open={selected == 3}
-                  onClose={() => setSelected(1)}
-                  title={t("Digital Product Passport Tree")}
-                >
-                  <Modal.Section>
-                    <div className="float-right">
-                      <Link href={`https://www.valueflo.ws/`}>
-                        <a>{t("To learn terms see ValueFlows ontology")}</a>
-                      </Link>
+                <div className="space-y-8">
+                  <div>
+                    <div className="flex justify-between items-center mb-4">
+                      <Text as="h1" variant="headingXl">
+                        {t("Tree view")}
+                      </Text>
+                      <div className="space-x-2">
+                        <Button onClick={copyDPP} icon={<Icon source={DuplicateMinor} />}>
+                          {t("Copy DPP")}
+                        </Button>
+                      </div>
                     </div>
-                    <div className="h-[100vh]" ref={ref}>
+                    <div className="border-1 border-border-subdued bg-white rounded-md h-64 relative">
+                      <div className="absolute bottom-4 right-4">
+                        <Button onClick={() => setActiveTree(true)} icon={<Icon source={MaximizeMinor} />}>
+                          {t("Full screen")}
+                        </Button>
+                      </div>
                       <Tree
                         data={treeData}
-                        zoom={1}
-                        translate={translate}
                         orientation="vertical"
                         nodeSize={{ x: 300, y: 100 }}
-                        dimensions={{ width, height: height / 2 }}
+                        zoom={0.5}
+                        hasInteractiveNodes={false}
+                        zoomable={false}
                       />
                     </div>
-                  </Modal.Section>
-                </Modal>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-4">
+                      <Text as="h1" variant="headingXl">
+                        {t("JSON view")}
+                      </Text>
+                      <Button onClick={copyDPP} icon={<Icon source={DuplicateMinor} />}>
+                        {t("Copy DPP")}
+                      </Button>
+                    </div>
+                    <DynamicReactJson
+                      src={data?.economicResource.traceDpp}
+                      collapsed={3}
+                      enableClipboard={true}
+                      displayDataTypes={false}
+                      sortKeys={true}
+                    />
+                  </div>
+                </div>
               )}
+              <Modal
+                large
+                open={activeTree}
+                onClose={() => setActiveTree(false)}
+                title={t("Digital Product Passport Tree")}
+              >
+                <Modal.Section>
+                  <div className="float-right">
+                    <Link href={`https://www.valueflo.ws/`}>
+                      <a>{t("To learn terms see ValueFlows ontology")}</a>
+                    </Link>
+                  </div>
+                  <div className="h-[100vh]" ref={ref}>
+                    <Tree
+                      data={treeData}
+                      zoom={1}
+                      translate={translate}
+                      orientation="vertical"
+                      nodeSize={{ x: 300, y: 100 }}
+                      dimensions={{ width, height: height / 2 }}
+                    />
+                  </div>
+                </Modal.Section>
+              </Modal>
 
               {selected == 4 && (
                 <ContributorsTable
