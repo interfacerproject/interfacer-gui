@@ -53,7 +53,7 @@ const useAutoImport = (): AutoImportReturnValue => {
     try {
       const licenses = await o.rest.licenses.getForRepo(u);
       // setLicense(licenses.data.license?.spdx_id || "UNLICENSED");
-      return licenses.data.license?.spdx_id;
+      return licenses.data.license;
     } catch (e) {
       devLog(e);
     }
@@ -136,7 +136,7 @@ const useAutoImport = (): AutoImportReturnValue => {
     const license = await getGhLicenses(u);
     const readme = await getGhReadme(u);
     let licenses = [];
-    if (license) licenses.push({ scope: "general", licenseId: license });
+    if (license) licenses.push({ scope: license?.name, licenseId: license?.spdx_id });
     if (main) main.description = readme || main!.description || "";
     return { main, licenses };
   };

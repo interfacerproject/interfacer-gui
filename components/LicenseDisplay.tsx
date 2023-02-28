@@ -25,9 +25,13 @@ export default function LicenseDisplay(props: Props) {
         </Text>
       )}
       <Text as="p" variant="bodyMd">
-        <Link external url={l.reference}>
-          {l.name}
-        </Link>
+        {licenseId === "NOASSERTION" ? (
+          "UNKNOW"
+        ) : (
+          <Link external url={l?.reference}>
+            {l?.name}
+          </Link>
+        )}
       </Text>
     </Stack>
   );
