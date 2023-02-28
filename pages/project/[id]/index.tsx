@@ -281,6 +281,7 @@ const Project = () => {
                         data={treeData}
                         orientation="vertical"
                         nodeSize={{ x: 300, y: 100 }}
+                        translate={{ x: 150, y: 20 }}
                         zoom={0.5}
                         hasInteractiveNodes={false}
                         zoomable={false}
@@ -314,19 +315,18 @@ const Project = () => {
                 title={t("Digital Product Passport Tree")}
               >
                 <Modal.Section>
-                  <div className="float-right">
-                    <Link href={`https://www.valueflo.ws/`}>
-                      <a>{t("To learn terms see ValueFlows ontology")}</a>
-                    </Link>
+                  <div className="flex justify-end">
+                    <Text as="p" variant="bodyMd" color="subdued">
+                      {t("Pan to move, pinch to zoom")}
+                    </Text>
                   </div>
                   <div className="h-[100vh]" ref={ref}>
                     <Tree
                       data={treeData}
                       zoom={1}
-                      translate={translate}
+                      translate={{ x: 200, y: 50 }}
                       orientation="vertical"
                       nodeSize={{ x: 300, y: 100 }}
-                      dimensions={{ width, height: height / 2 }}
                     />
                   </div>
                 </Modal.Section>
