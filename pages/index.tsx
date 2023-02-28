@@ -14,10 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { useQuery } from "@apollo/client";
 import { Button, ButtonGroup, Text } from "@bbtgnn/polaris-interfacer";
 import { GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
 import Layout from "components/layout/Layout";
 import ProjectsCards from "components/ProjectsCards";
+import useFilters from "hooks/useFilters";
+import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
+import { GetProjectTypesQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -41,7 +45,19 @@ export async function getStaticProps({ locale }: any) {
 
 const Home: NextPageWithLayout = () => {
   const { t } = useTranslation("homeProps");
+  const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES, {
+    ssr: true,
+    fetchPolicy: "cache-and-network",
+  });
   const { authenticated } = useAuth();
+  const { proposalFilter: designFilter } = useFilters();
+  const { proposalFilter: productFilter } = useFilters();
+  designFilter.conformsTo = [queryProjectTypes.data?.instanceVariables.specs.specProjectDesign.id!];
+  productFilter.conformsTo = [
+    queryProjectTypes.data?.instanceVariables.specs.specProjectProduct.id!,
+    queryProjectTypes.data?.instanceVariables.specs.specProjectService.id!,
+  ];
+
   const features = [
     {
       icon: <LightningBoltIcon />,
@@ -65,9 +81,7 @@ const Home: NextPageWithLayout = () => {
 
   const subtitles = [
     t("Welcome to Interfacer's Fabcity OS alpha staging 😎"),
-    t(
-      "Create or import projects and collaborate with others in digital designs or in manufacturing physical products"
-    ) + ".",
+    t("Create or import projects and collaborate with others in digital designs or in manufacturing physical products"),
   ];
 
   return (
@@ -121,7 +135,11 @@ const Home: NextPageWithLayout = () => {
       </div>
 
       <div className="container mx-auto mb-24">
-        <ProjectsCards />
+        <ProjectsCards header={t("Latest designs")} filter={designFilter} size={3} />
+      </div>
+
+      <div className="container mx-auto mb-24">
+        <ProjectsCards header={t("Latest products and services")} filter={productFilter} size={3} />
       </div>
 
       <div className="container mx-auto flex items-center justify-center bg-[#f8f7f4] w-full">

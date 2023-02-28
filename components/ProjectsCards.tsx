@@ -16,9 +16,9 @@
 
 import { useQuery } from "@apollo/client";
 import { Text } from "@bbtgnn/polaris-interfacer";
+import devLog from "lib/devLog";
 import Link from "next/link";
 import useLoadMore from "../hooks/useLoadMore";
-import devLog from "../lib/devLog";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 import AddStar from "./AddStar";
@@ -36,6 +36,8 @@ export interface ProjectsCardsProps {
   hidePrimaryAccountable?: boolean;
   hideHeader?: boolean;
   hideFilters?: boolean;
+  header?: string;
+  size?: number;
 }
 
 const ProjectsCards = (props: ProjectsCardsProps) => {
@@ -45,11 +47,13 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     hidePagination = false,
     hidePrimaryAccountable = false,
     hideFilters = false,
+    header = "Latest projects",
+    size = 6,
   } = props;
   const dataQueryIdentifier = "economicResources";
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
-    variables: { last: 6, filter: filter },
+    variables: { last: size, filter: filter },
   });
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
@@ -60,8 +64,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
   });
 
   const projects = items;
-
-  devLog("projects", projects);
+  devLog(projects);
 
   return (
     <>
@@ -69,7 +72,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
         onLoadMore={loadMore}
         nextPage={!!getHasNextPage}
         loading={loading}
-        header={hideHeader ? undefined : "Latest projects"}
+        header={hideHeader ? undefined : header}
         hidePagination={hidePagination}
       >
         {projects?.map(({ node }: { node: EconomicResource }) => (

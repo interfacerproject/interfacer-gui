@@ -21,6 +21,7 @@ import { LinkMinor } from "@shopify/polaris-icons";
 import Avatar from "boring-avatars";
 import BrTabs from "components/brickroom/BrTabs";
 import Spinner from "components/brickroom/Spinner";
+import ProjectsCards from "components/ProjectsCards";
 import ProjectsTable from "components/ProjectsTable";
 import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
@@ -128,7 +129,7 @@ const Profile: NextPage = () => {
                   component: (
                     <div>
                       <h3 className="my-8">{isUser ? t("My Projects") : t("Projects")}</h3>
-                      <ProjectsTable filter={proposalFilter} hideHeader={true} hideFilters={true} />
+                      <ProjectsCards filter={proposalFilter} hideHeader={true} hideFilters={true} />
                     </div>
                   ),
                 },
