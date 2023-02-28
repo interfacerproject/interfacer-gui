@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import Footer from "components/Footer";
 import Link from "next/link";
 import React, { ReactNode } from "react";
 import Topbar from "../Topbar";
@@ -38,6 +39,7 @@ const NRULayout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProp
           <img src="/about.svg" className={"w-full h-full object-contain bg-[#013026] md:h-screen hidden md:block"} />
           <div className="h-full">{layoutProps?.children}</div>
         </div>
+        <Footer />
       </div>
     </>
   );

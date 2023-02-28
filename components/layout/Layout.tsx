@@ -17,6 +17,7 @@
 import { useRouter } from "next/router";
 import React, { ReactNode, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import Footer from "../Footer";
 import Sidebar from "../Sidebar";
 import Topbar from "../Topbar";
 
@@ -43,9 +44,10 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
       {authenticated ? (
         <div className="drawer">
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-          <div className="drawer-content">
+          <div className="drawer-content flex flex-col">
             <Topbar />
-            <div className="bg-[#F3F3F1] max-w-full">{layoutProps?.children}</div>
+            <div className="bg-[#F3F3F1] max-w-full flex-grow">{layoutProps?.children}</div>
+            <Footer />
           </div>
           <div className="drawer-side">
             <label htmlFor="my-drawer" className="drawer-overlay" />
@@ -53,7 +55,10 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
           </div>
         </div>
       ) : (
-        <div className="bg-[#F3F3F1] ">{layoutProps?.children}</div>
+        <div>
+          <div className="bg-[#F3F3F1] ">{layoutProps?.children}</div>
+          <Footer />
+        </div>
       )}
     </>
   );
