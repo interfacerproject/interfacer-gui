@@ -16,10 +16,13 @@
 
 import { useQuery } from "@apollo/client";
 import { Text } from "@bbtgnn/polaris-interfacer";
+import Link from "next/link";
 import useLoadMore from "../hooks/useLoadMore";
 import devLog from "../lib/devLog";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
+import AddStar from "./AddStar";
+import BrDisplayUser from "./brickroom/BrDisplayUser";
 import BrTags from "./brickroom/BrTags";
 import CardsGroup from "./CardsGroup";
 import ProjectContributors from "./ProjectContributors";
@@ -46,7 +49,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
   const dataQueryIdentifier = "economicResources";
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
-    variables: { last: 10, filter: filter },
+    variables: { last: 6, filter: filter },
   });
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
@@ -70,14 +73,28 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
         hidePagination={hidePagination}
       >
         {projects?.map(({ node }: { node: EconomicResource }) => (
-          <div className="p-4 rounded-lg overflow-hidden bg-white border border-" key={node.id}>
+          <div className="p-4 rounded-lg overflow-hidden bg-white shadow mx-2 lg:mx-0 " key={node.id}>
             <div className="flex flex-col space-y-3">
-              <ProjectTime projectNode={node} />
-              <ProjectImage image={node?.images?.[0]} className="rounded-lg" />
-              <Text variant="headingXl" as="h4">
-                {node.name}
-              </Text>
-              <ProjectTypeChip projectNode={node} />
+              <div className="flex justify-between">
+                <ProjectTime projectNode={node} />
+                <AddStar id={node.id} owner={node.primaryAccountable.id} tiny />
+              </div>
+              <Link href={`/project/${node.id}`}>
+                <a>
+                  <ProjectImage image={node?.images?.[0]} className="rounded-lg object-scale-down max-h-60 w-full" />
+                </a>
+              </Link>
+              <Link href={`/project/${node.id}`}>
+                <a>
+                  <Text variant="headingXl" as="h4">
+                    {node.name}
+                  </Text>
+                </a>
+              </Link>
+              <div className="flex justify-between">
+                <ProjectTypeChip projectNode={node} />
+                <BrDisplayUser id={node.primaryAccountable.id} name={node.primaryAccountable.name} />
+              </div>
               <BrTags tags={node.classifiedAs || []} />
               <ProjectContributors projectNode={node} />
             </div>

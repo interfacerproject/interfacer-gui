@@ -17,7 +17,7 @@
 import { File } from "lib/types";
 
 const ProjectImage = ({ image, className }: { image: File | string | undefined; className?: string }) => {
-  if (!image) return <div className="w-full h-80 bg-base-300 rounded-lg"></div>;
+  if (!image) return <div className="w-full h-60 bg-base-300 rounded-lg"></div>;
 
   const src = typeof image === "string" ? image : `data:${image?.mimeType};base64,${image?.bin}`;
   return (

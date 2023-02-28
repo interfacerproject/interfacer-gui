@@ -24,7 +24,7 @@ const ProjectTypeChip = (props: { projectNode: EconomicResource }) => {
     <div className="flex items-center space-x-1">
       <p>{t("This is a")}</p>
       <span
-        className={classNames("flex space-x-1 py-0.5 px-1 rounded items-center", {
+        className={classNames("flex space-x-1 py-0.5 px-1 rounded items-center hover:cursor-pointer", {
           "bg-[#E4CCE3] text-[#413840] border-[#C18ABF]": name === "Design",
           "bg-[#FAE5B7] text-[#614C1F] border-[#614C1F]": name === "Product",
           "bg-[#CDE0E4] text-[#024960] border-[#5D8CA0]": name === "Service",

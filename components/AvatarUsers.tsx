@@ -19,7 +19,7 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 
 const AvatarUsers = ({ users, size = 4 }: { users: Array<string>; size?: number }) => {
-  const length = users.length;
+  const length = users?.length;
   const overflow = length > size;
   const cut = overflow ? users.slice(0, length) : users;
   const { t } = useTranslation("common");

@@ -18,7 +18,6 @@ import { Button, ButtonGroup, Text } from "@bbtgnn/polaris-interfacer";
 import { GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
 import Layout from "components/layout/Layout";
 import ProjectsCards from "components/ProjectsCards";
-import ProjectsTable from "components/ProjectsTable";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -115,12 +114,8 @@ const Home: NextPageWithLayout = () => {
         </div>
       </div>
 
-      <div className="container mx-auto">
+      <div className="container mx-auto mb-24">
         <ProjectsCards />
-      </div>
-
-      <div className="p-4 container mx-auto overflow-x-scroll">
-        {<ProjectsTable hideHeader={true} hidePagination={true} hideFilters />}
       </div>
 
       <div className="container mx-auto flex items-center justify-center bg-[#f8f7f4] w-full">
