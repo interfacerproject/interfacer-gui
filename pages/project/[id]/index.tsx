@@ -175,9 +175,9 @@ const Project = () => {
       </FullWidthBanner>
 
       {/* Main */}
-      <div className="p-4 container mx-auto grid grid-cols-4 max-w-5xl bg-[#f8f7f4]">
+      <div className="p-4 container mx-auto grid grid-cols-1 lg:grid-cols-4 max-w-5xl bg-[#f8f7f4]">
         {/* Content */}
-        <div className="col-span-3">
+        <div className="lg:col-span-3 lg:pr-4">
           <Stack vertical spacing="extraLoose">
             {/* Title */}
             <Stack vertical spacing="tight">
@@ -322,7 +322,7 @@ const Project = () => {
         </div>
 
         {/* Sidebar */}
-        <div className="col-span-1">
+        <div className="lg:col-span-1 order-first lg:order-last">
           {/* Project info */}
           <div className="w-full justify-end flex pb-3">
             <AddStar id={project.id} owner={project.primaryAccountable.id} />
