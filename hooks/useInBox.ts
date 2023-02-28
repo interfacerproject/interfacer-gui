@@ -50,6 +50,7 @@ type UseInBoxReturnValue = {
   messages: { id: number; sender: string; content: { data: string; message: any; subject: string } }[];
   startReading: () => void;
   setReadedMessages: (ids: number[]) => void;
+  readedMessages: number[];
 };
 
 const useInBox = (): UseInBoxReturnValue => {
@@ -60,6 +61,7 @@ const useInBox = (): UseInBoxReturnValue => {
   const [readedMessages, setReadedMessages] = useState<number[]>([]);
   const { user } = useAuth();
   const { signedPost } = useSignedPost();
+
   useEffect(() => {
     readedMessages.forEach(id => {
       setMessage(id, true);
@@ -145,6 +147,7 @@ const useInBox = (): UseInBoxReturnValue => {
     messages,
     startReading: () => setStartFetch(true),
     setReadedMessages,
+    readedMessages,
   };
 };
 

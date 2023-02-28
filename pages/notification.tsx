@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Button, Card, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Text } from "@bbtgnn/polaris-interfacer";
 import { BellIcon } from "@heroicons/react/outline";
+import classNames from "classnames";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -66,7 +67,13 @@ export enum MessageGroup {
 
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { startReading, messages, setReadedMessages, countUnread } = useInBox();
+  const { startReading, messages, setReadedMessages, countUnread, readedMessages } = useInBox();
+
+  console.log(
+    messages.map(m => m.id),
+    readedMessages
+  );
+
   useEffect(() => {
     startReading();
     countUnread > 0 &&
@@ -167,14 +174,22 @@ const Notification = () => {
                   {` (${group.length})`}
                 </Text>
 
-                <div className="mt-4">
-                  {group.map((m: any) => (
-                    <Card key={m.id}>
-                      <div className="p-4">
+                <div className="mt-4 space-y-2">
+                  {group.map((m: any) => {
+                    const isUnread = false;
+                    const classes = classNames("relative p-4 bg-white rounded-md", {
+                      "border-2 border-text-primary": isUnread,
+                      "border-1 border-border-subdued": !isUnread,
+                    });
+                    return (
+                      <div key={m.id} className={classes}>
                         <ContributionMessage message={m.content} sender={m.sender} data={m.content.data} />
+                        {isUnread && (
+                          <div className="absolute -top-2 -right-2 w-4 h-4 bg-text-primary border-2 border-white rounded-full shadow-md" />
+                        )}
                       </div>
-                    </Card>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
