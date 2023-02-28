@@ -161,6 +161,8 @@ const Project = () => {
     setViewCreatedBanner(false);
   };
 
+  const isOwner = project?.primaryAccountable?.id === user?.ulid;
+
   //
 
   if (loading) return <Spinner />;
@@ -173,6 +175,19 @@ const Project = () => {
           {t("Project succesfully created!")}
         </Text>
       </FullWidthBanner>
+
+      {isOwner && (
+        <FullWidthBanner open status="basic">
+          <Text as="p" variant="bodySm">
+            {t("This project is yours")}
+          </Text>
+          <Link href={`/project/${project.id}/edit`}>
+            <Button monochrome outline>
+              {t("Edit")}
+            </Button>
+          </Link>
+        </FullWidthBanner>
+      )}
 
       {/* Main */}
       <div className="p-4 container mx-auto grid grid-cols-1 lg:grid-cols-4 max-w-5xl bg-[#f8f7f4]">
