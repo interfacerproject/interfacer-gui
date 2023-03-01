@@ -67,14 +67,7 @@ export enum MessageGroup {
 
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { messages, setReadedMessages, unread, isLoading, error } = useInBox();
-
-  useEffect(() => {
-    unread > 0 &&
-      setInterval(() => {
-        setReadedMessages(messages.map((m: Message) => m.id));
-      }, 10000);
-  }, [messages]);
+  const { messages, isLoading, error } = useInBox();
 
   /* Message grouping */
 
@@ -185,7 +178,7 @@ const Notification = () => {
                     });
                     return (
                       <div key={m.id} className={classes}>
-                        <ContributionMessage message={m.content} sender={m.sender} data={m.content.data} />
+                        <ContributionMessage message={m.content} sender={m.sender} data={m.content.data} id={m.id} />
                         {isUnread && (
                           <div className="absolute -top-2 -right-2 w-4 h-4 bg-text-primary border-2 border-white rounded-full shadow-md" />
                         )}

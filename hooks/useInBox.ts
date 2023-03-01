@@ -99,16 +99,10 @@ const useInBox = () => {
     return await signedPost(process.env.NEXT_PUBLIC_INBOX_SET_READ!, request).then(res => res.json());
   };
 
-  const setReadedMessages = async (ids: number[]) => {
-    for (const id of ids) {
-      await setReadedMessage(id);
-    }
-  };
-
   const messages = data?.messages;
   const unread = unreadData?.count;
 
-  return { messages, error, isLoading, sendMessage, unread, setReadedMessage, setReadedMessages };
+  return { messages, error, isLoading, sendMessage, unread, setReadedMessage };
 };
 
 export default useInBox;
