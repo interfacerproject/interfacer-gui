@@ -128,7 +128,7 @@ const Home: NextPageWithLayout = () => {
       <div className="container mx-auto flex items-center justify-center bg-[#f8f7f4] w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
           <div>
-            <img src="/hero_1.png" alt="" className="contain w-full" />
+            <img src="/hero_1.png" alt="" className="contain w-full rounded-md" />
           </div>
           <div className="space-y-6 p-2 lg:p-8 order-first lg:order-last">
             <Text variant="heading4xl" as="h1">
