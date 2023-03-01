@@ -130,7 +130,7 @@ const Home: NextPageWithLayout = () => {
           <div>
             <img src="/hero_1.png" alt="" className="contain w-full rounded-md" />
           </div>
-          <div className="space-y-6 p-2 lg:p-8 order-first lg:order-last">
+          <div className="space-y-6 p-8 order-first lg:order-last">
             <Text variant="heading4xl" as="h1">
               {t("Sign-in to browse the library")}
             </Text>

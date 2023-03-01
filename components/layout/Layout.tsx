@@ -46,7 +46,7 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content flex flex-col">
             <Topbar />
-            <div className="bg-[#F3F3F1] max-w-full flex-grow">{layoutProps?.children}</div>
+            <div className="max-w-full flex-grow">{layoutProps?.children}</div>
             <Footer />
           </div>
           <div className="drawer-side">
