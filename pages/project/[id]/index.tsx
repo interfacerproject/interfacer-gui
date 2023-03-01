@@ -197,7 +197,7 @@ const Project = () => {
       )}
 
       {/* Main */}
-      <div className="p-4 container mx-auto grid grid-cols-1 lg:grid-cols-4 max-w-5xl bg-[#f8f7f4]">
+      <div className="p-4 container mx-auto grid grid-cols-1 lg:grid-cols-4 max-w-6xl bg-[#f8f7f4]">
         {/* Content */}
         <div className="lg:col-span-3 lg:pr-4">
           <Stack vertical spacing="extraLoose">
@@ -355,7 +355,7 @@ const Project = () => {
                 </Modal.Section>
               </Modal>
 
-              {selected == 4 && (
+              {selected == 3 && (
                 <ContributorsTable
                   contributors={project.metadata?.contributors}
                   title={t("Contributors")}
@@ -363,7 +363,7 @@ const Project = () => {
                   data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
                 />
               )}
-              {selected == 5 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
+              {selected == 4 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
             </Stack>
           </Stack>
         </div>
@@ -435,7 +435,7 @@ const Project = () => {
                 size="large"
                 fullWidth
                 monochrome
-                onClick={() => setSelected(5)}
+                onClick={() => setSelected(4)}
               >
                 {t("All contributions")}
               </Button>

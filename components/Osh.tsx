@@ -1,10 +1,10 @@
 import { ApolloQueryResult, OperationVariables } from "@apollo/client";
-import { Button, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Spinner, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { CheckmarkFilled, View, ViewOff, WarningAltFilled } from "@carbon/icons-react";
 import { useAuth } from "hooks/useAuth";
 import useAutoimport from "hooks/useAutoimport";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
-import devLog from "lib/devLog";
+import { url } from "lib/regex";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { Dispatch, useState } from "react";
@@ -40,7 +40,7 @@ const OshLine = ({
     setOshRatings(ratingsToUpdate);
   };
   return (
-    <div className="m-2 mr-0 py-1">
+    <div className="m-2 mr-1 py-1">
       <Stack vertical spacing="loose">
         <div className="flex flex-between">
           <div className="flex-grow">
@@ -79,29 +79,41 @@ const OshTool = ({
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<{ economicResource: EconomicResource }>>;
 }) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [oshRatings, setOshRatings] = useState<any>(project?.metadata?.ratings);
+  const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
   const { analyzeRepository } = useAutoimport();
   const { updateMetadata } = useProjectCRUD();
   const { user } = useAuth();
   const isOwner = user?.ulid === project.primaryAccountable.id;
   const handleAnalyze = async () => {
-    const result = await analyzeRepository("https://github.com/dyne/zenflows-gui");
-    if (result?.stats) {
-      const { stats } = result;
-      const { ratings } = stats;
-      let ratingsToUpdate: any = {};
-      if (oshRatings) {
-        for (const key of Object.keys(oshRatings)) {
-          ratingsToUpdate[key] = { ...ratings[key], show: Boolean(oshRatings[key].show) };
-        }
-      } else {
-        Object.keys(ratings).map((n: string) => (ratingsToUpdate[n] = { ...ratings[n], show: false }));
-      }
-      await updateMetadata(project, { ratings: ratingsToUpdate });
-      setOshRatings(ratingsToUpdate);
-      await refetch();
+    setLoading(true);
+    if (!project.repo || !url.test(project.repo!)) {
+      setError(t("Update your project and provide a valid repository url"));
+      setLoading(false);
+      return;
     }
+    const result = await analyzeRepository(project.repo);
+    if (!result?.stats) {
+      setError(t("Something went wrong be sure to have a valid repository url"));
+      setLoading(false);
+      return;
+    }
+    const { stats } = result;
+    const { ratings } = stats;
+    let ratingsToUpdate: any = {};
+    if (oshRatings) {
+      for (const key of Object.keys(oshRatings)) {
+        ratingsToUpdate[key] = { ...ratings[key], show: Boolean(oshRatings[key].show) };
+      }
+    } else {
+      Object.keys(ratings).map((n: string) => (ratingsToUpdate[n] = { ...ratings[n], show: false }));
+    }
+    await updateMetadata(project, { ratings: ratingsToUpdate });
+    setOshRatings(ratingsToUpdate);
+    await refetch();
+    setLoading(false);
   };
 
   return (
@@ -109,37 +121,54 @@ const OshTool = ({
       {(oshRatings || isOwner) && (
         <>
           <Card sectioned>
-            <Stack vertical spacing={"loose"}>
-              <Text as="h2" variant="heading2xl">
-                {t("Open Know How")}
-              </Text>
-              {isOwner && (
-                <Stack vertical spacing="loose">
-                  <Text as="p" variant="bodyMd">
-                    {t(
-                      "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification, ensuring that it follows standardized documentation and metadata practices for open hardware designs"
+            {loading ? (
+              <div className="w-full h-96 bg-white mt-24 bg-opacity-50 z-10 flex content-center justify-center">
+                <Spinner />
+              </div>
+            ) : (
+              <Stack vertical spacing={"loose"}>
+                <Text as="h2" variant="heading2xl">
+                  {t("Open Know How")}
+                </Text>
+                {isOwner && (
+                  <Stack vertical spacing="loose">
+                    <Text as="p" variant="bodyMd">
+                      {t(
+                        "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification, ensuring that it follows standardized documentation and metadata practices for open hardware designs"
+                      )}
+                    </Text>
+                    <div className="border rounded-sm bg-[#FAFAFA]">
+                      {oshRatings &&
+                        Object.keys(oshRatings).map((n: string, i: number) => (
+                          <OshLine
+                            stats={oshRatings}
+                            name={n}
+                            key={i}
+                            project={project}
+                            setOshRatings={setOshRatings}
+                          />
+                        ))}
+                    </div>
+                    {error && (
+                      <Text as="p" variant="bodyMd" color="critical">
+                        {error}
+                      </Text>
                     )}
-                  </Text>
-                  <div className="border rounded-sm bg-[#FAFAFA]">
-                    {oshRatings &&
-                      Object.keys(oshRatings).map((n: string, i: number) => (
-                        <OshLine stats={oshRatings} name={n} key={i} project={project} setOshRatings={setOshRatings} />
-                      ))}
-                  </div>
-                  <Button primary id="seeRelations" size="large" fullWidth monochrome onClick={handleAnalyze}>
-                    {t("Run checker")}
-                  </Button>
-                </Stack>
-              )}
-              {!isOwner && (
-                <Stack vertical spacing="extraTight">
-                  {Object.keys(oshRatings).map(
-                    (n: string, i: number) =>
-                      oshRatings[n].show && <img src={oshRatings[n].badgeUrl} key={i} alt={oshRatings[n].name} />
-                  )}
-                </Stack>
-              )}
-            </Stack>
+                    <Button primary id="seeRelations" size="large" fullWidth monochrome onClick={handleAnalyze}>
+                      {t("Run checker")}
+                    </Button>
+                  </Stack>
+                )}
+                {!isOwner && (
+                  <Stack vertical spacing="extraTight">
+                    {Object.keys(oshRatings).map(
+                      (n: string, i: number) =>
+                        oshRatings[n].show && <img src={oshRatings[n].badgeUrl} key={i} alt={oshRatings[n].name} />
+                    )}
+                  </Stack>
+                )}
+              </Stack>
+            )}
           </Card>
         </>
       )}
