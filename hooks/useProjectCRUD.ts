@@ -261,26 +261,22 @@ export const useProjectCRUD = () => {
           originalProjectId: projectId,
         });
         const project = await getProjectForMetadataUpdate(linkedDesign);
-        devLog("bbbbbb", project.metadata);
         if (project.metadata?.relations) {
           const relations: string[] = [...project.metadata.relations, projectId];
-          devLog("info: metadata updated", relations);
-          await updateRelations(linkedDesign, relations);
+          await updateRelations(linkedDesign, relations, true);
         } else {
-          await updateRelations(linkedDesign, [projectId]);
+          await updateRelations(linkedDesign, [projectId], true);
         }
       }
 
       for (const resource of formData.relations) {
         await addRelation(resource, processId, projectId);
         const project = await getProjectForMetadataUpdate(resource);
-        devLog("bbbbbb", project.metadata);
         if (project.metadata?.relations) {
           const relations: string[] = [...project.metadata.relations, projectId];
-          devLog("info: metadata updated", relations);
-          await updateRelations(resource, relations);
+          await updateRelations(resource, relations, true);
         } else {
-          await updateRelations(resource, [projectId]);
+          await updateRelations(resource, [projectId], true);
         }
       }
 
@@ -311,9 +307,10 @@ export const useProjectCRUD = () => {
   const updateMetadata = async (
     project: Partial<EconomicResource>,
     metadata: Record<string, unknown>,
-    processId: string
+    processId: string,
+    authorized = false
   ) => {
-    if (project.primaryAccountable?.id !== user?.ulid) throw new Error("NotAuthorized");
+    if (project.primaryAccountable?.id !== user?.ulid && !authorized) throw new Error("NotAuthorized");
     const newMetadata = { ...project.metadata, ...metadata };
     const quantity = project.onhandQuantity;
     const variables: UpdateMetadataMutationVariables = {
@@ -354,7 +351,13 @@ export const useProjectCRUD = () => {
 
   type CbUpdateFunction = (projectId: string, array: Array<string>, processId: string) => Promise<void>;
 
-  const updateMetadataArray = async (projectId: string, array: string[], key: string, cb: CbUpdateFunction) => {
+  const updateMetadataArray = async (
+    projectId: string,
+    array: string[],
+    key: string,
+    cb: CbUpdateFunction,
+    authorized = false
+  ) => {
     try {
       const project = await getProjectForMetadataUpdate(projectId);
       const oldArray = project.metadata[key];
@@ -364,7 +367,7 @@ export const useProjectCRUD = () => {
       devLog("success: process created", processName, processId);
       const newArray = getNewElements(project.metadata[key], array);
       if (newArray.length > 0) await cb(projectId, newArray, processId);
-      await updateMetadata(project, { [key]: array }, processId);
+      await updateMetadata(project, { [key]: array }, processId, authorized);
       devLog(`success: ${key} updated`);
     } catch (e) {
       devLog(`error: ${key} not updated`, e);
@@ -402,8 +405,8 @@ export const useProjectCRUD = () => {
     if (errors) throw new Error(`Metadata not updated: ${errors}`);
   };
 
-  const updateRelations = async (projectId: string, relations: Array<string>) =>
-    updateMetadataArray(projectId, relations, "relations", addRelations);
+  const updateRelations = async (projectId: string, relations: Array<string>, authorized = false) =>
+    updateMetadataArray(projectId, relations, "relations", addRelations, authorized);
 
   return {
     handleProjectCreation,
