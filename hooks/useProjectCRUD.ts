@@ -260,10 +260,28 @@ export const useProjectCRUD = () => {
           process: processId,
           originalProjectId: projectId,
         });
+        const project = await getProjectForMetadataUpdate(linkedDesign);
+        devLog("bbbbbb", project.metadata);
+        if (project.metadata?.relations) {
+          const relations: string[] = [...project.metadata.relations, projectId];
+          devLog("info: metadata updated", relations);
+          await updateRelations(linkedDesign, relations);
+        } else {
+          await updateRelations(linkedDesign, [projectId]);
+        }
       }
 
       for (const resource of formData.relations) {
         await addRelation(resource, processId, projectId);
+        const project = await getProjectForMetadataUpdate(resource);
+        devLog("bbbbbb", project.metadata);
+        if (project.metadata?.relations) {
+          const relations: string[] = [...project.metadata.relations, projectId];
+          devLog("info: metadata updated", relations);
+          await updateRelations(resource, relations);
+        } else {
+          await updateRelations(resource, [projectId]);
+        }
       }
 
       await addContributors(
@@ -384,6 +402,9 @@ export const useProjectCRUD = () => {
     if (errors) throw new Error(`Metadata not updated: ${errors}`);
   };
 
+  const updateRelations = async (projectId: string, relations: Array<string>) =>
+    updateMetadataArray(projectId, relations, "relations", addRelations);
+
   return {
     handleProjectCreation,
     error,
@@ -392,8 +413,7 @@ export const useProjectCRUD = () => {
     updateDeclarations,
     updateContributors: (projectId: string, contributors: Array<string>) =>
       updateMetadataArray(projectId, contributors, "contributors", addContributors),
-    updateRelations: (projectId: string, relations: Array<string>) =>
-      updateMetadataArray(projectId, relations, "relations", addRelations),
+    updateRelations,
     relocateProject,
   };
 };
