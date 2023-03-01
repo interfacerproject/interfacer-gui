@@ -1,21 +1,5 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 import { useAuth } from "./useAuth";
 import useSignedPost from "./useSignedPost";
 
@@ -53,42 +37,45 @@ type UseInBoxReturnValue = {
   readedMessages: number[];
 };
 
-const useInBox = (): UseInBoxReturnValue => {
-  const [countUnread, setCountUnread] = useState(0);
-  const [messages, setMessages] = useState<any[]>([]);
-  const [hasNewMessages, setHasNewMessages] = useState(false);
-  const [startFetch, setStartFetch] = useState(false);
-  const [readedMessages, setReadedMessages] = useState<number[]>([]);
+const useInBox = () => {
   const { user } = useAuth();
-  const { signedPost } = useSignedPost();
+  const { signRequest, signedPost } = useSignedPost();
+  const fetcher = async (url: string, request: any) => {
+    const requestJSON = JSON.stringify(request);
+    const requestHeaders = await signRequest(requestJSON);
+    return await fetch(url, {
+      method: "POST",
+      headers: requestHeaders,
+      body: JSON.stringify(request),
+    }).then(res => res.json());
+  };
 
-  useEffect(() => {
-    readedMessages.forEach(id => {
-      setMessage(id, true);
-    });
-    if (startFetch) {
-      fetchMessages().then(setMessages);
-      setInterval(() => {
-        fetchMessages().then(setMessages);
-      }, 120000);
-    }
-    count().then(counted => {
-      setCountUnread(counted);
-    });
-    setInterval(() => {
-      const previousCounted = countUnread;
-      count().then(counted => {
-        setCountUnread(counted);
-        if (counted && previousCounted < counted) {
-          setHasNewMessages(true);
-          setCountUnread(counted);
-          setInterval(() => {
-            setHasNewMessages(false);
-          }, 30000);
-        }
-      });
-    }, Number(process.env.NEXT_PUBLIC_INBOX_COUNT_INTERVAL));
-  }, [startFetch, readedMessages]);
+  const { data, error, isLoading } = useSWR(
+    [
+      process.env.NEXT_PUBLIC_INBOX_READ!,
+      {
+        request_id: 50,
+        receiver: user?.ulid,
+        only_unread: false,
+      },
+    ],
+    ([url, request]) => fetcher(url, request)
+  );
+
+  const {
+    data: unreadData,
+    error: errorUnread,
+    isLoading: isLoadingUnread,
+  } = useSWR(
+    [
+      process.env.NEXT_PUBLIC_INBOX_COUNT_UNREAD!,
+      {
+        receiver: user?.ulid,
+      },
+    ],
+    ([url, request]) => fetcher(url, request),
+    { refreshInterval: 1000 }
+  );
 
   const sendMessage = async (message: any, receivers: string[], subject: string = "Subject"): Promise<Response> => {
     const request = {
@@ -103,27 +90,7 @@ const useInBox = (): UseInBoxReturnValue => {
     return await signedPost(process.env.NEXT_PUBLIC_INBOX_SEND!, request);
   };
 
-  const readMessages = async () => {
-    const request = {
-      request_id: 42,
-      receiver: user?.ulid,
-    };
-    return await signedPost(process.env.NEXT_PUBLIC_INBOX_READ!, request).then(res => res.json());
-  };
-
-  const countMessages = async () => {
-    const request = {
-      receiver: user?.ulid,
-    };
-    return await signedPost(process.env.NEXT_PUBLIC_INBOX_COUNT_UNREAD!, request).then(res => res.json());
-  };
-  const count = async () => {
-    const _count = await countMessages();
-    if (_count.success) {
-      return _count.count;
-    }
-  };
-  const setMessage = async (id: number, read = true) => {
+  const setReadedMessage = async (id: number, read = true) => {
     const request = {
       message_id: id,
       receiver: user?.ulid,
@@ -132,23 +99,16 @@ const useInBox = (): UseInBoxReturnValue => {
     return await signedPost(process.env.NEXT_PUBLIC_INBOX_SET_READ!, request).then(res => res.json());
   };
 
-  const fetchMessages = async () => {
-    const _messages = await readMessages().then(res => res.messages);
-    return _messages;
+  const setReadedMessages = async (ids: number[]) => {
+    for (const id of ids) {
+      await setReadedMessage(id);
+    }
   };
 
-  return {
-    sendMessage,
-    readMessages,
-    countMessages,
-    countUnread,
-    hasNewMessages,
-    setMessage,
-    messages,
-    startReading: () => setStartFetch(true),
-    setReadedMessages,
-    readedMessages,
-  };
+  const messages = data?.messages;
+  const unread = unreadData?.count;
+
+  return { messages, error, isLoading, sendMessage, unread, setReadedMessage, setReadedMessages };
 };
 
 export default useInBox;

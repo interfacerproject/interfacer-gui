@@ -20,7 +20,7 @@ import classNames from "classnames";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ContributionMessage from "../components/ContributionMessage";
 import useInBox from "../hooks/useInBox";
 
@@ -67,31 +67,25 @@ export enum MessageGroup {
 
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { startReading, messages, setReadedMessages, countUnread, readedMessages } = useInBox();
-
-  console.log(
-    messages.map(m => m.id),
-    readedMessages
-  );
+  const { messages, setReadedMessages, unread, isLoading, error } = useInBox();
 
   useEffect(() => {
-    startReading();
-    countUnread > 0 &&
+    unread > 0 &&
       setInterval(() => {
-        setReadedMessages(messages.map(m => m.id));
-      }, 20000);
+        setReadedMessages(messages.map((m: Message) => m.id));
+      }, 10000);
   }, [messages]);
 
   /* Message grouping */
 
   type Message = typeof messages[number];
 
-  const groupedMessages: Record<MessageGroup, Array<Message>> = {
+  const [groupedMessages, setGroupedMessages] = useState<Record<MessageGroup, Array<Message>>>({
     [MessageGroup.CONTRIBUTION_REQUESTS]: [],
     [MessageGroup.CONTRIBUTION_RESPONSES]: [],
     [MessageGroup.CITATIONS]: [],
     [MessageGroup.ADDED_AS_CONTRIBUTOR]: [],
-  };
+  });
 
   function clearGroupedMessages() {
     groupedMessages.contributionRequests = [];
@@ -99,32 +93,39 @@ const Notification = () => {
     groupedMessages.citations = [];
   }
 
-  function groupMessagesBySubject(messages: Array<Message>): Record<MessageGroup, Array<Message>> {
+  function groupMessagesBySubject(messages: Array<Message>): void {
     // Contribution requests
+    let group: Record<MessageGroup, Array<Message>> = {
+      [MessageGroup.CONTRIBUTION_REQUESTS]: [],
+      [MessageGroup.CONTRIBUTION_RESPONSES]: [],
+      [MessageGroup.CITATIONS]: [],
+      [MessageGroup.ADDED_AS_CONTRIBUTOR]: [],
+    };
     for (let m of messages) {
       if (m.content.subject === MessageSubject.CONTRIBUTION_REQUEST) {
-        groupedMessages.contributionRequests.push(m);
+        group.contributionRequests.push(m);
       } else if (
         m.content.subject === MessageSubject.CONTRIBUTION_ACCEPTED ||
         m.content.subject === MessageSubject.CONTRIBUTION_REJECTED
       ) {
-        groupedMessages.contributionResponses.push(m);
+        group.contributionResponses.push(m);
       } else if (m.content.subject === "Project cited") {
-        groupedMessages.citations.push(m);
+        group.citations.push(m);
       } else if (m.content.subject === MessageSubject.ADDED_AS_CONTRIBUTOR) {
-        groupedMessages.addedAsContributor.push(m);
+        group.addedAsContributor.push(m);
       }
     }
     //
-    return groupedMessages;
+    setGroupedMessages(group);
   }
 
-  groupMessagesBySubject(messages);
-
   useEffect(() => {
-    clearGroupedMessages();
-    groupMessagesBySubject(messages);
-  }, [messages]);
+    console.log(isLoading, error, messages);
+    if (!isLoading && !error) {
+      clearGroupedMessages();
+      groupMessagesBySubject(messages);
+    }
+  }, [messages, isLoading]);
 
   const groupsLabels: Record<MessageGroup, string> = {
     [MessageGroup.CONTRIBUTION_REQUESTS]: t("Contribution Requests"),
@@ -135,7 +136,7 @@ const Notification = () => {
 
   /* Empty state */
 
-  if (messages.length === 0) {
+  if (!isLoading && messages.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[90vh] space-y-2 text-gray-500">
         <BellIcon className="w-5 h-5" />
@@ -176,7 +177,8 @@ const Notification = () => {
 
                 <div className="mt-4 space-y-2">
                   {group.map((m: any) => {
-                    const isUnread = false;
+                    // @ts-ignore
+                    const isUnread = !m.read;
                     const classes = classNames("relative p-4 bg-white rounded-md", {
                       "border-2 border-text-primary": isUnread,
                       "border-1 border-border-subdued": !isUnread,
