@@ -17,7 +17,7 @@
 import { useQuery } from "@apollo/client";
 import { Button } from "@bbtgnn/polaris-interfacer";
 import cn from "classnames";
-import { Notification } from "hooks/useInBox";
+import useInBox, { Notification } from "hooks/useInBox";
 import MdParser from "lib/MdParser";
 import { ASK_RESOURCE_PRIMARY_ACCOUNTABLE } from "lib/QueryAndMutation";
 import { useTranslation } from "next-i18next";
@@ -32,10 +32,12 @@ const ContributionMessage = ({
   message,
   sender,
   data,
+  id,
 }: {
   message: Notification.Content;
   sender: string;
   data: Date;
+  id: number;
 }) => {
   const [ownerName, setOwnerName] = useState("");
   const [userId, setUserId] = useState("");
@@ -70,6 +72,7 @@ const ContributionMessage = ({
     userName: parsedMessage.proposerName,
     proposalId: parsedMessage.proposalID,
     subject: message.subject,
+    id: id,
   };
 
   const makeMessageProps = () => {
@@ -108,6 +111,7 @@ const ContributionMessage = ({
 
   const hasMessage = Boolean(m.message);
   const request = MessageSubject.CONTRIBUTION_REQUEST === m.subject;
+  const { setReadedMessage } = useInBox();
 
   return (
     <div className="space-y-3">
@@ -146,6 +150,7 @@ const ContributionMessage = ({
         <Button
           fullWidth
           onClick={() => {
+            setReadedMessage(m.id);
             router.replace(`/project/${m.resourceId}`);
           }}
         >
