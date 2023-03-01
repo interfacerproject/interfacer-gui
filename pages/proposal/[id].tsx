@@ -66,6 +66,7 @@ const Proposal = () => {
       intentAccept: intents[1].id,
       intentModify: intents[2].id,
     };
+
     devLog("rejectProposalVariables", rejectProposalVariables);
     const rejection = await rejectProposal({ variables: rejectProposalVariables });
     devLog("Proposal rejected", rejection);
@@ -92,14 +93,25 @@ const Proposal = () => {
     const intents = proposal.primaryIntents;
     if (!intents) return;
 
+    const cite = intents[0];
+    const accept = intents[1];
+    const fork = cite.resourceInventoriedAs;
+    const toBeModifiedResource = accept.resourceInventoriedAs;
+
+    const oldRelations = fork?.metadata.relations?.filter((id: string) => id != toBeModifiedResource?.id) || [];
+
     const acceptanceVariables = {
-      process: intents[0].inputOf?.id,
+      process: cite.inputOf?.id || cite.outputOf?.id,
       owner: user!.ulid,
-      proposer: intents[0].resourceInventoriedAs?.primaryAccountable.id,
+      proposer: fork?.primaryAccountable.id,
       unitOne: unitAndCurrency?.units.unitOne.id!,
-      resourceForked: intents[0].resourceInventoriedAs?.id,
-      resourceOrigin: intents[1].resourceInventoriedAs?.id,
+      resourceForked: fork?.id,
+      resourceOrigin: toBeModifiedResource?.id,
       creationTime: new Date().toISOString(),
+      metadata: JSON.stringify({
+        ...toBeModifiedResource?.metadata,
+        relations: [...oldRelations, fork?.id!],
+      }),
     };
     devLog("acceptanceVariables", acceptanceVariables);
     const economicEvents = await acceptProposal({ variables: acceptanceVariables });

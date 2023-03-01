@@ -3685,7 +3685,14 @@ export type GetProjectLayoutQuery = {
     primaryAccountable:
       | { __typename?: "Organization"; id: string; name: string }
       | { __typename?: "Person"; id: string; name: string };
-    currentLocation?: { __typename?: "SpatialThing"; id: string; name: string; mappableAddress?: string | null } | null;
+    currentLocation?: {
+      __typename?: "SpatialThing";
+      id: string;
+      name: string;
+      mappableAddress?: string | null;
+      lat?: any | null;
+      long?: any | null;
+    } | null;
     images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
   } | null;
 };
@@ -3825,17 +3832,7 @@ export type GetResourceTableQuery = {
     license?: string | null;
     repo?: string | null;
     traceDpp: any;
-    trace?: Array<
-      | {
-          __typename: "EconomicEvent";
-          hasPointInTime?: any | null;
-          inputOf?: { __typename?: "Process"; id: string; name: string } | null;
-          outputOf?: { __typename?: "Process"; id: string; name: string } | null;
-          action: { __typename?: "Action"; id: string; label: string; inputOutput?: string | null };
-        }
-      | { __typename: "EconomicResource"; id: string; name: string; note?: string | null }
-      | { __typename: "Process"; id: string; name: string }
-    > | null;
+    classifiedAs?: Array<any> | null;
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     onhandQuantity: {
       __typename?: "Measure";
@@ -4231,6 +4228,7 @@ export type QueryProposalQuery = {
         id: string;
         name: string;
         repo?: string | null;
+        metadata?: any | null;
         primaryAccountable:
           | { __typename?: "Organization"; id: string; name: string }
           | { __typename?: "Person"; id: string; name: string };
@@ -4285,6 +4283,7 @@ export type AcceptProposalMutationVariables = Exact<{
   resourceForked: Scalars["ID"];
   resourceOrigin: Scalars["ID"];
   creationTime: Scalars["DateTime"];
+  metadata?: InputMaybe<Scalars["JSONObject"]>;
 }>;
 
 export type AcceptProposalMutation = {

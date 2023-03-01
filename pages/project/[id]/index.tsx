@@ -17,9 +17,8 @@
 import { useQuery } from "@apollo/client";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
-import devLog from "lib/devLog";
-import { QUERY_RESOURCE } from "lib/QueryAndMutation";
-import { EconomicResource } from "lib/types";
+import { QUERY_RESOURCE, QUERY_RESOURCE_PROPOSAlS } from "lib/QueryAndMutation";
+import { EconomicResource, ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/types";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -43,10 +42,14 @@ import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
-import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
+import { Cube, ListBoxes, MagicWand, ParentChild, Purchase } from "@carbon/icons-react";
+import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
+import ProjectContributors from "components/ProjectContributors";
+import ProjectLicenses from "components/ProjectLicenses";
+import ProjectTypeChip from "components/ProjectTypeChip";
 
 //
 
@@ -68,10 +71,14 @@ const Project = () => {
   const { loading, data, startPolling, refetch } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id: id },
   });
-  startPolling(120000);
 
-  devLog("trace", data?.economicResource.trace);
-  devLog("traceDpp", data?.economicResource.traceDpp);
+  const { data: contributions } = useQuery<ResourceProposalsQuery, ResourceProposalsQueryVariables>(
+    QUERY_RESOURCE_PROPOSAlS,
+    {
+      variables: { id: id as string },
+    }
+  );
+  startPolling(12000);
 
   // (Temp) Redirect if project is LOSH owned
   if (process.env.NEXT_PUBLIC_LOSH_ID == data?.economicResource?.primaryAccountable?.id) {
@@ -188,31 +195,26 @@ const Project = () => {
         </FullWidthBanner>
       )}
 
-      <div className="flex flex-row p-4">
-        <BrBreadcrumb
-          crumbs={[
-            { name: t("Projects"), href: "/projects" },
-            { name: project.conformsTo.name, href: `/projects?conformTo=${project.conformsTo.id}` },
-          ]}
-        />
-      </div>
-
       {/* Main */}
-      <div className="p-4 sm:max-w-xl mx-auto md:max-w-none md:flex md:flex-row md:space-x-12 md:justify-center">
+      <div className="p-4 container mx-auto grid grid-cols-1 lg:grid-cols-4 max-w-5xl bg-[#f8f7f4]">
         {/* Content */}
-        <div className="grow max-w-xl mb-16 md:mb-0">
+        <div className="lg:col-span-3 lg:pr-4">
           <Stack vertical spacing="extraLoose">
             {/* Title */}
             <Stack vertical spacing="tight">
-              <Text as="p" variant="bodyMd">
-                {t("This is a")}
-                <Link href={`/projects?conformTo=${project.conformsTo.id}`}>
-                  <a className="ml-1 font-bold text-primary hover:underline">{project.conformsTo.name}</a>
-                </Link>
-              </Text>
+              <BrBreadcrumb
+                crumbs={[
+                  { name: t("Projects"), href: "/projects" },
+                  { name: project.conformsTo.name, href: `/projects?conformTo=${project.conformsTo.id}` },
+                ]}
+              />
+              <ProjectTypeChip projectNode={project} />
               <Text as="h1" variant="heading2xl">
                 {project.name}
               </Text>
+              <p className="text-primary font-mono">
+                {t("ID:")} {project.id}
+              </p>
             </Stack>
 
             <BrThumbinailsGallery images={images} />
@@ -223,19 +225,34 @@ const Project = () => {
                 tabs={[
                   {
                     id: "overview",
-                    content: t("Overview"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <Cube />
+                        {t("Overview")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Project overview"),
                     panelID: "overview-content",
                   },
                   {
                     id: "relationships",
-                    content: t("Relationship tree"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <ParentChild />
+                        {t("Relationship tree")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Relationship tree"),
                     panelID: "relationships-content",
                   },
                   {
                     id: "dpp",
-                    content: t("DPP"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <Purchase />
+                        {t("DPP")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Digital Product Passport"),
                     panelID: "dpp-content",
                   },
@@ -247,7 +264,12 @@ const Project = () => {
                   },
                   {
                     id: "Contributions",
-                    content: t("Contributions"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <ListBoxes />
+                        {t("Contributions")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Contributions"),
                     panelID: "contributions-content",
                   },
@@ -257,7 +279,7 @@ const Project = () => {
               />
 
               {selected == 0 && <ProjectDetailOverview project={project} />}
-              {selected == 1 && <RelationshipTree dpp={data?.economicResource.traceDpp} />}
+              {selected == 1 && <RelationshipTree project={data?.economicResource} />}
               {selected == 2 && (
                 <div className="space-y-8">
                   <div>
@@ -340,26 +362,31 @@ const Project = () => {
                   data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
                 />
               )}
-              {selected == 5 && <ContributionsTable id={String(id)} />}
+              {selected == 5 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
             </Stack>
           </Stack>
         </div>
 
         {/* Sidebar */}
-        <div>
+        <div className="lg:col-span-1 order-first lg:order-last">
           {/* Project info */}
+          <div className="w-full justify-end flex pb-3">
+            {user && <AddStar id={project.id} owner={project.primaryAccountable.id} />}
+          </div>
           <Card sectioned>
             <Stack vertical>
-              <div>
-                <Text as="h2" variant="headingMd">
-                  {"ID"}
-                </Text>
-                <p className="text-primary font-mono">{project.id}</p>
-              </div>
-
+              {project.repo && (
+                <Button primary url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
+                  {t("Go to source")}
+                </Button>
+              )}
+              <Button id="addToList" size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>
+                {inList ? t("Remove from list") : t("Add to list")}
+              </Button>
+              {user && <WatchButton id={project.id} owner={project.primaryAccountable.id} />}
               <div className="space-y-1">
-                <Text as="h2" variant="headingMd">
-                  {t("Owner")}
+                <Text as="p" variant="bodyMd">
+                  {t("By:")}
                 </Text>
                 <BrDisplayUser
                   id={project.primaryAccountable.id}
@@ -367,54 +394,73 @@ const Project = () => {
                   location={project.currentLocation?.name}
                 />
               </div>
-              {project.repo && (
-                <Button url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
-                  {t("Go to source")}
-                </Button>
-              )}
             </Stack>
           </Card>
 
           {/* Actions */}
-          {user && (
+          {project.metadata.licenses && (
             <Card sectioned>
-              <Stack vertical>
-                <Button
-                  id="addToList"
-                  size="large"
-                  onClick={handleCollect}
-                  fullWidth
-                  icon={<Icon source={PlusMinor} />}
-                >
-                  {inList ? t("Remove from list") : t("Add to list")}
-                </Button>
-
-                <WatchButton id={project.id} owner={project.primaryAccountable.id} />
-
-                <AddStar id={project.id} owner={project.primaryAccountable.id} />
+              <Stack vertical spacing="loose">
+                <ProjectLicenses project={project} />
               </Stack>
             </Card>
           )}
           {/* Contributions */}
-          {user && project.primaryAccountable.id != user?.ulid && (
-            <Card sectioned>
-              <Stack vertical>
-                <Text as="h2" variant="headingMd">
-                  {t("Contributions")}
-                </Text>
-                <Button
-                  id="goToContribution"
-                  icon={<Icon source={MergeMinor} />}
-                  size="large"
-                  fullWidth
-                  primary
-                  onClick={() => router.push(`/create/contribution/${id}`)}
-                >
-                  {t("Make a contribution")}
-                </Button>
-              </Stack>
-            </Card>
-          )}
+          <Card sectioned>
+            <Stack vertical>
+              <Text as="h2" variant="headingMd">
+                {t("Contributions")}
+              </Text>
+              <Text color="success" as="p" variant="bodyMd">
+                {t("{{contributors}} contributors", { contributors: project.metadata.contributors?.length || 0 })}
+              </Text>
+              <ProjectContributors projectNode={project} />
+              <Text color="success" as="p" variant="bodyMd">
+                {t("{{contributions}} contributions", { contributions: contributions?.proposals.edges.length })}
+              </Text>
+              <Button
+                id="contribute"
+                icon={<MagicWand />}
+                size="large"
+                fullWidth
+                primary
+                onClick={() => router.push(`/create/contribution/${id}`)}
+              >
+                {t("Make a contribution")}
+              </Button>
+              <Button
+                id="seeContributions"
+                icon={<ListBoxes />}
+                size="large"
+                fullWidth
+                monochrome
+                onClick={() => setSelected(5)}
+              >
+                {t("All contributions")}
+              </Button>
+            </Stack>
+          </Card>
+          {/* Relations */}
+          <Card sectioned>
+            <Stack vertical spacing="loose">
+              <Text as="h2" variant="headingMd">
+                {t("Relations")}
+              </Text>
+              <Text color="success" as="p" variant="bodyMd">
+                {t("{{related}} related projects", { related: project.metadata.relations?.length || 0 })}
+              </Text>
+              <Button
+                id="seeRelations"
+                icon={<ParentChild />}
+                size="large"
+                fullWidth
+                monochrome
+                onClick={() => setSelected(1)}
+              >
+                {t("All relations")}
+              </Button>
+            </Stack>
+          </Card>
         </div>
       </div>
 

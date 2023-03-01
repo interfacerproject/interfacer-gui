@@ -203,34 +203,7 @@ export const QUERY_RESOURCE = gql`
       license
       repo
       traceDpp
-      trace {
-        __typename
-        ... on Process {
-          id
-          name
-        }
-        ... on EconomicEvent {
-          inputOf {
-            id
-            name
-          }
-          outputOf {
-            id
-            name
-          }
-          hasPointInTime
-          action {
-            id
-            label
-            inputOutput
-          }
-        }
-        ... on EconomicResource {
-          id
-          name
-          note
-        }
-      }
+      classifiedAs
       conformsTo {
         id
         name
@@ -735,6 +708,7 @@ export const QUERY_PROPOSAL = gql`
           id
           name
           repo
+          metadata
           primaryAccountable {
             id
             name
@@ -816,6 +790,7 @@ export const ACCEPT_PROPOSAL = gql`
     $resourceForked: ID!
     $resourceOrigin: ID!
     $creationTime: DateTime!
+    $metadata: JSONObject
   ) {
     cite: createEconomicEvent(
       event: {
@@ -858,6 +833,7 @@ export const ACCEPT_PROPOSAL = gql`
         resourceInventoriedAs: $resourceOrigin
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
         hasPointInTime: $creationTime
+        resourceMetadata: $metadata
       }
     ) {
       economicEvent {
