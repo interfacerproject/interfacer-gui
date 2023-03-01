@@ -1,6 +1,7 @@
 import { ApolloQueryResult, OperationVariables } from "@apollo/client";
 import { Button, Card, Spinner, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { CheckmarkFilled, View, ViewOff, WarningAltFilled } from "@carbon/icons-react";
+import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
 import useAutoimport from "hooks/useAutoimport";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
@@ -111,6 +112,7 @@ const OshTool = ({
       Object.keys(ratings).map((n: string) => (ratingsToUpdate[n] = { ...ratings[n], show: false }));
     }
     await updateMetadata(project, { ratings: ratingsToUpdate });
+    await updateMetadata(project, { lastOshCheck: dayjs().toISOString() });
     setOshRatings(ratingsToUpdate);
     await refetch();
     setLoading(false);
@@ -149,14 +151,23 @@ const OshTool = ({
                           />
                         ))}
                     </div>
-                    {error && (
-                      <Text as="p" variant="bodyMd" color="critical">
-                        {error}
-                      </Text>
-                    )}
-                    <Button primary id="seeRelations" size="large" fullWidth monochrome onClick={handleAnalyze}>
-                      {t("Run checker")}
-                    </Button>
+                    <div>
+                      {error && (
+                        <Text as="p" variant="bodyMd" color="critical">
+                          {error}
+                        </Text>
+                      )}
+                      {oshRatings && (
+                        <Text as="p" variant="bodySm">
+                          {t("Last execution")}
+                          {": "}
+                          {dayjs(project?.metadata?.oshExecution).toLocaleString()}
+                        </Text>
+                      )}
+                      <Button primary id="seeRelations" size="large" fullWidth monochrome onClick={handleAnalyze}>
+                        {t("Run checker")}
+                      </Button>
+                    </div>
                   </Stack>
                 )}
                 {!isOwner && (
