@@ -316,7 +316,7 @@ export const useProjectCRUD = () => {
     const variables: UpdateMetadataMutationVariables = {
       process: processId,
       metadata: JSON.stringify(newMetadata),
-      agent: user!.ulid,
+      agent: project.primaryAccountable?.id!,
       now: new Date().toISOString(),
       resource: project.id!,
       quantity: { hasNumericalValue: quantity?.hasNumericalValue, hasUnit: quantity?.hasUnit?.id },
@@ -405,8 +405,16 @@ export const useProjectCRUD = () => {
     if (errors) throw new Error(`Metadata not updated: ${errors}`);
   };
 
-  const updateRelations = async (projectId: string, relations: Array<string>, authorized = false) =>
-    updateMetadataArray(projectId, relations, "relations", addRelations, authorized);
+  const updateRelations = async (projectId: string, relations: Array<string>, authorized = false) => {
+    await updateMetadataArray(projectId, relations, "relations", addRelations, authorized);
+    for (const relation of relations) {
+      const project = await getProjectForMetadataUpdate(relation);
+      const oldRelations = project.metadata.relations;
+      if (oldRelations.includes(projectId)) continue;
+      const processId = await createProcess(`relations update @ ${project.name}`);
+      await updateMetadata(project, { relations: [...oldRelations, projectId] }, processId, true);
+    }
+  };
 
   return {
     handleProjectCreation,
