@@ -293,9 +293,10 @@ export const useProjectCRUD = () => {
   const updateMetadata = async (
     project: Partial<EconomicResource>,
     metadata: Record<string, unknown>,
-    processId: string
+    processId?: string
   ) => {
     if (project.primaryAccountable?.id !== user?.ulid) throw new Error("NotAuthorized");
+    if (!processId) processId = await createProcess(`metadata update @ ${project.name}`);
     const newMetadata = { ...project.metadata, ...metadata };
     const quantity = project.onhandQuantity;
     const variables: UpdateMetadataMutationVariables = {
@@ -395,5 +396,6 @@ export const useProjectCRUD = () => {
     updateRelations: (projectId: string, relations: Array<string>) =>
       updateMetadataArray(projectId, relations, "relations", addRelations),
     relocateProject,
+    updateMetadata,
   };
 };

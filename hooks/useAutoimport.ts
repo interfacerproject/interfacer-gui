@@ -15,6 +15,7 @@ const decodeBase64 = async (s: string) => {
 
 type AutoImportReturnValue = {
   importRepository: (input: AutoimportInput) => Promise<Partial<CreateProjectValues> | undefined>;
+  analyzeRepository: (repo: string) => Promise<any>;
 };
 
 const useAutoImport = (): AutoImportReturnValue => {
@@ -24,15 +25,15 @@ const useAutoImport = (): AutoImportReturnValue => {
 
   // const findImagesInReadme = (readme: string) => readme.match(/(https?:\/\/.*\.(?:png|jpe?g))/i);
 
-  // const analyze = async (repo: string) => {
-  //   try {
-  //     const request = { method: "POST", body: JSON.stringify({ repo: repo }) };
-  //     const result = await (await fetch(`${process.env.NEXT_PUBLIC_OSH}/analyze`, request)).json();
-  //     return result.ok;
-  //   } catch (e) {
-  //     devLog("error fetching osh metadata", e);
-  //   }
-  // };
+  const analyze = async (repo: string) => {
+    try {
+      const request = { method: "POST", body: JSON.stringify({ repo: repo }) };
+      const result = await (await fetch(`${process.env.NEXT_PUBLIC_OSH}/analyze`, request)).json();
+      return result.ok;
+    } catch (e) {
+      devLog("error fetching osh metadata", e);
+    }
+  };
 
   const getGhMetadata = async (u: { owner: string; repo: string }) => {
     try {
@@ -152,6 +153,7 @@ const useAutoImport = (): AutoImportReturnValue => {
   };
   return {
     importRepository,
+    analyzeRepository: analyze,
   };
 };
 

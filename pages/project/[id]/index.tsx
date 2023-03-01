@@ -47,6 +47,7 @@ import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
+import OshTool from "components/Osh";
 import ProjectContributors from "components/ProjectContributors";
 import ProjectLicenses from "components/ProjectLicenses";
 import ProjectTypeChip from "components/ProjectTypeChip";
@@ -461,6 +462,8 @@ const Project = () => {
               </Button>
             </Stack>
           </Card>
+          {/* Osh */}
+          <OshTool project={project} refetch={refetch} />
         </div>
       </div>
 
