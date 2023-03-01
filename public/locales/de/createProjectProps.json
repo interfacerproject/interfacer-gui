@@ -49,5 +49,12 @@
   "Send contribution": "Beitrag senden",
   "Contribution repository link or Interfacer ID": "Link zum Beitragsrepository oder Interfacer-ID",
   "github": "github",
-  "Reference to the resource's repository or Interfacer ID of the resource": "Verweis auf das Repository der Ressource oder Interfacer-ID der Ressource"
+  "Reference to the resource's repository or Interfacer ID of the resource": "Verweis auf das Repository der Ressource oder Interfacer-ID der Ressource",
+  "Project Information": "Projekt Information",
+  "This information will be used to identify your project and provide context to users who may be interested in it.": "Diese Informationen werden verwendet, um Ihr Projekt zu identifizieren und Benutzern, die daran interessiert sein könnten, einen Kontext bereitzustellen.",
+  "Project title": "Projekttitel",
+  "A clear and concise name for your project that summarizes its purpose or main focus.": "Ein klarer und prägnanter Name für Ihr Projekt, der seinen Zweck oder Schwerpunkt zusammenfasst.",
+  "Add relevant keywords that describe your project.": "Fügen Sie relevante Schlüsselwörter hinzu, die Ihr Projekt beschreiben.",
+  "Give a better understanding of what your project is about and why it’s important.": "Geben Sie ein besseres Verständnis dafür, worum es bei Ihrem Projekt geht und warum es wichtig ist.",
+  "Project Description": "Projektbeschreibung"
 }

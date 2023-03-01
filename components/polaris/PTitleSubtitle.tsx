@@ -10,19 +10,19 @@ export default function PTitleSubtitle(props: Props) {
   const { title = "", subtitle = "", titleTag = "h1" } = props;
 
   const titleVariant: Record<string, TextProps["variant"]> = {
-    h1: "heading3xl",
+    h1: "heading2xl",
     h2: "headingXl",
   };
 
   return (
-    <Stack vertical spacing="extraTight">
+    <Stack vertical spacing="baseTight">
       {title && (
         <Text variant={titleVariant[titleTag]} as={titleTag}>
           {title}
         </Text>
       )}
       {subtitle && (
-        <Text variant="bodyMd" as="p">
+        <Text variant="bodyMd" as="p" color="subdued">
           {subtitle}
         </Text>
       )}
