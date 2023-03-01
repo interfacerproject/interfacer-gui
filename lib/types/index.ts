@@ -3832,17 +3832,7 @@ export type GetResourceTableQuery = {
     license?: string | null;
     repo?: string | null;
     traceDpp: any;
-    trace?: Array<
-      | {
-          __typename: "EconomicEvent";
-          hasPointInTime?: any | null;
-          inputOf?: { __typename?: "Process"; id: string; name: string } | null;
-          outputOf?: { __typename?: "Process"; id: string; name: string } | null;
-          action: { __typename?: "Action"; id: string; label: string; inputOutput?: string | null };
-        }
-      | { __typename: "EconomicResource"; id: string; name: string; note?: string | null }
-      | { __typename: "Process"; id: string; name: string }
-    > | null;
+    classifiedAs?: Array<any> | null;
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     onhandQuantity: {
       __typename?: "Measure";

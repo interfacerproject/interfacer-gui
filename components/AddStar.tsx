@@ -49,12 +49,11 @@ const AddStar = ({ id, owner, tiny = false }: { id: string; owner: string; tiny?
         <Button
           id="likeButton"
           onClick={handleClick}
-          fullWidth
           disabled={hasAlreadyStarred}
-          size="large"
+          size="medium"
           icon={<Icon source={hasAlreadyStarred ? StarFilledMinor : StarOutlineMinor} />}
         >
-          {hasAlreadyStarred ? t("You already star it!") : t("Star")}
+          {t("Star")}
         </Button>
       )}
     </>

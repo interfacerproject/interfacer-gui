@@ -120,11 +120,12 @@ const Home: NextPageWithLayout = () => {
         </div>
       </div>
 
+      {/* PROJECT CARDS */}
       <div className="container mx-auto mb-24">
         <ProjectsCards />
       </div>
 
-      <div className="container mx-auto flex items-center justify-center w-full">
+      <div className="container mx-auto flex items-center justify-center bg-[#f8f7f4] w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
           <div>
             <img src="/hero_1.png" alt="" className="contain w-full rounded-md" />
@@ -170,7 +171,7 @@ const Home: NextPageWithLayout = () => {
         </div>
       </div>
 
-      <div className="grid gap-16 md:pl-32 md:grid-cols-3 mt-44">
+      <div className="container mx-auto grid gap-16 md:grid-cols-3 mt-44 justify-between">
         {features.map((f, i) => {
           return (
             <div key={i} className="flex md:flex-col mb-10">
