@@ -93,7 +93,10 @@ const CreateContribution: NextPageWithLayout = () => {
         agent: user!.ulid,
         name: `${resource!.name} forked by ${user!.name}`,
         note: formData.description,
-        metadata: JSON.stringify({ ...resource?.metadata, relations: [...resource?.metadata?.relations, id] }),
+        metadata: JSON.stringify({
+          ...resource?.metadata,
+          relations: Boolean(resource?.metadata?.relations) && [...resource?.metadata?.relations, id],
+        }),
         location: resource!.currentLocation?.id,
         unitOne: unitAndCurrency?.units.unitOne.id!,
         creationTime: new Date().toISOString(),
