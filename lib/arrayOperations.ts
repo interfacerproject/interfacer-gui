@@ -1,5 +1,5 @@
 export function getMissingElements<T>(baseArray: Array<T>, contrastArray: Array<T>): Array<T> {
-  return baseArray.filter(el => !contrastArray.includes(el));
+  return baseArray.filter(el => !contrastArray?.includes(el));
 }
 
 export function getNewElements<T>(baseArray: Array<T>, contrastArray: Array<T>): Array<T> {

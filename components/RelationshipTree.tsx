@@ -22,15 +22,14 @@ import ProjectsCards from "./ProjectsCards";
 const RelationshipTree = ({ project }: { project: EconomicResource | undefined }) => {
   const { t } = useTranslation("update");
 
-  if (!project) return <></>;
-  const relatedProjects = project.metadata?.relations;
+  const relatedProjects = project?.metadata?.relations;
   const proposalFilter = {
     id: relatedProjects,
   };
   return (
     <div className="w-full mt-2" id="relationshipTree">
       <PTitleCounter title={t("Relations")} length={relatedProjects?.length ?? 0} />
-      <ProjectsCards filter={proposalFilter} tiny />
+      {project && relatedProjects && <ProjectsCards filter={proposalFilter} tiny />}
     </div>
   );
 };
