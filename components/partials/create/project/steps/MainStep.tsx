@@ -45,7 +45,7 @@ export const mainStepSchema = yup.object({
 //
 
 export default function MainStep() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["createProjectProps", "common"]);
 
   const { formState, control, setValue, watch, trigger } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
@@ -54,7 +54,12 @@ export default function MainStep() {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("General information")} />
+      <PTitleSubtitle
+        title={t("Project Information")}
+        subtitle={t(
+          "This information will be used to identify your project and provide context to users who may be interested in it."
+        )}
+      />
 
       <Controller
         control={control}
@@ -68,8 +73,8 @@ export default function MainStep() {
             autoComplete="off"
             onChange={onChange}
             onBlur={onBlur}
-            placeholder={t("My new project")}
-            label={t("Title")}
+            label={t("Project title")}
+            helpText={t("A clear and concise name for your project that summarizes its purpose or main focus.")}
             error={errors.main?.title?.message}
             requiredIndicator={isRequired(mainStepSchema, "title")}
           />
@@ -101,9 +106,8 @@ export default function MainStep() {
         name="description"
         editorClass="h-60"
         value={watch("main.description")}
-        label={t("General information")}
-        helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t("Type up to 2048 characters")}.`}
-        subtitle={t("Short description to be displayed on the project page")}
+        label={t("Project Description")}
+        subtitle={t("Give a better understanding of what your project is about and why it’s important.")}
         onChange={({ text, html }) => {
           setValue("main.description", text, formSetValueOptions);
         }}
@@ -118,6 +122,8 @@ export default function MainStep() {
           trigger("main.tags");
         }}
         error={errors.main?.tags?.message}
+        label={t("Tags")}
+        helpText={t("Add relevant keywords that describe your project.")}
         requiredIndicator={isRequired(mainStepSchema, "tags")}
       />
     </Stack>
