@@ -20,7 +20,7 @@ const OshLine = ({
 }: {
   stats: any;
   name: string;
-  project: EconomicResource;
+  project: Partial<EconomicResource>;
   setOshRatings: Dispatch<any>;
   isOwner: boolean;
 }) => {
@@ -42,6 +42,7 @@ const OshLine = ({
     await updateMetadata(project, { ratings: ratingsToUpdate });
     setOshRatings(ratingsToUpdate);
   };
+  if (!stat.show && !isOwner) return null;
   return (
     <div className="m-2 mr-1 py-1">
       <Stack vertical spacing="loose">
@@ -79,7 +80,7 @@ const OshTool = ({
   project,
   refetch,
 }: {
-  project: EconomicResource;
+  project: Partial<EconomicResource>;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<{ economicResource: EconomicResource }>>;
@@ -91,7 +92,7 @@ const OshTool = ({
   const { analyzeRepository } = useAutoimport();
   const { updateMetadata } = useProjectCRUD();
   const { user } = useAuth();
-  const isOwner = user?.ulid === project.primaryAccountable.id;
+  const isOwner = user?.ulid === project.primaryAccountable!.id;
   const handleAnalyze = async () => {
     setLoading(true);
     if (!project.repo || !url.test(project.repo!)) {
@@ -124,7 +125,7 @@ const OshTool = ({
 
   return (
     <>
-      {oshRatings && (
+      {(oshRatings || isOwner) && (
         <>
           <Card sectioned>
             {loading ? (
@@ -169,7 +170,6 @@ const OshTool = ({
                         {t("Last execution")}
                         {": "}
                         {dayjs(project?.metadata?.oshExecution).toLocaleString()}
-                        {t("execution time")}
                       </Text>
                     )}
                     {isOwner && (
