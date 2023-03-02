@@ -3569,6 +3569,7 @@ export type SearchProjectQuery = {
     __typename?: "EconomicResource";
     id: string;
     name: string;
+    images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
     conformsTo: { __typename?: "ResourceSpecification"; name: string };
     primaryAccountable: { __typename?: "Organization"; name: string } | { __typename?: "Person"; name: string };
   } | null;
@@ -4070,6 +4071,11 @@ export type FetchInventoryQuery = {
           name: string;
           mappableAddress?: string | null;
         } | null;
+        trace?: Array<
+          | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
+          | { __typename: "EconomicResource" }
+          | { __typename: "Process" }
+        > | null;
         images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
         primaryAccountable:
           | { __typename?: "Organization"; id: string; name: string; note?: string | null }

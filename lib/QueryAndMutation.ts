@@ -451,6 +451,12 @@ export const FETCH_RESOURCES = gql`
           metadata
           okhv
           repo
+          trace {
+            __typename
+            ... on EconomicEvent {
+              hasPointInTime
+            }
+          }
           images {
             hash
             name
