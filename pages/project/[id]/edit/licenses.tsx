@@ -80,7 +80,7 @@ const EditLicenses: NextPageWithLayout = () => {
 //
 
 EditLicenses.getLayout = page => (
-  <Layout>
+  <Layout bottomPadding="none">
     <FetchProjectLayout>
       <EditProjectLayout>{page}</EditProjectLayout>
     </FetchProjectLayout>

@@ -80,7 +80,7 @@ const EditContributors: NextPageWithLayout = () => {
 //
 
 EditContributors.getLayout = page => (
-  <Layout>
+  <Layout bottomPadding="none">
     <FetchProjectLayout>
       <EditProjectLayout>{page}</EditProjectLayout>
     </FetchProjectLayout>

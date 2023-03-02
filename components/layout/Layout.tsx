@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { ReactNode, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
@@ -23,9 +24,11 @@ import Topbar from "../Topbar";
 
 type layoutProps = {
   children: ReactNode;
+  bottomPadding?: "none" | "lg";
 };
 
 const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
+  const { bottomPadding = "lg" } = layoutProps;
   const { authenticated } = useAuth();
   const router = useRouter();
 
@@ -39,6 +42,11 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
     });
   }, [router.events]);
 
+  const calcBottomPadding = classNames({
+    "pb-0": bottomPadding === "none",
+    "pb-20": bottomPadding === "lg",
+  });
+
   return (
     <>
       {authenticated ? (
@@ -46,7 +54,7 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content flex flex-col">
             <Topbar />
-            <div className="max-w-full flex-grow pb-20">{layoutProps?.children}</div>
+            <div className={`max-w-full flex-grow ${calcBottomPadding}`}>{layoutProps?.children}</div>
             <Footer />
           </div>
           <div className="drawer-side">
