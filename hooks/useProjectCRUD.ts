@@ -218,6 +218,8 @@ export const useProjectCRUD = () => {
       const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
       devLog("info: tags prepared", tags);
 
+      const design = formData.linkedDesign.length > 0 && formData.linkedDesign;
+
       const variables: CreateProjectMutationVariables = {
         resourceSpec: projectTypes![projectType],
         process: processId,
@@ -237,6 +239,7 @@ export const useProjectCRUD = () => {
           relations: formData.relations,
           declarations: formData.declarations,
           remote: location?.remote,
+          design: design,
         }),
       };
       devLog("info: project variables created", variables);

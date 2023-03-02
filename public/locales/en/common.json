@@ -66,5 +66,8 @@
   "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification ensuring that it follows standardized documentation and metadata practices for open hardware designs": "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification, ensuring that it follows standardized documentation and metadata practices for open hardware designs",
   "Open Know How": "Open Know How",
   "Last execution": "Last execution",
-  "Run checker": "Run checker"
+  "Run checker": "Run checker",
+  "Based on": "Based on",
+  "ID:": "ID:",
+  "Edit": "Edit"
 }
