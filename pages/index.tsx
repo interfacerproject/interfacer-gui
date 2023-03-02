@@ -198,11 +198,11 @@ const Home: NextPageWithLayout = () => {
       </div>
 
       <div className="container mx-auto flex items-center justify-center bg-[#335259] w-full text-white mt-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
-          <div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 items-center">
+          <div className="col-span-2">
             <img src="/hero_1.png" alt="" className="contain w-full rounded-md" />
           </div>
-          <div className="space-y-6 p-8 order-first lg:order-last">
+          <div className="space-y-6 p-8 order-first lg:order-last col-span-3">
             <Text variant="heading4xl" as="h1">
               {t("Sign-in and connect your designs")}
             </Text>
