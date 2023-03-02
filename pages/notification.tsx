@@ -147,7 +147,7 @@ const Notification = () => {
 
   return (
     <div className="flex flex-wrap mx-auto justify-center">
-      <div className="flex flex-col p-6 space-y-1 sticky top-0 self-start z-50">
+      <div className="flex flex-col p-6 space-y-1 sticky top-0 self-start z-40">
         {Object.entries(groupedMessages).map(([groupName, group]) => (
           <Button key={groupName} url={`#${groupName}`}>
             {/* @ts-ignore */}
