@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+/** @type {import('next-i18next').UserConfig} */
 module.exports = {
   i18n: {
     defaultLocale: "en",

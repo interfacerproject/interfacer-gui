@@ -25,5 +25,12 @@
   "github": {
     "com/my-repo": "E.g. github.com/my-repo"
   },
-  "Reference to the resource's repository or Interfacer ID of the resource": "Reference to the project's repository or its Interfacer ID"
+  "Reference to the resource's repository or Interfacer ID of the resource": "Reference to the project's repository or its Interfacer ID",
+  "Project Information": "Project Information",
+  "This information will be used to identify your project and provide context to users who may be interested in it.": "This information will be used to identify your project and provide context to users who may be interested in it.",
+  "Project title": "Project title",
+  "A clear and concise name for your project that summarizes its purpose or main focus.": "A clear and concise name for your project that summarizes its purpose or main focus.",
+  "Give a better understanding of what your project is about and why it’s important.": "Give a better understanding of what your project is about and why it’s important.",
+  "Project Description": "Project Description",
+  "Add relevant keywords that describe your project.": "Add relevant keywords that describe your project."
 }

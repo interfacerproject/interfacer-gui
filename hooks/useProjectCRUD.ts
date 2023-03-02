@@ -260,10 +260,24 @@ export const useProjectCRUD = () => {
           process: processId,
           originalProjectId: projectId,
         });
+        const project = await getProjectForMetadataUpdate(linkedDesign);
+        if (project.metadata?.relations) {
+          const relations: string[] = [...project.metadata.relations, projectId];
+          await updateRelations(linkedDesign, relations, true);
+        } else {
+          await updateRelations(linkedDesign, [projectId], true);
+        }
       }
 
       for (const resource of formData.relations) {
         await addRelation(resource, processId, projectId);
+        const project = await getProjectForMetadataUpdate(resource);
+        if (project.metadata?.relations) {
+          const relations: string[] = [...project.metadata.relations, projectId];
+          await updateRelations(resource, relations, true);
+        } else {
+          await updateRelations(resource, [projectId], true);
+        }
       }
 
       await addContributors(
@@ -293,16 +307,17 @@ export const useProjectCRUD = () => {
   const updateMetadata = async (
     project: Partial<EconomicResource>,
     metadata: Record<string, unknown>,
-    processId?: string
+    processId?: string,
+    authorized = false
   ) => {
-    if (project.primaryAccountable?.id !== user?.ulid) throw new Error("NotAuthorized");
+    if (project.primaryAccountable?.id !== user?.ulid && !authorized) throw new Error("NotAuthorized");
     if (!processId) processId = await createProcess(`metadata update @ ${project.name}`);
     const newMetadata = { ...project.metadata, ...metadata };
     const quantity = project.onhandQuantity;
     const variables: UpdateMetadataMutationVariables = {
       process: processId,
       metadata: JSON.stringify(newMetadata),
-      agent: user!.ulid,
+      agent: project.primaryAccountable?.id!,
       now: new Date().toISOString(),
       resource: project.id!,
       quantity: { hasNumericalValue: quantity?.hasNumericalValue, hasUnit: quantity?.hasUnit?.id },
@@ -337,7 +352,13 @@ export const useProjectCRUD = () => {
 
   type CbUpdateFunction = (projectId: string, array: Array<string>, processId: string) => Promise<void>;
 
-  const updateMetadataArray = async (projectId: string, array: string[], key: string, cb: CbUpdateFunction) => {
+  const updateMetadataArray = async (
+    projectId: string,
+    array: string[],
+    key: string,
+    cb: CbUpdateFunction,
+    authorized = false
+  ) => {
     try {
       const project = await getProjectForMetadataUpdate(projectId);
       const oldArray = project.metadata[key];
@@ -347,7 +368,7 @@ export const useProjectCRUD = () => {
       devLog("success: process created", processName, processId);
       const newArray = getNewElements(project.metadata[key], array);
       if (newArray.length > 0) await cb(projectId, newArray, processId);
-      await updateMetadata(project, { [key]: array }, processId);
+      await updateMetadata(project, { [key]: array }, processId, authorized);
       devLog(`success: ${key} updated`);
     } catch (e) {
       devLog(`error: ${key} not updated`, e);
@@ -385,6 +406,17 @@ export const useProjectCRUD = () => {
     if (errors) throw new Error(`Metadata not updated: ${errors}`);
   };
 
+  const updateRelations = async (projectId: string, relations: Array<string>, authorized = false) => {
+    await updateMetadataArray(projectId, relations, "relations", addRelations, authorized);
+    for (const relation of relations) {
+      const project = await getProjectForMetadataUpdate(relation);
+      const oldRelations = project.metadata.relations;
+      if (oldRelations.includes(projectId)) continue;
+      const processId = await createProcess(`relations update @ ${project.name}`);
+      await updateMetadata(project, { relations: [...oldRelations, projectId] }, processId, true);
+    }
+  };
+
   return {
     handleProjectCreation,
     error,
@@ -393,8 +425,7 @@ export const useProjectCRUD = () => {
     updateDeclarations,
     updateContributors: (projectId: string, contributors: Array<string>) =>
       updateMetadataArray(projectId, contributors, "contributors", addContributors),
-    updateRelations: (projectId: string, relations: Array<string>) =>
-      updateMetadataArray(projectId, relations, "relations", addRelations),
+    updateRelations,
     relocateProject,
     updateMetadata,
   };

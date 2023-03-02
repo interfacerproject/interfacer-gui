@@ -1,16 +1,30 @@
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { NextPageWithLayout } from "pages/_app";
+import { ReactElement } from "react";
+
+// Components
 import { Card, Icon, Stack } from "@bbtgnn/polaris-interfacer";
 import { ArrowRightMinor } from "@shopify/polaris-icons";
 import Layout from "components/layout/Layout";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import { useTranslation } from "next-i18next";
-import { NextPageWithLayout } from "pages/_app";
-import { ReactElement } from "react";
 
 // Icons
 import Link from "next/link";
 import DesignIcon from "public/project-icons/design.svg";
 import ProductIcon from "public/project-icons/product.svg";
 import ServiceIcon from "public/project-icons/service.svg";
+
+//
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      publicPage: true,
+      ...(await serverSideTranslations(locale, ["common", "createProjectProps"])),
+    },
+  };
+}
 
 //
 
