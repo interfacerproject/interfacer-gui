@@ -74,5 +74,18 @@
   "Repo URL": "Repo URL",
   "Please include the protocol (https://...) in the URL": "Please include the protocol (https://...) in the URL",
   "GitLab host": "GitLab host",
-  "Import repo": "Import repo"
+  "Import repo": "Import repo",
+  "By making a self-declaration, you are providing valuable information to others who may be interested in your product.": "By making a self-declaration, you are providing valuable information to others who may be interested in your product.",
+  "Self declarations": "Self declarations",
+  "Certifications": "Certifications",
+  "Add a certification": "Add a certification",
+  "Availability for recycling": "Availability for recycling",
+  "Indicate whether you are available to recycle your product at the end of its useful life.": "Indicate whether you are available to recycle your product at the end of its useful life.",
+  "Availability for repairing": "Availability for repairing",
+  "Indicate whether you are available to repair your product in case of any issues or malfunctions.": "Indicate whether you are available to repair your product in case of any issues or malfunctions.",
+  "Yes – Available": "Yes – Available",
+  "No – Not available": "No – Not available",
+  "Certification scope": "Certification scope",
+  "Certification link": "Certification link",
+  "Add certification": "Add certification"
 }
