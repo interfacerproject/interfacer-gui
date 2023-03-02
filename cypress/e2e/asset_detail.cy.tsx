@@ -50,7 +50,8 @@ describe("Project Detail functionality", () => {
   });
 
   it("Should add to list then remove it", () => {
-    cy.get("#addToList > span > :nth-child(2)")
+    cy.get("#addToList > .Polaris-Button__Content > .Polaris-Button__Text")
+      .eq(0)
       .should("exist")
       .click()
       .should("include.text", "Remove from list")
