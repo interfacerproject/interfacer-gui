@@ -16,11 +16,13 @@ const OshLine = ({
   name,
   project,
   setOshRatings,
+  isOwner,
 }: {
   stats: any;
   name: string;
   project: EconomicResource;
   setOshRatings: Dispatch<any>;
+  isOwner: boolean;
 }) => {
   const { t } = useTranslation("common");
   const { updateMetadata } = useProjectCRUD();
@@ -55,15 +57,17 @@ const OshLine = ({
             </Text>
           </div>
           <div className="flex-shrink pt-1">
-            <Button
-              id="seeRelations"
-              size="slim"
-              icon={stat.show ? <View /> : <ViewOff />}
-              fullWidth
-              onClick={handleShow}
-            >
-              {t(stat.show ? "Show" : "Hide")}
-            </Button>
+            {isOwner && (
+              <Button
+                id="seeRelations"
+                size="slim"
+                icon={stat.show ? <ViewOff /> : <View />}
+                fullWidth
+                onClick={handleShow}
+              >
+                {t(stat.show ? "Hide" : "Show")}
+              </Button>
+            )}
           </div>
         </div>
       </Stack>
@@ -120,7 +124,7 @@ const OshTool = ({
 
   return (
     <>
-      {(oshRatings || isOwner) && (
+      {oshRatings && (
         <>
           <Card sectioned>
             {loading ? (
@@ -132,52 +136,49 @@ const OshTool = ({
                 <Text as="h2" variant="heading2xl">
                   {t("Open Know How")}
                 </Text>
-                {isOwner && (
-                  <Stack vertical spacing="loose">
-                    <Text as="p" variant="bodyMd">
-                      {t(
-                        "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification ensuring that it follows standardized documentation and metadata practices for open hardware designs"
-                      )}
+                <Stack vertical spacing="loose">
+                  <Text as="p" variant="bodyMd">
+                    {t(
+                      "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification ensuring that it follows standardized documentation and metadata practices for open hardware designs"
+                    )}
+                  </Text>
+                  <div className="border rounded-sm bg-[#FAFAFA]">
+                    {oshRatings &&
+                      Object.keys(oshRatings).map((n: string, i: number) => (
+                        <OshLine
+                          stats={oshRatings}
+                          name={n}
+                          key={i}
+                          project={project}
+                          setOshRatings={setOshRatings}
+                          isOwner={isOwner}
+                        />
+                      ))}
+                  </div>
+                  <div>
+                    <Text as="p" variant="bodySm">
+                      {t("OKH version") + ": 0.3.1-15-gbc9808f"}
                     </Text>
-                    <div className="border rounded-sm bg-[#FAFAFA]">
-                      {oshRatings &&
-                        Object.keys(oshRatings).map((n: string, i: number) => (
-                          <OshLine
-                            stats={oshRatings}
-                            name={n}
-                            key={i}
-                            project={project}
-                            setOshRatings={setOshRatings}
-                          />
-                        ))}
-                    </div>
-                    <div>
-                      {error && (
-                        <Text as="p" variant="bodyMd" color="critical">
-                          {error}
-                        </Text>
-                      )}
-                      {oshRatings && (
-                        <Text as="p" variant="bodySm">
-                          {t("Last execution")}
-                          {": "}
-                          {dayjs(project?.metadata?.oshExecution).toLocaleString()}
-                        </Text>
-                      )}
+                    {error && (
+                      <Text as="p" variant="bodyMd" color="critical">
+                        {error}
+                      </Text>
+                    )}
+                    {oshRatings && (
+                      <Text as="p" variant="bodySm">
+                        {t("Last execution")}
+                        {": "}
+                        {dayjs(project?.metadata?.oshExecution).toLocaleString()}
+                        {t("execution time")}
+                      </Text>
+                    )}
+                    {isOwner && (
                       <Button primary id="seeRelations" size="large" fullWidth monochrome onClick={handleAnalyze}>
                         {t("Run checker")}
                       </Button>
-                    </div>
-                  </Stack>
-                )}
-                {!isOwner && (
-                  <Stack vertical spacing="extraTight">
-                    {Object.keys(oshRatings).map(
-                      (n: string, i: number) =>
-                        oshRatings[n].show && <img src={oshRatings[n].badgeUrl} key={i} alt={oshRatings[n].name} />
                     )}
-                  </Stack>
-                )}
+                  </div>
+                </Stack>
               </Stack>
             )}
           </Card>
