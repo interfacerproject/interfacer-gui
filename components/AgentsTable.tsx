@@ -48,7 +48,7 @@ export default function AgentsTable(props: AgentsTableProps) {
     variables: { last: 10, userOrName: searchTerm || "" },
   });
 
-  const dataQueryIdentifier = "agents";
+  const dataQueryIdentifier = "people";
 
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
@@ -57,8 +57,6 @@ export default function AgentsTable(props: AgentsTableProps) {
     data,
     dataQueryIdentifier,
   });
-
-  const people = data?.agents?.edges;
 
   const [showFilter, setShowFilter] = useState(false);
   const toggleFilter = () => setShowFilter(!showFilter);

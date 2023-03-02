@@ -291,7 +291,7 @@ export const QUERY_AGENTS = gql`
 
 export const FETCH_AGENTS = gql`
   query getAgents($userOrName: String!, $last: Int) {
-    agents(last: $last, filter: { name: $userOrName }) {
+    people(last: $last, filter: { userOrName: $userOrName }) {
       pageInfo {
         startCursor
         endCursor

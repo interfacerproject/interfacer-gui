@@ -54,7 +54,7 @@ const Search: NextPageWithLayout = () => {
   };
 
   return (
-    <div>
+    <div className="container mx-auto">
       <div className="p-8">
         <div className="mb-6">
           <h1>

@@ -3569,6 +3569,7 @@ export type SearchProjectQuery = {
     __typename?: "EconomicResource";
     id: string;
     name: string;
+    images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
     conformsTo: { __typename?: "ResourceSpecification"; name: string };
     primaryAccountable: { __typename?: "Organization"; name: string } | { __typename?: "Person"; name: string };
   } | null;
@@ -3902,8 +3903,8 @@ export type GetAgentsQueryVariables = Exact<{
 
 export type GetAgentsQuery = {
   __typename?: "RootQueryType";
-  agents?: {
-    __typename?: "AgentConnection";
+  people?: {
+    __typename?: "PersonConnection";
     pageInfo: {
       __typename?: "PageInfo";
       startCursor?: string | null;
@@ -3914,23 +3915,15 @@ export type GetAgentsQuery = {
       pageLimit?: number | null;
     };
     edges: Array<{
-      __typename?: "AgentEdge";
+      __typename?: "PersonEdge";
       cursor: string;
-      node:
-        | {
-            __typename?: "Organization";
-            id: string;
-            name: string;
-            note?: string | null;
-            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
-          }
-        | {
-            __typename?: "Person";
-            id: string;
-            name: string;
-            note?: string | null;
-            primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
-          };
+      node: {
+        __typename?: "Person";
+        id: string;
+        name: string;
+        note?: string | null;
+        primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
+      };
     }>;
   } | null;
 };
