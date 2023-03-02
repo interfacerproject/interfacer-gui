@@ -49,7 +49,7 @@ const Footer = () => {
               <Text as="h3" variant="headingLg">
                 {t("About")}
               </Text>
-              <Link href="/">
+              <Link href="https://dyne.org/">
                 <a>
                   <Text as="p" color="subdued" variant="headingMd">
                     {t("This platform")}
