@@ -26,6 +26,8 @@ export const mainStepDefaultValues: MainStepValues = {
   tags: [],
 };
 
+const CHAR_LIMIT = 16000;
+
 export const mainStepSchema = yup.object({
   title: yup.string().required(),
   link: yup.string().matches(url, "Invalid URL").required(),
@@ -34,9 +36,9 @@ export const mainStepSchema = yup.object({
     .string()
     .test(
       "size-check",
-      "Description length must be less than 2048 characters. If it's longer, please use the 'external link' field to reference it.",
+      `Description length must be less than ${CHAR_LIMIT} characters. If it's longer, please use the 'external link' field to reference it.`,
       value => {
-        if (value) return new Blob([value]).size < 2048;
+        if (value) return new Blob([value]).size < CHAR_LIMIT;
         else return true;
       }
     ),
