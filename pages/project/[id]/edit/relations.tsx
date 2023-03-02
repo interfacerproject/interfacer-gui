@@ -1,3 +1,5 @@
+import { useProjectCRUD } from "hooks/useProjectCRUD";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
 
 // Form
@@ -14,7 +16,17 @@ import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
-import { useProjectCRUD } from "hooks/useProjectCRUD";
+
+//
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      publicPage: true,
+      ...(await serverSideTranslations(locale, ["common", "createProjectProps"])),
+    },
+  };
+}
 
 //
 
