@@ -58,5 +58,21 @@
   "Search for a user": "Search for a user",
   "Search by username": "Search by username",
   "Selected contributors": "Selected contributors",
-  "Search for contributors": "Search for contributors"
+  "Search for contributors": "Search for contributors",
+  "Relations": "Relations",
+  "Connect your open source hardware projects to related projects within our community, creating a network of interlinked designs and ideas. You can link to other projects that are similar in design or concept, or that complement your own work.": "Connect your open source hardware projects to related projects within our community, creating a network of interlinked designs and ideas. You can link to other projects that are similar in design or concept, or that complement your own work.",
+  "Selected projects": "Selected projects",
+  "Add relation": "Add relation",
+  "Search for a project": "Search for a project",
+  "Search by resource name or Interfacer ID": "Search by resource name or Interfacer ID",
+  "Import from Repository": "Import from Repository",
+  "Easily and quickly import your open source hardware designs and projects directly from an existing repo. You can then review and make any necessary changes before submitting your project.": "Easily and quickly import your open source hardware designs and projects directly from an existing repo. You can then review and make any necessary changes before submitting your project.",
+  "We recommend to read this guide to know how to structure your folders for better machine-readability:": "We recommend to read this guide to know how to structure your folders for better machine-readability:",
+  "How to start with your OSH Repository in 10 Steps": "How to start with your OSH Repository in 10 Steps",
+  "Select repo type": "Select repo type",
+  "We currently support only GitHub and GitLab": "We currently support only GitHub and GitLab",
+  "Repo URL": "Repo URL",
+  "Please include the protocol (https://...) in the URL": "Please include the protocol (https://...) in the URL",
+  "GitLab host": "GitLab host",
+  "Import repo": "Import repo"
 }
