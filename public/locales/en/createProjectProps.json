@@ -107,5 +107,15 @@
   "Our platform is designed to support locally distributed products, so you can specify the location where your product is available. This allows others in your area to easily find and purchase your product, while also supporting local businesses and communities.": "Our platform is designed to support locally distributed products, so you can specify the location where your product is available. This allows others in your area to easily find and purchase your product, while also supporting local businesses and communities.",
   "Import your project repository. Share your open source hardware project documentation and collaborate on building it. Your contribution will help others learn and build upon your work.": "Import your project repository. Share your open source hardware project documentation and collaborate on building it. Your contribution will help others learn and build upon your work.",
   "Add a design": "Add a design",
-  "Repo ID": "Repo ID"
+  "Repo ID": "Repo ID",
+  "Design": "Design",
+  "Import your project repository. Share your open source hardware project documentation and collaborate on building it.": "Import your project repository. Share your open source hardware project documentation and collaborate on building it.",
+  "Product": "Product",
+  "Showcase your open source hardware product and connect with a global network of makers. Import your product details to our platform.": "Showcase your open source hardware product and connect with a global network of makers. Import your product details to our platform.",
+  "Services": "Services",
+  "Offer your expertise, training courses, or equipment rentals on our platform, supporting the development and collaboration of open source hardware projects in the community.": "Offer your expertise, training courses, or equipment rentals on our platform, supporting the development and collaboration of open source hardware projects in the community.",
+  "Submit a new project": "Submit a new project",
+  "Submit your new open source hardware project and ensure that all relevant information is included. This information will be used to identify your project and provide context to users who may be interested in it.": "Submit your new open source hardware project and ensure that all relevant information is included. This information will be used to identify your project and provide context to users who may be interested in it.",
+  "Read the User Guide": "Read the User Guide",
+  "Need help? Read the User Guide to get started.": "Need help? Read the User Guide to get started."
 }

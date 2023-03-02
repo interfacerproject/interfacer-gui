@@ -5,7 +5,7 @@ import { ReactElement } from "react";
 
 // Components
 import { Card, Icon, Stack } from "@bbtgnn/polaris-interfacer";
-import { ArrowRightMinor } from "@shopify/polaris-icons";
+import { ChevronRightMinor } from "@shopify/polaris-icons";
 import Layout from "components/layout/Layout";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
@@ -29,24 +29,30 @@ export async function getStaticProps({ locale }: any) {
 //
 
 const CreateProject: NextPageWithLayout = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["common", "createProjectProps"]);
 
   const sections: Array<{ title: string; description: string; icon: string; url: string }> = [
     {
       title: t("Design"),
-      description: t("A digital project, like an open source hardware project or 3D model"),
+      description: t(
+        "Import your project repository. Share your open source hardware project documentation and collaborate on building it."
+      ),
       url: "/create/project/design",
       icon: DesignIcon.src,
     },
     {
       title: t("Product"),
-      description: t("A physical product that can be picked up or delivered"),
+      description: t(
+        "Showcase your open source hardware product and connect with a global network of makers. Import your product details to our platform."
+      ),
       url: "/create/project/product",
       icon: ProductIcon.src,
     },
     {
-      title: t("Service"),
-      description: t("A service, like a consultancy, training course or usage/rental of equipment"),
+      title: t("Services"),
+      description: t(
+        "Offer your expertise, training courses, or equipment rentals on our platform, supporting the development and collaboration of open source hardware projects in the community."
+      ),
       url: "/create/project/service",
       icon: ServiceIcon.src,
     },
@@ -54,7 +60,27 @@ const CreateProject: NextPageWithLayout = () => {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("Create a new Project")} subtitle={t("Make sure you read the Community Guidelines.")} />
+      <PTitleSubtitle
+        title={t("Submit a new project")}
+        subtitle={
+          <>
+            {t(
+              "Submit your new open source hardware project and ensure that all relevant information is included. This information will be used to identify your project and provide context to users who may be interested in it."
+            )}
+            <br />
+            <br />
+            {t("Need help? Read the User Guide to get started.")}
+            <a
+              className="ml-1 text-text-primary hover:underline"
+              target="_blank"
+              rel="noreferrer"
+              href="https://interfacerproject.github.io/interfacer-docs/#/pages/user-manual/quickstart?id=projects"
+            >
+              {"[↗]"}
+            </a>
+          </>
+        }
+      />
       <Stack vertical>
         {sections.map(s => (
           <Card key={s.url}>
@@ -69,7 +95,7 @@ const CreateProject: NextPageWithLayout = () => {
                   <PTitleSubtitle title={s.title} subtitle={s.description} titleTag="h2" />
                 </div>
                 <div className="ml-6">
-                  <Icon color="subdued" source={ArrowRightMinor} />
+                  <Icon color="primary" source={ChevronRightMinor} />
                 </div>
               </div>
             </Link>

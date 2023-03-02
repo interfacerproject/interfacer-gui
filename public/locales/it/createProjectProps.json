@@ -82,5 +82,14 @@
   "Relations": "Relazioni",
   "Connect your open source hardware projects to related projects within our community, creating a network of interlinked designs and ideas. You can link to other projects that are similar in design or concept, or that complement your own work.": "Collega i tuoi progetti hardware open source a progetti correlati all'interno della nostra community, creando una rete di progetti e idee interconnessi. \nPuoi collegarti ad altri progetti simili nel design o nel concetto o che completano il tuo lavoro.",
   "Add relation": "Aggiungi relazione",
-  "Selected projects": "Progetti selezionati"
+  "Selected projects": "Progetti selezionati",
+  "Design": "Progetto",
+  "Import your project repository. Share your open source hardware project documentation and collaborate on building it.": "Importa il repository del tuo progetto. \nCondividi la documentazione del tuo progetto hardware open source e collabora alla sua creazione.",
+  "Product": "Prodotto",
+  "Showcase your open source hardware product and connect with a global network of makers. Import your product details to our platform.": "Mostra il tuo prodotto hardware open source e connettiti con una rete globale di produttori. \nImporta i dettagli del tuo prodotto sulla nostra piattaforma.",
+  "Offer your expertise, training courses, or equipment rentals on our platform, supporting the development and collaboration of open source hardware projects in the community.": "Offri la tua esperienza, corsi di formazione o noleggio di attrezzature sulla nostra piattaforma, supportando lo sviluppo e la collaborazione di progetti hardware open source nella comunità.",
+  "Submit a new project": "Invia un nuovo progetto",
+  "Submit your new open source hardware project and ensure that all relevant information is included. This information will be used to identify your project and provide context to users who may be interested in it.": "Invia il tuo nuovo progetto hardware open source e assicurati che tutte le informazioni pertinenti siano incluse. \nQueste informazioni verranno utilizzate per identificare il tuo progetto e fornire un contesto agli utenti che potrebbero essere interessati.",
+  "Need help? Read the User Guide to get started.": "Ho bisogno di aiuto? \nLeggi la Guida per l'utente per iniziare.",
+  "Services": "Servizi"
 }

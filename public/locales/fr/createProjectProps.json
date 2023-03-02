@@ -77,5 +77,14 @@
   "Relations": "Rapports",
   "Connect your open source hardware projects to related projects within our community, creating a network of interlinked designs and ideas. You can link to other projects that are similar in design or concept, or that complement your own work.": "Connectez vos projets de matériel open source à des projets connexes au sein de notre communauté, en créant un réseau de conceptions et d'idées interconnectées. \nVous pouvez créer des liens vers d'autres projets dont la conception ou le concept sont similaires, ou qui complètent votre propre travail.",
   "Add relation": "Ajouter une relation",
-  "Selected projects": "Projets sélectionnés"
+  "Selected projects": "Projets sélectionnés",
+  "Design": "Conception",
+  "Import your project repository. Share your open source hardware project documentation and collaborate on building it.": "Importez votre référentiel de projet. \nPartagez la documentation de votre projet de matériel open source et collaborez à sa création.",
+  "Product": "Produit",
+  "Showcase your open source hardware product and connect with a global network of makers. Import your product details to our platform.": "Présentez votre produit matériel open source et connectez-vous à un réseau mondial de fabricants. \nImportez les détails de votre produit sur notre plateforme.",
+  "Services": "Prestations de service",
+  "Offer your expertise, training courses, or equipment rentals on our platform, supporting the development and collaboration of open source hardware projects in the community.": "Proposez votre expertise, vos formations ou vos locations d'équipement sur notre plateforme, en soutenant le développement et la collaboration de projets de matériel open source dans la communauté.",
+  "Submit a new project": "Soumettre un nouveau projet",
+  "Need help? Read the User Guide to get started.": "Besoin d'aide? \nLisez le Guide de l'utilisateur pour commencer.",
+  "Submit your new open source hardware project and ensure that all relevant information is included. This information will be used to identify your project and provide context to users who may be interested in it.": "Soumettez votre nouveau projet de matériel open source et assurez-vous que toutes les informations pertinentes sont incluses. \nCes informations seront utilisées pour identifier votre projet et fournir un contexte aux utilisateurs qui pourraient être intéressés par celui-ci."
 }
