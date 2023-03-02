@@ -32,5 +32,10 @@
   "A clear and concise name for your project that summarizes its purpose or main focus.": "A clear and concise name for your project that summarizes its purpose or main focus.",
   "Give a better understanding of what your project is about and why it’s important.": "Give a better understanding of what your project is about and why it’s important.",
   "Project Description": "Project Description",
-  "Add relevant keywords that describe your project.": "Add relevant keywords that describe your project."
+  "Add relevant keywords that describe your project.": "Add relevant keywords that describe your project.",
+  "Upload pictures": "Upload pictures",
+  "Adding pictures to your open source hardware project is an important way to showcase your work and help others understand your design.": "Adding pictures to your open source hardware project is an important way to showcase your work and help others understand your design.",
+  "Upload up to {{MAX_FILES}} pictures": "Upload up to {{MAX_FILES}} pictures",
+  "Max file size": "Max file size",
+  "Accepted formats": "Accepted formats"
 }
