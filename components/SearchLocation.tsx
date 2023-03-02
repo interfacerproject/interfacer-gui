@@ -13,11 +13,16 @@ export interface Props extends Partial<PFieldInfoProps> {
   excludeIDs?: Array<string>;
   label?: string;
   conformsTo?: Array<ProjectType>;
+  placeholder?: string;
 }
 
 export default function SearchLocation(props: Props) {
   const { t } = useTranslation();
-  const { onSelect = () => {}, label = t("Search for an address") } = props;
+  const {
+    onSelect = () => {},
+    label = t("Search for an address"),
+    placeholder = t("Street, number, city, country"),
+  } = props;
 
   /* Searching locations */
 
@@ -67,7 +72,7 @@ export default function SearchLocation(props: Props) {
       error={props.error}
       helpText={props.helpText}
       prefix={<Icon source={SearchMinor} color="base" />}
-      placeholder={t("Street, number, city, country")}
+      placeholder={placeholder}
       requiredIndicator={props.requiredIndicator}
     />
   );

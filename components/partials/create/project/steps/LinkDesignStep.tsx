@@ -20,7 +20,7 @@ export const linkDesignStepDefaultValues: LinkDesignStepValues = "";
 //
 
 export default function LinkDesign() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const { setValue, watch } = useFormContext<CreateProjectValues>();
   const selected = watch("linkedDesign");
@@ -36,14 +36,19 @@ export default function LinkDesign() {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("Design source")} subtitle={t("Tell us from which design your product is based on.")} />
+      <PTitleSubtitle
+        title={t("Design source")}
+        subtitle={t(
+          "By linking your product to its design source, you can provide valuable information to others who may be interested in producing or modifying your product."
+        )}
+      />
 
-      <SearchProjects label="Search for a design" conformsTo={[ProjectType.DESIGN]} onSelect={handleSelect} />
+      <SearchProjects label={t("Search for a design")} conformsTo={[ProjectType.DESIGN]} onSelect={handleSelect} />
 
       {selected && (
         <Stack vertical spacing="extraTight">
           <Text as="p" variant="bodyMd">
-            {t("Linked design")}
+            {t("Selected source")}
           </Text>
           <PCardWithAction onClick={handleRemove}>
             <ProjectDisplay projectId={selected} />
