@@ -147,7 +147,7 @@ export default function ProjectSidebar(props: Props) {
             size="large"
             fullWidth
             monochrome
-            onClick={() => setSelected(5)}
+            onClick={() => setSelected(4)}
           >
             {t("All contributions")}
           </Button>
