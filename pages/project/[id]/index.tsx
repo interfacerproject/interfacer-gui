@@ -39,19 +39,16 @@ import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
-import { Cube, Events, ListBoxes, ParentChild, Purchase } from "@carbon/icons-react";
+import { Cube, Events, ListBoxes, MagicWand, ParentChild, Purchase, Renew, Tools } from "@carbon/icons-react";
+import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
-<<<<<<< HEAD
 import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
-=======
 import ProjectContributors from "components/ProjectContributors";
 import ProjectDisplay from "components/ProjectDisplay";
 import ProjectLicenses from "components/ProjectLicenses";
->>>>>>> 2634a9c (feat: ✨ display design in product page)
 import ProjectTypeChip from "components/ProjectTypeChip";
-import { ProjectType } from "components/types";
 
 //
 
@@ -175,10 +172,9 @@ const Project = () => {
 
   if (loading) return <Spinner />;
   if (!project) return null;
-  const isDesign = project?.conformsTo.name === ProjectType.DESIGN;
-  const isProduct = project?.conformsTo.name === ProjectType.PRODUCT;
-  const licenses = project?.metadata?.licenses?.lenght > 0 && project?.metadata?.licenses;
-  const design = project?.metadata?.design;
+  const licenses = project.metadata?.licenses?.lenght > 0 && project?.metadata?.licenses;
+  const design = project.metadata?.design;
+  const declarations = project.metadata?.declarations;
 
   const sidebar = (
     <ProjectSidebar project={project} contributions={contributions!} refetch={refetch} setSelected={setSelected} />
@@ -417,7 +413,7 @@ const Project = () => {
           </Card>
 
           {/* Actions */}
-          {(licenses || design) && (
+          {(licenses || design || declarations) && (
             <Card sectioned>
               <Stack vertical spacing="loose">
                 {licenses && <ProjectLicenses project={project} />}
@@ -429,6 +425,25 @@ const Project = () => {
                     </a>
                   </Link>
                 )}
+                <Stack vertical spacing="tight">
+                  {" "}
+                  {declarations.recyclable === "yes" && (
+                    <div className="flex items-center space-x-2 text-primary">
+                      <Tools />
+                      <Text as="p" variant="bodyMd" fontWeight="medium">
+                        {t("Available for recycling")}
+                      </Text>
+                    </div>
+                  )}
+                  {declarations.repairable === "yes" && (
+                    <div className="flex items-center space-x-2 text-primary">
+                      <Renew />
+                      <Text as="p" variant="bodyMd" fontWeight="medium">
+                        {t("Available for repair")}
+                      </Text>
+                    </div>
+                  )}
+                </Stack>
               </Stack>
             </Card>
           )}

@@ -28,13 +28,15 @@ export default function ProjectDisplay(props: Props) {
   else return <></>;
 
   return (
-    <Stack vertical>
-      <Stack spacing="tight">
-        <Text as="p" variant="bodyMd">
-          {t("Based on") + ":"}
-        </Text>
-        <ProjectTypeChip noIntroduction />
-      </Stack>
+    <Stack vertical spacing={isProductDesign ? "extraTight" : undefined}>
+      {isProductDesign && (
+        <Stack spacing="tight">
+          <Text as="p" variant="bodyMd">
+            {t("Based on") + ":"}
+          </Text>
+          <ProjectTypeChip noIntroduction />
+        </Stack>
+      )}
       <div className="flex flex-row">
         {!isProductDesign && <ProjectThumb project={p} />}
         <div className={isProductDesign ? "" : "pl-4"}>
