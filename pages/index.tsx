@@ -119,9 +119,9 @@ const Home: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className="container mx-auto flex items-center justify-center bg-[#e9e9e8] w-full">
+      <div className="container mx-auto flex items-center justify-center bg-[#e9e9e8] w-full rounded-md mt-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
-          <div className="space-y-6 p-2 lg:p-8">
+          <div className="space-y-6 p-8">
             <div className="mb-6 logo" />
 
             <Text variant="heading4xl" as="h1">
@@ -162,13 +162,13 @@ const Home: NextPageWithLayout = () => {
             </div>
           </div>
           <div className="order-first lg:order-last">
-            <img src="/hero.png" alt="" className="contain w-full" />
+            <img src="/hero.png" alt="" className="contain w-full rounded-md" />
           </div>
         </div>
       </div>
 
       {/* PROJECT CARDS */}
-      <div className="container mx-auto mb-24">
+      <div className="container mx-auto mb-24 mt-4">
         <ProjectsCards />
       </div>
 
@@ -197,7 +197,7 @@ const Home: NextPageWithLayout = () => {
         })}
       </div>
 
-      <div className="container mx-auto flex items-center justify-center bg-[#335259] w-full text-white mt-20">
+      <div className="container mx-auto flex items-center justify-center bg-[#335259] w-full text-white mt-20 rounded-md">
         <div className="grid grid-cols-1 lg:grid-cols-5 items-center">
           <div className="col-span-2">
             <img src="/hero_1.png" alt="" className="contain w-full rounded-md" />
