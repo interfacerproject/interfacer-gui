@@ -81,7 +81,7 @@ const EditLocation: NextPageWithLayout = () => {
 //
 
 EditLocation.getLayout = page => (
-  <Layout>
+  <Layout bottomPadding="none">
     <FetchProjectLayout>
       <EditProjectLayout>{page}</EditProjectLayout>
     </FetchProjectLayout>
