@@ -1,17 +1,21 @@
 import { ApolloQueryResult, OperationVariables } from "@apollo/client";
 import { Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
-import { ListBoxes, MagicWand, ParentChild } from "@carbon/icons-react";
+import { ListBoxes, MagicWand, ParentChild, Renew, Tools } from "@carbon/icons-react";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import OshTool from "components/Osh";
 import ProjectContributors from "components/ProjectContributors";
+import ProjectDisplay from "components/ProjectDisplay";
 import ProjectLicenses from "components/ProjectLicenses";
+import { ProjectType } from "components/types";
 import WatchButton from "components/WatchButton";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
+import devLog from "lib/devLog";
 import { EconomicResource, ResourceProposalsQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { Dispatch, SetStateAction, useState } from "react";
 
@@ -44,9 +48,15 @@ export default function ProjectSidebar(props: Props) {
       setInList(true);
     }
   };
+  const isDesign = project.conformsTo?.name === ProjectType.DESIGN;
+  devLog("ProjectSidebar", project, isDesign);
+  const licenses = project.metadata?.licenses?.lenght > 0 && project?.metadata?.licenses;
+  const design = project.metadata?.design;
+  const declarations = project.metadata?.declarations;
 
   return (
-    <div>
+    <div className="lg:col-span-1 order-first lg:order-last">
+      {/* Project info */}
       <div className="w-full justify-end flex pb-3">
         {user && <AddStar id={project.id!} owner={project.primaryAccountable!.id} />}
       </div>
@@ -75,10 +85,38 @@ export default function ProjectSidebar(props: Props) {
       </Card>
 
       {/* Actions */}
-      {project.metadata.licenses && (
+      {(licenses || design || declarations) && (
         <Card sectioned>
           <Stack vertical spacing="loose">
-            <ProjectLicenses project={project} />
+            {licenses && <ProjectLicenses project={project} />}
+            {design && (
+              <div className="border rounded bg-surface-subdued p-1">
+                <Link href={`/project/${design}`}>
+                  <a>
+                    <ProjectDisplay projectId={design} isProductDesign />
+                  </a>
+                </Link>
+              </div>
+            )}
+            <Stack vertical spacing="tight">
+              {" "}
+              {declarations.recyclable === "yes" && (
+                <div className="flex items-center space-x-2 text-primary">
+                  <Tools />
+                  <Text as="p" variant="bodyMd" fontWeight="medium">
+                    {t("Available for recycling")}
+                  </Text>
+                </div>
+              )}
+              {declarations.repairable === "yes" && (
+                <div className="flex items-center space-x-2 text-primary">
+                  <Renew />
+                  <Text as="p" variant="bodyMd" fontWeight="medium">
+                    {t("Available for repair")}
+                  </Text>
+                </div>
+              )}
+            </Stack>
           </Stack>
         </Card>
       )}
@@ -139,7 +177,7 @@ export default function ProjectSidebar(props: Props) {
         </Stack>
       </Card>
       {/* Osh */}
-      <OshTool project={project} refetch={refetch} />
+      {isDesign && <OshTool project={project} refetch={refetch} />}
     </div>
   );
 }

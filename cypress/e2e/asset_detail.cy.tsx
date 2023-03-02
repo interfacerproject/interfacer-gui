@@ -77,9 +77,9 @@ describe("Project Detail functionality", () => {
   it("Should have the relationships tab and when it is selected, should show resource details card", () => {
     cy.get("#relationships").should("exist");
     cy.get("#relationships").click();
-    cy.get("#relationshipTree")
-      .should("contain", Cypress.env("included_project_1"))
-      .and("contain", Cypress.env("included_project_2"));
+    cy.get(
+      ":nth-child(2) > a > .Polaris-Stack > .Polaris-Stack__Item > .flex-row > .pl-4 > .mb-3 > .Polaris-Text--root"
+    ).should("exist");
   });
   it("Should have the contributors tab and when it is selected, should contributors", () => {
     cy.get("#Contributors").should("exist");

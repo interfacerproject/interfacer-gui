@@ -42,6 +42,7 @@ const OshLine = ({
     await updateMetadata(project, { ratings: ratingsToUpdate });
     setOshRatings(ratingsToUpdate);
   };
+  if (!stat.show && !isOwner) return null;
   return (
     <div className="m-2 mr-1 py-1">
       <Stack vertical spacing="loose">
@@ -124,7 +125,7 @@ const OshTool = ({
 
   return (
     <>
-      {oshRatings && (
+      {(oshRatings || isOwner) && (
         <>
           <Card sectioned>
             {loading ? (
@@ -169,7 +170,6 @@ const OshTool = ({
                         {t("Last execution")}
                         {": "}
                         {dayjs(project?.metadata?.oshExecution).toLocaleString()}
-                        {t("execution time")}
                       </Text>
                     )}
                     {isOwner && (

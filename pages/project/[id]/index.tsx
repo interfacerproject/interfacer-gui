@@ -27,7 +27,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Tree from "react-d3-tree";
 
 // Components
-import { Button, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor, MaximizeMinor } from "@shopify/polaris-icons";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
 import FullWidthBanner from "components/FullWidthBanner";
@@ -375,6 +375,7 @@ const Project = () => {
         </div>
 
         <div className="hidden lg:block">{sidebar}</div>
+        {/* Sidebar */}
       </div>
 
       <Frame>{active ? <Toast content={t("DPP copied!")} onDismiss={toggleActive} duration={2000} /> : null}</Frame>
