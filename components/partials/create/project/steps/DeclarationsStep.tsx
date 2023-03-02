@@ -112,7 +112,7 @@ export default function DeclarationsStep(props: Props) {
   const spacer = <div className="h-4" />;
 
   return (
-    <Stack vertical spacing="loose">
+    <Stack vertical spacing="baseTight">
       <PTitleSubtitle
         title={t("Self declarations")}
         subtitle={t(
