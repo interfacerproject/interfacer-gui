@@ -1,4 +1,4 @@
-import { Stack, Tag } from "@bbtgnn/polaris-interfacer";
+import { Tag } from "@bbtgnn/polaris-interfacer";
 import { FieldInfoProps } from "./polaris/types";
 import SearchTags from "./SearchTags";
 
@@ -22,7 +22,7 @@ export default function SelectTags2(props: SelectTags2Props) {
   }
 
   return (
-    <Stack vertical>
+    <div className="space-y-4">
       <SearchTags
         exclude={tags}
         onSelect={handleSelect}
@@ -34,7 +34,7 @@ export default function SelectTags2(props: SelectTags2Props) {
         helpText={props.helpText}
       />
 
-      <div className="flex space-x-2">
+      <div className="flex flex-wrap gap-y-2 gap-2">
         {tags?.map(tag => (
           <Tag
             key={tag}
@@ -46,6 +46,6 @@ export default function SelectTags2(props: SelectTags2Props) {
           </Tag>
         ))}
       </div>
-    </Stack>
+    </div>
   );
 }
