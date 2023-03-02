@@ -21,7 +21,7 @@ export async function getStaticProps({ locale }: any) {
   return {
     props: {
       publicPage: true,
-      ...(await serverSideTranslations(locale, ["common", "createProjectProps"])),
+      ...(await serverSideTranslations(locale, ["createProjectProps", "common"])),
     },
   };
 }
@@ -29,7 +29,7 @@ export async function getStaticProps({ locale }: any) {
 //
 
 const CreateProject: NextPageWithLayout = () => {
-  const { t } = useTranslation(["common", "createProjectProps"]);
+  const { t } = useTranslation(["createProjectProps", "common"]);
 
   const sections: Array<{ title: string; description: string; icon: string; url: string }> = [
     {

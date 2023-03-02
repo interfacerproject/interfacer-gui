@@ -106,11 +106,14 @@
   "Connect your open source hardware projects to related projects within our community, creating a network of interlinked designs and ideas. You can link to other projects that are similar in design or concept, or that complement your own work.": "Verbinden Sie Ihre Open-Source-Hardwareprojekte mit verwandten Projekten innerhalb unserer Community und schaffen Sie so ein Netzwerk miteinander verknüpfter Designs und Ideen. \nSie können auf andere Projekte verweisen, die in Design oder Konzept ähnlich sind oder Ihre eigene Arbeit ergänzen.",
   "Add relation": "Beziehung hinzufügen",
   "Selected projects": "Ausgewählte Projekte",
-  "Import your project repository. Share your open source hardware project documentation and collaborate on building it.": "Importieren Sie Ihr Projekt-Repository. \nTeilen Sie Ihre Open-Source-Hardware-Projektdokumentation und arbeiten Sie an der Erstellung mit.",
+  "Import your project repository. Share your open source hardware project documentation and collaborate on building it.": "Importieren Sie Ihr Projekt-Repository. Teilen Sie Ihre Open-Source-Hardware Projektdokumentation und arbeiten Sie an der Erstellung mit.",
   "Showcase your open source hardware product and connect with a global network of makers. Import your product details to our platform.": "Präsentieren Sie Ihr Open-Source-Hardwareprodukt und verbinden Sie sich mit einem globalen Netzwerk von Herstellern. \nImportieren Sie Ihre Produktdetails in unsere Plattform.",
   "Services": "Dienstleistungen",
   "Offer your expertise, training courses, or equipment rentals on our platform, supporting the development and collaboration of open source hardware projects in the community.": "Bieten Sie Ihr Fachwissen, Schulungen oder Mietgeräte auf unserer Plattform an und unterstützen Sie so die Entwicklung und Zusammenarbeit von Open-Source-Hardwareprojekten in der Community.",
   "Submit a new project": "Reichen Sie ein neues Projekt ein",
-  "Need help? Read the User Guide to get started.": "Brauchen Sie Hilfe? \nLesen Sie das Benutzerhandbuch, um loszulegen.",
-  "Submit your new open source hardware project and ensure that all relevant information is included. This information will be used to identify your project and provide context to users who may be interested in it.": "Reichen Sie Ihr neues Open-Source-Hardwareprojekt ein und stellen Sie sicher, dass alle relevanten Informationen enthalten sind. \nDiese Informationen werden verwendet, um Ihr Projekt zu identifizieren und Benutzern, die daran interessiert sein könnten, einen Kontext bereitzustellen."
+  "Need help? Read the User Guide to get started.": "Brauchen Sie Hilfe? Lesen Sie das Benutzerhandbuch, um loszulegen.",
+  "Submit your new open source hardware project and ensure that all relevant information is included. This information will be used to identify your project and provide context to users who may be interested in it.": "Reichen Sie Ihr neues Open-Source-Hardwareprojekt ein und stellen Sie sicher, dass alle relevanten Informationen enthalten sind. \nDiese Informationen werden verwendet, um Ihr Projekt zu identifizieren und Benutzern, die daran interessiert sein könnten, einen Kontext bereitzustellen.",
+  "Add contributors": "Mitwirkende hinzufügen",
+  "Search for a user": "Suchen Sie nach einem Benutzer",
+  "Search by username": "Suche nach Benutzernamen"
 }
