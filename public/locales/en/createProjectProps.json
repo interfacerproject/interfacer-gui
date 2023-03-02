@@ -37,5 +37,14 @@
   "Adding pictures to your open source hardware project is an important way to showcase your work and help others understand your design.": "Adding pictures to your open source hardware project is an important way to showcase your work and help others understand your design.",
   "Upload up to {{MAX_FILES}} pictures": "Upload up to {{MAX_FILES}} pictures",
   "Max file size": "Max file size",
-  "Accepted formats": "Accepted formats"
+  "Accepted formats": "Accepted formats",
+  "Set license": "Set license",
+  "Add new license": "Add new license",
+  "Choosing the right license for your open source hardware project is an important step in making your work accessible and collaborative.": "Choosing the right license for your open source hardware project is an important step in making your work accessible and collaborative.",
+  "Added licenses": "Added licenses",
+  "License scope": "License scope",
+  "Documentation, code, hardware, etc.": "Documentation, code, hardware, etc.",
+  "Discard": "Discard",
+  "Add license": "Add license",
+  "Search for a license": "Search for a license"
 }
