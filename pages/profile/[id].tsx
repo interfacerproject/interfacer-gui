@@ -15,24 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useMutation, useQuery } from "@apollo/client";
-import { Icon } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Link, Stack, Tabs, Text } from "@bbtgnn/polaris-interfacer";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
-import { LinkMinor } from "@shopify/polaris-icons";
 import Avatar from "boring-avatars";
-import BrTabs from "components/brickroom/BrTabs";
 import Spinner from "components/brickroom/Spinner";
+import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import ProjectsCards from "components/ProjectsCards";
 import ProjectsTable from "components/ProjectsTable";
 import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import { Token } from "hooks/useWallet";
 import { CLAIM_DID, FETCH_USER } from "lib/QueryAndMutation";
-import type { NextPage } from "next";
-import { GetStaticPaths } from "next";
+import type { GetStaticPaths, NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useFilters from "../../hooks/useFilters";
 
 //
@@ -45,7 +44,10 @@ const Profile: NextPage = () => {
   const { t } = useTranslation("ProfileProps");
   const { proposalFilter } = useFilters();
   const { user } = useAuth();
-
+  const [selected, setSelected] = useState(0);
+  const [projectTabSelected, setProjectTabSelected] = useState(0);
+  const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
+  const handleProjectTabChange = useCallback((selectedTabIndex: number) => setProjectTabSelected(selectedTabIndex), []);
   const isUser: boolean = id === "my_profile" || id === user?.ulid;
   const idToBeFetch = isUser ? user?.ulid : String(id);
 
@@ -67,88 +69,155 @@ const Profile: NextPage = () => {
     });
   }, []);
 
+  const tabs = [
+    {
+      id: "week",
+      content: t("This week"),
+    },
+    {
+      id: "month",
+      content: t("This month"),
+    },
+    {
+      id: "cycle",
+      content: t("This cycle"),
+    },
+  ];
+
+  const tabsContent = [
+    <div className="flex" key={"week"}>
+      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} />
+      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} />
+    </div>,
+    <div className="flex" key={"month"}>
+      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} />
+      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} />
+    </div>,
+    <div className="flex" key="cyclal">
+      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} />
+      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} />
+    </div>,
+  ];
+
   return (
     <>
       {!person && <Spinner />}
       {person && (
         <>
-          <div className="relative h-128 md:h-72">
-            <div
-              className="w-full bg-center bg-cover h-128 md:h-72"
-              style={{ backgroundImage: "url('/profile_bg.jpeg')", filter: "blur(1px)" }}
-            />
-            <div className="absolute w-full p-2 bottom-8 top-2 md:p-0 md:bottom-12 md:h-100">
-              <div className="grid grid-cols-1 px-2 md:pt-8 md:grid-cols-2 md:pl-8">
-                <div className="flex flex-col">
-                  <div className="flex flex-row">
-                    <h2 className="pt-5 mb-6 mr-2">
-                      {isUser ? <>{t("Hi") + " "}</> : <> </>}
-                      <span className="text-primary">{person?.name}</span>
-                    </h2>
-                    <div className="w-10 rounded-full">
-                      <Avatar
-                        size={"full"}
-                        name={person?.name}
-                        variant="beam"
-                        colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
-                      />
-                    </div>
-                  </div>
-                  <p>{isUser ? t("Welcome to your Interfacer profile") : t("")} </p>
-                  <h4 className="mt-2">
-                    {isUser
-                      ? t("Your user id is: {{id}}", { id: person?.id })
-                      : t("The user id is: {{id}}", { id: person?.id })}{" "}
-                  </h4>
-                  <a href={didUrl} target="_blank" rel="noreferrer">
-                    <h4 className="mt-2 flex flex-row">
-                      <Icon source={LinkMinor} backdrop />
-                      {t("Go to distributed identity explorer")}
-                    </h4>
-                  </a>
+          <div className="grid grid-cols-2 container mx-auto pt-7">
+            <Stack vertical>
+              <Stack spacing="tight" alignment="leading">
+                <Text as="h2" variant="headingXl">
+                  {isUser ? <>{t("Hi,") + " "}</> : <> </>}
+                  <span className="text-primary">{person?.name}</span>
+                </Text>
+                <div className="w-10 rounded-full">
+                  <Avatar
+                    size={"full"}
+                    name={person?.name}
+                    variant="beam"
+                    colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
+                  />
                 </div>
-                <div className="my-4 shadow md:mr-20 stats stats-vertical">
-                  <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} />
-                  <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} />
-                </div>
-              </div>
-            </div>
+              </Stack>
+              <Stack>
+                <Text as="span" variant="bodyLg" color="subdued">
+                  {t("Username:")}
+                </Text>
+                <Text as="span" variant="bodyLg">
+                  <span className="text-primary">@{person?.user}</span>
+                </Text>
+              </Stack>
+              {isUser && (
+                <Stack>
+                  <Text as="span" variant="bodyLg" color="subdued">
+                    {t("Email:")}
+                  </Text>
+                  <Text as="span" variant="bodyLg">
+                    <span className="text-primary">{person?.email}</span>
+                  </Text>
+                </Stack>
+              )}
+              <Stack alignment="center">
+                <Text as="span" variant="bodyLg" color="subdued">
+                  {t("DID:")}
+                </Text>
+                <Text as="span" variant="bodyLg">
+                  <Link url={didUrl}>
+                    <a>
+                      <Button primary>{t("DID Explorer")}</Button>
+                    </a>
+                  </Link>
+                </Text>
+              </Stack>
+              <Stack>
+                <Text as="span" variant="bodyLg" color="subdued">
+                  {t("ID:")}
+                </Text>
+                <Text as="span" variant="bodyLg" color="subdued">
+                  {person?.id}
+                </Text>
+              </Stack>
+            </Stack>
+
+            <Stack vertical spacing="extraLoose">
+              <PTitleSubtitle
+                title={t("Track record")}
+                subtitle={t(
+                  "We keep track of your recent activity on the platform, such as the number of designs you've contributed, the feedback you've received, and your level of engagement in the community. About the economic model"
+                )}
+                titleTag="h2"
+              ></PTitleSubtitle>
+              <Card>
+                <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
+                  {tabsContent[selected]}
+                </Tabs>
+              </Card>
+            </Stack>
           </div>
-          <div className="px-4 pt-32 md:mr-12 md:px-10 md:pt-0">
-            <BrTabs
-              initialTab={(typeof tab === "string" && parseInt(tab)) || undefined}
-              tabsArray={[
+
+          <div className="container mx-auto">
+            <Tabs
+              tabs={[
                 {
-                  title: (
+                  id: "projects",
+                  content: (
                     <span className="flex items-center space-x-4">
                       <CubeIcon className="w-5 h-5 mr-1" />
                       {t("Projects")}
                     </span>
                   ),
-                  component: (
-                    <div>
-                      <h3 className="my-8">{isUser ? t("My Projects") : t("Projects")}</h3>
-                      <ProjectsTable filter={proposalFilter} hideHeader={true} hideFilters={true} />
-                    </div>
-                  ),
                 },
+
                 {
-                  title: (
+                  id: "list",
+                  content: (
                     <span className="flex items-center space-x-4">
                       <ClipboardListIcon className="w-5 h-5 mr-1" />
                       {t("List")}
                     </span>
                   ),
-                  component: (
-                    <div>
-                      <h3 className="my-8">{isUser ? t("My List") : t("List")}</h3>
-                      <ProjectsTable filter={collectedProjects} hideHeader={true} hideFilters={true} />
-                    </div>
-                  ),
-                  disabled: hasCollectedProjects,
                 },
               ]}
-            />
+              selected={projectTabSelected}
+              onSelect={handleProjectTabChange}
+            >
+              {projectTabSelected === 0 && (
+                <div className="w-full">
+                  <ProjectsCards
+                    filter={proposalFilter}
+                    hideHeader={false}
+                    hideFilters={false}
+                    header={isUser ? t("My projects") : t("Her projects")}
+                  />
+                </div>
+              )}
+              {projectTabSelected === 1 && (
+                <>
+                  <ProjectsTable filter={collectedProjects} hideHeader={true} hideFilters={true} />
+                </>
+              )}
+            </Tabs>
           </div>
         </>
       )}
