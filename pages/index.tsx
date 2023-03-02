@@ -47,7 +47,7 @@ const Home: NextPageWithLayout = () => {
       icon: <LightningBoltIcon />,
       title: t("Reinforcing collaboration"),
       description: (
-        <ul className="list-disc pl-5">
+        <ul className="list-disc pl-5 space-y-1">
           <li>{t("Discover the work of your peers")}</li>
           <li>
             {t(
@@ -63,7 +63,7 @@ const Home: NextPageWithLayout = () => {
       title: t("‘Passwordless’ Log in"),
 
       description: (
-        <ul className="list-disc pl-5">
+        <ul className="list-disc pl-5 space-y-1">
           <li>{t("Based on 5 security questions, a set of keys are generated for you")}</li>
           <li>
             {t(
@@ -78,7 +78,7 @@ const Home: NextPageWithLayout = () => {
       icon: <GlobeAltIcon />,
       title: t("End-to-end crypto wallet"),
       description: (
-        <ul className="list-disc pl-5">
+        <ul className="list-disc pl-5 space-y-1">
           <li>{t("Your sovereign identity")}</li>
           <li>{t("W3C compliant")}</li>
           <li>{t("Served by a Distributed identity controller")}</li>
@@ -89,7 +89,7 @@ const Home: NextPageWithLayout = () => {
       icon: <LightningBoltIcon />,
       title: t("Your first Digital Product Passport"),
       description: (
-        <ul className="list-disc pl-5">
+        <ul className="list-disc pl-5 space-y-1">
           <li>{t("Track resources, locations and contributions trough the whole supply-chain")}</li>
           <li>{t("Value and incentivate the production of products that recyclable and repairable")}</li>
         </ul>
