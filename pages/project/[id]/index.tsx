@@ -27,7 +27,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Tree from "react-d3-tree";
 
 // Components
-import { Button, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor, MaximizeMinor } from "@shopify/polaris-icons";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
 import FullWidthBanner from "components/FullWidthBanner";
@@ -39,15 +39,11 @@ import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
-import { Cube, Events, ListBoxes, MagicWand, ParentChild, Purchase, Renew, Tools } from "@carbon/icons-react";
-import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
+import { Cube, Events, ListBoxes, ParentChild, Purchase } from "@carbon/icons-react";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
 import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
-import ProjectContributors from "components/ProjectContributors";
-import ProjectDisplay from "components/ProjectDisplay";
-import ProjectLicenses from "components/ProjectLicenses";
 import ProjectTypeChip from "components/ProjectTypeChip";
 
 //
@@ -172,9 +168,6 @@ const Project = () => {
 
   if (loading) return <Spinner />;
   if (!project) return null;
-  const licenses = project.metadata?.licenses?.lenght > 0 && project?.metadata?.licenses;
-  const design = project.metadata?.design;
-  const declarations = project.metadata?.declarations;
 
   const sidebar = (
     <ProjectSidebar project={project} contributions={contributions!} refetch={refetch} setSelected={setSelected} />
@@ -383,126 +376,6 @@ const Project = () => {
 
         <div className="hidden lg:block">{sidebar}</div>
         {/* Sidebar */}
-        <div className="lg:col-span-1 order-first lg:order-last">
-          {/* Project info */}
-          <div className="w-full justify-end flex pb-3">
-            {user && <AddStar id={project.id} owner={project.primaryAccountable.id} />}
-          </div>
-          <Card sectioned>
-            <Stack vertical>
-              {project.repo && (
-                <Button primary url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
-                  {t("Go to source")}
-                </Button>
-              )}
-              <Button id="addToList" size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>
-                {inList ? t("Remove from list") : t("Add to list")}
-              </Button>
-              {user && <WatchButton id={project.id} owner={project.primaryAccountable.id} />}
-              <div className="space-y-1">
-                <Text as="p" variant="bodyMd">
-                  {t("By:")}
-                </Text>
-                <BrDisplayUser
-                  id={project.primaryAccountable.id}
-                  name={project.primaryAccountable.name}
-                  location={project.currentLocation?.name}
-                />
-              </div>
-            </Stack>
-          </Card>
-
-          {/* Actions */}
-          {(licenses || design || declarations) && (
-            <Card sectioned>
-              <Stack vertical spacing="loose">
-                {licenses && <ProjectLicenses project={project} />}
-                {design && (
-                  <Link href={`/project/${design}`}>
-                    <a>
-                      <ProjectDisplay projectId={design} isProductDesign />
-                    </a>
-                  </Link>
-                )}
-                <Stack vertical spacing="tight">
-                  {" "}
-                  {declarations.recyclable === "yes" && (
-                    <div className="flex items-center space-x-2 text-primary">
-                      <Tools />
-                      <Text as="p" variant="bodyMd" fontWeight="medium">
-                        {t("Available for recycling")}
-                      </Text>
-                    </div>
-                  )}
-                  {declarations.repairable === "yes" && (
-                    <div className="flex items-center space-x-2 text-primary">
-                      <Renew />
-                      <Text as="p" variant="bodyMd" fontWeight="medium">
-                        {t("Available for repair")}
-                      </Text>
-                    </div>
-                  )}
-                </Stack>
-              </Stack>
-            </Card>
-          )}
-          {/* Contributions */}
-          <Card sectioned>
-            <Stack vertical>
-              <Text as="h2" variant="headingMd">
-                {t("Contributions")}
-              </Text>
-              <Text color="success" as="p" variant="bodyMd">
-                {t("{{contributors}} contributors", { contributors: project.metadata.contributors?.length || 0 })}
-              </Text>
-              <ProjectContributors projectNode={project} />
-              <Text color="success" as="p" variant="bodyMd">
-                {t("{{contributions}} contributions", { contributions: contributions?.proposals.edges.length })}
-              </Text>
-              <Button
-                id="contribute"
-                icon={<MagicWand />}
-                size="large"
-                fullWidth
-                primary
-                onClick={() => router.push(`/create/contribution/${id}`)}
-              >
-                {t("Make a contribution")}
-              </Button>
-              <Button
-                id="seeContributions"
-                icon={<ListBoxes />}
-                size="large"
-                fullWidth
-                monochrome
-                onClick={() => setSelected(5)}
-              >
-                {t("All contributions")}
-              </Button>
-            </Stack>
-          </Card>
-          {/* Relations */}
-          <Card sectioned>
-            <Stack vertical spacing="loose">
-              <Text as="h2" variant="headingMd">
-                {t("Relations")}
-              </Text>
-              <Text color="success" as="p" variant="bodyMd">
-                {t("{{related}} related projects", { related: project.metadata.relations?.length || 0 })}
-              </Text>
-              <Button
-                id="seeRelations"
-                icon={<ParentChild />}
-                size="large"
-                fullWidth
-                monochrome
-                onClick={() => setSelected(1)}
-              >
-                {t("All relations")}
-              </Button>
-            </Stack>
-          </Card>
-        </div>
       </div>
 
       <Frame>{active ? <Toast content={t("DPP copied!")} onDismiss={toggleActive} duration={2000} /> : null}</Frame>
