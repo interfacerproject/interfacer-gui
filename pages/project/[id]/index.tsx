@@ -417,7 +417,6 @@ const Project = () => {
             <Card sectioned>
               <Stack vertical spacing="loose">
                 {licenses && <ProjectLicenses project={project} />}
-
                 {design && (
                   <Link href={`/project/${design}`}>
                     <a>
