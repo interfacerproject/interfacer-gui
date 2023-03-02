@@ -28,7 +28,7 @@ type layoutProps = {
 };
 
 const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
-  const { bottomPadding = "none" } = layoutProps;
+  const { bottomPadding = "lg" } = layoutProps;
   const { authenticated } = useAuth();
   const router = useRouter();
 
