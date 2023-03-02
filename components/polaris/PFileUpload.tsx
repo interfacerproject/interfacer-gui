@@ -27,6 +27,7 @@ type FileValidator = (file: File) => { valid: boolean; message: string };
 //
 
 export default function PFileUpload(props: Props) {
+  const { t } = useTranslation("createProjectProps");
   const {
     files = [],
     onUpdate = () => {},
@@ -37,10 +38,9 @@ export default function PFileUpload(props: Props) {
     allowDuplicates = false,
     customValidators = [],
 
-    actionTitle = "Click here to upload or Drag and drop",
+    actionTitle = t("Click here to upload or Drag and drop"),
     helpText = "",
   } = props;
-  const { t } = useTranslation();
 
   //
 

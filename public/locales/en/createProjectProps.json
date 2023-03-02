@@ -46,5 +46,11 @@
   "Documentation, code, hardware, etc.": "Documentation, code, hardware, etc.",
   "Discard": "Discard",
   "Add license": "Add license",
-  "Search for a license": "Search for a license"
+  "Search for a license": "Search for a license",
+  "Click here to upload or Drag and drop": "Click here to upload or Drag and drop",
+  "File already existing": "File already existing",
+  "File size over limit": "File size over limit",
+  "File type invalid": "File type invalid",
+  "File number over limit": "File number over limit",
+  "The following files couldn’t be uploaded:": "The following files couldn’t be uploaded:"
 }
