@@ -74,7 +74,7 @@ const useInBox = () => {
       },
     ],
     ([url, request]) => fetcher(url, request),
-    { refreshInterval: 1000 }
+    { refreshInterval: process.env.NEXT_PUBLIC_INBOX_COUNT_INTERVAL! as unknown as number }
   );
 
   const sendMessage = async (message: any, receivers: string[], subject: string = "Subject"): Promise<Response> => {

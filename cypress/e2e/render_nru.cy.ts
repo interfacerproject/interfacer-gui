@@ -17,7 +17,7 @@
 describe("When user is not logged in", () => {
   it("Should see /", () => {
     cy.visit("/");
-    cy.contains("Building a Sustainable Future with Open-Source Hardware");
+    cy.contains("Empowering the Open Source Hardware Community");
     cy.checkLinks();
   });
 

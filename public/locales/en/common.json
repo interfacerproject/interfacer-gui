@@ -66,5 +66,11 @@
   "External link": "External link",
   "Add link": "Add link",
   "Street, number, city, country": "Street, number, city, country",
-  "Search for an address": "Search for an address"
+  "Search for an address": "Search for an address",
+  "Update your project and provide a valid repository url": "Update your project and provide a valid repository url",
+  "Something went wrong be sure to have a valid repository url": "Something went wrong be sure to have a valid repository url",
+  "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification ensuring that it follows standardized documentation and metadata practices for open hardware designs": "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification, ensuring that it follows standardized documentation and metadata practices for open hardware designs",
+  "Open Know How": "Open Know How",
+  "Last execution": "Last execution",
+  "Run checker": "Run checker"
 }
