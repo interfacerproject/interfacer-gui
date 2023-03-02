@@ -42,7 +42,7 @@ import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
-import { Cube, ListBoxes, MagicWand, ParentChild, Purchase } from "@carbon/icons-react";
+import { Cube, Events, ListBoxes, MagicWand, ParentChild, Purchase } from "@carbon/icons-react";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
@@ -258,7 +258,12 @@ const Project = () => {
                   },
                   {
                     id: "Contributors",
-                    content: t("Contributors"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <Events />
+                        {t("Contributors")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Contributors"),
                     panelID: "dpp-content",
                   },
@@ -331,6 +336,7 @@ const Project = () => {
                 </div>
               )}
               <Modal
+                fullScreen
                 large
                 open={activeTree}
                 onClose={() => setActiveTree(false)}
@@ -354,7 +360,7 @@ const Project = () => {
                 </Modal.Section>
               </Modal>
 
-              {selected == 4 && (
+              {selected == 3 && (
                 <ContributorsTable
                   contributors={project.metadata?.contributors}
                   title={t("Contributors")}
@@ -362,7 +368,7 @@ const Project = () => {
                   data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
                 />
               )}
-              {selected == 5 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
+              {selected == 4 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
             </Stack>
           </Stack>
         </div>

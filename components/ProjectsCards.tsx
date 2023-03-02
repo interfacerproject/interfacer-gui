@@ -37,6 +37,7 @@ export interface ProjectsCardsProps {
   hidePrimaryAccountable?: boolean;
   hideHeader?: boolean;
   hideFilters?: boolean;
+  header?: string;
   tiny?: boolean;
 }
 
@@ -48,6 +49,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     hidePrimaryAccountable = false,
     hideFilters = false,
     tiny = false,
+    header = "Latest projects",
   } = props;
   const dataQueryIdentifier = "economicResources";
   const { user } = useAuth();
@@ -72,8 +74,10 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
           onLoadMore={loadMore}
           nextPage={!!getHasNextPage}
           loading={loading}
-          header={hideHeader ? undefined : "Latest projects"}
+          header={hideHeader ? undefined : header}
           hidePagination={hidePagination}
+          length={projects?.length || 0}
+          hideFilters={hideFilters}
         >
           {projects?.map(({ node }: { node: EconomicResource }) => (
             <div className="p-4 rounded-lg overflow-hidden bg-white shadow mx-2 lg:mx-0 " key={node.id}>

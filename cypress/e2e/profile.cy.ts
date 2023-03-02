@@ -27,18 +27,14 @@ describe("When user visit the profile page", () => {
 
   it("The profile page should work", function () {
     cy.visit("/profile/my_profile");
-    cy.contains(`Your user id is: ${Cypress.env("authId")}`);
-    cy.contains("idea");
-    cy.contains("strengths");
-    cy.contains("My Projects");
-    cy.get("a.tab.tab-bordered.pb-9").eq(1).click();
-    cy.contains("My List");
+    cy.contains(`${Cypress.env("authId")}`);
+    cy.get(".py-5 > .Polaris-Stack > :nth-child(1) > .Polaris-Text--root").contains("My projects");
+    cy.get(".Polaris-Button__Text").contains("DID Explorer");
   });
   it("The profile page should render slightly differently for other user", function () {
     cy.visit(`/profile/${Cypress.env("otherUserId")}`);
-    cy.contains("The user id is:");
-    cy.contains("Projects");
-    cy.get("a.tab.tab-bordered.pb-9").eq(1).click();
+    cy.contains(`${Cypress.env("otherUserId")}`);
+    cy.contains("Her projects");
     cy.contains("My List").should("not.exist");
   });
 });
