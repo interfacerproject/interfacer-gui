@@ -208,7 +208,7 @@ const Profile: NextPage = () => {
                     filter={proposalFilter}
                     hideHeader={false}
                     hideFilters={false}
-                    header={"My projects"}
+                    header={isUser ? t("My projects") : t("Her projects")}
                   />
                 </div>
               )}
