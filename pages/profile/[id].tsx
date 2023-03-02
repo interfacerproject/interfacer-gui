@@ -214,7 +214,7 @@ const Profile: NextPage = () => {
               )}
               {projectTabSelected === 1 && (
                 <>
-                  <ProjectsTable filter={collectedProjects} hideHeader={true} hideFilters={true} />
+                  <ProjectsCards header={t("My list")} filter={collectedProjects} hideHeader={false} />
                 </>
               )}
             </Tabs>
