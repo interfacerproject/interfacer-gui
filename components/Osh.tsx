@@ -20,7 +20,7 @@ const OshLine = ({
 }: {
   stats: any;
   name: string;
-  project: EconomicResource;
+  project: Partial<EconomicResource>;
   setOshRatings: Dispatch<any>;
   isOwner: boolean;
 }) => {
@@ -79,7 +79,7 @@ const OshTool = ({
   project,
   refetch,
 }: {
-  project: EconomicResource;
+  project: Partial<EconomicResource>;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<{ economicResource: EconomicResource }>>;
@@ -91,7 +91,7 @@ const OshTool = ({
   const { analyzeRepository } = useAutoimport();
   const { updateMetadata } = useProjectCRUD();
   const { user } = useAuth();
-  const isOwner = user?.ulid === project.primaryAccountable.id;
+  const isOwner = user?.ulid === project.primaryAccountable!.id;
   const handleAnalyze = async () => {
     setLoading(true);
     if (!project.repo || !url.test(project.repo!)) {

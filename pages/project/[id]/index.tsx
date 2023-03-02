@@ -27,29 +27,23 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Tree from "react-d3-tree";
 
 // Components
-import { Button, Card, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
+import { Button, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor, MaximizeMinor } from "@shopify/polaris-icons";
-import AddStar from "components/AddStar";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
-import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import FullWidthBanner from "components/FullWidthBanner";
 import ProjectDetailOverview from "components/ProjectDetailOverview";
 import RelationshipTree from "components/RelationshipTree";
-import WatchButton from "components/WatchButton";
 import Link from "next/link";
 
 import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
-import { Cube, Events, ListBoxes, MagicWand, ParentChild, Purchase } from "@carbon/icons-react";
-import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
+import { Cube, Events, ListBoxes, ParentChild, Purchase } from "@carbon/icons-react";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
-import OshTool from "components/Osh";
-import ProjectContributors from "components/ProjectContributors";
-import ProjectLicenses from "components/ProjectLicenses";
+import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
 import ProjectTypeChip from "components/ProjectTypeChip";
 
 //
@@ -175,6 +169,10 @@ const Project = () => {
   if (loading) return <Spinner />;
   if (!project) return null;
 
+  const sidebar = (
+    <ProjectSidebar project={project} contributions={contributions!} refetch={refetch} setSelected={setSelected} />
+  );
+
   return (
     <>
       <FullWidthBanner open={viewCreatedBanner} onClose={closeBanner}>
@@ -219,6 +217,8 @@ const Project = () => {
             </Stack>
 
             <BrThumbinailsGallery images={images} />
+
+            <div className="block lg:hidden">{sidebar}</div>
 
             {/* Content */}
             <Stack vertical spacing="loose">
@@ -374,103 +374,7 @@ const Project = () => {
           </Stack>
         </div>
 
-        {/* Sidebar */}
-        <div className="lg:col-span-1 order-first lg:order-last">
-          {/* Project info */}
-          <div className="w-full justify-end flex pb-3">
-            {user && <AddStar id={project.id} owner={project.primaryAccountable.id} />}
-          </div>
-          <Card sectioned>
-            <Stack vertical>
-              {project.repo && (
-                <Button primary url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
-                  {t("Go to source")}
-                </Button>
-              )}
-              <Button id="addToList" size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>
-                {inList ? t("Remove from list") : t("Add to list")}
-              </Button>
-              {user && <WatchButton id={project.id} owner={project.primaryAccountable.id} />}
-              <div className="space-y-1">
-                <Text as="p" variant="bodyMd">
-                  {t("By:")}
-                </Text>
-                <BrDisplayUser
-                  id={project.primaryAccountable.id}
-                  name={project.primaryAccountable.name}
-                  location={project.currentLocation?.name}
-                />
-              </div>
-            </Stack>
-          </Card>
-
-          {/* Actions */}
-          {project.metadata.licenses && (
-            <Card sectioned>
-              <Stack vertical spacing="loose">
-                <ProjectLicenses project={project} />
-              </Stack>
-            </Card>
-          )}
-          {/* Contributions */}
-          <Card sectioned>
-            <Stack vertical>
-              <Text as="h2" variant="headingMd">
-                {t("Contributions")}
-              </Text>
-              <Text color="success" as="p" variant="bodyMd">
-                {t("{{contributors}} contributors", { contributors: project.metadata.contributors?.length || 0 })}
-              </Text>
-              <ProjectContributors projectNode={project} />
-              <Text color="success" as="p" variant="bodyMd">
-                {t("{{contributions}} contributions", { contributions: contributions?.proposals.edges.length })}
-              </Text>
-              <Button
-                id="contribute"
-                icon={<MagicWand />}
-                size="large"
-                fullWidth
-                primary
-                onClick={() => router.push(`/create/contribution/${id}`)}
-              >
-                {t("Make a contribution")}
-              </Button>
-              <Button
-                id="seeContributions"
-                icon={<ListBoxes />}
-                size="large"
-                fullWidth
-                monochrome
-                onClick={() => setSelected(4)}
-              >
-                {t("All contributions")}
-              </Button>
-            </Stack>
-          </Card>
-          {/* Relations */}
-          <Card sectioned>
-            <Stack vertical spacing="loose">
-              <Text as="h2" variant="headingMd">
-                {t("Relations")}
-              </Text>
-              <Text color="success" as="p" variant="bodyMd">
-                {t("{{related}} related projects", { related: project.metadata.relations?.length || 0 })}
-              </Text>
-              <Button
-                id="seeRelations"
-                icon={<ParentChild />}
-                size="large"
-                fullWidth
-                monochrome
-                onClick={() => setSelected(1)}
-              >
-                {t("All relations")}
-              </Button>
-            </Stack>
-          </Card>
-          {/* Osh */}
-          <OshTool project={project} refetch={refetch} />
-        </div>
+        <div className="hidden lg:block">{sidebar}</div>
       </div>
 
       <Frame>{active ? <Toast content={t("DPP copied!")} onDismiss={toggleActive} duration={2000} /> : null}</Frame>
