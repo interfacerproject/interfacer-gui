@@ -1,5 +1,6 @@
 import { Text } from "@bbtgnn/polaris-interfacer";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 
 const Footer = () => {
   const { t } = useTranslation("common");
@@ -17,7 +18,11 @@ const Footer = () => {
             <Text as="p" variant="bodySm">
               {t("Software by")}
             </Text>
-            <img className="h-10" src="/logo-dyne.svg" alt="Dyne.org Logo" />
+            <Link href="https://dyne.org">
+              <a>
+                <img className="h-10" src="/logo-dyne.svg" alt="Dyne.org Logo" />
+              </a>
+            </Link>
           </div>
 
           <div className="max-w-[250px] md:pl-4">

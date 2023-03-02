@@ -20,6 +20,7 @@ import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import Avatar from "boring-avatars";
 import Spinner from "components/brickroom/Spinner";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import ProjectsCards from "components/ProjectsCards";
 import ProjectsTable from "components/ProjectsTable";
 import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
@@ -173,45 +174,50 @@ const Profile: NextPage = () => {
                 </Tabs>
               </Card>
             </Stack>
+          </div>
 
-            <div>
-              <Tabs
-                tabs={[
-                  {
-                    id: "projects",
-                    content: (
-                      <span className="flex items-center space-x-4">
-                        <CubeIcon className="w-5 h-5 mr-1" />
-                        {t("Projects")}
-                      </span>
-                    ),
-                  },
+          <div className="container mx-auto">
+            <Tabs
+              tabs={[
+                {
+                  id: "projects",
+                  content: (
+                    <span className="flex items-center space-x-4">
+                      <CubeIcon className="w-5 h-5 mr-1" />
+                      {t("Projects")}
+                    </span>
+                  ),
+                },
 
-                  {
-                    id: "list",
-                    content: (
-                      <span className="flex items-center space-x-4">
-                        <ClipboardListIcon className="w-5 h-5 mr-1" />
-                        {t("List")}
-                      </span>
-                    ),
-                  },
-                ]}
-                selected={projectTabSelected}
-                onSelect={handleProjectTabChange}
-              >
-                {projectTabSelected === 0 && (
-                  <>
-                    <ProjectsTable filter={proposalFilter} hideHeader={true} hideFilters={true} />
-                  </>
-                )}
-                {projectTabSelected === 1 && (
-                  <>
-                    <ProjectsTable filter={collectedProjects} hideHeader={true} hideFilters={true} />
-                  </>
-                )}
-              </Tabs>
-            </div>
+                {
+                  id: "list",
+                  content: (
+                    <span className="flex items-center space-x-4">
+                      <ClipboardListIcon className="w-5 h-5 mr-1" />
+                      {t("List")}
+                    </span>
+                  ),
+                },
+              ]}
+              selected={projectTabSelected}
+              onSelect={handleProjectTabChange}
+            >
+              {projectTabSelected === 0 && (
+                <div className="w-full">
+                  <ProjectsCards
+                    filter={proposalFilter}
+                    hideHeader={false}
+                    hideFilters={false}
+                    header={"My projects"}
+                  />
+                </div>
+              )}
+              {projectTabSelected === 1 && (
+                <>
+                  <ProjectsTable filter={collectedProjects} hideHeader={true} hideFilters={true} />
+                </>
+              )}
+            </Tabs>
           </div>
         </>
       )}
