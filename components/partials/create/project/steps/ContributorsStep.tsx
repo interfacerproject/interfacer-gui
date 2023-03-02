@@ -22,7 +22,7 @@ export const contributorsStepDefaultValues: ContributorsStepValues = [];
 //
 
 export default function ContributorsStep() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { setValue, watch } = useFormContext<CreateProjectValues>();
 
   const CONTRIBUTORS_FORM_KEY = "contributors";
@@ -43,8 +43,13 @@ export default function ContributorsStep() {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("Contributors")} subtitle={t("Tell us who contributed to this project.")} />
-      <SearchUsers onSelect={handleSelect} excludeIDs={contributors} />
+      <PTitleSubtitle
+        title={t("Add contributors")}
+        subtitle={t(
+          "Collaborating with others is an important part of the open source hardware movement, and adding contributors to your project can help expand its reach and impact."
+        )}
+      />
+      <SearchUsers onSelect={handleSelect} excludeIDs={contributors} label={t("Search for contributors")} />
       {contributors.length && (
         <Stack vertical spacing="tight">
           <Text variant="bodyMd" as="p">

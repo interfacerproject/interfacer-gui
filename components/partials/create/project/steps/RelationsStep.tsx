@@ -22,7 +22,7 @@ export const relationsStepDefaultValues: RelationsStepValues = [];
 //
 
 export default function RelationsStep() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { watch, setValue } = useFormContext<CreateProjectValues>();
 
   const RELATIONS_FORM_KEY = "relations";
@@ -43,9 +43,14 @@ export default function RelationsStep() {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("Relations")} subtitle={t("Please read our Documentation Guidelines.")} />
+      <PTitleSubtitle
+        title={t("Relations")}
+        subtitle={t(
+          "Connect your open source hardware projects to related projects within our community, creating a network of interlinked designs and ideas. You can link to other projects that are similar in design or concept, or that complement your own work."
+        )}
+      />
 
-      <SearchProjects onSelect={handleSelect} excludeIDs={relations} />
+      <SearchProjects onSelect={handleSelect} excludeIDs={relations} label={t("Add relation")} />
 
       {relations.length && (
         <Stack vertical spacing="tight">
