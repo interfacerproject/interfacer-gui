@@ -64,5 +64,7 @@
   "URL shape is not valid": "URL shape is not valid",
   "Link title": "Link title",
   "External link": "External link",
-  "Add link": "Add link"
+  "Add link": "Add link",
+  "Street, number, city, country": "Street, number, city, country",
+  "Search for an address": "Search for an address"
 }
