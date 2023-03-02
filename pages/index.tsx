@@ -110,18 +110,11 @@ const Home: NextPageWithLayout = () => {
     },
   ];
 
-  const subtitles = [
-    t("Welcome to Interfacer's Fabcity OS alpha staging 😎"),
-    t(
-      "Create or import projects and collaborate with others in digital designs or in manufacturing physical products"
-    ) + ".",
-  ];
-
   return (
     <>
-      <div className="container mx-auto flex items-center justify-center bg-[#e9e9e8] w-full rounded-md mt-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
-          <div className="space-y-6 p-8">
+      <div className="flex items-center justify-center bg-[#e9e9e8] w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center container mx-auto">
+          <div className="space-y-6 px-8 py-12">
             <div className="mb-6 logo" />
 
             <Text variant="heading4xl" as="h1">
@@ -197,10 +190,10 @@ const Home: NextPageWithLayout = () => {
         })}
       </div>
 
-      <div className="container mx-auto flex items-center justify-center bg-[#335259] w-full text-white mt-20 rounded-md">
-        <div className="grid grid-cols-1 lg:grid-cols-5 items-center">
+      <div className="flex items-center justify-center bg-[#335259] w-full text-white mt-20 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 items-center container mx-auto">
           <div className="col-span-2">
-            <img src="/hero_1.png" alt="" className="contain w-full rounded-md" />
+            <img src="/hero_1.png" alt="" className="contain w-full" />
           </div>
           <div className="space-y-6 p-8 order-first lg:order-last col-span-3">
             <Text variant="heading4xl" as="h1">
