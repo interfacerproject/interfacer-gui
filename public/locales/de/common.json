@@ -59,6 +59,8 @@
   "This is": "Das ist",
   "Software by": "Software von:",
   "Project funded": "Projekt gefördert durch den Europäischen Fonds für regionale Entwicklung (EFRE) im Rahmen der",
+  "Search by resource name or Interfacer ID": "Suchen Sie nach Ressourcenname oder Interfacer-ID",
+  "Search for a project": "Suchen Sie nach einem Projekt",
   "Update your project and provide a valid repository url": "Aktualisieren Sie Ihr Projekt und geben Sie eine gültige Repository-URL an",
   "Something went wrong be sure to have a valid repository url": "Etwas ist schief gelaufen. Stellen Sie sicher, dass Sie eine gültige Repository-URL haben",
   "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification ensuring that it follows standardized documentation and metadata practices for open hardware designs": "Der OKH-Checker ist ein Tool, das überprüft, ob ein Hardwaredesign mit der Open Know How-Spezifikation übereinstimmt, und sicherstellt, dass es standardisierten Dokumentations- und Metadatenpraktiken für offene Hardwaredesigns folgt",

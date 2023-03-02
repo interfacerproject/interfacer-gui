@@ -8,7 +8,7 @@ export interface Props {
 }
 
 export default function CreateProjectNav(props: Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { projectType } = props;
 
   const links = getSectionsByProjectType(projectType).map(section => {

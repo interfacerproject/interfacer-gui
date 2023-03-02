@@ -22,13 +22,22 @@ export interface Link {
 export interface Props {
   onSubmit?: (value: Link) => void;
   onDiscard?: () => void;
+  textLabel?: string;
+  urlLabel?: string;
+  addButtonLabel?: string;
 }
 
 //
 
 export default function AddLink(props: Props) {
-  const { t } = useTranslation();
-  const { onSubmit = () => {}, onDiscard = () => {} } = props;
+  const { t } = useTranslation("common");
+  const {
+    onSubmit = () => {},
+    onDiscard = () => {},
+    textLabel = t("Link title"),
+    urlLabel = t("External link"),
+    addButtonLabel = t("Add link"),
+  } = props;
 
   const defaultValues: Link = {
     url: "",
@@ -64,7 +73,7 @@ export default function AddLink(props: Props) {
           name="label"
           render={({ field: { onChange, onBlur, name, value } }) => (
             <TextField
-              label={t("Link title")}
+              label={textLabel}
               autoComplete="off"
               onChange={onChange}
               onBlur={onBlur}
@@ -80,7 +89,7 @@ export default function AddLink(props: Props) {
           name="url"
           render={({ field: { onChange, onBlur, name, value } }) => (
             <TextField
-              label={t("External link")}
+              label={urlLabel}
               autoComplete="off"
               value={value}
               onBlur={onBlur}
@@ -96,7 +105,7 @@ export default function AddLink(props: Props) {
             {t("Discard")}
           </Button>
           <Button onClick={submit} disabled={!isValid || isSubmitting} icon={<Icon source={PlusMinor} />}>
-            {t("Add link")}
+            {addButtonLabel}
           </Button>
         </div>
       </Stack>

@@ -63,7 +63,7 @@ export interface Props extends Partial<LocationStepSchemaContext> {
 
 export default function LocationStepProduct(props: Props) {
   const { projectType, isEdit = false } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const { setValue, control, formState, watch, trigger } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
@@ -74,7 +74,7 @@ export default function LocationStepProduct(props: Props) {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("Set location")} subtitle={t("Please read our Documentation Guidelines.")} />
+      <PTitleSubtitle title={t("Set location")} />
 
       <Controller
         control={control}
@@ -93,8 +93,7 @@ export default function LocationStepProduct(props: Props) {
               onBlur(), trigger("location.locationData");
             }}
             label={t("Location name")}
-            placeholder={t("Cool fablab")}
-            helpText={t("The name of the place where the project is stored")}
+            helpText={t("For example: My Workshop")}
             error={errors.location?.locationName?.message}
             requiredIndicator={projectType == ProjectType.PRODUCT}
           />
@@ -102,6 +101,8 @@ export default function LocationStepProduct(props: Props) {
       />
 
       <SelectLocation2
+        label={t("Address")}
+        placeholder={t("An d. Alsterschleife 3, 22399 - Hamburg, Germany")}
         location={watch("location.locationData")}
         setLocation={value => setValue("location.locationData", value, formSetValueOptions)}
         error={errors.location?.locationData?.message}

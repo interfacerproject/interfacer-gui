@@ -12,11 +12,18 @@ import BrUserAvatar from "./brickroom/BrUserAvatar";
 export interface Props {
   onSelect?: (value: Partial<Person>) => void;
   excludeIDs?: Array<string>;
+  label?: string;
+  placeholder?: string;
 }
 
 export default function SearchUsers(props: Props) {
-  const { onSelect = () => {}, excludeIDs = [] } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
+  const {
+    onSelect = () => {},
+    excludeIDs = [],
+    label = t("Search for a user"),
+    placeholder = t("Search by username"),
+  } = props;
 
   /* Polaris field logic */
 
@@ -78,10 +85,10 @@ export default function SearchUsers(props: Props) {
     <Autocomplete.TextField
       onChange={handleInputChange}
       autoComplete="off"
-      label={t("Search for a user")}
+      label={label}
       value={inputValue}
       prefix={<Icon source={SearchMinor} color="base" />}
-      placeholder="User name"
+      placeholder={placeholder}
     />
   );
 
