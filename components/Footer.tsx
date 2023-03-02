@@ -49,27 +49,23 @@ const Footer = () => {
               <Text as="h3" variant="headingLg">
                 {t("About")}
               </Text>
-              <Link href="/projects">
+              <Link href="/">
                 <a>
                   <Text as="p" color="subdued" variant="headingMd">
                     {t("This platform")}
                   </Text>
                 </a>
               </Link>
-              <Link href="/create/project">
-                <a>
-                  <Text as="p" color="subdued" variant="headingMd">
-                    {t("Interfacer Project")}
-                  </Text>
-                </a>
-              </Link>
-              <Link href="/resources">
-                <a>
-                  <Text as="p" color="subdued" variant="headingMd">
-                    {t("Fab City Foundation")}
-                  </Text>
-                </a>
-              </Link>
+              <a href="https://www.interfacerproject.eu/" target="_blank" rel="noreferrer">
+                <Text as="p" color="subdued" variant="headingMd">
+                  {t("Interfacer Project")}
+                </Text>
+              </a>
+              <a href="https://fab.city/" target="_blank" rel="noreferrer">
+                <Text as="p" color="subdued" variant="headingMd">
+                  {t("Fab City Foundation")}
+                </Text>
+              </a>
             </Stack>
             <Stack vertical spacing="loose">
               <Text as="h3" variant="headingLg">
@@ -132,7 +128,7 @@ const Footer = () => {
           <img className="h-10" src="/logo-bwi.svg" alt="Hamburg City Logo" />
         </div>
       </div>
-      <div className="p-4 text-center bg-background">{t("&copy; 2023 Interfacer. All rights reserved.")}</div>
+      <div className="p-4 text-center bg-background">{"©" + t("2023 Interfacer. All rights reserved.")}</div>
     </div>
   );
 };
