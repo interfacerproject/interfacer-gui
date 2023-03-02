@@ -90,11 +90,13 @@ export default function ProjectSidebar(props: Props) {
           <Stack vertical spacing="loose">
             {licenses && <ProjectLicenses project={project} />}
             {design && (
-              <Link href={`/project/${design}`}>
-                <a>
-                  <ProjectDisplay projectId={design} isProductDesign />
-                </a>
-              </Link>
+              <div className="border rounded bg-surface-subdued p-1">
+                <Link href={`/project/${design}`}>
+                  <a>
+                    <ProjectDisplay projectId={design} isProductDesign />
+                  </a>
+                </Link>
+              </div>
             )}
             <Stack vertical spacing="tight">
               {" "}
