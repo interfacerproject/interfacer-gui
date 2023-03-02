@@ -31,5 +31,6 @@
   "Do you have your invitation key?": "Avez-vous votre clé d'invitation ?",
   "formError": "formError",
   "Invitation key": "Clé d'invitation",
-  "Type your invitation key": "Tapez votre clé d'invitation"
+  "Type your invitation key": "Tapez votre clé d'invitation",
+  "You will have to remember the answers and keep them for later as they are necessary for the log in": "Vous devrez vous souvenir des réponses et les conserver pour plus tard car elles sont nécessaires pour la connexion."
 }

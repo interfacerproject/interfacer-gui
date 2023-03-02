@@ -27,7 +27,7 @@ export default function AnswerQuestions(props: { children?: ReactNode }) {
       <h2>{t("Sign up")}</h2>
       <p>{t("Answer to these questions to complete your signup 🧩")}</p>
       <p className="mt-4 font-semibold text-primary">
-        {t("You will have to remember the answers and keep them for later as they are necessary for the log in&#46;")}
+        {t("You will have to remember the answers and keep them for later as they are necessary for the log in")}
       </p>
       {props.children}
     </div>
