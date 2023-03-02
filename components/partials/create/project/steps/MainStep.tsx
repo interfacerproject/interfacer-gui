@@ -93,7 +93,7 @@ export default function MainStep() {
             autoComplete="off"
             onChange={onChange}
             onBlur={onBlur}
-            placeholder={t("projectsite.com/info")}
+            placeholder={"projectsite.com/info"}
             label={t("External link")}
             error={errors.main?.link?.message}
             requiredIndicator={isRequired(mainStepSchema, "link")}

@@ -22,7 +22,7 @@ export const licenseStepDefaultValues: LicenseStepValues = [];
 //
 
 export default function LicenseStep() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const { setValue, watch } = useFormContext<CreateProjectValues>();
 
@@ -60,11 +60,16 @@ export default function LicenseStep() {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("Set license")} subtitle={t("Specify how you want to license your repo")} />
+      <PTitleSubtitle
+        title={t("Set license")}
+        subtitle={t(
+          "Choosing the right license for your open source hardware project is an important step in making your work accessible and collaborative."
+        )}
+      />
 
       {!showAdd && (
         <Button onClick={handleShowAdd} fullWidth icon={<Icon source={PlusMinor} />}>
-          {t("Add a license")}
+          {t("Add new license")}
         </Button>
       )}
 
@@ -73,7 +78,7 @@ export default function LicenseStep() {
       {licenses.length && (
         <Stack spacing="tight" vertical>
           <Text variant="bodyMd" as="p">
-            {t("Selected licenses")}
+            {t("Added licenses")}
           </Text>
           {licenses.map((l, i) => (
             <PCardWithAction

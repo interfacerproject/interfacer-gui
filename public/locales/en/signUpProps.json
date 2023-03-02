@@ -20,5 +20,6 @@
   "The sign up process generates your private keys which are never communicate to the server; Keep a copy of your passphrase": "The sign up process generates your private keys which are never communicate to the server. Keep a copy of your passphrase",
   "Do you have already an account?": "Do you have already an account?",
   "LogIn": "LogIn",
-  "Register and login": "Register and login"
+  "Register and login": "Register and login",
+  "You will have to remember the answers and keep them for later as they are necessary for the log in": "You will have to remember the answers and keep them for later as they are necessary for the log in.\n"
 }

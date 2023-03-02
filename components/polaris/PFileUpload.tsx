@@ -3,6 +3,7 @@ import { CancelMinor } from "@shopify/polaris-icons";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
 import PHelp from "./PHelp";
+import PLabel from "./PLabel";
 
 //
 
@@ -16,6 +17,7 @@ export interface Props {
   allowDuplicates?: boolean;
   customValidators?: Array<FileValidator>;
 
+  label?: string;
   actionTitle?: string;
   helpText?: string;
 }
@@ -25,6 +27,7 @@ type FileValidator = (file: File) => { valid: boolean; message: string };
 //
 
 export default function PFileUpload(props: Props) {
+  const { t } = useTranslation("createProjectProps");
   const {
     files = [],
     onUpdate = () => {},
@@ -35,10 +38,9 @@ export default function PFileUpload(props: Props) {
     allowDuplicates = false,
     customValidators = [],
 
-    actionTitle = "Click here to upload or Drag and drop",
+    actionTitle = t("Click here to upload or Drag and drop"),
     helpText = "",
   } = props;
-  const { t } = useTranslation();
 
   //
 
@@ -178,6 +180,7 @@ export default function PFileUpload(props: Props) {
 
   return (
     <Stack vertical spacing="tight">
+      {props.label && <PLabel label={props.label} />}
       <DropZone onDrop={handleDrop} customValidator={customValidator}>
         {files.length > 0 && uploadedFiles}
         {!files.length && <DropZone.FileUpload actionTitle={actionTitle} />}

@@ -7,6 +7,7 @@ import BrUserDisplay from "components/brickroom/BrUserDisplay";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SearchUsers from "components/SearchUsers";
+import { useAuth } from "hooks/useAuth";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { Person } from "lib/types";
 import { useFormContext } from "react-hook-form";
@@ -22,8 +23,9 @@ export const contributorsStepDefaultValues: ContributorsStepValues = [];
 //
 
 export default function ContributorsStep() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { setValue, watch } = useFormContext<CreateProjectValues>();
+  const { user } = useAuth();
 
   const CONTRIBUTORS_FORM_KEY = "contributors";
   const contributors = watch(CONTRIBUTORS_FORM_KEY);
@@ -43,8 +45,13 @@ export default function ContributorsStep() {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={t("Contributors")} subtitle={t("Tell us who contributed to this project.")} />
-      <SearchUsers onSelect={handleSelect} excludeIDs={contributors} />
+      <PTitleSubtitle
+        title={t("Add contributors")}
+        subtitle={t(
+          "Collaborating with others is an important part of the open source hardware movement, and adding contributors to your project can help expand its reach and impact."
+        )}
+      />
+      <SearchUsers onSelect={handleSelect} excludeIDs={[...contributors, user?.ulid!]} label={t("Search for contributors")} />
       {contributors.length && (
         <Stack vertical spacing="tight">
           <Text variant="bodyMd" as="p">

@@ -30,6 +30,7 @@ import ProjectDisplay from "./ProjectDisplay";
 import ProjectImage from "./ProjectImage";
 import ProjectTime from "./ProjectTime";
 import ProjectTypeChip from "./ProjectTypeChip";
+import { ProjectType } from "./types";
 
 export interface ProjectsCardsProps {
   filter?: EconomicResourceFilterParams;
@@ -88,7 +89,11 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
                 </div>
                 <Link href={`/project/${node.id}`}>
                   <a>
-                    <ProjectImage image={node?.images?.[0]} className="rounded-lg object-scale-down max-h-60 w-full" />
+                    <ProjectImage
+                      projectType={node.conformsTo.name as ProjectType}
+                      image={node?.images?.[0]}
+                      className="rounded-lg object-scale-down max-h-60 w-full"
+                    />
                   </a>
                 </Link>
                 <Link href={`/project/${node.id}`}>

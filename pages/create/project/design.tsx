@@ -27,7 +27,7 @@ const CreateDesign: NextPageWithLayout = () => {
 
 CreateDesign.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout>
+    <Layout bottomPadding="none">
       <CreateProjectLayout>{page}</CreateProjectLayout>
     </Layout>
   );
