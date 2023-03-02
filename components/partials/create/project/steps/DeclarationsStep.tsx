@@ -11,6 +11,7 @@ import PFieldInfo from "components/polaris/PFieldInfo";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
 // Form
+import PLabel from "components/polaris/PLabel";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
@@ -58,7 +59,7 @@ export interface Props {
 }
 
 export default function DeclarationsStep(props: Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const { formState, setValue, watch } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
@@ -66,8 +67,8 @@ export default function DeclarationsStep(props: Props) {
   // Consumer services
 
   const choices = [
-    { label: "Yes", value: YES_NO[0] },
-    { label: "No", value: YES_NO[1] },
+    { label: t("Yes – Available"), value: YES_NO[0] },
+    { label: t("No – Not available"), value: YES_NO[1] },
   ];
 
   function setRepairable(value: string) {
@@ -111,28 +112,20 @@ export default function DeclarationsStep(props: Props) {
   const spacer = <div className="h-4" />;
 
   return (
-    <Stack vertical spacing="loose">
-      <PTitleSubtitle title={t("Self declarations")} subtitle={t("Lorem ipsum dolor sit amet.")} />
+    <Stack vertical spacing="baseTight">
+      <PTitleSubtitle
+        title={t("Self declarations")}
+        subtitle={t(
+          "By making a self-declaration, you are providing valuable information to others who may be interested in your product."
+        )}
+      />
 
       {spacer}
 
       <Stack vertical spacing="extraLoose">
-        <PTitleSubtitle title={t("Consumer services")} subtitle={t("Lorem ipsum dolor sit amet.")} titleTag="h2" />
-
-        <PFieldInfo
-          label={t("Availability for repairing")}
-          helpText={t("Refer to the standards we want to follow for this field")}
-          error={errors.declarations?.repairable?.message}
-          requiredIndicator
-        >
-          <div className="py-1">
-            <PButtonRadio options={choices} onChange={setRepairable} selected={watch("declarations.repairable")} />
-          </div>
-        </PFieldInfo>
-
         <PFieldInfo
           label={t("Availability for recycling")}
-          helpText={t("Refer to the standards we want to follow for this field")}
+          helpText={t("Indicate whether you are available to recycle your product at the end of its useful life.")}
           error={errors.declarations?.recyclable?.message}
           requiredIndicator
         >
@@ -140,36 +133,58 @@ export default function DeclarationsStep(props: Props) {
             <PButtonRadio options={choices} onChange={setRecyclable} selected={watch("declarations.recyclable")} />
           </div>
         </PFieldInfo>
+
+        <PFieldInfo
+          label={t("Availability for repairing")}
+          helpText={t(
+            "Indicate whether you are available to repair your product in case of any issues or malfunctions."
+          )}
+          error={errors.declarations?.repairable?.message}
+          requiredIndicator
+        >
+          <div className="py-1">
+            <PButtonRadio options={choices} onChange={setRepairable} selected={watch("declarations.repairable")} />
+          </div>
+        </PFieldInfo>
       </Stack>
 
       {spacer}
 
-      <PTitleSubtitle title={t("Links to certifications")} subtitle={t("(Optional field)")} titleTag="h2" />
+      <Stack vertical>
+        <PLabel label={t("Certifications")} />
+        {!showAddLink && (
+          <Button onClick={handleShowAddLink} fullWidth icon={<Icon source={PlusMinor} />}>
+            {t("Add a certification")}
+          </Button>
+        )}
 
-      {!showAddLink && (
-        <Button onClick={handleShowAddLink} fullWidth icon={<Icon source={PlusMinor} />}>
-          {t("Add a certification")}
-        </Button>
-      )}
+        {showAddLink && (
+          <AddLink
+            onDiscard={handleDiscard}
+            onSubmit={addCertification}
+            textLabel={t("Certification scope")}
+            urlLabel={t("Certification link")}
+            addButtonLabel={t("Add certification")}
+          />
+        )}
 
-      {showAddLink && <AddLink onDiscard={handleDiscard} onSubmit={addCertification} />}
-
-      {certifications.length && (
-        <Stack spacing="tight" vertical>
-          {certifications.map((c, i) => (
-            <PCardWithAction
-              key={c.url}
-              onClick={() => {
-                removeCertification(c);
-              }}
-            >
-              <Link url={c.url} external>
-                {c.label}
-              </Link>
-            </PCardWithAction>
-          ))}
-        </Stack>
-      )}
+        {certifications.length && (
+          <Stack spacing="tight" vertical>
+            {certifications.map((c, i) => (
+              <PCardWithAction
+                key={c.url}
+                onClick={() => {
+                  removeCertification(c);
+                }}
+              >
+                <Link url={c.url} external>
+                  {c.label}
+                </Link>
+              </PCardWithAction>
+            ))}
+          </Stack>
+        )}
+      </Stack>
     </Stack>
   );
 }

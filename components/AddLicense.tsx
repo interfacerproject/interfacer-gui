@@ -28,7 +28,7 @@ export interface Props {
 //
 
 export default function AddLicense(props: Props) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
   const { onAdd = () => {}, onDiscard = () => {} } = props;
 
   const defaultValues = {
