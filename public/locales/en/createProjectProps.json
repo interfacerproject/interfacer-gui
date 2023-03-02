@@ -52,5 +52,11 @@
   "File size over limit": "File size over limit",
   "File type invalid": "File type invalid",
   "File number over limit": "File number over limit",
-  "The following files couldn’t be uploaded:": "The following files couldn’t be uploaded:"
+  "The following files couldn’t be uploaded:": "The following files couldn’t be uploaded:",
+  "Add contributors": "Add contributors",
+  "Collaborating with others is an important part of the open source hardware movement, and adding contributors to your project can help expand its reach and impact.": "Collaborating with others is an important part of the open source hardware movement, and adding contributors to your project can help expand its reach and impact.",
+  "Search for a user": "Search for a user",
+  "Search by username": "Search by username",
+  "Selected contributors": "Selected contributors",
+  "Search for contributors": "Search for contributors"
 }
