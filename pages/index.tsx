@@ -172,7 +172,7 @@ const Home: NextPageWithLayout = () => {
         <ProjectsCards />
       </div>
 
-      <div className="container mx-auto grid gap-8 md:grid-cols-2 mt-44 justify-between">
+      <div className="container mx-auto grid gap-8 md:grid-cols-2 mt-20 justify-between">
         <div className="col-span-2">
           <Text as="h2" variant="heading2xl">
             {t("What’s included 👌")}
@@ -197,7 +197,7 @@ const Home: NextPageWithLayout = () => {
         })}
       </div>
 
-      <div className="container mx-auto flex items-center justify-center bg-[#335259] w-full text-white mt-44">
+      <div className="container mx-auto flex items-center justify-center bg-[#335259] w-full text-white mt-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
           <div>
             <img src="/hero_1.png" alt="" className="contain w-full rounded-md" />
