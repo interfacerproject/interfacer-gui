@@ -58,5 +58,11 @@
   "Last updated": "Ultimo aggiornamento",
   "This is": "Questo è",
   "Software by": "Software di:",
-  "Project funded": "Progetto finanziato dal Fondo europeo di sviluppo regionale (FESR) nell'ambito del"
+  "Project funded": "Progetto finanziato dal Fondo europeo di sviluppo regionale (FESR) nell'ambito del",
+  "Update your project and provide a valid repository url": "Aggiorna il tuo progetto e fornisci un URL del repository valido",
+  "Something went wrong be sure to have a valid repository url": "Qualcosa è andato storto assicurati di avere un URL del repository valido",
+  "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification ensuring that it follows standardized documentation and metadata practices for open hardware designs": "Il correttore OKH è uno strumento che verifica se un progetto hardware è in linea con la specifica Open Know How, assicurando che segua documentazione standardizzata e pratiche di metadati per progetti hardware aperti",
+  "Open Know How": "Open Know How",
+  "Last execution": "Ultima esecuzione",
+  "Run checker": "Esegui il correttore"
 }

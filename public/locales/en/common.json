@@ -60,5 +60,11 @@
   "Last updated": "Last updated",
   "This is": "This is",
   "Software by": "Software by:",
-  "Project funded": "Project funded by the European Regional Development Fund (ERDF) in the context of the"
+  "Project funded": "Project funded by the European Regional Development Fund (ERDF) in the context of the",
+  "Update your project and provide a valid repository url": "Update your project and provide a valid repository url",
+  "Something went wrong be sure to have a valid repository url": "Something went wrong be sure to have a valid repository url",
+  "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification ensuring that it follows standardized documentation and metadata practices for open hardware designs": "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification, ensuring that it follows standardized documentation and metadata practices for open hardware designs",
+  "Open Know How": "Open Know How",
+  "Last execution": "Last execution",
+  "Run checker": "Run checker"
 }

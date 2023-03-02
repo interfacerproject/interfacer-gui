@@ -19,6 +19,7 @@ import cn from "classnames";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import Spinner from "./brickroom/Spinner";
+import PTitleCounter from "./polaris/PTitleCounter";
 import ProjectsFilters from "./ProjectsFilters";
 
 export interface CardsGroupProps {
@@ -30,6 +31,7 @@ export interface CardsGroupProps {
   onLoadMore: () => void;
   nextPage: boolean;
   loading: boolean;
+  length?: number;
 }
 
 const CardsGroup = (props: CardsGroupProps) => {
@@ -42,6 +44,7 @@ const CardsGroup = (props: CardsGroupProps) => {
     onLoadMore,
     loading,
     nextPage,
+    length = 0,
   } = props;
 
   const { t } = useTranslation("lastUpdatedProps");
@@ -62,7 +65,7 @@ const CardsGroup = (props: CardsGroupProps) => {
           {header && (
             <div className="flex items-center justify-between py-5">
               {/* Left side */}
-              <h3>{header}</h3>
+              <PTitleCounter title={header} titleTag="h2" length={length} />
 
               {/* Right side */}
               {hideFilters && (
