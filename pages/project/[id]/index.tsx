@@ -47,6 +47,7 @@ import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
+import OshTool from "components/Osh";
 import ProjectContributors from "components/ProjectContributors";
 import ProjectLicenses from "components/ProjectLicenses";
 import ProjectTypeChip from "components/ProjectTypeChip";
@@ -196,7 +197,7 @@ const Project = () => {
       )}
 
       {/* Main */}
-      <div className="p-4 container mx-auto grid grid-cols-1 lg:grid-cols-4 max-w-5xl bg-[#f8f7f4]">
+      <div className="p-4 container mx-auto grid grid-cols-1 lg:grid-cols-4 max-w-6xl bg-[#f8f7f4]">
         {/* Content */}
         <div className="lg:col-span-3 lg:pr-4">
           <Stack vertical spacing="extraLoose">
@@ -440,7 +441,7 @@ const Project = () => {
                 size="large"
                 fullWidth
                 monochrome
-                onClick={() => setSelected(5)}
+                onClick={() => setSelected(4)}
               >
                 {t("All contributions")}
               </Button>
@@ -467,6 +468,8 @@ const Project = () => {
               </Button>
             </Stack>
           </Card>
+          {/* Osh */}
+          <OshTool project={project} refetch={refetch} />
         </div>
       </div>
 
