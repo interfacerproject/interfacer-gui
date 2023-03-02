@@ -22,7 +22,7 @@ const OshLine = ({
   project: EconomicResource;
   setOshRatings: Dispatch<any>;
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("common");
   const { updateMetadata } = useProjectCRUD();
   const stat = stats[name];
   const percentageHighlights = () => {
@@ -136,7 +136,7 @@ const OshTool = ({
                   <Stack vertical spacing="loose">
                     <Text as="p" variant="bodyMd">
                       {t(
-                        "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification, ensuring that it follows standardized documentation and metadata practices for open hardware designs"
+                        "The OKH checker is a tool that verifies whether a hardware design aligns with the Open Know How specification ensuring that it follows standardized documentation and metadata practices for open hardware designs"
                       )}
                     </Text>
                     <div className="border rounded-sm bg-[#FAFAFA]">
