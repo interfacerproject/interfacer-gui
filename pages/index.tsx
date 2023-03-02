@@ -72,18 +72,18 @@ const Home: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className="container mx-auto flex items-center justify-center bg-[#f8f7f4] w-full">
+      <div className="container mx-auto flex items-center justify-center bg-[#e9e9e8] w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
           <div className="space-y-6 p-2 lg:p-8">
             <div className="mb-6 logo" />
 
             <Text variant="heading4xl" as="h1">
-              {t("Building a Sustainable Future with Open-Source Hardware")}
+              {t("Empowering the Open Source Hardware Community")}
             </Text>
 
             <Text variant="bodyMd" as="p">
               {t(
-                "Innovative federated open source platform for sharing and collaborating on Open Source Hardware projects. Find and share open source hardware projects, collaborate with others and discover new products and services. Import your projects to allow access to the community and grow your reputation. Whether you're a seasoned pro or just getting started, we would love to explore with you revolutionary ways for creating, building and innovating together."
+                "Innovative federated open source platform for sharing and collaborating on Open Source Hardware projects. Find and share open source hardware projects, collaborate with others and discover new products and services. Import your projects to allow access to the community and grow your reputation."
               )}
             </Text>
 
@@ -107,8 +107,8 @@ const Home: NextPageWithLayout = () => {
                       {t("Create a new project")}
                     </Button>
                   </Link>
-                  <Link href="/resources">
-                    <Button size="large">{t("Import from LOSH")}</Button>
+                  <Link href="/projects">
+                    <Button size="large">{t("Explore")}</Button>
                   </Link>
                 </ButtonGroup>
               )}
@@ -125,14 +125,14 @@ const Home: NextPageWithLayout = () => {
         <ProjectsCards />
       </div>
 
-      <div className="container mx-auto flex items-center justify-center bg-[#f8f7f4] w-full">
+      <div className="container mx-auto flex items-center justify-center bg-[#335259] w-full text-white">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
           <div>
             <img src="/hero_1.png" alt="" className="contain w-full rounded-md" />
           </div>
           <div className="space-y-6 p-8 order-first lg:order-last">
             <Text variant="heading4xl" as="h1">
-              {t("Sign-in to browse the library")}
+              {t("Sign-in and connect your designs")}
             </Text>
 
             <Text variant="bodyMd" as="p">
@@ -149,8 +149,8 @@ const Home: NextPageWithLayout = () => {
                       {t("Log In")}
                     </Button>
                   </Link>
-                  <Link href="/sign_up">
-                    <Button size="large">{t("Register")}</Button>
+                  <Link href="/projects">
+                    <Button size="large">{t("Explore")}</Button>
                   </Link>
                 </ButtonGroup>
               )}
@@ -161,8 +161,8 @@ const Home: NextPageWithLayout = () => {
                       {t("Create a new project")}
                     </Button>
                   </Link>
-                  <Link href="/resources">
-                    <Button size="large">{t("Import from LOSH")}</Button>
+                  <Link href="/projects">
+                    <Button size="large">{t("Explore")}</Button>
                   </Link>
                 </ButtonGroup>
               )}
