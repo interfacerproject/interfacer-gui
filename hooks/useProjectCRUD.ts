@@ -410,13 +410,31 @@ export const useProjectCRUD = () => {
   };
 
   const updateRelations = async (projectId: string, relations: Array<string>, authorized = false) => {
+    const projectToUpdate = await getProjectForMetadataUpdate(projectId);
+    if (projectToUpdate.metadata.design && !relations.includes(projectToUpdate.metadata.design)) {
+      const processId = await createProcess(`design update @ ${projectToUpdate.name}`);
+      await updateMetadata(projectToUpdate, { design: false }, processId, true);
+    }
     await updateMetadataArray(projectId, relations, "relations", addRelations, authorized);
+    // add relaton to children
     for (const relation of relations) {
       const project = await getProjectForMetadataUpdate(relation);
+      let relationsToUpdate;
       const oldRelations = project.metadata.relations;
+      if (!!oldRelations) relationsToUpdate = { relations: [...oldRelations, projectId] };
+      else relationsToUpdate = { relations: [projectId] };
       if (oldRelations.includes(projectId)) continue;
       const processId = await createProcess(`relations update @ ${project.name}`);
-      await updateMetadata(project, { relations: [...oldRelations, projectId] }, processId, true);
+      await updateMetadata(project, relationsToUpdate, processId, true);
+    }
+    // remove relation from children
+    for (const relation of projectToUpdate.metadata.relations) {
+      if (relations.includes(relation)) continue;
+      const project = await getProjectForMetadataUpdate(relation);
+      const oldRelations = project.metadata.relations;
+      const relationsToUpdate = { relations: oldRelations.filter((r: string) => r !== projectId) };
+      const processId = await createProcess(`relations update @ ${project.name}`);
+      await updateMetadata(project, relationsToUpdate, processId, true);
     }
   };
 
