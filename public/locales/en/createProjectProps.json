@@ -96,5 +96,16 @@
   "For example: My Workshop": "For example: My Workshop",
   "Address": "Address",
   "An d. Alsterschleife 3, 22399 - Hamburg, Germany": "An d. Alsterschleife 3, 22399 - Hamburg, Germany",
-  "This service happens remotely / online": "This service happens remotely / online"
+  "This service happens remotely / online": "This service happens remotely / online",
+  "Sections": "Sections",
+  "Create a new service": "Create a new service",
+  "Create a new product": "Create a new product",
+  "Create a new design": "Create a new design",
+  "Add a service": "Add a service",
+  "List any open source hardware services that you offer, such as consultancy, training courses, or usage/rental of equipment. By listing your services, you can connect with others who may be interested in collaborating with you. You can also include any relevant links or resources.": "List any open source hardware services that you offer, such as consultancy, training courses, or usage/rental of equipment. By listing your services, you can connect with others who may be interested in collaborating with you. You can also include any relevant links or resources.",
+  "Add a product": "Add a product",
+  "Our platform is designed to support locally distributed products, so you can specify the location where your product is available. This allows others in your area to easily find and purchase your product, while also supporting local businesses and communities.": "Our platform is designed to support locally distributed products, so you can specify the location where your product is available. This allows others in your area to easily find and purchase your product, while also supporting local businesses and communities.",
+  "Import your project repository. Share your open source hardware project documentation and collaborate on building it. Your contribution will help others learn and build upon your work.": "Import your project repository. Share your open source hardware project documentation and collaborate on building it. Your contribution will help others learn and build upon your work.",
+  "Add a design": "Add a design",
+  "Repo ID": "Repo ID"
 }
