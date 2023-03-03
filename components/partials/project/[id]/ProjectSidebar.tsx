@@ -50,7 +50,7 @@ export default function ProjectSidebar(props: Props) {
   };
   const isDesign = project.conformsTo?.name === ProjectType.DESIGN;
   devLog("ProjectSidebar", project, isDesign);
-  const licenses = project.metadata?.licenses?.lenght > 0 && project?.metadata?.licenses;
+  const licenses = project.metadata?.licenses?.length > 0 && project?.metadata?.licenses;
   const design = project.metadata?.design;
   const declarations = project.metadata?.declarations;
   const haveDeclarations = declarations?.recyclable === "yes" || declarations?.repairable === "yes";
