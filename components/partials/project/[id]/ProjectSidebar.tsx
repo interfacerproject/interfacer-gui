@@ -53,6 +53,7 @@ export default function ProjectSidebar(props: Props) {
   const licenses = project.metadata?.licenses?.lenght > 0 && project?.metadata?.licenses;
   const design = project.metadata?.design;
   const declarations = project.metadata?.declarations;
+  const haveDeclarations = declarations?.recyclable === "yes" || declarations?.repairable === "yes";
 
   return (
     <div className="lg:col-span-1 order-first lg:order-last">
@@ -85,7 +86,7 @@ export default function ProjectSidebar(props: Props) {
       </Card>
 
       {/* Actions */}
-      {(licenses || design || declarations) && (
+      {(licenses || design || haveDeclarations) && (
         <Card sectioned>
           <Stack vertical spacing="loose">
             {licenses && <ProjectLicenses project={project} />}
