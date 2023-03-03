@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Map, { Marker, Popup } from "react-map-gl";
+import Map, { Layer, LayerProps, Source } from "react-map-gl";
 
 import { useQuery } from "@apollo/client";
 import useLoadMore from "../hooks/useLoadMore";
@@ -40,6 +40,53 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
   });
   const { items: projects } = useLoadMore({ fetchMore, refetch, variables, data, dataQueryIdentifier });
 
+  const clusterLayer: LayerProps = {
+    id: "clusters",
+    type: "circle",
+    source: "earthquakes",
+    filter: ["has", "point_count"],
+    paint: {
+      "circle-color": ["step", ["get", "point_count"], "#51bbd6", 100, "#f1f075", 750, "#f28cb1"],
+      "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+    },
+  };
+
+  const clusterCountLayer: LayerProps = {
+    id: "cluster-count",
+    type: "symbol",
+    source: "earthquakes",
+    filter: ["has", "point_count"],
+    layout: {
+      "text-field": "{point_count_abbreviated}",
+      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+      "text-size": 12,
+    },
+  };
+
+  const unclusteredPointLayer: LayerProps = {
+    id: "unclustered-point",
+    type: "circle",
+    source: "earthquakes",
+    filter: ["!", ["has", "point_count"]],
+    paint: {
+      "circle-color": "#11b4da",
+      "circle-radius": 10,
+      "circle-stroke-width": 1,
+      "circle-stroke-color": "#fff",
+    },
+  };
+
+  const geoJSON = {
+    type: "FeatureCollection",
+    features: projects?.map(({ node }: { node: EconomicResource }) => {
+      return {
+        type: "Feature",
+        properties: { id: node.id },
+        geometry: { type: "Point", coordinates: [node.currentLocation?.long, node.currentLocation?.lat] },
+      };
+    }),
+  };
+
   return (
     <>
       <Map
@@ -52,7 +99,20 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
         mapStyle="mapbox://styles/mapbox/streets-v9"
         mapboxAccessToken={MAPBOX_TOKEN}
       >
-        {projects?.map(({ node }: { node: EconomicResource }) => (
+        <Source
+          id="projects"
+          type="geojson"
+          // @ts-ignore
+          data={geoJSON}
+          cluster={true}
+          clusterMaxZoom={14}
+          clusterRadius={50}
+        >
+          <Layer {...clusterLayer} />
+          <Layer {...clusterCountLayer} />
+          <Layer {...unclusteredPointLayer} />
+        </Source>
+        {/* projects?.map(({ node }: { node: EconomicResource }) => (
           <>
             <Marker
               longitude={node.currentLocation?.long || 10}
@@ -68,7 +128,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
               {node.name}
             </Popup>
           </>
-        ))}
+        )) */}
       </Map>
     </>
   );
