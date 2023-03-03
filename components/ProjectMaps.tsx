@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Map, { Layer, LayerProps, Source } from "react-map-gl";
+import Map, { Layer, LayerProps, MapRef, Popup, Source } from "react-map-gl";
 
 import { useQuery } from "@apollo/client";
 import useLoadMore from "../hooks/useLoadMore";
@@ -22,6 +22,7 @@ import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 
 import "mapbox-gl/dist/mapbox-gl.css";
+import { useRef, useState } from "react";
 
 export interface ProjectsMapsProps {
   filter?: EconomicResourceFilterParams;
@@ -31,8 +32,15 @@ export interface ProjectsMapsProps {
   hideFilters?: boolean;
 }
 
+interface PopupInfo {
+  lngLat: [number, number];
+  text: string;
+}
+
 const ProjectsMaps = (props: ProjectsMapsProps) => {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+  const mapRef = useRef<MapRef>(null);
   const { filter = {} } = props;
   const dataQueryIdentifier = "economicResources";
   const { data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
@@ -40,6 +48,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
   });
   const { items: projects } = useLoadMore({ fetchMore, refetch, variables, data, dataQueryIdentifier });
 
+  if (!projects) return null;
   const clusterLayer: LayerProps = {
     id: "clusters",
     type: "circle",
@@ -51,6 +60,25 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     },
   };
 
+  const handleMapClick = (e: any) => {
+    e.preventDefault();
+    const features = e.features || [];
+    if (!!features[0]?.properties.cluster_id) {
+      const zoom = mapRef.current?.getZoom();
+      mapRef.current?.easeTo({
+        center: features[0].geometry.coordinates,
+        zoom: zoom! * 2,
+        duration: 500,
+      });
+    } else if (features.length > 0) {
+      setPopupInfo({
+        lngLat: features[0].geometry.coordinates,
+        text: features[0].properties.title,
+      });
+    } else {
+      setPopupInfo(null);
+    }
+  };
   const clusterCountLayer: LayerProps = {
     id: "cluster-count",
     type: "symbol",
@@ -81,7 +109,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     features: projects?.map(({ node }: { node: EconomicResource }) => {
       return {
         type: "Feature",
-        properties: { id: node.id },
+        properties: { id: node.id, title: node.name },
         geometry: { type: "Point", coordinates: [node.currentLocation?.long, node.currentLocation?.lat] },
       };
     }),
@@ -98,6 +126,9 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
         style={{ width: "full", height: 600 }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         mapboxAccessToken={MAPBOX_TOKEN}
+        interactiveLayerIds={[unclusteredPointLayer.id!, clusterLayer.id!]}
+        onClick={handleMapClick}
+        ref={mapRef}
       >
         <Source
           id="projects"
@@ -106,29 +137,17 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
           data={geoJSON}
           cluster={true}
           clusterMaxZoom={14}
-          clusterRadius={50}
+          clusterRadius={0}
         >
           <Layer {...clusterLayer} />
           <Layer {...clusterCountLayer} />
           <Layer {...unclusteredPointLayer} />
         </Source>
-        {/* projects?.map(({ node }: { node: EconomicResource }) => (
-          <>
-            <Marker
-              longitude={node.currentLocation?.long || 10}
-              latitude={node.currentLocation?.lat || 10}
-              color="red"
-            />
-            <Popup
-              longitude={node.currentLocation?.long || 10}
-              latitude={node.currentLocation?.lat || 10}
-              anchor="bottom"
-              onClose={() => {}}
-            >
-              {node.name}
-            </Popup>
-          </>
-        )) */}
+        {popupInfo && (
+          <Popup longitude={popupInfo.lngLat[0]} latitude={popupInfo.lngLat[1]} closeOnClick={false}>
+            {popupInfo.text}
+          </Popup>
+        )}
       </Map>
     </>
   );
