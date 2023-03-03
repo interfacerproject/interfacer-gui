@@ -25,10 +25,11 @@ import { EconomicResourceFilterParams, FetchInventoryQuery, FetchInventoryQueryV
 
 // Components
 import { AdjustmentsIcon } from "@heroicons/react/outline";
+import useLoadMore from "../hooks/useLoadMore";
+import Spinner from "./brickroom/Spinner";
+import PTitleCounter from "./polaris/PTitleCounter";
 import ProjectsFilters from "./ProjectsFilters";
 import ProjectsTableBase from "./ProjectsTableBase";
-import Spinner from "./brickroom/Spinner";
-import useLoadMore from "../hooks/useLoadMore";
 
 //
 
@@ -115,6 +116,7 @@ export default function ProjectsTable(props: ProjectsTableProps) {
           <div className="flex flex-row flex-nowrap items-start space-x-8">
             {data && (
               <div className="grow">
+                <PTitleCounter title={t("Projects")} length={items.length} />
                 <ProjectsTableBase
                   projects={items}
                   onLoadMore={loadMore}

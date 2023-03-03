@@ -14,6 +14,7 @@ export interface SelectedLocation {
 interface Props extends Partial<PFieldInfoProps> {
   location?: SelectedLocation | null;
   setLocation?: (location: SelectedLocation | null) => void;
+  placeholder?: string;
 }
 
 //
@@ -36,6 +37,7 @@ export default function SelectLocation2(props: Props) {
         label={props.label}
         error={props.error}
         helpText={props.helpText}
+        placeholder={props.placeholder}
         requiredIndicator={props.requiredIndicator}
       />
       {location && (

@@ -19,7 +19,7 @@ import { intercept } from "../../utils";
 
 function checkTableAndContent() {
   // Rows of table should be visible
-  const rows = cy.get("tr");
+  const rows = cy.get(".flex-row > :nth-child(1) > .grid > div");
   rows.should("be.visible");
 
   // Getting cells – should have text content

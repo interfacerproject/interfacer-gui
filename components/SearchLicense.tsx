@@ -22,7 +22,7 @@ export interface Props {
 
 export default function SearchLicense(props: Props) {
   const { onSelect = () => {}, requiredIndicator = false, error = "" } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const licenses = licensesJSON.licenses as Array<License>;
   const deselectedOptions: Array<Option> = useMemo(

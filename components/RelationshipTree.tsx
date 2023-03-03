@@ -14,45 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
-import ResourceDetailsCard from "../components/ResourceDetailsCard";
+import PTitleCounter from "./polaris/PTitleCounter";
+import ProjectsCards from "./ProjectsCards";
 
-const RelationshipTree = ({ dpp }: { dpp: JSON }) => {
-  const [projects, setProjects] = useState<any[]>([]);
-  const { t } = useTranslation("lastUpdatedProps");
-  const findProject = (level: any) => {
-    if (!!level?.children[0]?.children[0]?.node?.accounting_quantity_has_numerical_value) {
-      const _projects = level?.children?.map((child: any) => ({
-        name: child?.children[0]?.node.name,
-        id: child?.children[0]?.node.id,
-        description: child?.children[0]?.node.note,
-      }));
-      setProjects(projects.concat(_projects));
-    } else {
-      for (let i = 0; i < level?.children?.length; i++) {
-        findProject(level.children[i]);
-      }
-    }
+const RelationshipTree = ({ project }: { project: EconomicResource | undefined }) => {
+  const { t } = useTranslation("update");
+
+  const relatedProjects = project?.metadata?.relations;
+  const proposalFilter = {
+    id: relatedProjects,
   };
-  useEffect(() => {
-    findProject(dpp);
-  }, [dpp]);
   return (
     <div className="w-full mt-2" id="relationshipTree">
-      <div className="font-bold text-xl mb-2">{t("Included or cited projects")}</div>
-      {projects
-        .filter(project => Boolean(project.name))
-        .map(project => (
-          <div key={project.id} className="flex flex-column mt-2 border-b-2">
-            <Link href={`/project/${project.id}`}>
-              <a>
-                <ResourceDetailsCard resource={project} />
-              </a>
-            </Link>
-          </div>
-        ))}
+      <PTitleCounter title={t("Relations")} length={relatedProjects?.length ?? 0} />
+      {project && relatedProjects && <ProjectsCards filter={proposalFilter} tiny />}
     </div>
   );
 };

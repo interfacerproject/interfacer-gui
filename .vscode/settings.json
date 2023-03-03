@@ -36,5 +36,7 @@
     "zenflows"
   ],
   "i18n-ally.localesPaths": ["public/locales"],
+  "i18n-ally.regex.key": ".*?",
+  "i18n-ally.disablePathParsing": true,
   "i18n-ally.keystyle": "flat"
 }

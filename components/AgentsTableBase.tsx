@@ -34,7 +34,7 @@ export default function AgentsTableBase(props: ProjectsTableBaseProps) {
   const { data, hidePagination = false, onLoadMore = () => {} } = props;
   const { t } = useTranslation("common");
 
-  const agents = data.agents?.edges;
+  const agents = data.people?.edges;
   const hasNextPage = data.agents?.pageInfo.hasNextPage;
   const showEmptyState = !Boolean(agents) || agents?.length == 0;
 

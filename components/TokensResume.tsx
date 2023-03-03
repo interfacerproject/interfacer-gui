@@ -50,7 +50,7 @@ const TokensResume = ({ stat, id }: { stat: string; id: string }) => {
           <span>{trendValue}</span>
         </span>
       </div>
-      <div className="stat-title capitalize">{t(`${stat} points`)}</div>
+      <div className="stat-title capitalize">{t(stat)}</div>
       <div className="text-2xl font-semibold stat-value text-primary font-display">{value}</div>
     </div>
   );

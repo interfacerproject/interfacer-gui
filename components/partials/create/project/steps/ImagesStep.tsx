@@ -18,7 +18,7 @@ export const imagesStepDefaultValues: ImagesStepValues = [];
 //
 
 export default function ImagesStep() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   const { setValue, watch } = useFormContext<CreateProjectValues>();
   const images = watch("images");
@@ -27,19 +27,24 @@ export default function ImagesStep() {
     setValue("images", images, formSetValueOptions);
   }
 
+  const MAX_FILES = 10;
+
   return (
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle
         title={t("Upload pictures")}
-        subtitle={t("Upload pictures to be displayed inside the project page")}
+        subtitle={t(
+          "Adding pictures to your open source hardware project is an important way to showcase your work and help others understand your design."
+        )}
       />
       <PFileUpload
-        maxFiles={10}
+        maxFiles={MAX_FILES}
         files={images}
         onUpdate={handleUpdate}
         accept="image"
         maxSize={2000000}
-        helpText={t("Max 10 images | Max file size 2MB | Accepted formats: JPG, PNG, GIF, SVG")}
+        label={t("Upload up to {{MAX_FILES}} pictures", { MAX_FILES })}
+        helpText={`${t("Max file size")}: 2MB | ${t("Accepted formats")}: JPG, PNG, GIF, SVG`}
       />
     </Stack>
   );

@@ -43,7 +43,7 @@ const useSignedPost = (idInHeader?: boolean) => {
       body: JSON.stringify(request),
     });
   };
-  return { signedPost };
+  return { signedPost, signRequest };
 };
 
 export default useSignedPost;

@@ -17,9 +17,8 @@
 import { useQuery } from "@apollo/client";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
-import devLog from "lib/devLog";
-import { QUERY_RESOURCE } from "lib/QueryAndMutation";
-import { EconomicResource } from "lib/types";
+import { QUERY_RESOURCE, QUERY_RESOURCE_PROPOSAlS } from "lib/QueryAndMutation";
+import { EconomicResource, ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/types";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -30,23 +29,22 @@ import Tree from "react-d3-tree";
 // Components
 import { Button, Card, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor, MaximizeMinor } from "@shopify/polaris-icons";
-import AddStar from "components/AddStar";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
-import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import FullWidthBanner from "components/FullWidthBanner";
 import ProjectDetailOverview from "components/ProjectDetailOverview";
 import RelationshipTree from "components/RelationshipTree";
-import WatchButton from "components/WatchButton";
 import Link from "next/link";
 
 import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
-import { LinkMinor, MergeMinor, PlusMinor } from "@shopify/polaris-icons";
+import { Cube, Events, ListBoxes, ParentChild, Purchase } from "@carbon/icons-react";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
+import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
+import ProjectTypeChip from "components/ProjectTypeChip";
 
 //
 
@@ -68,10 +66,14 @@ const Project = () => {
   const { loading, data, startPolling, refetch } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id: id },
   });
-  startPolling(120000);
 
-  devLog("trace", data?.economicResource.trace);
-  devLog("traceDpp", data?.economicResource.traceDpp);
+  const { data: contributions } = useQuery<ResourceProposalsQuery, ResourceProposalsQueryVariables>(
+    QUERY_RESOURCE_PROPOSAlS,
+    {
+      variables: { id: id as string },
+    }
+  );
+  startPolling(12000);
 
   // (Temp) Redirect if project is LOSH owned
   if (process.env.NEXT_PUBLIC_LOSH_ID == data?.economicResource?.primaryAccountable?.id) {
@@ -167,6 +169,10 @@ const Project = () => {
   if (loading) return <Spinner />;
   if (!project) return null;
 
+  const sidebar = (
+    <ProjectSidebar project={project} contributions={contributions!} refetch={refetch} setSelected={setSelected} />
+  );
+
   return (
     <>
       <FullWidthBanner open={viewCreatedBanner} onClose={closeBanner}>
@@ -188,34 +194,31 @@ const Project = () => {
         </FullWidthBanner>
       )}
 
-      <div className="flex flex-row p-4">
-        <BrBreadcrumb
-          crumbs={[
-            { name: t("Projects"), href: "/projects" },
-            { name: project.conformsTo.name, href: `/projects?conformTo=${project.conformsTo.id}` },
-          ]}
-        />
-      </div>
-
       {/* Main */}
-      <div className="p-4 sm:max-w-xl mx-auto md:max-w-none md:flex md:flex-row md:space-x-12 md:justify-center">
+      <div className="p-4 container mx-auto grid grid-cols-1 lg:grid-cols-4 max-w-6xl bg-[#f8f7f4]">
         {/* Content */}
-        <div className="grow max-w-xl mb-16 md:mb-0">
+        <div className="lg:col-span-3 lg:pr-4">
           <Stack vertical spacing="extraLoose">
             {/* Title */}
             <Stack vertical spacing="tight">
-              <Text as="p" variant="bodyMd">
-                {t("This is a")}
-                <Link href={`/projects?conformTo=${project.conformsTo.id}`}>
-                  <a className="ml-1 font-bold text-primary hover:underline">{project.conformsTo.name}</a>
-                </Link>
-              </Text>
+              <BrBreadcrumb
+                crumbs={[
+                  { name: t("Projects"), href: "/projects" },
+                  { name: project.conformsTo.name, href: `/projects?conformTo=${project.conformsTo.id}` },
+                ]}
+              />
+              <ProjectTypeChip projectNode={project} />
               <Text as="h1" variant="heading2xl">
                 {project.name}
               </Text>
+              <p className="text-primary font-mono">
+                {t("ID:")} {project.id}
+              </p>
             </Stack>
 
             <BrThumbinailsGallery images={images} />
+
+            <div className="block lg:hidden">{sidebar}</div>
 
             {/* Content */}
             <Stack vertical spacing="loose">
@@ -223,31 +226,56 @@ const Project = () => {
                 tabs={[
                   {
                     id: "overview",
-                    content: t("Overview"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <Cube />
+                        {t("Overview")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Project overview"),
                     panelID: "overview-content",
                   },
                   {
                     id: "relationships",
-                    content: t("Relationship tree"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <ParentChild />
+                        {t("Relationship tree")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Relationship tree"),
                     panelID: "relationships-content",
                   },
                   {
                     id: "dpp",
-                    content: t("DPP"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <Purchase />
+                        {t("DPP")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Digital Product Passport"),
                     panelID: "dpp-content",
                   },
                   {
                     id: "Contributors",
-                    content: t("Contributors"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <Events />
+                        {t("Contributors")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Contributors"),
                     panelID: "dpp-content",
                   },
                   {
                     id: "Contributions",
-                    content: t("Contributions"),
+                    content: (
+                      <span className="flex items-center gap-2">
+                        <ListBoxes />
+                        {t("Contributions")}
+                      </span>
+                    ),
                     accessibilityLabel: t("Contributions"),
                     panelID: "contributions-content",
                   },
@@ -257,7 +285,7 @@ const Project = () => {
               />
 
               {selected == 0 && <ProjectDetailOverview project={project} />}
-              {selected == 1 && <RelationshipTree dpp={data?.economicResource.traceDpp} />}
+              {selected == 1 && <RelationshipTree project={data?.economicResource} />}
               {selected == 2 && (
                 <div className="space-y-8">
                   <div>
@@ -309,6 +337,7 @@ const Project = () => {
                 </div>
               )}
               <Modal
+                fullScreen
                 large
                 open={activeTree}
                 onClose={() => setActiveTree(false)}
@@ -332,7 +361,7 @@ const Project = () => {
                 </Modal.Section>
               </Modal>
 
-              {selected == 4 && (
+              {selected == 3 && (
                 <ContributorsTable
                   contributors={project.metadata?.contributors}
                   title={t("Contributors")}
@@ -340,82 +369,13 @@ const Project = () => {
                   data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
                 />
               )}
-              {selected == 5 && <ContributionsTable id={String(id)} />}
+              {selected == 4 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
             </Stack>
           </Stack>
         </div>
 
+        <div className="hidden lg:block">{sidebar}</div>
         {/* Sidebar */}
-        <div>
-          {/* Project info */}
-          <Card sectioned>
-            <Stack vertical>
-              <div>
-                <Text as="h2" variant="headingMd">
-                  {"ID"}
-                </Text>
-                <p className="text-primary font-mono">{project.id}</p>
-              </div>
-
-              <div className="space-y-1">
-                <Text as="h2" variant="headingMd">
-                  {t("Owner")}
-                </Text>
-                <BrDisplayUser
-                  id={project.primaryAccountable.id}
-                  name={project.primaryAccountable.name}
-                  location={project.currentLocation?.name}
-                />
-              </div>
-              {project.repo && (
-                <Button url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
-                  {t("Go to source")}
-                </Button>
-              )}
-            </Stack>
-          </Card>
-
-          {/* Actions */}
-          {user && (
-            <Card sectioned>
-              <Stack vertical>
-                <Button
-                  id="addToList"
-                  size="large"
-                  onClick={handleCollect}
-                  fullWidth
-                  icon={<Icon source={PlusMinor} />}
-                >
-                  {inList ? t("Remove from list") : t("Add to list")}
-                </Button>
-
-                <WatchButton id={project.id} owner={project.primaryAccountable.id} />
-
-                <AddStar id={project.id} owner={project.primaryAccountable.id} />
-              </Stack>
-            </Card>
-          )}
-          {/* Contributions */}
-          {user && project.primaryAccountable.id != user?.ulid && (
-            <Card sectioned>
-              <Stack vertical>
-                <Text as="h2" variant="headingMd">
-                  {t("Contributions")}
-                </Text>
-                <Button
-                  id="goToContribution"
-                  icon={<Icon source={MergeMinor} />}
-                  size="large"
-                  fullWidth
-                  primary
-                  onClick={() => router.push(`/create/contribution/${id}`)}
-                >
-                  {t("Make a contribution")}
-                </Button>
-              </Stack>
-            </Card>
-          )}
-        </div>
       </div>
 
       <Frame>{active ? <Toast content={t("DPP copied!")} onDismiss={toggleActive} duration={2000} /> : null}</Frame>

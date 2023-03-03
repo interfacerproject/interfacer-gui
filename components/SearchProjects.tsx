@@ -15,12 +15,19 @@ export interface Props {
   onSelect?: (value: Partial<EconomicResource>) => void;
   excludeIDs?: Array<string>;
   label?: string;
+  placeholder?: string;
   conformsTo?: Array<ProjectType>;
 }
 
 export default function SearchProjects(props: Props) {
   const { t } = useTranslation();
-  const { onSelect = () => {}, excludeIDs = [], label = t("Search for a project"), conformsTo = [] } = props;
+  const {
+    onSelect = () => {},
+    excludeIDs = [],
+    label = t("Search for a project"),
+    conformsTo = [],
+    placeholder = t("Search by resource name or Interfacer ID"),
+  } = props;
 
   /* Getting project types */
 
@@ -117,7 +124,7 @@ export default function SearchProjects(props: Props) {
       label={label}
       value={inputValue}
       prefix={<Icon source={SearchMinor} color="base" />}
-      placeholder="Project name or Interfacer ID"
+      placeholder={placeholder}
     />
   );
 

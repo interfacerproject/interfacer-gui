@@ -10,8 +10,8 @@ const icons: any = {
   Service: <Collaborate />,
 };
 
-const ProjectTypeChip = (props: { projectNode: EconomicResource }) => {
-  const name = props.projectNode.conformsTo.name;
+const ProjectTypeChip = (props: { projectNode?: Partial<EconomicResource>; noIntroduction?: boolean }) => {
+  const name = props.projectNode?.conformsTo?.name || "Design";
   const { t } = useTranslation("common");
 
   const router = useRouter();
@@ -22,7 +22,7 @@ const ProjectTypeChip = (props: { projectNode: EconomicResource }) => {
 
   return (
     <div className="flex items-center space-x-1">
-      <p>{t("This is a")}</p>
+      {!props.noIntroduction && <p>{t("This is a")}</p>}
       <span
         className={classNames("flex space-x-1 py-0.5 px-1 rounded items-center hover:cursor-pointer", {
           "bg-[#E4CCE3] text-[#413840] border-[#C18ABF]": name === "Design",

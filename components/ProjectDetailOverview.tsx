@@ -14,39 +14,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Stack, Text } from "@bbtgnn/polaris-interfacer";
-import { useTranslation } from "next-i18next";
+import { Stack } from "@bbtgnn/polaris-interfacer";
 import MdParser from "../lib/MdParser";
 import { EconomicResource } from "../lib/types";
 import BrTags from "./brickroom/BrTags";
 
 const ProjectDetailOverview = ({ project }: { project: EconomicResource }) => {
-  const { t } = useTranslation("common");
-
-  const license = project?.license;
   const tags = project?.classifiedAs;
   const text = project?.note;
 
   return (
     <Stack vertical>
       {text && <div className="prose" dangerouslySetInnerHTML={{ __html: MdParser.render(text) }} />}
-      {tags && (
-        <div>
-          <Text as="h2" variant="headingMd">
-            {t("Tags")}
-          </Text>
-          <BrTags tags={tags} />
-        </div>
-      )}
-
-      {license && (
-        <div>
-          <Text as="h2" variant="headingMd">
-            {t("License")}
-          </Text>
-          <p>{license}</p>
-        </div>
-      )}
+      {tags && <BrTags tags={tags} />}
     </Stack>
   );
 };

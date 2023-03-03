@@ -1,15 +1,19 @@
 import { gql, useQuery } from "@apollo/client";
-import { Spinner, Tag, Text } from "@bbtgnn/polaris-interfacer";
+import { Spinner, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource, SearchProjectQuery, SearchProjectQueryVariables } from "lib/types";
+import { useTranslation } from "next-i18next";
 import ProjectThumb from "./ProjectThumb";
+import ProjectTypeChip from "./ProjectTypeChip";
 
 export interface Props {
   project?: Partial<EconomicResource>;
   projectId?: string;
+  isProductDesign?: boolean;
 }
 
 export default function ProjectDisplay(props: Props) {
-  const { project, projectId } = props;
+  const { project, projectId, isProductDesign } = props;
+  const { t } = useTranslation("common");
 
   let p: Partial<EconomicResource>;
 
@@ -24,27 +28,37 @@ export default function ProjectDisplay(props: Props) {
   else return <></>;
 
   return (
-    <div className="flex flex-row">
-      <ProjectThumb project={p} />
-      <div className="pl-4">
-        <div className="mb-3 space-y-1">
-          <Text as="p" variant="bodyMd" fontWeight="bold">
-            {p.name}
-          </Text>
-          <Tag>{p.conformsTo?.name}</Tag>
-        </div>
-        <div className="font-mono">
+    <Stack vertical spacing={isProductDesign ? "extraTight" : undefined}>
+      {isProductDesign && (
+        <Stack spacing="tight">
           <Text as="p" variant="bodyMd">
-            <span className="font-bold">{"ID: "}</span>
-            <span>{p.id}</span>
+            {t("Based on") + ":"}
           </Text>
-          <Text as="p" variant="bodyMd">
-            <span className="font-bold">{"Owner: "}</span>
-            <span>{p.primaryAccountable?.name}</span>
-          </Text>
+          <ProjectTypeChip noIntroduction />
+        </Stack>
+      )}
+      <div className="flex flex-row">
+        {!isProductDesign && <ProjectThumb project={p} />}
+        <div className={isProductDesign ? "" : "pl-4"}>
+          <div className="mb-3 space-y-1">
+            <Text as="p" variant="bodyMd" fontWeight="bold">
+              {p.name}
+            </Text>
+            {!isProductDesign && <ProjectTypeChip projectNode={p} />}
+          </div>
+          <div className="font-mono">
+            <Text as="p" variant="bodyMd">
+              <span className="font-bold">{"ID: "}</span>
+              <span>{p.id}</span>
+            </Text>
+            <Text as="p" variant="bodyMd">
+              <span className="font-bold">{"Owner: "}</span>
+              <span>{p.primaryAccountable?.name}</span>
+            </Text>
+          </div>
         </div>
       </div>
-    </div>
+    </Stack>
   );
 }
 
@@ -53,6 +67,10 @@ export const SEARCH_PROJECT = gql`
     economicResource(id: $id) {
       id
       name
+      images {
+        bin
+        mimeType
+      }
       conformsTo {
         name
       }

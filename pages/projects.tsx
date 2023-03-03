@@ -19,8 +19,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 
 // Components
-import ProjectsTable from "components/ProjectsTable";
 import NewProjectButton from "components/NewProjectButton";
+import ProjectsCards from "components/ProjectsCards";
 import useFilters from "../hooks/useFilters";
 
 //
@@ -52,7 +52,7 @@ export default function Projects() {
       </div>
 
       {/*  */}
-      <ProjectsTable filter={proposalFilter} />
+      <ProjectsCards filter={proposalFilter} hideFilters />
     </div>
   );
 }

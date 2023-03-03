@@ -218,6 +218,8 @@ export const useProjectCRUD = () => {
       const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
       devLog("info: tags prepared", tags);
 
+      const design = formData.linkedDesign.length > 0 && formData.linkedDesign;
+
       const variables: CreateProjectMutationVariables = {
         resourceSpec: projectTypes![projectType],
         process: processId,
@@ -237,6 +239,7 @@ export const useProjectCRUD = () => {
           relations: formData.relations,
           declarations: formData.declarations,
           remote: location?.remote,
+          design: design,
         }),
       };
       devLog("info: project variables created", variables);
@@ -260,10 +263,24 @@ export const useProjectCRUD = () => {
           process: processId,
           originalProjectId: projectId,
         });
+        const project = await getProjectForMetadataUpdate(linkedDesign);
+        if (project.metadata?.relations) {
+          const relations: string[] = [...project.metadata.relations, projectId];
+          await updateRelations(linkedDesign, relations, true);
+        } else {
+          await updateRelations(linkedDesign, [projectId], true);
+        }
       }
 
       for (const resource of formData.relations) {
         await addRelation(resource, processId, projectId);
+        const project = await getProjectForMetadataUpdate(resource);
+        if (project.metadata?.relations) {
+          const relations: string[] = [...project.metadata.relations, projectId];
+          await updateRelations(resource, relations, true);
+        } else {
+          await updateRelations(resource, [projectId], true);
+        }
       }
 
       await addContributors(
@@ -293,15 +310,17 @@ export const useProjectCRUD = () => {
   const updateMetadata = async (
     project: Partial<EconomicResource>,
     metadata: Record<string, unknown>,
-    processId: string
+    processId?: string,
+    authorized = false
   ) => {
-    if (project.primaryAccountable?.id !== user?.ulid) throw new Error("NotAuthorized");
+    if (project.primaryAccountable?.id !== user?.ulid && !authorized) throw new Error("NotAuthorized");
+    if (!processId) processId = await createProcess(`metadata update @ ${project.name}`);
     const newMetadata = { ...project.metadata, ...metadata };
     const quantity = project.onhandQuantity;
     const variables: UpdateMetadataMutationVariables = {
       process: processId,
       metadata: JSON.stringify(newMetadata),
-      agent: user!.ulid,
+      agent: project.primaryAccountable?.id!,
       now: new Date().toISOString(),
       resource: project.id!,
       quantity: { hasNumericalValue: quantity?.hasNumericalValue, hasUnit: quantity?.hasUnit?.id },
@@ -336,7 +355,13 @@ export const useProjectCRUD = () => {
 
   type CbUpdateFunction = (projectId: string, array: Array<string>, processId: string) => Promise<void>;
 
-  const updateMetadataArray = async (projectId: string, array: string[], key: string, cb: CbUpdateFunction) => {
+  const updateMetadataArray = async (
+    projectId: string,
+    array: string[],
+    key: string,
+    cb: CbUpdateFunction,
+    authorized = false
+  ) => {
     try {
       const project = await getProjectForMetadataUpdate(projectId);
       const oldArray = project.metadata[key];
@@ -346,7 +371,7 @@ export const useProjectCRUD = () => {
       devLog("success: process created", processName, processId);
       const newArray = getNewElements(project.metadata[key], array);
       if (newArray.length > 0) await cb(projectId, newArray, processId);
-      await updateMetadata(project, { [key]: array }, processId);
+      await updateMetadata(project, { [key]: array }, processId, authorized);
       devLog(`success: ${key} updated`);
     } catch (e) {
       devLog(`error: ${key} not updated`, e);
@@ -384,6 +409,35 @@ export const useProjectCRUD = () => {
     if (errors) throw new Error(`Metadata not updated: ${errors}`);
   };
 
+  const updateRelations = async (projectId: string, relations: Array<string>, authorized = false) => {
+    const projectToUpdate = await getProjectForMetadataUpdate(projectId);
+    if (projectToUpdate.metadata.design && !relations.includes(projectToUpdate.metadata.design)) {
+      const processId = await createProcess(`design update @ ${projectToUpdate.name}`);
+      await updateMetadata(projectToUpdate, { design: false }, processId, true);
+    }
+    await updateMetadataArray(projectId, relations, "relations", addRelations, authorized);
+    // add relaton to children
+    for (const relation of relations) {
+      const project = await getProjectForMetadataUpdate(relation);
+      let relationsToUpdate;
+      const oldRelations = project.metadata.relations;
+      if (!!oldRelations) relationsToUpdate = { relations: [...oldRelations, projectId] };
+      else relationsToUpdate = { relations: [projectId] };
+      if (oldRelations.includes(projectId)) continue;
+      const processId = await createProcess(`relations update @ ${project.name}`);
+      await updateMetadata(project, relationsToUpdate, processId, true);
+    }
+    // remove relation from children
+    for (const relation of projectToUpdate.metadata.relations) {
+      if (relations.includes(relation)) continue;
+      const project = await getProjectForMetadataUpdate(relation);
+      const oldRelations = project.metadata.relations;
+      const relationsToUpdate = { relations: oldRelations.filter((r: string) => r !== projectId) };
+      const processId = await createProcess(`relations update @ ${project.name}`);
+      await updateMetadata(project, relationsToUpdate, processId, true);
+    }
+  };
+
   return {
     handleProjectCreation,
     error,
@@ -392,8 +446,8 @@ export const useProjectCRUD = () => {
     updateDeclarations,
     updateContributors: (projectId: string, contributors: Array<string>) =>
       updateMetadataArray(projectId, contributors, "contributors", addContributors),
-    updateRelations: (projectId: string, relations: Array<string>) =>
-      updateMetadataArray(projectId, relations, "relations", addRelations),
+    updateRelations,
     relocateProject,
+    updateMetadata,
   };
 };

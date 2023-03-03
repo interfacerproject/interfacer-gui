@@ -1,4 +1,5 @@
 import { ProjectType } from "components/types";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
@@ -9,6 +10,15 @@ import CreateProjectForm from "components/partials/create/project/CreateProjectF
 
 //
 
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      publicPage: true,
+      ...(await serverSideTranslations(locale, ["common", "createProjectProps"])),
+    },
+  };
+}
+
 const CreateProduct: NextPageWithLayout = () => {
   return <CreateProjectForm projectType={ProjectType.PRODUCT} />;
 };
@@ -17,7 +27,7 @@ const CreateProduct: NextPageWithLayout = () => {
 
 CreateProduct.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout>
+    <Layout bottomPadding="none">
       <CreateProjectLayout>{page}</CreateProjectLayout>
     </Layout>
   );

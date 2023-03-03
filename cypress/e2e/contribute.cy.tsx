@@ -11,7 +11,7 @@ describe("When user want to contribute", () => {
 
   it("Should go to contribution page", () => {
     cy.visit(`/project/${Cypress.env("project_id")}`);
-    cy.get("#goToContribution").should("exist").click().url().should("include", "create/contribution/");
+    cy.get("#contribute").should("exist").click().url().should("include", "create/contribution/");
     cy.wait(2000);
     cy.get("#contributionRepositoryID").type("testRepo");
     cy.get("#description").click().find("textarea").type("testDescription");

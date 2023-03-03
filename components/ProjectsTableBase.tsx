@@ -40,7 +40,7 @@ export default function ProjectsTableBase(props: ProjectsTableBaseProps) {
 
   return (
     <div>
-      <BrTable headArray={[t("Project"), t("Project Type"), t("Last update"), t("tags"), t("Owner")]}>
+      <BrTable headArray={[t("Name"), t("Project Type"), t("Last update"), t("tags"), t("Owner")]}>
         {projects?.map((e: any) => (
           <ProjectsTableRow project={e} key={e.cursor} />
         ))}

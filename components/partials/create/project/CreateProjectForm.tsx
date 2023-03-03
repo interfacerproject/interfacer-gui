@@ -131,7 +131,7 @@ export default function CreateProjectForm(props: Props) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-row justify-center space-x-8 md:space-x-16 lg:space-x-24 p-6">
           <div className="max-w-xs">
-            <div className="sticky top-8">
+            <div className="sticky top-24">
               <CreateProjectNav projectType={projectType} />
             </div>
           </div>

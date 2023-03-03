@@ -2,6 +2,7 @@ import { Button, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import LoadingOverlay from "components/LoadingOverlay";
 import PButtonRadio from "components/polaris/PButtonRadio";
+import PFieldInfo from "components/polaris/PFieldInfo";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import useAutoimport from "hooks/useAutoimport";
 import {
@@ -19,7 +20,7 @@ import { CreateProjectValues } from "../CreateProjectForm";
 //
 
 export default function ImportDesign() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("createProjectProps");
 
   /* Form handling */
 
@@ -67,11 +68,32 @@ export default function ImportDesign() {
   return (
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle
-        title={t("Import from external source")}
-        subtitle={t("Import a project from Github, Thingiverse, LOSH or Git")}
+        title={t("Import from Repository")}
+        subtitle={
+          <>
+            {t(
+              "Easily and quickly import your open source hardware designs and projects directly from an existing repo. You can then review and make any necessary changes before submitting your project."
+            )}
+            <br />
+            <br />
+            {t(
+              "We recommend to read this guide to know how to structure your folders for better machine-readability:"
+            )}{" "}
+            <a
+              className="text-text-primary hover:underline"
+              href="https://gitlab.fabcity.hamburg/hardware/interfacer-osh-build-workshops/project-coordination/-/blob/main/OSH%20Dokumentation/10_Step__Documentation_Guideline.md"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {t("How to start with your OSH Repository in 10 Steps")}
+            </a>
+          </>
+        }
       />
 
-      <PButtonRadio options={autoimportOptions} onChange={handleSourceChange} selected={watch("source")} />
+      <PFieldInfo label={t("Select repo type")} helpText={t("We currently support only GitHub and GitLab")}>
+        <PButtonRadio options={autoimportOptions} onChange={handleSourceChange} selected={watch("source")} />
+      </PFieldInfo>
 
       {watch("source") === AutoimportSource.GITHUB && (
         <Controller
@@ -101,7 +123,7 @@ export default function ImportDesign() {
             render={({ field: { onChange, onBlur, value } }) => (
               <TextField
                 type="url"
-                label={t("Gitlab host")}
+                label={t("GitLab host")}
                 placeholder={"https://gitlab.com"}
                 helpText={t("Please include the protocol (https://...) in the URL")}
                 autoComplete="off"
