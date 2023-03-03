@@ -67,7 +67,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
       const zoom = mapRef.current?.getZoom();
       mapRef.current?.easeTo({
         center: features[0].geometry.coordinates,
-        zoom: zoom! * 2,
+        zoom: zoom! * 1.4,
         duration: 500,
       });
     } else if (features.length > 0) {
