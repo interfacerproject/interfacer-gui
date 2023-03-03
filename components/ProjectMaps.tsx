@@ -22,7 +22,9 @@ import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 
 import "mapbox-gl/dist/mapbox-gl.css";
+import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
+import ProjectDisplay from "./ProjectDisplay";
 
 export interface ProjectsMapsProps {
   filter?: EconomicResourceFilterParams;
@@ -34,7 +36,7 @@ export interface ProjectsMapsProps {
 
 interface PopupInfo {
   lngLat: [number, number];
-  text: string;
+  id: string;
 }
 
 const ProjectsMaps = (props: ProjectsMapsProps) => {
@@ -51,6 +53,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
   const onGrab = useCallback(() => setCursor("grabbing"), []);
+  const onDrag = useCallback(() => setCursor("grab"), []);
 
   const clusterLayer: LayerProps = {
     id: "clusters",
@@ -76,7 +79,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     } else if (features.length > 0) {
       setPopupInfo({
         lngLat: features[0].geometry.coordinates,
-        text: features[0].properties.title,
+        id: features[0].properties.id,
       });
     } else {
       setPopupInfo(null);
@@ -137,6 +140,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onMouseDown={onGrab}
+        onMouseUp={onMouseLeave}
         ref={mapRef}
         cursor={cursor}
       >
@@ -147,7 +151,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
           data={geoJSON}
           cluster={true}
           clusterMaxZoom={14}
-          clusterRadius={0}
+          clusterRadius={15}
         >
           <Layer {...clusterLayer} />
           <Layer {...clusterCountLayer} />
@@ -159,8 +163,13 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
             latitude={popupInfo.lngLat[1]}
             closeOnClick={false}
             closeButton={false}
+            style={{ width: "400px", padding: 0, overflow: "hidden", maxWidth: "600px" }}
           >
-            {popupInfo.text}
+            <Link href={`/project/${popupInfo.id}`}>
+              <a>
+                <ProjectDisplay projectId={popupInfo.id} />
+              </a>
+            </Link>
           </Popup>
         )}
       </Map>
