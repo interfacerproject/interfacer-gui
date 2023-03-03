@@ -22,7 +22,7 @@ import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 export interface ProjectsMapsProps {
   filter?: EconomicResourceFilterParams;
@@ -40,6 +40,7 @@ interface PopupInfo {
 const ProjectsMaps = (props: ProjectsMapsProps) => {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+  const [cursor, setCursor] = useState<string>("grab");
   const mapRef = useRef<MapRef>(null);
   const { filter = {} } = props;
   const dataQueryIdentifier = "economicResources";
@@ -47,8 +48,10 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     variables: { last: 200, filter: filter },
   });
   const { items: projects } = useLoadMore({ fetchMore, refetch, variables, data, dataQueryIdentifier });
+  const onMouseEnter = useCallback(() => setCursor("pointer"), []);
+  const onMouseLeave = useCallback(() => setCursor("grab"), []);
+  const onGrab = useCallback(() => setCursor("grabbing"), []);
 
-  if (!projects) return null;
   const clusterLayer: LayerProps = {
     id: "clusters",
     type: "circle",
@@ -104,6 +107,8 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     },
   };
 
+  if (!projects) return null;
+
   const geoJSON = {
     type: "FeatureCollection",
     features: projects?.map(({ node }: { node: EconomicResource }) => {
@@ -123,12 +128,17 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
           longitude: 9.98,
           zoom: 4,
         }}
+        interactive
         style={{ width: "full", height: 600 }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         mapboxAccessToken={MAPBOX_TOKEN}
         interactiveLayerIds={[unclusteredPointLayer.id!, clusterLayer.id!]}
         onClick={handleMapClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onMouseDown={onGrab}
         ref={mapRef}
+        cursor={cursor}
       >
         <Source
           id="projects"
