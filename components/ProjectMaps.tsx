@@ -144,7 +144,12 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
           <Layer {...unclusteredPointLayer} />
         </Source>
         {popupInfo && (
-          <Popup longitude={popupInfo.lngLat[0]} latitude={popupInfo.lngLat[1]} closeOnClick={false}>
+          <Popup
+            longitude={popupInfo.lngLat[0]}
+            latitude={popupInfo.lngLat[1]}
+            closeOnClick={false}
+            closeButton={false}
+          >
             {popupInfo.text}
           </Popup>
         )}
