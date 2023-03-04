@@ -17,15 +17,12 @@
 import Map, { Layer, LayerProps, MapRef, Popup, Source } from "react-map-gl";
 
 import { useQuery } from "@apollo/client";
-import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import {
   EconomicResource,
   EconomicResourceFilterParams,
   FetchInventoryQuery,
   FetchInventoryQueryVariables,
-  FetchResourcesQuery,
-  FetchResourcesQueryVariables,
 } from "../lib/types";
 
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -48,14 +45,44 @@ interface PopupInfo {
 
 const ProjectsMaps = (props: ProjectsMapsProps) => {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
-  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const [cursor, setCursor] = useState<string>("grab");
   const mapRef = useRef<MapRef>(null);
   const { filter = {} } = props;
   const { data } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(FETCH_RESOURCES, {
-    variables: { last: 200, filter: filter },
+    variables: { last: 50, filter: filter },
   });
   const projects = data?.economicResources?.edges;
+
+  const Popups = () => {
+    let locationsFrequency: any = {};
+    return projects?.map(project => {
+      const { id, currentLocation } = project?.node as EconomicResource;
+      if (!currentLocation) return null;
+      const { lat, long } = currentLocation;
+      if (Object.keys(locationsFrequency).includes(`${lat}-${long}`)) locationsFrequency[`${lat}-${long}`]++;
+      else {
+        locationsFrequency[`${lat}-${long}`] = 1;
+      }
+      if (locationsFrequency[`${lat}-${long}`] > 3) return null;
+      return (
+        <Popup
+          key={id}
+          latitude={lat}
+          longitude={long}
+          closeButton={false}
+          closeOnClick={false}
+          style={{ width: "400px", padding: 0, overflow: "hidden", maxWidth: "600px" }}
+          offset={locationsFrequency[`${lat}-${long}`] * 5}
+        >
+          <Link href={`/project/${id}`}>
+            <a>
+              <ProjectDisplay projectId={id} />
+            </a>
+          </Link>
+        </Popup>
+      );
+    });
+  };
 
   // const { items: projects } = useLoadMore({ fetchMore, refetch, variables, data, dataQueryIdentifier });
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
@@ -69,7 +96,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     source: "earthquakes",
     filter: ["has", "point_count"],
     paint: {
-      "circle-color": ["step", ["get", "point_count"], "#51bbd6", 100, "#f1f075", 750, "#f28cb1"],
+      "circle-color": ["step", ["get", "point_count"], "#32D583", 20, "#FDB022", 50, "#FF7A70"],
       "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
     },
   };
@@ -84,13 +111,6 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
         zoom: zoom! * 1.4,
         duration: 500,
       });
-    } else if (features.length > 0) {
-      setPopupInfo({
-        lngLat: features[0].geometry.coordinates,
-        id: features[0].properties.id,
-      });
-    } else {
-      setPopupInfo(null);
     }
   };
   const clusterCountLayer: LayerProps = {
@@ -111,7 +131,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     source: "earthquakes",
     filter: ["!", ["has", "point_count"]],
     paint: {
-      "circle-color": "#11b4da",
+      "circle-color": "#014837",
       "circle-radius": 10,
       "circle-stroke-width": 1,
       "circle-stroke-color": "#fff",
@@ -143,7 +163,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
         style={{ width: "full", height: 600 }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         mapboxAccessToken={MAPBOX_TOKEN}
-        interactiveLayerIds={[unclusteredPointLayer.id!, clusterLayer.id!]}
+        interactiveLayerIds={[clusterLayer.id!]}
         onClick={handleMapClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -165,21 +185,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
           <Layer {...clusterCountLayer} />
           <Layer {...unclusteredPointLayer} />
         </Source>
-        {popupInfo && (
-          <Popup
-            longitude={popupInfo.lngLat[0]}
-            latitude={popupInfo.lngLat[1]}
-            closeOnClick={false}
-            closeButton={false}
-            style={{ width: "400px", padding: 0, overflow: "hidden", maxWidth: "600px" }}
-          >
-            <Link href={`/project/${popupInfo.id}`}>
-              <a>
-                <ProjectDisplay projectId={popupInfo.id} />
-              </a>
-            </Link>
-          </Popup>
-        )}
+        {Popups()}
       </Map>
     </>
   );
