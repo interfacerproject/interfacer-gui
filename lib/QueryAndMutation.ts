@@ -443,6 +443,8 @@ export const FETCH_RESOURCES = gql`
             id
             name
             mappableAddress
+            lat
+            long
           }
           id
           name

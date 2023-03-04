@@ -18,6 +18,7 @@ import { Button, ButtonGroup, Card, Stack, Text } from "@bbtgnn/polaris-interfac
 import { GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
 import Layout from "components/layout/Layout";
 import ProjectsCards from "components/ProjectsCards";
+import ProjectMaps from "components/ProjectMaps";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -163,6 +164,11 @@ const Home: NextPageWithLayout = () => {
       {/* PROJECT CARDS */}
       <div className="container mx-auto mb-24 mt-4">
         <ProjectsCards />
+      </div>
+
+      {/* MAP */}
+      <div className="container mx-auto mb-24 mt-4">
+        <ProjectMaps />
       </div>
 
       <div className="container mx-auto grid gap-8 md:grid-cols-2 mt-20 justify-between">
