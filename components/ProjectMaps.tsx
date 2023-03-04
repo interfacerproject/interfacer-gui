@@ -19,7 +19,14 @@ import Map, { Layer, LayerProps, MapRef, Popup, Source } from "react-map-gl";
 import { useQuery } from "@apollo/client";
 import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
-import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
+import {
+  EconomicResource,
+  EconomicResourceFilterParams,
+  FetchInventoryQuery,
+  FetchInventoryQueryVariables,
+  FetchResourcesQuery,
+  FetchResourcesQueryVariables,
+} from "../lib/types";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import Link from "next/link";
@@ -45,11 +52,12 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
   const [cursor, setCursor] = useState<string>("grab");
   const mapRef = useRef<MapRef>(null);
   const { filter = {} } = props;
-  const dataQueryIdentifier = "economicResources";
-  const { data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
+  const { data } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(FETCH_RESOURCES, {
     variables: { last: 200, filter: filter },
   });
-  const { items: projects } = useLoadMore({ fetchMore, refetch, variables, data, dataQueryIdentifier });
+  const projects = data?.economicResources?.edges;
+
+  // const { items: projects } = useLoadMore({ fetchMore, refetch, variables, data, dataQueryIdentifier });
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
   const onGrab = useCallback(() => setCursor("grabbing"), []);
@@ -114,7 +122,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
 
   const geoJSON = {
     type: "FeatureCollection",
-    features: projects?.map(({ node }: { node: EconomicResource }) => {
+    features: projects?.map(({ node }) => {
       return {
         type: "Feature",
         properties: { id: node.id, title: node.name },

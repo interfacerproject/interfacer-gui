@@ -110,5 +110,5 @@ table {
 }
 .mapboxgl-popup-content {
   padding: none !important;
-  @apply max-w-none pl-12 w-full;
+  @apply max-w-none pl-12 w-full rounded-lg;
 }
