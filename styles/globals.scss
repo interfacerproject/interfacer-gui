@@ -108,7 +108,11 @@ table {
 .swiper-slide img {
   @apply w-full h-full block object-cover;
 }
+.mapboxgl-popup {
+  max-width: none !important;
+}
 .mapboxgl-popup-content {
   padding: none !important;
+  max-width: none !important;
   @apply max-w-none pl-12 w-full rounded-lg border-1 border-slate-400;
 }

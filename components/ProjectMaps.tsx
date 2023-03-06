@@ -15,9 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useQuery } from "@apollo/client";
-import Map, { Layer, LayerProps, MapRef, Popup, Source, useMap } from "react-map-gl";
-import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
-import { EconomicResourceFilterParams, FetchInventoryQuery, FetchInventoryQueryVariables } from "../lib/types";
+import Map, { Layer, LayerProps, MapRef, Popup, Source } from "react-map-gl";
+import { FETCH_RESOURCES, QUERY_PROJECT_TYPES } from "../lib/QueryAndMutation";
+import {
+  EconomicResourceFilterParams,
+  FetchInventoryQuery,
+  FetchInventoryQueryVariables,
+  GetProjectTypesQuery,
+} from "../lib/types";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import Link from "next/link";
@@ -36,28 +41,26 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
   const [cursor, setCursor] = useState<string>("grab");
   const mapRef = useRef<MapRef>(null);
+
+  const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
+  const specs = queryProjectTypes.data?.instanceVariables.specs;
+  const conformsTo = [specs?.specProjectService.id || "", specs?.specProjectProduct.id || ""];
+
   const { filter = {} } = props;
+  filter.conformsTo = conformsTo;
   const { data } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(FETCH_RESOURCES, {
     variables: { last: 200, filter: filter },
   });
-  const PopUps = () => {
-    const { current: map } = useMap();
-    if (!map) return null;
-    if (!map.isStyleLoaded()) return null;
-    const points = map
-      .querySourceFeatures("projects", { sourceLayer: unclusteredPointLayer.id! })
-      .filter((e: any) => !e.properties?.cluster);
+  const PopUps = ({ points }: { points: any[] }) => {
     return (
       <>
-        {points.map((p: any, i) => (
+        {points?.map((p: any, i) => (
           <Popup
             key={i}
             latitude={p.geometry.coordinates[1]}
             longitude={p.geometry.coordinates[0]}
             closeButton={false}
             closeOnClick={false}
-            style={{ width: "400px", padding: 0, overflow: "hidden", maxWidth: "600px" }}
-            // offset={locationsFrequency[`${lat}-${long}`] * 5}
           >
             <Link href={`/project/${p.properties.id}`}>
               <a>
@@ -76,7 +79,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
   const clusterLayer: LayerProps = {
     id: "clusters",
     type: "circle",
-    source: "earthquakes",
+    source: "projects",
     filter: ["has", "point_count"],
     paint: {
       "circle-color": ["step", ["get", "point_count"], "#32D583", 20, "#FDB022", 50, "#FF7A70", 90, "#FF7A70"],
@@ -84,26 +87,13 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     },
   };
 
-  const handleMapClick = (e: any) => {
-    e.preventDefault();
-    const features = e.features || [];
-    if (!features.length) return;
-    if (!!features[0]?.properties.cluster_id) {
-      const zoom = mapRef.current?.getZoom();
-      mapRef.current?.easeTo({
-        center: features[0].geometry.coordinates,
-        zoom: zoom! * 1.4,
-        duration: 500,
-      });
-    }
-  };
   const clusterCountLayer: LayerProps = {
     id: "cluster-count",
     type: "symbol",
     source: "projects",
     filter: ["has", "point_count"],
     layout: {
-      "text-field": "{point_count}",
+      "text-field": "{point_count_abbreviated}",
       "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
       "text-size": 12,
     },
@@ -121,6 +111,24 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
       "circle-stroke-color": "#fff",
     },
   };
+
+  const handleMapClick = (e: any) => {
+    e.preventDefault();
+    const features = e.features || [];
+    if (!features.length) return;
+    if (!!features[0]?.properties.cluster_id) {
+      const zoom = mapRef.current?.getZoom();
+      mapRef.current?.easeTo({
+        center: features[0].geometry.coordinates,
+        zoom: zoom! * 1.4,
+        duration: 500,
+      });
+    }
+  };
+
+  const points = mapRef?.current
+    ?.querySourceFeatures("projects", { sourceLayer: unclusteredPointLayer.id! })
+    .filter((e: any) => !e.properties?.cluster);
 
   if (!projects) return null;
 
@@ -147,7 +155,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
         style={{ width: "full", height: 600 }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         mapboxAccessToken={MAPBOX_TOKEN}
-        interactiveLayerIds={[clusterLayer.id!, unclusteredPointLayer.id!]}
+        interactiveLayerIds={[clusterLayer.id!]}
         onClick={handleMapClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -169,7 +177,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
           <Layer {...clusterCountLayer} />
           <Layer {...unclusteredPointLayer} />
         </Source>
-        <PopUps />
+        {points && <PopUps points={points} />}
       </Map>
     </>
   );
