@@ -109,7 +109,7 @@ table {
   @apply w-full h-full block object-cover;
 }
 .mapboxgl-popup {
-  max-width: none !important;
+  max-width: 32rem !important;
 }
 .mapboxgl-popup-content {
   padding: none !important;
