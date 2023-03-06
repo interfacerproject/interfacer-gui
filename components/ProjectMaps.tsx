@@ -14,16 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Map, { Layer, LayerProps, MapRef, Popup, Source } from "react-map-gl";
-
 import { useQuery } from "@apollo/client";
+import Map, { Layer, LayerProps, MapRef, Popup, Source, useMap } from "react-map-gl";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
-import {
-  EconomicResource,
-  EconomicResourceFilterParams,
-  FetchInventoryQuery,
-  FetchInventoryQueryVariables,
-} from "../lib/types";
+import { EconomicResourceFilterParams, FetchInventoryQuery, FetchInventoryQueryVariables } from "../lib/types";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import Link from "next/link";
@@ -38,72 +32,62 @@ export interface ProjectsMapsProps {
   hideFilters?: boolean;
 }
 
-interface PopupInfo {
-  lngLat: [number, number];
-  id: string;
-}
-
 const ProjectsMaps = (props: ProjectsMapsProps) => {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
   const [cursor, setCursor] = useState<string>("grab");
   const mapRef = useRef<MapRef>(null);
   const { filter = {} } = props;
   const { data } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(FETCH_RESOURCES, {
-    variables: { last: 50, filter: filter },
+    variables: { last: 200, filter: filter },
   });
-  const projects = data?.economicResources?.edges;
-
-  const Popups = () => {
-    let locationsFrequency: any = {};
-    return projects?.map(project => {
-      const { id, currentLocation } = project?.node as EconomicResource;
-      if (!currentLocation) return null;
-      const { lat, long } = currentLocation;
-      if (Object.keys(locationsFrequency).includes(`${lat}-${long}`)) locationsFrequency[`${lat}-${long}`]++;
-      else {
-        locationsFrequency[`${lat}-${long}`] = 1;
-      }
-      if (locationsFrequency[`${lat}-${long}`] > 3) return null;
-      return (
-        <Popup
-          key={id}
-          latitude={lat}
-          longitude={long}
-          closeButton={false}
-          closeOnClick={false}
-          style={{ width: "400px", padding: 0, overflow: "hidden", maxWidth: "600px" }}
-          offset={locationsFrequency[`${lat}-${long}`] * 5}
-        >
-          <Link href={`/project/${id}`}>
-            <a>
-              <ProjectDisplay projectId={id} />
-            </a>
-          </Link>
-        </Popup>
-      );
-    });
+  const PopUps = () => {
+    const { current: map } = useMap();
+    if (!map) return null;
+    if (!map.isStyleLoaded()) return null;
+    const points = map
+      .querySourceFeatures("projects", { sourceLayer: unclusteredPointLayer.id! })
+      .filter((e: any) => !e.properties?.cluster);
+    return (
+      <>
+        {points.map((p: any, i) => (
+          <Popup
+            key={i}
+            latitude={p.geometry.coordinates[1]}
+            longitude={p.geometry.coordinates[0]}
+            closeButton={false}
+            closeOnClick={false}
+            style={{ width: "400px", padding: 0, overflow: "hidden", maxWidth: "600px" }}
+            // offset={locationsFrequency[`${lat}-${long}`] * 5}
+          >
+            <Link href={`/project/${p.properties.id}`}>
+              <a>
+                <ProjectDisplay projectId={p.properties.id} />
+              </a>
+            </Link>
+          </Popup>
+        ))}
+      </>
+    );
   };
-
-  // const { items: projects } = useLoadMore({ fetchMore, refetch, variables, data, dataQueryIdentifier });
+  const projects = data?.economicResources?.edges;
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
   const onGrab = useCallback(() => setCursor("grabbing"), []);
-  const onDrag = useCallback(() => setCursor("grab"), []);
-
   const clusterLayer: LayerProps = {
     id: "clusters",
     type: "circle",
     source: "earthquakes",
     filter: ["has", "point_count"],
     paint: {
-      "circle-color": ["step", ["get", "point_count"], "#32D583", 20, "#FDB022", 50, "#FF7A70"],
-      "circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+      "circle-color": ["step", ["get", "point_count"], "#32D583", 20, "#FDB022", 50, "#FF7A70", 90, "#FF7A70"],
+      "circle-radius": ["step", ["get", "point_count"], 20, 60, 30, 80, 100],
     },
   };
 
   const handleMapClick = (e: any) => {
     e.preventDefault();
     const features = e.features || [];
+    if (!features.length) return;
     if (!!features[0]?.properties.cluster_id) {
       const zoom = mapRef.current?.getZoom();
       mapRef.current?.easeTo({
@@ -116,10 +100,10 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
   const clusterCountLayer: LayerProps = {
     id: "cluster-count",
     type: "symbol",
-    source: "earthquakes",
+    source: "projects",
     filter: ["has", "point_count"],
     layout: {
-      "text-field": "{point_count_abbreviated}",
+      "text-field": "{point_count}",
       "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
       "text-size": 12,
     },
@@ -128,7 +112,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
   const unclusteredPointLayer: LayerProps = {
     id: "unclustered-point",
     type: "circle",
-    source: "earthquakes",
+    source: "projects",
     filter: ["!", ["has", "point_count"]],
     paint: {
       "circle-color": "#014837",
@@ -145,7 +129,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     features: projects?.map(({ node }) => {
       return {
         type: "Feature",
-        properties: { id: node.id, title: node.name },
+        properties: { id: node.id, title: node.name, long: node.currentLocation?.long, lat: node.currentLocation?.lat },
         geometry: { type: "Point", coordinates: [node.currentLocation?.long, node.currentLocation?.lat] },
       };
     }),
@@ -163,7 +147,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
         style={{ width: "full", height: 600 }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         mapboxAccessToken={MAPBOX_TOKEN}
-        interactiveLayerIds={[clusterLayer.id!]}
+        interactiveLayerIds={[clusterLayer.id!, unclusteredPointLayer.id!]}
         onClick={handleMapClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -185,7 +169,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
           <Layer {...clusterCountLayer} />
           <Layer {...unclusteredPointLayer} />
         </Source>
-        {Popups()}
+        <PopUps />
       </Map>
     </>
   );
