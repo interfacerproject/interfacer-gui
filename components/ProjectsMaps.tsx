@@ -16,19 +16,18 @@
 
 import { useQuery } from "@apollo/client";
 import Map, { Layer, LayerProps, MapRef, Popup, Source } from "react-map-gl";
-import { FETCH_RESOURCES, QUERY_PROJECT_TYPES } from "../lib/QueryAndMutation";
-import {
-  EconomicResourceFilterParams,
-  FetchInventoryQuery,
-  FetchInventoryQueryVariables,
-  GetProjectTypesQuery,
-} from "../lib/types";
+import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
+import { FetchInventoryQuery, FetchInventoryQueryVariables } from "../lib/types";
 
+import { AdjustmentsIcon } from "@heroicons/react/outline";
+import cn from "classnames";
+import useFilters from "hooks/useFilters";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import ProjectDisplay from "./ProjectDisplay";
-import useFilters from "hooks/useFilters";
+import ProjectsFilters from "./ProjectsFilters";
 
 const ProjectsMaps = () => {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
@@ -125,6 +124,11 @@ const ProjectsMaps = () => {
     setPopUpsAnchor(points);
   };
 
+  const { t } = useTranslation("lastUpdatedProps");
+
+  const [showFilter, setShowFilter] = useState(false);
+  const toggleFilter = () => setShowFilter(!showFilter);
+
   if (!projects) return null;
 
   const geoJSON = {
@@ -144,42 +148,64 @@ const ProjectsMaps = () => {
 
   return (
     <>
-      <Map
-        initialViewState={{
-          latitude: 53.3,
-          longitude: 9.98,
-          zoom: 4,
-        }}
-        interactive
-        style={{ width: "full", height: 600 }}
-        mapStyle="mapbox://styles/mapbox/dark-v11"
-        mapboxAccessToken={MAPBOX_TOKEN}
-        interactiveLayerIds={[clusterLayer.id!]}
-        onClick={handleMapClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onMouseDown={onGrab}
-        onMouseUp={onMouseLeave}
-        ref={mapRef}
-        cursor={cursor}
-        onZoomEnd={onZoomChange}
-        onLoad={onZoomChange}
-      >
-        <Source
-          id="projects"
-          type="geojson"
-          // @ts-ignore
-          data={geoJSON}
-          cluster={true}
-          clusterMaxZoom={14}
-          clusterRadius={15}
-        >
-          <Layer {...clusterLayer} />
-          <Layer {...clusterCountLayer} />
-          <Layer {...unclusteredPointLayer} />
-        </Source>
-        {popUpsAnchors && <PopUps />}
-      </Map>
+      <div className="flex flex-col">
+        <div className="flex items-center justify-between py-5">
+          <button
+            onClick={toggleFilter}
+            className={cn(
+              "gap-2 text-white-700 font-normal normal-case rounded-[4px] border-1 btn btn-sm btn-outline border-white-600 bg-white-100 hover:text-accent hover:bg-white-100",
+              { "bg-accent text-white-100": showFilter }
+            )}
+          >
+            <AdjustmentsIcon className="w-5 h-5" /> {t("Filter by")}
+          </button>
+        </div>
+        <div className="flex flex-row flex-nowrap items-start space-x-8 w-full">
+          <div className="flex flex-col flex-nowrap w-full">
+            <Map
+              initialViewState={{
+                latitude: 53.3,
+                longitude: 9.98,
+                zoom: 4,
+              }}
+              interactive
+              style={{ width: "full", height: 600 }}
+              mapStyle="mapbox://styles/mapbox/dark-v11"
+              mapboxAccessToken={MAPBOX_TOKEN}
+              interactiveLayerIds={[clusterLayer.id!]}
+              onClick={handleMapClick}
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
+              onMouseDown={onGrab}
+              onMouseUp={onMouseLeave}
+              ref={mapRef}
+              cursor={cursor}
+              onZoomEnd={onZoomChange}
+              onLoad={onZoomChange}
+            >
+              <Source
+                id="projects"
+                type="geojson"
+                // @ts-ignore
+                data={geoJSON}
+                cluster={true}
+                clusterMaxZoom={14}
+                clusterRadius={15}
+              >
+                <Layer {...clusterLayer} />
+                <Layer {...clusterCountLayer} />
+                <Layer {...unclusteredPointLayer} />
+              </Source>
+              {popUpsAnchors && <PopUps />}
+            </Map>
+          </div>
+          {showFilter && (
+            <div className="basis-96 sticky top-8">
+              <ProjectsFilters hideConformsTo />
+            </div>
+          )}
+        </div>
+      </div>
     </>
   );
 };

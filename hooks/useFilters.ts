@@ -46,6 +46,7 @@ const useFilters = () => {
   const mapFilter: Partial<EconomicResourceFilterParams> = {
     conformsTo: conformsToNoDesign,
     classifiedAs: tagsList?.map(tag => encodeURI(tag)),
+    primaryAccountable: primaryAccountableList,
   };
 
   return { proposalFilter, resourceFilter, mapFilter };
