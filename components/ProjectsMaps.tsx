@@ -107,14 +107,14 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     filter: ["!", ["has", "point_count"]],
     paint: {
       "circle-color": { type: "identity", property: "color" },
-      "circle-radius": 10,
+      "circle-radius": 15,
       "circle-stroke-width": 1,
       "circle-stroke-color": "#fff",
     },
   };
 
   const handleMapClick = (e: any) => {
-    if (e.preventDefault) e.preventDefault();
+    e.preventDefault();
     const features = e.features || [];
     if (!features.length) return;
     if (!!features[0]?.properties.cluster_id) {
