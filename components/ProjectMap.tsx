@@ -65,7 +65,7 @@ const ProjectMap = (props: ProjectMapProps) => {
           zoom: 7,
         }}
         style={{ width: "full", height: 600 }}
-        mapStyle="mapbox://styles/mapbox/streets-v9"
+        mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
