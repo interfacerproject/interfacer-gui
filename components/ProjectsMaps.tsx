@@ -106,7 +106,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     source: "projects",
     filter: ["!", ["has", "point_count"]],
     paint: {
-      "circle-color": "#014837",
+      "circle-color": { type: "identity", property: "color" },
       "circle-radius": 10,
       "circle-stroke-width": 1,
       "circle-stroke-color": "#fff",
@@ -141,7 +141,11 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     features: projects?.map(({ node }) => {
       return {
         type: "Feature",
-        properties: { id: node.id, title: node.name, long: node.currentLocation?.long, lat: node.currentLocation?.lat },
+        properties: {
+          id: node.id,
+          title: node.name,
+          color: node.conformsTo?.name === "Product" ? "#FAE5B7" : "#CDE0E4",
+        },
         geometry: { type: "Point", coordinates: [node.currentLocation?.long, node.currentLocation?.lat] },
       };
     }),
