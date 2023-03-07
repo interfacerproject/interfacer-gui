@@ -40,6 +40,7 @@ export interface ProjectsMapsProps {
 const ProjectsMaps = (props: ProjectsMapsProps) => {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
   const [cursor, setCursor] = useState<string>("grab");
+  const [popUpsAnchors, setPopUpsAnchor] = useState<any>(null);
   const mapRef = useRef<MapRef>(null);
 
   const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
@@ -51,10 +52,10 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
   const { data } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(FETCH_RESOURCES, {
     variables: { last: 200, filter: filter },
   });
-  const PopUps = ({ points }: { points: any[] }) => {
+  const PopUps = () => {
     return (
       <>
-        {points?.map((p: any, i) => (
+        {popUpsAnchors?.map((p: any, i: number) => (
           <Popup
             key={i}
             latitude={p.geometry.coordinates[1]}
@@ -113,7 +114,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
   };
 
   const handleMapClick = (e: any) => {
-    e.preventDefault();
+    if (e.preventDefault) e.preventDefault();
     const features = e.features || [];
     if (!features.length) return;
     if (!!features[0]?.properties.cluster_id) {
@@ -126,9 +127,12 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
     }
   };
 
-  const points = mapRef?.current
-    ?.querySourceFeatures("projects", { sourceLayer: unclusteredPointLayer.id! })
-    .filter((e: any) => !e.properties?.cluster);
+  const onZoomChange = () => {
+    const points = mapRef?.current
+      ?.querySourceFeatures("projects", { sourceLayer: unclusteredPointLayer.id! })
+      .filter((e: any) => !e.properties?.cluster);
+    setPopUpsAnchor(points);
+  };
 
   if (!projects) return null;
 
@@ -163,6 +167,8 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
         onMouseUp={onMouseLeave}
         ref={mapRef}
         cursor={cursor}
+        onZoomEnd={onZoomChange}
+        onLoad={onZoomChange}
       >
         <Source
           id="projects"
@@ -177,7 +183,7 @@ const ProjectsMaps = (props: ProjectsMapsProps) => {
           <Layer {...clusterCountLayer} />
           <Layer {...unclusteredPointLayer} />
         </Source>
-        {points && <PopUps points={points} />}
+        {popUpsAnchors && <PopUps />}
       </Map>
     </>
   );
