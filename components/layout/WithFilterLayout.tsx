@@ -1,14 +1,15 @@
 import { AdjustmentsIcon } from "@heroicons/react/outline";
+import cn from "classnames";
 import PTitleCounter from "components/polaris/PTitleCounter";
 import ProjectsFilters from "components/ProjectsFilters";
-import cn from "classnames";
-import { useState } from "react";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
 
 type WithFilterLayoutProps = {
   header?: boolean | string;
   hideFilters?: boolean;
   hidePrimaryAccountable?: boolean;
+  hideConformsTo?: boolean;
   children: React.ReactNode;
   length?: number;
 };
@@ -17,6 +18,7 @@ const WithFilterLayout = ({
   header = false,
   hideFilters = false,
   hidePrimaryAccountable = false,
+  hideConformsTo = false,
   length = 0,
   children,
 }: WithFilterLayoutProps) => {
@@ -44,7 +46,7 @@ const WithFilterLayout = ({
           {children}
           {!hideFilters && showFilter && (
             <div className="basis-96 sticky top-8">
-              <ProjectsFilters hidePrimaryAccountable={hidePrimaryAccountable} />
+              <ProjectsFilters hidePrimaryAccountable={hidePrimaryAccountable} hideConformsTo={hideConformsTo} />
             </div>
           )}
         </div>

@@ -139,7 +139,7 @@ const ProjectsMaps = () => {
   };
 
   return (
-    <WithFilterLayout>
+    <WithFilterLayout hideConformsTo>
       <div className="flex flex-col flex-nowrap w-full">
         <Map
           initialViewState={{
