@@ -70,6 +70,7 @@ export default function AddLicense(props: Props) {
           name="scope"
           render={({ field: { onChange, onBlur, name, value } }) => (
             <TextField
+              id="license-scope"
               label={t("License scope")}
               autoComplete="off"
               onChange={onChange}
@@ -87,6 +88,7 @@ export default function AddLicense(props: Props) {
           name="licenseID"
           render={({ field: { onChange, onBlur, name, value } }) => (
             <SearchLicense
+              id="license-id"
               onSelect={onChange}
               requiredIndicator={isRequired(schema, name)}
               error={errors[name]?.message}
@@ -98,7 +100,12 @@ export default function AddLicense(props: Props) {
           <Button onClick={handleDiscard} icon={<Icon source={CancelMinor} />}>
             {t("Discard")}
           </Button>
-          <Button onClick={handleAdd} disabled={!isValid} icon={<Icon source={PlusMinor} />}>
+          <Button
+            id="add-license-submit-button"
+            onClick={handleAdd}
+            disabled={!isValid}
+            icon={<Icon source={PlusMinor} />}
+          >
             {t("Add license")}
           </Button>
         </div>

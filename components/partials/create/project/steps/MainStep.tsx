@@ -49,6 +49,7 @@ export default function MainStep() {
 
   const { formState, control, setValue, watch, trigger } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
+  const getId = (name: string) => name.replace(".", "-");
 
   //
 
@@ -67,7 +68,7 @@ export default function MainStep() {
         render={({ field: { onChange, onBlur, name, value } }) => (
           <TextField
             type="text"
-            id={name}
+            id={getId(name)}
             name={name}
             value={value}
             autoComplete="off"
@@ -87,7 +88,7 @@ export default function MainStep() {
         render={({ field: { onChange, onBlur, name, value } }) => (
           <TextField
             type="text"
-            id={name}
+            id={getId(name)}
             name={name}
             value={value}
             autoComplete="off"
@@ -102,7 +103,7 @@ export default function MainStep() {
       />
 
       <BrMdEditor
-        id="description"
+        id="main-description"
         name="description"
         editorClass="h-60"
         value={watch("main.description")}
@@ -115,17 +116,19 @@ export default function MainStep() {
         error={errors.main?.description?.message}
       />
 
-      <SelectTags2
-        tags={watch("main.tags")}
-        setTags={tags => {
-          setValue("main.tags", tags, formSetValueOptions);
-          trigger("main.tags");
-        }}
-        error={errors.main?.tags?.message}
-        label={t("Tags")}
-        helpText={t("Add relevant keywords that describe your project.")}
-        requiredIndicator={isRequired(mainStepSchema, "tags")}
-      />
+      <div id="main-tags">
+        <SelectTags2
+          tags={watch("main.tags")}
+          setTags={tags => {
+            setValue("main.tags", tags, formSetValueOptions);
+            trigger("main.tags");
+          }}
+          error={errors.main?.tags?.message}
+          label={t("Tags")}
+          helpText={t("Add relevant keywords that describe your project.")}
+          requiredIndicator={isRequired(mainStepSchema, "tags")}
+        />
+      </div>
     </Stack>
   );
 }

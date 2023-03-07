@@ -50,7 +50,12 @@ export default function RelationsStep() {
         )}
       />
 
-      <SearchProjects onSelect={handleSelect} excludeIDs={relations} label={t("Add relation")} />
+      <SearchProjects
+        id="add-related-projects-search"
+        onSelect={handleSelect}
+        excludeIDs={relations}
+        label={t("Add relation")}
+      />
 
       {relations.length && (
         <Stack vertical spacing="tight">

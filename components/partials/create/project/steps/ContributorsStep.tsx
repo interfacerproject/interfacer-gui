@@ -51,7 +51,12 @@ export default function ContributorsStep() {
           "Collaborating with others is an important part of the open source hardware movement, and adding contributors to your project can help expand its reach and impact."
         )}
       />
-      <SearchUsers onSelect={handleSelect} excludeIDs={[...contributors, user?.ulid!]} label={t("Search for contributors")} />
+      <SearchUsers
+        id="add-contributors-search"
+        onSelect={handleSelect}
+        excludeIDs={[...contributors, user?.ulid!]}
+        label={t("Search for contributors")}
+      />
       {contributors.length && (
         <Stack vertical spacing="tight">
           <Text variant="bodyMd" as="p">
