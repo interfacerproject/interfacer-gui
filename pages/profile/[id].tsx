@@ -21,7 +21,6 @@ import Avatar from "boring-avatars";
 import Spinner from "components/brickroom/Spinner";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectsCards from "components/ProjectsCards";
-import ProjectsTable from "components/ProjectsTable";
 import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
@@ -207,14 +206,14 @@ const Profile: NextPage = () => {
                   <ProjectsCards
                     filter={proposalFilter}
                     hideHeader={false}
-                    hideFilters={false}
+                    hideFilters
                     header={isUser ? t("My projects") : t("Her projects")}
                   />
                 </div>
               )}
               {projectTabSelected === 1 && (
                 <>
-                  <ProjectsCards header={t("My list")} filter={collectedProjects} hideHeader={false} />
+                  <ProjectsCards header={t("My list")} filter={collectedProjects} hideHeader={false} hideFilters />
                 </>
               )}
             </Tabs>

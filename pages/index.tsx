@@ -163,7 +163,7 @@ const Home: NextPageWithLayout = () => {
 
       {/* PROJECT CARDS */}
       <div className="container mx-auto mb-24 mt-4">
-        <ProjectsCards />
+        <ProjectsCards hideFilters />
       </div>
 
       {/* MAP */}

@@ -16,11 +16,13 @@
 
 import { useQuery } from "@apollo/client";
 import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { EconomicResourceFilterParams, GetProjectTypesQuery } from "../lib/types";
 
 const useFilters = () => {
   const { conformsTo, primaryAccountable, tags } = useRouter().query;
+  const { t } = useTranslation("lastUpdatedProps");
 
   const tagsList = typeof tags === "string" ? tags.split(",") : tags;
   const primaryAccountableList =

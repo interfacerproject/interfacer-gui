@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Map, { MapRef, Marker, Popup } from "react-map-gl";
+import Map, { Marker } from "react-map-gl";
 
 import { EconomicResource } from "lib/types";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
-import ProjectDisplay from "./ProjectDisplay";
+import { useCallback, useState } from "react";
 
 export interface ProjectMapProps {
   project: Partial<EconomicResource>;
@@ -30,28 +28,6 @@ const ProjectMap = (props: ProjectMapProps) => {
   const { project } = props;
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
   const [cursor, setCursor] = useState<string>("grab");
-  const mapRef = useRef<MapRef>(null);
-  const PopUps = ({ points }: { points: any[] }) => {
-    return (
-      <>
-        {points?.map((p: any, i) => (
-          <Popup
-            key={i}
-            latitude={p.geometry.coordinates[1]}
-            longitude={p.geometry.coordinates[0]}
-            closeButton={false}
-            closeOnClick={false}
-          >
-            <Link href={`/project/${p.properties.id}`}>
-              <a>
-                <ProjectDisplay projectId={p.properties.id} />
-              </a>
-            </Link>
-          </Popup>
-        ))}
-      </>
-    );
-  };
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
   const onGrab = useCallback(() => setCursor("grabbing"), []);
