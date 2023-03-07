@@ -28,30 +28,21 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import ProjectDisplay from "./ProjectDisplay";
+import useFilters from "hooks/useFilters";
 
-export interface ProjectsMapsProps {
-  filter?: EconomicResourceFilterParams;
-  hidePagination?: boolean;
-  hidePrimaryAccountable?: boolean;
-  hideHeader?: boolean;
-  hideFilters?: boolean;
-}
-
-const ProjectsMaps = (props: ProjectsMapsProps) => {
+const ProjectsMaps = () => {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+
   const [cursor, setCursor] = useState<string>("grab");
   const [popUpsAnchors, setPopUpsAnchor] = useState<any>(null);
+
   const mapRef = useRef<MapRef>(null);
 
-  const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
-  const specs = queryProjectTypes.data?.instanceVariables.specs;
-  const conformsTo = [specs?.specProjectService.id || "", specs?.specProjectProduct.id || ""];
-
-  const { filter = {} } = props;
-  filter.conformsTo = conformsTo;
+  const { mapFilter: filter } = useFilters();
   const { data } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(FETCH_RESOURCES, {
     variables: { last: 200, filter: filter },
   });
+
   const PopUps = () => {
     return (
       <>
