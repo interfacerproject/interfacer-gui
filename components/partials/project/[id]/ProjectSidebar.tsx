@@ -1,6 +1,7 @@
 import { ApolloQueryResult, OperationVariables } from "@apollo/client";
 import { Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { ListBoxes, MagicWand, ParentChild, Renew, Tools } from "@carbon/icons-react";
+import { LocationMarkerIcon } from "@heroicons/react/solid";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
@@ -76,12 +77,28 @@ export default function ProjectSidebar(props: Props) {
             <Text as="p" variant="bodyMd">
               {t("By:")}
             </Text>
-            <BrDisplayUser
-              id={project.primaryAccountable!.id}
-              name={project.primaryAccountable!.name}
-              location={project.currentLocation?.name}
-            />
+            <BrDisplayUser id={project.primaryAccountable!.id} name={project.primaryAccountable!.name} />
           </div>
+          {/* Project location */}
+          {project.currentLocation && (
+            <Link href={`/project/${project.id}/map`}>
+              <a>
+                <Stack spacing="tight">
+                  <LocationMarkerIcon className="w-10 h-10 mr-1 text-red-500" />
+                  <div>
+                    <Stack vertical spacing="extraTight">
+                      <Text as="p" variant="bodyMd">
+                        {project.currentLocation?.name}
+                      </Text>
+                      <Text as="p" variant="bodyMd">
+                        {project.currentLocation?.mappableAddress}
+                      </Text>
+                    </Stack>
+                  </div>
+                </Stack>
+              </a>
+            </Link>
+          )}
         </Stack>
       </Card>
 

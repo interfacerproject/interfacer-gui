@@ -18,7 +18,7 @@ import { Button, ButtonGroup, Card, Stack, Text } from "@bbtgnn/polaris-interfac
 import { GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
 import Layout from "components/layout/Layout";
 import ProjectsCards from "components/ProjectsCards";
-import ProjectMaps from "components/ProjectMaps";
+import ProjectMaps from "components/ProjectsMaps";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
