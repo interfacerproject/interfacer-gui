@@ -16,7 +16,7 @@
 
 import { randomString } from "../utils";
 
-describe.skip("when user visits create design and submit autoimport field", () => {
+describe("when user visits create design and submit autoimport field", () => {
   beforeEach(() => {
     cy.login();
     cy.visit("/create/project");
@@ -37,14 +37,14 @@ describe.skip("when user visits create design and submit autoimport field", () =
   });
 });
 
-describe.skip("when user visits create design and submit manually data", () => {
+describe("when user visits create design and submit manually data", () => {
   beforeEach(() => {
     cy.login();
     cy.visit("/create/project");
     cy.get("#create-design-button").should("exist").click();
   });
 
-  it.skip("should create a new design", () => {
+  it("should create a new design", () => {
     cy.get("#main-title").type("Laser");
     cy.get("#main-description").find("textarea").type("The project description");
     cy.get("#main-link").type("https://gitub.com/dyne/zenroom");
@@ -75,7 +75,7 @@ describe.skip("when user visits create design and submit manually data", () => {
   });
 });
 
-describe.skip("when user visits create product and submit manually data", () => {
+describe("when user visits create product and submit manually data", () => {
   beforeEach(() => {
     cy.login();
     cy.visit("/create/project");
@@ -113,6 +113,41 @@ describe.skip("when user visits create product and submit manually data", () => 
     cy.get("#project-create-submit").click();
     cy.wait(10000);
     cy.url().should("not.contain", "/create/project/product");
+    cy.url().should("contain", "/project");
+    cy.url().should("contain", "created=true");
+  });
+});
+
+describe("when user visits create service and submit manually data", () => {
+  beforeEach(() => {
+    cy.login();
+    cy.visit("/create/project");
+    cy.get("#create-services-button").should("exist").click();
+  });
+
+  it("should create a new service", () => {
+    cy.get("#main-title").type("Test service");
+    cy.get("#main-description").find("textarea").type("The project description");
+    cy.get("#main-link").type("https://gitub.com/dyne/root");
+    cy.get("#main-tags").type("open-source");
+    cy.get("#PolarisPortalsContainer")
+      .should("exist")
+      .children()
+      .children()
+      .children()
+      .eq(0)
+      .should("contain", "open-source")
+      .click();
+    cy.get("#location-locationName").type(randomString(9));
+    cy.get("#search-location").type("Via del Corso");
+    cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
+    cy.get("#add-contributors-search").type("nenno").wait(500);
+    cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
+    cy.get("#add-related-projects-search").type("perenzio").wait(500);
+    cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
+    cy.get("#project-create-submit").click();
+    cy.wait(10000);
+    cy.url().should("not.contain", "/create/project/service");
     cy.url().should("contain", "/project");
     cy.url().should("contain", "created=true");
   });
