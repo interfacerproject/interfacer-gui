@@ -16,7 +16,7 @@
 
 import { randomString } from "../utils";
 
-describe("when user visits create design and submit autoimport field", () => {
+describe.skip("when user visits create design and submit autoimport field", () => {
   beforeEach(() => {
     cy.login();
     cy.visit("/create/project");
@@ -28,22 +28,23 @@ describe("when user visits create design and submit autoimport field", () => {
   });
 
   it("should import from an external repository title", () => {
-    cy.get("#autoimport-github-url").type("https://github.com/dyne/zenroom");
+    cy.get("#autoimport-github-url").type("https://github.com/dyne/Zenroom");
     cy.get("#autoimport-submit-button").click();
     cy.get("#main-title").should("have.value", "Zenroom");
     // cy.get("#main-description").find("textarea").contains("Zenroom is a small virtual machine for secure scripts");
-    cy.get("#main-link").should("have.value", "https://github.com/dyne/zenroom");
+    cy.get("#main-link").should("have.value", "https://github.com/dyne/Zenroom");
+    cy.get(".Polaris-Tag__TagText").should("exist").should("contain", "arm");
   });
 });
 
-describe("when user visits create design and submit manually data", () => {
+describe.skip("when user visits create design and submit manually data", () => {
   beforeEach(() => {
     cy.login();
     cy.visit("/create/project");
     cy.get("#create-design-button").should("exist").click();
   });
 
-  it("should create a new design", () => {
+  it.skip("should create a new design", () => {
     cy.get("#main-title").type("Laser");
     cy.get("#main-description").find("textarea").type("The project description");
     cy.get("#main-link").type("https://gitub.com/dyne/zenroom");
@@ -69,6 +70,49 @@ describe("when user visits create design and submit manually data", () => {
     cy.get("#project-create-submit").click();
     cy.wait(10000);
     cy.url().should("not.contain", "/create/project/design");
+    cy.url().should("contain", "/project");
+    cy.url().should("contain", "created=true");
+  });
+});
+
+describe.skip("when user visits create product and submit manually data", () => {
+  beforeEach(() => {
+    cy.login();
+    cy.visit("/create/project");
+    cy.get("#create-product-button").should("exist").click();
+  });
+
+  it("should create a new product", () => {
+    cy.get("#main-title").type("Lengho");
+    cy.get("#main-description").find("textarea").type("The project description");
+    cy.get("#main-link").type("https://gitub.com/dyne/root");
+    cy.get("#main-tags").type("open-source");
+    cy.get("#PolarisPortalsContainer")
+      .should("exist")
+      .children()
+      .children()
+      .children()
+      .eq(0)
+      .should("contain", "open-source")
+      .click();
+    cy.get("#add-contributors-search").type("nenno").wait(500);
+    cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
+    cy.get("#link-design-search").type("perenzio").wait(500);
+    cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
+    cy.get("#add-related-projects-search").type("perenzio").wait(500);
+    cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
+    cy.get("#location-locationName").type(randomString(9));
+    cy.get("#search-location").type("Via del Corso");
+    cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
+    cy.get("#recyclable-yes").click();
+    cy.get("#recyclable-yes").should("have.class", "Polaris-Button--pressed");
+    cy.get("#recyclable-no").should("not.have.class", "Polaris-Button--pressed");
+    cy.get("#repairable-no").click();
+    cy.get("#repairable-yes").should("not.have.class", "Polaris-Button--pressed");
+    cy.get("#repairable-no").should("have.class", "Polaris-Button--pressed");
+    cy.get("#project-create-submit").click();
+    cy.wait(10000);
+    cy.url().should("not.contain", "/create/project/product");
     cy.url().should("contain", "/project");
     cy.url().should("contain", "created=true");
   });

@@ -3,6 +3,7 @@ import BrMdEditor from "components/brickroom/BrMdEditor";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SelectTags2 from "components/SelectTags2";
 import { formSetValueOptions } from "lib/formSetValueOptions";
+import getIdFromFormName from "lib/getIdFromFormName";
 import { isRequired } from "lib/isFieldRequired";
 import { url } from "lib/regex";
 import { useTranslation } from "next-i18next";
@@ -49,7 +50,6 @@ export default function MainStep() {
 
   const { formState, control, setValue, watch, trigger } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
-  const getId = (name: string) => name.replace(".", "-");
 
   //
 
@@ -68,7 +68,7 @@ export default function MainStep() {
         render={({ field: { onChange, onBlur, name, value } }) => (
           <TextField
             type="text"
-            id={getId(name)}
+            id={getIdFromFormName(name)}
             name={name}
             value={value}
             autoComplete="off"
@@ -88,7 +88,7 @@ export default function MainStep() {
         render={({ field: { onChange, onBlur, name, value } }) => (
           <TextField
             type="text"
-            id={getId(name)}
+            id={getIdFromFormName(name)}
             name={name}
             value={value}
             autoComplete="off"
