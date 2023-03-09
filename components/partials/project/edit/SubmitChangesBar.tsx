@@ -9,6 +9,7 @@ export default function SubmitChangesBar(props: SubmitChangesProps) {
   const { t } = useTranslation();
   const { formState, reset } = useFormContext();
   const { isValid, isDirty } = formState;
+  console.log(formState, isValid, isDirty);
 
   function handleReset() {
     reset();

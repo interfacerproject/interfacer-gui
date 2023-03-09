@@ -12,13 +12,14 @@ import SubmitChangesBar from "./SubmitChangesBar";
 export interface EditFormLayoutProps<T extends FieldValues> {
   children: React.ReactNode;
   formMethods: UseFormReturn<T, any>;
+  nav?: React.ReactNode;
   onSubmit: (values: T) => Promise<void>;
 }
 
 //
 
 export default function EditFormLayout<T extends FieldValues>(props: EditFormLayoutProps<T>) {
-  const { children, formMethods, onSubmit = () => {} } = props;
+  const { children, formMethods, nav, onSubmit = () => {} } = props;
   const router = useRouter();
   const { handleSubmit } = formMethods;
   const [loading, setLoading] = useState(false);
@@ -34,7 +35,8 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
       <form onSubmit={handleSubmit(onSubmitWrapper)}>
         <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
           <div className="sticky top-24">
-            <EditProjectNav />
+            {!nav && <EditProjectNav />}
+            {nav}
           </div>
           <div className="grow max-w-xl px-6 pb-24 pt-0">{children}</div>
         </div>

@@ -449,5 +449,6 @@ export const useProjectCRUD = () => {
     updateRelations,
     relocateProject,
     updateMetadata,
+    handleCreateLocation
   };
 };
