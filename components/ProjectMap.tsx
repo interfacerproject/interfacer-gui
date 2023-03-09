@@ -23,10 +23,11 @@ import devLog from "lib/devLog";
 
 export interface ProjectMapProps {
   project: Partial<EconomicResource>;
+  height?: number;
 }
 
 const ProjectMap = (props: ProjectMapProps) => {
-  const { project } = props;
+  const { project, height = 600 } = props;
   devLog("map", project);
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
   const [cursor, setCursor] = useState<string>("grab");
@@ -42,7 +43,7 @@ const ProjectMap = (props: ProjectMapProps) => {
           longitude: project.currentLocation?.long,
           zoom: 7,
         }}
-        style={{ width: "full", height: 100 }}
+        style={{ width: "full", height: height }}
         mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
         onMouseEnter={onMouseEnter}

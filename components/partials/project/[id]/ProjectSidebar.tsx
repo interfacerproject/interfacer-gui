@@ -82,7 +82,7 @@ export default function ProjectSidebar(props: Props) {
           {project.currentLocation && (
             <Link href={`/project/${project.id}/map`}>
               <a>
-                <ProjectMap project={project} />
+                <ProjectMap project={project} height={120} />
               </a>
             </Link>
           )}
