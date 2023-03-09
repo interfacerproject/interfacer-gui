@@ -19,7 +19,7 @@ import MdParser from "../lib/MdParser";
 import { EconomicResource } from "../lib/types";
 import BrTags from "./brickroom/BrTags";
 
-const ProjectDetailOverview = ({ project }: { project: EconomicResource }) => {
+const ProjectDetailOverview = ({ project }: { project: Partial<EconomicResource> }) => {
   const tags = project?.classifiedAs;
   const text = project?.note;
 

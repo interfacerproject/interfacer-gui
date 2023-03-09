@@ -9,12 +9,13 @@ import OshTool from "components/Osh";
 import ProjectContributors from "components/ProjectContributors";
 import ProjectDisplay from "components/ProjectDisplay";
 import ProjectLicenses from "components/ProjectLicenses";
+import ProjectMap from "components/ProjectMap";
 import { ProjectType } from "components/types";
 import WatchButton from "components/WatchButton";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import devLog from "lib/devLog";
-import { EconomicResource, ResourceProposalsQuery } from "lib/types";
+import { EconomicResource, GetProjectLayoutQuery, ResourceProposalsQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -24,9 +25,7 @@ interface Props {
   project: Partial<EconomicResource>;
   contributions: ResourceProposalsQuery;
   setSelected: Dispatch<SetStateAction<number>>;
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<{ economicResource: EconomicResource }>>;
+  refetch: (variables?: { id: string }) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
 }
 
 export default function ProjectSidebar(props: Props) {
@@ -83,19 +82,7 @@ export default function ProjectSidebar(props: Props) {
           {project.currentLocation && (
             <Link href={`/project/${project.id}/map`}>
               <a>
-                <Stack spacing="tight">
-                  <LocationMarkerIcon className="w-10 h-10 mr-1 text-red-500" />
-                  <div>
-                    <Stack vertical spacing="extraTight">
-                      <Text as="p" variant="bodyMd">
-                        {project.currentLocation?.name}
-                      </Text>
-                      <Text as="p" variant="bodyMd">
-                        {project.currentLocation?.mappableAddress}
-                      </Text>
-                    </Stack>
-                  </div>
-                </Stack>
+                <ProjectMap project={project} />
               </a>
             </Link>
           )}

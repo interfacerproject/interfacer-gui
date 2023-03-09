@@ -19,6 +19,7 @@ import Map, { Marker } from "react-map-gl";
 import { EconomicResource } from "lib/types";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useCallback, useState } from "react";
+import devLog from "lib/devLog";
 
 export interface ProjectMapProps {
   project: Partial<EconomicResource>;
@@ -26,6 +27,7 @@ export interface ProjectMapProps {
 
 const ProjectMap = (props: ProjectMapProps) => {
   const { project } = props;
+  devLog("map", project);
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
   const [cursor, setCursor] = useState<string>("grab");
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
@@ -40,7 +42,7 @@ const ProjectMap = (props: ProjectMapProps) => {
           longitude: project.currentLocation?.long,
           zoom: 7,
         }}
-        style={{ width: "full", height: 600 }}
+        style={{ width: "full", height: 100 }}
         mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
         onMouseEnter={onMouseEnter}

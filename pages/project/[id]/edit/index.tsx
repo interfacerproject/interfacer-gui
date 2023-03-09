@@ -40,7 +40,7 @@ export interface EditMainValues {
 }
 
 const EditMain: NextPageWithLayout = () => {
-  const project = useProject();
+  const { project } = useProject();
 
   /* Form setup */
 
