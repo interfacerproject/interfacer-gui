@@ -71,6 +71,7 @@ export const GET_PROJECT_LAYOUT = gql`
       license
       repo
       classifiedAs
+      traceDpp
       conformsTo {
         id
         name

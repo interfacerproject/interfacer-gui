@@ -1,7 +1,6 @@
-import { ApolloQueryResult, OperationVariables } from "@apollo/client";
+import { ApolloQueryResult } from "@apollo/client";
 import { Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { ListBoxes, MagicWand, ParentChild, Renew, Tools } from "@carbon/icons-react";
-import { LocationMarkerIcon } from "@heroicons/react/solid";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
@@ -82,7 +81,7 @@ export default function ProjectSidebar(props: Props) {
           {project.currentLocation && (
             <Link href={`/project/${project.id}/map`}>
               <a>
-                <ProjectMap project={project} height={120} />
+                <ProjectMap project={project} height={180} fixed />
               </a>
             </Link>
           )}

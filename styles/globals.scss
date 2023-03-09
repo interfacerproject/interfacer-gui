@@ -112,7 +112,16 @@ table {
   max-width: 32rem !important;
 }
 .mapboxgl-popup-content {
-  padding: none !important;
+  padding: 0.5rem 0.3rem !important;
   max-width: none !important;
-  @apply max-w-none pl-12 w-full rounded-lg border-1 border-slate-400;
+  border-radius: 0.5rem !important;
+  @apply max-w-none w-full border-slate-400;
 }
+.mapboxgl-ctrl-bottom-left {
+  @apply hidden;
+}
+
+.mapboxgl-ctrl-bottom-right {
+  @apply hidden;
+}
+
