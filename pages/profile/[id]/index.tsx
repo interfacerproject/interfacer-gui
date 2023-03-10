@@ -19,6 +19,7 @@ import { Button, Card, Link, Stack, Tabs, Text } from "@bbtgnn/polaris-interface
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import Avatar from "boring-avatars";
 import Spinner from "components/brickroom/Spinner";
+import FullWidthBanner from "components/FullWidthBanner";
 import FetchUserLayout, { useUser } from "components/layout/FetchUserLayout";
 import Layout from "components/layout/Layout";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
@@ -106,6 +107,18 @@ const Profile: NextPageWithLayout = () => {
       {!person && <Spinner />}
       {person && (
         <>
+          {isUser && (
+            <FullWidthBanner open status="basic">
+              <Text as="p" variant="bodySm">
+                {t("This is your profilepage. Edit it to add your bio and other information.")}
+              </Text>
+              <Link url={`/profile/${user.ulid}/edit`} monochrome>
+                <Button monochrome outline>
+                  {t("Edit")}
+                </Button>
+              </Link>
+            </FullWidthBanner>
+          )}
           <div className="grid grid-cols-2 container mx-auto pt-7">
             <Stack vertical>
               <Stack spacing="tight" alignment="leading">
@@ -159,6 +172,16 @@ const Profile: NextPageWithLayout = () => {
                 <Text as="span" variant="bodyLg" color="subdued">
                   {person?.id}
                 </Text>
+              </Stack>
+              <Stack>
+                <Text as="span" variant="bodyLg" color="subdued">
+                  {t("About:")}
+                </Text>
+                <div className="py-1 px-4 overflow-scroll w-64 max-h-36 bg-white border-2 rounded-md">
+                  <Text as="span" variant="bodyMd">
+                    {person?.note}
+                  </Text>
+                </div>
               </Stack>
             </Stack>
 
