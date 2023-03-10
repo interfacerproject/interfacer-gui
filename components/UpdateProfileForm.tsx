@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import { Stack, TextField, Text } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import devLog from "lib/devLog";
@@ -50,8 +50,6 @@ export namespace UpdateUserNS {
 
 const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
   const { t } = useTranslation("ProfileProps");
-  console.log("popopopopopopopoopopopo", user);
-
   const { handleCreateLocation } = useProjectCRUD();
 
   const [updateUser] = useMutation(UPDATE_USER);
@@ -75,6 +73,7 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
       devLog(e);
     }
   };
+
   const defaultLocationData = {
     address: user?.primaryLocation?.mappableAddress || "",
     lat: user?.primaryLocation?.lat,
@@ -109,13 +108,23 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
     resolver: yupResolver(schema),
     defaultValues,
   });
+  function EditProfileNav() {
+    return (
+      <div className="space-y-2">
+        <div className="border-b-1 pb-1 border-border-subdued px-2">
+          <Text as="p" variant="bodySm" color="subdued">
+            <span className="uppercase font-bold">{"Edit Profile"}</span>
+          </Text>
+        </div>
+      </div>
+    );
+  }
 
-  const { formState, handleSubmit, register, control, setValue, watch, trigger } = form;
+  const { formState, control, setValue, watch, trigger } = form;
   const { errors } = formState;
-  devLog("ppppppp", formState, formState.isValid, formState.isDirty, errors);
 
   return (
-    <EditFormLayout nav formMethods={form} onSubmit={onSubmit}>
+    <EditFormLayout nav={EditProfileNav()} formMethods={form} onSubmit={onSubmit}>
       <Stack vertical spacing="extraLoose">
         <PTitleSubtitle
           title={t("Update your profile")}
@@ -123,7 +132,6 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
         />
         <Controller
           control={control}
-          // @ts-ignore
           name="name"
           render={({ field: { onChange, onBlur, name, value } }) => (
             <TextField
@@ -144,7 +152,6 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
 
         <Controller
           control={control}
-          // @ts-ignore
           name="username"
           render={({ field: { onChange, onBlur, name, value } }) => (
             <TextField
@@ -192,50 +199,8 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
           setLocation={value => setValue("address.locationData", value, formSetValueOptions)}
         />
 
-        {/* <div className="grid grid-cols-2 gap-2">
-          <Controller
-            control={control}
-            // @ts-ignore
-            name="locationName"
-            render={({ field: { onChange, onBlur, name, value } }) => (
-              <TextField
-                type="text"
-                id={name}
-                name={name}
-                value={value}
-                autoComplete="off"
-                onChange={onChange}
-                onBlur={onBlur}
-                label={t("location")}
-                requiredIndicator={isRequired(schema, name)}
-                error={errors.locationName?.message}
-              />
-            )}
-          />
-          
-          <Controller
-            control={control}
-            name="address"
-            render={({ field: { onChange, onBlur, name, ref } }) => (
-              <SelectLocation
-                id={name}
-                name={name}
-                ref={ref}
-                onBlur={onBlur}
-                onChange={onChange}
-                label={t("Select the address")}
-                placeholder={user?.primaryLocation?.mappableAddress || t("Hamburg")}
-                error={errors.address?.message}
-                creatable={false}
-                requiredIndicator={isRequired(schema, name)}
-              />
-            )}
-          />
-        </div> */}
-
         <Controller
           control={control}
-          // @ts-ignore
           name="note"
           render={({ field: { onChange, onBlur, name, value } }) => (
             <TextField
