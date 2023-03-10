@@ -36,6 +36,7 @@ import {
 
 function Sidebar() {
   const { t } = useTranslation("SideBarProps");
+  const { user } = useAuth();
 
   // Links
   const items: Record<string, IfSideBarLinkProps> = {
@@ -58,7 +59,7 @@ function Sidebar() {
     },
     myProjects: {
       text: t("My Projects"),
-      link: "/profile/my_profile",
+      link: `/profile/${user!.ulid}`,
     },
     // Dropdown -> Projects
     latestProjects: {
@@ -72,7 +73,7 @@ function Sidebar() {
     },
     my_list: {
       text: t("My list"),
-      link: "/profile/my_profile?tab=1",
+      link: `/profile/${user!.ulid}?tab=1`,
     },
     reportBug: {
       text: t("Report a bug"),

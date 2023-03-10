@@ -70,7 +70,7 @@ describe("when user is logged in", () => {
   });
 
   it("Should see /profile/my_profile", () => {
-    cy.visit("/profile/my_profile");
+    cy.visit(`/profile/${Cypress.env("authId")}`);
     cy.contains(Cypress.env("authName"));
   });
 

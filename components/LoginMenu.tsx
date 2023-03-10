@@ -31,7 +31,7 @@ export default function LoginBtn() {
           <div className="grid items-center grid-cols-2 p-2 pl-0">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar bordered border-accent">
               <div className="w-10 rounded-full">
-                <Link href="/profile/my_profile">
+                <Link href={`/profile/${user!.ulid}`}>
                   <a>
                     <Avatar
                       size={"full"}
@@ -44,7 +44,7 @@ export default function LoginBtn() {
               </div>
             </label>
             <div className="grid grid-cols-1 ml-1 text-xs font-normal normal-case gap-y-1">
-              <Link href="/profile/my_profile">
+              <Link href={`/profile/${user!.ulid}`}>
                 <a>
                   <p className="text-base-400 whitespace-nowrap test-2xs">{user?.username}</p>
                 </a>
