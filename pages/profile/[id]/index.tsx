@@ -44,7 +44,7 @@ const Profile: NextPageWithLayout = () => {
   const [didUrl, setDidUrl] = useState<string>(process.env.NEXT_PUBLIC_DID_EXPLORER!);
   const router = useRouter();
   const { tab } = router.query;
-  const { t } = useTranslation("ProfileProps");
+  const { t } = useTranslation("common");
   const { proposalFilter } = useFilters();
   const { user } = useAuth();
 
@@ -71,7 +71,7 @@ const Profile: NextPageWithLayout = () => {
     claimPerson({ variables: { id: id } }).then(data => {
       setDidUrl(`${process.env.NEXT_PUBLIC_DID_EXPLORER!}details/${data.data.claimPerson.did.didDocument?.id}`);
     });
-  }, []);
+  });
 
   const tabs = [
     {
@@ -111,7 +111,7 @@ const Profile: NextPageWithLayout = () => {
           {isUser && (
             <FullWidthBanner open status="basic">
               <Text as="p" variant="bodySm">
-                {t("This is your profilepage. Edit it to add your bio and other information.")}
+                {t("This is your profile page. Edit it to add your bio and other informations.")}
               </Text>
               <Link url={`/profile/${user.ulid}/edit`} monochrome>
                 <Button monochrome outline>
@@ -176,7 +176,7 @@ const Profile: NextPageWithLayout = () => {
               </Stack>
               <Stack>
                 <Text as="span" variant="bodyLg" color="subdued">
-                  {t("About:")}
+                  {t("Bio:")}
                 </Text>
                 <div className="py-1 px-4 overflow-scroll w-64 max-h-36 bg-white border-2 rounded-md">
                   <Text as="span" variant="bodyMd">
@@ -190,7 +190,7 @@ const Profile: NextPageWithLayout = () => {
               <PTitleSubtitle
                 title={t("Track record")}
                 subtitle={t(
-                  "We keep track of your recent activity on the platform, such as the number of designs you've contributed, the feedback you've received, and your level of engagement in the community. About the economic model"
+                  "We keep track of your recent activity on the platform, such as the number of designs you have contributed, the feedback you have received, and your level of engagement in the community. About the economic model"
                 )}
                 titleTag="h2"
               ></PTitleSubtitle>
@@ -234,7 +234,7 @@ const Profile: NextPageWithLayout = () => {
                     filter={proposalFilter}
                     hideHeader={false}
                     hideFilters={false}
-                    header={isUser ? t("My projects") : t("Her projects")}
+                    header={isUser ? t("My projects") : t("Projects")}
                   />
                 </div>
               )}
@@ -261,7 +261,12 @@ export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["signInProps", "lastUpdatedProps", "SideBarProps", "ProfileProps"])),
+      ...(await serverSideTranslations(locale, [
+        "signInProps",
+        "lastUpdatedProps",
+        "SideBarProps",
+        "ProfileProps, common",
+      ])),
     },
   };
 }

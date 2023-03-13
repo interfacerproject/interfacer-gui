@@ -72,5 +72,16 @@
   "Edit": "Modifier",
   "Available for recycling": "Disponible pour le recyclage",
   "Available for repair": "Disponible pour réparation",
-  "People": "Personnes"
+  "People": "Personnes",
+  "Bio:": "Bio:",
+  "This is your profile page. Edit it to add your bio and other informations.": "Ceci est votre page de profil. \nModifiez-le pour ajouter votre bio et d'autres informations.",
+  "This week": "Cette semaine",
+  "This month": "Ce mois-ci",
+  "This cycle": "Ce circuit",
+  "Hi,": "Salut,",
+  "Username:": "Nom d'utilisateur:",
+  "Email:": "E-mail:",
+  "DID Explorer": "Explorateur DID",
+  "Track record": "Antécédents",
+  "We keep track of your recent activity on the platform, such as the number of designs you have contributed, the feedback you have received, and your level of engagement in the community. About the economic model": "Nous gardons une trace de votre activité récente sur la plateforme, comme le nombre de conceptions auxquelles vous avez contribué, les commentaires que vous avez reçus et votre niveau d'engagement dans la communauté. \nÀ propos du modèle économique"
 }

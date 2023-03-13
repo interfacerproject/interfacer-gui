@@ -72,5 +72,16 @@
   "Run checker": "Esegui l'analisi",
   "Available for recycling": "Disponibile per il riciclaggio",
   "Available for repair": "Disponibile per la riparazione",
-  "People": "Persone"
+  "People": "Persone",
+  "Bio:": "Biografia:",
+  "This is your profile page. Edit it to add your bio and other informations.": "Questa è la pagina del tuo profilo. \nModificalo per aggiungere la tua biografia e altre informazioni.",
+  "This week": "Questa settimana",
+  "This month": "Questo mese",
+  "This cycle": "Questo ciclo",
+  "Hi,": "CIAO,",
+  "Username:": "Nome utente:",
+  "Email:": "E-mail:",
+  "DID Explorer": "Esploratore DID",
+  "Track record": "Record di pista",
+  "We keep track of your recent activity on the platform, such as the number of designs you have contributed, the feedback you have received, and your level of engagement in the community. About the economic model": "Teniamo traccia della tua attività recente sulla piattaforma, come il numero di progetti che hai contribuito, il feedback che hai ricevuto e il tuo livello di coinvolgimento nella comunità. \nSul modello economico"
 }
