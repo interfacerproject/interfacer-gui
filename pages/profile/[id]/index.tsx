@@ -120,8 +120,8 @@ const Profile: NextPageWithLayout = () => {
               </Link>
             </FullWidthBanner>
           )}
-          <div className="grid grid-cols-1 lg:grid-cols-2 container mx-auto pt-7 px-2 lg:px-0 space-y-2 mb-2">
-            <Stack vertical>
+          <div className="grid grid-cols-1 lg:grid-cols-2 container mx-auto pt-7 px-2 lg:px-0">
+            <Stack vertical spacing="extraLoose">
               <Stack spacing="tight" alignment="leading">
                 <Text as="h2" variant="headingXl">
                   {isUser ? <>{t("Hi,") + " "}</> : <> </>}
@@ -202,7 +202,7 @@ const Profile: NextPageWithLayout = () => {
             </Stack>
           </div>
 
-          <div className="container mx-auto mb-4">
+          <div className="container mx-auto my-4">
             <Tabs
               tabs={[
                 {
