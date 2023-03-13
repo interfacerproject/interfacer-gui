@@ -72,7 +72,7 @@ const Profile: NextPageWithLayout = () => {
     claimPerson({ variables: { id: id } }).then(data => {
       setDidUrl(`${process.env.NEXT_PUBLIC_DID_EXPLORER!}details/${data.data.claimPerson.did.didDocument?.id}`);
     });
-  });
+  }, []);
 
   const tabs = [
     {
@@ -91,7 +91,7 @@ const Profile: NextPageWithLayout = () => {
 
   const tabsContent = [
     <div className="flex" key={"week"}>
-      <TokensResume stat={t(Token.Idea)} id={id! as string} />
+      <TokensResume stat={t(Token.Idea)} id={id!} />
       <TokensResume stat={t(Token.Strengths)} id={id!} />
     </div>,
     <div className="flex" key={"month"}>
@@ -175,16 +175,12 @@ const Profile: NextPageWithLayout = () => {
                   {person?.id}
                 </Text>
               </Stack>
-              <Stack>
+              <div className="flex flex-row space-x-2 lg:mr-2">
                 <Text as="span" variant="bodyLg" color="subdued">
                   {t("Bio:")}
                 </Text>
-                <div className="py-1 px-4 w-full bg-white border-2 rounded-md">
-                  <Text as="span" variant="bodyMd">
-                    {person?.note}
-                  </Text>
-                </div>
-              </Stack>
+                <pre className="whitespace-normal py-1 px-4 bg-white border-2 rounded-md">{person?.note}</pre>
+              </div>
             </Stack>
 
             <Stack vertical spacing="extraLoose">
