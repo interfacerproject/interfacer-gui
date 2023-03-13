@@ -21,11 +21,10 @@ import Avatar from "boring-avatars";
 import Spinner from "components/brickroom/Spinner";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectsCards from "components/ProjectsCards";
-import ProjectsTable from "components/ProjectsTable";
 import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
-import { Token } from "hooks/useWallet";
+import { Token, TrendPeriod } from "hooks/useWallet";
 import { CLAIM_DID, FETCH_USER } from "lib/QueryAndMutation";
 import type { GetStaticPaths, NextPage } from "next";
 import { useTranslation } from "next-i18next";
@@ -86,16 +85,16 @@ const Profile: NextPage = () => {
 
   const tabsContent = [
     <div className="flex" key={"week"}>
-      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} />
-      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} />
+      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} period={TrendPeriod.Week} />
+      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} period={TrendPeriod.Week} />
     </div>,
     <div className="flex" key={"month"}>
-      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} />
-      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} />
+      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} period={TrendPeriod.Month} />
+      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} period={TrendPeriod.Month} />
     </div>,
     <div className="flex" key="cyclal">
-      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} />
-      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} />
+      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} period={TrendPeriod.Cycle} />
+      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} period={TrendPeriod.Cycle} />
     </div>,
   ];
 

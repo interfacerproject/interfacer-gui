@@ -24,7 +24,7 @@ import { useTranslation } from "next-i18next";
 const WatchButton = ({ id, owner }: { id: string; owner: string }) => {
   const { followActivity, isWatched, erFollowerLength } = useSocial(id);
   const { t } = useTranslation("common");
-  const { addIdeaPoints } = useWallet();
+  const { addIdeaPoints } = useWallet({});
   const watched = isWatched();
   const handleWatch = async () => {
     followActivity();

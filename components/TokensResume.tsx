@@ -16,16 +16,16 @@
 
 import { ArrowSmUpIcon } from "@heroicons/react/outline";
 import cn from "classnames";
-import useWallet, { Token } from "hooks/useWallet";
+import useWallet, { Token, TrendPeriod } from "hooks/useWallet";
 import { useTranslation } from "next-i18next";
 
-const TokensResume = ({ stat, id }: { stat: string; id: string }) => {
+const TokensResume = ({ stat, id, period }: { stat: string; id: string; period?: TrendPeriod }) => {
   const { t } = useTranslation("ProfileProps");
-  const { getIdeaPoints, getStrengthsPoints, ideaTrend, strengthsTrend } = useWallet(id);
+  const { getIdeaPoints, getStrengthsPoints, ideaTrend, strengthsTrend } = useWallet({ id, period });
   const value = stat === Token.Idea ? getIdeaPoints : getStrengthsPoints;
   const trendValue = stat === Token.Idea ? ideaTrend : strengthsTrend;
   const positive = Number(trendValue) > 0;
-  const trendNotANumber = Number.isNaN(Number(trendValue)) || trendValue === "0";
+  const trendNotANumber = Number.isNaN(Number(trendValue)) || trendValue == "0.00";
 
   return (
     <div className="stat">
@@ -43,6 +43,7 @@ const TokensResume = ({ stat, id }: { stat: string; id: string }) => {
                 className={cn("w-5 h-5", {
                   "text-green-500": positive,
                   "text-red-500 rotate-180": !positive,
+                  hidden: trendNotANumber,
                 })}
               />
             </>
