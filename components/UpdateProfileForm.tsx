@@ -35,7 +35,6 @@ const UPDATE_USER =
 export namespace UpdateUserNS {
   export interface FormValues {
     name: string;
-    username: string;
     address?: LocationStepValues;
     note: string;
   }
@@ -49,7 +48,7 @@ export namespace UpdateUserNS {
 }
 
 const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
-  const { t } = useTranslation("ProfileProps");
+  const { t } = useTranslation("common");
   const { handleCreateLocation } = useProjectCRUD();
 
   const [updateUser] = useMutation(UPDATE_USER);
@@ -65,10 +64,9 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
           name: formData.name,
           note: formData.note,
           primaryLocation: location?.st?.id,
-          user: formData.username,
         },
       };
-      devLog(await updateUser(variables));
+      await updateUser(variables);
     } catch (e) {
       devLog(e);
     }
@@ -88,7 +86,6 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
 
   const defaultValues: UpdateUserNS.FormValues = {
     name: user?.name || "",
-    username: user?.user || "",
     address: defaultAddress,
     note: user?.note || "",
   };
@@ -96,7 +93,6 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
   const schema = yup
     .object({
       name: yup.string(),
-      username: yup.string(),
       locationName: yup.string(),
       address: locationStepSchema,
       note: yup.string(),
@@ -152,25 +148,6 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
 
         <Controller
           control={control}
-          name="username"
-          render={({ field: { onChange, onBlur, name, value } }) => (
-            <TextField
-              type="text"
-              id={name}
-              name={name}
-              value={value}
-              autoComplete="off"
-              onChange={onChange}
-              onBlur={onBlur}
-              label={t("Your username")}
-              helpText={t("This will be your public username")}
-              requiredIndicator={isRequired(schema, name)}
-              error={errors.username?.message}
-            />
-          )}
-        />
-        <Controller
-          control={control}
           name="address.locationName"
           render={({ field: { onChange, onBlur, name, value } }) => (
             <TextField
@@ -212,7 +189,7 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
               autoComplete="off"
               onChange={onChange}
               onBlur={onBlur}
-              label={t("Note")}
+              label={t("Bio:")}
               requiredIndicator={isRequired(schema, name)}
               error={errors.note?.message}
             />

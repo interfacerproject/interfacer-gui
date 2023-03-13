@@ -59,35 +59,6 @@ export interface EditProfileValues {
 const EditProfile: NextPageWithLayout = () => {
   const { person } = useUser();
 
-  /* Form setup */
-
-  const defaultValues: Partial<EditProfileValues> = {
-    name: person.name,
-    note: person.note,
-    primaryLocation: person.primaryLocation,
-    user: person.user,
-  };
-
-  const schema = yup.object({
-    editProfileSchema,
-  });
-
-  const formMethods = useForm<EditProfileValues>({
-    mode: "all",
-    resolver: yupResolver(schema),
-    defaultValues,
-  });
-
-  /* Submit logic */
-
-  const router = useRouter();
-
-  // const {id} = router.query;
-
-  async function onSubmit(values: any) {}
-
-  /* Render */
-
   return <UpdateProfileForm user={person} />;
 };
 
