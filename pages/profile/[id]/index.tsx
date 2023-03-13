@@ -47,9 +47,10 @@ const Profile: NextPageWithLayout = () => {
   const { t } = useTranslation("common");
   const { proposalFilter } = useFilters();
   const { user } = useAuth();
+  const initialTab = tab ? Number(tab) : 0;
 
   const [selected, setSelected] = useState(0);
-  const [projectTabSelected, setProjectTabSelected] = useState(0);
+  const [projectTabSelected, setProjectTabSelected] = useState(initialTab);
   const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
   const handleProjectTabChange = useCallback((selectedTabIndex: number) => setProjectTabSelected(selectedTabIndex), []);
 
@@ -120,7 +121,7 @@ const Profile: NextPageWithLayout = () => {
               </Link>
             </FullWidthBanner>
           )}
-          <div className="grid grid-cols-1 lg:grid-cols-2 container mx-auto pt-7 px-2 lg:px-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 container mx-auto pt-7 px-2 lg:px-0 space-x-2">
             <Stack vertical spacing="extraLoose">
               <Stack spacing="tight" alignment="leading">
                 <Text as="h2" variant="headingXl">
@@ -178,7 +179,7 @@ const Profile: NextPageWithLayout = () => {
                 <Text as="span" variant="bodyLg" color="subdued">
                   {t("Bio:")}
                 </Text>
-                <div className="py-1 px-4 overflow-scroll w-64 max-h-36 bg-white border-2 rounded-md">
+                <div className="py-1 px-4 w-full bg-white border-2 rounded-md">
                   <Text as="span" variant="bodyMd">
                     {person?.note}
                   </Text>
