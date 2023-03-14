@@ -67,7 +67,7 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
         .string()
         .email()
         .required()
-        .test("email-exists", t("email is not valid"), async (value, testContext) => {
+        .test("email-exists", t("this e-mail has already been used by another user"), async (value, testContext) => {
           return await testEmail(value!);
         }),
     })
