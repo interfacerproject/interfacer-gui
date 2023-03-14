@@ -37,7 +37,7 @@ const ProjectMap = (props: ProjectMapProps) => {
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
   const onGrab = useCallback(() => setCursor("grabbing"), []);
 
-  const style = fixed ? "mapbox://styles/mapbox/outdoors-v12" : "mapbox://styles/mapbox/satellite-streets-v12";
+  const style = "mapbox://styles/mapbox/light-v11";
 
   return (
     <>

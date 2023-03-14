@@ -149,7 +149,7 @@ const ProjectsMaps = () => {
           }}
           interactive
           style={{ width: "full", height: 600 }}
-          mapStyle="mapbox://styles/mapbox/dark-v11"
+          mapStyle="mapbox://styles/mapbox/light-v11"
           mapboxAccessToken={MAPBOX_TOKEN}
           interactiveLayerIds={[clusterLayer.id!]}
           onClick={handleMapClick}
