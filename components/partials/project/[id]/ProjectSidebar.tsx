@@ -78,13 +78,7 @@ export default function ProjectSidebar(props: Props) {
             <BrDisplayUser id={project.primaryAccountable!.id} name={project.primaryAccountable!.name} />
           </div>
           {/* Project location */}
-          {project.currentLocation && (
-            <Link href={`/project/${project.id}/map`}>
-              <a>
-                <ProjectMap project={project} height={180} fixed />
-              </a>
-            </Link>
-          )}
+          {project.currentLocation && <ProjectMap project={project} height={180} />}
         </Stack>
       </Card>
 

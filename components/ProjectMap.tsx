@@ -25,11 +25,10 @@ import { Text } from "@bbtgnn/polaris-interfacer";
 export interface ProjectMapProps {
   project: Partial<EconomicResource>;
   height?: number;
-  fixed?: boolean;
 }
 
 const ProjectMap = (props: ProjectMapProps) => {
-  const { project, height = 600, fixed = false } = props;
+  const { project, height = 600 } = props;
   devLog("map", project);
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
   const [cursor, setCursor] = useState<string>("grab");
@@ -50,9 +49,9 @@ const ProjectMap = (props: ProjectMapProps) => {
         style={{ width: "full", height: height, borderRadius: "0.5rem" }}
         mapStyle={style}
         mapboxAccessToken={MAPBOX_TOKEN}
-        dragPan={!fixed}
-        scrollZoom={!fixed}
-        doubleClickZoom={!fixed}
+        dragPan={false}
+        scrollZoom={false}
+        doubleClickZoom={false}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onMouseDown={onGrab}
@@ -73,7 +72,7 @@ const ProjectMap = (props: ProjectMapProps) => {
             {project.currentLocation?.mappableAddress}
           </Text>
         </Popup>
-        {!fixed && <FullscreenControl position="top-right" />}
+        <FullscreenControl position="top-right" />
       </Map>
     </>
   );
