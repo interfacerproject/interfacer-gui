@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Map, { FullscreenControl, Marker, Popup } from "react-map-gl";
+import Map, { FullscreenControl, MapRef, Marker, Popup } from "react-map-gl";
 
 import devLog from "lib/devLog";
 import { EconomicResource } from "lib/types";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Text } from "@bbtgnn/polaris-interfacer";
 
 export interface ProjectMapProps {
@@ -29,12 +29,19 @@ export interface ProjectMapProps {
 
 const ProjectMap = (props: ProjectMapProps) => {
   const { project, height = 600 } = props;
-  devLog("map", project);
+  const mapRef = useRef<MapRef>(null);
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [loaded, setLoaded] = useState<boolean>(false);
   const [cursor, setCursor] = useState<string>("grab");
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
   const onGrab = useCallback(() => setCursor("grabbing"), []);
+  // @ts-ignore
+  const fullscreen = mapRef.current?.getMap()._controls[2]._fullscreen;
+  useEffect(() => {
+    setIsFullscreen(fullscreen);
+  }, [fullscreen, loaded]);
 
   const style = "mapbox://styles/mapbox/light-v11";
 
@@ -49,13 +56,15 @@ const ProjectMap = (props: ProjectMapProps) => {
         style={{ width: "full", height: height, borderRadius: "0.5rem" }}
         mapStyle={style}
         mapboxAccessToken={MAPBOX_TOKEN}
-        dragPan={false}
-        scrollZoom={false}
-        doubleClickZoom={false}
+        dragPan={isFullscreen}
+        ref={mapRef}
+        scrollZoom={isFullscreen}
+        doubleClickZoom={isFullscreen}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onMouseDown={onGrab}
         onMouseUp={onMouseLeave}
+        onLoad={() => setLoaded(true)}
         cursor={cursor}
         maxZoom={15}
         minZoom={6}
