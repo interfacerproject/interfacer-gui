@@ -34,7 +34,7 @@ describe("When user visit the profile page", () => {
   it("The profile page should render slightly differently for other user", function () {
     cy.visit(`/profile/${Cypress.env("otherUserId")}`);
     cy.contains(`${Cypress.env("otherUserId")}`);
-    cy.contains("Her projects");
+    cy.contains("Projects");
     cy.contains("My List").should("not.exist");
   });
 });
