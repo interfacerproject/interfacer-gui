@@ -1,4 +1,5 @@
 import devLog from "lib/devLog";
+import { replaceMdRelativesUrl } from "lib/findMDRelativesUrl";
 // @ts-ignore
 import { Octokit } from "octokit";
 import { useState } from "react";
@@ -39,11 +40,15 @@ const useAutoImport = (): AutoImportReturnValue => {
     try {
       const metadata = await o.rest.repos.get({ owner: u.owner, repo: u.repo });
       const _data = metadata.data;
+      devLog("fetched metadata", _data);
       return {
-        title: _data.name,
-        link: _data.html_url,
-        description: _data.description || "",
-        tags: _data.topics || [],
+        main: {
+          title: _data.name,
+          link: _data.html_url,
+          description: _data.description || "",
+          tags: _data.topics || [],
+        },
+        blobUrl: `${_data.html_url}/blob/${_data.default_branch}`,
       };
     } catch (e) {
       devLog("error fetching metadata", e);
@@ -60,20 +65,25 @@ const useAutoImport = (): AutoImportReturnValue => {
     }
   };
 
-  const getGhReadme = async (u: { owner: string; repo: string }) => {
+  const getGhReadme = async (u: { owner: string; repo: string }, blobUrl?: string) => {
     try {
-      const readme = await o.rest.repos.getReadme(u);
+      const readmeURL = await o.rest.repos.getReadme(u);
       const readmeFile = await o.rest.repos.getContent({
         mediaType: {
           format: "raw",
         },
         owner: u.owner,
         repo: u.repo,
-        path: readme.data.path,
+        path: readmeURL.data.path,
       });
       // const images = findImagesInReadme(readmeFile.data.toString());
       // setImages(images as string[]);
-      return readmeFile.data.toString();
+      let readme: string;
+      readme = readmeFile.data.toString();
+      if (blobUrl) {
+        readme = replaceMdRelativesUrl(readme, blobUrl);
+      }
+      return readme;
     } catch (e) {
       devLog(e);
     }
@@ -133,9 +143,9 @@ const useAutoImport = (): AutoImportReturnValue => {
     const owner = url.split("/")[3];
     const repoName = url.split("/")[4];
     const u = { owner, repo: repoName };
-    const main = await getGhMetadata(u);
+    const { main, blobUrl } = (await getGhMetadata(u)) || {};
     const license = await getGhLicenses(u);
-    const readme = await getGhReadme(u);
+    const readme = await getGhReadme(u, blobUrl);
     let licenses = [];
     if (license) licenses.push({ scope: license?.name, licenseId: license?.spdx_id });
     if (main) main.description = readme || main!.description || "";
