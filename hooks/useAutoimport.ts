@@ -40,7 +40,6 @@ const useAutoImport = (): AutoImportReturnValue => {
     try {
       const metadata = await o.rest.repos.get({ owner: u.owner, repo: u.repo });
       const _data = metadata.data;
-      devLog("fetched metadata", _data);
       return {
         main: {
           title: _data.name,
@@ -80,7 +79,7 @@ const useAutoImport = (): AutoImportReturnValue => {
       // setImages(images as string[]);
       let readme: string;
       readme = readmeFile.data.toString();
-      if (blobUrl) {
+      if (blobUrl && readmeURL.data.path.endsWith(".md")) {
         readme = replaceMdRelativesUrl(readme, blobUrl);
       }
       return readme;
