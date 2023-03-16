@@ -4062,6 +4062,8 @@ export type FetchInventoryQuery = {
           id: string;
           name: string;
           mappableAddress?: string | null;
+          lat?: any | null;
+          long?: any | null;
         } | null;
         images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
         primaryAccountable:
@@ -4434,6 +4436,40 @@ export type RelocateProjectMutation = {
   __typename?: "RootMutationType";
   pickup: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
   dropoff: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
+};
+
+export type GetDppQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type GetDppQuery = {
+  __typename?: "RootQueryType";
+  economicResource?: { __typename?: "EconomicResource"; traceDpp: any } | null;
+};
+
+export type GetProcessGroupQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type GetProcessGroupQuery = {
+  __typename?: "RootQueryType";
+  processGroup?: {
+    __typename?: "ProcessGroup";
+    id: string;
+    name: string;
+    note?: string | null;
+    type: "ProcessGroup";
+    groupedIn?: { __typename?: "ProcessGroup"; id: string; name: string; note?: string | null } | null;
+    groups?: {
+      __typename?: "ProcessOrProcessGroupConnection";
+      edges: Array<{
+        __typename?: "ProcessOrProcessGroupEdge";
+        node:
+          | { __typename?: "Process"; id: string; name: string; note?: string | null; type: "Process" }
+          | { __typename?: "ProcessGroup"; id: string; name: string; note?: string | null; type: "ProcessGroup" };
+      }>;
+    } | null;
+  } | null;
 };
 
 export type EditMainMutationVariables = Exact<{

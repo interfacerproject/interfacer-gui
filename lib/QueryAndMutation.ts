@@ -1094,3 +1094,44 @@ export const RELOCATE_PROJECT = gql`
     }
   }
 `;
+
+export const GET_DPP = gql`
+  query getDPP($id: ID!) {
+    economicResource(id: $id) {
+      traceDpp
+    }
+  }
+`;
+
+export const GET_PROCESS_GROUP = gql`
+  query getProcessGroup($id: ID!) {
+    processGroup(id: $id) {
+      groupedIn {
+        id
+        name
+        note
+      }
+      id
+      name
+      type: __typename
+      note
+      groups(first: 100) {
+        edges {
+          node {
+            type: __typename
+            ... on Process {
+              id
+              name
+              note
+            }
+            ... on ProcessGroup {
+              id
+              name
+              note
+            }
+          }
+        }
+      }
+    }
+  }
+`;
