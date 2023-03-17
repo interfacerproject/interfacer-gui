@@ -92,8 +92,17 @@ function UserSection(props: { user: User }) {
 
 function LogoutButton(props: { text: string }) {
   const { text } = props;
+  const { logout } = useAuth();
   return (
-    <Button outline destructive icon={<Logout />} fullWidth>
+    <Button
+      onClick={() => {
+        logout();
+      }}
+      outline
+      destructive
+      icon={<Logout />}
+      fullWidth
+    >
       {text}
     </Button>
   );
