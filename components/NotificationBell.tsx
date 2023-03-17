@@ -22,7 +22,7 @@ const NotificationBell = () => {
   const { unread } = useInBox();
   return (
     <Link href="/notification">
-      <a className="relative mr-4" id="notification-bell">
+      <a className="relative" id="notification-bell">
         <button className="bg-white btn btn-circle btn-accent">
           <BellIcon className="w-5 h-5" />
         </button>
