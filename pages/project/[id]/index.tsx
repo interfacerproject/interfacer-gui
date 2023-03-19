@@ -132,7 +132,7 @@ const Project = () => {
 
   // map trace dpp to treeData
   const dppToTreeData = (dpp: any) => {
-    return dpp?.children.map((child: any) => {
+    return dpp?.children?.map((child: any) => {
       return {
         name: child.type,
         children: dppToTreeData(child),
@@ -176,14 +176,14 @@ const Project = () => {
   return (
     <>
       <FullWidthBanner open={viewCreatedBanner} onClose={closeBanner}>
-        <Text as="p" variant="bodyMd">
+        <Text as="p" variant="bodyMd" id="created-banner-content">
           {t("Project succesfully created!")}
         </Text>
       </FullWidthBanner>
 
       {isOwner && (
         <FullWidthBanner open status="basic">
-          <Text as="p" variant="bodySm">
+          <Text as="p" variant="bodySm" id="is-owner-banner-content">
             {t("This project is yours")}
           </Text>
           <Link href={`/project/${project.id}/edit`}>
@@ -208,7 +208,7 @@ const Project = () => {
                 ]}
               />
               <ProjectTypeChip projectNode={project} />
-              <Text as="h1" variant="heading2xl">
+              <Text as="h1" variant="heading2xl" id="project-title">
                 {project.name}
               </Text>
               <p className="text-primary font-mono">
