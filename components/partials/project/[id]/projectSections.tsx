@@ -1,14 +1,14 @@
 import { ProjectType } from "components/types";
-import { CreateProjectValues } from "../create/project/CreateProjectForm";
-import ContributorsStep from "../create/project/steps/ContributorsStep";
-import DeclarationsStep from "../create/project/steps/DeclarationsStep";
-import ImagesStep from "../create/project/steps/ImagesStep";
-import ImportDesignStep from "../create/project/steps/ImportDesignStep";
-import LicenseStep from "../create/project/steps/LicenseStep";
-import LinkDesignStep from "../create/project/steps/LinkDesignStep";
-import LocationStep from "../create/project/steps/LocationStep";
-import MainStep from "../create/project/steps/MainStep";
-import RelationsStep from "../create/project/steps/RelationsStep";
+import { CreateProjectValues } from "../../create/project/CreateProjectForm";
+import ContributorsStep from "../../create/project/steps/ContributorsStep";
+import DeclarationsStep from "../../create/project/steps/DeclarationsStep";
+import ImagesStep from "../../create/project/steps/ImagesStep";
+import ImportDesignStep from "../../create/project/steps/ImportDesignStep";
+import LicenseStep from "../../create/project/steps/LicenseStep";
+import LinkDesignStep from "../../create/project/steps/LinkDesignStep";
+import LocationStep from "../../create/project/steps/LocationStep";
+import MainStep from "../../create/project/steps/MainStep";
+import RelationsStep from "../../create/project/steps/RelationsStep";
 
 //
 

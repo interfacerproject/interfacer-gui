@@ -1,4 +1,4 @@
-import { getSectionsByProjectType } from "components/partials/project/projectSections";
+import { getSectionsByProjectType } from "components/partials/project/[id]/projectSections";
 import TableOfContents from "components/TableOfContents";
 import { ProjectType } from "components/types";
 import { useTranslation } from "next-i18next";

@@ -22,7 +22,7 @@ import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { ReactElement, useCallback, useEffect, useRef, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 
 // Components
 import { Stack, Text } from "@bbtgnn/polaris-interfacer";
@@ -32,15 +32,15 @@ import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
-import Layout from "components/layout/Layout";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
+import Layout from "components/layout/Layout";
+import CreatedBanner from "components/partials/project/[id]/CreatedBanner";
+import EditBanner from "components/partials/project/[id]/EditBanner";
 import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
+import ProjectTabs from "components/partials/project/[id]/ProjectTabs";
 import ProjectTypeChip from "components/ProjectTypeChip";
 import { NextPageWithLayout } from "pages/_app";
-import CreatedBanner from "components/partials/project/CreatedBanner";
-import EditBanner from "components/partials/project/EditBanner";
-import ProjectTabs from "components/partials/project/ProjectTabs";
 
 //
 
