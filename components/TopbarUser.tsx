@@ -31,6 +31,13 @@ export default function TopbarUser() {
         <MenuLink href="/profile/my_profile">
           <UserSection user={user!} />
         </MenuLink>
+        <div>
+          <MenuLink href="/profile/my_profile">
+            <Text as="p" variant="bodyMd">
+              {t("My profile")}
+            </Text>
+          </MenuLink>
+        </div>
         <MenuSection>
           <LogoutButton text={t("Logout")} />
         </MenuSection>
