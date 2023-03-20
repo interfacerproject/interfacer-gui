@@ -91,7 +91,7 @@ export default function ProjectSidebar(props: Props) {
           <Stack vertical spacing="loose">
             {licenses && <ProjectLicenses project={project} />}
             {design && (
-              <div className="border rounded bg-surface-subdued p-1">
+              <div className="border rounded bg-surface-subdued p-1" id="linked-design">
                 <Link href={`/project/${design}`}>
                   <a>
                     <ProjectDisplay projectId={design} isProductDesign />
@@ -104,7 +104,7 @@ export default function ProjectSidebar(props: Props) {
               {declarations.recyclable === "yes" && (
                 <div className="flex items-center space-x-2 text-primary">
                   <Tools />
-                  <Text as="p" variant="bodyMd" fontWeight="medium">
+                  <Text as="p" variant="bodyMd" fontWeight="medium" id="recycling-availability">
                     {t("Available for recycling")}
                   </Text>
                 </div>
@@ -112,7 +112,7 @@ export default function ProjectSidebar(props: Props) {
               {declarations.repairable === "yes" && (
                 <div className="flex items-center space-x-2 text-primary">
                   <Renew />
-                  <Text as="p" variant="bodyMd" fontWeight="medium">
+                  <Text as="p" variant="bodyMd" fontWeight="medium" id="repairing-availability">
                     {t("Available for repair")}
                   </Text>
                 </div>
@@ -127,7 +127,7 @@ export default function ProjectSidebar(props: Props) {
           <Text as="h2" variant="headingMd">
             {t("Contributions")}
           </Text>
-          <Text color="success" as="p" variant="bodyMd">
+          <Text color="success" as="p" variant="bodyMd" id="sidebar-contributors">
             {t("{{contributors}} contributors", { contributors: project.metadata.contributors?.length || 0 })}
           </Text>
           <ProjectContributors projectNode={project} />

@@ -3698,6 +3698,15 @@ export type GetProjectLayoutQuery = {
   } | null;
 };
 
+export type GetDppQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type GetDppQuery = {
+  __typename?: "RootQueryType";
+  economicResource?: { __typename?: "EconomicResource"; traceDpp: any } | null;
+};
+
 export type GetVariablesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetVariablesQuery = {
@@ -3832,7 +3841,6 @@ export type GetResourceTableQuery = {
     metadata?: any | null;
     license?: string | null;
     repo?: string | null;
-    traceDpp: any;
     classifiedAs?: Array<any> | null;
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     onhandQuantity: {
@@ -4062,6 +4070,8 @@ export type FetchInventoryQuery = {
           id: string;
           name: string;
           mappableAddress?: string | null;
+          lat?: any | null;
+          long?: any | null;
         } | null;
         images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
         primaryAccountable:

@@ -68,7 +68,7 @@ const addRelatedProjects = (query: string) => {
 
 const submit = () => {
   cy.get("#project-create-submit").click();
-  cy.wait(12000);
+  cy.wait(15000);
 };
 
 const checkUrl = (type: string) => {
@@ -79,7 +79,7 @@ const checkUrl = (type: string) => {
 };
 
 const checkMainValues = (v: CompileMainValuesParams) => {
-  cy.wait(12000);
+  cy.wait(15000);
   cy.get("#created-banner-content").should("exist");
   cy.get("#is-owner-banner-content").should("exist");
   cy.get("#project-title").should("contain", v.title);
@@ -89,7 +89,7 @@ const checkMainValues = (v: CompileMainValuesParams) => {
 
 const addLocation = (type: string, query: string) => {
   cy.get("#location-locationName").type(randomString(9));
-  cy.get("#search-location").type(query);
+  cy.get("#search-location").type(query).wait(500);
   cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
 };
 type DeclarationParams = {
@@ -105,6 +105,26 @@ const addDeclarations = (p: DeclarationParams) => {
   cy.get(`#repairable-${yesOrNo(p.repairable)}`).click();
   cy.get(`#repairable-${yesOrNo(!p.repairable)}`).should("not.have.class", "Polaris-Button--pressed");
   cy.get(`#repairable-${yesOrNo(p.repairable)}`).should("have.class", "Polaris-Button--pressed");
+};
+
+const checkLicense = () => {
+  cy.get("#license-scope").should("exist").should("contain", "docs");
+  cy.get("#license-id").should("exist").should("contain", "MIT License");
+};
+
+const checkDeclarations = (p: DeclarationParams) => {
+  p.recyclable
+    ? cy.get("#recycling-availability").should("exist")
+    : cy.get("#recycling-availability").should("not.exist");
+  p.repairable ? cy.get("#repair-availability").should("exist") : cy.get("#repair-availability").should("not.exist");
+};
+
+const checkHasLinkedDesign = () => {
+  cy.get("#linked-design").should("exist");
+};
+
+const checkContributors = () => {
+  cy.get("#sidebar-contributors").should("exist");
 };
 
 describe.skip("when user visits create design and submit autoimport field", () => {
@@ -143,9 +163,8 @@ describe("when user visits create design and submit manually data", () => {
     submit();
     checkUrl("design");
     checkMainValues(mainValues);
-
-    // cy.get("#license-scope").should("exist").should("contain", "docs");
-    // cy.get("#license-id").should("exist").should("contain", "MIT License");
+    checkLicense();
+    checkContributors();
     // cy.get("#contributors-list").should("exist").should("contain", "nenno");
     // cy.get("#related-projects-list").should("exist").should("contain", "perenzio");
   });
@@ -176,8 +195,12 @@ describe("when user visits create product and submit manually data", () => {
     };
     addDeclarations(declaration);
     submit();
+
     checkUrl("product");
     checkMainValues(mainValues);
+    checkDeclarations(declaration);
+    checkHasLinkedDesign();
+    checkContributors();
   });
 });
 
@@ -200,5 +223,7 @@ describe("when user visits create service and submit manually data", () => {
     addRelatedProjects("perenzio");
     submit();
     checkUrl("service");
+    checkMainValues(mainValues);
+    checkContributors();
   });
 });
