@@ -20,6 +20,7 @@ import SearchBar from "components/SearchBar";
 import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import TopbarNotifications from "./TopbarNotifications";
 import TopbarUser from "./TopbarUser";
 
 type topbarProps = {
@@ -82,6 +83,7 @@ function Topbar({ search = true, children, userMenu = true, cta, burger = true }
         )}
         <LocationMenu />
         {userMenu && <NotificationBell />}
+        {userMenu && <TopbarNotifications />}
         {user && <TopbarUser />}
       </div>
     </div>
