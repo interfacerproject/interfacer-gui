@@ -124,10 +124,10 @@ const checkHasLinkedDesign = () => {
 };
 
 const checkContributors = () => {
-  cy.get("#sidebar-contributors").should("exist");
+  cy.get("#sidebar-contributors").should("exist").should("contain", "1 contributors");
 };
 
-describe.skip("when user visits create design and submit autoimport field", () => {
+describe("when user visits create design and submit autoimport field", () => {
   beforeEach(() => {
     visitCreateProject("design");
   });
