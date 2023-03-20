@@ -47,6 +47,7 @@ import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
 import ProjectTypeChip from "components/ProjectTypeChip";
 import { NextPageWithLayout } from "pages/_app";
 import CreatedBanner from "components/partials/project/CreatedBanner";
+import EditBanner from "components/partials/project/EditBanner";
 
 //
 
@@ -113,19 +114,7 @@ const Project: NextPageWithLayout = () => {
   return (
     <>
       <CreatedBanner />
-
-      {isOwner && (
-        <FullWidthBanner open status="basic">
-          <Text as="p" variant="bodyMd" id="is-owner-banner-content">
-            {t("This project is yours")}
-          </Text>
-          <Link href={`/project/${project.id}/edit`}>
-            <Button monochrome outline>
-              {t("Edit")}
-            </Button>
-          </Link>
-        </FullWidthBanner>
-      )}
+      <EditBanner />
 
       {/* Main */}
       <div className="p-4 container mx-auto grid grid-cols-1 lg:grid-cols-4 max-w-6xl bg-[#f8f7f4]">

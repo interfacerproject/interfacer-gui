@@ -1,5 +1,6 @@
 import { ApolloQueryResult, gql, useQuery } from "@apollo/client";
 import { Spinner } from "@bbtgnn/polaris-interfacer";
+import { useAuth } from "hooks/useAuth";
 import { EconomicResource, Exact, GetProjectLayoutQuery, GetProjectLayoutQueryVariables } from "lib/types";
 import { useRouter } from "next/router";
 import { createContext, useContext } from "react";
@@ -10,6 +11,7 @@ interface ProjectContextValue {
   refetch: (
     variables?: Partial<Exact<{ id: string }>> | undefined
   ) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
+  isOwner?: boolean;
 }
 
 export const ProjectContext = createContext<ProjectContextValue>({} as ProjectContextValue);
@@ -26,6 +28,7 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
   const { children, projectIdParam = "id" } = props;
   const router = useRouter();
   const id = router.query[projectIdParam] as string;
+  const { user } = useAuth();
 
   const { loading, data, refetch } = useQuery<GetProjectLayoutQuery, GetProjectLayoutQueryVariables>(
     GET_PROJECT_LAYOUT,
@@ -35,6 +38,7 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
     }
   );
   const project = data?.economicResource as Partial<EconomicResource>;
+  const isOwner = user?.ulid == project?.primaryAccountable?.id;
 
   //   if (!id) router.push("/projects");
   if (loading)
@@ -50,6 +54,7 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
   const contextValue: ProjectContextValue = {
     project,
     refetch,
+    isOwner,
   };
 
   return <ProjectContext.Provider value={contextValue}>{children}</ProjectContext.Provider>;
