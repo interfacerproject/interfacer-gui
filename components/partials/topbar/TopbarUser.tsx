@@ -10,6 +10,7 @@ import { Logout } from "@carbon/icons-react";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import { ChildrenProp } from "components/brickroom/types";
 import Link from "next/link";
+import { TopbarButton } from "./TopbarButton";
 
 //
 
@@ -27,7 +28,11 @@ export default function TopbarUser() {
     });
   }, [router.events]);
 
-  const activator = <UserAvatarButton user={user!} onClick={togglePopoverActive} />;
+  const activator = (
+    <TopbarButton onClick={togglePopoverActive}>
+      <BrUserAvatar name={user?.name} />
+    </TopbarButton>
+  );
 
   return (
     <Popover active={popoverActive} activator={activator} onClose={togglePopoverActive} fullHeight>
@@ -51,25 +56,6 @@ export default function TopbarUser() {
 }
 
 /* Partials */
-
-function UserAvatarButton(props: { onClick: () => void; user: User; notification?: boolean }) {
-  const { onClick, user, notification = true } = props;
-  return (
-    <button
-      onClick={onClick}
-      className="w-12 h-12 rounded-full border-1 border-border-subdued flex items-center justify-center hover:ring-primary hover:ring-2 relative"
-    >
-      {notification && (
-        <div className="absolute -top-0.5 -right-0.5 w-4 h-4 border-1 border-border-subdued bg-white rounded-full flex items-center justify-center">
-          <div className="w-2 h-2 bg-yellow-500 rounded-full" />
-        </div>
-      )}
-      <div className="w-10 h-10">
-        <BrUserAvatar name={user.name} />
-      </div>
-    </button>
-  );
-}
 
 function MenuSection(props: ChildrenProp) {
   const { children } = props;
