@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import LocationMenu from "components/LocationMenu";
-import NotificationBell from "components/NotificationBell";
 import SearchBar from "components/SearchBar";
 import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
@@ -82,7 +81,6 @@ function Topbar({ search = true, children, userMenu = true, cta, burger = true }
           </div>
         )}
         <LocationMenu />
-        {userMenu && <NotificationBell />}
         {userMenu && <TopbarNotifications />}
         {user && <TopbarUser />}
       </div>
