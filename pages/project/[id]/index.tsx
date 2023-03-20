@@ -25,29 +25,22 @@ import { useRouter } from "next/router";
 import { ReactElement, useCallback, useEffect, useRef, useState } from "react";
 
 // Components
-import { Button, Stack, Tabs, Text } from "@bbtgnn/polaris-interfacer";
+import { Stack, Text } from "@bbtgnn/polaris-interfacer";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
-import FullWidthBanner from "components/FullWidthBanner";
-import ProjectDetailOverview from "components/ProjectDetailOverview";
-import RelationshipTree from "components/RelationshipTree";
-import Link from "next/link";
 
 import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
 import Layout from "components/layout/Layout";
-import { Cube, Events, ListBoxes, ParentChild, Purchase } from "@carbon/icons-react";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
-import ContributionsTable from "components/ContributionsTable";
-import ContributorsTable from "components/ContributorsTable";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
-import ProjectDpp from "components/partials/project/ProjectDpp";
 import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
 import ProjectTypeChip from "components/ProjectTypeChip";
 import { NextPageWithLayout } from "pages/_app";
 import CreatedBanner from "components/partials/project/CreatedBanner";
 import EditBanner from "components/partials/project/EditBanner";
+import ProjectTabs from "components/partials/project/ProjectTabs";
 
 //
 
@@ -86,27 +79,6 @@ const Project: NextPageWithLayout = () => {
     setImages(_images);
   }, [project, ref, selected]);
 
-  // Tabs setup
-  const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
-
-  //
-  // Check if project has been just created
-  const isCreated = router.query.created === "true";
-
-  const [viewCreatedBanner, setViewCreatedBanner] = useState(false);
-
-  useEffect(() => {
-    setViewCreatedBanner(isCreated);
-  }, [isCreated]);
-
-  const closeBanner = () => {
-    setViewCreatedBanner(false);
-  };
-
-  const isOwner = project?.primaryAccountable?.id === user?.ulid;
-
-  //
-
   if (!project) return null;
 
   const sidebar = <ProjectSidebar project={project} contributions={contributions!} setSelected={setSelected} />;
@@ -121,7 +93,6 @@ const Project: NextPageWithLayout = () => {
         {/* Content */}
         <div className="lg:col-span-3 lg:pr-4">
           <Stack vertical spacing="extraLoose">
-            {/* Title */}
             <Stack vertical spacing="tight">
               <BrBreadcrumb
                 crumbs={[
@@ -137,94 +108,12 @@ const Project: NextPageWithLayout = () => {
                 {t("ID:")} {project.id}
               </p>
             </Stack>
-
             <BrThumbinailsGallery images={images} />
-
             <div className="block lg:hidden">{sidebar}</div>
-
-            {/* Content */}
-            <Stack vertical spacing="loose">
-              <Tabs
-                tabs={[
-                  {
-                    id: "overview",
-                    content: (
-                      <span className="flex items-center gap-2">
-                        <Cube />
-                        {t("Overview")}
-                      </span>
-                    ),
-                    accessibilityLabel: t("Project overview"),
-                    panelID: "overview-content",
-                  },
-                  {
-                    id: "relationships",
-                    content: (
-                      <span className="flex items-center gap-2">
-                        <ParentChild />
-                        {t("Relationship tree")}
-                      </span>
-                    ),
-                    accessibilityLabel: t("Relationship tree"),
-                    panelID: "relationships-content",
-                  },
-                  {
-                    id: "dpp",
-                    content: (
-                      <span className="flex items-center gap-2">
-                        <Purchase />
-                        {t("DPP")}
-                      </span>
-                    ),
-                    accessibilityLabel: t("Digital Product Passport"),
-                    panelID: "dpp-content",
-                  },
-                  {
-                    id: "Contributors",
-                    content: (
-                      <span className="flex items-center gap-2">
-                        <Events />
-                        {t("Contributors")}
-                      </span>
-                    ),
-                    accessibilityLabel: t("Contributors"),
-                    panelID: "dpp-content",
-                  },
-                  {
-                    id: "Contributions",
-                    content: (
-                      <span className="flex items-center gap-2">
-                        <ListBoxes />
-                        {t("Contributions")}
-                      </span>
-                    ),
-                    accessibilityLabel: t("Contributions"),
-                    panelID: "contributions-content",
-                  },
-                ]}
-                selected={selected}
-                onSelect={handleTabChange}
-              />
-
-              {selected == 0 && <ProjectDetailOverview project={project} />}
-              {selected == 1 && <RelationshipTree project={project} />}
-              {selected == 2 && <ProjectDpp id={project.id!} />}
-
-              {selected == 3 && (
-                <ContributorsTable
-                  contributors={project.metadata?.contributors}
-                  title={t("Contributors")}
-                  // @ts-ignore
-                  data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
-                />
-              )}
-              {selected == 4 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
-            </Stack>
+            <ProjectTabs />
           </Stack>
         </div>
-
         <div className="hidden lg:block">{sidebar}</div>
-        {/* Sidebar */}
       </div>
     </>
   );
