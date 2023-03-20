@@ -12,7 +12,7 @@ export interface TopbarPopoverProps extends ChildrenProp {
 }
 
 export default function TopbarPopover(props: TopbarPopoverProps) {
-  const { children, notification, buttonContent } = props;
+  const { children, notification = false, buttonContent } = props;
   const router = useRouter();
 
   const [popoverActive, setPopoverActive] = useState(false);
