@@ -1,4 +1,3 @@
-import { ApolloQueryResult, OperationVariables } from "@apollo/client";
 import { Button, Card, Spinner, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { CheckmarkFilled, View, ViewOff, WarningAltFilled } from "@carbon/icons-react";
 import dayjs from "dayjs";
@@ -9,6 +8,7 @@ import { url } from "lib/regex";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { Dispatch, useState } from "react";
+import { useProject } from "./layout/FetchProjectLayout";
 
 declare type Color = "success" | "critical" | "warning" | "subdued" | "text-inverse";
 const OshLine = ({
@@ -76,15 +76,8 @@ const OshLine = ({
   );
 };
 
-const OshTool = ({
-  project,
-  refetch,
-}: {
-  project: Partial<EconomicResource>;
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<{ economicResource: EconomicResource }>>;
-}) => {
+const OshTool = () => {
+  const { project, refetch } = useProject();
   const [loading, setLoading] = useState<boolean>(false);
   const [oshRatings, setOshRatings] = useState<any>(project?.metadata?.ratings);
   const [error, setError] = useState<string | null>(null);

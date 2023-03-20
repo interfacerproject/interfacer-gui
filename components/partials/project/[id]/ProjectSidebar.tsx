@@ -1,4 +1,4 @@
-import { ApolloQueryResult, OperationVariables } from "@apollo/client";
+import { ApolloQueryResult } from "@apollo/client";
 import { Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { ListBoxes, MagicWand, ParentChild, Renew, Tools } from "@carbon/icons-react";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
@@ -13,7 +13,7 @@ import WatchButton from "components/WatchButton";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import devLog from "lib/devLog";
-import { EconomicResource, ResourceProposalsQuery } from "lib/types";
+import { EconomicResource, Exact, GetProjectLayoutQuery, ResourceProposalsQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -23,14 +23,11 @@ interface Props {
   project: Partial<EconomicResource>;
   contributions: ResourceProposalsQuery;
   setSelected: Dispatch<SetStateAction<number>>;
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<{ economicResource: EconomicResource }>>;
 }
 
 export default function ProjectSidebar(props: Props) {
   const { t } = useTranslation("common");
-  const { project, contributions, setSelected, refetch } = props;
+  const { project, contributions, setSelected } = props;
   const { user } = useAuth();
   const { getItem, setItem } = useStorage();
   const [inList, setInList] = useState<boolean>(false);
@@ -178,7 +175,7 @@ export default function ProjectSidebar(props: Props) {
         </Stack>
       </Card>
       {/* Osh */}
-      {isDesign && <OshTool project={project} refetch={refetch} />}
+      {isDesign && <OshTool />}
     </div>
   );
 }

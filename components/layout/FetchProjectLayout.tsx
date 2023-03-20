@@ -1,12 +1,18 @@
-import { gql, useQuery } from "@apollo/client";
+import { ApolloQueryResult, gql, useQuery } from "@apollo/client";
 import { Spinner } from "@bbtgnn/polaris-interfacer";
-import { EconomicResource, GetProjectLayoutQuery, GetProjectLayoutQueryVariables } from "lib/types";
+import { EconomicResource, Exact, GetProjectLayoutQuery, GetProjectLayoutQueryVariables } from "lib/types";
 import { useRouter } from "next/router";
 import { createContext, useContext } from "react";
 
 //
+interface ProjectContextValue {
+  project: Partial<EconomicResource>;
+  refetch: (
+    variables?: Partial<Exact<{ id: string }>> | undefined
+  ) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
+}
 
-export const ProjectContext = createContext<Partial<EconomicResource>>({});
+export const ProjectContext = createContext<ProjectContextValue>({} as ProjectContextValue);
 export const useProject = () => useContext(ProjectContext);
 
 //
@@ -21,10 +27,13 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
   const router = useRouter();
   const id = router.query[projectIdParam] as string;
 
-  const { loading, data } = useQuery<GetProjectLayoutQuery, GetProjectLayoutQueryVariables>(GET_PROJECT_LAYOUT, {
-    variables: { id },
-    skip: !id,
-  });
+  const { loading, data, refetch } = useQuery<GetProjectLayoutQuery, GetProjectLayoutQueryVariables>(
+    GET_PROJECT_LAYOUT,
+    {
+      variables: { id },
+      skip: !id,
+    }
+  );
   const project = data?.economicResource as Partial<EconomicResource>;
 
   //   if (!id) router.push("/projects");
@@ -38,7 +47,12 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
     );
   if (!project) return null;
 
-  return <ProjectContext.Provider value={project}>{children}</ProjectContext.Provider>;
+  const contextValue: ProjectContextValue = {
+    project,
+    refetch,
+  };
+
+  return <ProjectContext.Provider value={contextValue}>{children}</ProjectContext.Provider>;
 };
 
 export default FetchProjectLayout;

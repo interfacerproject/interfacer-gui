@@ -16,17 +16,16 @@
 
 import { useQuery } from "@apollo/client";
 import { useAuth } from "hooks/useAuth";
-import useStorage from "hooks/useStorage";
-import { QUERY_RESOURCE, QUERY_RESOURCE_PROPOSAlS } from "lib/QueryAndMutation";
-import { EconomicResource, ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/types";
+import { QUERY_RESOURCE_PROPOSAlS } from "lib/QueryAndMutation";
+import { ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/types";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { ReactElement, useCallback, useEffect, useRef, useState } from "react";
 
 // Components
-import { Button, Spinner, Stack, Tabs, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Stack, Tabs, Text } from "@bbtgnn/polaris-interfacer";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
 import FullWidthBanner from "components/FullWidthBanner";
 import ProjectDetailOverview from "components/ProjectDetailOverview";
@@ -37,34 +36,32 @@ import dynamic from "next/dynamic";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 // Icons
+import Layout from "components/layout/Layout";
 import { Cube, Events, ListBoxes, ParentChild, Purchase } from "@carbon/icons-react";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
+import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import ProjectDpp from "components/partials/project/ProjectDpp";
 import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
 import ProjectTypeChip from "components/ProjectTypeChip";
+import { NextPageWithLayout } from "pages/_app";
+import CreatedBanner from "components/partials/project/CreatedBanner";
 
 //
 
-const Project = () => {
-  const { getItem, setItem } = useStorage();
+const Project: NextPageWithLayout = () => {
   const router = useRouter();
   const { user } = useAuth();
   const { id } = router.query;
   const { t } = useTranslation("common");
-  const [project, setProject] = useState<EconomicResource | undefined>();
-  const [inList, setInList] = useState<boolean>(false);
+  // const [project, setProject] = useState<EconomicResource | undefined>();
   const [images, setImages] = useState<string[]>([]);
   const [selected, setSelected] = useState(0);
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
+
+  const { project } = useProject();
 
   const ref = useRef(null);
-
-  const { loading, data, startPolling, refetch } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
-    variables: { id: id },
-  });
 
   const { data: contributions } = useQuery<ResourceProposalsQuery, ResourceProposalsQueryVariables>(
     QUERY_RESOURCE_PROPOSAlS,
@@ -72,36 +69,21 @@ const Project = () => {
       variables: { id: id as string },
     }
   );
-  startPolling(12000);
 
   // (Temp) Redirect if project is LOSH owned
-  if (process.env.NEXT_PUBLIC_LOSH_ID == data?.economicResource?.primaryAccountable?.id) {
+  if (process.env.NEXT_PUBLIC_LOSH_ID == project?.primaryAccountable?.id) {
     router.push(`/resource/${id}`);
   }
 
   useEffect(() => {
-    const _project: EconomicResource | undefined = data?.economicResource;
-    setProject(_project);
-    const singleImage = typeof _project?.metadata?.image === "string";
-    const metadataImage = singleImage ? [_project?.metadata?.image] : _project?.metadata?.image || [];
+    const singleImage = typeof project?.metadata?.image === "string";
+    const metadataImage = singleImage ? [project?.metadata?.image] : project?.metadata?.image || [];
     const _images =
-      _project && _project.images!.length > 0
-        ? _project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
+      project && project.images!.length > 0
+        ? project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
         : metadataImage;
     setImages(_images);
-    if (ref.current) {
-      //@ts-ignore
-      setWidth(ref.current.offsetWidth);
-      //@ts-ignore
-      setHeight(ref.current.offsetHeight);
-    }
-  }, [data, ref, selected]);
-
-  useEffect(() => {
-    const _list = getItem("projectsCollected");
-    const _listParsed = _list ? JSON.parse(_list) : [];
-    setInList(_listParsed.includes(project?.id));
-  }, [project, getItem]);
+  }, [project, ref, selected]);
 
   // Tabs setup
   const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
@@ -124,24 +106,17 @@ const Project = () => {
 
   //
 
-  if (loading) return <Spinner />;
   if (!project) return null;
 
-  const sidebar = (
-    <ProjectSidebar project={project} contributions={contributions!} refetch={refetch} setSelected={setSelected} />
-  );
+  const sidebar = <ProjectSidebar project={project} contributions={contributions!} setSelected={setSelected} />;
 
   return (
     <>
-      <FullWidthBanner open={viewCreatedBanner} onClose={closeBanner}>
-        <Text as="p" variant="bodyMd" id="created-banner-content">
-          {t("Project succesfully created!")}
-        </Text>
-      </FullWidthBanner>
+      <CreatedBanner />
 
       {isOwner && (
         <FullWidthBanner open status="basic">
-          <Text as="p" variant="bodySm" id="is-owner-banner-content">
+          <Text as="p" variant="bodyMd" id="is-owner-banner-content">
             {t("This project is yours")}
           </Text>
           <Link href={`/project/${project.id}/edit`}>
@@ -162,7 +137,7 @@ const Project = () => {
               <BrBreadcrumb
                 crumbs={[
                   { name: t("Projects"), href: "/projects" },
-                  { name: project.conformsTo.name, href: `/projects?conformTo=${project.conformsTo.id}` },
+                  { name: project.conformsTo!.name, href: `/projects?conformTo=${project.conformsTo!.id}` },
                 ]}
               />
               <ProjectTypeChip projectNode={project} />
@@ -243,8 +218,8 @@ const Project = () => {
               />
 
               {selected == 0 && <ProjectDetailOverview project={project} />}
-              {selected == 1 && <RelationshipTree project={data?.economicResource} />}
-              {selected == 2 && <ProjectDpp id={data?.economicResource.id!} />}
+              {selected == 1 && <RelationshipTree project={project} />}
+              {selected == 2 && <ProjectDpp id={project.id!} />}
 
               {selected == 3 && (
                 <ContributorsTable
@@ -284,6 +259,11 @@ export async function getStaticProps({ locale }: any) {
 }
 
 Project.publicPage = true;
+Project.getLayout = (page: ReactElement) => (
+  <FetchProjectLayout>
+    <Layout>{page}</Layout>
+  </FetchProjectLayout>
+);
 
 //
 
