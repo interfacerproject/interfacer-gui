@@ -1,41 +1,23 @@
 import { User } from "contexts/AuthContext";
 import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
 
 // Components
-import { Button, Popover, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Text } from "@bbtgnn/polaris-interfacer";
 import { Logout } from "@carbon/icons-react";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import { ChildrenProp } from "components/brickroom/types";
 import Link from "next/link";
-import { TopbarButton } from "./TopbarButton";
+import TopbarPopover from "./TopbarPopover";
 
 //
 
 export default function TopbarUser() {
   const { user } = useAuth();
   const { t } = useTranslation("common");
-  const router = useRouter();
-
-  const [popoverActive, setPopoverActive] = useState(false);
-  const togglePopoverActive = useCallback(() => setPopoverActive(popoverActive => !popoverActive), []);
-
-  useEffect(() => {
-    router.events.on("routeChangeStart", () => {
-      setPopoverActive(false);
-    });
-  }, [router.events]);
-
-  const activator = (
-    <TopbarButton onClick={togglePopoverActive}>
-      <BrUserAvatar name={user?.name} />
-    </TopbarButton>
-  );
 
   return (
-    <Popover active={popoverActive} activator={activator} onClose={togglePopoverActive} fullHeight>
+    <TopbarPopover buttonContent={<BrUserAvatar name={user?.name} />}>
       <div className="w-40 divide-y-1 divide-slate-200">
         <MenuLink href="/profile/my_profile">
           <UserSection user={user!} />
@@ -51,7 +33,7 @@ export default function TopbarUser() {
           <LogoutButton text={t("Logout")} />
         </MenuSection>
       </div>
-    </Popover>
+    </TopbarPopover>
   );
 }
 
