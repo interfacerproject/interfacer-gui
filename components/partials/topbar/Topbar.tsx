@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import LocationMenu from "components/LocationMenu";
+import NotificationBell from "components/NotificationBell";
+import SearchBar from "components/SearchBar";
 import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import LocationMenu from "./LocationMenu";
-import NotificationBell from "./NotificationBell";
-import SearchBar from "./SearchBar";
 import TopbarUser from "./TopbarUser";
 
 type topbarProps = {

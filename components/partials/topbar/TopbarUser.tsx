@@ -1,13 +1,17 @@
-import { Button, Popover, Text } from "@bbtgnn/polaris-interfacer";
-import { Logout } from "@carbon/icons-react";
 import { User } from "contexts/AuthContext";
 import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import BrUserAvatar from "./brickroom/BrUserAvatar";
-import { ChildrenProp } from "./brickroom/types";
+
+// Components
+import { Button, Popover, Text } from "@bbtgnn/polaris-interfacer";
+import { Logout } from "@carbon/icons-react";
+import BrUserAvatar from "components/brickroom/BrUserAvatar";
+import { ChildrenProp } from "components/brickroom/types";
+import Link from "next/link";
+
+//
 
 export default function TopbarUser() {
   const { user } = useAuth();
