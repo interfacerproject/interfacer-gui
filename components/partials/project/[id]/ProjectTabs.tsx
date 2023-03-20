@@ -7,16 +7,20 @@ import ProjectDetailOverview from "components/ProjectDetailOverview";
 import RelationshipTree from "components/RelationshipTree";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ProjectDpp from "./ProjectDpp";
 
-const ProjectTabs = () => {
+const ProjectTabs = ({ select }: { select: number }) => {
+  console.log("ProjectTabs", select);
   const { project } = useProject();
   const router = useRouter();
   const { t } = useTranslation("common");
   const { id } = router.query;
 
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(select);
+  useEffect(() => {
+    setSelected(select);
+  }, [select]);
   const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
 
   return (

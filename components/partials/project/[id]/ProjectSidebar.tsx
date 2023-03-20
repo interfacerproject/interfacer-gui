@@ -4,6 +4,7 @@ import { ListBoxes, MagicWand, ParentChild, Renew, Tools } from "@carbon/icons-r
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
+import { useProject } from "components/layout/FetchProjectLayout";
 import OshTool from "components/Osh";
 import ProjectContributors from "components/ProjectContributors";
 import ProjectDisplay from "components/ProjectDisplay";
@@ -20,14 +21,14 @@ import { useRouter } from "next/router";
 import { Dispatch, SetStateAction, useState } from "react";
 
 interface Props {
-  project: Partial<EconomicResource>;
   contributions: ResourceProposalsQuery;
   setSelected: Dispatch<SetStateAction<number>>;
 }
 
 export default function ProjectSidebar(props: Props) {
   const { t } = useTranslation("common");
-  const { project, contributions, setSelected } = props;
+  const { contributions, setSelected } = props;
+  const { project } = useProject();
   const { user } = useAuth();
   const { getItem, setItem } = useStorage();
   const [inList, setInList] = useState<boolean>(false);

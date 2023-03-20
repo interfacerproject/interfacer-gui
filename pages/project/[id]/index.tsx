@@ -41,14 +41,13 @@ import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
 import ProjectTabs from "components/partials/project/[id]/ProjectTabs";
 import ProjectTypeChip from "components/ProjectTypeChip";
 import { NextPageWithLayout } from "pages/_app";
+import ProjectHeader from "components/partials/project/[id]/ProjectHeader";
 
 //
 
 const Project: NextPageWithLayout = () => {
   const router = useRouter();
-  const { user } = useAuth();
   const { id } = router.query;
-  const { t } = useTranslation("common");
   // const [project, setProject] = useState<EconomicResource | undefined>();
   const [images, setImages] = useState<string[]>([]);
   const [selected, setSelected] = useState(0);
@@ -81,36 +80,19 @@ const Project: NextPageWithLayout = () => {
 
   if (!project) return null;
 
-  const sidebar = <ProjectSidebar project={project} contributions={contributions!} setSelected={setSelected} />;
+  const sidebar = <ProjectSidebar contributions={contributions!} setSelected={setSelected} />;
 
   return (
     <>
       <CreatedBanner />
       <EditBanner />
-
-      {/* Main */}
       <div className="p-4 container mx-auto grid grid-cols-1 lg:grid-cols-4 max-w-6xl bg-[#f8f7f4]">
-        {/* Content */}
         <div className="lg:col-span-3 lg:pr-4">
           <Stack vertical spacing="extraLoose">
-            <Stack vertical spacing="tight">
-              <BrBreadcrumb
-                crumbs={[
-                  { name: t("Projects"), href: "/projects" },
-                  { name: project.conformsTo!.name, href: `/projects?conformTo=${project.conformsTo!.id}` },
-                ]}
-              />
-              <ProjectTypeChip projectNode={project} />
-              <Text as="h1" variant="heading2xl" id="project-title">
-                {project.name}
-              </Text>
-              <p className="text-primary font-mono">
-                {t("ID:")} {project.id}
-              </p>
-            </Stack>
+            <ProjectHeader />
             <BrThumbinailsGallery images={images} />
             <div className="block lg:hidden">{sidebar}</div>
-            <ProjectTabs />
+            <ProjectTabs select={selected} />
           </Stack>
         </div>
         <div className="hidden lg:block">{sidebar}</div>
