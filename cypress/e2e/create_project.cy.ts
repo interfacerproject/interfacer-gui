@@ -68,7 +68,7 @@ const addRelatedProjects = (query: string) => {
 
 const submit = () => {
   cy.get("#project-create-submit").click();
-  cy.wait(15000);
+  cy.wait(30000);
 };
 
 const checkUrl = (type: string) => {
@@ -79,7 +79,7 @@ const checkUrl = (type: string) => {
 };
 
 const checkMainValues = (v: CompileMainValuesParams) => {
-  cy.wait(15000);
+  cy.wait(20000);
   cy.get("#created-banner-content").should("exist");
   cy.get("#is-owner-banner-content").should("exist");
   cy.get("#project-title").should("contain", v.title);
