@@ -63,6 +63,24 @@ export function waitForData(name = request) {
   return cy.wait(`@${name}`);
 }
 
+export const hasOperationName = (req: any, operationName: string) => {
+  const { body } = req;
+  return body.hasOwnProperty("operationName") && body.operationName === operationName;
+};
+
+// Alias query if operationName matches
+export const aliasQuery = (req: any, operationName: string) => {
+  if (hasOperationName(req, operationName)) {
+    req.alias = `gql${operationName}Query`;
+  }
+};
+
+export const aliasMutation = (req: any, operationName: string) => {
+  if (hasOperationName(req, operationName)) {
+    req.alias = `gql${operationName}Mutation`;
+  }
+};
+
 export const randomCity = () => {
   const cities = [
     "Rome",

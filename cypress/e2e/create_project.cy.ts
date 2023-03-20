@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { randomString } from "../utils";
+import { aliasMutation, randomString } from "../utils";
 import { randomCity } from "../utils";
+import { aliasQuery } from "../utils";
 
 const visitCreateProject = (type: string) => {
   cy.login();
@@ -68,18 +69,19 @@ const addRelatedProjects = (query: string) => {
 
 const submit = () => {
   cy.get("#project-create-submit").click();
-  cy.wait(30000);
+  // cy.wait(20000)
+  cy.wait("@gqlCreateProjectMutation", { timeout: 60000 });
 };
 
 const checkUrl = (type: string) => {
+  cy.wait("@gqlgetResourceTableQuery", { timeout: 120000 });
   const url = cy.url();
   url.should("not.contain", `/create/project/${type}"`);
   url.should("contain", "/project");
-  // url.should("contain", "created=true");
+  url.should("contain", "created=true");
 };
 
 const checkMainValues = (v: CompileMainValuesParams) => {
-  cy.wait(20000);
   cy.get("#created-banner-content").should("exist");
   cy.get("#is-owner-banner-content").should("exist");
   cy.get("#project-title").should("contain", v.title);
@@ -127,6 +129,15 @@ const checkContributors = () => {
   cy.get("#sidebar-contributors").should("exist").should("contain", "1 contributors");
 };
 
+const aliasQueryandMutation = () => {
+  cy.intercept("POST", Cypress.env("ZENFLOWS_URL"), req => {
+    // Queries
+    aliasQuery(req, "getResourceTable");
+    // Mutations
+    aliasMutation(req, "CreateProject");
+  });
+};
+
 describe("when user visits create design and submit autoimport field", () => {
   beforeEach(() => {
     visitCreateProject("design");
@@ -148,6 +159,7 @@ describe("when user visits create design and submit autoimport field", () => {
 describe("when user visits create design and submit manually data", () => {
   beforeEach(() => {
     visitCreateProject("design");
+    aliasQueryandMutation();
   });
   it("should create a new design", () => {
     const mainValues: CompileMainValuesParams = {
@@ -173,6 +185,7 @@ describe("when user visits create design and submit manually data", () => {
 describe("when user visits create product and submit manually data", () => {
   beforeEach(() => {
     visitCreateProject("product");
+    aliasQueryandMutation();
   });
 
   it("should create a new product", () => {
@@ -207,6 +220,7 @@ describe("when user visits create product and submit manually data", () => {
 describe("when user visits create service and submit manually data", () => {
   beforeEach(() => {
     visitCreateProject("services");
+    aliasQueryandMutation();
   });
 
   it("should create a new service", () => {
