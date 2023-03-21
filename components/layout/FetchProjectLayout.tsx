@@ -3,7 +3,7 @@ import { Spinner } from "@bbtgnn/polaris-interfacer";
 import { useAuth } from "hooks/useAuth";
 import { EconomicResource, Exact, GetProjectLayoutQuery, GetProjectLayoutQueryVariables } from "lib/types";
 import { useRouter } from "next/router";
-import { createContext, useContext } from "react";
+import { createContext, Dispatch, SetStateAction, useContext, useState } from "react";
 
 //
 interface ProjectContextValue {
@@ -12,6 +12,8 @@ interface ProjectContextValue {
     variables?: Partial<Exact<{ id: string }>> | undefined
   ) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
   isOwner?: boolean;
+  selected: number;
+  setSelected: Dispatch<SetStateAction<number>>;
 }
 
 export const ProjectContext = createContext<ProjectContextValue>({} as ProjectContextValue);
@@ -28,6 +30,7 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
   const { children, projectIdParam = "id" } = props;
   const router = useRouter();
   const id = router.query[projectIdParam] as string;
+  const [selected, setSelected] = useState(0);
   const { user } = useAuth();
 
   const { loading, data, refetch } = useQuery<GetProjectLayoutQuery, GetProjectLayoutQueryVariables>(
@@ -55,6 +58,8 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
     project,
     refetch,
     isOwner,
+    selected,
+    setSelected,
   };
 
   return <ProjectContext.Provider value={contextValue}>{children}</ProjectContext.Provider>;

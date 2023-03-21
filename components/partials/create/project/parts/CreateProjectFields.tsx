@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { CreateProjectValues } from "../CreateProjectForm";
 
 // Steps
-import { getSectionsByProjectType } from "components/partials/project/[id]/projectSections";
+import { getSectionsByProjectType } from "components/partials/project/projectSections";
 
 // Components
 import { Stack } from "@bbtgnn/polaris-interfacer";

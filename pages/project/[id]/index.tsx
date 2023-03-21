@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
-import { QUERY_RESOURCE_PROPOSAlS } from "lib/QueryAndMutation";
-import { ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/types";
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
@@ -40,18 +37,8 @@ const Project: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query;
   const [images, setImages] = useState<string[]>([]);
-  const [selected, setSelected] = useState(0);
 
   const { project } = useProject();
-
-  const ref = useRef(null);
-
-  const { data: contributions } = useQuery<ResourceProposalsQuery, ResourceProposalsQueryVariables>(
-    QUERY_RESOURCE_PROPOSAlS,
-    {
-      variables: { id: id as string },
-    }
-  );
 
   // (Temp) Redirect if project is LOSH owned
   if (process.env.NEXT_PUBLIC_LOSH_ID == project?.primaryAccountable?.id) {
@@ -66,11 +53,11 @@ const Project: NextPageWithLayout = () => {
         ? project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
         : metadataImage;
     setImages(_images);
-  }, [project, ref, selected]);
+  }, [project]);
 
   if (!project) return null;
 
-  const sidebar = <ProjectSidebar contributions={contributions!} setSelected={setSelected} />;
+  const sidebar = <ProjectSidebar />;
 
   return (
     <>
@@ -82,7 +69,7 @@ const Project: NextPageWithLayout = () => {
             <ProjectHeader />
             <BrThumbinailsGallery images={images} />
             <div className="block lg:hidden">{sidebar}</div>
-            <ProjectTabs select={selected} />
+            <ProjectTabs />
           </Stack>
         </div>
         <div className="hidden lg:block">{sidebar}</div>
@@ -95,8 +82,8 @@ const Project: NextPageWithLayout = () => {
 
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: "blocking", //indicates the type of fallback
+    paths: [],
+    fallback: "blocking",
   };
 };
 

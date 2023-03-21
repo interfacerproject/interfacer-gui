@@ -10,17 +10,12 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import ProjectDpp from "./ProjectDpp";
 
-const ProjectTabs = ({ select }: { select: number }) => {
-  console.log("ProjectTabs", select);
-  const { project } = useProject();
+const ProjectTabs = () => {
+  const { project, selected, setSelected } = useProject();
   const router = useRouter();
   const { t } = useTranslation("common");
   const { id } = router.query;
 
-  const [selected, setSelected] = useState(select);
-  useEffect(() => {
-    setSelected(select);
-  }, [select]);
   const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
 
   return (

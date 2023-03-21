@@ -1,5 +1,5 @@
 import { Link as PLink, Spinner } from "@bbtgnn/polaris-interfacer";
-import { isEditRouteAllowed } from "components/partials/project/[id]/projectSections";
+import { isEditRouteAllowed } from "components/partials/project/projectSections";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";

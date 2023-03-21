@@ -2,7 +2,7 @@ import { useProject } from "components/layout/FetchProjectLayout";
 import TableOfContents, { TOCLink } from "components/TableOfContents";
 import { ProjectType } from "components/types";
 import { useRouter } from "next/router";
-import { getSectionsByProjectType } from "../[id]/projectSections";
+import { getSectionsByProjectType } from "../projectSections";
 
 export default function EditProjectNav() {
   const { asPath } = useRouter();
