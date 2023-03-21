@@ -1,24 +1,20 @@
-import { ApolloQueryResult } from "@apollo/client";
 import { Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
-import { ListBoxes, MagicWand, ParentChild, Renew, Tools } from "@carbon/icons-react";
+import { ListBoxes, MagicWand, ParentChild } from "@carbon/icons-react";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import AddStar from "components/AddStar";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import { useProject } from "components/layout/FetchProjectLayout";
 import OshTool from "components/Osh";
 import ProjectContributors from "components/ProjectContributors";
-import ProjectDisplay from "components/ProjectDisplay";
-import ProjectLicenses from "components/ProjectLicenses";
 import { ProjectType } from "components/types";
 import WatchButton from "components/WatchButton";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
-import devLog from "lib/devLog";
-import { EconomicResource, Exact, GetProjectLayoutQuery, ResourceProposalsQuery } from "lib/types";
+import { ResourceProposalsQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { Dispatch, SetStateAction, useState } from "react";
+import ActionsCard from "./sidebar/ActionsCard";
 
 interface Props {
   contributions: ResourceProposalsQuery;
@@ -47,7 +43,6 @@ export default function ProjectSidebar(props: Props) {
     }
   };
   const isDesign = project.conformsTo?.name === ProjectType.DESIGN;
-  devLog("ProjectSidebar", project, isDesign);
   const licenses = project.metadata?.licenses?.length > 0 && project?.metadata?.licenses;
   const design = project.metadata?.design;
   const declarations = project.metadata?.declarations;
@@ -83,42 +78,7 @@ export default function ProjectSidebar(props: Props) {
         </Stack>
       </Card>
 
-      {/* Actions */}
-      {(licenses || design || haveDeclarations) && (
-        <Card sectioned>
-          <Stack vertical spacing="loose">
-            {licenses && <ProjectLicenses project={project} />}
-            {design && (
-              <div className="border rounded bg-surface-subdued p-1" id="linked-design">
-                <Link href={`/project/${design}`}>
-                  <a>
-                    <ProjectDisplay projectId={design} isProductDesign />
-                  </a>
-                </Link>
-              </div>
-            )}
-            <Stack vertical spacing="tight">
-              {" "}
-              {declarations.recyclable === "yes" && (
-                <div className="flex items-center space-x-2 text-primary">
-                  <Tools />
-                  <Text as="p" variant="bodyMd" fontWeight="medium" id="recycling-availability">
-                    {t("Available for recycling")}
-                  </Text>
-                </div>
-              )}
-              {declarations.repairable === "yes" && (
-                <div className="flex items-center space-x-2 text-primary">
-                  <Renew />
-                  <Text as="p" variant="bodyMd" fontWeight="medium" id="repairing-availability">
-                    {t("Available for repair")}
-                  </Text>
-                </div>
-              )}
-            </Stack>
-          </Stack>
-        </Card>
-      )}
+      <ActionsCard />
       {/* Contributions */}
       <Card sectioned>
         <Stack vertical>

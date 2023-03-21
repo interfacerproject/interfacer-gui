@@ -15,21 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useQuery } from "@apollo/client";
-import { useAuth } from "hooks/useAuth";
 import { QUERY_RESOURCE_PROPOSAlS } from "lib/QueryAndMutation";
 import { ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/types";
 import { GetStaticPaths } from "next";
-import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect, useRef, useState } from "react";
 
 // Components
-import { Stack, Text } from "@bbtgnn/polaris-interfacer";
-import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
-
-import dynamic from "next/dynamic";
-const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
+import { Stack } from "@bbtgnn/polaris-interfacer";
 
 // Icons
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
@@ -39,16 +33,12 @@ import CreatedBanner from "components/partials/project/[id]/CreatedBanner";
 import EditBanner from "components/partials/project/[id]/EditBanner";
 import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
 import ProjectTabs from "components/partials/project/[id]/ProjectTabs";
-import ProjectTypeChip from "components/ProjectTypeChip";
 import { NextPageWithLayout } from "pages/_app";
 import ProjectHeader from "components/partials/project/[id]/ProjectHeader";
-
-//
 
 const Project: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query;
-  // const [project, setProject] = useState<EconomicResource | undefined>();
   const [images, setImages] = useState<string[]>([]);
   const [selected, setSelected] = useState(0);
 

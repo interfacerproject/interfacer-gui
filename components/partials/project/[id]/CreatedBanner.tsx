@@ -9,7 +9,6 @@ const CreatedBanner = () => {
   const router = useRouter();
 
   const isCreated = router.query.created === "true";
-
   const [viewCreatedBanner, setViewCreatedBanner] = useState(false);
 
   useEffect(() => {
