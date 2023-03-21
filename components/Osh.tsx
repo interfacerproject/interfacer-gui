@@ -9,6 +9,7 @@ import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { Dispatch, useState } from "react";
 import { useProject } from "./layout/FetchProjectLayout";
+import { ProjectType } from "./types";
 
 declare type Color = "success" | "critical" | "warning" | "subdued" | "text-inverse";
 const OshLine = ({
@@ -86,6 +87,7 @@ const OshTool = () => {
   const { updateMetadata } = useProjectCRUD();
   const { user } = useAuth();
   const isOwner = user?.ulid === project.primaryAccountable!.id;
+  const isDesign = project.conformsTo?.name === ProjectType.DESIGN;
   const handleAnalyze = async () => {
     setLoading(true);
     if (!project.repo || !url.test(project.repo!)) {
@@ -115,7 +117,7 @@ const OshTool = () => {
     await refetch();
     setLoading(false);
   };
-
+  if (!isDesign) return null;
   return (
     <>
       {(oshRatings || isOwner) && (

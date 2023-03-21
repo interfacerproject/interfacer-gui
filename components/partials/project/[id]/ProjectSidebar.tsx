@@ -14,6 +14,7 @@ import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import ActionsCard from "./sidebar/ActionsCard";
 import ContributionsCard from "./sidebar/ContributionsCard";
+import RelationsCard from "./sidebar/RelationsCard";
 
 export default function ProjectSidebar() {
   const { t } = useTranslation("common");
@@ -68,29 +69,8 @@ export default function ProjectSidebar() {
 
       <ActionsCard />
       <ContributionsCard />
-      {/* Relations */}
-      <Card sectioned>
-        <Stack vertical spacing="loose">
-          <Text as="h2" variant="headingMd">
-            {t("Relations")}
-          </Text>
-          <Text color="success" as="p" variant="bodyMd">
-            {t("{{related}} related projects", { related: project.metadata.relations?.length || 0 })}
-          </Text>
-          <Button
-            id="seeRelations"
-            icon={<ParentChild />}
-            size="large"
-            fullWidth
-            monochrome
-            onClick={() => setSelected(1)}
-          >
-            {t("All relations")}
-          </Button>
-        </Stack>
-      </Card>
-      {/* Osh */}
-      {isDesign && <OshTool />}
+      <RelationsCard />
+      <OshTool />
     </div>
   );
 }
