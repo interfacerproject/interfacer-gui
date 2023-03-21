@@ -74,7 +74,7 @@ const submit = () => {
 };
 
 const checkUrl = (type: string) => {
-  cy.wait("@gqlgetResourceTableQuery", { timeout: 120000 });
+  cy.wait("@gqlgetProjectLayoutQuery", { timeout: 120000 });
   const url = cy.url();
   url.should("not.contain", `/create/project/${type}"`);
   url.should("contain", "/project");
@@ -132,7 +132,7 @@ const checkContributors = () => {
 const aliasQueryandMutation = () => {
   cy.intercept("POST", Cypress.env("ZENFLOWS_URL"), req => {
     // Queries
-    aliasQuery(req, "getResourceTable");
+    aliasQuery(req, "getProjectLayout");
     // Mutations
     aliasMutation(req, "CreateProject");
   });
