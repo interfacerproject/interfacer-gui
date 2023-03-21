@@ -44,18 +44,24 @@ const useCytoGraph = () => {
     const { data } = await fetchProcessGroup({ id });
     const pg = data.processGroup;
     if (!pg) return null;
-    //@ts-ignore
-    processGroups[pg.name] = {
-      id: pg.id,
-      name: pg.name,
-      note: pg.note,
-      type: pg.type,
-      groups: pg.groups!.edges.map(e => e.node.id),
-      groupedIn: pg.groupedIn ? await populateProcessGroups(pg.groupedIn.id, processGroups) : null,
-    };
+    const newProcessGroups = { ...processGroups };
+    Object.defineProperty(processGroups, pg.name, {
+      value: {
+        id: pg.id,
+        name: pg.name,
+        note: pg.note,
+        type: pg.type,
+        groups: pg.groups!.edges.map(e => e.node.id),
+        groupedIn: pg.groupedIn ? await populateProcessGroups(pg.groupedIn.id, processGroups) : null,
+      },
+      enumerable: true,
+      writable: true,
+    });
+    return newProcessGroups;
   };
 
-  const findProcessGroups = (dppChild: DppChild, processGroups: ProcessGroup) => {
+  const findProcessGroups = async (dppChild: DppChild, processGroups: ProcessGroup) => {
+    let newProcessGroups = processGroups;
     if (dppChild.type === "Process") {
       // @ts-ignore
       const id = dppChild.node.groupedIn.id;
@@ -67,24 +73,37 @@ const useCytoGraph = () => {
             break;
           }
         }
-        if (!found) populateProcessGroups(id, processGroups);
+        if (!found) {
+          const ppG = await populateProcessGroups(id, processGroups);
+          newProcessGroups = { ...newProcessGroups, ...ppG };
+        }
       }
     }
 
-    for (let c of dppChild.children) findProcessGroups(c, processGroups);
+    for (let c of dppChild.children) {
+      const fpG = await findProcessGroups(c, processGroups);
+      newProcessGroups = { ...newProcessGroups, ...fpG };
+    }
+    return newProcessGroups;
   };
 
   const differentiateResources = (dppChild: DppChild) => {
+    let new_: DppChild | null = null;
+    if (dppChild.type === "EconomicEvent")
+      // @ts-ignore
+      new_ = { children: [], type: dppChild.type, node: { ...dppChild.node, name: dppChild.node.action.id } };
     if (dppChild.type === "EconomicResource") {
       for (let c of dppChild.children) {
         // @ts-ignore
-        if (c.node.name == "modify") {
-          dppChild.node.id += c.node.id;
+        if (c.node.action.id === "modify") {
+          new_ = { children: [], type: dppChild.type, node: { ...dppChild.node, id: dppChild.node.id + c.node.id } };
           break;
         }
       }
     }
-    for (let c of dppChild.children) differentiateResources(c);
+    if (!new_) new_ = { children: [], type: dppChild.type, node: dppChild.node };
+    for (let c of dppChild.children) new_.children.push(differentiateResources(c));
+    return new_;
   };
 
   const flattenObject: (obj: Record<string, any>, parentKey?: string) => Record<string, any> = (
@@ -103,7 +122,9 @@ const useCytoGraph = () => {
     }, {});
   };
 
-  const toCompact = (dppChild: DppChild) => {
+  const isCompact = (compact: boolean, dppChild: DppChild) => {
+    if (!compact) return false;
+
     if (dppChild.type === "EconomicResource" || dppChild.type === "Process") return true;
     // else, we can assume: dppChild.type === "EconomicEvent"
     // @ts-ignore
@@ -128,23 +149,24 @@ const useCytoGraph = () => {
       if (!assignedUsers.has(agent.id)) {
         citoGraph.nodes.push({ data: { id: agent.id, ...flattenObject(agent) } });
         assignedUsers.add(agent.id);
+        citoGraph.edges.push({ data: { source: agent.id, target: agent.id } });
       }
     }
 
     if (!assignedNodes.has(dppChild.node.id)) {
       const origin = assignedNodes.size === 0;
       assignedNodes.add(dppChild.node.id);
-      if ((compact && toCompact(dppChild)) || !compact) {
+      if (!compact || isCompact(compact, dppChild)) {
         citoGraph.nodes.push({
           data: flattenObject({
+            origin: origin,
             type: dppChild.type,
             ...dppChild.node,
-            origin,
           }),
         });
       }
 
-      if (compact && toCompact(dppChild)) {
+      if (isCompact(compact, dppChild)) {
         if (pendingEdge.target === null) {
           pendingEdge.target = dppChild.node.id;
         } else {
@@ -174,17 +196,17 @@ const useCytoGraph = () => {
     }
   };
 
-  const generateGraph = async (
-    id: string,
-    processGroups: Record<string, any>,
-    doUsers: boolean,
-    addGroups: boolean,
-    compact: boolean
-  ) => {
+  const generateGraph = async (id: string, processGroups: any, doUsers: boolean, compact: boolean) => {
+    // const addGroups = Object.keys(processGroups).length !== 0;
+    console.log(Object.keys(processGroups).length !== 0);
+    const addGroups = true;
+    // let processGroups = {} as any
     const { data } = await fetchDPP({ id });
-    console.log(data);
-    const [dppChild] = data.economicResource?.traceDpp;
-    findProcessGroups(dppChild, processGroups);
+    const [oldDppChild] = data.economicResource?.traceDpp;
+
+    const dppChild = differentiateResources(oldDppChild);
+
+    if (addGroups) processGroups = await findProcessGroups(dppChild, processGroups);
 
     if (compact) doUsers = false;
 
@@ -204,8 +226,10 @@ const useCytoGraph = () => {
     }
 
     makeCyto(dppChild, citoGraph.elements, assignedNodes, assignedUsers, doUsers, compact, pendingEdge);
-    if (addGroups && Object.keys(processGroups).length != 0) {
-      for (const k in processGroups) citoGraph.groups.push(flattenObject(processGroups[k]));
+    if (addGroups) {
+      Object.keys(processGroups).forEach(k => {
+        citoGraph.groups.push(processGroups[k]);
+      });
     }
     return citoGraph;
   };

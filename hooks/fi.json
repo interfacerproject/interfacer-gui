@@ -1,0 +1,1823 @@
+{
+  "elements": {
+    "nodes": [
+      {
+        "data": {
+          "origin": true,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "1",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZFSYM433WMM86536E9QQ0",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCE4FBT3FBMED3JANH5HC",
+          "custodian.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "id": "063EC255EADPZKTSEY75H3V7SR",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "fancy collaborative bike",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "1",
+          "previousEvent.id": "063EC255DG9KG2NCKQ0SGZQAZM",
+          "primaryAccountable.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "fancy_collaborative_bike-5547",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "transfer",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:31.445447Z",
+          "id": "063EC255DG9KG2NCKQ0SGZQAZM",
+          "inputOf.id": null,
+          "note": "Transfer fancy bike from service_prov2 to designer2",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC251D670XHZY6HQNC9T6BW",
+          "provider.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC251DDEWSCS5X056X1M6PR",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": "063CRZCE4FBT3FBMED3JANH5HC",
+          "toResourceInventoriedAs.id": "063EC255EADPZKTSEY75H3V7SR",
+          "triggeredBy.id": null,
+          "name": "transfer"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "0",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZFSYM433WMM86536E9QQ0",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCJY9FEAGBR6GHHX53XBG",
+          "custodian.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "id": "063EC251DDEWSCS5X056X1M6PR",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "fancy collaborative bike",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "0",
+          "previousEvent.id": "063EC255DG9KG2NCKQ0SGZQAZM",
+          "primaryAccountable.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "fancy_collaborative_bike-5547",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "produce",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:30.387420Z",
+          "id": "063EC251D670XHZY6HQNC9T6BW",
+          "inputOf.id": null,
+          "note": "produce fancy collaborative bike",
+          "outputOf.id": "063EC233KJ3J6ZBH2YFTSWEMW4",
+          "previousEvent.id": null,
+          "provider.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZFSYM433WMM86536E9QQ0",
+          "resourceInventoriedAs.id": "063EC251DDEWSCS5X056X1M6PR",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": "063CRZCJY9FEAGBR6GHHX53XBG",
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "produce"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "Process",
+          "basedOn.id": null,
+          "classifiedAs": null,
+          "deletable": false,
+          "finished": false,
+          "groupedIn.id": "063EC25BJN3AFCF5T026MYG780",
+          "hasBeginning": "2023-03-15T16:09:14.618543Z",
+          "hasEnd": "2023-03-15T16:09:14.618543Z",
+          "id": "063EC233KJ3J6ZBH2YFTSWEMW4",
+          "name": "Assemble_bike",
+          "note": "Assemble bike 1-hour service by service_prov2",
+          "plannedWithin.id": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "work",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": "1",
+          "effortQuantity.hasUnit.id": "063CRZD4B0PETV54K8EC69AMPG",
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:29.985202Z",
+          "id": "063EC24ZM5QFA6X7CAPHK3H6JW",
+          "inputOf.id": "063EC233KJ3J6ZBH2YFTSWEMW4",
+          "note": "work to assemble bike",
+          "outputOf.id": null,
+          "previousEvent.id": null,
+          "provider.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZFQCVC0966B1XFJJF0E8G",
+          "resourceInventoriedAs.id": null,
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": null,
+          "resourceQuantity.hasUnit.id": null,
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "work"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "consume",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:29.341437Z",
+          "id": "063EC24X46SEM4KE7A0Y4ZKRQ4",
+          "inputOf.id": "063EC233KJ3J6ZBH2YFTSWEMW4",
+          "note": "consume aluminium bike frame",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC24RF77B3QYWF9ZYMNAF1M",
+          "provider.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC24RGFNTN147N319WHMTVM",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "consume"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "0",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZD6QR84H8AY6K0GP2MDA8",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCJY9FEAGBR6GHHX53XBG",
+          "custodian.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "id": "063EC24RGFNTN147N319WHMTVM",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "aluminium bike frame",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "0",
+          "previousEvent.id": "063EC24X46SEM4KE7A0Y4ZKRQ4",
+          "primaryAccountable.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "aluminium_bike_frame-2606",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "transfer",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:28.132994Z",
+          "id": "063EC24RF77B3QYWF9ZYMNAF1M",
+          "inputOf.id": null,
+          "note": "Transfer aluminium bike frame from designer2 to service_prov2",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC23R6W1J3EM1F10VWSB8KM",
+          "provider.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC23R7TEXCREYVHNCZK87KW",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": "063CRZCJY9FEAGBR6GHHX53XBG",
+          "toResourceInventoriedAs.id": "063EC24RGFNTN147N319WHMTVM",
+          "triggeredBy.id": null,
+          "name": "transfer"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "0",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZD6QR84H8AY6K0GP2MDA8",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCE4FBT3FBMED3JANH5HC",
+          "custodian.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "id": "063EC23R7TEXCREYVHNCZK87KW",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "aluminium bike frame",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "0",
+          "previousEvent.id": "063EC24RF77B3QYWF9ZYMNAF1M",
+          "primaryAccountable.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "aluminium_bike_frame-2606",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "transfer",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:19.881450Z",
+          "id": "063EC23R6W1J3EM1F10VWSB8KM",
+          "inputOf.id": null,
+          "note": "Transfer aluminium bike frame from manufacturer1 to designer2",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC23NDYRSKTG2JFTVB2YY48",
+          "provider.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC23NE5A6CWN2J7JWRTE96C",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": "063CRZCE4FBT3FBMED3JANH5HC",
+          "toResourceInventoriedAs.id": "063EC23R7TEXCREYVHNCZK87KW",
+          "triggeredBy.id": null,
+          "name": "transfer"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "0",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZD6QR84H8AY6K0GP2MDA8",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCP21RMSX53RW5SYBBGKC",
+          "custodian.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "id": "063EC23NE5A6CWN2J7JWRTE96C",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "aluminium bike frame",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "0",
+          "previousEvent.id": "063EC23R6W1J3EM1F10VWSB8KM",
+          "primaryAccountable.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "aluminium_bike_frame-2606",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "produce",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:19.173253Z",
+          "id": "063EC23NDYRSKTG2JFTVB2YY48",
+          "inputOf.id": null,
+          "note": "produce aluminium bike frame",
+          "outputOf.id": "063EC22PSGXBKC3ATPD7EGFPGR",
+          "previousEvent.id": null,
+          "provider.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZD6QR84H8AY6K0GP2MDA8",
+          "resourceInventoriedAs.id": "063EC23NE5A6CWN2J7JWRTE96C",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": "063CRZCP21RMSX53RW5SYBBGKC",
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "produce"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "Process",
+          "basedOn.id": null,
+          "classifiedAs": null,
+          "deletable": false,
+          "finished": false,
+          "groupedIn.id": null,
+          "hasBeginning": "2023-03-15T16:09:11.187035Z",
+          "hasEnd": "2023-03-15T16:09:11.187035Z",
+          "id": "063EC22PSGXBKC3ATPD7EGFPGR",
+          "name": "Manifacture_aluminium_bike_frame",
+          "note": "Creation of aluminum bike frame by Manufacturer1",
+          "plannedWithin.id": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "consume",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:18.458498Z",
+          "id": "063EC23JM6HTNYNNXBZAYGRB6G",
+          "inputOf.id": "063EC22PSGXBKC3ATPD7EGFPGR",
+          "note": "consume aluminium for bike frame",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC23EDV5YQ4GP154NT82W4R",
+          "provider.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC23EEAS51B2VF6PKP3E9DC",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "5",
+          "resourceQuantity.hasUnit.id": "063CRZD1YFXW38RZH2BM799KJ4",
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "consume"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "0",
+          "accountingQuantity.hasUnit.id": "063CRZD1YFXW38RZH2BM799KJ4",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZD81SA37X8PEQQY919YTR",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCP21RMSX53RW5SYBBGKC",
+          "custodian.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "id": "063EC23EEAS51B2VF6PKP3E9DC",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "aluminium",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD1YFXW38RZH2BM799KJ4",
+          "onhandQuantityHas.numericalValue": "0",
+          "previousEvent.id": "063EC23JM6HTNYNNXBZAYGRB6G",
+          "primaryAccountable.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "aluminium-2399",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "raise",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:17.377810Z",
+          "id": "063EC23EDV5YQ4GP154NT82W4R",
+          "inputOf.id": null,
+          "note": "create resource",
+          "outputOf.id": null,
+          "previousEvent.id": null,
+          "provider.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZD81SA37X8PEQQY919YTR",
+          "resourceInventoriedAs.id": "063EC23EEAS51B2VF6PKP3E9DC",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "5",
+          "resourceQuantity.hasUnit.id": "063CRZD1YFXW38RZH2BM799KJ4",
+          "toLocation.id": "063CRZCP21RMSX53RW5SYBBGKC",
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "raise"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "work",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": "8",
+          "effortQuantity.hasUnit.id": "063CRZD4B0PETV54K8EC69AMPG",
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:17.756998Z",
+          "id": "063EC23FVH02D0FPX4HC54161C",
+          "inputOf.id": "063EC22PSGXBKC3ATPD7EGFPGR",
+          "note": "work to manufacture bike frame",
+          "outputOf.id": null,
+          "previousEvent.id": null,
+          "provider.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVQMPTT0V40Z0DQR4NMNG",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZD99A2GPHVXWHB57PGT7G",
+          "resourceInventoriedAs.id": null,
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": null,
+          "resourceQuantity.hasUnit.id": null,
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "work"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "cite",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:28.971813Z",
+          "id": "063EC24VNFAX9G2DZNQ5Y3ZYV8",
+          "inputOf.id": "063EC233KJ3J6ZBH2YFTSWEMW4",
+          "note": "cite design to build bike",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC23CSDC12Z6EPEEFSDVK0M",
+          "provider.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC23CSXB852WBM37BRSFYJC",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "cite"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "1",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZDY5CQKSMBT01H9NKV2RC",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCBQMEH4WNBMASJSV6CNW",
+          "custodian.id": "0630EEVN6YP4P4R5AY5CFDF5F0",
+          "id": "063EC23CSXB852WBM37BRSFYJC",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "funky bike design",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "1",
+          "previousEvent.id": "063EC24VNFAX9G2DZNQ5Y3ZYV8",
+          "primaryAccountable.id": "0630EEVN6YP4P4R5AY5CFDF5F0",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "funky_bike_design-8082",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "produce",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:16.953264Z",
+          "id": "063EC23CSDC12Z6EPEEFSDVK0M",
+          "inputOf.id": null,
+          "note": "produce design for funky bike",
+          "outputOf.id": "063EC239ZBWNFSF70B7GNYPBZC",
+          "previousEvent.id": null,
+          "provider.id": "0630EEVN6YP4P4R5AY5CFDF5F0",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVN6YP4P4R5AY5CFDF5F0",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZDY5CQKSMBT01H9NKV2RC",
+          "resourceInventoriedAs.id": "063EC23CSXB852WBM37BRSFYJC",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": "063CRZCBQMEH4WNBMASJSV6CNW",
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "produce"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "Process",
+          "basedOn.id": null,
+          "classifiedAs": null,
+          "deletable": false,
+          "finished": false,
+          "groupedIn.id": "063EC25BJN3AFCF5T026MYG780",
+          "hasBeginning": "2023-03-15T16:09:16.253262Z",
+          "hasEnd": "2023-03-15T16:09:16.253262Z",
+          "id": "063EC239ZBWNFSF70B7GNYPBZC",
+          "name": "Design_funky_bike",
+          "note": "Design of funky bike by Designer1",
+          "plannedWithin.id": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "work",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": "8",
+          "effortQuantity.hasUnit.id": "063CRZD4B0PETV54K8EC69AMPG",
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:16.588239Z",
+          "id": "063EC23BBBFT6DBABDK8469Y0W",
+          "inputOf.id": "063EC239ZBWNFSF70B7GNYPBZC",
+          "note": "work to design funky bike",
+          "outputOf.id": null,
+          "previousEvent.id": null,
+          "provider.id": "0630EEVN6YP4P4R5AY5CFDF5F0",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVN6YP4P4R5AY5CFDF5F0",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZDZCJ80GZZD8H1CV47CT0",
+          "resourceInventoriedAs.id": null,
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": null,
+          "resourceQuantity.hasUnit.id": null,
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "work"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "consume",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:28.592722Z",
+          "id": "063EC24T6DTCQZWZ8JZNK487DR",
+          "inputOf.id": "063EC233KJ3J6ZBH2YFTSWEMW4",
+          "note": "consume mirror for bike",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC24PX4PHAG4RF33EXQ94VC",
+          "provider.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC24PY5FN040BFABMNM48DW",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "consume"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "0",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZES5KXCNGQRKZ42Q5X2KW",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCJY9FEAGBR6GHHX53XBG",
+          "custodian.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "id": "063EC24PY5FN040BFABMNM48DW",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "magic bike mirror",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "0",
+          "previousEvent.id": "063EC24T6DTCQZWZ8JZNK487DR",
+          "primaryAccountable.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "magic_bike_mirror-8998",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "transfer",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:27.741709Z",
+          "id": "063EC24PX4PHAG4RF33EXQ94VC",
+          "inputOf.id": null,
+          "note": "Transfer magic bike mirror from designer2 to service_prov2",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC24N6JK5H11ERFR0T2W54G",
+          "provider.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVQ2ZKZG83BC1R7Q2VMC8",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC24N7Q4XMGNC76NMHZM1Q8",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": "063CRZCJY9FEAGBR6GHHX53XBG",
+          "toResourceInventoriedAs.id": "063EC24PY5FN040BFABMNM48DW",
+          "triggeredBy.id": null,
+          "name": "transfer"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "0",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZES5KXCNGQRKZ42Q5X2KW",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCE4FBT3FBMED3JANH5HC",
+          "custodian.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "id": "063EC24N7Q4XMGNC76NMHZM1Q8",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "magic bike mirror",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "0",
+          "previousEvent.id": "063EC24PX4PHAG4RF33EXQ94VC",
+          "primaryAccountable.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "magic_bike_mirror-8998",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "transfer",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:27.308603Z",
+          "id": "063EC24N6JK5H11ERFR0T2W54G",
+          "inputOf.id": null,
+          "note": "Transfer magic bike mirror from manufacturer2 to designer2",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC24KPC0SJ2J9HZKZZPB5NM",
+          "provider.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC244GVQBGJHCGAYWSEHBRM",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": "063CRZCE4FBT3FBMED3JANH5HC",
+          "toResourceInventoriedAs.id": "063EC24N7Q4XMGNC76NMHZM1Q8",
+          "triggeredBy.id": null,
+          "name": "transfer"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "0",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZES5KXCNGQRKZ42Q5X2KW",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCRC3JQGBSTGDKX7ACVER",
+          "custodian.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "id": "063EC244GVQBGJHCGAYWSEHBRM063EC24KPC0SJ2J9HZKZZPB5NM",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "magic bike mirror",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "0",
+          "previousEvent.id": "063EC24N6JK5H11ERFR0T2W54G",
+          "primaryAccountable.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "magic_bike_mirror-8998",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "modify",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:26.909194Z",
+          "id": "063EC24KPC0SJ2J9HZKZZPB5NM",
+          "inputOf.id": null,
+          "note": "modify mirror into packaged mirror",
+          "outputOf.id": "063EC24CXSEC2FD4BKPDGQ5N4R",
+          "previousEvent.id": "063EC24HDGG2M40S1XS0EW2WJ8",
+          "provider.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC244GVQBGJHCGAYWSEHBRM",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "modify"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "Process",
+          "basedOn.id": null,
+          "classifiedAs": null,
+          "deletable": false,
+          "finished": false,
+          "groupedIn.id": "063EC25NBA6717W8G048XM6G68",
+          "hasBeginning": "2023-03-15T16:09:25.196571Z",
+          "hasEnd": "2023-03-15T16:09:25.196571Z",
+          "id": "063EC24CXSEC2FD4BKPDGQ5N4R",
+          "name": "Packaging_magic_bike_mirror",
+          "note": "Packaging magic bike mirror by Manufacturer2",
+          "plannedWithin.id": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "accept",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:26.290133Z",
+          "id": "063EC24HDGG2M40S1XS0EW2WJ8",
+          "inputOf.id": "063EC24CXSEC2FD4BKPDGQ5N4R",
+          "note": "accept mirror for packaging",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC24B4E10EZ5D089Y39SF30",
+          "provider.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC244GVQBGJHCGAYWSEHBRM",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "accept"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "0",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZES5KXCNGQRKZ42Q5X2KW",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCRC3JQGBSTGDKX7ACVER",
+          "custodian.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "id": "063EC244GVQBGJHCGAYWSEHBRM063EC24B4E10EZ5D089Y39SF30",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "magic bike mirror",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "0",
+          "previousEvent.id": "063EC24N6JK5H11ERFR0T2W54G",
+          "primaryAccountable.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "magic_bike_mirror-8998",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "modify",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:24.728308Z",
+          "id": "063EC24B4E10EZ5D089Y39SF30",
+          "inputOf.id": null,
+          "note": "modify mirror into painted mirror",
+          "outputOf.id": "063EC246QETNRQJAVM3C58B7A4",
+          "previousEvent.id": "063EC249KVR9SC499X2635SQBW",
+          "provider.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC244GVQBGJHCGAYWSEHBRM",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "modify"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "Process",
+          "basedOn.id": null,
+          "classifiedAs": null,
+          "deletable": false,
+          "finished": false,
+          "groupedIn.id": "063EC25NBA6717W8G048XM6G68",
+          "hasBeginning": "2023-03-15T16:09:23.513629Z",
+          "hasEnd": "2023-03-15T16:09:23.513629Z",
+          "id": "063EC246QETNRQJAVM3C58B7A4",
+          "name": "Painting_magic_bike_mirror",
+          "note": "Painting magic bike mirror by Manufacturer2",
+          "plannedWithin.id": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "accept",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:24.346858Z",
+          "id": "063EC249KVR9SC499X2635SQBW",
+          "inputOf.id": "063EC246QETNRQJAVM3C58B7A4",
+          "note": "accept mirror for painting",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC244GBSQFGQ8M82KST4AE4",
+          "provider.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC244GVQBGJHCGAYWSEHBRM",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "accept"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "0",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZES5KXCNGQRKZ42Q5X2KW",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCRC3JQGBSTGDKX7ACVER",
+          "custodian.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "id": "063EC244GVQBGJHCGAYWSEHBRM",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "magic bike mirror",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "0",
+          "previousEvent.id": "063EC24N6JK5H11ERFR0T2W54G",
+          "primaryAccountable.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "magic_bike_mirror-8998",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "produce",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:23.030743Z",
+          "id": "063EC244GBSQFGQ8M82KST4AE4",
+          "inputOf.id": null,
+          "note": "produce magic bike mirror",
+          "outputOf.id": "063EC23ZX7ZVG670T641KB0KY4",
+          "previousEvent.id": null,
+          "provider.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZES5KXCNGQRKZ42Q5X2KW",
+          "resourceInventoriedAs.id": "063EC244GVQBGJHCGAYWSEHBRM",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": "063CRZCRC3JQGBSTGDKX7ACVER",
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "produce"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "Process",
+          "basedOn.id": null,
+          "classifiedAs": null,
+          "deletable": false,
+          "finished": false,
+          "groupedIn.id": "063EC25H2V4WPW1TWHV9V3TWFC",
+          "hasBeginning": "2023-03-15T16:09:21.868058Z",
+          "hasEnd": "2023-03-15T16:09:21.868058Z",
+          "id": "063EC23ZX7ZVG670T641KB0KY4",
+          "name": "Creation_magic_bike_mirror",
+          "note": "Creation of magic bike mirror by Manufacturer2",
+          "plannedWithin.id": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "consume",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:22.626246Z",
+          "id": "063EC2430J1V2B93HB08ZE6XWG",
+          "inputOf.id": "063EC23ZX7ZVG670T641KB0KY4",
+          "note": "consume glass for bike mirror",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC23YGG4G25JC1RFDYJK1PG",
+          "provider.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC23YH3R1ZE2WEFEJT47A5C",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "0.2",
+          "resourceQuantity.hasUnit.id": "063CRZD1YFXW38RZH2BM799KJ4",
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "consume"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "0.0",
+          "accountingQuantity.hasUnit.id": "063CRZD1YFXW38RZH2BM799KJ4",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZENB3A8502EFZE7WP9MSM",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCRC3JQGBSTGDKX7ACVER",
+          "custodian.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "id": "063EC23YH3R1ZE2WEFEJT47A5C",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "glass",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD1YFXW38RZH2BM799KJ4",
+          "onhandQuantityHas.numericalValue": "0.0",
+          "previousEvent.id": "063EC2430J1V2B93HB08ZE6XWG",
+          "primaryAccountable.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "glass-7503",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "raise",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:21.505597Z",
+          "id": "063EC23YGG4G25JC1RFDYJK1PG",
+          "inputOf.id": null,
+          "note": "create resource",
+          "outputOf.id": null,
+          "previousEvent.id": null,
+          "provider.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZENB3A8502EFZE7WP9MSM",
+          "resourceInventoriedAs.id": "063EC23YH3R1ZE2WEFEJT47A5C",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "0.2",
+          "resourceQuantity.hasUnit.id": "063CRZD1YFXW38RZH2BM799KJ4",
+          "toLocation.id": "063CRZCRC3JQGBSTGDKX7ACVER",
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "raise"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "cite",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:22.253089Z",
+          "id": "063EC241EGEM8CQQ2EBDEK0EY4",
+          "inputOf.id": "063EC23ZX7ZVG670T641KB0KY4",
+          "note": "cite design to make mirror",
+          "outputOf.id": null,
+          "previousEvent.id": "063EC23WT5NSPXF6RY28KWFK2M",
+          "provider.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": null,
+          "resourceInventoriedAs.id": "063EC23WTE0KZKY7BMAZQ9XHXR",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "cite"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicResource",
+          "accountingQuantity.hasNumericalValue": "1",
+          "accountingQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "classifiedAs": null,
+          "conformsTo.id": "063CRZEG0N2FP1Z9A2XRK1H8EG",
+          "containedIn.id": null,
+          "currentLocation.id": "063CRZCE4FBT3FBMED3JANH5HC",
+          "custodian.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "id": "063EC23WTE0KZKY7BMAZQ9XHXR",
+          "license": null,
+          "licensor": null,
+          "lot.id": null,
+          "metadata": null,
+          "name": "magic mirror design",
+          "note": null,
+          "okhv": null,
+          "onhandQuantityHas.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "onhandQuantityHas.numericalValue": "1",
+          "previousEvent.id": "063EC241EGEM8CQQ2EBDEK0EY4",
+          "primaryAccountable.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "repo": null,
+          "stage.id": null,
+          "state.id": null,
+          "trackingIdentifier": "magic_mirror_design-2639",
+          "unitOfEffort.id": null,
+          "version": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "produce",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": null,
+          "effortQuantity.hasUnit.id": null,
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:21.052345Z",
+          "id": "063EC23WT5NSPXF6RY28KWFK2M",
+          "inputOf.id": null,
+          "note": "produce design for magic mirror",
+          "outputOf.id": "063EC23T0K7P97SN3QQ9QRGZ6R",
+          "previousEvent.id": null,
+          "provider.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZEG0N2FP1Z9A2XRK1H8EG",
+          "resourceInventoriedAs.id": "063EC23WTE0KZKY7BMAZQ9XHXR",
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": "1",
+          "resourceQuantity.hasUnit.id": "063CRZD0S1K8KW2H6HSQPK9ESW",
+          "toLocation.id": "063CRZCE4FBT3FBMED3JANH5HC",
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "produce"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "Process",
+          "basedOn.id": null,
+          "classifiedAs": null,
+          "deletable": false,
+          "finished": false,
+          "groupedIn.id": "063EC25H2V4WPW1TWHV9V3TWFC",
+          "hasBeginning": "2023-03-15T16:09:20.357920Z",
+          "hasEnd": "2023-03-15T16:09:20.357920Z",
+          "id": "063EC23T0K7P97SN3QQ9QRGZ6R",
+          "name": "Design_magic_mirror",
+          "note": "Design of magic mirror by Designer2",
+          "plannedWithin.id": null
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "work",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": "5",
+          "effortQuantity.hasUnit.id": "063CRZD4B0PETV54K8EC69AMPG",
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:20.694805Z",
+          "id": "063EC23VBM21ZQGJ4GANSXB4YM",
+          "inputOf.id": "063EC23T0K7P97SN3QQ9QRGZ6R",
+          "note": "work to design magic mirror",
+          "outputOf.id": null,
+          "previousEvent.id": null,
+          "provider.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVNS6Q0MB90D54N6QD0MG",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZDZCJ80GZZD8H1CV47CT0",
+          "resourceInventoriedAs.id": null,
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": null,
+          "resourceQuantity.hasUnit.id": null,
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "work"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "work",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": "6",
+          "effortQuantity.hasUnit.id": "063CRZD4B0PETV54K8EC69AMPG",
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:23.975462Z",
+          "id": "063EC2484XVZ389GR4ANZ6530W",
+          "inputOf.id": "063EC246QETNRQJAVM3C58B7A4",
+          "note": "work to paint magic mirror",
+          "outputOf.id": null,
+          "previousEvent.id": null,
+          "provider.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZEYH38Z4TX4RHH3D7QN3M",
+          "resourceInventoriedAs.id": null,
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": null,
+          "resourceQuantity.hasUnit.id": null,
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "work"
+        }
+      },
+      {
+        "data": {
+          "origin": false,
+          "type": "EconomicEvent",
+          "action.id": "work",
+          "agreedIn": null,
+          "atLocation.id": null,
+          "effortQuantity.hasNumericalValue": "3",
+          "effortQuantity.hasUnit.id": "063CRZD4B0PETV54K8EC69AMPG",
+          "hasBeginning": null,
+          "hasEnd": null,
+          "hasPointInTime": "2023-03-15T16:09:25.546879Z",
+          "id": "063EC24EXAXAZKP08XA5RAQ338",
+          "inputOf.id": "063EC24CXSEC2FD4BKPDGQ5N4R",
+          "note": "work to package magic mirror",
+          "outputOf.id": null,
+          "previousEvent.id": null,
+          "provider.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "realizationOf.id": null,
+          "receiver.id": "0630EEVR4N5Z16NNDGZ4KMV1AW",
+          "resourceClassifiedAs": null,
+          "resourceConformsTo.id": "063CRZF5ABZ56RWSPC72PVM550",
+          "resourceInventoriedAs.id": null,
+          "resourceMetadata": null,
+          "resourceQuantity.hasNumericalValue": null,
+          "resourceQuantity.hasUnit.id": null,
+          "toLocation.id": null,
+          "toResourceInventoriedAs.id": null,
+          "triggeredBy.id": null,
+          "name": "work"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "data": {
+          "source": "063EC255DG9KG2NCKQ0SGZQAZM",
+          "target": "063EC255EADPZKTSEY75H3V7SR"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC251DDEWSCS5X056X1M6PR",
+          "target": "063EC255DG9KG2NCKQ0SGZQAZM"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC251D670XHZY6HQNC9T6BW",
+          "target": "063EC251DDEWSCS5X056X1M6PR"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC233KJ3J6ZBH2YFTSWEMW4",
+          "target": "063EC251D670XHZY6HQNC9T6BW"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24ZM5QFA6X7CAPHK3H6JW",
+          "target": "063EC233KJ3J6ZBH2YFTSWEMW4"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24X46SEM4KE7A0Y4ZKRQ4",
+          "target": "063EC233KJ3J6ZBH2YFTSWEMW4"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24RGFNTN147N319WHMTVM",
+          "target": "063EC24X46SEM4KE7A0Y4ZKRQ4"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24RF77B3QYWF9ZYMNAF1M",
+          "target": "063EC24RGFNTN147N319WHMTVM"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23R7TEXCREYVHNCZK87KW",
+          "target": "063EC24RF77B3QYWF9ZYMNAF1M"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23R6W1J3EM1F10VWSB8KM",
+          "target": "063EC23R7TEXCREYVHNCZK87KW"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23NE5A6CWN2J7JWRTE96C",
+          "target": "063EC23R6W1J3EM1F10VWSB8KM"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23NDYRSKTG2JFTVB2YY48",
+          "target": "063EC23NE5A6CWN2J7JWRTE96C"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC22PSGXBKC3ATPD7EGFPGR",
+          "target": "063EC23NDYRSKTG2JFTVB2YY48"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23JM6HTNYNNXBZAYGRB6G",
+          "target": "063EC22PSGXBKC3ATPD7EGFPGR"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23EEAS51B2VF6PKP3E9DC",
+          "target": "063EC23JM6HTNYNNXBZAYGRB6G"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23EDV5YQ4GP154NT82W4R",
+          "target": "063EC23EEAS51B2VF6PKP3E9DC"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23FVH02D0FPX4HC54161C",
+          "target": "063EC22PSGXBKC3ATPD7EGFPGR"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24VNFAX9G2DZNQ5Y3ZYV8",
+          "target": "063EC233KJ3J6ZBH2YFTSWEMW4"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23CSXB852WBM37BRSFYJC",
+          "target": "063EC24VNFAX9G2DZNQ5Y3ZYV8"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23CSDC12Z6EPEEFSDVK0M",
+          "target": "063EC23CSXB852WBM37BRSFYJC"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC239ZBWNFSF70B7GNYPBZC",
+          "target": "063EC23CSDC12Z6EPEEFSDVK0M"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23BBBFT6DBABDK8469Y0W",
+          "target": "063EC239ZBWNFSF70B7GNYPBZC"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24T6DTCQZWZ8JZNK487DR",
+          "target": "063EC233KJ3J6ZBH2YFTSWEMW4"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24PY5FN040BFABMNM48DW",
+          "target": "063EC24T6DTCQZWZ8JZNK487DR"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24PX4PHAG4RF33EXQ94VC",
+          "target": "063EC24PY5FN040BFABMNM48DW"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24N7Q4XMGNC76NMHZM1Q8",
+          "target": "063EC24PX4PHAG4RF33EXQ94VC"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24N6JK5H11ERFR0T2W54G",
+          "target": "063EC24N7Q4XMGNC76NMHZM1Q8"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC244GVQBGJHCGAYWSEHBRM063EC24KPC0SJ2J9HZKZZPB5NM",
+          "target": "063EC24N6JK5H11ERFR0T2W54G"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24KPC0SJ2J9HZKZZPB5NM",
+          "target": "063EC244GVQBGJHCGAYWSEHBRM063EC24KPC0SJ2J9HZKZZPB5NM"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24CXSEC2FD4BKPDGQ5N4R",
+          "target": "063EC24KPC0SJ2J9HZKZZPB5NM"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24HDGG2M40S1XS0EW2WJ8",
+          "target": "063EC24CXSEC2FD4BKPDGQ5N4R"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC244GVQBGJHCGAYWSEHBRM063EC24B4E10EZ5D089Y39SF30",
+          "target": "063EC24HDGG2M40S1XS0EW2WJ8"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24B4E10EZ5D089Y39SF30",
+          "target": "063EC244GVQBGJHCGAYWSEHBRM063EC24B4E10EZ5D089Y39SF30"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC246QETNRQJAVM3C58B7A4",
+          "target": "063EC24B4E10EZ5D089Y39SF30"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC249KVR9SC499X2635SQBW",
+          "target": "063EC246QETNRQJAVM3C58B7A4"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC244GVQBGJHCGAYWSEHBRM",
+          "target": "063EC249KVR9SC499X2635SQBW"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC244GBSQFGQ8M82KST4AE4",
+          "target": "063EC244GVQBGJHCGAYWSEHBRM"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23ZX7ZVG670T641KB0KY4",
+          "target": "063EC244GBSQFGQ8M82KST4AE4"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC2430J1V2B93HB08ZE6XWG",
+          "target": "063EC23ZX7ZVG670T641KB0KY4"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23YH3R1ZE2WEFEJT47A5C",
+          "target": "063EC2430J1V2B93HB08ZE6XWG"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23YGG4G25JC1RFDYJK1PG",
+          "target": "063EC23YH3R1ZE2WEFEJT47A5C"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC241EGEM8CQQ2EBDEK0EY4",
+          "target": "063EC23ZX7ZVG670T641KB0KY4"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23WTE0KZKY7BMAZQ9XHXR",
+          "target": "063EC241EGEM8CQQ2EBDEK0EY4"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23WT5NSPXF6RY28KWFK2M",
+          "target": "063EC23WTE0KZKY7BMAZQ9XHXR"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23T0K7P97SN3QQ9QRGZ6R",
+          "target": "063EC23WT5NSPXF6RY28KWFK2M"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC23VBM21ZQGJ4GANSXB4YM",
+          "target": "063EC23T0K7P97SN3QQ9QRGZ6R"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC2484XVZ389GR4ANZ6530W",
+          "target": "063EC246QETNRQJAVM3C58B7A4"
+        }
+      },
+      {
+        "data": {
+          "source": "063EC24EXAXAZKP08XA5RAQ338",
+          "target": "063EC24CXSEC2FD4BKPDGQ5N4R"
+        }
+      }
+    ]
+  },
+  "groups": [
+    {
+      "id": "063EC25BJN3AFCF5T026MYG780",
+      "name": "design_assemble_bike",
+      "note": "Groups bike design and assemblage",
+      "type": "ProcessGroup",
+      "groups": ["063EC233KJ3J6ZBH2YFTSWEMW4", "063EC239ZBWNFSF70B7GNYPBZC"],
+      "groupedIn": null
+    },
+    {
+      "id": "063EC25FM2MGTVRE04WNSTCEJW",
+      "name": "design_create_paint_package_mirror",
+      "note": "Groups two groups: mirror design and creation and mirror painting and packaging",
+      "type": "ProcessGroup",
+      "groups": ["063EC25H2V4WPW1TWHV9V3TWFC", "063EC25NBA6717W8G048XM6G68"],
+      "groupedIn": null
+    },
+    {
+      "id": "063EC25NBA6717W8G048XM6G68",
+      "name": "paint_package_mirror",
+      "note": "Groups mirror painting and packaging",
+      "type": "ProcessGroup",
+      "groups": ["063EC246QETNRQJAVM3C58B7A4", "063EC24CXSEC2FD4BKPDGQ5N4R"],
+      "groupedIn": {
+        "design_assemble_bike": {
+          "id": "063EC25BJN3AFCF5T026MYG780",
+          "name": "design_assemble_bike",
+          "note": "Groups bike design and assemblage",
+          "type": "ProcessGroup",
+          "groups": ["063EC233KJ3J6ZBH2YFTSWEMW4", "063EC239ZBWNFSF70B7GNYPBZC"],
+          "groupedIn": null
+        }
+      }
+    },
+    {
+      "id": "063EC25H2V4WPW1TWHV9V3TWFC",
+      "name": "design_create_mirror",
+      "note": "Groups mirror design and creation",
+      "type": "ProcessGroup",
+      "groups": ["063EC23T0K7P97SN3QQ9QRGZ6R", "063EC23ZX7ZVG670T641KB0KY4"],
+      "groupedIn": {
+        "design_assemble_bike": {
+          "id": "063EC25BJN3AFCF5T026MYG780",
+          "name": "design_assemble_bike",
+          "note": "Groups bike design and assemblage",
+          "type": "ProcessGroup",
+          "groups": ["063EC233KJ3J6ZBH2YFTSWEMW4", "063EC239ZBWNFSF70B7GNYPBZC"],
+          "groupedIn": null
+        },
+        "design_create_paint_package_mirror": {
+          "id": "063EC25FM2MGTVRE04WNSTCEJW",
+          "name": "design_create_paint_package_mirror",
+          "note": "Groups two groups: mirror design and creation and mirror painting and packaging",
+          "type": "ProcessGroup",
+          "groups": ["063EC25H2V4WPW1TWHV9V3TWFC", "063EC25NBA6717W8G048XM6G68"],
+          "groupedIn": null
+        },
+        "paint_package_mirror": {
+          "id": "063EC25NBA6717W8G048XM6G68",
+          "name": "paint_package_mirror",
+          "note": "Groups mirror painting and packaging",
+          "type": "ProcessGroup",
+          "groups": ["063EC246QETNRQJAVM3C58B7A4", "063EC24CXSEC2FD4BKPDGQ5N4R"],
+          "groupedIn": {
+            "design_assemble_bike": {
+              "id": "063EC25BJN3AFCF5T026MYG780",
+              "name": "design_assemble_bike",
+              "note": "Groups bike design and assemblage",
+              "type": "ProcessGroup",
+              "groups": ["063EC233KJ3J6ZBH2YFTSWEMW4", "063EC239ZBWNFSF70B7GNYPBZC"],
+              "groupedIn": null
+            }
+          }
+        }
+      }
+    }
+  ],
+  "flags": []
+}
