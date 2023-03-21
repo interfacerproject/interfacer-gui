@@ -34,5 +34,6 @@
   "formError": "formError",
   "Invitation key": "Einladungsschlüssel",
   "Type your invitation key": "Geben Sie Ihren Einladungsschlüssel ein",
-  "You will have to remember the answers and keep them for later as they are necessary for the log in": "Sie müssen sich die Antworten merken und für später aufbewahren, da sie für die Anmeldung erforderlich sind."
+  "You will have to remember the answers and keep them for later as they are necessary for the log in": "Sie müssen sich die Antworten merken und für später aufbewahren, da sie für die Anmeldung erforderlich sind.",
+  "this e-mail has already been used by another user": "diese E-Mail wurde bereits von einem anderen Benutzer verwendet"
 }
