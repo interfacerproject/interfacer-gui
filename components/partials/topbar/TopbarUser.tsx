@@ -19,7 +19,7 @@ export default function TopbarUser() {
   return (
     <TopbarPopover buttonContent={<BrUserAvatar name={user?.name} />}>
       <div className="w-40 divide-y-1 divide-slate-200">
-        <MenuLink href="/profile/my_profile">
+        <MenuLink href={`/profile/${user?.ulid}`}>
           <UserSection user={user!} />
         </MenuLink>
         <div>

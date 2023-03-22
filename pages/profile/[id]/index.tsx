@@ -175,12 +175,14 @@ const Profile: NextPageWithLayout = () => {
                   {person?.id}
                 </Text>
               </Stack>
-              <div className="flex flex-row space-x-2 lg:mr-2">
-                <Text as="span" variant="bodyLg" color="subdued">
-                  {t("Bio:")}
-                </Text>
-                <pre className="whitespace-normal py-1 px-4 bg-white border-2 rounded-md">{person?.note}</pre>
-              </div>
+              {person?.note && (
+                <div className="flex flex-row space-x-2 lg:mr-2">
+                  <Text as="span" variant="bodyLg" color="subdued">
+                    {t("Bio:")}
+                  </Text>
+                  <pre className="whitespace-normal py-1 px-4 bg-white border-2 rounded-md">{person?.note}</pre>
+                </div>
+              )}
             </Stack>
 
             <Stack vertical spacing="extraLoose">
