@@ -46,7 +46,7 @@ const Proposal = () => {
     variables: { id: id?.toString() || "" },
   });
   const { sendMessage } = useInBox();
-  const { addStrengthsPoints, addIdeaPoints } = useWallet();
+  const { addStrengthsPoints, addIdeaPoints } = useWallet({});
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [acceptProposal] = useMutation(ACCEPT_PROPOSAL);

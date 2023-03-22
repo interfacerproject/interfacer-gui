@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import Topbar from "components/partials/topbar/Topbar";
 import { useRouter } from "next/router";
 import React, { ReactNode, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import Sidebar from "../Sidebar";
-import Topbar from "../Topbar";
 
 type layoutProps = {
   children: ReactNode;

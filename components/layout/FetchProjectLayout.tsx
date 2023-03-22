@@ -10,6 +10,8 @@ interface ProjectContextValue {
   project: Partial<EconomicResource>;
   refetch: (variables?: { id?: string }) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
   isOwner?: boolean;
+  loading: boolean;
+}
 }
 
 export const ProjectContext = createContext<ProjectContextValue>({} as ProjectContextValue);
@@ -28,13 +30,14 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
   const id = router.query[projectIdParam] as string;
   const { user } = useAuth();
 
-  const { loading, data, refetch } = useQuery<GetProjectLayoutQuery, GetProjectLayoutQueryVariables>(
+  const { loading, data, refetch, startPolling } = useQuery<GetProjectLayoutQuery, GetProjectLayoutQueryVariables>(
     GET_PROJECT_LAYOUT,
     {
       variables: { id },
       skip: !id,
     }
   );
+  startPolling(120000);
   const project = data?.economicResource as Partial<EconomicResource>;
   const isOwner = user?.ulid == project?.primaryAccountable?.id;
   if (loading)
@@ -51,6 +54,7 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
     project,
     refetch,
     isOwner,
+      loading,
   };
 
   return <ProjectContext.Provider value={contextValue}>{children}</ProjectContext.Provider>;
@@ -70,6 +74,7 @@ export const GET_PROJECT_LAYOUT = gql`
       license
       repo
       classifiedAs
+      traceDpp
       conformsTo {
         id
         name
