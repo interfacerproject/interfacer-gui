@@ -17,7 +17,7 @@ export default function TopbarUser() {
   const { t } = useTranslation("common");
 
   return (
-    <TopbarPopover buttonContent={<BrUserAvatar name={user?.name} />}>
+    <TopbarPopover id="user-menu" buttonContent={<BrUserAvatar name={user?.name} />}>
       <div className="w-40 divide-y-1 divide-slate-200">
         <MenuLink href="/profile/my_profile">
           <UserSection user={user!} />
@@ -79,6 +79,7 @@ function LogoutButton(props: { text: string }) {
   const { logout } = useAuth();
   return (
     <Button
+      id="logout-button"
       onClick={() => {
         logout();
       }}
