@@ -12,7 +12,6 @@ interface ProjectContextValue {
   isOwner?: boolean;
   loading: boolean;
 }
-}
 
 export const ProjectContext = createContext<ProjectContextValue>({} as ProjectContextValue);
 export const useProject = () => useContext(ProjectContext);
@@ -54,7 +53,7 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
     project,
     refetch,
     isOwner,
-      loading,
+    loading,
   };
 
   return <ProjectContext.Provider value={contextValue}>{children}</ProjectContext.Provider>;

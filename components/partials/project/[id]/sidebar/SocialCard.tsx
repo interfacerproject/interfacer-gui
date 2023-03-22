@@ -2,6 +2,7 @@ import { Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import { useProject } from "components/layout/FetchProjectLayout";
+import ProjectMap from "components/ProjectMap";
 import WatchButton from "components/WatchButton";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
@@ -47,6 +48,7 @@ const SocialCard = () => {
             name={project.primaryAccountable!.name}
             location={project.currentLocation?.name}
           />
+          {project.currentLocation && <ProjectMap project={project} height={180} />}
         </div>
       </Stack>
     </Card>

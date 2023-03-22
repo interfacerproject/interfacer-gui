@@ -30,7 +30,7 @@ const AddStar = ({ id, owner, tiny = false }: { id: string; owner: string; tiny?
   const hasAlreadyStarred = isLiked(id);
   const { t } = useTranslation("common");
   const { user } = useAuth();
-  const { addIdeaPoints } = useWallet();
+  const { addIdeaPoints } = useWallet({});
   const handleClick = async () => {
     await likeER();
     //economic system: points assignments
