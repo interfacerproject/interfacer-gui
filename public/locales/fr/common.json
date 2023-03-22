@@ -72,5 +72,6 @@
   "Edit": "Modifier",
   "Available for recycling": "Disponible pour le recyclage",
   "Available for repair": "Disponible pour réparation",
-  "People": "Personnes"
+  "People": "Personnes",
+  "There are unsaved changes. Discard them?": "Il y a des modifications non enregistrées. \nLes jeter ?"
 }
