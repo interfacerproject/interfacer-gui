@@ -47,6 +47,7 @@ export const projectSections: Array<ProjectSection> = [
     navLabel: "Images",
     id: "images",
     component: <ImagesStep />,
+    required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN],
   },
   {
     navLabel: "Location",
