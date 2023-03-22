@@ -7,11 +7,13 @@ import ProjectDetailOverview from "components/ProjectDetailOverview";
 import RelationshipTree from "components/RelationshipTree";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import { useProjectTabs } from "pages/project/[id]";
 import { useCallback, useEffect, useState } from "react";
 import ProjectDpp from "./ProjectDpp";
 
 const ProjectTabs = () => {
-  const { project, selected, setSelected } = useProject();
+  const { project } = useProject();
+  const { selected, setSelected } = useProjectTabs();
   const router = useRouter();
   const { t } = useTranslation("common");
   const { id } = router.query;

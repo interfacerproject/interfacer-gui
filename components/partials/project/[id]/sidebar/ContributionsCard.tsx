@@ -7,9 +7,11 @@ import { QUERY_RESOURCE_PROPOSAlS } from "lib/QueryAndMutation";
 import { ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import { useProjectTabs } from "pages/project/[id]";
 
 const ContributionsCard = () => {
-  const { project, setSelected } = useProject();
+  const { project } = useProject();
+  const { setSelected } = useProjectTabs();
   const { t } = useTranslation("common");
   const router = useRouter();
   const { id } = router.query;

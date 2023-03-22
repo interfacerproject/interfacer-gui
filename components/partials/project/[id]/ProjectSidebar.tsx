@@ -1,8 +1,7 @@
 import AddStar from "components/AddStar";
 import { useProject } from "components/layout/FetchProjectLayout";
 import OshTool from "components/Osh";
-import { useAuth } from "hooks/useAuth";
-import ActionsCard from "./sidebar/ActionsCard";
+import TechnicalInfoCard from "./sidebar/TechnicalInfoCard";
 import ContributionsCard from "./sidebar/ContributionsCard";
 import RelationsCard from "./sidebar/RelationsCard";
 import SocialCard from "./sidebar/SocialCard";
@@ -16,7 +15,7 @@ export default function ProjectSidebar() {
         <AddStar id={project.id!} owner={project.primaryAccountable!.id} />
       </div>
       <SocialCard />
-      <ActionsCard />
+      <TechnicalInfoCard />
       <ContributionsCard />
       <RelationsCard />
       <OshTool />

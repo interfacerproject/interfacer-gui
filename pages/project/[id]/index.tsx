@@ -17,7 +17,7 @@
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { ReactElement, useEffect, useRef, useState } from "react";
+import { createContext, Dispatch, ReactElement, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 
 // Components
 import { Stack } from "@bbtgnn/polaris-interfacer";
@@ -33,10 +33,19 @@ import ProjectTabs from "components/partials/project/[id]/ProjectTabs";
 import { NextPageWithLayout } from "pages/_app";
 import ProjectHeader from "components/partials/project/[id]/ProjectHeader";
 
+interface ProjectTabsContextValue {
+  selected: number;
+  setSelected: Dispatch<SetStateAction<number>>;
+}
+
+export const ProjectTabsContext = createContext<ProjectTabsContextValue>({} as ProjectTabsContextValue);
+export const useProjectTabs = () => useContext(ProjectTabsContext);
+
 const Project: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query;
   const [images, setImages] = useState<string[]>([]);
+  const [selected, setSelected] = useState(0);
 
   const { project } = useProject();
 
@@ -57,24 +66,26 @@ const Project: NextPageWithLayout = () => {
 
   if (!project) return null;
 
-  const sidebar = <ProjectSidebar />;
-
   return (
-    <>
+    <ProjectTabsContext.Provider value={{ selected, setSelected }}>
       <CreatedBanner />
       <EditBanner />
-      <div className="p-4 container mx-auto grid grid-cols-1 lg:grid-cols-4 max-w-6xl bg-[#f8f7f4]">
-        <div className="lg:col-span-3 lg:pr-4">
+      <div className="p-4 container mx-auto flex max-w-6xl bg-[#f8f7f4] space-x-4">
+        <div className="grow">
           <Stack vertical spacing="extraLoose">
             <ProjectHeader />
             <BrThumbinailsGallery images={images} />
-            <div className="block lg:hidden">{sidebar}</div>
+            <div className="block lg:hidden">
+              <ProjectSidebar />
+            </div>
             <ProjectTabs />
           </Stack>
         </div>
-        <div className="hidden lg:block">{sidebar}</div>
+        <div className="hidden lg:block w-80">
+          <ProjectSidebar />
+        </div>
       </div>
-    </>
+    </ProjectTabsContext.Provider>
   );
 };
 

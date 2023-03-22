@@ -6,7 +6,7 @@ import ProjectLicenses from "components/ProjectLicenses";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 
-const ActionsCard = () => {
+const TechnicalInfoCard = () => {
   const { t } = useTranslation("common");
   const { project } = useProject();
   const declarations = project.metadata?.declarations;
@@ -53,4 +53,4 @@ const ActionsCard = () => {
   );
 };
 
-export default ActionsCard;
+export default TechnicalInfoCard;

@@ -2,10 +2,12 @@ import { Button, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { ParentChild } from "@carbon/icons-react";
 import { useProject } from "components/layout/FetchProjectLayout";
 import { useTranslation } from "next-i18next";
+import { useProjectTabs } from "pages/project/[id]";
 
 const RelationsCard = () => {
   const { t } = useTranslation("common");
-  const { project, setSelected } = useProject();
+  const { project } = useProject();
+  const { setSelected } = useProjectTabs();
   return (
     <Card sectioned>
       <Stack vertical spacing="loose">
