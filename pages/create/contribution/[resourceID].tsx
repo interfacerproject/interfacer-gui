@@ -56,7 +56,7 @@ const CreateContribution: NextPageWithLayout = () => {
   const id = resourceID?.toString() || "";
   const { user } = useAuth();
   const { sendMessage } = useInBox();
-  const { addStrengthsPoints, addIdeaPoints } = useWallet();
+  const { addStrengthsPoints, addIdeaPoints } = useWallet({});
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [createProcess] = useMutation(CREATE_PROCESS);

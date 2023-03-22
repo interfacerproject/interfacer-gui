@@ -4062,6 +4062,8 @@ export type FetchInventoryQuery = {
           id: string;
           name: string;
           mappableAddress?: string | null;
+          lat?: any | null;
+          long?: any | null;
         } | null;
         images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
         primaryAccountable:

@@ -19,7 +19,7 @@ import { useTranslation } from "next-i18next";
 import PTitleCounter from "./polaris/PTitleCounter";
 import ProjectsCards from "./ProjectsCards";
 
-const RelationshipTree = ({ project }: { project: EconomicResource | undefined }) => {
+const RelationshipTree = ({ project }: { project: Partial<EconomicResource> | undefined }) => {
   const { t } = useTranslation("update");
 
   const relatedProjects = project?.metadata?.relations;
