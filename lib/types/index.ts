@@ -3575,6 +3575,22 @@ export type SearchProjectQuery = {
   } | null;
 };
 
+export type GetTraceQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type GetTraceQuery = {
+  __typename?: "RootQueryType";
+  economicResource?: {
+    __typename?: "EconomicResource";
+    trace?: Array<
+      | { __typename: "EconomicEvent"; hasPointInTime?: any | null }
+      | { __typename: "EconomicResource" }
+      | { __typename: "Process" }
+    > | null;
+  } | null;
+};
+
 export type SearchProjectsQueryVariables = Exact<{
   last?: InputMaybe<Scalars["Int"]>;
   IDs?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
