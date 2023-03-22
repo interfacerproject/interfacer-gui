@@ -42,7 +42,7 @@ export interface EditRelationsValues {
 }
 
 const EditMain: NextPageWithLayout = () => {
-  const project = useProject();
+  const { project } = useProject();
 
   /* Form setup */
 
