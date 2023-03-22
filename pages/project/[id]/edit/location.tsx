@@ -45,7 +45,7 @@ export interface EditLocationValues {
 }
 
 const EditLocation: NextPageWithLayout = () => {
-  const project = useProject();
+  const { project } = useProject();
   const projectType = project?.conformsTo?.name as ProjectType.PRODUCT | ProjectType.SERVICE;
 
   /* Form setup */

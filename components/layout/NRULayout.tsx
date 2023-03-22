@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import Footer from "components/Footer";
+import Topbar from "components/partials/topbar/Topbar";
 import Link from "next/link";
 import React, { ReactNode } from "react";
-import Topbar from "../Topbar";
 
 type layoutProps = {
   children: ReactNode;

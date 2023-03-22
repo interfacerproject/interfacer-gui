@@ -49,7 +49,7 @@ import useStorage from "./useStorage";
 export const useProjectCRUD = () => {
   const { user } = useAuth();
   const { sendMessage } = useInBox();
-  const { addIdeaPoints, addStrengthsPoints } = useWallet();
+  const { addIdeaPoints, addStrengthsPoints } = useWallet({});
   const { getItem } = useStorage();
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
@@ -449,6 +449,6 @@ export const useProjectCRUD = () => {
     updateRelations,
     relocateProject,
     updateMetadata,
-    handleCreateLocation
+    handleCreateLocation,
   };
 };

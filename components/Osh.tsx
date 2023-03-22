@@ -1,4 +1,4 @@
-import { ApolloQueryResult, OperationVariables } from "@apollo/client";
+import { ApolloQueryResult } from "@apollo/client";
 import { Button, Card, Spinner, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { CheckmarkFilled, View, ViewOff, WarningAltFilled } from "@carbon/icons-react";
 import dayjs from "dayjs";
@@ -6,7 +6,7 @@ import { useAuth } from "hooks/useAuth";
 import useAutoimport from "hooks/useAutoimport";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { url } from "lib/regex";
-import { EconomicResource } from "lib/types";
+import { EconomicResource, GetProjectLayoutQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { Dispatch, useState } from "react";
 
@@ -81,9 +81,7 @@ const OshTool = ({
   refetch,
 }: {
   project: Partial<EconomicResource>;
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<{ economicResource: EconomicResource }>>;
+  refetch: (variables?: { id: string }) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [oshRatings, setOshRatings] = useState<any>(project?.metadata?.ratings);

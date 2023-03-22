@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { ApolloQueryResult, gql, useQuery } from "@apollo/client";
 import { Spinner } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource, GetProjectLayoutQuery, GetProjectLayoutQueryVariables } from "lib/types";
 import { useRouter } from "next/router";
@@ -6,7 +6,13 @@ import { createContext, useContext } from "react";
 
 //
 
-export const ProjectContext = createContext<Partial<EconomicResource>>({});
+interface ProjectContextValue {
+  project: Partial<EconomicResource>;
+  refetch: (variables?: { id: string }) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
+  loading: boolean;
+}
+
+export const ProjectContext = createContext<ProjectContextValue>(null as any);
 export const useProject = () => useContext(ProjectContext);
 
 //
@@ -21,10 +27,14 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
   const router = useRouter();
   const id = router.query[projectIdParam] as string;
 
-  const { loading, data } = useQuery<GetProjectLayoutQuery, GetProjectLayoutQueryVariables>(GET_PROJECT_LAYOUT, {
-    variables: { id },
-    skip: !id,
-  });
+  const { loading, data, refetch, startPolling } = useQuery<GetProjectLayoutQuery, GetProjectLayoutQueryVariables>(
+    GET_PROJECT_LAYOUT,
+    {
+      variables: { id },
+      skip: !id,
+    }
+  );
+  startPolling(120000);
   const project = data?.economicResource as Partial<EconomicResource>;
 
   //   if (!id) router.push("/projects");
@@ -38,7 +48,13 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
     );
   if (!project) return null;
 
-  return <ProjectContext.Provider value={project}>{children}</ProjectContext.Provider>;
+  const contextValues: ProjectContextValue = {
+    project,
+    refetch,
+    loading,
+  };
+
+  return <ProjectContext.Provider value={contextValues}>{children}</ProjectContext.Provider>;
 };
 
 export default FetchProjectLayout;
@@ -55,6 +71,7 @@ export const GET_PROJECT_LAYOUT = gql`
       license
       repo
       classifiedAs
+      traceDpp
       conformsTo {
         id
         name

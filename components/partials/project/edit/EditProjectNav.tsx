@@ -6,7 +6,7 @@ import { getSectionsByProjectType } from "../projectSections";
 
 export default function EditProjectNav() {
   const { asPath } = useRouter();
-  const project = useProject();
+  const { project } = useProject();
   const id = project.id;
 
   function isCurrent(link: TOCLink) {

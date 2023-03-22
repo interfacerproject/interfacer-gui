@@ -15,8 +15,8 @@ import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLa
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetStaticPaths } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 //
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
@@ -42,7 +42,7 @@ export interface EditContributorsValues {
 }
 
 const EditContributors: NextPageWithLayout = () => {
-  const project = useProject();
+  const { project } = useProject();
 
   /* Form setup */
 

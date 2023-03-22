@@ -1,4 +1,4 @@
-import { ApolloQueryResult, OperationVariables } from "@apollo/client";
+import { ApolloQueryResult } from "@apollo/client";
 import { Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { ListBoxes, MagicWand, ParentChild, Renew, Tools } from "@carbon/icons-react";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
@@ -8,12 +8,13 @@ import OshTool from "components/Osh";
 import ProjectContributors from "components/ProjectContributors";
 import ProjectDisplay from "components/ProjectDisplay";
 import ProjectLicenses from "components/ProjectLicenses";
+import ProjectMap from "components/ProjectMap";
 import { ProjectType } from "components/types";
 import WatchButton from "components/WatchButton";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import devLog from "lib/devLog";
-import { EconomicResource, ResourceProposalsQuery } from "lib/types";
+import { EconomicResource, GetProjectLayoutQuery, ResourceProposalsQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -23,9 +24,7 @@ interface Props {
   project: Partial<EconomicResource>;
   contributions: ResourceProposalsQuery;
   setSelected: Dispatch<SetStateAction<number>>;
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<{ economicResource: EconomicResource }>>;
+  refetch: (variables?: { id: string }) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
 }
 
 export default function ProjectSidebar(props: Props) {
@@ -76,12 +75,10 @@ export default function ProjectSidebar(props: Props) {
             <Text as="p" variant="bodyMd">
               {t("By:")}
             </Text>
-            <BrDisplayUser
-              id={project.primaryAccountable!.id}
-              name={project.primaryAccountable!.name}
-              location={project.currentLocation?.name}
-            />
+            <BrDisplayUser id={project.primaryAccountable!.id} name={project.primaryAccountable!.name} />
           </div>
+          {/* Project location */}
+          {project.currentLocation && <ProjectMap project={project} height={180} />}
         </Stack>
       </Card>
 

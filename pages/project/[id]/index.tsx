@@ -45,16 +45,18 @@ import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
 import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
 import ProjectTypeChip from "components/ProjectTypeChip";
+import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
+import { NextPageWithLayout } from "pages/_app";
+import Layout from "components/layout/Layout";
 
 //
 
-const Project = () => {
+const Project: NextPageWithLayout = () => {
   const { getItem, setItem } = useStorage();
   const router = useRouter();
   const { user } = useAuth();
   const { id } = router.query;
   const { t } = useTranslation("common");
-  const [project, setProject] = useState<EconomicResource | undefined>();
   const [inList, setInList] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
   const [selected, setSelected] = useState(0);
@@ -63,7 +65,9 @@ const Project = () => {
 
   const ref = useRef(null);
 
-  const { loading, data, startPolling, refetch } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
+  const { project, refetch } = useProject();
+
+  const { loading, data } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
     variables: { id: id },
   });
 
@@ -73,21 +77,18 @@ const Project = () => {
       variables: { id: id as string },
     }
   );
-  startPolling(12000);
 
   // (Temp) Redirect if project is LOSH owned
-  if (process.env.NEXT_PUBLIC_LOSH_ID == data?.economicResource?.primaryAccountable?.id) {
+  if (process.env.NEXT_PUBLIC_LOSH_ID == project?.primaryAccountable?.id) {
     router.push(`/resource/${id}`);
   }
 
   useEffect(() => {
-    const _project: EconomicResource | undefined = data?.economicResource;
-    setProject(_project);
-    const singleImage = typeof _project?.metadata?.image === "string";
-    const metadataImage = singleImage ? [_project?.metadata?.image] : _project?.metadata?.image || [];
+    const singleImage = typeof project?.metadata?.image === "string";
+    const metadataImage = singleImage ? [project?.metadata?.image] : project?.metadata?.image || [];
     const _images =
-      _project && _project.images!.length > 0
-        ? _project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
+      project && project.images!.length > 0
+        ? project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
         : metadataImage;
     setImages(_images);
     if (ref.current) {
@@ -96,26 +97,13 @@ const Project = () => {
       //@ts-ignore
       setHeight(ref.current.offsetHeight);
     }
-  }, [data, ref, selected]);
+  }, [project, ref, selected]);
 
   useEffect(() => {
     const _list = getItem("projectsCollected");
     const _listParsed = _list ? JSON.parse(_list) : [];
     setInList(_listParsed.includes(project?.id));
   }, [project, getItem]);
-
-  const handleCollect = () => {
-    const _list = getItem("projectsCollected");
-    const _listParsed = _list ? JSON.parse(_list) : [];
-    if (_listParsed.includes(project!.id)) {
-      setItem("projectsCollected", JSON.stringify(_listParsed.filter((a: string) => a !== project!.id)));
-      setInList(false);
-    } else {
-      const _listParsedUpdated = [..._listParsed, project?.id];
-      setItem("projectsCollected", JSON.stringify(_listParsedUpdated));
-      setInList(true);
-    }
-  };
 
   // Tabs setup
   const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
@@ -126,7 +114,7 @@ const Project = () => {
   const toggleActive = useCallback(() => setActive(active => !active), []);
 
   function copyDPP() {
-    navigator.clipboard.writeText(JSON.stringify(data?.economicResource.traceDpp, null, 2));
+    navigator.clipboard.writeText(JSON.stringify(project?.traceDpp, null, 2));
     setActive(true);
   }
 
@@ -144,8 +132,7 @@ const Project = () => {
   const [activeTree, setActiveTree] = useState(false);
 
   // DPP Tree
-  const translate = { x: width / 2, y: 20 };
-  const treeData = dppToTreeData(data?.economicResource.traceDpp);
+  const treeData = dppToTreeData(project?.traceDpp);
 
   //
 
@@ -204,7 +191,7 @@ const Project = () => {
               <BrBreadcrumb
                 crumbs={[
                   { name: t("Projects"), href: "/projects" },
-                  { name: project.conformsTo.name, href: `/projects?conformTo=${project.conformsTo.id}` },
+                  { name: project.conformsTo!.name, href: `/projects?conformTo=${project.conformsTo!.id}` },
                 ]}
               />
               <ProjectTypeChip projectNode={project} />
@@ -285,7 +272,7 @@ const Project = () => {
               />
 
               {selected == 0 && <ProjectDetailOverview project={project} />}
-              {selected == 1 && <RelationshipTree project={data?.economicResource} />}
+              {selected == 1 && <RelationshipTree project={project} />}
               {selected == 2 && (
                 <div className="space-y-8">
                   <div>
@@ -327,7 +314,7 @@ const Project = () => {
                       </Button>
                     </div>
                     <DynamicReactJson
-                      src={data?.economicResource.traceDpp}
+                      src={project.traceDpp}
                       collapsed={3}
                       enableClipboard={true}
                       displayDataTypes={false}
@@ -384,6 +371,14 @@ const Project = () => {
 };
 
 //
+
+Project.getLayout = page => {
+  return (
+    <Layout>
+      <FetchProjectLayout>{page}</FetchProjectLayout>
+    </Layout>
+  );
+};
 
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   return {

@@ -27,7 +27,7 @@ import ProjectsCards from "components/ProjectsCards";
 import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
-import { Token } from "hooks/useWallet";
+import { Token, TrendPeriod } from "hooks/useWallet";
 import { CLAIM_DID } from "lib/QueryAndMutation";
 import type { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
@@ -91,16 +91,16 @@ const Profile: NextPageWithLayout = () => {
 
   const tabsContent = [
     <div className="flex" key={"week"}>
-      <TokensResume stat={t(Token.Idea)} id={id!} />
-      <TokensResume stat={t(Token.Strengths)} id={id!} />
+      <TokensResume stat={t(Token.Idea)} id={id} period={TrendPeriod.Week} />
+      <TokensResume stat={t(Token.Strengths)} id={id} period={TrendPeriod.Week} />
     </div>,
     <div className="flex" key={"month"}>
-      <TokensResume stat={t(Token.Idea)} id={id!} />
-      <TokensResume stat={t(Token.Strengths)} id={id!} />
+      <TokensResume stat={t(Token.Idea)} id={id} period={TrendPeriod.Month} />
+      <TokensResume stat={t(Token.Strengths)} id={id} period={TrendPeriod.Month} />
     </div>,
     <div className="flex" key="cyclal">
-      <TokensResume stat={t(Token.Idea)} id={id!} />
-      <TokensResume stat={t(Token.Strengths)} id={id!} />
+      <TokensResume stat={t(Token.Idea)} id={id} period={TrendPeriod.Cycle} />
+      <TokensResume stat={t(Token.Strengths)} id={id} period={TrendPeriod.Cycle} />
     </div>,
   ];
 

@@ -22,7 +22,6 @@ import { useAuth } from "../hooks/useAuth";
 import IfSidebarDropdown from "./brickroom/IfSidebarDropdown";
 import { IfSidebarItemProps } from "./brickroom/IfSidebarItem";
 import IfSideBarLink, { IfSideBarLinkProps } from "./brickroom/IfSideBarLink";
-import LoginBtn from "./LoginMenu";
 
 import {
   BellIcon,
@@ -139,13 +138,6 @@ function Sidebar() {
           {/*<IfSideBarLink {...items.map} />*/}
         </ul>
       </div>
-
-      {/* Logout button if signed in */}
-      {authenticated && (
-        <span className="inline-block align-bottom">
-          <LoginBtn />
-        </span>
-      )}
     </div>
   );
 }

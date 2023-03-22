@@ -70,7 +70,7 @@ export const AuthContext = createContext(
   }
 );
 
-type User = {
+export type User = {
   ulid: string;
   email: string;
   username: string;

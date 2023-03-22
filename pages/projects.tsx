@@ -52,7 +52,7 @@ export default function Projects() {
       </div>
 
       {/*  */}
-      <ProjectsCards filter={proposalFilter} hideFilters />
+      <ProjectsCards filter={proposalFilter} />
     </div>
   );
 }
