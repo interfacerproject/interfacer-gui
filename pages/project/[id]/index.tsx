@@ -27,7 +27,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Tree from "react-d3-tree";
 
 // Components
-import { Button, Card, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
+import { Button, Frame, Icon, Modal, Spinner, Stack, Tabs, Text, Toast } from "@bbtgnn/polaris-interfacer";
 import { DuplicateMinor, MaximizeMinor } from "@shopify/polaris-icons";
 import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
 import FullWidthBanner from "components/FullWidthBanner";
@@ -43,11 +43,11 @@ import { Cube, Events, ListBoxes, ParentChild, Purchase } from "@carbon/icons-re
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import ContributionsTable from "components/ContributionsTable";
 import ContributorsTable from "components/ContributorsTable";
+import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
+import Layout from "components/layout/Layout";
 import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
 import ProjectTypeChip from "components/ProjectTypeChip";
-import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import { NextPageWithLayout } from "pages/_app";
-import Layout from "components/layout/Layout";
 
 //
 
@@ -194,7 +194,7 @@ const Project: NextPageWithLayout = () => {
                   { name: project.conformsTo!.name, href: `/projects?conformTo=${project.conformsTo!.id}` },
                 ]}
               />
-              <ProjectTypeChip projectNode={project} />
+              <ProjectTypeChip project={project} introduction />
               <Text as="h1" variant="heading2xl">
                 {project.name}
               </Text>

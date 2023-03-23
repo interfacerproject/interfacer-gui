@@ -34,7 +34,7 @@ export default function ProjectDisplay(props: Props) {
           <Text as="p" variant="bodyMd">
             {t("Based on") + ":"}
           </Text>
-          <ProjectTypeChip noIntroduction />
+          <ProjectTypeChip project={p} />
         </Stack>
       )}
       <div className="flex flex-row">
@@ -44,7 +44,7 @@ export default function ProjectDisplay(props: Props) {
             <Text as="p" variant="bodyMd" fontWeight="bold">
               {p.name}
             </Text>
-            {!isProductDesign && <ProjectTypeChip projectNode={p} />}
+            {!isProductDesign && <ProjectTypeChip project={p} introduction />}
           </div>
           <div className="font-mono">
             <Text as="p" variant="bodyMd">
