@@ -9,10 +9,11 @@ import { TopbarButton } from "./TopbarButton";
 export interface TopbarPopoverProps extends ChildrenProp {
   buttonContent?: React.ReactNode;
   notification?: boolean;
+  id?: string;
 }
 
 export default function TopbarPopover(props: TopbarPopoverProps) {
-  const { children, notification = false, buttonContent } = props;
+  const { children, notification = false, buttonContent, id } = props;
   const router = useRouter();
 
   const [popoverActive, setPopoverActive] = useState(false);
@@ -25,7 +26,7 @@ export default function TopbarPopover(props: TopbarPopoverProps) {
   }, [router.events]);
 
   const activator = (
-    <TopbarButton onClick={togglePopoverActive} notification={notification}>
+    <TopbarButton onClick={togglePopoverActive} notification={notification} id={id}>
       {buttonContent}
     </TopbarButton>
   );
