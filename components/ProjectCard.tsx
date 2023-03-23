@@ -1,12 +1,14 @@
 import { Text } from "@bbtgnn/polaris-interfacer";
 import classNames from "classnames";
 import { useAuth } from "hooks/useAuth";
+import { isProjectType } from "lib/isProjectType";
 import { Agent, EconomicResource } from "lib/types";
 import Link from "next/link";
 import { useState } from "react";
 import AddStar from "./AddStar";
 import BrTags from "./brickroom/BrTags";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
+import LocationText from "./LocationText";
 import ProjectImage from "./ProjectImage";
 import ProjectTypeChip from "./ProjectTypeChip";
 import { ProjectType } from "./types";
@@ -27,6 +29,9 @@ export default function ProjectCard(props: ProjectCardProps) {
     "ring-2 ring-primary": hover,
   });
 
+  const location = project.currentLocation?.mappableAddress;
+  const isDesign = isProjectType(project.conformsTo?.name!).Design;
+
   return (
     <div className={classes}>
       <div className="space-y-3 p-3">
@@ -46,7 +51,10 @@ export default function ProjectCard(props: ProjectCardProps) {
               <Text variant="headingLg" as="h4">
                 {project.name}
               </Text>
-              <ProjectTypeChip project={project} link={false} />
+              <div className="flex items-center space-x-2">
+                <ProjectTypeChip project={project} link={false} />
+                {location && !isDesign && <LocationText color="primary" name={location} />}
+              </div>
             </a>
           </Link>
         </div>
