@@ -40,16 +40,21 @@ export default function ProjectTypeChip(props: Props) {
     "hover:ring-[#5D8CA0]": isType.Service && link,
   });
 
-  const content = (
-    <div className="flex items-baseline space-x-1">
-      {introduction && <p>{t("This is a")}</p>}
-      <span className={classes}>
-        <strong>{name}</strong>
-        {icons[name]}
-      </span>
-    </div>
+  const baseChip = (
+    <span className={classes}>
+      <strong>{name}</strong>
+      {icons[name]}
+    </span>
   );
 
-  if (!link) return content;
-  else return <LinkWrapper href={href}>{content}</LinkWrapper>;
+  const chipWithLink = !link ? baseChip : <LinkWrapper href={href}>{baseChip}</LinkWrapper>;
+
+  if (!introduction) return chipWithLink;
+  else
+    return (
+      <div className="flex items-baseline space-x-2">
+        <p>{t("This is a")}</p>
+        {chipWithLink}
+      </div>
+    );
 }

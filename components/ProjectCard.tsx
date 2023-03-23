@@ -46,7 +46,7 @@ export default function ProjectCard(props: ProjectCardProps) {
               <Text variant="headingLg" as="h4">
                 {project.name}
               </Text>
-              <ProjectTypeChip project={project} />
+              <ProjectTypeChip project={project} link={false} />
             </a>
           </Link>
         </div>
