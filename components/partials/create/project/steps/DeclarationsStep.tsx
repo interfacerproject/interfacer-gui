@@ -130,7 +130,12 @@ export default function DeclarationsStep(props: Props) {
           requiredIndicator
         >
           <div className="py-1">
-            <PButtonRadio options={choices} onChange={setRecyclable} selected={watch("declarations.recyclable")} />
+            <PButtonRadio
+              options={choices}
+              onChange={setRecyclable}
+              selected={watch("declarations.recyclable")}
+              id="recyclable"
+            />
           </div>
         </PFieldInfo>
 
@@ -143,7 +148,12 @@ export default function DeclarationsStep(props: Props) {
           requiredIndicator
         >
           <div className="py-1">
-            <PButtonRadio options={choices} onChange={setRepairable} selected={watch("declarations.repairable")} />
+            <PButtonRadio
+              options={choices}
+              onChange={setRepairable}
+              selected={watch("declarations.repairable")}
+              id="repairable"
+            />
           </div>
         </PFieldInfo>
       </Stack>

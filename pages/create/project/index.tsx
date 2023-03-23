@@ -86,6 +86,7 @@ const CreateProject: NextPageWithLayout = () => {
           <Card key={s.url}>
             <Link href={s.url}>
               <div
+                id={`create-${s.title.toLowerCase()}-button`}
                 className="
                 flex flex-row flex-nowrap items-center p-6 rounded-lg
                 hover:cursor-pointer hover:outline hover:outline-2 hover:outline-primary"

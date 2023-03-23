@@ -101,6 +101,7 @@ export default function ImportDesign() {
           name="github.url"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextField
+              id="autoimport-github-url"
               type="url"
               label={t("Repo URL")}
               placeholder={"https://github.com/username/repo"}
@@ -122,6 +123,7 @@ export default function ImportDesign() {
             name="gitlab.host"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextField
+                id="autoimport-gitlab-host"
                 type="url"
                 label={t("GitLab host")}
                 placeholder={"https://gitlab.com"}
@@ -155,7 +157,7 @@ export default function ImportDesign() {
       )}
 
       {isValid && (
-        <Button primary fullWidth onClick={handleImport}>
+        <Button id="autoimport-submit-button" primary fullWidth onClick={handleImport}>
           {t("Import repo")}
         </Button>
       )}

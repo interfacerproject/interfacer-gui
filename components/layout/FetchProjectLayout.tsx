@@ -1,18 +1,19 @@
 import { ApolloQueryResult, gql, useQuery } from "@apollo/client";
 import { Spinner } from "@bbtgnn/polaris-interfacer";
+import { useAuth } from "hooks/useAuth";
 import { EconomicResource, GetProjectLayoutQuery, GetProjectLayoutQueryVariables } from "lib/types";
 import { useRouter } from "next/router";
-import { createContext, useContext } from "react";
+import { createContext, Dispatch, SetStateAction, useContext, useState } from "react";
 
 //
-
 interface ProjectContextValue {
   project: Partial<EconomicResource>;
-  refetch: (variables?: { id: string }) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
+  refetch: (variables?: { id?: string }) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
+  isOwner?: boolean;
   loading: boolean;
 }
 
-export const ProjectContext = createContext<ProjectContextValue>(null as any);
+export const ProjectContext = createContext<ProjectContextValue>({} as ProjectContextValue);
 export const useProject = () => useContext(ProjectContext);
 
 //
@@ -26,6 +27,7 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
   const { children, projectIdParam = "id" } = props;
   const router = useRouter();
   const id = router.query[projectIdParam] as string;
+  const { user } = useAuth();
 
   const { loading, data, refetch, startPolling } = useQuery<GetProjectLayoutQuery, GetProjectLayoutQueryVariables>(
     GET_PROJECT_LAYOUT,
@@ -36,8 +38,7 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
   );
   startPolling(120000);
   const project = data?.economicResource as Partial<EconomicResource>;
-
-  //   if (!id) router.push("/projects");
+  const isOwner = user?.ulid == project?.primaryAccountable?.id;
   if (loading)
     return (
       <div className="flex pt-40 items-center">
@@ -48,13 +49,14 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
     );
   if (!project) return null;
 
-  const contextValues: ProjectContextValue = {
+  const contextValue: ProjectContextValue = {
     project,
     refetch,
+    isOwner,
     loading,
   };
 
-  return <ProjectContext.Provider value={contextValues}>{children}</ProjectContext.Provider>;
+  return <ProjectContext.Provider value={contextValue}>{children}</ProjectContext.Provider>;
 };
 
 export default FetchProjectLayout;
@@ -71,7 +73,6 @@ export const GET_PROJECT_LAYOUT = gql`
       license
       repo
       classifiedAs
-      traceDpp
       conformsTo {
         id
         name

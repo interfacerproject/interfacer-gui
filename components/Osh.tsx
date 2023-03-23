@@ -9,6 +9,8 @@ import { url } from "lib/regex";
 import { EconomicResource, GetProjectLayoutQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { Dispatch, useState } from "react";
+import { useProject } from "./layout/FetchProjectLayout";
+import { ProjectType } from "./types";
 
 declare type Color = "success" | "critical" | "warning" | "subdued" | "text-inverse";
 const OshLine = ({
@@ -76,13 +78,8 @@ const OshLine = ({
   );
 };
 
-const OshTool = ({
-  project,
-  refetch,
-}: {
-  project: Partial<EconomicResource>;
-  refetch: (variables?: { id: string }) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
-}) => {
+const OshTool = () => {
+  const { project, refetch } = useProject();
   const [loading, setLoading] = useState<boolean>(false);
   const [oshRatings, setOshRatings] = useState<any>(project?.metadata?.ratings);
   const [error, setError] = useState<string | null>(null);
@@ -91,6 +88,7 @@ const OshTool = ({
   const { updateMetadata } = useProjectCRUD();
   const { user } = useAuth();
   const isOwner = user?.ulid === project.primaryAccountable!.id;
+  const isDesign = project.conformsTo?.name === ProjectType.DESIGN;
   const handleAnalyze = async () => {
     setLoading(true);
     if (!project.repo || !url.test(project.repo!)) {
@@ -120,7 +118,7 @@ const OshTool = ({
     await refetch();
     setLoading(false);
   };
-
+  if (!isDesign) return null;
   return (
     <>
       {(oshRatings || isOwner) && (
