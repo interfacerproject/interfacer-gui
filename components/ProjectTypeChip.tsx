@@ -1,39 +1,55 @@
 import { Collaborate, DataDefinition, GroupObjectsNew } from "@carbon/icons-react";
 import classNames from "classnames";
+import { isProjectType } from "lib/isProjectType";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
+import { ReactNode } from "react";
+import LinkWrapper from "./LinkWrapper";
+import { ProjectType } from "./types";
 
-const icons: any = {
+//
+
+const icons: Record<ProjectType, ReactNode> = {
   Design: <GroupObjectsNew />,
   Product: <DataDefinition />,
   Service: <Collaborate />,
 };
 
-const ProjectTypeChip = (props: { projectNode?: Partial<EconomicResource>; noIntroduction?: boolean }) => {
-  const name = props.projectNode?.conformsTo?.name || "Design";
+interface Props {
+  project?: Partial<EconomicResource>;
+  introduction?: boolean;
+  link?: boolean;
+}
+
+export default function ProjectTypeChip(props: Props) {
   const { t } = useTranslation("common");
+  const { project, introduction = false, link = true } = props;
 
-  const router = useRouter();
-  const handleCoformstoClick = () => {
-    router.push(`/projects?conformsTo=${props.projectNode?.conformsTo?.id}`);
-  };
+  const name = project?.conformsTo?.name as ProjectType;
+  const href = `/projects?conformsTo=${project?.conformsTo?.id}`;
 
-  return (
-    <button className="flex items-center space-x-1" onClick={handleCoformstoClick}>
-      {!props.noIntroduction && <p>{t("This is a")}</p>}
-      <span
-        className={classNames("flex space-x-1 py-0.5 px-1 rounded items-center hover:cursor-pointer", {
-          "bg-[#E4CCE3] text-[#413840] border-[#C18ABF]": name === "Design",
-          "bg-[#FAE5B7] text-[#614C1F] border-[#614C1F]": name === "Product",
-          "bg-[#CDE0E4] text-[#024960] border-[#5D8CA0]": name === "Service",
-        })}
-      >
+  const isType = isProjectType(name);
+
+  const classes = classNames("flex items-center space-x-1 py-1 px-2 rounded w-fit", {
+    "hover:ring-2 hover:cursor-pointer": link,
+    "bg-[#E4CCE3] text-[#413840]": isType.Design,
+    "hover:ring-[#C18ABF]": isType.Design && link,
+    "bg-[#FAE5B7] text-[#614C1F]": isType.Product,
+    "hover:ring-[#614C1F]": isType.Product && link,
+    "bg-[#CDE0E4] text-[#024960] ": isType.Service,
+    "hover:ring-[#5D8CA0]": isType.Service && link,
+  });
+
+  const content = (
+    <div className="flex items-baseline space-x-1">
+      {introduction && <p>{t("This is a")}</p>}
+      <span className={classes}>
         <strong>{name}</strong>
         {icons[name]}
       </span>
-    </button>
+    </div>
   );
-};
 
-export default ProjectTypeChip;
+  if (!link) return content;
+  else return <LinkWrapper href={href}>{content}</LinkWrapper>;
+}
