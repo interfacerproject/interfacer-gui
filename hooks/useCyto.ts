@@ -18,7 +18,7 @@ type ProcessGroup = Record<
     note?: string | null;
     type: string;
     groups: string[];
-    groupedIn?: Partial<ProcessGroup> | null;
+    groupedIn: string | null;
   }
 >;
 
@@ -43,48 +43,47 @@ const useCytoGraph = () => {
   const populateProcessGroups = async (id: string, processGroups: ProcessGroup) => {
     const { data } = await fetchProcessGroup({ id });
     const pg = data.processGroup;
-    if (!pg) return null;
-    const newProcessGroups = { ...processGroups };
-    Object.defineProperty(processGroups, pg.name, {
-      value: {
-        id: pg.id,
-        name: pg.name,
-        note: pg.note,
-        type: pg.type,
-        groups: pg.groups!.edges.map(e => e.node.id),
-        groupedIn: pg.groupedIn ? await populateProcessGroups(pg.groupedIn.id, processGroups) : null,
-      },
-      enumerable: true,
-      writable: true,
-    });
-    return newProcessGroups;
+    if (!pg) throw new Error("Process group not found.");
+    //@ts-ignore
+    processGroups[pg.name] = {
+      id: pg.id,
+      name: pg.name,
+      note: pg.note,
+      type: pg.type,
+      groups: pg.groups!.edges.map(e => e.node.id),
+      groupedIn: null,
+    };
+
+    if (pg.groupedIn !== null) {
+      processGroups[pg.name].groupedIn = pg.groupedIn!.id;
+      let found = false;
+      for (const k of Object.keys(processGroups)) {
+        if (processGroups[k].id === processGroups[pg.name].groupedIn) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) await populateProcessGroups(processGroups[pg.name].groupedIn!, processGroups);
+    }
   };
 
   const findProcessGroups = async (dppChild: DppChild, processGroups: ProcessGroup) => {
-    let newProcessGroups = processGroups;
     if (dppChild.type === "Process") {
       // @ts-ignore
       const id = dppChild.node.groupedIn.id;
       if (id !== null) {
         let found = false;
-        for (const k in processGroups) {
+        for (const k of Object.keys(processGroups)) {
           if (processGroups[k].id === id) {
             found = true;
             break;
           }
         }
-        if (!found) {
-          const ppG = await populateProcessGroups(id, processGroups);
-          newProcessGroups = { ...newProcessGroups, ...ppG };
-        }
+        if (!found) await populateProcessGroups(id, processGroups);
       }
     }
 
-    for (let c of dppChild.children) {
-      const fpG = await findProcessGroups(c, processGroups);
-      newProcessGroups = { ...newProcessGroups, ...fpG };
-    }
-    return newProcessGroups;
+    for (let c of dppChild.children) await findProcessGroups(c, processGroups);
   };
 
   const differentiateResources = (dppChild: DppChild) => {
@@ -206,7 +205,7 @@ const useCytoGraph = () => {
 
     const dppChild = differentiateResources(oldDppChild);
 
-    if (addGroups) processGroups = await findProcessGroups(dppChild, processGroups);
+    if (addGroups) await findProcessGroups(dppChild, processGroups);
 
     if (compact) doUsers = false;
 
@@ -227,9 +226,7 @@ const useCytoGraph = () => {
 
     makeCyto(dppChild, citoGraph.elements, assignedNodes, assignedUsers, doUsers, compact, pendingEdge);
     if (addGroups) {
-      Object.keys(processGroups).forEach(k => {
-        citoGraph.groups.push(processGroups[k]);
-      });
+      for (const k of Object.keys(processGroups)) citoGraph.groups.push(flattenObject(processGroups[k]));
     }
     return citoGraph;
   };
