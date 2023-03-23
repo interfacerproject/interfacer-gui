@@ -35,7 +35,7 @@ export default function ProjectCard(props: ProjectCardProps) {
                 image={project.images?.[0]}
                 className="rounded-lg object-cover h-48 w-full"
               />
-              <Text variant="headingMd" as="h4">
+              <Text variant="headingLg" as="h4">
                 {project.name}
               </Text>
               <div className="flex justify-between">
