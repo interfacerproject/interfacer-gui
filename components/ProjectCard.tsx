@@ -9,7 +9,7 @@ import AddStar from "./AddStar";
 import BrTags from "./brickroom/BrTags";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
 import LocationText from "./LocationText";
-import ProjectImage from "./ProjectImage";
+import ProjectCardImage from "./ProjectCardImage";
 import ProjectTypeChip from "./ProjectTypeChip";
 import { ProjectType } from "./types";
 
@@ -43,7 +43,7 @@ export default function ProjectCard(props: ProjectCardProps) {
         <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse}>
           <Link href={`/project/${project.id}`}>
             <a className="space-y-3">
-              <ProjectImage
+              <ProjectCardImage
                 projectType={project.conformsTo!.name as ProjectType}
                 image={project.images?.[0]}
                 className="rounded-lg object-cover h-48 w-full"
@@ -51,7 +51,7 @@ export default function ProjectCard(props: ProjectCardProps) {
               <Text variant="headingLg" as="h4">
                 {project.name}
               </Text>
-              <div className="flex items-center space-x-2">
+              <div className="space-y-1">
                 <ProjectTypeChip project={project} link={false} />
                 {location && !isDesign && <LocationText color="primary" name={location} />}
               </div>
