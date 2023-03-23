@@ -20,11 +20,11 @@ export default function LicenseDisplay(props: Props) {
   return (
     <Stack vertical spacing="extraTight">
       {label && (
-        <Text as="p" variant="bodyMd" fontWeight="bold">
+        <Text as="p" variant="bodyMd" fontWeight="bold" id="license-scope">
           {label}
         </Text>
       )}
-      <Text as="p" variant="bodyMd">
+      <Text as="p" variant="bodyMd" id="license-id">
         {licenseId === "NOASSERTION" ? (
           "UNKNOW"
         ) : (

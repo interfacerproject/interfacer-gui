@@ -3,6 +3,7 @@ import BrMdEditor from "components/brickroom/BrMdEditor";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SelectTags2 from "components/SelectTags2";
 import { formSetValueOptions } from "lib/formSetValueOptions";
+import getIdFromFormName from "lib/getIdFromFormName";
 import { isRequired } from "lib/isFieldRequired";
 import { url } from "lib/regex";
 import { useTranslation } from "next-i18next";
@@ -67,7 +68,7 @@ export default function MainStep() {
         render={({ field: { onChange, onBlur, name, value } }) => (
           <TextField
             type="text"
-            id={name}
+            id={getIdFromFormName(name)}
             name={name}
             value={value}
             autoComplete="off"
@@ -87,7 +88,7 @@ export default function MainStep() {
         render={({ field: { onChange, onBlur, name, value } }) => (
           <TextField
             type="text"
-            id={name}
+            id={getIdFromFormName(name)}
             name={name}
             value={value}
             autoComplete="off"
@@ -102,7 +103,7 @@ export default function MainStep() {
       />
 
       <BrMdEditor
-        id="description"
+        id="main-description"
         name="description"
         editorClass="h-60"
         value={watch("main.description")}
@@ -115,17 +116,19 @@ export default function MainStep() {
         error={errors.main?.description?.message}
       />
 
-      <SelectTags2
-        tags={watch("main.tags")}
-        setTags={tags => {
-          setValue("main.tags", tags, formSetValueOptions);
-          trigger("main.tags");
-        }}
-        error={errors.main?.tags?.message}
-        label={t("Tags")}
-        helpText={t("Add relevant keywords that describe your project.")}
-        requiredIndicator={isRequired(mainStepSchema, "tags")}
-      />
+      <div id="main-tags">
+        <SelectTags2
+          tags={watch("main.tags")}
+          setTags={tags => {
+            setValue("main.tags", tags, formSetValueOptions);
+            trigger("main.tags");
+          }}
+          error={errors.main?.tags?.message}
+          label={t("Tags")}
+          helpText={t("Add relevant keywords that describe your project.")}
+          requiredIndicator={isRequired(mainStepSchema, "tags")}
+        />
+      </div>
     </Stack>
   );
 }
