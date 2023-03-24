@@ -65,14 +65,14 @@ const addRelatedProjects = (query: string) => {
   searchMenuAdd("#add-related-projects-search", query);
 };
 
-const submit = () => {
+const submit = async () => {
   cy.get("#project-create-submit").click();
   // cy.wait(20000)
   cy.wait("@gqlCreateProjectMutation", { timeout: 60000 });
+  cy.wait("@gqlgetProjectLayoutQuery", { timeout: 120000 });
 };
 
 const checkUrl = (type: string) => {
-  cy.wait("@gqlgetProjectLayoutQuery", { timeout: 120000 });
   const url = cy.url();
   url.should("not.contain", `/create/project/${type}"`);
   url.should("contain", "/project");
@@ -178,7 +178,7 @@ describe("when user visits create design and submit manually data", () => {
     visitCreateProject("design");
     aliasQueryandMutation();
   });
-  it("should create a new design", () => {
+  it("should create a new design", async () => {
     const mainValues: CompileMainValuesParams = {
       title: "Vegeta",
       description: "The project description",
@@ -190,7 +190,7 @@ describe("when user visits create design and submit manually data", () => {
     addLicense();
     addContributors("nenn");
     addRelatedProjects("milano");
-    submit();
+    await submit();
     checkUrl("design");
     checkMainValues(mainValues);
     checkLicense();
@@ -206,7 +206,7 @@ describe("when user visits create product and submit manually data", () => {
     aliasQueryandMutation();
   });
 
-  it("should create a new product", () => {
+  it("should create a new product", async () => {
     const mainValues: CompileMainValuesParams = {
       title: "Goku",
       description: "The project description",
@@ -225,7 +225,7 @@ describe("when user visits create product and submit manually data", () => {
       repairable: false,
     };
     addDeclarations(declaration);
-    submit();
+    await submit();
     checkUrl("product");
     checkMainValues(mainValues);
     checkDeclarations(declaration);
@@ -240,7 +240,7 @@ describe("when user visits create service and submit manually data", () => {
     aliasQueryandMutation();
   });
 
-  it("should create a new service", () => {
+  it("should create a new service", async () => {
     const mainValues: CompileMainValuesParams = {
       title: "Maijin Bu",
       description: "The project description",
@@ -253,7 +253,7 @@ describe("when user visits create service and submit manually data", () => {
     addLocation("service", city);
     addContributors("nenn");
     addRelatedProjects("bonomelli");
-    submit();
+    await submit();
     checkUrl("service");
     checkMainValues(mainValues);
     checkContributors();
