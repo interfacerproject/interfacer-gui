@@ -216,9 +216,8 @@ describe("when user visits create product and submit manually data", () => {
     compileMainValues(mainValues);
     uploadImage();
     addContributors("nenn");
-    cy.get("#link-design-search").type("perenzio").wait(500);
+    cy.get("#link-design-search").type("perenzio design").wait(500);
     cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
-    addRelatedProjects("bonomelli");
     const city = randomCity();
     addLocation("product", city);
     const declaration = {
@@ -253,7 +252,7 @@ describe("when user visits create service and submit manually data", () => {
     const city = randomCity();
     addLocation("service", city);
     addContributors("nenn");
-    addRelatedProjects("perenzio design");
+    addRelatedProjects("bonomelli");
     submit();
     checkUrl("service");
     checkMainValues(mainValues);
