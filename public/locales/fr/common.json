@@ -72,10 +72,12 @@
   "Available for recycling": "Disponible pour le recyclage",
   "Available for repair": "Disponible pour réparation",
   "People": "Personnes",
+  "There are unsaved changes. Discard them?": "Il y a des modifications non enregistrées. Les jeter?",
   "Logout": "Se déconnecter",
   "My profile": "Mon profil",
   "relation_one": "rapport",
   "relation_other": "rapports",
   "contributor_one": "contributeur",
-  "contributor_other": "contributeurs"
+  "contributor_other": "contributeurs",
+  "See all notifications": "Voir toutes les notifications"
 }
