@@ -27,6 +27,7 @@ import { IdeaPoints } from "lib/PointsDistribution";
 export default function AddStar({ id, owner, tiny = false }: { id: string; owner: string; tiny?: boolean }) {
   const { likeER, isLiked } = useSocial(id);
   const hasAlreadyStarred = isLiked(id);
+  const { user } = useAuth();
 
   const { addIdeaPoints } = useWallet({});
   const handleClick = async () => {
