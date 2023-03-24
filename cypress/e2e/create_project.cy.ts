@@ -140,6 +140,11 @@ const uploadImage = () => {
   const imageName = `image-${randomString(4)}`;
   const attempt = Cypress.currentRetry;
   cy.screenshot(imageName);
+  // when run this test from the browser app you want this:
+  // const imageToUpload =
+  // attempt == 0
+  //   ? `cypress/screenshots/ci/${imageName}.png`
+  //   : `cypress/screenshots/ci/${imageName} (attempt ${attempt + 1}).png`;
   const imageToUpload =
     attempt == 0
       ? `cypress/screenshots/ci/create_project.cy.ts/${imageName}.png`
@@ -175,7 +180,7 @@ describe("when user visits create design and submit manually data", () => {
   });
   it("should create a new design", () => {
     const mainValues: CompileMainValuesParams = {
-      title: "Laser",
+      title: "Vegeta",
       description: "The project description",
       link: "https://gitub.com/dyne/root",
       tag: "open-source",
@@ -184,7 +189,7 @@ describe("when user visits create design and submit manually data", () => {
     uploadImage();
     addLicense();
     addContributors("nenn");
-    addRelatedProjects("perenzio");
+    addRelatedProjects("milano");
     submit();
     checkUrl("design");
     checkMainValues(mainValues);
@@ -203,7 +208,7 @@ describe("when user visits create product and submit manually data", () => {
 
   it("should create a new product", () => {
     const mainValues: CompileMainValuesParams = {
-      title: "Lengho",
+      title: "Goku",
       description: "The project description",
       link: "https://gitub.com/dyne/root",
       tag: "open-source",
@@ -213,7 +218,7 @@ describe("when user visits create product and submit manually data", () => {
     addContributors("nenn");
     cy.get("#link-design-search").type("perenzio").wait(500);
     cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
-    addRelatedProjects("perenzio");
+    addRelatedProjects("bonomelli");
     const city = randomCity();
     addLocation("product", city);
     const declaration = {
@@ -238,7 +243,7 @@ describe("when user visits create service and submit manually data", () => {
 
   it("should create a new service", () => {
     const mainValues: CompileMainValuesParams = {
-      title: "awesome service",
+      title: "Maijin Bu",
       description: "The project description",
       link: "https://gitub.com/dyne/root",
       tag: "open-source",
@@ -248,7 +253,7 @@ describe("when user visits create service and submit manually data", () => {
     const city = randomCity();
     addLocation("service", city);
     addContributors("nenn");
-    addRelatedProjects("perenzio");
+    addRelatedProjects("perenzio design");
     submit();
     checkUrl("service");
     checkMainValues(mainValues);
