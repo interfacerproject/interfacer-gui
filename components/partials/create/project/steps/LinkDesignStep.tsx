@@ -43,7 +43,12 @@ export default function LinkDesign() {
         )}
       />
 
-      <SearchProjects label={t("Search for a design")} conformsTo={[ProjectType.DESIGN]} onSelect={handleSelect} />
+      <SearchProjects
+        label={t("Search for a design")}
+        conformsTo={[ProjectType.DESIGN]}
+        onSelect={handleSelect}
+        id="link-design-search"
+      />
 
       {selected && (
         <Stack vertical spacing="extraTight">

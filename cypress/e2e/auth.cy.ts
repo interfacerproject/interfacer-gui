@@ -155,8 +155,8 @@ describe("Sign up process", () => {
     cy.url()
       .should("eq", "http://localhost:3000/")
       .then(() => {
-        cy.get("#sidebarOpener").click();
-        get("signOut").click();
+        cy.get("#user-menu").click();
+        cy.get("#logout-button").click();
       });
     cy.url().should("eq", "http://localhost:3000/sign_in");
     expect(localStorage.getItem("reflowPrivateKey")).to.be.null;

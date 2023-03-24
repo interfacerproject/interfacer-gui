@@ -15,12 +15,13 @@ interface Props extends Partial<PFieldInfoProps> {
   location?: SelectedLocation | null;
   setLocation?: (location: SelectedLocation | null) => void;
   placeholder?: string;
+  id?: string;
 }
 
 //
 
 export default function SelectLocation2(props: Props) {
-  const { location = null, setLocation = () => {} } = props;
+  const { location = null, setLocation = () => {}, id } = props;
 
   function handleSelect(loc: LocationLookup.Location | null) {
     setLocation(loc ? { address: loc.title, lat: loc.position.lat, lng: loc.position.lng } : null);
@@ -33,6 +34,7 @@ export default function SelectLocation2(props: Props) {
   return (
     <div className="space-y-3">
       <SearchLocation
+        id={id}
         onSelect={handleSelect}
         label={props.label}
         error={props.error}

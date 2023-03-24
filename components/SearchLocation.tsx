@@ -14,6 +14,7 @@ export interface Props extends Partial<PFieldInfoProps> {
   label?: string;
   conformsTo?: Array<ProjectType>;
   placeholder?: string;
+  id?: string;
 }
 
 export default function SearchLocation(props: Props) {
@@ -22,6 +23,7 @@ export default function SearchLocation(props: Props) {
     onSelect = () => {},
     label = t("Search for an address"),
     placeholder = t("Street, number, city, country"),
+    id,
   } = props;
 
   /* Searching locations */
@@ -65,6 +67,7 @@ export default function SearchLocation(props: Props) {
 
   const textField = (
     <Autocomplete.TextField
+      id={id}
       onChange={handleInputChange}
       autoComplete="off"
       label={label}

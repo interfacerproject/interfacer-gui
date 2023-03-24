@@ -15,13 +15,12 @@ const ProjectTypeChip = (props: { projectNode?: Partial<EconomicResource>; noInt
   const { t } = useTranslation("common");
 
   const router = useRouter();
-  const handleCoformstoClick = (conformsTo: string) => {
-    router.query.conformsTo = conformsTo;
-    router.push({ pathname: router.pathname, query: router.query });
+  const handleCoformstoClick = () => {
+    router.push(`/projects?conformsTo=${props.projectNode?.conformsTo?.id}`);
   };
 
   return (
-    <div className="flex items-center space-x-1">
+    <button className="flex items-center space-x-1" onClick={handleCoformstoClick}>
       {!props.noIntroduction && <p>{t("This is a")}</p>}
       <span
         className={classNames("flex space-x-1 py-0.5 px-1 rounded items-center hover:cursor-pointer", {
@@ -33,7 +32,7 @@ const ProjectTypeChip = (props: { projectNode?: Partial<EconomicResource>; noInt
         <strong>{name}</strong>
         {icons[name]}
       </span>
-    </div>
+    </button>
   );
 };
 

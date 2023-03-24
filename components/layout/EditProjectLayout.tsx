@@ -16,7 +16,7 @@ export default function EditProjectLayout(props: Props) {
   const { user } = useAuth();
   const router = useRouter();
   const { t } = useTranslation();
-  const project = useProject();
+  const { project } = useProject();
   const id = project?.id;
 
   const isOwner = user?.ulid === project.primaryAccountable?.id;

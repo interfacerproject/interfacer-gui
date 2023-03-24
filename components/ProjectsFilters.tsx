@@ -31,6 +31,7 @@ import SelectTags2 from "./SelectTags2";
 
 export interface ProjectsFiltersProps {
   hidePrimaryAccountable?: boolean;
+  hideConformsTo?: boolean;
   children?: React.ReactNode;
 }
 
@@ -42,7 +43,7 @@ export type QueryFilters<T> = Record<ProjectFilter, T>;
 //
 
 export default function ProjectsFilters(props: ProjectsFiltersProps) {
-  const { hidePrimaryAccountable = false, children } = props;
+  const { hidePrimaryAccountable = false, hideConformsTo = false, children } = props;
 
   const { t } = useTranslation("lastUpdatedProps");
   const router = useRouter();
@@ -105,19 +106,21 @@ export default function ProjectsFilters(props: ProjectsFiltersProps) {
         </Text>
         {/* Filters */}
         {children}
-        <SelectProjectType
-          label={t("Type")}
-          onChange={v => {
-            setQueryFilters({
-              ...queryFilters,
-              // @ts-ignore
-              conformsTo: v.map(getOptionValue),
-            });
-          }}
-          isMulti
-          defaultValueRaw={queryFilters.conformsTo}
-          id="type"
-        />
+        {!hideConformsTo && (
+          <SelectProjectType
+            label={t("Type")}
+            onChange={v => {
+              setQueryFilters({
+                ...queryFilters,
+                // @ts-ignore
+                conformsTo: v.map(getOptionValue),
+              });
+            }}
+            isMulti
+            defaultValueRaw={queryFilters.conformsTo}
+            id="type"
+          />
+        )}
 
         <SelectTags2
           label={t("Tags")}

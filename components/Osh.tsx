@@ -1,4 +1,4 @@
-import { ApolloQueryResult, OperationVariables } from "@apollo/client";
+import { ApolloQueryResult } from "@apollo/client";
 import { Button, Card, Spinner, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { CheckmarkFilled, View, ViewOff, WarningAltFilled } from "@carbon/icons-react";
 import dayjs from "dayjs";
@@ -6,9 +6,11 @@ import { useAuth } from "hooks/useAuth";
 import useAutoimport from "hooks/useAutoimport";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { url } from "lib/regex";
-import { EconomicResource } from "lib/types";
+import { EconomicResource, GetProjectLayoutQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { Dispatch, useState } from "react";
+import { useProject } from "./layout/FetchProjectLayout";
+import { ProjectType } from "./types";
 
 declare type Color = "success" | "critical" | "warning" | "subdued" | "text-inverse";
 const OshLine = ({
@@ -76,15 +78,8 @@ const OshLine = ({
   );
 };
 
-const OshTool = ({
-  project,
-  refetch,
-}: {
-  project: Partial<EconomicResource>;
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<{ economicResource: EconomicResource }>>;
-}) => {
+const OshTool = () => {
+  const { project, refetch } = useProject();
   const [loading, setLoading] = useState<boolean>(false);
   const [oshRatings, setOshRatings] = useState<any>(project?.metadata?.ratings);
   const [error, setError] = useState<string | null>(null);
@@ -93,6 +88,7 @@ const OshTool = ({
   const { updateMetadata } = useProjectCRUD();
   const { user } = useAuth();
   const isOwner = user?.ulid === project.primaryAccountable!.id;
+  const isDesign = project.conformsTo?.name === ProjectType.DESIGN;
   const handleAnalyze = async () => {
     setLoading(true);
     if (!project.repo || !url.test(project.repo!)) {
@@ -122,7 +118,7 @@ const OshTool = ({
     await refetch();
     setLoading(false);
   };
-
+  if (!isDesign) return null;
   return (
     <>
       {(oshRatings || isOwner) && (

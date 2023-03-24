@@ -84,7 +84,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
             <div className="p-4 rounded-lg overflow-hidden bg-white shadow mx-2 lg:mx-0 " key={node.id}>
               <div className="flex flex-col space-y-3">
                 <div className="flex justify-between">
-                  <ProjectTime projectNode={node} />
+                  <ProjectTime id={node.id} />
                   {user && <AddStar id={node.id} owner={node.primaryAccountable.id} tiny />}
                 </div>
                 <Link href={`/project/${node.id}`}>
