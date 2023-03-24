@@ -99,8 +99,10 @@ const useInBox = () => {
     return await signedPost(process.env.NEXT_PUBLIC_INBOX_SET_READ!, request).then(res => res.json());
   };
 
-  const messages = data?.messages;
-  const unread = unreadData?.count;
+  const messages = (data?.messages as Array<Notification.Message>)?.sort((a, b) => {
+    return dayjs(b.content.data).unix() - dayjs(a.content.data).unix();
+  });
+  const unread: number = unreadData?.count;
 
   return { messages, error, isLoading, sendMessage, unread, setReadedMessage };
 };

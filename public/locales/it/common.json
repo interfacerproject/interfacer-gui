@@ -73,6 +73,8 @@
   "Available for recycling": "Disponibile per il riciclaggio",
   "Available for repair": "Disponibile per la riparazione",
   "People": "Persone",
+  "There are unsaved changes. Discard them?": "Sono presenti modifiche non salvate. \nScartarli?",
   "Logout": "Logout",
-  "My profile": "Il mio profilo"
+  "My profile": "Il mio profilo",
+  "See all notifications": "Visualizza tutte le notifiche"
 }
