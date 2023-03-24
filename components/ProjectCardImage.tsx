@@ -20,7 +20,6 @@ import { ProjectType } from "./types";
 
 interface Props {
   image: File | string | undefined;
-  className?: string;
   projectType?: ProjectType;
 }
 
@@ -30,7 +29,7 @@ const ProjectImage = (props: Props) => {
   const src = typeof image === "string" ? image : `data:${image?.mimeType};base64,${image?.bin}`;
 
   return (
-    <div className="h-60 bg-base-200 rounded-lg flex items-center justify-center">
+    <div className="h-60 bg-base-200 rounded-lg flex items-center justify-center overflow-hidden">
       {!image && projectType && (
         <div className="opacity-40">
           <ProjectTypeRoundIcon projectType={projectType} />
