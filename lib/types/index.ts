@@ -3726,7 +3726,6 @@ export type GetProjectLayoutQuery = {
     license?: string | null;
     repo?: string | null;
     classifiedAs?: Array<any> | null;
-    traceDpp: any;
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     primaryAccountable:
       | { __typename?: "Organization"; id: string; name: string }
@@ -3765,6 +3764,15 @@ export type GetUserLayoutQuery = {
       long?: any | null;
     } | null;
   } | null;
+};
+
+export type GetDppQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type GetDppQuery = {
+  __typename?: "RootQueryType";
+  economicResource?: { __typename?: "EconomicResource"; traceDpp: any } | null;
 };
 
 export type GetVariablesQueryVariables = Exact<{ [key: string]: never }>;
@@ -3901,7 +3909,6 @@ export type GetResourceTableQuery = {
     metadata?: any | null;
     license?: string | null;
     repo?: string | null;
-    traceDpp: any;
     classifiedAs?: Array<any> | null;
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     onhandQuantity: {

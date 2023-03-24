@@ -10,7 +10,7 @@ export default function CreateProjectSubmit() {
   return (
     <div className="sticky bottom-0 right-0 z-30 bg-background p-3 border-t-1 border-t-border-subdued">
       <div className="flex flex-row justify-end">
-        <Button submit primary disabled={!isValid}>
+        <Button id="project-create-submit" submit primary disabled={!isValid}>
           {t("Submit!")}
         </Button>
       </div>

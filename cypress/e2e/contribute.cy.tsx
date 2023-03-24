@@ -11,6 +11,8 @@ describe("When user want to contribute", () => {
 
   it("Should go to contribution page", () => {
     cy.visit(`/project/${Cypress.env("project_id")}`);
+    //Todo: remove this wait after refactor-profile changes
+    cy.wait(20000);
     cy.get("#contribute").should("exist").click().url().should("include", "create/contribution/");
     cy.wait(2000);
     cy.get("#contributionRepositoryID").type("testRepo");
