@@ -68,7 +68,7 @@ export default function LicenseStep() {
       />
 
       {!showAdd && (
-        <Button onClick={handleShowAdd} fullWidth icon={<Icon source={PlusMinor} />}>
+        <Button id="add-license" onClick={handleShowAdd} fullWidth icon={<Icon source={PlusMinor} />}>
           {t("Add new license")}
         </Button>
       )}

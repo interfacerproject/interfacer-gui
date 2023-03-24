@@ -3,12 +3,14 @@ import { ChildrenProp } from "components/brickroom/types";
 export interface TopbarButtonProps extends ChildrenProp {
   onClick?: () => void;
   notification?: boolean;
+  id?: string;
 }
 
 export function TopbarButton(props: TopbarButtonProps) {
-  const { onClick = () => {}, children, notification = true } = props;
+  const { onClick = () => {}, children, notification = true, id } = props;
   return (
     <button
+      id={id}
       onClick={onClick}
       className="
         w-12 h-12

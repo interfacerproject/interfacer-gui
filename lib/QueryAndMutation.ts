@@ -202,7 +202,6 @@ export const QUERY_RESOURCE = gql`
       metadata
       license
       repo
-      traceDpp
       classifiedAs
       conformsTo {
         id

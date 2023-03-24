@@ -33,7 +33,7 @@ const BrThumbinailsGallery = ({ images }: { images: string[] | undefined }) => {
   // Empty state
   if (!images || images.length === 0)
     return (
-      <div className="h-96 rounded-lg overflow-hidden">
+      <div className="h-96 rounded-lg overflow-hidden" id="images-gallery">
         <div className="h-full bg-gray-300 flex flex-col items-center justify-center">
           <p className="text-gray-500">{"No images found"}</p>
         </div>
@@ -42,7 +42,7 @@ const BrThumbinailsGallery = ({ images }: { images: string[] | undefined }) => {
 
   return (
     <>
-      <div className="h-96 rounded-lg overflow-hidden">
+      <div className="h-96 rounded-lg overflow-hidden" id="images-gallery">
         {/* Single image */}
         {images.length === 1 && <img className="w-full h-full fit  rounded-xl object-contain" src={images[0]} alt="" />}
 
