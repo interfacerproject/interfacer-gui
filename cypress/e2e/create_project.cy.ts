@@ -137,10 +137,14 @@ const aliasQueryandMutation = () => {
 };
 
 const uploadImage = () => {
-  //@ts-ignore
   const imageName = `image-${randomString(4)}`;
+  const attempt = Cypress.currentRetry;
   cy.screenshot(imageName);
-  cy.get("input[type=file]#dropzone-images").selectFile(`cypress/screenshots/ci/${imageName}.png`, {
+  const imageToUpload =
+    attempt == 0
+      ? `cypress/screenshots/ci/create_project.cy.ts/${imageName}.png`
+      : `cypress/screenshots/ci/create_project.cy.ts/${imageName} (attempt ${attempt + 1}).png`;
+  cy.get("input[type=file]#dropzone-images").selectFile(imageToUpload, {
     action: "drag-drop",
     force: true,
   });
