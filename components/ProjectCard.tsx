@@ -27,7 +27,7 @@ export default function ProjectCard(props: ProjectCardProps) {
   const setHoverTrue = () => setHover(true);
   const setHoverFalse = () => setHover(false);
 
-  const classes = classNames("rounded-lg bg-white shadow", {
+  const classes = classNames("rounded-lg bg-white shadow flex flex-col justify-between", {
     "ring-2 ring-primary": hover,
   });
 
