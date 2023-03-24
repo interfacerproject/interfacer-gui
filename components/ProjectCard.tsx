@@ -63,7 +63,7 @@ export default function ProjectCard(props: ProjectCardProps) {
 
       {project.classifiedAs?.length && (
         <div className="p-3 border-t-1 border-t-gray-200">
-          <BrTags tags={project.classifiedAs || []} />
+          <BrTags wrap={false} tags={project.classifiedAs || []} />
         </div>
       )}
     </div>

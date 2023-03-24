@@ -14,13 +14,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import classNames from "classnames";
 import BrTag from "./BrTag";
 
-const BrTags = ({ tags }: { tags?: Array<string>; onCancel?: (tag: string) => void; testID?: string }) => {
+//
+
+interface Props {
+  tags?: Array<string>;
+  id?: string;
+  wrap?: boolean;
+}
+
+export default function BrTags(props: Props) {
+  const { tags = [], id = "", wrap = true } = props;
+
+  const classes = classNames("flex space-x-1", {
+    "flex-nowrap overflow-x-scroll scrollbar-hide": !wrap,
+    "flex-wrap": wrap,
+  });
+
   return (
-    <div className="flex flex-wrap space-x-1">
+    <div id={id} className={classes}>
       {tags && tags.length > 0 && tags?.map((tag: string) => <BrTag tag={tag} key={tag} />)}
     </div>
   );
-};
-export default BrTags;
+}
