@@ -26,6 +26,7 @@ const BrTags = ({ tags }: { tags?: Array<string>; onCancel?: (tag: string) => vo
               <Link href={`/projects?tags=${tag}`} key={index}>
                 <a
                   key={tag}
+                  id={tag}
                   className={`text-primary bg-[#E1EFEC] hover:bg-[#CDE4DF] border border-1 border-[#CDE4DF] rounded-[4px] text-sm float-left mb-1 mr-1 p-1.5`}
                 >
                   {decodeURI(tag)}

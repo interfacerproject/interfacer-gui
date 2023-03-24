@@ -91,11 +91,9 @@ const Search: NextPageWithLayout = () => {
             selected={searchType}
             onSelect={setSearchType}
           />
-          {searchType === 0 && <ProjectsCards filter={filters} />}
+          {searchType === 0 && <ProjectsCards filter={filters} hideFilters />}
           {searchType === 1 && <AgentsTable hideHeader searchTerm={q?.toString() || ""} />}
         </Stack>
-        {/*<ProjectsCards filter={Projectfilter} />*/}
-        {/*<ResourcesCards filter={Resourcefilter} />*/}
       </div>
     </div>
   );

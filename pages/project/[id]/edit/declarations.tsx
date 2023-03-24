@@ -43,7 +43,7 @@ export interface EditDeclarationsValues {
 }
 
 const EditDeclarations: NextPageWithLayout = () => {
-  const project = useProject();
+  const { project } = useProject();
 
   /* Form setup */
 

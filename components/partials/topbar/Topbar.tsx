@@ -14,11 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import LocationMenu from "components/LocationMenu";
+import SearchBar from "components/SearchBar";
+import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import LocationMenu from "./LocationMenu";
-import NotificationBell from "./NotificationBell";
-import SearchBar from "./SearchBar";
+import TopbarNotifications from "./TopbarNotifications";
+import TopbarUser from "./TopbarUser";
 
 type topbarProps = {
   userMenu?: boolean;
@@ -31,6 +33,7 @@ type topbarProps = {
 function Topbar({ search = true, children, userMenu = true, cta, burger = true }: topbarProps) {
   const router = useRouter();
   const path = router.asPath;
+  const { user } = useAuth();
   const { t } = useTranslation("common");
   const isSignup = path === "/sign_up";
   const isSignin = path === "/sign_in";
@@ -65,11 +68,10 @@ function Topbar({ search = true, children, userMenu = true, cta, burger = true }
         )}
         {search && <SearchBar />}
       </div>
-      <div className="navbar-end">
+      <div className="navbar-end space-x-4">
         {cta}
-        {userMenu && <NotificationBell />}
         {(isSignup || isSignin) && (
-          <div className="flex mr-2 space-x-2">
+          <div className="flex space-x-2">
             <button className="btn btn-primary" onClick={() => router.push("/sign_in")}>
               {t("Login")}
             </button>
@@ -79,6 +81,8 @@ function Topbar({ search = true, children, userMenu = true, cta, burger = true }
           </div>
         )}
         <LocationMenu />
+        {userMenu && <TopbarNotifications />}
+        {user && <TopbarUser />}
       </div>
     </div>
   );

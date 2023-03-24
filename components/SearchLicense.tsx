@@ -18,10 +18,11 @@ export interface Props {
   onSelect?: (value: string) => void;
   requiredIndicator?: boolean;
   error?: string;
+  id?: string;
 }
 
 export default function SearchLicense(props: Props) {
-  const { onSelect = () => {}, requiredIndicator = false, error = "" } = props;
+  const { onSelect = () => {}, requiredIndicator = false, error = "", id } = props;
   const { t } = useTranslation("createProjectProps");
 
   const licenses = licensesJSON.licenses as Array<License>;
@@ -81,6 +82,7 @@ export default function SearchLicense(props: Props) {
 
   const textField = (
     <Autocomplete.TextField
+      id={id}
       onChange={updateText}
       autoComplete="off"
       label={t("Search for a license")}

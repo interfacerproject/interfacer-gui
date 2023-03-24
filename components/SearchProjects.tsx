@@ -17,6 +17,7 @@ export interface Props {
   label?: string;
   placeholder?: string;
   conformsTo?: Array<ProjectType>;
+  id?: string;
 }
 
 export default function SearchProjects(props: Props) {
@@ -27,6 +28,7 @@ export default function SearchProjects(props: Props) {
     label = t("Search for a project"),
     conformsTo = [],
     placeholder = t("Search by resource name or Interfacer ID"),
+    id,
   } = props;
 
   /* Getting project types */
@@ -119,6 +121,7 @@ export default function SearchProjects(props: Props) {
 
   const textField = (
     <Autocomplete.TextField
+      id={id}
       onChange={handleInputChange}
       autoComplete="off"
       label={label}
