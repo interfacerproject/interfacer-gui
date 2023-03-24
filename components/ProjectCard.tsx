@@ -3,6 +3,7 @@ import classNames from "classnames";
 import { useAuth } from "hooks/useAuth";
 import { isProjectType } from "lib/isProjectType";
 import { Agent, EconomicResource } from "lib/types";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useState } from "react";
 import AddStar from "./AddStar";
@@ -18,6 +19,7 @@ export interface ProjectCardProps {
 }
 
 export default function ProjectCard(props: ProjectCardProps) {
+  const { t } = useTranslation("common");
   const { project } = props;
   const { user } = useAuth();
 
@@ -43,14 +45,13 @@ export default function ProjectCard(props: ProjectCardProps) {
         <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse}>
           <Link href={`/project/${project.id}`}>
             <a className="space-y-3">
-              <ProjectCardImage
-                projectType={project.conformsTo!.name as ProjectType}
-                image={project.images?.[0]}
-                className="rounded-lg object-cover h-48 w-full"
-              />
-              <Text variant="headingLg" as="h4">
-                {project.name}
-              </Text>
+              <ProjectCardImage projectType={project.conformsTo!.name as ProjectType} image={project.images?.[0]} />
+              <div>
+                <Text variant="headingLg" as="h4">
+                  {project.name}
+                </Text>
+                <StatsDisplay project={project} />
+              </div>
               <div className="space-y-1">
                 <ProjectTypeChip project={project} link={false} />
                 {location && !isDesign && <LocationText color="primary" name={location} />}
@@ -84,5 +85,39 @@ function UserDisplay(props: { user: Partial<Agent> }) {
         </div>
       </a>
     </Link>
+  );
+}
+
+function StatDisplay(props: { stat: number; label: string }) {
+  const { stat, label } = props;
+  return (
+    <>
+      {Boolean(stat) && (
+        <Text as="p" variant="bodyMd" color="subdued">
+          <strong>{stat}</strong> {label}
+        </Text>
+      )}
+    </>
+  );
+}
+
+function StatsDisplay(props: { project: Partial<EconomicResource> }) {
+  const { t } = useTranslation("common");
+  const { project } = props;
+
+  const contributorsNum = project.metadata.contributors.length;
+  const relationsNum = project.metadata.relations.length;
+
+  const stats = [
+    { stat: contributorsNum, label: t("contributor", { count: contributorsNum }) },
+    { stat: relationsNum, label: t("relation", { count: relationsNum }) },
+  ];
+
+  return (
+    <div className="flex [&>*+*]:before:content-[',_']">
+      {stats.map((s, i) => (
+        <StatDisplay stat={s.stat} label={s.label} key={s.stat} />
+      ))}
+    </div>
   );
 }
