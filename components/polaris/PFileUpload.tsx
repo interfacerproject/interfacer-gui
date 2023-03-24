@@ -181,7 +181,7 @@ export default function PFileUpload(props: Props) {
   return (
     <Stack vertical spacing="tight">
       {props.label && <PLabel label={props.label} />}
-      <DropZone onDrop={handleDrop} customValidator={customValidator}>
+      <DropZone onDrop={handleDrop} customValidator={customValidator} id="dropzone-images">
         {files.length > 0 && uploadedFiles}
         {!files.length && <DropZone.FileUpload actionTitle={actionTitle} />}
       </DropZone>

@@ -14,9 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { aliasMutation, randomString } from "../utils";
-import { randomCity } from "../utils";
-import { aliasQuery } from "../utils";
+import { aliasMutation, aliasQuery, randomCity, randomString } from "../utils";
 
 const visitCreateProject = (type: string) => {
   cy.login();
@@ -101,12 +99,14 @@ type DeclarationParams = {
 
 const addDeclarations = (p: DeclarationParams) => {
   const yesOrNo = (value: boolean) => (value ? "yes" : "no");
-  cy.get(`#recyclable-${yesOrNo(p.recyclable)}`).click();
-  cy.get(`#recyclable-${yesOrNo(p.recyclable)}`).should("have.class", "Polaris-Button--pressed");
+  const recyclableChoice = cy.get(`#recyclable-${yesOrNo(p.recyclable)}`);
+  const repairableChoice = cy.get(`#repairable-${yesOrNo(p.repairable)}`);
+  recyclableChoice.click();
+  recyclableChoice.should("have.class", "Polaris-Button--pressed");
   cy.get(`#recyclable-${yesOrNo(!p.recyclable)}`).should("not.have.class", "Polaris-Button--pressed");
-  cy.get(`#repairable-${yesOrNo(p.repairable)}`).click();
+  repairableChoice.click();
+  repairableChoice.should("have.class", "Polaris-Button--pressed");
   cy.get(`#repairable-${yesOrNo(!p.repairable)}`).should("not.have.class", "Polaris-Button--pressed");
-  cy.get(`#repairable-${yesOrNo(p.repairable)}`).should("have.class", "Polaris-Button--pressed");
 };
 
 const checkLicense = () => {
@@ -131,10 +131,18 @@ const checkContributors = () => {
 
 const aliasQueryandMutation = () => {
   cy.intercept("POST", Cypress.env("ZENFLOWS_URL"), req => {
-    // Queries
     aliasQuery(req, "getProjectLayout");
-    // Mutations
     aliasMutation(req, "CreateProject");
+  });
+};
+
+const uploadImage = () => {
+  //@ts-ignore
+  const imageName = `image-${randomString(4)}`;
+  cy.screenshot(imageName);
+  cy.get("input[type=file]#dropzone-images").selectFile(`cypress/screenshots/ci/${imageName}.png`, {
+    action: "drag-drop",
+    force: true,
   });
 };
 
@@ -169,6 +177,7 @@ describe("when user visits create design and submit manually data", () => {
       tag: "open-source",
     };
     compileMainValues(mainValues);
+    uploadImage();
     addLicense();
     addContributors("nenn");
     addRelatedProjects("perenzio");
@@ -196,6 +205,7 @@ describe("when user visits create product and submit manually data", () => {
       tag: "open-source",
     };
     compileMainValues(mainValues);
+    uploadImage();
     addContributors("nenn");
     cy.get("#link-design-search").type("perenzio").wait(500);
     cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
@@ -208,7 +218,6 @@ describe("when user visits create product and submit manually data", () => {
     };
     addDeclarations(declaration);
     submit();
-
     checkUrl("product");
     checkMainValues(mainValues);
     checkDeclarations(declaration);
@@ -231,6 +240,7 @@ describe("when user visits create service and submit manually data", () => {
       tag: "open-source",
     };
     compileMainValues(mainValues);
+    uploadImage();
     const city = randomCity();
     addLocation("service", city);
     addContributors("nenn");
