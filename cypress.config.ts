@@ -22,6 +22,7 @@ export default defineConfig({
     baseUrl: "http://localhost:3000",
     experimentalStudio: true,
     testIsolation: false,
+    experimentalMemoryManagement: true,
     setupNodeEvents(on, config) {
       require("cypress-localstorage-commands/plugin")(on, config);
       require("cypress-fail-fast/plugin")(on, config);
