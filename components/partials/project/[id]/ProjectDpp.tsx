@@ -50,12 +50,14 @@ const ProjectDpp = ({ id }: { id: string }) => {
   return (
     <>
       <div className="space-y-8">
-        <div className="flex justify-between items-center mb-4">
-          <Text as="h1" variant="headingXl">
-            {t("Qr Code")}
-          </Text>
+        <div>
+          <div className="mb-4">
+            <Text as="h1" variant="headingXl">
+              {t("Qr Code")}
+            </Text>
+          </div>
+          <QRCode value={origin + path} />
         </div>
-        <QRCode value={origin + path} />
         <div>
           <div className="flex justify-between items-center mb-4">
             <Text as="h1" variant="headingXl">
