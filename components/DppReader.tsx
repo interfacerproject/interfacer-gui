@@ -10,7 +10,7 @@ const DppReader = () => {
   const [activeLink, setActiveLink] = useState(false);
   const { t } = useTranslation("common");
   return (
-    <div className="container mx-auto">
+    <>
       <QrReader
         constraints={{
           facingMode: "environment",
@@ -50,7 +50,7 @@ const DppReader = () => {
           </div>
         </Modal.Section>
       </Modal>
-    </div>
+    </>
   );
 };
 
