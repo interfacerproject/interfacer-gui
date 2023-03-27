@@ -16,7 +16,7 @@ export interface Props {
   accept?: "image" | "file";
   allowDuplicates?: boolean;
   customValidators?: Array<FileValidator>;
-
+  requiredIndicator?: boolean;
   label?: string;
   actionTitle?: string;
   helpText?: string;
@@ -37,7 +37,7 @@ export default function PFileUpload(props: Props) {
     accept = "file",
     allowDuplicates = false,
     customValidators = [],
-
+    requiredIndicator = false,
     actionTitle = t("Click here to upload or Drag and drop"),
     helpText = "",
   } = props;
@@ -180,7 +180,7 @@ export default function PFileUpload(props: Props) {
 
   return (
     <Stack vertical spacing="tight">
-      {props.label && <PLabel label={props.label} />}
+      {props.label && <PLabel label={props.label} requiredIndicator={requiredIndicator} />}
       <DropZone onDrop={handleDrop} customValidator={customValidator} id="dropzone-images">
         {files.length > 0 && uploadedFiles}
         {!files.length && <DropZone.FileUpload actionTitle={actionTitle} />}
