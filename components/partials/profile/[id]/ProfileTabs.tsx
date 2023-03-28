@@ -29,43 +29,46 @@ const ProfileTabs = () => {
     collectedProjects["id"] = JSON.parse(getItem("projectsCollected"));
   }
 
-  return (
-    <Tabs
-      tabs={[
-        {
-          id: "projects",
-          content: (
-            <span className="flex items-center space-x-4">
-              <CubeIcon className="w-5 h-5 mr-1" />
-              {t("Projects")}
-            </span>
-          ),
-        },
+  const tabs = [
+    {
+      id: "projects",
+      content: (
+        <span className="flex items-center space-x-4">
+          <CubeIcon className="w-5 h-5 mr-1" />
+          {t("Projects")}
+        </span>
+      ),
+    },
 
-        {
-          id: "list",
-          content: (
-            <span className="flex items-center space-x-4">
-              <ClipboardListIcon className="w-5 h-5 mr-1" />
-              {t("List")}
-            </span>
-          ),
-        },
-      ]}
-      selected={projectTabSelected}
-      onSelect={handleProjectTabChange}
-    >
-      {projectTabSelected === 0 && (
-        <ProjectsCards
-          filter={proposalFilter}
-          hideHeader={false}
-          hideFilters={false}
-          header={isUser ? t("My projects") : t("Projects")}
-        />
-      )}
-      {projectTabSelected === 1 && (
-        <ProjectsCards header={t("My list")} filter={collectedProjects} hideHeader={false} />
-      )}
+    {
+      id: "list",
+      content: (
+        <span className="flex items-center space-x-4">
+          <ClipboardListIcon className="w-5 h-5 mr-1" />
+          {t("List")}
+        </span>
+      ),
+    },
+  ];
+
+  const userProjects = {
+    filter: proposalFilter,
+    hideHeader: false,
+    hideFilters: false,
+    header: isUser ? t("My projects") : t("Projects"),
+  };
+
+  const inListProjects = {
+    header: t("My list"),
+    filter: collectedProjects,
+    hideHeader: false,
+  };
+
+  const projectsCardsProps = projectTabSelected === 0 ? { ...userProjects } : { ...inListProjects };
+
+  return (
+    <Tabs tabs={tabs} selected={projectTabSelected} onSelect={handleProjectTabChange}>
+      <ProjectsCards {...projectsCardsProps} />
     </Tabs>
   );
 };
