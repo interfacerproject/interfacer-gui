@@ -14,26 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Button, Card, Link, Stack, Tabs, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Link, Tabs, Text } from "@bbtgnn/polaris-interfacer";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import Spinner from "components/brickroom/Spinner";
 import FullWidthBanner from "components/FullWidthBanner";
 import FetchUserLayout, { useUser } from "components/layout/FetchUserLayout";
 import Layout from "components/layout/Layout";
 import ProfileHeading from "components/partials/profile/[id]/ProfileHeading";
-import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import TrackRecord from "components/partials/profile/[id]/TrackRecord";
 import ProjectsCards from "components/ProjectsCards";
-import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
-import { Token, TrendPeriod } from "hooks/useWallet";
 import type { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
 import { useCallback, useState } from "react";
-import useFilters from "../../../hooks/useFilters";
+import useFilters from "hooks/useFilters";
 
 //
 
@@ -46,9 +44,7 @@ const Profile: NextPageWithLayout = () => {
   const { user } = useAuth();
   const initialTab = tab ? Number(tab) : 0;
 
-  const [selected, setSelected] = useState(0);
   const [projectTabSelected, setProjectTabSelected] = useState(initialTab);
-  const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
   const handleProjectTabChange = useCallback((selectedTabIndex: number) => setProjectTabSelected(selectedTabIndex), []);
 
   const { person, id } = useUser();
@@ -62,36 +58,6 @@ const Profile: NextPageWithLayout = () => {
   if (hasCollectedProjects) {
     collectedProjects["id"] = JSON.parse(getItem("projectsCollected"));
   }
-
-  const tabs = [
-    {
-      id: "week",
-      content: t("This week"),
-    },
-    {
-      id: "month",
-      content: t("This month"),
-    },
-    {
-      id: "cycle",
-      content: t("This cycle"),
-    },
-  ];
-
-  const tabsContent = [
-    <div className="flex" key={"week"}>
-      <TokensResume stat={t(Token.Idea)} id={id} period={TrendPeriod.Week} />
-      <TokensResume stat={t(Token.Strengths)} id={id} period={TrendPeriod.Week} />
-    </div>,
-    <div className="flex" key={"month"}>
-      <TokensResume stat={t(Token.Idea)} id={id} period={TrendPeriod.Month} />
-      <TokensResume stat={t(Token.Strengths)} id={id} period={TrendPeriod.Month} />
-    </div>,
-    <div className="flex" key="cyclal">
-      <TokensResume stat={t(Token.Idea)} id={id} period={TrendPeriod.Cycle} />
-      <TokensResume stat={t(Token.Strengths)} id={id} period={TrendPeriod.Cycle} />
-    </div>,
-  ];
 
   return (
     <>
@@ -112,21 +78,7 @@ const Profile: NextPageWithLayout = () => {
           )}
           <div className="grid grid-cols-1 lg:grid-cols-2 container mx-auto pt-7 px-2 lg:px-0 space-x-2">
             <ProfileHeading />
-
-            <Stack vertical spacing="extraLoose">
-              <PTitleSubtitle
-                title={t("Track record")}
-                subtitle={t(
-                  "We keep track of your recent activity on the platform, such as the number of designs you have contributed, the feedback you have received, and your level of engagement in the community. About the economic model"
-                )}
-                titleTag="h2"
-              ></PTitleSubtitle>
-              <Card>
-                <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
-                  {tabsContent[selected]}
-                </Tabs>
-              </Card>
-            </Stack>
+            <TrackRecord />
           </div>
 
           <div className="container mx-auto my-4">
