@@ -31,9 +31,13 @@ const Profile: NextPageWithLayout = () => {
     <>
       <EditProfileBanner />
       <div className="container mx-auto space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 pt-7 px-2 lg:px-0 space-x-2">
-          <ProfileHeading />
-          <TrackRecord />
+        <div className="flex flex-col md:flex-row pt-7 lg:space-x-8 space-y-2">
+          <div className="flex grow">
+            <ProfileHeading />
+          </div>
+          <div className="max-w-2xl ">
+            <TrackRecord />
+          </div>
         </div>
         <ProfileTabs />
       </div>

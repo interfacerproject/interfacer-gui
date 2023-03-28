@@ -3,7 +3,6 @@ import { Button, Link, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import Avatar from "boring-avatars";
 import { useUser } from "components/layout/FetchUserLayout";
 import { useAuth } from "hooks/useAuth";
-import useFilters from "hooks/useFilters";
 import { CLAIM_DID } from "lib/QueryAndMutation";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
