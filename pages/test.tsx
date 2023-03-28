@@ -7,8 +7,7 @@ const Test = () => {
   const [pp, setPp] = useState<any>(null);
   const { generateGraph } = useCyto();
   const l = async () => {
-    const p = await generateGraph("063EC255EADPZKTSEY75H3V7SR", {} as Record<string, any>, false, false);
-    devLog("ppppppppp", p);
+    const p = await generateGraph("063EMWS0NCTH3N6TCVNG8EEPG8", true, false, false);
     setPp(p);
   };
   useEffect(() => {

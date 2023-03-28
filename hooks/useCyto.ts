@@ -8,7 +8,7 @@ import {
   GetProcessGroupQuery,
   GetProcessGroupQueryVariables,
   Process,
-} from "./../lib/types/index";
+} from "lib/types/index";
 
 type ProcessGroup = Record<
   string,
@@ -195,11 +195,8 @@ const useCytoGraph = () => {
     }
   };
 
-  const generateGraph = async (id: string, processGroups: any, doUsers: boolean, compact: boolean) => {
-    // const addGroups = Object.keys(processGroups).length !== 0;
-    console.log(Object.keys(processGroups).length !== 0);
-    const addGroups = true;
-    // let processGroups = {} as any
+  const generateGraph = async (id: string, addGroups: boolean, doUsers: boolean, compact: boolean) => {
+    const processGroups = {} as ProcessGroup;
     const { data } = await fetchDPP({ id });
     const [oldDppChild] = data.economicResource?.traceDpp;
 
