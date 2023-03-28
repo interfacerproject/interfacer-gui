@@ -14,34 +14,31 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useMutation } from "@apollo/client";
 import { Button, Card, Link, Stack, Tabs, Text } from "@bbtgnn/polaris-interfacer";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
-import Avatar from "boring-avatars";
 import Spinner from "components/brickroom/Spinner";
 import FullWidthBanner from "components/FullWidthBanner";
 import FetchUserLayout, { useUser } from "components/layout/FetchUserLayout";
 import Layout from "components/layout/Layout";
+import ProfileHeading from "components/partials/profile/[id]/ProfileHeading";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectsCards from "components/ProjectsCards";
 import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import { Token, TrendPeriod } from "hooks/useWallet";
-import { CLAIM_DID } from "lib/QueryAndMutation";
 import type { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import useFilters from "../../../hooks/useFilters";
 
 //
 
 const Profile: NextPageWithLayout = () => {
   const { getItem } = useStorage();
-  const [didUrl, setDidUrl] = useState<string>(process.env.NEXT_PUBLIC_DID_EXPLORER!);
   const router = useRouter();
   const { tab } = router.query;
   const { t } = useTranslation("common");
@@ -54,8 +51,6 @@ const Profile: NextPageWithLayout = () => {
   const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
   const handleProjectTabChange = useCallback((selectedTabIndex: number) => setProjectTabSelected(selectedTabIndex), []);
 
-  const [claimPerson] = useMutation(CLAIM_DID);
-
   const { person, id } = useUser();
   const isUser = user?.ulid === id;
   proposalFilter.primaryAccountable = [id];
@@ -67,12 +62,6 @@ const Profile: NextPageWithLayout = () => {
   if (hasCollectedProjects) {
     collectedProjects["id"] = JSON.parse(getItem("projectsCollected"));
   }
-
-  useEffect(() => {
-    claimPerson({ variables: { id: id } }).then(data => {
-      setDidUrl(`${process.env.NEXT_PUBLIC_DID_EXPLORER!}details/${data.data.claimPerson.did.didDocument?.id}`);
-    });
-  }, []);
 
   const tabs = [
     {
@@ -122,68 +111,7 @@ const Profile: NextPageWithLayout = () => {
             </FullWidthBanner>
           )}
           <div className="grid grid-cols-1 lg:grid-cols-2 container mx-auto pt-7 px-2 lg:px-0 space-x-2">
-            <Stack vertical spacing="extraLoose">
-              <Stack spacing="tight" alignment="leading">
-                <Text as="h2" variant="headingXl">
-                  {isUser ? <>{t("Hi,") + " "}</> : <> </>}
-                  <span className="text-primary">{person?.name}</span>
-                </Text>
-                <div className="w-10 rounded-full">
-                  <Avatar
-                    size={"full"}
-                    name={person?.name}
-                    variant="beam"
-                    colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
-                  />
-                </div>
-              </Stack>
-              <Stack>
-                <Text as="span" variant="bodyLg" color="subdued">
-                  {t("Username:")}
-                </Text>
-                <Text as="span" variant="bodyLg">
-                  <span className="text-primary">@{person?.user}</span>
-                </Text>
-              </Stack>
-              {isUser && (
-                <Stack>
-                  <Text as="span" variant="bodyLg" color="subdued">
-                    {t("Email:")}
-                  </Text>
-                  <Text as="span" variant="bodyLg">
-                    <span className="text-primary">{person?.email}</span>
-                  </Text>
-                </Stack>
-              )}
-              <Stack alignment="center">
-                <Text as="span" variant="bodyLg" color="subdued">
-                  {t("DID:")}
-                </Text>
-                <Text as="span" variant="bodyLg">
-                  <Link url={didUrl}>
-                    <a>
-                      <Button primary>{t("DID Explorer")}</Button>
-                    </a>
-                  </Link>
-                </Text>
-              </Stack>
-              <Stack>
-                <Text as="span" variant="bodyLg" color="subdued">
-                  {t("ID:")}
-                </Text>
-                <Text as="span" variant="bodyLg" color="subdued">
-                  {person?.id}
-                </Text>
-              </Stack>
-              {person?.note && (
-                <div className="flex flex-row space-x-2 lg:mr-2">
-                  <Text as="span" variant="bodyLg" color="subdued">
-                    {t("Bio:")}
-                  </Text>
-                  <pre className="whitespace-normal py-1 px-4 bg-white border-2 rounded-md">{person?.note}</pre>
-                </div>
-              )}
-            </Stack>
+            <ProfileHeading />
 
             <Stack vertical spacing="extraLoose">
               <PTitleSubtitle
