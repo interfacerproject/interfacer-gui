@@ -41,7 +41,7 @@ export default function SearchUsers(props: Props) {
 
   const { data, loading } = useQuery<SearchPeopleQuery, SearchPeopleQueryVariables>(SEARCH_PEOPLE, {
     variables: {
-      last: 5,
+      last: 12,
       filter: inputValue ? filter : undefined,
     },
   });

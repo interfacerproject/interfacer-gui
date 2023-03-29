@@ -46,7 +46,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
   const dataQueryIdentifier = "economicResources";
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
-    variables: { last: 6, filter: filter },
+    variables: { last: 12, filter: filter },
   });
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
