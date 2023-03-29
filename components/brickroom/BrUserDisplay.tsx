@@ -1,6 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
-import { Icon, Spinner, Text } from "@bbtgnn/polaris-interfacer";
-import { LocationsMinor } from "@shopify/polaris-icons";
+import { Spinner, Text } from "@bbtgnn/polaris-interfacer";
+import LocationText from "components/LocationText";
 import { GetPersonQuery, GetPersonQueryVariables, Person } from "lib/types";
 import BrUserAvatar from "./BrUserAvatar";
 
@@ -36,14 +36,7 @@ export default function BrUserDisplay(props: Props) {
           <span className="font-medium">{u.user}</span>
           {u.name != u.user && <span className="ml-1 text-text-subdued">{`(${u.name})`}</span>}
         </Text>
-        {u.primaryLocation && (
-          <div className="flex items-center text-primary">
-            <Icon source={LocationsMinor} color="subdued" />
-            <Text as="p" variant="bodyMd" color="subdued">
-              {u.primaryLocation.name}
-            </Text>
-          </div>
-        )}
+        {u.primaryLocation && <LocationText name={u.primaryLocation.name} />}
       </div>
     </div>
   );

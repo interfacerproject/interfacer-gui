@@ -14,14 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { AdjustmentsIcon } from "@heroicons/react/outline";
-import cn from "classnames";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import Spinner from "./brickroom/Spinner";
 import WithFilterLayout from "./layout/WithFilterLayout";
-import PTitleCounter from "./polaris/PTitleCounter";
-import ProjectsFilters from "./ProjectsFilters";
 
 export interface CardsGroupProps {
   hidePagination?: boolean;
@@ -68,7 +64,7 @@ const CardsGroup = (props: CardsGroupProps) => {
           hideFilters={hideFilters}
         >
           <div className="w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {/* CARDS */}
               {children}
             </div>
