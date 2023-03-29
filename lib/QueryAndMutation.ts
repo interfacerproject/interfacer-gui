@@ -465,6 +465,9 @@ export const FETCH_RESOURCES = gql`
             id
             name
             note
+            primaryLocation {
+              name
+            }
           }
           custodian {
             id

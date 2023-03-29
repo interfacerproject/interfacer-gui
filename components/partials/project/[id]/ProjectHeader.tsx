@@ -15,7 +15,7 @@ const ProjectHeader = () => {
           { name: project.conformsTo!.name, href: `/projects?conformTo=${project.conformsTo!.id}` },
         ]}
       />
-      <ProjectTypeChip projectNode={project} />
+      <ProjectTypeChip project={project} />
       <Text as="h1" variant="heading2xl" id="project-title">
         {project.name}
       </Text>

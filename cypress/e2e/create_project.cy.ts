@@ -14,9 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { aliasMutation, randomString } from "../utils";
-import { randomCity } from "../utils";
-import { aliasQuery } from "../utils";
+import { aliasMutation, aliasQuery, randomCity, randomString } from "../utils";
 
 const visitCreateProject = (type: string) => {
   cy.login();
@@ -67,14 +65,14 @@ const addRelatedProjects = (query: string) => {
   searchMenuAdd("#add-related-projects-search", query);
 };
 
-const submit = () => {
+const submit = async () => {
   cy.get("#project-create-submit").click();
   // cy.wait(20000)
   cy.wait("@gqlCreateProjectMutation", { timeout: 60000 });
+  cy.wait("@gqlgetProjectLayoutQuery", { timeout: 120000 });
 };
 
 const checkUrl = (type: string) => {
-  cy.wait("@gqlgetProjectLayoutQuery", { timeout: 120000 });
   const url = cy.url();
   url.should("not.contain", `/create/project/${type}"`);
   url.should("contain", "/project");
@@ -101,12 +99,14 @@ type DeclarationParams = {
 
 const addDeclarations = (p: DeclarationParams) => {
   const yesOrNo = (value: boolean) => (value ? "yes" : "no");
-  cy.get(`#recyclable-${yesOrNo(p.recyclable)}`).click();
-  cy.get(`#recyclable-${yesOrNo(p.recyclable)}`).should("have.class", "Polaris-Button--pressed");
+  const recyclableChoice = cy.get(`#recyclable-${yesOrNo(p.recyclable)}`);
+  const repairableChoice = cy.get(`#repairable-${yesOrNo(p.repairable)}`);
+  recyclableChoice.click();
+  recyclableChoice.should("have.class", "Polaris-Button--pressed");
   cy.get(`#recyclable-${yesOrNo(!p.recyclable)}`).should("not.have.class", "Polaris-Button--pressed");
-  cy.get(`#repairable-${yesOrNo(p.repairable)}`).click();
+  repairableChoice.click();
+  repairableChoice.should("have.class", "Polaris-Button--pressed");
   cy.get(`#repairable-${yesOrNo(!p.repairable)}`).should("not.have.class", "Polaris-Button--pressed");
-  cy.get(`#repairable-${yesOrNo(p.repairable)}`).should("have.class", "Polaris-Button--pressed");
 };
 
 const checkLicense = () => {
@@ -131,10 +131,27 @@ const checkContributors = () => {
 
 const aliasQueryandMutation = () => {
   cy.intercept("POST", Cypress.env("ZENFLOWS_URL"), req => {
-    // Queries
     aliasQuery(req, "getProjectLayout");
-    // Mutations
     aliasMutation(req, "CreateProject");
+  });
+};
+
+const uploadImage = () => {
+  const imageName = `image-${randomString(4)}`;
+  const attempt = Cypress.currentRetry;
+  cy.screenshot(imageName);
+  // when run this test from the browser app you want this:
+  // const imageToUpload =
+  // attempt == 0
+  //   ? `cypress/screenshots/ci/${imageName}.png`
+  //   : `cypress/screenshots/ci/${imageName} (attempt ${attempt + 1}).png`;
+  const imageToUpload =
+    attempt == 0
+      ? `cypress/screenshots/ci/create_project.cy.ts/${imageName}.png`
+      : `cypress/screenshots/ci/create_project.cy.ts/${imageName} (attempt ${attempt + 1}).png`;
+  cy.get("input[type=file]#dropzone-images").selectFile(imageToUpload, {
+    action: "drag-drop",
+    force: true,
   });
 };
 
@@ -161,18 +178,19 @@ describe("when user visits create design and submit manually data", () => {
     visitCreateProject("design");
     aliasQueryandMutation();
   });
-  it("should create a new design", () => {
+  it("should create a new design", async () => {
     const mainValues: CompileMainValuesParams = {
-      title: "Laser",
+      title: "Vegeta",
       description: "The project description",
       link: "https://gitub.com/dyne/root",
       tag: "open-source",
     };
     compileMainValues(mainValues);
+    uploadImage();
     addLicense();
     addContributors("nenn");
-    addRelatedProjects("perenzio");
-    submit();
+    addRelatedProjects("milano");
+    await submit();
     checkUrl("design");
     checkMainValues(mainValues);
     checkLicense();
@@ -188,18 +206,18 @@ describe("when user visits create product and submit manually data", () => {
     aliasQueryandMutation();
   });
 
-  it("should create a new product", () => {
+  it("should create a new product", async () => {
     const mainValues: CompileMainValuesParams = {
-      title: "Lengho",
+      title: "Goku",
       description: "The project description",
       link: "https://gitub.com/dyne/root",
       tag: "open-source",
     };
     compileMainValues(mainValues);
+    uploadImage();
     addContributors("nenn");
-    cy.get("#link-design-search").type("perenzio").wait(500);
+    cy.get("#link-design-search").type("perenzio design").wait(500);
     cy.get("#PolarisPortalsContainer").children().children().children().eq(0).click();
-    addRelatedProjects("perenzio");
     const city = randomCity();
     addLocation("product", city);
     const declaration = {
@@ -207,8 +225,7 @@ describe("when user visits create product and submit manually data", () => {
       repairable: false,
     };
     addDeclarations(declaration);
-    submit();
-
+    await submit();
     checkUrl("product");
     checkMainValues(mainValues);
     checkDeclarations(declaration);
@@ -223,19 +240,20 @@ describe("when user visits create service and submit manually data", () => {
     aliasQueryandMutation();
   });
 
-  it("should create a new service", () => {
+  it("should create a new service", async () => {
     const mainValues: CompileMainValuesParams = {
-      title: "awesome service",
+      title: "Maijin Bu",
       description: "The project description",
       link: "https://gitub.com/dyne/root",
       tag: "open-source",
     };
     compileMainValues(mainValues);
+    uploadImage();
     const city = randomCity();
     addLocation("service", city);
     addContributors("nenn");
-    addRelatedProjects("perenzio");
-    submit();
+    addRelatedProjects("bonomelli");
+    await submit();
     checkUrl("service");
     checkMainValues(mainValues);
     checkContributors();

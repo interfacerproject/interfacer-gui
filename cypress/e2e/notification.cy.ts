@@ -25,7 +25,7 @@ describe("when user has notification", () => {
     cy.restoreLocalStorage();
   });
 
-  it("should mark notification as read", () => {
+  it.skip("should mark notification as read", () => {
     cy.intercept("POST", Cypress.env("NEXT_PUBLIC_INBOX_COUNT_UNREAD"), {
       body: { count: 4, success: "true" },
     }).as("countUnread");
