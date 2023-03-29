@@ -76,5 +76,9 @@
   "There are unsaved changes. Discard them?": "Es gibt nicht gespeicherte Änderungen. Verwerfen?",
   "Logout": "Ausloggen",
   "My profile": "Mein Profil",
+  "relation_one": "Beziehung",
+  "relation_other": "Beziehungen",
+  "contributor_one": "Beitragszahler",
+  "contributor_other": "Beitragszahler",
   "See all notifications": "Alle Benachrichtigungen anzeigen"
 }
