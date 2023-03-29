@@ -33,7 +33,7 @@ specifiers:
   base64url: ^3.0.1
   boring-avatars: ^1.7.0
   classnames: ^2.3.1
-  cypress: ^12.8.1
+  cypress: ^12.9.0
   cypress-fail-fast: ^5.0.1
   cypress-localstorage-commands: ^2.2.1
   cypress-wait-until: ^1.7.2
@@ -104,7 +104,7 @@ dependencies:
   '@hookform/resolvers': 2.9.10_react-hook-form@7.39.5
   '@shopify/polaris-icons': 6.5.0
   '@tailwindcss/typography': 0.5.8_tailwindcss@3.2.4
-  '@testing-library/cypress': 8.0.7_cypress@12.8.1
+  '@testing-library/cypress': 8.0.7_cypress@12.9.0
   '@types/base45': 2.0.0
   '@types/carbon__icons-react': 11.15.0
   '@types/crypto-js': 4.1.1
@@ -121,8 +121,8 @@ dependencies:
   base64url: 3.0.1
   boring-avatars: 1.7.0
   classnames: 2.3.2
-  cypress: 12.8.1
-  cypress-localstorage-commands: 2.2.1_cypress@12.8.1
+  cypress: 12.9.0
+  cypress-localstorage-commands: 2.2.1_cypress@12.9.0
   cypress-wait-until: 1.7.2
   daisyui: 2.41.0_l5bzpxvjbqhurjfyo5fybuhvfy
   dayjs: 1.11.6
@@ -170,7 +170,7 @@ dependencies:
 devDependencies:
   '@types/lodash': 4.14.191
   '@typescript-eslint/eslint-plugin': 5.43.0_nqj4bdx4ekws7aecttskpih4py
-  cypress-fail-fast: 5.0.1_cypress@12.8.1
+  cypress-fail-fast: 5.0.1_cypress@12.9.0
   devmoji: 2.3.0
   eslint: 8.28.0
   eslint-config-next: 12.2.5_hsf322ms6xhhd4b5ne6lb74y4a
@@ -2358,7 +2358,7 @@ packages:
       tailwindcss: 3.2.4_ts-node@10.9.1
     dev: false
 
-  /@testing-library/cypress/8.0.7_cypress@12.8.1:
+  /@testing-library/cypress/8.0.7_cypress@12.9.0:
     resolution: {integrity: sha512-3HTV725rOS+YHve/gD9coZp/UcPK5xhr4H0GMnq/ni6USdtzVtSOG9WBFtd8rYnrXk8rrGD+0toRFYouJNIG0Q==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
@@ -2366,7 +2366,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.1
       '@testing-library/dom': 8.19.0
-      cypress: 12.8.1
+      cypress: 12.9.0
     dev: false
 
   /@testing-library/dom/8.19.0:
@@ -2523,8 +2523,8 @@ packages:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: false
 
-  /@types/node/14.18.40:
-    resolution: {integrity: sha512-pGteXO/JQX7wPxGR8lyT+doqjMa7XvlVowwrDwLfX92k5SdLkk4cwC7CYSLBxrenw/R5oQwKioVIak7ZgplM3g==}
+  /@types/node/14.18.42:
+    resolution: {integrity: sha512-xefu+RBie4xWlK8hwAzGh3npDz/4VhF6icY/shU+zv/1fNn+ZVG7T7CRwe9LId9sAYRPxI+59QBPuKL3WpyGRg==}
     dev: false
 
   /@types/node/18.7.15:
@@ -3813,38 +3813,38 @@ packages:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
     dev: false
 
-  /cypress-fail-fast/5.0.1_cypress@12.8.1:
+  /cypress-fail-fast/5.0.1_cypress@12.9.0:
     resolution: {integrity: sha512-8x1RGWki0Vldq3dNUuWnSUiDPBSdDqznSl8S8Z6aK3JBPaqMZOlVYWhCzoyymSpt4Ta8rL+IAuDJ/+5GA2faTA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       cypress: '>=6.0.0'
     dependencies:
       chalk: 4.1.2
-      cypress: 12.8.1
+      cypress: 12.9.0
     dev: true
 
-  /cypress-localstorage-commands/2.2.1_cypress@12.8.1:
+  /cypress-localstorage-commands/2.2.1_cypress@12.9.0:
     resolution: {integrity: sha512-m7IwoM+BMOJj7FzzN4It268c/i/Ur72CQX8JwLICkQ6ZgF1XNJOIKlQ7Rszg45ATLTjVTL1QElKCZECoU8cthQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       cypress: '>=2.1.0'
     dependencies:
-      cypress: 12.8.1
+      cypress: 12.9.0
     dev: false
 
   /cypress-wait-until/1.7.2:
     resolution: {integrity: sha512-uZ+M8/MqRcpf+FII/UZrU7g1qYZ4aVlHcgyVopnladyoBrpoaMJ4PKZDrdOJ05H5RHbr7s9Tid635X3E+ZLU/Q==}
     dev: false
 
-  /cypress/12.8.1:
-    resolution: {integrity: sha512-lIFbKdaSYAOarNLHNFa2aPZu6YSF+8UY4VRXMxJrFUnk6RvfG0AWsZ7/qle/aIz30TNUD4aOihz2ZgS4vuQVSA==}
+  /cypress/12.9.0:
+    resolution: {integrity: sha512-Ofe09LbHKgSqX89Iy1xen2WvpgbvNxDzsWx3mgU1mfILouELeXYGwIib3ItCwoRrRifoQwcBFmY54Vs0zw7QCg==}
     engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
     hasBin: true
     requiresBuild: true
     dependencies:
       '@cypress/request': 2.88.11
       '@cypress/xvfb': 1.2.4
-      '@types/node': 14.18.40
+      '@types/node': 14.18.42
       '@types/sinonjs__fake-timers': 8.1.1
       '@types/sizzle': 2.3.3
       arch: 2.2.0
