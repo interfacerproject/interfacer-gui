@@ -61,7 +61,7 @@ const useWallet = (props: UseWalletProps): UseWalletReturnValue => {
     const today = dayjs();
     const begins = dayjs(process.env.NEXT_PUBLIC_START_DATE!);
     const daysFromCycleBegin = today.diff(begins, "day") % Number(process.env.NEXT_PUBLIC_CYCLE_LENGTH!);
-    return dayjs().subtract(daysFromCycleBegin, "day").startOf("day").valueOf();
+    return dayjs().subtract(-daysFromCycleBegin, "day").startOf("day").valueOf();
   };
 
   const firstDayOfPeriod: Record<TrendPeriod, number> = {

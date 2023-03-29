@@ -8,11 +8,12 @@ import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useFormContext } from "react-hook-form";
 import { CreateProjectValues } from "../CreateProjectForm";
+import { isRequired } from "lib/isFieldRequired";
 
 //
 
 export type ImagesStepValues = Array<File>;
-export const imagesStepSchema = yup.array();
+export const imagesStepSchema = yup.array().min(1).required();
 export const imagesStepDefaultValues: ImagesStepValues = [];
 
 //
@@ -45,6 +46,7 @@ export default function ImagesStep() {
         maxSize={2000000}
         label={t("Upload up to {{MAX_FILES}} pictures", { MAX_FILES })}
         helpText={`${t("Max file size")}: 2MB | ${t("Accepted formats")}: JPG, PNG, GIF, SVG`}
+        requiredIndicator={true}
       />
     </Stack>
   );
