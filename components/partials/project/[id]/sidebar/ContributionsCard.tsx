@@ -8,6 +8,7 @@ import { ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/typ
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useProjectTabs } from "pages/project/[id]";
+import QRCode from "react-qr-code";
 
 const ContributionsCard = () => {
   const { project } = useProject();
@@ -26,6 +27,10 @@ const ContributionsCard = () => {
   return (
     <Card sectioned>
       <Stack vertical>
+        <Text as="h2" variant="headingMd">
+          {t("Dpp Qr-Code")}
+        </Text>
+        <QRCode size={128} value={project.id || ""} />
         <Text as="h2" variant="headingMd">
           {t("Contributions")}
         </Text>

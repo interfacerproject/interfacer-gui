@@ -22,12 +22,10 @@ const DppReader = () => {
           }
           if (!!result) {
             //@ts-ignore
-            const url = result.text;
-            const dppId = url.split("/").pop();
-            const isTypeId = dppId.match(/^[a-zA-Z0-9]{26}$/);
-            console.log(isTypeId, dppId, url);
+            const id = result.text;
+            const isTypeId = id.match(/^[a-zA-Z0-9]{26}$/);
             if (isTypeId) {
-              setId(dppId);
+              setId(id);
               setActiveLink(true);
             }
           }
