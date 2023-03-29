@@ -150,30 +150,29 @@ describe("Sign up process", () => {
   });
 
   it("should log out", () => {
-    cy.login();
     cy.visit("/");
+    cy.get("#user-menu").click();
+    cy.get("#logout-button").click();
     cy.url()
-      .should("eq", "http://localhost:3000/")
+      .should("eq", "http://localhost:3000/sign_in")
       .then(() => {
-        cy.get("#user-menu").click();
-        cy.get("#logout-button").click();
+        cy.url();
+        expect(localStorage.getItem("reflowPrivateKey")).to.be.null;
+        expect(localStorage.getItem("reflowPublicKey")).to.be.null;
+        expect(localStorage.getItem("eddsaPublicKey")).to.be.null;
+        expect(localStorage.getItem("eddsaPrivateKey")).to.be.null;
+        expect(localStorage.getItem("seed")).to.be.null;
+        expect(localStorage.getItem("ethereumAddress")).to.be.null;
+        expect(localStorage.getItem("ethereumPrivateKey")).to.be.null;
+        expect(localStorage.getItem("ecdhPublicKey")).to.be.null;
+        expect(localStorage.getItem("ecdhPrivateKey")).to.be.null;
+        expect(localStorage.getItem("bitcoinPrivateKey")).to.be.null;
+        expect(localStorage.getItem("bitcoinPublicKey")).to.be.null;
+        expect(localStorage.getItem("authId")).to.be.null;
+        expect(localStorage.getItem("authEmail")).to.be.null;
+        expect(localStorage.getItem("authName")).to.be.null;
+        expect(localStorage.getItem("authUsername")).to.be.null;
       });
-    cy.url().should("eq", "http://localhost:3000/sign_in");
-    expect(localStorage.getItem("reflowPrivateKey")).to.be.null;
-    expect(localStorage.getItem("reflowPublicKey")).to.be.null;
-    expect(localStorage.getItem("eddsaPublicKey")).to.be.null;
-    expect(localStorage.getItem("eddsaPrivateKey")).to.be.null;
-    expect(localStorage.getItem("seed")).to.be.null;
-    expect(localStorage.getItem("ethereumAddress")).to.be.null;
-    expect(localStorage.getItem("ethereumPrivateKey")).to.be.null;
-    expect(localStorage.getItem("ecdhPublicKey")).to.be.null;
-    expect(localStorage.getItem("ecdhPrivateKey")).to.be.null;
-    expect(localStorage.getItem("bitcoinPrivateKey")).to.be.null;
-    expect(localStorage.getItem("bitcoinPublicKey")).to.be.null;
-    expect(localStorage.getItem("authId")).to.be.null;
-    expect(localStorage.getItem("authEmail")).to.be.null;
-    expect(localStorage.getItem("authName")).to.be.null;
-    expect(localStorage.getItem("authUsername")).to.be.null;
   });
 
   /**
