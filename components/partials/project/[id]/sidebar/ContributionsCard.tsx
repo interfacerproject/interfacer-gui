@@ -28,10 +28,6 @@ const ContributionsCard = () => {
     <Card sectioned>
       <Stack vertical>
         <Text as="h2" variant="headingMd">
-          {t("Dpp Qr-Code")}
-        </Text>
-        <QRCode size={128} value={project.id || ""} />
-        <Text as="h2" variant="headingMd">
           {t("Contributions")}
         </Text>
         <Text color="success" as="p" variant="bodyMd" id="sidebar-contributors">
@@ -61,6 +57,10 @@ const ContributionsCard = () => {
         >
           {t("All contributions")}
         </Button>
+        <Text as="h2" variant="headingMd">
+          {t("Dpp Qr-Code")}
+        </Text>
+        <QRCode size={128} value={project.id || ""} />
       </Stack>
     </Card>
   );
