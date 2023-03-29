@@ -75,6 +75,7 @@ specifiers:
   react-dom: 18.2.0
   react-dropzone: ^14.2.3
   react-hook-form: ^7.38.0
+  react-hook-form-persist: ^3.0.0
   react-json-view: ^1.21.3
   react-map-gl: ^7.0.21
   react-markdown-editor-lite: ^1.3.3
@@ -153,6 +154,7 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
   react-dropzone: 14.2.3_react@18.2.0
   react-hook-form: 7.39.5_react@18.2.0
+  react-hook-form-persist: 3.0.0_3z6ud7h6db4gqiyognuifociji
   react-json-view: 1.21.3_63dfw6rfgd64rl77ptfma4cvt4
   react-map-gl: 7.0.21_5wflejxe2geyle4qn254jrdyiy
   react-markdown-editor-lite: 1.3.3_react@18.2.0
@@ -3884,6 +3886,7 @@ packages:
       tmp: 0.2.1
       untildify: 4.0.0
       yauzl: 2.10.0
+    dev: false
 
   /d3-color/3.1.0:
     resolution: {integrity: sha512-zg/chbXyeBtMQ1LbD/WSoW2DpC3I0mpmPdW+ynRTj/x2DAWYrIY7qeZIHidozwV24m4iavr15lNwIwLxRmOxhA==}
@@ -7940,6 +7943,16 @@ packages:
 
   /react-fast-compare/3.2.0:
     resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}
+    dev: false
+
+  /react-hook-form-persist/3.0.0_3z6ud7h6db4gqiyognuifociji:
+    resolution: {integrity: sha512-6nwW65JyFpBem9RjLYAWvIFxOLoCk0E13iB9e5yeF5jeHlwx1ua0M77FvwhPpD8eaCz7hG4ziCdOxRcnJVUSxQ==}
+    peerDependencies:
+      react: '>= 16.3'
+      react-hook-form: '>= 6'
+    dependencies:
+      react: 18.2.0
+      react-hook-form: 7.39.5_react@18.2.0
     dev: false
 
   /react-hook-form/7.39.5_react@18.2.0:

@@ -37,7 +37,9 @@ import LoadingOverlay from "components/LoadingOverlay";
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormProvider, useForm } from "react-hook-form";
+import useFormPersist from "react-hook-form-persist";
 import * as yup from "yup";
+import useStorage from "hooks/useStorage";
 
 //
 
@@ -95,20 +97,29 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
   const { handleProjectCreation } = useProjectCRUD();
+  const { getItem } = useStorage();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const storedValues: CreateProjectValues | undefined = getItem("creationForm") && JSON.parse(getItem("creationForm"));
 
   const formMethods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",
     resolver: yupResolver(createProjectSchema),
-    defaultValues: createProjectDefaultValues,
+    defaultValues: storedValues || createProjectDefaultValues,
     context: {
       projectType,
       isEdit: false,
     },
   });
 
-  const { handleSubmit } = formMethods;
+  const { handleSubmit, watch, setValue } = formMethods;
+
+  useFormPersist("creationForm", {
+    watch,
+    setValue,
+    storage: window.localStorage,
+    exclude: ["images"],
+  });
 
   async function onSubmit(values: CreateProjectValues) {
     setLoading(true);
