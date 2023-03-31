@@ -18,10 +18,17 @@ specifiers:
   '@types/base45': ^2.0.0
   '@types/carbon__icons-react': ^11.15.0
   '@types/crypto-js': ^4.1.1
+  '@types/cytoscape': ^3.19.9
+  '@types/cytoscape-dagre': ^2.3.0
+  '@types/cytoscape-euler': ^1.2.0
+  '@types/cytoscape-fcose': ^2.2.0
+  '@types/cytoscape-klay': ^3.1.0
+  '@types/cytoscape-popper': ^2.0.0
   '@types/lodash': ^4.14.191
   '@types/markdown-it': ^12.2.3
   '@types/node': 18.7.15
   '@types/react': 18.0.18
+  '@types/react-cytoscapejs': ^1.2.2
   '@types/react-dom': 18.0.6
   '@typescript-eslint/eslint-plugin': ^5.0.0
   '@typescript-eslint/parser': ^5.40.1
@@ -37,6 +44,12 @@ specifiers:
   cypress-fail-fast: ^5.0.1
   cypress-localstorage-commands: ^2.2.1
   cypress-wait-until: ^1.7.2
+  cytoscape: ^3.23.0
+  cytoscape-dagre: ^2.5.0
+  cytoscape-euler: ^1.2.2
+  cytoscape-fcose: ^2.2.0
+  cytoscape-klay: ^3.1.4
+  cytoscape-popper: ^2.0.0
   daisyui: ^2.25.0
   dayjs: ^1.11.5
   devmoji: ^2.3.0
@@ -65,12 +78,14 @@ specifiers:
   markdown-it-task-lists: ^2.1.1
   next: 12.2.5
   next-i18next: ^12.0.1
+  next-transpile-modules: ^10.0.0
   octokit: ^2.0.14
   postcss: ^8.4.16
   postcss-preset-env: ^7.8.0
   prepend-http: ^4.0.0
   prettier: ^2.7.1
   react: 18.2.0
+  react-cytoscapejs: ^2.0.0
   react-d3-tree: ^3.4.2
   react-dom: 18.2.0
   react-dropzone: ^14.2.3
@@ -108,9 +123,16 @@ dependencies:
   '@types/base45': 2.0.0
   '@types/carbon__icons-react': 11.15.0
   '@types/crypto-js': 4.1.1
+  '@types/cytoscape': 3.19.9
+  '@types/cytoscape-dagre': 2.3.0
+  '@types/cytoscape-euler': 1.2.0
+  '@types/cytoscape-fcose': 2.2.0
+  '@types/cytoscape-klay': 3.1.0
+  '@types/cytoscape-popper': 2.0.0
   '@types/markdown-it': 12.2.3
   '@types/node': 18.7.15
   '@types/react': 18.0.18
+  '@types/react-cytoscapejs': 1.2.2
   '@types/react-dom': 18.0.6
   '@typescript-eslint/parser': 5.43.0_hsf322ms6xhhd4b5ne6lb74y4a
   '@uiw/react-markdown-preview': 4.1.5_63dfw6rfgd64rl77ptfma4cvt4
@@ -124,6 +146,12 @@ dependencies:
   cypress: 10.11.0
   cypress-localstorage-commands: 2.2.1_cypress@10.11.0
   cypress-wait-until: 1.7.2
+  cytoscape: 3.23.0
+  cytoscape-dagre: 2.5.0_cytoscape@3.23.0
+  cytoscape-euler: 1.2.2_cytoscape@3.23.0
+  cytoscape-fcose: 2.2.0_cytoscape@3.23.0
+  cytoscape-klay: 3.1.4_cytoscape@3.23.0
+  cytoscape-popper: 2.0.0_cytoscape@3.23.0
   daisyui: 2.41.0_l5bzpxvjbqhurjfyo5fybuhvfy
   dayjs: 1.11.6
   eslint-plugin-i18next: 6.0.0-6
@@ -144,11 +172,13 @@ dependencies:
   markdown-it-task-lists: 2.1.1
   next: 12.2.5_vgii64pd2ccbnbx2v3ro5gbin4
   next-i18next: 12.1.0_3xcjr4wz26biff45sz3jtokgje
+  next-transpile-modules: 10.0.0
   octokit: 2.0.14
   postcss: 8.4.19
   postcss-preset-env: 7.8.3_postcss@8.4.19
   prepend-http: 4.0.0
   react: 18.2.0
+  react-cytoscapejs: 2.0.0_bwu3tuwxqgbhqogdmspjd7bfae
   react-d3-tree: 3.4.2_biqbaboplfbrettd7655fr4n2y
   react-dom: 18.2.0_react@18.2.0
   react-dropzone: 14.2.3_react@18.2.0
@@ -2305,6 +2335,10 @@ packages:
       webcrypto-core: 1.7.5
     dev: false
 
+  /@popperjs/core/2.11.7:
+    resolution: {integrity: sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==}
+    dev: false
+
   /@repeaterjs/repeater/3.0.4:
     resolution: {integrity: sha512-AW8PKd6iX3vAZ0vA43nOUOnbq/X5ihgU+mSXXqunMkeQADGiqw/PY0JNeYtD5sr0PAy51YPgAPbDoeapv9r8WA==}
     dev: false
@@ -2425,6 +2459,41 @@ packages:
     resolution: {integrity: sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA==}
     dev: false
 
+  /@types/cytoscape-dagre/2.3.0:
+    resolution: {integrity: sha512-1WwDnCcdySVwhxhHWHxRFlWoz7InlXlA9O9gQjtBkk1Sf7hW0+uaRxS6nr1TLBSPZRX0QNpYGvGqh13NuFEDaA==}
+    dependencies:
+      '@types/cytoscape': 3.19.9
+    dev: false
+
+  /@types/cytoscape-euler/1.2.0:
+    resolution: {integrity: sha512-vFpbhRUim6Yz5qoypO14xth76peaXcLxmiampUW8642PZgp/1d+fxGbHYGxFyzHIqaSudtxxQIfi4MlvZMcYrA==}
+    dependencies:
+      '@types/cytoscape': 3.19.9
+    dev: false
+
+  /@types/cytoscape-fcose/2.2.0:
+    resolution: {integrity: sha512-l9+2vXg5Q4N62+9XwoIY8iMXw6SvaosEKZKYjW9LnJv+dJkCcMIA0Nmb7/6nL647j9/3FNTBk18PEOqLmmxPsQ==}
+    dependencies:
+      '@types/cytoscape': 3.19.9
+    dev: false
+
+  /@types/cytoscape-klay/3.1.0:
+    resolution: {integrity: sha512-jdHwHrvBlR0eDhZF9ggG+i7Qjx0/b0yZPZG6QfnRBc4SJwIA9BzsCxlHqHqFv1oh/CO8jJL5AkbvLUS9H0TLPQ==}
+    dependencies:
+      '@types/cytoscape': 3.19.9
+    dev: false
+
+  /@types/cytoscape-popper/2.0.0:
+    resolution: {integrity: sha512-dJnE6UDPne7tqOKoB27V/QJeflDZ6RxFH7wws3l5rnknsgFpaw4UHqIAI4waEQuqkRsA+Wht8bl3Gp5izHikqA==}
+    dependencies:
+      '@popperjs/core': 2.11.7
+      '@types/cytoscape': 3.19.9
+    dev: false
+
+  /@types/cytoscape/3.19.9:
+    resolution: {integrity: sha512-oqCx0ZGiBO0UESbjgq052vjDAy2X53lZpMrWqiweMpvVwKw/2IiYDdzPFK6+f4tMfdv9YKEM9raO5bAZc3UYBg==}
+    dev: false
+
   /@types/d3-hierarchy/1.1.8:
     resolution: {integrity: sha512-AbStKxNyWiMDQPGDguG2Kuhlq1Sv539pZSxYbx4UZeYkutpPwXCcgyiRrlV4YH64nIOsKx7XVnOMy9O7rJsXkg==}
     dev: false
@@ -2538,6 +2607,13 @@ packages:
 
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
+    dev: false
+
+  /@types/react-cytoscapejs/1.2.2:
+    resolution: {integrity: sha512-Z+CeQLw4XyQOrS/SdbcUCdYfWqYmaPS/WT+gNy33KYR09BtVzekx1jeNU5kNDvXCv8/8jGlhSrSk0uO7ocGuFg==}
+    dependencies:
+      '@types/cytoscape': 3.19.9
+      '@types/react': 18.0.18
     dev: false
 
   /@types/react-dom/18.0.6:
@@ -3633,6 +3709,12 @@ packages:
   /core-util-is/1.0.2:
     resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
 
+  /cose-base/2.2.0:
+    resolution: {integrity: sha512-AzlgcsCbUMymkADOJtQm3wO9S3ltPfYOFD5033keQn9NJzIbtnZj+UdBJe7DYml/8TdbtHJW3j58SOnKhWY/5g==}
+    dependencies:
+      layout-base: 2.0.1
+    dev: false
+
   /cosmiconfig-toml-loader/1.0.0:
     resolution: {integrity: sha512-H/2gurFWVi7xXvCyvsWRLCMekl4tITJcX0QEsDMpzxtuxDyM59xLatYNg4s/k9AA/HdtCYfj2su8mgA0GSDLDA==}
     dependencies:
@@ -3844,6 +3926,58 @@ packages:
       untildify: 4.0.0
       yauzl: 2.10.0
 
+  /cytoscape-dagre/2.5.0_cytoscape@3.23.0:
+    resolution: {integrity: sha512-VG2Knemmshop4kh5fpLO27rYcyUaaDkRw+6PiX4bstpB+QFt0p2oauMrsjVbUamGWQ6YNavh7x2em2uZlzV44g==}
+    peerDependencies:
+      cytoscape: ^3.2.22
+    dependencies:
+      cytoscape: 3.23.0
+      dagre: 0.8.5
+    dev: false
+
+  /cytoscape-euler/1.2.2_cytoscape@3.23.0:
+    resolution: {integrity: sha512-A24ZGrFpqCOutTIlGoXA5kmjFj68iy7HvqXuhcZUL1a7Z8bL59Bl2bB7hkSvFcCZBVCNcArxKr+YlB8bJo9Ftw==}
+    peerDependencies:
+      cytoscape: ^3.0.0
+    dependencies:
+      cytoscape: 3.23.0
+    dev: false
+
+  /cytoscape-fcose/2.2.0_cytoscape@3.23.0:
+    resolution: {integrity: sha512-ki1/VuRIHFCzxWNrsshHYPs6L7TvLu3DL+TyIGEsRcvVERmxokbf5Gdk7mFxZnTdiGtnA4cfSmjZJMviqSuZrQ==}
+    peerDependencies:
+      cytoscape: ^3.2.0
+    dependencies:
+      cose-base: 2.2.0
+      cytoscape: 3.23.0
+    dev: false
+
+  /cytoscape-klay/3.1.4_cytoscape@3.23.0:
+    resolution: {integrity: sha512-VwPj0VR25GPfy6qXVQRi/MYlZM/zkdvRhHlgqbM//lSvstgM6fhp3ik/uM8Wr8nlhskfqz/M1fIDmR6UckbS2A==}
+    peerDependencies:
+      cytoscape: ^3.2.0
+    dependencies:
+      cytoscape: 3.23.0
+      klayjs: 0.4.1
+    dev: false
+
+  /cytoscape-popper/2.0.0_cytoscape@3.23.0:
+    resolution: {integrity: sha512-b7WSOn8qXHWtdIXFNmrgc8qkaOs16tMY0EwtRXlxzvn8X+al6TAFrUwZoYATkYSlotfd/36ZMoeKMEoUck6feA==}
+    peerDependencies:
+      cytoscape: ^3.2.0
+    dependencies:
+      '@popperjs/core': 2.11.7
+      cytoscape: 3.23.0
+    dev: false
+
+  /cytoscape/3.23.0:
+    resolution: {integrity: sha512-gRZqJj/1kiAVPkrVFvz/GccxsXhF3Qwpptl32gKKypO4IlqnKBjTOu+HbXtEggSGzC5KCaHp3/F7GgENrtsFkA==}
+    engines: {node: '>=0.10'}
+    dependencies:
+      heap: 0.2.7
+      lodash: 4.17.21
+    dev: false
+
   /d3-color/3.1.0:
     resolution: {integrity: sha512-zg/chbXyeBtMQ1LbD/WSoW2DpC3I0mpmPdW+ynRTj/x2DAWYrIY7qeZIHidozwV24m4iavr15lNwIwLxRmOxhA==}
     engines: {node: '>=12'}
@@ -3921,6 +4055,13 @@ packages:
       d3-interpolate: 3.0.1
       d3-selection: 3.0.0
       d3-transition: 3.0.1_d3-selection@3.0.0
+    dev: false
+
+  /dagre/0.8.5:
+    resolution: {integrity: sha512-/aTqmnRta7x7MCCpExk7HQL2O4owCT2h8NT//9I1OQ9vt29Pa0BzSAkR5lwFUcQ7491yVi/3CXU9jQ5o0Mn2Sw==}
+    dependencies:
+      graphlib: 2.1.8
+      lodash: 4.17.21
     dev: false
 
   /daisyui/2.41.0_l5bzpxvjbqhurjfyo5fybuhvfy:
@@ -4241,6 +4382,14 @@ packages:
     resolution: {integrity: sha512-+uw1inIHVPQoaVuHzRyXd21icM+cnt4CzD5rW+NC1wjOUSTOs+Te7FOv7AhN7vS9x/oIyhLP5PR1H+phQAHu5Q==}
     dependencies:
       once: 1.4.0
+
+  /enhanced-resolve/5.12.0:
+    resolution: {integrity: sha512-QHTXI/sZQmko1cbDoNAa3mJ5qhWUUNAq3vR0/YiD379fWQrcfuoX1+HW2S0MTt7XmoPLapdaDKUtelUSPic7hQ==}
+    engines: {node: '>=10.13.0'}
+    dependencies:
+      graceful-fs: 4.2.10
+      tapable: 2.2.1
+    dev: false
 
   /enquirer/2.3.6:
     resolution: {integrity: sha512-yjNnPr315/FjS4zIsUxYguYUPP2e1NK4d7E7ZOLiyYCcbFBiTMyID+2wvm2w6+pZ/odMA7cRkjhsPbltwBOrLg==}
@@ -5217,6 +5366,12 @@ packages:
   /grapheme-splitter/1.0.4:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
 
+  /graphlib/2.1.8:
+    resolution: {integrity: sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==}
+    dependencies:
+      lodash: 4.17.21
+    dev: false
+
   /graphql-config/4.3.6_45e7sohesb5rh3klx2sxjwrfoe:
     resolution: {integrity: sha512-i7mAPwc0LAZPnYu2bI8B6yXU5820Wy/ArvmOseDLZIu0OU1UTULEuexHo6ZcHXeT9NvGGaUPQZm8NV3z79YydA==}
     engines: {node: '>= 10.0.0'}
@@ -5443,6 +5598,10 @@ packages:
     dependencies:
       capital-case: 1.0.4
       tslib: 2.4.1
+    dev: false
+
+  /heap/0.2.7:
+    resolution: {integrity: sha512-2bsegYkkHO+h/9MGbn6KWcE45cHZgPANo5LXF7EvWdT0yT2EguSVO1nDgU5c8+ZOPwp2vMNa7YFsJhVcDR9Sdg==}
     dev: false
 
   /hoist-non-react-statics/3.3.2:
@@ -6046,6 +6205,10 @@ packages:
     resolution: {integrity: sha512-hRkd6/XW4HTsA9vjVpY9tuXJYLSlelnkTmVFu4M9/7MIYQtFcHpbugAU7UbOfjOiVSVYl2fqgBuJ32JUmRo5Ew==}
     dev: false
 
+  /klayjs/0.4.1:
+    resolution: {integrity: sha512-WUNxuO7O79TEkxCj6OIaK5TJBkaWaR/IKNTakgV9PwDn+mrr63MLHed34AcE2yTaDntgO6l0zGFIzhcoTeroTA==}
+    dev: false
+
   /kleur/4.1.5:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
@@ -6060,6 +6223,10 @@ packages:
     dependencies:
       language-subtag-registry: 0.3.22
     dev: true
+
+  /layout-base/2.0.1:
+    resolution: {integrity: sha512-dp3s92+uNI1hWIpPGH3jK2kxE2lMjdXdr+DH8ynZHpd6PUlH6x6cbuXnoMmiNumznqaNO31xu9e79F0uuZ0JFg==}
+    dev: false
 
   /lazy-ass/1.6.0:
     resolution: {integrity: sha512-cc8oEVoctTvsFZ/Oje/kGnHbpWHYBe8IAJe4C0QNc3t8uM/0Y8+erSz/7Y1ALuXTEZTMvxXwO6YbX1ey3ujiZw==}
@@ -6857,6 +7024,13 @@ packages:
     transitivePeerDependencies:
       - react-dom
       - react-native
+    dev: false
+
+  /next-transpile-modules/10.0.0:
+    resolution: {integrity: sha512-FyeJ++Lm2Fq31gbThiRCrJlYpIY9QaI7A3TjuhQLzOix8ChQrvn5ny4MhfIthS5cy6+uK1AhDRvxVdW17y3Xdw==}
+    deprecated: All features of next-transpile-modules are now natively built-in Next.js 13.1. Please use Next's transpilePackages option :)
+    dependencies:
+      enhanced-resolve: 5.12.0
     dev: false
 
   /next/12.2.5_vgii64pd2ccbnbx2v3ro5gbin4:
@@ -7846,6 +8020,17 @@ packages:
       pure-color: 1.3.0
     dev: false
 
+  /react-cytoscapejs/2.0.0_bwu3tuwxqgbhqogdmspjd7bfae:
+    resolution: {integrity: sha512-t3SSl1DQy7+JQjN+8QHi1anEJlM3i3aAeydHTsJwmjo/isyKK7Rs7oCvU6kZsB9NwZidzZQR21Vm2PcBLG/Tjg==}
+    peerDependencies:
+      cytoscape: ^3.2.19
+      react: '>=15.0.0'
+    dependencies:
+      cytoscape: 3.23.0
+      prop-types: 15.8.1
+      react: 18.2.0
+    dev: false
+
   /react-d3-tree/3.4.2_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-qVqvSDwLPcKVTtZ6QxU8l/YmvTxa2zcOxi1SINOOVFz+VQ9IsIQdp21rbx1oXmjK+LBUaxnv+f5QSroPv+bWWg==}
     peerDependencies:
@@ -8777,6 +8962,11 @@ packages:
       resolve: 1.22.1
     transitivePeerDependencies:
       - ts-node
+    dev: false
+
+  /tapable/2.2.1:
+    resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
+    engines: {node: '>=6'}
     dev: false
 
   /text-table/0.2.0:

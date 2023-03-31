@@ -106,7 +106,7 @@ const useCytoGraph = () => {
   };
 
   const flattenObject: (obj: Record<string, any>, parentKey?: string) => Record<string, any> = (
-    obj,
+    obj = {},
     parentKey = ""
   ) => {
     // console.log("flattenObject obj", obj);
@@ -145,10 +145,10 @@ const useCytoGraph = () => {
     if (doUsers && (dppChild.node.provider !== null || dppChild.node.receiver !== null)) {
       // @ts-ignore
       const agent = dppChild.node.provider ? dppChild.node.provider : dppChild.node.receiver;
-      if (!assignedUsers.has(agent.id)) {
-        citoGraph.nodes.push({ data: { id: agent.id, ...flattenObject(agent) } });
-        assignedUsers.add(agent.id);
-        citoGraph.edges.push({ data: { source: agent.id, target: agent.id } });
+      if (!assignedUsers.has(agent?.id)) {
+        citoGraph.nodes.push({ data: { id: agent?.id, ...flattenObject(agent) } });
+        assignedUsers.add(agent?.id);
+        citoGraph.edges.push({ data: { source: agent?.id, target: agent?.id } });
       }
     }
 
@@ -201,9 +201,7 @@ const useCytoGraph = () => {
     const [oldDppChild] = data.economicResource?.traceDpp;
 
     const dppChild = differentiateResources(oldDppChild);
-
     if (addGroups) await findProcessGroups(dppChild, processGroups);
-
     if (compact) doUsers = false;
 
     const citoGraph: CitoGraph = {

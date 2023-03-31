@@ -16,10 +16,13 @@
 
 /** @type {import('next').NextConfig} */
 const { i18n } = require("./next-i18next.config");
+const withTM = require("next-transpile-modules")(["react-cytoscapejs"]);
+
 const nextConfig = {
   i18n,
   reactStrictMode: true,
   swcMinify: true,
+
   webpack: config => {
     config.resolve.fallback = {
       fs: false,
@@ -32,4 +35,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withTM(nextConfig);
