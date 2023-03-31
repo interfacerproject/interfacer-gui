@@ -38,7 +38,10 @@ const FetchUserLayout: React.FunctionComponent<Props> = (props: Props) => {
         </div>
       </div>
     );
-  if (!user) return null;
+  if (!user) {
+    router.push("/404");
+    return null;
+  }
 
   return <UserContext.Provider value={{ person: user, id }}>{children}</UserContext.Provider>;
 };

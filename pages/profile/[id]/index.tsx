@@ -22,15 +22,12 @@ import ProfileTabs from "components/partials/profile/[id]/ProfileTabs";
 import TrackRecord from "components/partials/profile/[id]/TrackRecord";
 import type { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
 
 //
 
 const Profile: NextPageWithLayout = () => {
-  const { id } = useUser();
-  if (!id) {
-    return null;
-  }
   return (
     <>
       <EditProfileBanner />
