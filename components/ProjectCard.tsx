@@ -105,8 +105,8 @@ function StatsDisplay(props: { project: Partial<EconomicResource> }) {
   const { t } = useTranslation("common");
   const { project } = props;
 
-  const contributorsNum = project.metadata?.contributors.length;
-  const relationsNum = project.metadata?.relations.length;
+  const contributorsNum = project.metadata?.contributors?.length;
+  const relationsNum = project.metadata?.relations?.length;
 
   const stats = [
     { stat: contributorsNum, label: t("contributor", { count: contributorsNum }) },
