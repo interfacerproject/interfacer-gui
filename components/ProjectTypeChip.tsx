@@ -25,15 +25,15 @@ export default function ProjectTypeChip(props: Props) {
   const { t } = useTranslation("common");
   const { project, introduction = false, link = true } = props;
 
-  const name = project?.conformsTo?.name as ProjectType;
+  const name = (project?.conformsTo?.name as ProjectType) || ProjectType.DESIGN;
   const href = `/projects?conformsTo=${project?.conformsTo?.id}`;
 
   const renderProps = ProjectTypeRenderProps[name];
 
-  const hoverClasses = `hover:cursor-pointer hover:ring-2 hover:${renderProps.classes.border}`;
+  const hoverClasses = `hover:cursor-pointer hover:ring-2 hover:${renderProps?.classes.border}`;
   const classes = classNames(
     "flex items-center space-x-1 py-1 px-2 rounded w-fit",
-    `${renderProps.classes.bg} ${renderProps.classes.content}`,
+    `${renderProps?.classes.bg} ${renderProps?.classes.content}`,
     {
       [hoverClasses]: link,
     }
@@ -41,8 +41,8 @@ export default function ProjectTypeChip(props: Props) {
 
   const baseChip = (
     <span className={classes}>
-      <strong>{renderProps.label}</strong>
-      <renderProps.icon size={16} />
+      <strong>{renderProps?.label}</strong>
+      {renderProps && <renderProps.icon size={16} />}
     </span>
   );
 
