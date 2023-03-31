@@ -14,13 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { AdjustmentsIcon } from "@heroicons/react/outline";
-import cn from "classnames";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import Spinner from "./brickroom/Spinner";
-import PTitleCounter from "./polaris/PTitleCounter";
-import ProjectsFilters from "./ProjectsFilters";
+import WithFilterLayout from "./layout/WithFilterLayout";
 
 export interface CardsGroupProps {
   hidePagination?: boolean;
@@ -60,49 +57,27 @@ const CardsGroup = (props: CardsGroupProps) => {
         </div>
       )}
       {!loading && (
-        <div className="flex flex-col">
-          {/* Header */}
-          {header && (
-            <div className="flex items-center justify-between py-5">
-              {/* Left side */}
-              <PTitleCounter title={header} titleTag="h2" length={length} />
-
-              {/* Right side */}
-              {hideFilters && (
-                <button
-                  onClick={toggleFilter}
-                  className={cn(
-                    "gap-2 text-white-700 font-normal normal-case rounded-[4px] border-1 btn btn-sm btn-outline border-white-600 bg-white-100 hover:text-accent hover:bg-white-100",
-                    { "bg-accent text-white-100": showFilter }
-                  )}
-                >
-                  <AdjustmentsIcon className="w-5 h-5" /> {t("Filter by")}
+        <WithFilterLayout
+          header={header}
+          length={length}
+          hidePrimaryAccountable={hidePrimaryAccountable}
+          hideFilters={hideFilters}
+        >
+          <div className="w-full">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {/* CARDS */}
+              {children}
+            </div>
+            {/* Pagination */}
+            {!hidePagination && nextPage && (
+              <div className="w-full pt-4 text-center">
+                <button className="text-center btn btn-primary" onClick={onLoadMore} disabled={!nextPage}>
+                  {t("Load more")}
                 </button>
-              )}
-            </div>
-          )}
-          <div className="flex flex-row flex-nowrap items-start space-x-8 w-full">
-            <div className="w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* CARDS */}
-                {children}
-              </div>
-              {/* Pagination */}
-              {!hidePagination && nextPage && (
-                <div className="w-full pt-4 text-center">
-                  <button className="text-center btn btn-primary" onClick={onLoadMore} disabled={!nextPage}>
-                    {t("Load more")}
-                  </button>
-                </div>
-              )}
-            </div>
-            {hideFilters && showFilter && (
-              <div className="basis-96 sticky top-8">
-                <ProjectsFilters hidePrimaryAccountable={hidePrimaryAccountable} />
               </div>
             )}
           </div>
-        </div>
+        </WithFilterLayout>
       )}
     </>
   );

@@ -14,6 +14,7 @@ export interface Props {
   excludeIDs?: Array<string>;
   label?: string;
   placeholder?: string;
+  id?: string;
 }
 
 export default function SearchUsers(props: Props) {
@@ -83,6 +84,7 @@ export default function SearchUsers(props: Props) {
 
   const textField = (
     <Autocomplete.TextField
+      id={props.id}
       onChange={handleInputChange}
       autoComplete="off"
       label={label}

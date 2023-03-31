@@ -17,47 +17,76 @@
 import { Button, Icon } from "@bbtgnn/polaris-interfacer";
 import { StarFilledMinor, StarOutlineMinor } from "@shopify/polaris-icons";
 import classNames from "classnames";
+import { useAuth } from "hooks/useAuth";
 import useSocial from "hooks/useSocial";
 import useWallet from "hooks/useWallet";
 import { IdeaPoints } from "lib/PointsDistribution";
-import { useTranslation } from "next-i18next";
 
 //
 
-const AddStar = ({ id, owner, tiny = false }: { id: string; owner: string; tiny?: boolean }) => {
+export default function AddStar({ id, owner, tiny = false }: { id: string; owner: string; tiny?: boolean }) {
   const { likeER, isLiked } = useSocial(id);
   const hasAlreadyStarred = isLiked(id);
-  const { t } = useTranslation("common");
-  const { addIdeaPoints } = useWallet();
+  const { user } = useAuth();
+
+  const { addIdeaPoints } = useWallet({});
   const handleClick = async () => {
     await likeER();
     //economic system: points assignments
     addIdeaPoints(owner, IdeaPoints.OnStar);
   };
 
+  if (!user) return null;
+
   return (
     <>
-      {tiny && (
-        <div
-          className={classNames("text-primary hover:cursor-pointer", { "hover:cursor-not-allowed": hasAlreadyStarred })}
-          onClick={handleClick}
-        >
-          <Icon source={hasAlreadyStarred ? StarFilledMinor : StarOutlineMinor} color="primary" />
-        </div>
-      )}
-      {!tiny && (
-        <Button
-          id="likeButton"
-          onClick={handleClick}
-          disabled={hasAlreadyStarred}
-          size="medium"
-          icon={<Icon source={hasAlreadyStarred ? StarFilledMinor : StarOutlineMinor} />}
-        >
-          {t("Star")}
-        </Button>
-      )}
+      {tiny && <StarButtonSmall starred={hasAlreadyStarred} onClick={handleClick} />}
+      {!tiny && <StarButtonDefault starred={hasAlreadyStarred} onClick={handleClick} />}
     </>
   );
-};
+}
 
-export default AddStar;
+/* Partials */
+
+interface StarredProp {
+  starred?: boolean;
+}
+
+interface ButtonProps extends StarredProp {
+  onClick?: () => void;
+}
+
+function StarIcon(props: StarredProp) {
+  const { starred = false } = props;
+  return <Icon source={starred ? StarFilledMinor : StarOutlineMinor} />;
+}
+
+function StarText(props: StarredProp) {
+  const { starred = false } = props;
+  return starred ? "Starred" : "Star";
+}
+
+function StarButtonDefault(props: ButtonProps) {
+  const { onClick = () => {}, starred = false } = props;
+  return (
+    <Button id="likeButton" onClick={onClick} disabled={starred} size="medium" icon={<StarIcon starred={starred} />}>
+      {StarText({ starred })}
+    </Button>
+  );
+}
+
+function StarButtonSmall(props: ButtonProps) {
+  const { onClick = () => {}, starred = false } = props;
+
+  const classes = classNames("py-2 px-3", "rounded-full border-1", "fill-primary", {
+    "border-primary hover:cursor-not-allowed bg-primary/5": starred,
+    "border-gray-200 hover:border-transparent hover:ring-2 hover:ring-primary": !starred,
+  });
+
+  return (
+    <button disabled={starred} onClick={onClick} className={classes} aria-label={StarText({ starred })}>
+      <span className=""></span>
+      <StarIcon starred={starred} />
+    </button>
+  );
+}

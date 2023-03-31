@@ -9,7 +9,6 @@
   "Load more": "Per saperne di più",
   "projects": "patrimonio",
   "contributorsHead": "collaboratoriCapo",
-  "contributors": "collaboratori",
   "watch": "orologio",
   "add to list": "Aggiungi all'elenco",
   "unwatch": "non guardare",
@@ -72,5 +71,14 @@
   "Run checker": "Esegui l'analisi",
   "Available for recycling": "Disponibile per il riciclaggio",
   "Available for repair": "Disponibile per la riparazione",
-  "People": "Persone"
+  "People": "Persone",
+  "There are unsaved changes. Discard them?": "Sono presenti modifiche non salvate. Scartarle?",
+  "Logout": "Logout",
+  "My profile": "Il mio profilo",
+  "relation_one": "relazione",
+  "relation_other": "relazioni",
+  "contributor_one": "collaboratore",
+  "contributor_other": "collaboratori",
+  "See all notifications": "Visualizza tutte le notifiche",
+  "Scan QR": "Scansiona QR"
 }

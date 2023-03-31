@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form";
 
 // Components
 import LoadingOverlay from "components/LoadingOverlay";
+import { useTranslation } from "next-i18next";
 import EditProjectNav from "./EditProjectNav";
 import SubmitChangesBar from "./SubmitChangesBar";
 
@@ -18,6 +19,7 @@ export interface EditFormLayoutProps<T extends FieldValues> {
 //
 
 export default function EditFormLayout<T extends FieldValues>(props: EditFormLayoutProps<T>) {
+  const { t } = useTranslation("common");
   const { children, formMethods, onSubmit = () => {} } = props;
   const router = useRouter();
   const { handleSubmit } = formMethods;
@@ -28,6 +30,31 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
     await onSubmit(values);
     router.reload();
   }
+
+  /* Prevent navigation if unsaved changes */
+
+  const unsavedChanges = formMethods.formState.isDirty;
+
+  useEffect(() => {
+    const handleWindowClose = (e: Event) => {
+      if (!unsavedChanges) return;
+      return e.preventDefault();
+    };
+    const handleBrowseAway = () => {
+      if (!unsavedChanges) return;
+      if (window.confirm(t("There are unsaved changes. Discard them?"))) return;
+      router.events.emit("routeChangeError");
+      throw "routeChange aborted.";
+    };
+    window.addEventListener("beforeunload", handleWindowClose);
+    router.events.on("routeChangeStart", handleBrowseAway);
+    return () => {
+      window.removeEventListener("beforeunload", handleWindowClose);
+      router.events.off("routeChangeStart", handleBrowseAway);
+    };
+  }, [unsavedChanges, router.events, t]);
+
+  /* Render */
 
   return (
     <FormProvider {...formMethods}>

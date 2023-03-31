@@ -14,34 +14,44 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { useQuery } from "@apollo/client";
+import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { EconomicResourceFilterParams } from "../lib/types";
-import { useEffect, useState } from "react";
+import { EconomicResourceFilterParams, GetProjectTypesQuery } from "../lib/types";
 
 const useFilters = () => {
-  const [resourceFilter, setResourceFilter] = useState<EconomicResourceFilterParams>({
+  const { conformsTo, primaryAccountable, tags } = useRouter().query;
+  const { t } = useTranslation("lastUpdatedProps");
+
+  const tagsList = typeof tags === "string" ? tags.split(",") : tags;
+  const primaryAccountableList =
+    typeof primaryAccountable === "string" ? primaryAccountable.split(",") : primaryAccountable;
+  const conformToList = typeof conformsTo === "string" ? conformsTo.split(",") : conformsTo;
+
+  const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
+  const specs = queryProjectTypes.data?.instanceVariables.specs;
+  const conformsToNoDesign = specs ? [specs.specProjectService.id, specs.specProjectProduct.id] : undefined;
+
+  const resourceFilter: EconomicResourceFilterParams = {
     primaryAccountable: [process.env.NEXT_PUBLIC_LOSH_ID!],
     gtOnhandQuantityHasNumericalValue: 0,
-  });
-  const [proposalFilter, setProposalFilter] = useState<EconomicResourceFilterParams>({});
-  const { conformsTo, primaryAccountable, tags } = useRouter().query;
-  useEffect(() => {
-    const primaryAccountableList =
-      typeof primaryAccountable === "string" ? primaryAccountable.split(",") : primaryAccountable;
-    const tagsList = typeof tags === "string" ? tags.split(",") : tags;
-    const conformToList = typeof conformsTo === "string" ? conformsTo.split(",") : conformsTo;
+    conformsTo: conformToList,
+    classifiedAs: tagsList?.map(tag => encodeURI(tag)),
+  };
+  const proposalFilter: EconomicResourceFilterParams = {
+    conformsTo: conformToList,
+    primaryAccountable: primaryAccountableList,
+    classifiedAs: tagsList?.map(tag => encodeURI(tag)),
+    notCustodian: [process.env.NEXT_PUBLIC_LOSH_ID!],
+  };
+  const mapFilter: Partial<EconomicResourceFilterParams> = {
+    conformsTo: conformsToNoDesign,
+    classifiedAs: tagsList?.map(tag => encodeURI(tag)),
+    primaryAccountable: primaryAccountableList,
+  };
 
-    // @ts-ignore
-    setProposalFilter({
-      conformsTo: conformToList,
-      primaryAccountable: primaryAccountableList,
-      classifiedAs: tagsList?.map(tag => encodeURI(tag)),
-      notCustodian: [process.env.NEXT_PUBLIC_LOSH_ID!],
-    });
-    setResourceFilter({ ...resourceFilter, conformsTo: conformToList });
-  }, [conformsTo, primaryAccountable, tags]);
-
-  return { proposalFilter, resourceFilter };
+  return { proposalFilter, resourceFilter, mapFilter };
 };
 
 export default useFilters;

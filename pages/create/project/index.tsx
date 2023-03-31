@@ -8,12 +8,11 @@ import { Card, Icon, Stack } from "@bbtgnn/polaris-interfacer";
 import { ChevronRightMinor } from "@shopify/polaris-icons";
 import Layout from "components/layout/Layout";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import ProjectTypeRoundIcon from "components/ProjectTypeRoundIcon";
 
 // Icons
+import { ProjectType } from "components/types";
 import Link from "next/link";
-import DesignIcon from "public/project-icons/design.svg";
-import ProductIcon from "public/project-icons/product.svg";
-import ServiceIcon from "public/project-icons/service.svg";
 
 //
 
@@ -31,14 +30,14 @@ export async function getStaticProps({ locale }: any) {
 const CreateProject: NextPageWithLayout = () => {
   const { t } = useTranslation(["createProjectProps", "common"]);
 
-  const sections: Array<{ title: string; description: string; icon: string; url: string }> = [
+  const sections: Array<{ title: string; description: string; url: string; projectType: ProjectType }> = [
     {
       title: t("Design"),
       description: t(
         "Import your project repository. Share your open source hardware project documentation and collaborate on building it."
       ),
       url: "/create/project/design",
-      icon: DesignIcon.src,
+      projectType: ProjectType.DESIGN,
     },
     {
       title: t("Product"),
@@ -46,7 +45,7 @@ const CreateProject: NextPageWithLayout = () => {
         "Showcase your open source hardware product and connect with a global network of makers. Import your product details to our platform."
       ),
       url: "/create/project/product",
-      icon: ProductIcon.src,
+      projectType: ProjectType.PRODUCT,
     },
     {
       title: t("Services"),
@@ -54,7 +53,7 @@ const CreateProject: NextPageWithLayout = () => {
         "Offer your expertise, training courses, or equipment rentals on our platform, supporting the development and collaboration of open source hardware projects in the community."
       ),
       url: "/create/project/service",
-      icon: ServiceIcon.src,
+      projectType: ProjectType.SERVICE,
     },
   ];
 
@@ -86,11 +85,12 @@ const CreateProject: NextPageWithLayout = () => {
           <Card key={s.url}>
             <Link href={s.url}>
               <div
+                id={`create-${s.title.toLowerCase()}-button`}
                 className="
-                flex flex-row flex-nowrap items-center p-6 rounded-lg
+                flex flex-row flex-nowrap items-center p-6 rounded-lg space-x-4
                 hover:cursor-pointer hover:outline hover:outline-2 hover:outline-primary"
               >
-                <img className="mr-6" src={s.icon} alt={`${s.title} icon`} />
+                <ProjectTypeRoundIcon projectType={s.projectType} />
                 <div className="grow">
                   <PTitleSubtitle title={s.title} subtitle={s.description} titleTag="h2" />
                 </div>

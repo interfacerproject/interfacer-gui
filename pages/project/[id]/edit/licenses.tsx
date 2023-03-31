@@ -42,7 +42,7 @@ export interface EditLicensesValues {
 }
 
 const EditLicenses: NextPageWithLayout = () => {
-  const project = useProject();
+  const { project } = useProject();
 
   /* Form setup */
 

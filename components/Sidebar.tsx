@@ -22,7 +22,6 @@ import { useAuth } from "../hooks/useAuth";
 import IfSidebarDropdown from "./brickroom/IfSidebarDropdown";
 import { IfSidebarItemProps } from "./brickroom/IfSidebarItem";
 import IfSideBarLink, { IfSideBarLinkProps } from "./brickroom/IfSideBarLink";
-import LoginBtn from "./LoginMenu";
 
 import {
   BellIcon,
@@ -33,6 +32,7 @@ import {
   HomeIcon,
   SupportIcon,
 } from "@heroicons/react/outline";
+import { ScanAlt } from "@carbon/icons-react";
 
 function Sidebar() {
   const { t } = useTranslation("SideBarProps");
@@ -73,6 +73,11 @@ function Sidebar() {
     my_list: {
       text: t("My list"),
       link: "/profile/my_profile?tab=1",
+    },
+    ScanQr: {
+      text: t("Scan QR"),
+      link: "/scan",
+      leftIcon: <ScanAlt />,
     },
     reportBug: {
       text: t("Report a bug"),
@@ -132,19 +137,13 @@ function Sidebar() {
             <IfSideBarLink {...items.my_list} />
             <IfSideBarLink {...items.resources} />
           </IfSidebarDropdown>
+          <IfSideBarLink {...items.ScanQr} />
 
           <IfSideBarLink {...items.reportBug} />
           <IfSideBarLink {...items.userGuide} />
           {/*<IfSideBarLink {...items.map} />*/}
         </ul>
       </div>
-
-      {/* Logout button if signed in */}
-      {authenticated && (
-        <span className="inline-block align-bottom">
-          <LoginBtn />
-        </span>
-      )}
     </div>
   );
 }

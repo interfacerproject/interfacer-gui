@@ -9,7 +9,6 @@
   "Load more": "Chargez plus",
   "projects": "actifs",
   "contributorsHead": "contributeursResponsable",
-  "contributors": "contributeurs",
   "watch": "regarder",
   "add to list": "ajouter à la liste",
   "unwatch": "débrancher",
@@ -18,7 +17,7 @@
   "Sign Out": "Se déconnecter",
   "Overview": "Vue d'ensemble",
   "Contributions": "Contributions",
-  "Contributors": "Contributeurs",
+  "Contributors": "contributeurs",
   "remove from list": "supprimer de la liste",
   "Owner": "Propriétaire",
   "Passphrase ": "Phrase de passe",
@@ -72,5 +71,14 @@
   "Edit": "Modifier",
   "Available for recycling": "Disponible pour le recyclage",
   "Available for repair": "Disponible pour réparation",
-  "People": "Personnes"
+  "People": "Personnes",
+  "There are unsaved changes. Discard them?": "Il y a des modifications non enregistrées. Les jeter?",
+  "Logout": "Se déconnecter",
+  "My profile": "Mon profil",
+  "relation_one": "rapport",
+  "relation_other": "rapports",
+  "contributor_one": "contributeur",
+  "contributor_other": "contributeurs",
+  "See all notifications": "Voir toutes les notifications",
+  "Scan QR": "Numériser QR"
 }

@@ -19,13 +19,15 @@ import MdParser from "../lib/MdParser";
 import { EconomicResource } from "../lib/types";
 import BrTags from "./brickroom/BrTags";
 
-const ProjectDetailOverview = ({ project }: { project: EconomicResource }) => {
+const ProjectDetailOverview = ({ project }: { project: Partial<EconomicResource> }) => {
   const tags = project?.classifiedAs;
   const text = project?.note;
 
   return (
     <Stack vertical>
-      {text && <div className="prose" dangerouslySetInnerHTML={{ __html: MdParser.render(text) }} />}
+      {text && (
+        <div id="project-overview" className="prose" dangerouslySetInnerHTML={{ __html: MdParser.render(text) }} />
+      )}
       {tags && <BrTags tags={tags} />}
     </Stack>
   );

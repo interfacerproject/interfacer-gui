@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { aliasQuery, waitForData } from "../utils";
+
 describe("Project Detail functionality", () => {
   before(() => {
     cy.login();
@@ -71,8 +73,12 @@ describe("Project Detail functionality", () => {
     cy.get("#contribute").should("exist").click().url().should("include", "create/contribution/");
   });
   it("Should have Dpp tab and when it is selected, should have a Json object inside", () => {
+    cy.intercept("POST", Cypress.env("ZENFLOWS_URL"), req => {
+      aliasQuery(req, "getDpp");
+    });
     cy.get("#dpp").should("exist");
     cy.get("#dpp").click();
+    cy.wait("@gqlgetDppQuery", { timeout: 120000 });
     cy.get(".pretty-json-container.object-container").should("exist");
   });
   it("Should have the relationships tab and when it is selected, should show resource details card", () => {

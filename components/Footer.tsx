@@ -1,6 +1,6 @@
-import { Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Stack, Text, Link } from "@bbtgnn/polaris-interfacer";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
+import NextLink from "next/link";
 
 const Footer = () => {
   const { t } = useTranslation("common");
@@ -23,39 +23,39 @@ const Footer = () => {
               <Text as="h3" variant="headingLg">
                 {t("Projects")}
               </Text>
-              <Link href="/projects">
+              <NextLink href="/projects">
                 <a>
                   <Text as="p" color="subdued" variant="headingMd">
                     {t("All projects")}
                   </Text>
                 </a>
-              </Link>
-              <Link href="/create/project">
+              </NextLink>
+              <NextLink href="/create/project">
                 <a>
                   <Text as="p" color="subdued" variant="headingMd">
                     {t("Add project")}
                   </Text>
                 </a>
-              </Link>
-              <Link href="/resources">
+              </NextLink>
+              <NextLink href="/resources">
                 <a>
                   <Text as="p" color="subdued" variant="headingMd">
                     {t("Imported from LOSH")}
                   </Text>
                 </a>
-              </Link>
+              </NextLink>
             </Stack>
             <Stack vertical spacing="loose">
               <Text as="h3" variant="headingLg">
                 {t("About")}
               </Text>
-              <Link href="https://dyne.org/">
+              <NextLink href="https://dyne.org/">
                 <a>
                   <Text as="p" color="subdued" variant="headingMd">
                     {t("This platform")}
                   </Text>
                 </a>
-              </Link>
+              </NextLink>
               <a href="https://www.interfacerproject.eu/" target="_blank" rel="noreferrer">
                 <Text as="p" color="subdued" variant="headingMd">
                   {t("Interfacer Project")}
@@ -71,27 +71,27 @@ const Footer = () => {
               <Text as="h3" variant="headingLg">
                 {t("Help pages")}
               </Text>
-              <Link href="https://interfacerproject.github.io/interfacer-docs/">
+              <NextLink href="https://interfacerproject.github.io/interfacer-docs/">
                 <a target={"_blank"}>
                   <Text as="p" color="subdued" variant="headingMd">
                     {t("User manual")}
                   </Text>
                 </a>
-              </Link>
-              <Link href="https://github.com/dyne/interfacer-gui/issues/new">
+              </NextLink>
+              <NextLink href="https://github.com/dyne/interfacer-gui/issues/new">
                 <a target="_blank" rel="noreferrer">
                   <Text as="p" color="subdued" variant="headingMd">
                     {t("Report a bug")}
                   </Text>
                 </a>
-              </Link>
-              <Link href="https://github.com/interfacerproject">
+              </NextLink>
+              <NextLink href="https://github.com/interfacerproject">
                 <a target="_blank" rel="noreferrer">
                   <Text as="p" color="subdued" variant="headingMd">
                     {t("Github")}
                   </Text>
                 </a>
-              </Link>
+              </NextLink>
             </Stack>
           </div>
         </div>
@@ -102,11 +102,11 @@ const Footer = () => {
             <Text as="p" variant="bodySm">
               {t("Software by")}
             </Text>
-            <Link href="https://dyne.org">
+            <NextLink href="https://dyne.org">
               <a>
                 <img className="h-10" src="/logo-dyne.svg" alt="Dyne.org Logo" />
               </a>
-            </Link>
+            </NextLink>
           </div>
 
           <div className="max-w-[250px] md:pl-4">
@@ -128,7 +128,12 @@ const Footer = () => {
           <img className="h-10" src="/logo-bwi.svg" alt="Hamburg City Logo" />
         </div>
       </div>
-      <div className="p-4 text-center bg-background">{"©" + t("2023 Interfacer. All rights reserved.")}</div>
+      <div className="p-4 text-center bg-background">
+        {"©" + t("2023 Interfacer. All rights reserved.")}{" "}
+        <Link url="https://www.iubenda.com/privacy-policy/75616407" external>
+          {t("Privacy policy.")}
+        </Link>
+      </div>
     </div>
   );
 };

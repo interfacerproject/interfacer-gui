@@ -36,7 +36,20 @@ type UseWalletReturnValue = {
   addIdeaPoints: (id: string, amount?: number) => Promise<Response>;
   addStrengthsPoints: (id: string, amount?: number) => Promise<Response>;
 };
-const useWallet = (id?: string): UseWalletReturnValue => {
+
+export enum TrendPeriod {
+  Week = "week",
+  Month = "month",
+  Cycle = "cycle",
+}
+
+type UseWalletProps = {
+  id?: string;
+  period?: TrendPeriod;
+};
+
+const useWallet = (props: UseWalletProps): UseWalletReturnValue => {
+  const { id, period = TrendPeriod.Week } = props;
   const [ideaPoints, setIdeaPoints] = useState<number>(0);
   const [strengthsPoints, setStrengthsPoints] = useState<number>(0);
   const [ideaTrend, setIdeaTrend] = useState<string>("0");
@@ -44,30 +57,46 @@ const useWallet = (id?: string): UseWalletReturnValue => {
 
   const { signedPost } = useSignedPost(true);
 
+  const getCycleDay0 = () => {
+    const today = dayjs();
+    const begins = dayjs(process.env.NEXT_PUBLIC_START_DATE!);
+    const daysFromCycleBegin = today.diff(begins, "day") % Number(process.env.NEXT_PUBLIC_CYCLE_LENGTH!);
+    return dayjs().subtract(-daysFromCycleBegin, "day").startOf("day").valueOf();
+  };
+
+  const firstDayOfPeriod: Record<TrendPeriod, number> = {
+    [TrendPeriod.Week]: dayjs().startOf("week").valueOf(),
+    [TrendPeriod.Month]: dayjs().startOf("month").valueOf(),
+    [TrendPeriod.Cycle]: getCycleDay0(),
+  };
+
   useEffect(() => {
     if (!id) return;
     getPoints(id, Token.Idea).then(amount => setIdeaPoints(amount));
     getPoints(id, Token.Strengths).then(amount => setStrengthsPoints(amount));
     getTrends(id, Token.Idea).then(trend => setIdeaTrend(trend));
     getTrends(id, Token.Strengths).then(trend => setStrengthsTrend(trend));
-  }, [id]);
+  }, [id, period]);
 
   const getPoints = async (id: string, type: Token): Promise<number> => {
+    const day0 = firstDayOfPeriod[period];
+    const responseDayO = await fetch(`${process.env.NEXT_PUBLIC_WALLET}/${type}/${id}?until=${day0}`);
+    const dataDay0 = await responseDayO.json();
     const response = await fetch(`${process.env.NEXT_PUBLIC_WALLET}/${type}/${id}`);
     const data = await response.json();
-    return data.success === true ? data.amount : 0;
+    return data.success === true ? data.amount - dataDay0.amount : 0;
   };
 
   const getTrends = async (id: string, type: Token): Promise<string> => {
-    const yesterday = dayjs().subtract(1, "day").valueOf();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_WALLET}/${type}/${id}?until=${yesterday}`);
+    const day0 = firstDayOfPeriod[period];
+    const response = await fetch(`${process.env.NEXT_PUBLIC_WALLET}/${type}/${id}?until=${day0}`);
     const data = await response.json();
     const today = await fetch(`${process.env.NEXT_PUBLIC_WALLET}/${type}/${id}`);
     const todayData = await today.json();
     const todayPoints = todayData.success === true ? todayData.amount : 0;
-    const yesterdayPoints = data.success === true ? data.amount : 0;
-    if (yesterdayPoints === 0) return "N/A";
-    const trend = (todayPoints - yesterdayPoints) / yesterdayPoints;
+    const day0Points = data.success === true ? data.amount : 0;
+    if (day0Points === 0) return "N/A";
+    const trend = (todayPoints - day0Points) / day0Points;
     return (trend * 100).toFixed(2);
   };
 
