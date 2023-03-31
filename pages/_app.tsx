@@ -41,6 +41,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   // Use the layout defined at the page level or default layout
   const getLayout = Component.getLayout || ((page: ReactElement) => <Layout>{page}</Layout>);
   const publicPage = Component.publicPage || false;
+
   return (
     <AppProvider i18n={enTranslations}>
       <Head>

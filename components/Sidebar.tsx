@@ -32,6 +32,7 @@ import {
   HomeIcon,
   SupportIcon,
 } from "@heroicons/react/outline";
+import { ScanAlt } from "@carbon/icons-react";
 
 function Sidebar() {
   const { t } = useTranslation("SideBarProps");
@@ -73,6 +74,11 @@ function Sidebar() {
     my_list: {
       text: t("My list"),
       link: `/profile/${user!.ulid}?tab=1`,
+    },
+    ScanQr: {
+      text: t("Scan QR"),
+      link: "/scan",
+      leftIcon: <ScanAlt />,
     },
     reportBug: {
       text: t("Report a bug"),
@@ -132,6 +138,7 @@ function Sidebar() {
             <IfSideBarLink {...items.my_list} />
             <IfSideBarLink {...items.resources} />
           </IfSidebarDropdown>
+          <IfSideBarLink {...items.ScanQr} />
 
           <IfSideBarLink {...items.reportBug} />
           <IfSideBarLink {...items.userGuide} />

@@ -9,7 +9,6 @@
   "Load more": "Load more...",
   "projects": "Projects",
   "contributorsHead": ["UserName", "Date"],
-  "contributors": "Contributors",
   "watch": "Watch",
   "add to list": "Add to list",
   "unwatch": "unwatch",
@@ -18,7 +17,6 @@
   "Sign Out": "Sign Out",
   "Overview": "Overview",
   "Contributions": "Contributions",
-  "Contributors": "Contributors",
   "remove from list": "remove from list",
   "Owner": "Owner",
   "Passphrase ": "Passphrase ",
@@ -93,5 +91,10 @@
   "There are unsaved changes. Discard them?": "There are unsaved changes. Discard them?",
   "Logout": "Logout",
   "My profile": "My profile",
-  "See all notifications": "See all notifications"
+  "relation_one": "relation",
+  "relation_other": "relations",
+  "contributor_one": "contributor",
+  "contributor_other": "contributors",
+  "See all notifications": "See all notifications",
+  "Scan QR": "Scan QR"
 }
