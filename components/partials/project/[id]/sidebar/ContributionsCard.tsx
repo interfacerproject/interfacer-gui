@@ -31,9 +31,9 @@ const ContributionsCard = () => {
           {t("Contributions")}
         </Text>
         <Text color="success" as="p" variant="bodyMd" id="sidebar-contributors">
-          {t("{{contributors}} contributors", { contributors: project.metadata.contributors?.length || 0 })}
+          {t("{{contributors}} contributors", { contributors: project.metadata?.contributors?.length || 0 })}
         </Text>
-        {project.metadata.contributors?.length && <ProjectContributors projectNode={project} />}
+        {project.metadata?.contributors?.length && <ProjectContributors projectNode={project} />}
         <Text color="success" as="p" variant="bodyMd">
           {t("{{contributions}} contributions", { contributions: contributions?.proposals.edges.length })}
         </Text>

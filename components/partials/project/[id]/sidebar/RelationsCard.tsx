@@ -15,7 +15,7 @@ const RelationsCard = () => {
           {t("Relations")}
         </Text>
         <Text color="success" as="p" variant="bodyMd">
-          {t("{{related}} related projects", { related: project.metadata.relations?.length || 0 })}
+          {t("{{related}} related projects", { related: project.metadata?.relations?.length || 0 })}
         </Text>
         <Button
           id="seeRelations"
