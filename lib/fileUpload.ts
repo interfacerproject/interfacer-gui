@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { IFile } from "lib/types";
-import signFile from "zenflows-crypto/src/sign_file";
+// @ts-ignore
+import signFile from "zenflows-crypto/src/sign_file.zen";
 import { zencode_exec, zenroom_hash_final, zenroom_hash_init, zenroom_hash_update } from "zenroom";
 import devLog from "./devLog";
 import base64url from "base64url";
@@ -66,7 +67,7 @@ export async function hashFile(ab: ArrayBuffer): Promise<string> {
 //
 
 export async function createFileSignature(hash: string, eddsa: string): Promise<string> {
-  const { result } = await zencode_exec(signFile(), {
+  const { result } = await zencode_exec(signFile, {
     data: createZenData(hash),
     keys: createZenKeys(eddsa),
   });
