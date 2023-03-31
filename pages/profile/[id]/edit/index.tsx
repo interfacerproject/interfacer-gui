@@ -1,18 +1,13 @@
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
 
-// Form
-import { useForm } from "react-hook-form";
-
 // Components
-import { yupResolver } from "@hookform/resolvers/yup";
 import EditProfileLayout from "components/layout/EditProfileLayout";
 import FetchUserLayout, { useUser } from "components/layout/FetchUserLayout";
 import Layout from "components/layout/Layout";
 import UpdateProfileForm from "components/UpdateProfileForm";
 import { SpatialThing } from "lib/types";
 import { GetStaticPaths } from "next";
-import { useRouter } from "next/router";
 import * as yup from "yup";
 
 //

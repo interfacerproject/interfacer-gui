@@ -1,4 +1,4 @@
-import { Link as PLink, Spinner } from "@bbtgnn/polaris-interfacer";
+import { Link as PLink } from "@bbtgnn/polaris-interfacer";
 import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
@@ -23,7 +23,7 @@ export default function EditProfileLayout(props: Props) {
       {isOwner && (
         <>
           <div className="p-4">
-            <Link href={`/profile/${id}`}>
+            <Link href={user!.profileUrl}>
               <PLink>
                 <span className="text-text-primary">
                   {"← "}

@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import Link from "next/link";
 import { TOCLink } from "./TableOfContents";
 
 interface Props extends TOCLink {
@@ -15,10 +14,8 @@ export default function TableOfContentsLink(props: Props) {
   });
 
   return (
-    <Link href={href}>
-      <div className={classes}>
-        <a>{label}</a>
-      </div>
-    </Link>
+    <a href={href}>
+      <div className={classes}>{label}</div>
+    </a>
   );
 }

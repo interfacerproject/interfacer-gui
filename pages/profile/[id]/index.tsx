@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import FetchUserLayout, { useUser } from "components/layout/FetchUserLayout";
+import FetchUserLayout from "components/layout/FetchUserLayout";
 import Layout from "components/layout/Layout";
 import EditProfileBanner from "components/partials/profile/[id]/EditProfileBanner";
 import ProfileHeading from "components/partials/profile/[id]/ProfileHeading";
@@ -22,7 +22,6 @@ import ProfileTabs from "components/partials/profile/[id]/ProfileTabs";
 import TrackRecord from "components/partials/profile/[id]/TrackRecord";
 import type { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
 
 //
@@ -31,7 +30,7 @@ const Profile: NextPageWithLayout = () => {
   return (
     <>
       <EditProfileBanner />
-      <div className="container mx-auto space-y-8">
+      <div className="p-4 container mx-auto space-y-8">
         <div className="flex flex-col md:flex-row pt-7 lg:space-x-8 space-y-2">
           <div className="flex grow">
             <ProfileHeading />

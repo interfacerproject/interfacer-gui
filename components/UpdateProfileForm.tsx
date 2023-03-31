@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import { Stack, TextField, Text } from "@bbtgnn/polaris-interfacer";
+import { Card, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import devLog from "lib/devLog";
@@ -11,8 +11,10 @@ import { isRequired } from "../lib/isFieldRequired";
 import { Person } from "../lib/types";
 import { locationStepSchema, LocationStepValues } from "./partials/create/project/steps/LocationStep";
 import EditFormLayout from "./partials/project/edit/EditFormLayout";
+import PDivider from "./polaris/PDivider";
 import PTitleSubtitle from "./polaris/PTitleSubtitle";
 import SelectLocation2 from "./SelectLocation2";
+import TableOfContents from "./TableOfContents";
 
 const UPDATE_USER =
   gql(`mutation updateUser($name: String, $id: ID!, $note:String, $primaryLocation: ID, $user: String) {
@@ -53,8 +55,9 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
 
   const [updateUser] = useMutation(UPDATE_USER);
 
+  const sections = ["personal info", "location"];
+
   const onSubmit = async (formData: UpdateUserNS.FormValues) => {
-    console.log(formData);
     try {
       let location = undefined;
       if (formData.address) location = await handleCreateLocation(formData.address, false);
@@ -105,15 +108,11 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
     defaultValues,
   });
   function EditProfileNav() {
-    return (
-      <div className="space-y-2">
-        <div className="border-b-1 pb-1 border-border-subdued px-2">
-          <Text as="p" variant="bodySm" color="subdued">
-            <span className="uppercase font-bold">{"Edit Profile"}</span>
-          </Text>
-        </div>
-      </div>
-    );
+    const links = sections.map(section => ({
+      label: <span className="capitalize">{section}</span>,
+      href: `#${section.replace(" ", "-")}`,
+    }));
+    return <TableOfContents title={t("Edit Profile")} links={links} />;
   }
 
   const { formState, control, setValue, watch, trigger } = form;
@@ -124,77 +123,90 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
       <Stack vertical spacing="extraLoose">
         <PTitleSubtitle
           title={t("Update your profile")}
-          subtitle={t("This information will be visible to other users")}
-        />
-        <Controller
-          control={control}
-          name="name"
-          render={({ field: { onChange, onBlur, name, value } }) => (
-            <TextField
-              type="text"
-              id={name}
-              name={name}
-              value={value}
-              autoComplete="off"
-              onChange={onChange}
-              onBlur={onBlur}
-              label={t("Your name")}
-              helpText={t("This will be your public name")}
-              requiredIndicator={isRequired(schema, name)}
-              error={errors.name?.message}
-            />
+          subtitle={t(
+            "Have clean and up to date information about you helps others users to find you. You can also add a bio to tell more about you. Dont forget to add your location and a profile picture."
           )}
         />
-
-        <Controller
-          control={control}
-          name="address.locationName"
-          render={({ field: { onChange, onBlur, name, value } }) => (
-            <TextField
-              type="text"
-              id={name}
-              name={name}
-              value={value}
-              autoComplete="off"
-              onChange={value => {
-                onChange(value), trigger("address.locationData");
-              }}
-              onBlur={() => {
-                onBlur(), trigger("address.locationData");
-              }}
-              label={t("Location name")}
-              helpText={t("For example: My Workshop")}
-              error={errors.address?.locationName?.message}
+        <PDivider id={sections[0].replace(" ", "-")} />
+        <Card sectioned>
+          <Stack vertical spacing="extraLoose">
+            <PTitleSubtitle title={t("Personal info")} />
+            <Controller
+              control={control}
+              name="name"
+              render={({ field: { onChange, onBlur, name, value } }) => (
+                <TextField
+                  type="text"
+                  id={name}
+                  name={name}
+                  value={value}
+                  autoComplete="off"
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  label={t("Your name")}
+                  helpText={t("A clear and concise name for your project that summarizes its purpose or main focus")}
+                  requiredIndicator={isRequired(schema, name)}
+                  error={errors.name?.message}
+                />
+              )}
             />
-          )}
-        />
-
-        <SelectLocation2
-          label={t("Address")}
-          placeholder={t("An d. Alsterschleife 3, 22399 - Hamburg, Germany")}
-          location={watch("address.locationData")}
-          setLocation={value => setValue("address.locationData", value, formSetValueOptions)}
-        />
-
-        <Controller
-          control={control}
-          name="note"
-          render={({ field: { onChange, onBlur, name, value } }) => (
-            <TextField
-              type="text"
-              id={name}
-              multiline={5}
-              name={name}
-              value={value}
-              autoComplete="off"
-              onChange={onChange}
-              onBlur={onBlur}
-              label={t("Bio:")}
-              requiredIndicator={isRequired(schema, name)}
-              error={errors.note?.message}
+            <Controller
+              control={control}
+              name="note"
+              render={({ field: { onChange, onBlur, name, value } }) => (
+                <TextField
+                  type="text"
+                  id={name}
+                  multiline={5}
+                  name={name}
+                  value={value}
+                  autoComplete="off"
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  label={t("Bio:")}
+                  helpText={t("Tell us more about you")}
+                  requiredIndicator={isRequired(schema, name)}
+                  error={errors.note?.message}
+                />
+              )}
             />
-          )}
-        />
+          </Stack>
+        </Card>
+        <PDivider id={sections[1]} />
+        <Card sectioned>
+          <Stack vertical spacing="extraLoose">
+            <PTitleSubtitle title={t("Set location")} subtitle={t("Add your location to help others to find you")} />
+            <Controller
+              control={control}
+              name="address.locationName"
+              render={({ field: { onChange, onBlur, name, value } }) => (
+                <TextField
+                  type="text"
+                  id={name}
+                  name={name}
+                  value={value}
+                  autoComplete="off"
+                  onChange={value => {
+                    onChange(value), trigger("address.locationData");
+                  }}
+                  onBlur={() => {
+                    onBlur(), trigger("address.locationData");
+                  }}
+                  label={t("Location name")}
+                  helpText={t("For example: My Workshop")}
+                  error={errors.address?.locationName?.message}
+                />
+              )}
+            />
+            <SelectLocation2
+              label={t("Address")}
+              placeholder={t("An d. Alsterschleife 3, 22399 - Hamburg, Germany")}
+              location={watch("address.locationData")}
+              setLocation={value => setValue("address.locationData", value, formSetValueOptions)}
+              helpText={t("Start to type the address and select the correct one from the list")}
+            />
+          </Stack>
+        </Card>
       </Stack>
     </EditFormLayout>
   );
