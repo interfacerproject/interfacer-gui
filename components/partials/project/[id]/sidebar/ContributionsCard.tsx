@@ -8,6 +8,7 @@ import { ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/typ
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useProjectTabs } from "pages/project/[id]";
+import QRCode from "react-qr-code";
 
 const ContributionsCard = () => {
   const { project } = useProject();
@@ -32,7 +33,7 @@ const ContributionsCard = () => {
         <Text color="success" as="p" variant="bodyMd" id="sidebar-contributors">
           {t("{{contributors}} contributors", { contributors: project.metadata.contributors?.length || 0 })}
         </Text>
-        <ProjectContributors projectNode={project} />
+        {project.metadata.contributors?.length && <ProjectContributors projectNode={project} />}
         <Text color="success" as="p" variant="bodyMd">
           {t("{{contributions}} contributions", { contributions: contributions?.proposals.edges.length })}
         </Text>
@@ -56,6 +57,10 @@ const ContributionsCard = () => {
         >
           {t("All contributions")}
         </Button>
+        <Text as="h2" variant="headingMd">
+          {t("Dpp Qr-Code")}
+        </Text>
+        <QRCode size={128} value={project.id || ""} />
       </Stack>
     </Card>
   );

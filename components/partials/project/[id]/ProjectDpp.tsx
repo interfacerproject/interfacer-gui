@@ -3,8 +3,10 @@ import { Button, Frame, Icon, Modal, Spinner, Text, Toast } from "@bbtgnn/polari
 import { DuplicateMinor, MaximizeMinor } from "@shopify/polaris-icons";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import { useCallback, useRef, useState } from "react";
 import Tree from "react-d3-tree";
+import QRCode from "react-qr-code";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 export const QUERY_DPP = gql`
@@ -17,6 +19,10 @@ export const QUERY_DPP = gql`
 
 const ProjectDpp = ({ id }: { id: string }) => {
   const [activeTree, setActiveTree] = useState(false);
+  const { asPath: path } = useRouter();
+  if (typeof window !== "undefined") {
+    origin = window.location.origin;
+  }
   const [active, setActive] = useState(false);
   const toggleActive = useCallback(() => setActive(active => !active), []);
   const { loading, data } = useQuery(QUERY_DPP, {
