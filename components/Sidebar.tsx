@@ -59,7 +59,7 @@ function Sidebar() {
     },
     myProjects: {
       text: t("My Projects"),
-      link: `/profile/${user!.ulid}`,
+      link: user!.profileUrl,
     },
     // Dropdown -> Projects
     latestProjects: {
@@ -73,7 +73,7 @@ function Sidebar() {
     },
     my_list: {
       text: t("My list"),
-      link: `/profile/${user!.ulid}?tab=1`,
+      link: `${user?.profileUrl}?tab=1`,
     },
     ScanQr: {
       text: t("Scan QR"),

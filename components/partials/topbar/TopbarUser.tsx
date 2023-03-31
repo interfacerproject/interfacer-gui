@@ -19,11 +19,11 @@ export default function TopbarUser() {
   return (
     <TopbarPopover id="user-menu" buttonContent={<BrUserAvatar name={user?.name} />}>
       <div className="w-40 divide-y-1 divide-slate-200">
-        <MenuLink href={`/profile/${user?.ulid}`}>
+        <MenuLink href={user!.profileUrl}>
           <UserSection user={user!} />
         </MenuLink>
         <div>
-          <MenuLink href="/profile/my_profile">
+          <MenuLink href={user!.profileUrl}>
             <Text as="p" variant="bodyMd">
               {t("My profile")}
             </Text>

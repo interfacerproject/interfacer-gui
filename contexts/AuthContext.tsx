@@ -77,6 +77,7 @@ export type User = {
   name: string;
   publicKey: string;
   privateKey: string;
+  profileUrl: string;
 };
 
 export const AuthProvider = ({ children, publicPage = false }: any) => {
@@ -109,6 +110,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
         name,
         privateKey,
         publicKey,
+        profileUrl: `/profile/${ulid}`,
       });
       setLoading(false);
       return;
@@ -154,6 +156,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
           name: data?.personCheck.name,
           privateKey: getItem("eddsaPrivateKey") as string,
           publicKey,
+          profileUrl: `/profile/${data?.personCheck.id}`,
         });
       });
   };

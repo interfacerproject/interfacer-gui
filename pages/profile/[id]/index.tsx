@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import FetchUserLayout from "components/layout/FetchUserLayout";
+import FetchUserLayout, { useUser } from "components/layout/FetchUserLayout";
 import Layout from "components/layout/Layout";
 import EditProfileBanner from "components/partials/profile/[id]/EditProfileBanner";
 import ProfileHeading from "components/partials/profile/[id]/ProfileHeading";
@@ -27,6 +27,10 @@ import { NextPageWithLayout } from "pages/_app";
 //
 
 const Profile: NextPageWithLayout = () => {
+  const { id } = useUser();
+  if (!id) {
+    return null;
+  }
   return (
     <>
       <EditProfileBanner />
