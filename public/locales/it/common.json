@@ -91,5 +91,14 @@
   "contributor_one": "collaboratore",
   "contributor_other": "collaboratori",
   "See all notifications": "Visualizza tutte le notifiche",
-  "Scan QR": "Scansiona QR"
+  "Scan QR": "Scansiona QR",
+  "Update your profile": "Aggiorna il tuo profilo",
+  "Edit Profile": "Modifica Profilo",
+  "Edit your profile picture, bio and location info": "Modifica l'immagine del profilo, la biografia e le informazioni sulla posizione",
+  "Personal info": "Informazioni personali",
+  "This information will be visible to any logged-in user": "Queste informazioni saranno visibili a qualsiasi utente loggato",
+  "This will be your public name": "Questo sarà il tuo nome pubblico",
+  "Max. 860 ch": "Massimo. \n860 cap",
+  "We value your privacy and will only use your location for the purpose of connecting you with other members of the community": "Apprezziamo la tua privacy e utilizzeremo la tua posizione solo allo scopo di metterti in contatto con altri membri della comunità",
+  "Start to type the address and select the correct one from the list": "Inizia a digitare l'indirizzo e seleziona quello corretto dall'elenco"
 }

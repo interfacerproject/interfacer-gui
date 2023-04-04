@@ -8,7 +8,10 @@
   "Value of this project": "Value of this project",
   "Load more": "Load more...",
   "projects": "Projects",
-  "contributorsHead": ["UserName", "Date"],
+  "contributorsHead": [
+    "UserName",
+    "Date"
+  ],
   "watch": "Watch",
   "add to list": "Add to list",
   "unwatch": "unwatch",
@@ -96,5 +99,14 @@
   "contributor_one": "contributor",
   "contributor_other": "contributors",
   "See all notifications": "See all notifications",
-  "Scan QR": "Scan QR"
+  "Scan QR": "Scan QR",
+  "Update your profile": "Update your profile",
+  "Edit Profile": "Edit Profile",
+  "Edit your profile picture, bio and location info": "Edit your profile picture, bio and location info",
+  "Personal info": "Personal info",
+  "This information will be visible to any logged-in user": "This information will be visible to any logged-in user",
+  "This will be your public name": "This will be your public name",
+  "Max. 860 ch": "Max. 860 ch",
+  "We value your privacy and will only use your location for the purpose of connecting you with other members of the community": "We value your privacy and will only use your location for the purpose of connecting you with other members of the community",
+  "Start to type the address and select the correct one from the list": "Start to type the address and select the correct one from the list"
 }

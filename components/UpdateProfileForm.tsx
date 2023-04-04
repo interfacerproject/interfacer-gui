@@ -124,13 +124,13 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
         <PTitleSubtitle
           title={t("Update your profile")}
           subtitle={t(
-            "Have clean and up to date information about you helps others users to find you. You can also add a bio to tell more about you. Dont forget to add your location and a profile picture."
+            "Edit your profile picture, bio and location info"
           )}
         />
         <PDivider id={sections[0].replace(" ", "-")} />
         <Card sectioned>
           <Stack vertical spacing="extraLoose">
-            <PTitleSubtitle title={t("Personal info")} />
+            <PTitleSubtitle title={t("Personal info")} subtitle={t("This information will be visible to any logged-in user")}/>
             <Controller
               control={control}
               name="name"
@@ -144,7 +144,7 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
                   onChange={onChange}
                   onBlur={onBlur}
                   label={t("Your name")}
-                  helpText={t("A clear and concise name for your project that summarizes its purpose or main focus")}
+                  helpText={t("This will be your public name")}
                   requiredIndicator={isRequired(schema, name)}
                   error={errors.name?.message}
                 />
@@ -164,7 +164,7 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
                   onChange={onChange}
                   onBlur={onBlur}
                   label={t("Bio:")}
-                  helpText={t("Tell us more about you")}
+                  helpText={t("Max. 860 ch")}
                   requiredIndicator={isRequired(schema, name)}
                   error={errors.note?.message}
                 />
@@ -175,7 +175,7 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
         <PDivider id={sections[1]} />
         <Card sectioned>
           <Stack vertical spacing="extraLoose">
-            <PTitleSubtitle title={t("Set location")} subtitle={t("Add your location to help others to find you")} />
+            <PTitleSubtitle title={t("Set location")} subtitle={t("We value your privacy and will only use your location for the purpose of connecting you with other members of the community")} />
             <Controller
               control={control}
               name="address.locationName"
