@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { Button, Link, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import Avatar from "boring-avatars";
+import DetailMap from "components/DetailMap";
 import { useUser } from "components/layout/FetchUserLayout";
 import { useAuth } from "hooks/useAuth";
 import { CLAIM_DID } from "lib/QueryAndMutation";
@@ -73,6 +74,13 @@ const ProfileHeading = () => {
           {person?.id}
         </Text>
       </Heading>
+      {person?.primaryLocation && (
+        <Heading label={t("Location:")}>
+          <div className="w-72">
+            <DetailMap height={180} location={person?.primaryLocation} />
+          </div>
+        </Heading>
+      )}
       {person?.note && (
         <div className="flex flex-row space-x-2 lg:mr-2">
           <Text as="span" variant="bodyLg" color="subdued">

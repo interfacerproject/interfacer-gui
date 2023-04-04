@@ -8,10 +8,7 @@
   "Value of this project": "Value of this project",
   "Load more": "Load more...",
   "projects": "Projects",
-  "contributorsHead": [
-    "UserName",
-    "Date"
-  ],
+  "contributorsHead": ["UserName", "Date"],
   "watch": "Watch",
   "add to list": "Add to list",
   "unwatch": "unwatch",
@@ -108,5 +105,6 @@
   "This will be your public name": "This will be your public name",
   "Max. 860 ch": "Max. 860 ch",
   "We value your privacy and will only use your location for the purpose of connecting you with other members of the community": "We value your privacy and will only use your location for the purpose of connecting you with other members of the community",
-  "Start to type the address and select the correct one from the list": "Start to type the address and select the correct one from the list"
+  "Start to type the address and select the correct one from the list": "Start to type the address and select the correct one from the list",
+  "Location:": "Location:"
 }
