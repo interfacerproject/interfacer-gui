@@ -22,6 +22,15 @@ const ProfileHeading = () => {
     });
   }, []);
 
+  const Heading = ({ label, children }: { label: string; children: React.ReactNode }) => (
+    <Stack>
+      <Text as="span" variant="bodyLg" color="subdued">
+        {label}
+      </Text>
+      {children}
+    </Stack>
+  );
+
   return (
     <Stack vertical spacing="extraLoose">
       <Stack spacing="tight" alignment="leading">
@@ -38,28 +47,19 @@ const ProfileHeading = () => {
           />
         </div>
       </Stack>
-      <Stack>
-        <Text as="span" variant="bodyLg" color="subdued">
-          {t("Username:")}
-        </Text>
+      <Heading label={t("Username:")}>
         <Text as="span" variant="bodyLg">
           <span className="text-primary">@{person?.user}</span>
         </Text>
-      </Stack>
+      </Heading>
       {isUser && (
-        <Stack>
-          <Text as="span" variant="bodyLg" color="subdued">
-            {t("Email:")}
-          </Text>
+        <Heading label={t("Email:")}>
           <Text as="span" variant="bodyLg">
             <span className="text-primary">{person?.email}</span>
           </Text>
-        </Stack>
+        </Heading>
       )}
-      <Stack alignment="center">
-        <Text as="span" variant="bodyLg" color="subdued">
-          {t("DID:")}
-        </Text>
+      <Heading label={t("DID:")}>
         <Text as="span" variant="bodyLg">
           <Link url={didUrl}>
             <a>
@@ -67,15 +67,12 @@ const ProfileHeading = () => {
             </a>
           </Link>
         </Text>
-      </Stack>
-      <Stack>
-        <Text as="span" variant="bodyLg" color="subdued">
-          {t("ID:")}
-        </Text>
-        <Text as="span" variant="bodyLg" color="subdued">
+      </Heading>
+      <Heading label={t("ID:")}>
+        <Text as="span" variant="bodyLg">
           {person?.id}
         </Text>
-      </Stack>
+      </Heading>
       {person?.note && (
         <div className="flex flex-row space-x-2 lg:mr-2">
           <Text as="span" variant="bodyLg" color="subdued">
