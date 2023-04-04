@@ -38,7 +38,6 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     filter = {},
     hideHeader = false,
     hidePagination = false,
-    hidePrimaryAccountable = false,
     hideFilters = false,
     tiny = false,
     header = "Latest projects",
