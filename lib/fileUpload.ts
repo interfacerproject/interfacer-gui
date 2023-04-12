@@ -65,19 +65,8 @@ export async function hashFile(ab: ArrayBuffer): Promise<string> {
 
 //
 
-export async function createFileSignature(hash: string, eddsa: string): Promise<string> {
-  const { result } = await zencode_exec(signFile(), {
-    data: createZenData(hash),
-    keys: createZenKeys(eddsa),
-  });
-  return await JSON.parse(result).eddsa_signature;
-}
-
-//
-
 export async function prepFileForZenflows(file: File, eddsa: string): Promise<IFile> {
   const hash = await createFileHash(file);
-  const signature = await createFileSignature(hash, eddsa);
 
   return {
     name: file.name,
@@ -86,7 +75,6 @@ export async function prepFileForZenflows(file: File, eddsa: string): Promise<IF
     hash,
     mimeType: file.type,
     size: file.size,
-    signature,
   };
 }
 

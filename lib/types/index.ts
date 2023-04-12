@@ -677,12 +677,10 @@ export type File = {
   description: Scalars["String"];
   extension: Scalars["String"];
   hash: Scalars["Url64"];
-  height?: Maybe<Scalars["Int"]>;
   mimeType: Scalars["String"];
   name: Scalars["String"];
-  signature: Scalars["String"];
+  signature?: Maybe<Scalars["String"]>;
   size: Scalars["Int"];
-  width?: Maybe<Scalars["Int"]>;
 };
 
 /** Mutation input structure for defining time durations. */
@@ -697,12 +695,9 @@ export type IFile = {
   description: Scalars["String"];
   extension: Scalars["String"];
   hash: Scalars["Url64"];
-  height?: InputMaybe<Scalars["Int"]>;
   mimeType: Scalars["String"];
   name: Scalars["String"];
-  signature: Scalars["String"];
   size: Scalars["Int"];
-  width?: InputMaybe<Scalars["Int"]>;
 };
 
 /**
@@ -777,8 +772,8 @@ export type Intent = {
    */
   hasPointInTime?: Maybe<Scalars["DateTime"]>;
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the intent, such as a photo. */
-  image?: Maybe<Scalars["Base64"]>;
+  /** The image files relevant to the intent, such as a photo. */
+  images?: Maybe<Array<File>>;
   /** Defines the process to which this intent is an input. */
   inputOf?: Maybe<Process>;
   /**
@@ -865,8 +860,8 @@ export type IntentCreateParams = {
    * and end.
    */
   hasPointInTime?: InputMaybe<Scalars["DateTime"]>;
-  /** The base64-encoded image binary relevant to the intent, such as a photo. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the intent, such as a photo. */
+  images?: InputMaybe<Array<IFile>>;
   /** (`Process`) Defines the process to which this intent is an input. */
   inputOf?: InputMaybe<Scalars["ID"]>;
   /**
@@ -958,8 +953,8 @@ export type IntentUpdateParams = {
    */
   hasPointInTime?: InputMaybe<Scalars["DateTime"]>;
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the intent, such as a photo. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the intent, such as a photo. */
+  images?: InputMaybe<Array<IFile>>;
   /** (`Process`) Defines the process to which this intent is an input. */
   inputOf?: InputMaybe<Scalars["ID"]>;
   /**
@@ -2057,8 +2052,8 @@ export type RecipeProcessUpdateParams = {
 export type RecipeResource = {
   __typename?: "RecipeResource";
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the entity, such as a photo, diagram, etc. */
-  image?: Maybe<Scalars["Base64"]>;
+  /** The image files relevant to the entity, such as a photo, diagram, etc. */
+  images?: Maybe<Array<File>>;
   /**
    * An informal or formal textual identifier for a recipe resource.  Does not
    * imply uniqueness.
@@ -2098,8 +2093,8 @@ export type RecipeResourceConnection = {
 };
 
 export type RecipeResourceCreateParams = {
-  /** The base64-encoded image binary relevant to the entity, such as a photo, diagram, etc. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the entity, such as a photo, diagram, etc. */
+  images?: InputMaybe<Array<IFile>>;
   /**
    * An informal or formal textual identifier for a recipe resource.  Does not
    * imply uniqueness.
@@ -2142,8 +2137,8 @@ export type RecipeResourceResponse = {
 
 export type RecipeResourceUpdateParams = {
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the entity, such as a photo, diagram, etc. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the entity, such as a photo, diagram, etc. */
+  images?: InputMaybe<Array<IFile>>;
   /**
    * An informal or formal textual identifier for a recipe resource.  Does not
    * imply uniqueness.
@@ -4091,8 +4086,20 @@ export type FetchInventoryQuery = {
         } | null;
         images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
         primaryAccountable:
-          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
-          | { __typename?: "Person"; id: string; name: string; note?: string | null };
+          | {
+              __typename?: "Organization";
+              id: string;
+              name: string;
+              note?: string | null;
+              primaryLocation?: { __typename?: "SpatialThing"; name: string } | null;
+            }
+          | {
+              __typename?: "Person";
+              id: string;
+              name: string;
+              note?: string | null;
+              primaryLocation?: { __typename?: "SpatialThing"; name: string } | null;
+            };
         custodian:
           | { __typename?: "Organization"; id: string; name: string; note?: string | null }
           | { __typename?: "Person"; id: string; name: string; note?: string | null };
