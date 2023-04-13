@@ -38,7 +38,6 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     filter = {},
     hideHeader = false,
     hidePagination = false,
-    hidePrimaryAccountable = false,
     hideFilters = false,
     tiny = false,
     header = "Latest projects",
@@ -46,7 +45,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
   const dataQueryIdentifier = "economicResources";
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
-    variables: { last: 6, filter: filter },
+    variables: { last: 8, filter: filter },
   });
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
