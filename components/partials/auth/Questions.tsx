@@ -19,10 +19,10 @@ import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
 // Form
+import { Button, TextField } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
-import { Button, TextField } from "@bbtgnn/polaris-interfacer";
 import { isRequired } from "../../../lib/isFieldRequired";
 
 //
@@ -181,6 +181,7 @@ const Questions = (props: QuestionsNS.Props) => {
                     id={name}
                     name={name}
                     value={value}
+                    focused={index === 0}
                     autoComplete="off"
                     onChange={onChange}
                     onBlur={onBlur}
