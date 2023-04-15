@@ -1096,3 +1096,9 @@ export const RELOCATE_PROJECT = gql`
     }
   }
 `;
+
+export const SEND_EMAIL_VERIFICATION = gql`
+  mutation SendEmailVerification($template: EmailTemplate!) {
+    personRequestEmailVerification(template: $template)
+  }
+`;
