@@ -51,7 +51,7 @@ export async function getStaticProps({ locale }: any) {
 //
 
 const SignUp: NextPageWithLayout = () => {
-  const { signup, login, register } = useAuth();
+  const { signup, login, register, sendEmailVerification } = useAuth();
   const { setItem, getItem } = useStorage();
   const router = useRouter();
   const { t } = useTranslation("signUpProps");
@@ -114,6 +114,7 @@ const SignUp: NextPageWithLayout = () => {
       });
 
       await login({ email: signUpData.email });
+      await sendEmailVerification();
       await claim(getItem("authId"));
       router.push("/");
     } catch (err) {
