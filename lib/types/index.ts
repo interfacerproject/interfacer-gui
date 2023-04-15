@@ -700,7 +700,7 @@ export type IFile = {
   height?: InputMaybe<Scalars["Int"]>;
   mimeType: Scalars["String"];
   name: Scalars["String"];
-  signature: Scalars["String"];
+  signature?: Scalars["String"];
   size: Scalars["Int"];
   width?: InputMaybe<Scalars["Int"]>;
 };
