@@ -16,12 +16,14 @@
 
 import { ApolloProvider, gql } from "@apollo/client";
 import useStorage from "hooks/useStorage";
-import { SEND_EMAIL_VERIFICATION, SIGN_UP } from "lib/QueryAndMutation";
+import { SEND_EMAIL_VERIFICATION, SIGN_IN, SIGN_UP } from "lib/QueryAndMutation";
 import createApolloClient from "lib/createApolloClient";
 import {
   EmailTemplate,
   SendEmailVerificationMutation,
   SendEmailVerificationMutationVariables,
+  SignInQuery,
+  SignInQueryVariables,
   SignUpMutation,
   SignUpMutationVariables,
 } from "lib/types";
@@ -130,39 +132,30 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
 
   const login: LoginFn = async ({ email }) => {
     if (authenticated) return;
-
     const client = createApolloClient(false);
+
     const publicKey = getItem("eddsaPublicKey") as string;
-    const SignInMutation = gql`
-      query ($email: String!, $pubkey: String!) {
-        personCheck(email: $email, eddsaPublicKey: $pubkey) {
-          name
-          user
-          email
-          id
-        }
-      }
-    `;
-    await client
-      .query({
-        query: SignInMutation,
-        variables: { email, pubkey: publicKey },
-      })
-      .then(({ data }) => {
-        setItem("authId", data?.personCheck.id);
-        setItem("authName", data?.personCheck.name);
-        setItem("authUsername", data?.personCheck.user);
-        setItem("authEmail", data?.personCheck.email);
-        setAuthenticated(true);
-        setUser({
-          ulid: data?.personCheck.id,
-          email,
-          username: data?.personCheck.user,
-          name: data?.personCheck.name,
-          privateKey: getItem("eddsaPrivateKey") as string,
-          publicKey,
-        });
-      });
+
+    const { data } = await client.query<SignInQuery, SignInQueryVariables>({
+      query: SIGN_IN,
+      variables: { email, pubkey: publicKey },
+    });
+    const personCheck = data?.personCheck;
+    if (!personCheck) return;
+
+    setItem("authId", personCheck.id);
+    setItem("authName", personCheck.name);
+    setItem("authUsername", personCheck.user);
+    setItem("authEmail", personCheck.email);
+    setAuthenticated(true);
+    setUser({
+      ulid: personCheck.id,
+      email,
+      username: personCheck.user,
+      name: personCheck.name,
+      privateKey: getItem("eddsaPrivateKey") as string,
+      publicKey,
+    });
   };
 
   const register: RegisterFn = async (email, firstRegistration) => {

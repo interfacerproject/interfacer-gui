@@ -4511,6 +4511,16 @@ export type SendEmailVerificationMutation = {
   personRequestEmailVerification: boolean;
 };
 
+export type SignInQueryVariables = Exact<{
+  email: Scalars["String"];
+  pubkey: Scalars["String"];
+}>;
+
+export type SignInQuery = {
+  __typename?: "RootQueryType";
+  personCheck: { __typename?: "Person"; name: string; user: string; email: string; id: string };
+};
+
 export type SignUpMutationVariables = Exact<{
   name: Scalars["String"];
   user: Scalars["String"];

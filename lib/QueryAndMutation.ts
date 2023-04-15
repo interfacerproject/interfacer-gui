@@ -1103,6 +1103,17 @@ export const SEND_EMAIL_VERIFICATION = gql`
   }
 `;
 
+export const SIGN_IN = gql`
+  query SignIn($email: String!, $pubkey: String!) {
+    personCheck(email: $email, eddsaPublicKey: $pubkey) {
+      name
+      user
+      email
+      id
+    }
+  }
+`;
+
 export const SIGN_UP = gql`
   mutation SignUp(
     $name: String!
