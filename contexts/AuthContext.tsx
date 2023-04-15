@@ -182,7 +182,9 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     }
   };
 
-  const keypair: KeypairFn = async ({ question1, question2, question3, question4, question5, email, HMAC }) => {
+  const keypair: KeypairFn = async props => {
+    const { question1, question2, question3, question4, question5, email, HMAC } = props;
+
     const zenData = `
             {
                 "userChallenges": {
@@ -196,20 +198,20 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
                 "seedServerSideShard.HMAC": "${HMAC}"
             }`;
 
-    return await zencode_exec(keypairoomClient, { data: zenData }).then(({ result }) => {
-      const res = JSON.parse(result);
-      setItem("eddsaPrivateKey", res.keyring.eddsa);
-      setItem("ethereumPrivateKey", res.keyring.ethereum);
-      setItem("reflowPrivateKey", res.keyring.reflow);
-      setItem("bitcoinPrivateKey", res.keyring.bitcoin);
-      setItem("ecdhPrivateKey", res.keyring.ecdh);
-      setItem("seed", res.seed);
-      setItem("ecdhPublicKey", res.ecdh_public_key);
-      setItem("bitcoinPublicKey", res.bitcoin_public_key);
-      setItem("eddsaPublicKey", res.eddsa_public_key);
-      setItem("reflowPublicKey", res.reflow_public_key);
-      setItem("ethereumAddress", res.ethereum_address);
-    });
+    const { result } = await zencode_exec(keypairoomClient, { data: zenData });
+    const parsedResult = JSON.parse(result);
+
+    setItem("eddsaPrivateKey", parsedResult.keyring.eddsa);
+    setItem("ethereumPrivateKey", parsedResult.keyring.ethereum);
+    setItem("reflowPrivateKey", parsedResult.keyring.reflow);
+    setItem("bitcoinPrivateKey", parsedResult.keyring.bitcoin);
+    setItem("ecdhPrivateKey", parsedResult.keyring.ecdh);
+    setItem("seed", parsedResult.seed);
+    setItem("ecdhPublicKey", parsedResult.ecdh_public_key);
+    setItem("bitcoinPublicKey", parsedResult.bitcoin_public_key);
+    setItem("eddsaPublicKey", parsedResult.eddsa_public_key);
+    setItem("reflowPublicKey", parsedResult.reflow_public_key);
+    setItem("ethereumAddress", parsedResult.ethereum_address);
   };
 
   const signup: SignupFn = async props => {
