@@ -4547,6 +4547,12 @@ export type SignUpMutation = {
   };
 };
 
+export type VerifyEmailMutationVariables = Exact<{
+  token: Scalars["String"];
+}>;
+
+export type VerifyEmailMutation = { __typename?: "RootMutationType"; personVerifyEmailVerification: boolean };
+
 export type EditMainMutationVariables = Exact<{
   id: Scalars["ID"];
   classifiedAs?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
