@@ -670,13 +670,6 @@ export type EconomicResourceUpdateParams = {
   repo?: InputMaybe<Scalars["String"]>;
 };
 
-export enum EmailTemplate {
-  InterfacerDebugging = "INTERFACER_DEBUGGING",
-  InterfacerDeployment = "INTERFACER_DEPLOYMENT",
-  InterfacerStaging = "INTERFACER_STAGING",
-  InterfacerTesting = "INTERFACER_TESTING",
-}
-
 export type File = {
   __typename?: "File";
   bin?: Maybe<Scalars["Base64"]>;
@@ -684,12 +677,10 @@ export type File = {
   description: Scalars["String"];
   extension: Scalars["String"];
   hash: Scalars["Url64"];
-  height?: Maybe<Scalars["Int"]>;
   mimeType: Scalars["String"];
   name: Scalars["String"];
-  signature?: Scalars["String"];
+  signature?: Maybe<Scalars["String"]>;
   size: Scalars["Int"];
-  width?: Maybe<Scalars["Int"]>;
 };
 
 /** Mutation input structure for defining time durations. */
@@ -704,12 +695,9 @@ export type IFile = {
   description: Scalars["String"];
   extension: Scalars["String"];
   hash: Scalars["Url64"];
-  height?: InputMaybe<Scalars["Int"]>;
   mimeType: Scalars["String"];
   name: Scalars["String"];
-  signature?: Scalars["String"];
   size: Scalars["Int"];
-  width?: InputMaybe<Scalars["Int"]>;
 };
 
 /**
@@ -784,8 +772,8 @@ export type Intent = {
    */
   hasPointInTime?: Maybe<Scalars["DateTime"]>;
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the intent, such as a photo. */
-  image?: Maybe<Scalars["Base64"]>;
+  /** The image files relevant to the intent, such as a photo. */
+  images?: Maybe<Array<File>>;
   /** Defines the process to which this intent is an input. */
   inputOf?: Maybe<Process>;
   /**
@@ -872,8 +860,8 @@ export type IntentCreateParams = {
    * and end.
    */
   hasPointInTime?: InputMaybe<Scalars["DateTime"]>;
-  /** The base64-encoded image binary relevant to the intent, such as a photo. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the intent, such as a photo. */
+  images?: InputMaybe<Array<IFile>>;
   /** (`Process`) Defines the process to which this intent is an input. */
   inputOf?: InputMaybe<Scalars["ID"]>;
   /**
@@ -965,8 +953,8 @@ export type IntentUpdateParams = {
    */
   hasPointInTime?: InputMaybe<Scalars["DateTime"]>;
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the intent, such as a photo. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the intent, such as a photo. */
+  images?: InputMaybe<Array<IFile>>;
   /** (`Process`) Defines the process to which this intent is an input. */
   inputOf?: InputMaybe<Scalars["ID"]>;
   /**
@@ -1165,8 +1153,6 @@ export type Person = Agent & {
   id: Scalars["ID"];
   /** The image files relevant to the agent, such as a logo, avatar, photo, etc. */
   images?: Maybe<Array<File>>;
-  /** Has the user verified their email address. */
-  isVerified: Scalars["Boolean"];
   /** The name that this agent will be referred to by. */
   name: Scalars["String"];
   /** A textual description or comment. */
@@ -2066,8 +2052,8 @@ export type RecipeProcessUpdateParams = {
 export type RecipeResource = {
   __typename?: "RecipeResource";
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the entity, such as a photo, diagram, etc. */
-  image?: Maybe<Scalars["Base64"]>;
+  /** The image files relevant to the entity, such as a photo, diagram, etc. */
+  images?: Maybe<Array<File>>;
   /**
    * An informal or formal textual identifier for a recipe resource.  Does not
    * imply uniqueness.
@@ -2107,8 +2093,8 @@ export type RecipeResourceConnection = {
 };
 
 export type RecipeResourceCreateParams = {
-  /** The base64-encoded image binary relevant to the entity, such as a photo, diagram, etc. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the entity, such as a photo, diagram, etc. */
+  images?: InputMaybe<Array<IFile>>;
   /**
    * An informal or formal textual identifier for a recipe resource.  Does not
    * imply uniqueness.
@@ -2151,8 +2137,8 @@ export type RecipeResourceResponse = {
 
 export type RecipeResourceUpdateParams = {
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the entity, such as a photo, diagram, etc. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the entity, such as a photo, diagram, etc. */
+  images?: InputMaybe<Array<IFile>>;
   /**
    * An informal or formal textual identifier for a recipe resource.  Does not
    * imply uniqueness.
@@ -2391,17 +2377,6 @@ export type RootMutationType = {
   /** Import repositories from a softwarepassport instance. */
   importRepos?: Maybe<Scalars["String"]>;
   keypairoomServer: Scalars["String"];
-  /**
-   * Send an email verification request to the user via email using email address if
-   * available, else fails (some users are registered by admin without an email
-   * address).
-   */
-  personRequestEmailVerification: Scalars["Boolean"];
-  /**
-   * Verify an email verification request of the user using the token provided in
-   * the verification request.
-   */
-  personVerifyEmailVerification: Scalars["Boolean"];
   /**
    * Include an existing intent as part of a proposal.
    * @param publishedIn the (`Proposal`) to include the intent in
@@ -2650,14 +2625,6 @@ export type RootMutationTypeImportReposArgs = {
 export type RootMutationTypeKeypairoomServerArgs = {
   firstRegistration: Scalars["Boolean"];
   userData: Scalars["String"];
-};
-
-export type RootMutationTypePersonRequestEmailVerificationArgs = {
-  template: EmailTemplate;
-};
-
-export type RootMutationTypePersonVerifyEmailVerificationArgs = {
-  token: Scalars["String"];
 };
 
 export type RootMutationTypeProposeIntentArgs = {
@@ -4500,15 +4467,6 @@ export type RelocateProjectMutation = {
   __typename?: "RootMutationType";
   pickup: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
   dropoff: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
-};
-
-export type SendEmailVerificationMutationVariables = Exact<{
-  template: EmailTemplate;
-}>;
-
-export type SendEmailVerificationMutation = {
-  __typename?: "RootMutationType";
-  personRequestEmailVerification: boolean;
 };
 
 export type EditMainMutationVariables = Exact<{
