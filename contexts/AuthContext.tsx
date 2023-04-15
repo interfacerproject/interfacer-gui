@@ -214,22 +214,19 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
 
   const signup: SignupFn = async props => {
     const client = createApolloClient(false);
-    await client
-      .mutate<SignUpMutation, SignUpMutationVariables>({
-        mutation: SIGN_UP,
-        variables: props,
-        context: {
-          headers: { "zenflows-admin": process.env.NEXT_PUBLIC_ZENFLOWS_ADMIN },
-        },
-      })
-      .then(({ data }) => {
-        const agent = data?.createPerson.agent;
-        if (!agent) return;
-        setItem("authId", agent.id);
-        setItem("authName", agent.name);
-        setItem("authUsername", agent.user);
-        setItem("authEmail", agent.email);
-      });
+    const { data } = await client.mutate<SignUpMutation, SignUpMutationVariables>({
+      mutation: SIGN_UP,
+      variables: props,
+      context: {
+        headers: { "zenflows-admin": process.env.NEXT_PUBLIC_ZENFLOWS_ADMIN },
+      },
+    });
+    const agent = data?.createPerson.agent;
+    if (!agent) return;
+    setItem("authId", agent.id);
+    setItem("authName", agent.name);
+    setItem("authUsername", agent.user);
+    setItem("authEmail", agent.email);
   };
 
   const logout: LogoutFn = (redirect = "/sign_in") => {
