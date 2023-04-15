@@ -4511,6 +4511,32 @@ export type SendEmailVerificationMutation = {
   personRequestEmailVerification: boolean;
 };
 
+export type SignUpMutationVariables = Exact<{
+  name: Scalars["String"];
+  user: Scalars["String"];
+  email: Scalars["String"];
+  eddsaPublicKey: Scalars["String"];
+  reflowPublicKey: Scalars["String"];
+  ethereumAddress: Scalars["String"];
+  ecdhPublicKey: Scalars["String"];
+  bitcoinPublicKey: Scalars["String"];
+}>;
+
+export type SignUpMutation = {
+  __typename?: "RootMutationType";
+  createPerson: {
+    __typename?: "PersonResponse";
+    agent: {
+      __typename?: "Person";
+      id: string;
+      name: string;
+      user: string;
+      email: string;
+      eddsaPublicKey?: string | null;
+    };
+  };
+};
+
 export type EditMainMutationVariables = Exact<{
   id: Scalars["ID"];
   classifiedAs?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;

@@ -1102,3 +1102,37 @@ export const SEND_EMAIL_VERIFICATION = gql`
     personRequestEmailVerification(template: $template)
   }
 `;
+
+export const SIGN_UP = gql`
+  mutation SignUp(
+    $name: String!
+    $user: String!
+    $email: String!
+    $eddsaPublicKey: String!
+    $reflowPublicKey: String!
+    $ethereumAddress: String!
+    $ecdhPublicKey: String!
+    $bitcoinPublicKey: String!
+  ) {
+    createPerson(
+      person: {
+        name: $name
+        user: $user
+        email: $email
+        eddsaPublicKey: $eddsaPublicKey
+        reflowPublicKey: $reflowPublicKey
+        ethereumAddress: $ethereumAddress
+        ecdhPublicKey: $ecdhPublicKey
+        bitcoinPublicKey: $bitcoinPublicKey
+      }
+    ) {
+      agent {
+        id
+        name
+        user
+        email
+        eddsaPublicKey
+      }
+    }
+  }
+`;

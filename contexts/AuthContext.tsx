@@ -16,9 +16,15 @@
 
 import { ApolloProvider, gql } from "@apollo/client";
 import useStorage from "hooks/useStorage";
-import { SEND_EMAIL_VERIFICATION } from "lib/QueryAndMutation";
+import { SEND_EMAIL_VERIFICATION, SIGN_UP } from "lib/QueryAndMutation";
 import createApolloClient from "lib/createApolloClient";
-import { EmailTemplate, SendEmailVerificationMutation, SendEmailVerificationMutationVariables } from "lib/types";
+import {
+  EmailTemplate,
+  SendEmailVerificationMutation,
+  SendEmailVerificationMutationVariables,
+  SignUpMutation,
+  SignUpMutationVariables,
+} from "lib/types";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
@@ -206,50 +212,23 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     });
   };
 
-  const signup: SignupFn = async ({
-    name,
-    user,
-    email,
-    eddsaPublicKey,
-    ethereumAddress,
-    ecdhPublicKey,
-    reflowPublicKey,
-    bitcoinPublicKey,
-  }) => {
+  const signup: SignupFn = async props => {
     const client = createApolloClient(false);
-    const SignUpMutation = gql`mutation  {
-              createPerson(person: {
-                name: "${name}"
-                user: "${user}"
-                email: "${email}"
-                eddsaPublicKey: "${eddsaPublicKey}"
-                reflowPublicKey: "${reflowPublicKey}"
-                ethereumAddress: "${ethereumAddress}"
-                ecdhPublicKey: "${ecdhPublicKey}"
-                bitcoinPublicKey: "${bitcoinPublicKey}"
-              }) {
-              agent{
-                id
-                name
-                user
-                email
-                eddsaPublicKey
-              }
-              }
-            }`;
-
     await client
-      .mutate({
-        mutation: SignUpMutation,
+      .mutate<SignUpMutation, SignUpMutationVariables>({
+        mutation: SIGN_UP,
+        variables: props,
         context: {
           headers: { "zenflows-admin": process.env.NEXT_PUBLIC_ZENFLOWS_ADMIN },
         },
       })
       .then(({ data }) => {
-        setItem("authId", data?.createPerson.agent.id);
-        setItem("authName", data?.createPerson.agent.name);
-        setItem("authUsername", data?.createPerson.agent.user);
-        setItem("authEmail", data?.createPerson.agent.email);
+        const agent = data?.createPerson.agent;
+        if (!agent) return;
+        setItem("authId", agent.id);
+        setItem("authName", agent.name);
+        setItem("authUsername", agent.user);
+        setItem("authEmail", agent.email);
       });
   };
 
