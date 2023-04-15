@@ -24,9 +24,7 @@ export default function EmailVerify() {
     verifyEmail({
       variables: { token },
       onError: err => setError(err.message),
-      onCompleted: () => {
-        setLoading(false);
-      },
+      onCompleted: () => setLoading(false),
     });
   }, [router.query]);
 

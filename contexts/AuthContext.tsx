@@ -41,6 +41,7 @@ export type User = {
   name: string;
   publicKey: string;
   privateKey: string;
+  isVerified: boolean;
 };
 
 type LoginFn = (props: { email: string }) => Promise<void>;
@@ -110,6 +111,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
       const name = getItem("authName") as string;
       const email = getItem("authEmail") as string;
       const publicKey = getItem("eddsaPublicKey") as string;
+      const isVerified = Boolean(getItem("authIsVerified"));
       setAuthenticated(true);
       setUser({
         ulid,
@@ -118,6 +120,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
         name,
         privateKey,
         publicKey,
+        isVerified,
       });
       setLoading(false);
       return;
@@ -133,7 +136,6 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   const login: LoginFn = async ({ email }) => {
     if (authenticated) return;
     const client = createApolloClient(false);
-
     const publicKey = getItem("eddsaPublicKey") as string;
 
     const { data } = await client.query<SignInQuery, SignInQueryVariables>({
@@ -147,12 +149,14 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     setItem("authName", personCheck.name);
     setItem("authUsername", personCheck.user);
     setItem("authEmail", personCheck.email);
+    setItem("authIsVerified", personCheck.email);
     setAuthenticated(true);
     setUser({
       ulid: personCheck.id,
       email,
       username: personCheck.user,
       name: personCheck.name,
+      isVerified: personCheck.isVerified,
       privateKey: getItem("eddsaPrivateKey") as string,
       publicKey,
     });

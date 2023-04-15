@@ -4518,7 +4518,7 @@ export type SignInQueryVariables = Exact<{
 
 export type SignInQuery = {
   __typename?: "RootQueryType";
-  personCheck: { __typename?: "Person"; name: string; user: string; email: string; id: string };
+  personCheck: { __typename?: "Person"; name: string; user: string; email: string; id: string; isVerified: boolean };
 };
 
 export type SignUpMutationVariables = Exact<{
