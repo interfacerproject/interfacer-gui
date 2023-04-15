@@ -16,7 +16,9 @@
 
 import { ApolloProvider, gql } from "@apollo/client";
 import useStorage from "hooks/useStorage";
+import { SEND_EMAIL_VERIFICATION } from "lib/QueryAndMutation";
 import createApolloClient from "lib/createApolloClient";
+import { EmailTemplate, SendEmailVerificationMutation, SendEmailVerificationMutationVariables } from "lib/types";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
@@ -31,6 +33,7 @@ export const AuthContext = createContext(
     loading: boolean;
     authenticationProcess: boolean;
     register: (email: string, firstRegistration: boolean) => Promise<any>;
+    sendEmailVerification: () => Promise<void>;
     keypair: ({
       question1,
       question2,
@@ -282,6 +285,45 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     router.push(redirect || "/sign_in", undefined, { shallow: true });
   };
 
+  /* Email verification */
+
+  const SEND_EMAIL_VERIFICATION_TEMPLATES: Array<{ template: EmailTemplate; url: string }> = [
+    {
+      template: EmailTemplate.InterfacerTesting,
+      url: "https://gateway0.interfacer.dyne.org",
+    },
+    {
+      template: EmailTemplate.InterfacerStaging,
+      url: "https://gateway1.interfacer.dyne.org",
+    },
+  ];
+
+  function getEmailVerificationTemplateFromEnv() {
+    for (let t of SEND_EMAIL_VERIFICATION_TEMPLATES) {
+      if (process.env.BASE_URL === t.url) {
+        return t.template;
+      }
+    }
+    return EmailTemplate.InterfacerTesting;
+  }
+
+  async function sendEmailVerification() {
+    if (!authenticated) {
+      throw new Error("User not authenticated");
+    }
+
+    const client = createApolloClient(authenticated);
+
+    await client.mutate<SendEmailVerificationMutation, SendEmailVerificationMutationVariables>({
+      mutation: SEND_EMAIL_VERIFICATION,
+      variables: {
+        template: getEmailVerificationTemplateFromEnv(),
+      },
+    });
+  }
+
+  //
+
   return (
     <AuthContext.Provider
       value={{
@@ -294,6 +336,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
         register,
         signup,
         keypair,
+        sendEmailVerification,
       }}
     >
       {loading ? (
