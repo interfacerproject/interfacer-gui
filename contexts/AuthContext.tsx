@@ -24,54 +24,7 @@ import { createContext, useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
 import keypairoomClient from "../zenflows-crypto/src/keypairoomClient-8-9-10-11-12";
 
-export const AuthContext = createContext(
-  {} as {
-    user: User | null;
-    login: ({ email }: { email: string }) => Promise<void>;
-    logout: (redirect?: string) => void;
-    authenticated: boolean;
-    loading: boolean;
-    authenticationProcess: boolean;
-    register: (email: string, firstRegistration: boolean) => Promise<any>;
-    sendEmailVerification: () => Promise<void>;
-    keypair: ({
-      question1,
-      question2,
-      question3,
-      question4,
-      question5,
-      email,
-      HMAC,
-    }: {
-      question1: string;
-      question2: string;
-      question3: string;
-      question4: string;
-      question5: string;
-      email: string;
-      HMAC: string;
-    }) => Promise<void>;
-    signup: ({
-      name,
-      user,
-      email,
-      eddsaPublicKey,
-      ethereumAddress,
-      ecdhPublicKey,
-      reflowPublicKey,
-      bitcoinPublicKey,
-    }: {
-      name: string;
-      user: string;
-      email: string;
-      eddsaPublicKey: string;
-      ethereumAddress: string;
-      ecdhPublicKey: string;
-      reflowPublicKey: string;
-      bitcoinPublicKey: string;
-    }) => Promise<void>;
-  }
-);
+/* Definitions */
 
 export type User = {
   ulid: string;
@@ -82,12 +35,57 @@ export type User = {
   privateKey: string;
 };
 
+type LoginFn = (props: { email: string }) => Promise<void>;
+type LogoutFn = (redirect?: string) => void;
+type RegisterFn = (email: string, firstRegistration: boolean) => Promise<any>;
+
+interface KeypairFnProps {
+  question1: string;
+  question2: string;
+  question3: string;
+  question4: string;
+  question5: string;
+  email: string;
+  HMAC: string;
+}
+type KeypairFn = (props: KeypairFnProps) => Promise<void>;
+
+interface SignupFnProps {
+  name: string;
+  user: string;
+  email: string;
+  eddsaPublicKey: string;
+  ethereumAddress: string;
+  ecdhPublicKey: string;
+  reflowPublicKey: string;
+  bitcoinPublicKey: string;
+}
+type SignupFn = (props: SignupFnProps) => Promise<void>;
+
+interface AuthContextValue {
+  user: User | null;
+  authenticated: boolean;
+  loading: boolean;
+  isAuthenticationProcess: () => boolean;
+  login: LoginFn;
+  logout: LogoutFn;
+  register: RegisterFn;
+  keypair: KeypairFn;
+  signup: SignupFn;
+  sendEmailVerification: () => Promise<void>;
+}
+
+/* Context */
+
+export const AuthContext = createContext<AuthContextValue>({} as AuthContextValue);
+
 export const AuthProvider = ({ children, publicPage = false }: any) => {
   const { getItem, setItem, clear } = useStorage();
-  const [authenticated, setAuthenticated] = useState(false);
-  const [user, setUser] = useState(null as User | null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  const [authenticated, setAuthenticated] = useState<AuthContextValue["authenticated"]>(false);
+  const [user, setUser] = useState<AuthContextValue["user"]>(null);
+  const [loading, setLoading] = useState<AuthContextValue["loading"]>(true);
 
   const isAuthenticationProcess = () => {
     const path = router.asPath;
@@ -124,7 +122,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     }
   }, [router.asPath]);
 
-  const login = async ({ email }: { email: string }) => {
+  const login: LoginFn = async ({ email }) => {
     if (authenticated) return;
 
     const client = createApolloClient(false);
@@ -161,7 +159,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
       });
   };
 
-  const register = async (email: string, firstRegistration: boolean) => {
+  const register: RegisterFn = async (email, firstRegistration) => {
     const client = createApolloClient(false);
     const KEYPAIROOM_SERVER_MUTATION = gql`mutation {keypairoomServer(firstRegistration: ${firstRegistration}, userData: "{\\"email\\": \\"${email}\\"}")}`;
     try {
@@ -178,23 +176,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     }
   };
 
-  const keypair = async ({
-    question1,
-    question2,
-    question3,
-    question4,
-    question5,
-    email,
-    HMAC,
-  }: {
-    question1: string;
-    question2: string;
-    question3: string;
-    question4: string;
-    question5: string;
-    email: string;
-    HMAC: string;
-  }) => {
+  const keypair: KeypairFn = async ({ question1, question2, question3, question4, question5, email, HMAC }) => {
     const zenData = `
             {
                 "userChallenges": {
@@ -224,7 +206,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     });
   };
 
-  const signup = async ({
+  const signup: SignupFn = async ({
     name,
     user,
     email,
@@ -233,15 +215,6 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     ecdhPublicKey,
     reflowPublicKey,
     bitcoinPublicKey,
-  }: {
-    name: string;
-    user: string;
-    email: string;
-    eddsaPublicKey: string;
-    reflowPublicKey: string;
-    ethereumAddress: string;
-    ecdhPublicKey: string;
-    bitcoinPublicKey: string;
   }) => {
     const client = createApolloClient(false);
     const SignUpMutation = gql`mutation  {
@@ -280,7 +253,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
       });
   };
 
-  const logout = (redirect = "/sign_in") => {
+  const logout: LogoutFn = (redirect = "/sign_in") => {
     clear();
     router.push(redirect || "/sign_in", undefined, { shallow: true });
   };
@@ -332,7 +305,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
         loading,
         logout,
         login,
-        authenticationProcess: isAuthenticationProcess(),
+        isAuthenticationProcess,
         register,
         signup,
         keypair,
