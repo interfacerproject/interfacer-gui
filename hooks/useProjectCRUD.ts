@@ -4,9 +4,6 @@ import { DeclarationsStepValues } from "components/partials/create/project/steps
 import { ProjectType } from "components/types";
 import useInBox from "hooks/useInBox";
 import useWallet from "hooks/useWallet";
-import { arrayEquals, getNewElements } from "lib/arrayOperations";
-import { errorFormatter } from "lib/errorFormatter";
-import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
 import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import {
   ASK_RESOURCE_PRIMARY_ACCOUNTABLE,
@@ -20,6 +17,9 @@ import {
   RELOCATE_PROJECT,
   UPDATE_METADATA,
 } from "lib/QueryAndMutation";
+import { arrayEquals, getNewElements } from "lib/arrayOperations";
+import { errorFormatter } from "lib/errorFormatter";
+import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
 import {
   CreateLocationMutation,
   CreateLocationMutationVariables,
@@ -33,8 +33,8 @@ import {
 import { useTranslation } from "next-i18next";
 import { AddedAsContributorNotification, MessageSubject, ProposalNotification } from "pages/notification";
 import { useState } from "react";
-import devLog from "../lib/devLog";
 import { QUERY_PROJECT_FOR_METADATA_UPDATE } from "../lib/QueryAndMutation";
+import devLog from "../lib/devLog";
 import {
   QueryProjectForMetadataUpdateQuery,
   QueryProjectForMetadataUpdateQueryVariables,
@@ -213,7 +213,7 @@ export const useProjectCRUD = () => {
       if (formData.location.locationData || formData.location.remote) {
         location = await handleCreateLocation(formData.location, projectType === ProjectType.DESIGN);
       }
-      const images: IFile[] = await prepFilesForZenflows(formData.images, getItem("eddsaPrivateKey"));
+      const images: IFile[] = await prepFilesForZenflows(formData.images);
       devLog("info: images prepared", images);
       const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
       devLog("info: tags prepared", tags);
