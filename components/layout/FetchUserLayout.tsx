@@ -66,6 +66,7 @@ export const GET_USER_LAYOUT = gql`
       }
       ethereumAddress
       primaryLocation {
+        id
         name
         mappableAddress
         lat

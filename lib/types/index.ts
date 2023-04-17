@@ -3758,6 +3758,7 @@ export type GetUserLayoutQuery = {
     images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
     primaryLocation?: {
       __typename?: "SpatialThing";
+      id: string;
       name: string;
       mappableAddress?: string | null;
       lat?: any | null;

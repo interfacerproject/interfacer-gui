@@ -1,7 +1,14 @@
 import { gql, useMutation } from "@apollo/client";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { useTranslation } from "next-i18next";
-import { IFile, Person, UpdateUserMutation, UpdateUserMutationVariables } from "../lib/types";
+import {
+  CreateLocationMutation,
+  CreateLocationMutationVariables,
+  IFile,
+  Person,
+  UpdateUserMutation,
+  UpdateUserMutationVariables,
+} from "../lib/types";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,16 +16,17 @@ import { formSetValueOptions } from "lib/formSetValueOptions";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { isRequired } from "../lib/isFieldRequired";
-import { LocationStepValues } from "./partials/create/project/steps/LocationStep";
 
 // Partials
 import ProfileImageEditor from "./partials/profile/[id]/ProfileImageEditor";
 
 // Components
 import { Card, Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import { CREATE_LOCATION } from "lib/QueryAndMutation";
 import devLog from "lib/devLog";
 import { prepFileForZenflows, uploadFile } from "lib/fileUpload";
 import { createImageSrc } from "lib/resourceImages";
+import SelectLocation2, { SelectedLocation } from "./SelectLocation2";
 import TableOfContents from "./TableOfContents";
 import EditFormLayout from "./partials/project/edit/EditFormLayout";
 import PDivider from "./polaris/PDivider";
@@ -28,13 +36,14 @@ import PTitleSubtitle from "./polaris/PTitleSubtitle";
 
 export interface UpdateProfileValues {
   name: string;
-  // address?: LocationStepValues;
+  address: SelectedLocation | null;
   note: string;
   image: File | null;
 }
 
 export default function UpdateProfileForm(props: { user: Partial<Person> }) {
   const { user } = props;
+  console.log(user);
 
   const { t } = useTranslation("common");
   const { handleCreateLocation } = useProjectCRUD();
@@ -58,28 +67,30 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
 
   /* */
 
-  const defaultLocationData = {
-    address: user?.primaryLocation?.mappableAddress || "",
-    lat: user?.primaryLocation?.lat,
-    lng: user?.primaryLocation?.long,
-  };
-
-  const defaultAddress: LocationStepValues = {
-    locationName: user.primaryLocation?.name || "",
-    locationData: defaultLocationData || null,
-    remote: false,
-  };
+  const defaultAddress: UpdateProfileValues["address"] = user?.primaryLocation
+    ? {
+        address: user?.primaryLocation?.mappableAddress!,
+        lat: user?.primaryLocation?.lat!,
+        lng: user?.primaryLocation?.long!,
+      }
+    : null;
 
   const defaultValues: UpdateProfileValues = {
     name: user?.name || "",
-    // address: defaultAddress,
+    address: defaultAddress,
     note: user?.note || "",
     image: null,
   };
 
   const schema = yup.object({
     name: yup.string(),
-    // address: locationStepSchema,
+    address: yup
+      .object({
+        address: yup.string().required(),
+        lat: yup.number().required(),
+        lng: yup.number().required(),
+      })
+      .nullable(),
     note: yup.string(),
     image: yup.object().nullable(),
   });
@@ -91,7 +102,7 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
   });
 
   const { formState, control, setValue, watch, trigger, handleSubmit } = form;
-  const { errors } = formState;
+  const { errors, touchedFields } = formState;
 
   const onImageChange = async (f: File) => {
     setValue("image", f, formSetValueOptions);
@@ -99,13 +110,26 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
 
   //
 
+  const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
   const [updateUser] = useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UPDATE_USER);
 
   const onSubmit = async (formData: UpdateProfileValues) => {
     formData = watch();
     try {
-      // let location = undefined;
-      // if (formData.address) location = await handleCreateLocation(formData.address, false);
+      let locationId = user.primaryLocation?.id ?? null;
+      const locData = formData.address;
+      if (touchedFields.address && locData) {
+        const location = await createLocation({
+          variables: {
+            addr: locData.address,
+            name: locData.address,
+            lat: locData.lat,
+            lng: locData.lng,
+          },
+        });
+        locationId = location.data?.createSpatialThing.spatialThing.id!;
+      }
+      console.log(locationId);
 
       let images = user.images as Array<IFile>;
       if (formData.image) images = [await prepFileForZenflows(formData.image)];
@@ -115,7 +139,7 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
         name: formData.name,
         note: formData.note,
         images,
-        // primaryLocation: location?.st?.id,
+        primaryLocation: locationId,
       };
 
       await updateUser({ variables });
@@ -202,35 +226,13 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
                 "We value your privacy and will only use your location for the purpose of connecting you with other members of the community"
               )}
             />
-            {/* <Controller
-              control={control}
-              name="address.locationName"
-              render={({ field: { onChange, onBlur, name, value } }) => (
-                <TextField
-                  type="text"
-                  id={name}
-                  name={name}
-                  value={value}
-                  autoComplete="off"
-                  onChange={value => {
-                    onChange(value), trigger("address.locationData");
-                  }}
-                  onBlur={() => {
-                    onBlur(), trigger("address.locationData");
-                  }}
-                  label={t("Location name")}
-                  helpText={t("For example: My Workshop")}
-                  error={errors.address?.locationName?.message}
-                />
-              )}
-            />
             <SelectLocation2
               label={t("Address")}
               placeholder={t("An d. Alsterschleife 3, 22399 - Hamburg, Germany")}
-              location={watch("address.locationData")}
-              setLocation={value => setValue("address.locationData", value, formSetValueOptions)}
+              location={watch("address")}
+              setLocation={value => setValue("address", value, formSetValueOptions)}
               helpText={t("Start to type the address and select the correct one from the list")}
-            /> */}
+            />
           </Stack>
         </Card>
       </Stack>
