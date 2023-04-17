@@ -6,18 +6,17 @@ interface Props {
   initialImage?: string;
   label?: string;
   helpText?: string;
+  image?: File | null;
   onChange?: (file: File) => void;
 }
 
 export default function ProfileImageEditor(props: Props) {
-  const { initialImage, label, helpText, onChange = () => {} } = props;
-  const [file, setFile] = useState<File | null>(null);
+  const { initialImage, label, helpText, onChange = () => {}, image = null } = props;
   const [error, setError] = useState<string>("");
   const [rejectedFiles, setRejectedFiles] = useState<File[]>([]);
   const hasError = rejectedFiles.length > 0;
 
   const handleDrop = useCallback((_droppedFiles: File[], acceptedFiles: File[], rejectedFiles: File[]) => {
-    setFile(acceptedFiles[0]);
     onChange(acceptedFiles[0]);
     setRejectedFiles(rejectedFiles);
   }, []);
@@ -50,8 +49,8 @@ export default function ProfileImageEditor(props: Props) {
           allowMultiple={false}
         >
           <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white bg-gray-100">
-            {initialImage && !file && <img src={initialImage} className="w-full h-full bg-cover" />}
-            {file && <img src={window.URL.createObjectURL(file)} className="w-full h-full bg-cover" />}
+            {initialImage && !image && <img src={initialImage} className="w-full h-full bg-cover" />}
+            {image && <img src={window.URL.createObjectURL(image)} className="w-full h-full bg-cover" />}
           </div>
         </DropZone>
       </div>

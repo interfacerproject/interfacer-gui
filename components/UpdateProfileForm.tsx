@@ -29,6 +29,7 @@ export interface UpdateProfileValues {
   name: string;
   address?: LocationStepValues;
   note: string;
+  image: File | null;
 }
 
 export interface UpdateProfileProps {
@@ -42,9 +43,64 @@ export default function UpdateProfileForm({ user }: { user: Partial<Person> }) {
   const { t } = useTranslation("common");
   const { handleCreateLocation } = useProjectCRUD();
 
-  const [updateUser] = useMutation(UPDATE_USER);
+  /* */
 
   const sections = ["personal info", "location"];
+
+  function EditProfileNav() {
+    const links = sections.map(section => ({
+      label: <span className="capitalize">{section}</span>,
+      href: `#${section.replace(" ", "-")}`,
+    }));
+    return <TableOfContents title={t("Edit Profile")} links={links} />;
+  }
+
+  /* */
+
+  const defaultLocationData = {
+    address: user?.primaryLocation?.mappableAddress || "",
+    lat: user?.primaryLocation?.lat,
+    lng: user?.primaryLocation?.long,
+  };
+
+  const defaultAddress: LocationStepValues = {
+    locationName: user.primaryLocation?.name || "",
+    locationData: defaultLocationData || null,
+    remote: false,
+  };
+
+  const defaultValues: UpdateProfileValues = {
+    name: user?.name || "",
+    address: defaultAddress,
+    note: user?.note || "",
+    image: null,
+  };
+
+  const schema = yup
+    .object({
+      name: yup.string(),
+      address: locationStepSchema,
+      note: yup.string(),
+      image: yup.object(),
+    })
+    .required();
+
+  const form = useForm<UpdateProfileValues>({
+    mode: "all",
+    resolver: yupResolver(schema),
+    defaultValues,
+  });
+
+  const { formState, control, setValue, watch, trigger } = form;
+  const { errors } = formState;
+
+  const onImageChange = async (f: File) => {
+    setValue("image", f, formSetValueOptions);
+  };
+
+  //
+
+  const [updateUser] = useMutation(UPDATE_USER);
 
   const onSubmit = async (formData: UpdateProfileValues) => {
     try {
@@ -64,53 +120,7 @@ export default function UpdateProfileForm({ user }: { user: Partial<Person> }) {
     }
   };
 
-  const defaultLocationData = {
-    address: user?.primaryLocation?.mappableAddress || "",
-    lat: user?.primaryLocation?.lat,
-    lng: user?.primaryLocation?.long,
-  };
-
-  const defaultAddress: LocationStepValues = {
-    locationName: user.primaryLocation?.name || "",
-    locationData: defaultLocationData || null,
-    remote: false,
-  };
-
-  const defaultValues: UpdateProfileValues = {
-    name: user?.name || "",
-    address: defaultAddress,
-    note: user?.note || "",
-  };
-
-  const schema = yup
-    .object({
-      name: yup.string(),
-      locationName: yup.string(),
-      address: locationStepSchema,
-      note: yup.string(),
-    })
-    .required();
-
-  const form = useForm<UpdateProfileValues>({
-    mode: "all",
-    resolver: yupResolver(schema),
-    defaultValues,
-  });
-
-  function EditProfileNav() {
-    const links = sections.map(section => ({
-      label: <span className="capitalize">{section}</span>,
-      href: `#${section.replace(" ", "-")}`,
-    }));
-    return <TableOfContents title={t("Edit Profile")} links={links} />;
-  }
-
-  const { formState, control, setValue, watch, trigger } = form;
-  const { errors } = formState;
-
-  const onImageChange = async (f: File) => {
-    console.log(f);
-  };
+  //
 
   return (
     <EditFormLayout nav={EditProfileNav()} formMethods={form} onSubmit={onSubmit}>
@@ -130,6 +140,7 @@ export default function UpdateProfileForm({ user }: { user: Partial<Person> }) {
 
             <ProfileImageEditor
               label={t("Avatar")}
+              image={watch("image")}
               onChange={onImageChange}
               helpText={t("Upload a file or drag and drop.")}
               initialImage="https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8&w=1000&q=80"
