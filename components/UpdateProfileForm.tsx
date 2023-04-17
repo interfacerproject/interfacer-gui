@@ -25,24 +25,6 @@ import PTitleSubtitle from "./polaris/PTitleSubtitle";
 
 //
 
-const UPDATE_USER =
-  gql(`mutation updateUser($name: String, $id: ID!, $note:String, $primaryLocation: ID, $user: String) {
-    updatePerson(person: { id: $id, name:$name, note: $note, primaryLocation: $primaryLocation, user: $user}) {
-      agent {
-        id
-        name
-        note
-        primaryLocation{
-          id
-          lat
-          long
-          name
-        }
-      }
-    }
-  }
-  `);
-
 export interface UpdateProfileValues {
   name: string;
   address?: LocationStepValues;
@@ -56,7 +38,7 @@ export interface UpdateProfileProps {
   onSubmit: (data: UpdateProfileValues) => void;
 }
 
-const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
+export default function UpdateProfileForm({ user }: { user: Partial<Person> }) {
   const { t } = useTranslation("common");
   const { handleCreateLocation } = useProjectCRUD();
 
@@ -114,6 +96,7 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
     resolver: yupResolver(schema),
     defaultValues,
   });
+
   function EditProfileNav() {
     const links = sections.map(section => ({
       label: <span className="capitalize">{section}</span>,
@@ -237,6 +220,24 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
       </Stack>
     </EditFormLayout>
   );
-};
+}
 
-export default UpdateProfileForm;
+//
+
+const UPDATE_USER = gql`
+  mutation updateUser($name: String, $id: ID!, $note: String, $primaryLocation: ID, $user: String) {
+    updatePerson(person: { id: $id, name: $name, note: $note, primaryLocation: $primaryLocation, user: $user }) {
+      agent {
+        id
+        name
+        note
+        primaryLocation {
+          id
+          lat
+          long
+          name
+        }
+      }
+    }
+  }
+`;

@@ -58,6 +58,12 @@ export const GET_USER_LAYOUT = gql`
       note
       email
       user
+      images {
+        hash
+        name
+        mimeType
+        bin
+      }
       ethereumAddress
       primaryLocation {
         name
