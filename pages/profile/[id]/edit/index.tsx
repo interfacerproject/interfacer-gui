@@ -6,11 +6,17 @@ import EditProfileLayout from "components/layout/EditProfileLayout";
 import FetchUserLayout, { useUser } from "components/layout/FetchUserLayout";
 import Layout from "components/layout/Layout";
 import UpdateProfileForm from "components/UpdateProfileForm";
-import { SpatialThing } from "lib/types";
 import { GetStaticPaths } from "next";
-import * as yup from "yup";
 
 //
+
+const EditProfile: NextPageWithLayout = () => {
+  const { person } = useUser();
+  return <UpdateProfileForm user={person} />;
+};
+
+//
+
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   return {
     paths: [],
@@ -26,38 +32,6 @@ export async function getStaticProps({ locale }: any) {
     },
   };
 }
-
-export const editProfileSchema = yup.object({
-  name: yup.string(),
-  note: yup.string(),
-  primaryLocation: yup.object({
-    id: yup.string(),
-    name: yup.string(),
-    geo: yup.object({
-      type: yup.string(),
-      coordinates: yup.array().of(yup.number()),
-    }),
-  }),
-  user: yup.string(),
-});
-
-//
-
-export interface EditProfileValues {
-  id: string;
-  name: string;
-  note: string | null;
-  primaryLocation: SpatialThing | null;
-  user: string;
-}
-
-const EditProfile: NextPageWithLayout = () => {
-  const { person } = useUser();
-
-  return <UpdateProfileForm user={person} />;
-};
-
-//
 
 EditProfile.getLayout = page => (
   <Layout bottomPadding="none">

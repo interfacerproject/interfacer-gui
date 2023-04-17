@@ -32,14 +32,10 @@ export interface UpdateProfileValues {
   image: File | null;
 }
 
-export interface UpdateProfileProps {
-  locationId: string;
-  lat: number;
-  long: number;
-  onSubmit: (data: UpdateProfileValues) => void;
-}
+export default function UpdateProfileForm(props: { user: Partial<Person> }) {
+  const { user } = props;
+  console.log(user);
 
-export default function UpdateProfileForm({ user }: { user: Partial<Person> }) {
   const { t } = useTranslation("common");
   const { handleCreateLocation } = useProjectCRUD();
 
