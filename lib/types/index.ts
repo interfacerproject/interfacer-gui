@@ -1225,6 +1225,8 @@ export type PersonResponse = {
 
 export type PersonUpdateParams = {
   id: Scalars["ID"];
+  /** The image files relevant to the agent, such as a logo, avatar, photo, etc. */
+  images?: InputMaybe<Array<IFile>>;
   /** The name that this agent will be referred to by. */
   name?: InputMaybe<Scalars["String"]>;
   /** A textual description or comment. */
@@ -3664,11 +3666,12 @@ export type GetTagsQueryVariables = Exact<{ [key: string]: never }>;
 export type GetTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
 
 export type UpdateUserMutationVariables = Exact<{
-  name?: InputMaybe<Scalars["String"]>;
   id: Scalars["ID"];
+  name?: InputMaybe<Scalars["String"]>;
   note?: InputMaybe<Scalars["String"]>;
   primaryLocation?: InputMaybe<Scalars["ID"]>;
   user?: InputMaybe<Scalars["String"]>;
+  images?: InputMaybe<Array<IFile> | IFile>;
 }>;
 
 export type UpdateUserMutation = {
@@ -3680,6 +3683,7 @@ export type UpdateUserMutation = {
       id: string;
       name: string;
       note?: string | null;
+      images?: Array<{ __typename?: "File"; name: string }> | null;
       primaryLocation?: {
         __typename?: "SpatialThing";
         id: string;
@@ -3751,6 +3755,7 @@ export type GetUserLayoutQuery = {
     email: string;
     user: string;
     ethereumAddress?: string | null;
+    images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
     primaryLocation?: {
       __typename?: "SpatialThing";
       name: string;

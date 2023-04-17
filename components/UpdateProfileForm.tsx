@@ -232,12 +232,17 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
 //
 
 const UPDATE_USER = gql`
-  mutation updateUser($name: String, $id: ID!, $note: String, $primaryLocation: ID, $user: String) {
-    updatePerson(person: { id: $id, name: $name, note: $note, primaryLocation: $primaryLocation, user: $user }) {
+  mutation updateUser($id: ID!, $name: String, $note: String, $primaryLocation: ID, $user: String, $images: [IFile!]) {
+    updatePerson(
+      person: { id: $id, name: $name, note: $note, primaryLocation: $primaryLocation, user: $user, images: $images }
+    ) {
       agent {
         id
         name
         note
+        images {
+          name
+        }
         primaryLocation {
           id
           lat
