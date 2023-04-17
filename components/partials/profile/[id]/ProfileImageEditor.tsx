@@ -49,8 +49,8 @@ export default function ProfileImageEditor(props: Props) {
           allowMultiple={false}
         >
           <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white bg-gray-100">
-            {initialImage && !image && <img src={initialImage} className="w-full h-full bg-cover" />}
-            {image && <img src={window.URL.createObjectURL(image)} className="w-full h-full bg-cover" />}
+            {initialImage && !image && <img src={initialImage} className="w-full h-full object-cover" />}
+            {image && <img src={window.URL.createObjectURL(image)} className="w-full h-full object-cover" />}
           </div>
         </DropZone>
       </div>

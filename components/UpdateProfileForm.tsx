@@ -1,8 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
-import devLog from "lib/devLog";
 import { useTranslation } from "next-i18next";
-import { Person } from "../lib/types";
+import { IFile, Person, UpdateUserMutation, UpdateUserMutationVariables } from "../lib/types";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -10,16 +9,18 @@ import { formSetValueOptions } from "lib/formSetValueOptions";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { isRequired } from "../lib/isFieldRequired";
-import { LocationStepValues, locationStepSchema } from "./partials/create/project/steps/LocationStep";
+import { LocationStepValues } from "./partials/create/project/steps/LocationStep";
 
 // Partials
 import ProfileImageEditor from "./partials/profile/[id]/ProfileImageEditor";
-import EditFormLayout from "./partials/project/edit/EditFormLayout";
 
 // Components
 import { Card, Stack, TextField } from "@bbtgnn/polaris-interfacer";
-import SelectLocation2 from "./SelectLocation2";
+import devLog from "lib/devLog";
+import { prepFileForZenflows, uploadFile } from "lib/fileUpload";
+import { createImageSrc } from "lib/resourceImages";
 import TableOfContents from "./TableOfContents";
+import EditFormLayout from "./partials/project/edit/EditFormLayout";
 import PDivider from "./polaris/PDivider";
 import PTitleSubtitle from "./polaris/PTitleSubtitle";
 
@@ -27,17 +28,21 @@ import PTitleSubtitle from "./polaris/PTitleSubtitle";
 
 export interface UpdateProfileValues {
   name: string;
-  address?: LocationStepValues;
+  // address?: LocationStepValues;
   note: string;
   image: File | null;
 }
 
 export default function UpdateProfileForm(props: { user: Partial<Person> }) {
   const { user } = props;
-  console.log(user);
 
   const { t } = useTranslation("common");
   const { handleCreateLocation } = useProjectCRUD();
+
+  /* */
+
+  let userImg = undefined;
+  if (user.images && user.images[0]) userImg = createImageSrc(user.images[0]);
 
   /* */
 
@@ -67,19 +72,17 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
 
   const defaultValues: UpdateProfileValues = {
     name: user?.name || "",
-    address: defaultAddress,
+    // address: defaultAddress,
     note: user?.note || "",
     image: null,
   };
 
-  const schema = yup
-    .object({
-      name: yup.string(),
-      address: locationStepSchema,
-      note: yup.string(),
-      image: yup.object(),
-    })
-    .required();
+  const schema = yup.object({
+    name: yup.string(),
+    // address: locationStepSchema,
+    note: yup.string(),
+    image: yup.object().nullable(),
+  });
 
   const form = useForm<UpdateProfileValues>({
     mode: "all",
@@ -87,7 +90,7 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
     defaultValues,
   });
 
-  const { formState, control, setValue, watch, trigger } = form;
+  const { formState, control, setValue, watch, trigger, handleSubmit } = form;
   const { errors } = formState;
 
   const onImageChange = async (f: File) => {
@@ -96,21 +99,27 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
 
   //
 
-  const [updateUser] = useMutation(UPDATE_USER);
+  const [updateUser] = useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UPDATE_USER);
 
   const onSubmit = async (formData: UpdateProfileValues) => {
+    formData = watch();
     try {
-      let location = undefined;
-      if (formData.address) location = await handleCreateLocation(formData.address, false);
-      const variables = {
-        variables: {
-          id: user.id,
-          name: formData.name,
-          note: formData.note,
-          primaryLocation: location?.st?.id,
-        },
+      // let location = undefined;
+      // if (formData.address) location = await handleCreateLocation(formData.address, false);
+
+      let images = user.images as Array<IFile>;
+      if (formData.image) images = [await prepFileForZenflows(formData.image)];
+
+      const variables: UpdateUserMutationVariables = {
+        id: user.id!,
+        name: formData.name,
+        note: formData.note,
+        images,
+        // primaryLocation: location?.st?.id,
       };
-      await updateUser(variables);
+
+      await updateUser({ variables });
+      if (formData.image) await uploadFile(formData.image);
     } catch (e) {
       devLog(e);
     }
@@ -139,7 +148,7 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
               image={watch("image")}
               onChange={onImageChange}
               helpText={t("Upload a file or drag and drop.")}
-              initialImage="https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8&w=1000&q=80"
+              initialImage={userImg}
             />
 
             <Controller
@@ -193,7 +202,7 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
                 "We value your privacy and will only use your location for the purpose of connecting you with other members of the community"
               )}
             />
-            <Controller
+            {/* <Controller
               control={control}
               name="address.locationName"
               render={({ field: { onChange, onBlur, name, value } }) => (
@@ -221,7 +230,7 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
               location={watch("address.locationData")}
               setLocation={value => setValue("address.locationData", value, formSetValueOptions)}
               helpText={t("Start to type the address and select the correct one from the list")}
-            />
+            /> */}
           </Stack>
         </Card>
       </Stack>

@@ -17,6 +17,14 @@ const EditProfile: NextPageWithLayout = () => {
 
 //
 
+EditProfile.getLayout = page => (
+  <Layout bottomPadding="none">
+    <FetchUserLayout>
+      <EditProfileLayout>{page}</EditProfileLayout>
+    </FetchUserLayout>
+  </Layout>
+);
+
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   return {
     paths: [],
@@ -32,13 +40,5 @@ export async function getStaticProps({ locale }: any) {
     },
   };
 }
-
-EditProfile.getLayout = page => (
-  <Layout bottomPadding="none">
-    <FetchUserLayout>
-      <EditProfileLayout>{page}</EditProfileLayout>
-    </FetchUserLayout>
-  </Layout>
-);
 
 export default EditProfile;
