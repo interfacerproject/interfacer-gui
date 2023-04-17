@@ -1,20 +1,29 @@
 import { gql, useMutation } from "@apollo/client";
-import { Card, Stack, TextField } from "@bbtgnn/polaris-interfacer";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import devLog from "lib/devLog";
-import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useTranslation } from "next-i18next";
+import { Person } from "../lib/types";
+
+// Form
+import { yupResolver } from "@hookform/resolvers/yup";
+import { formSetValueOptions } from "lib/formSetValueOptions";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { isRequired } from "../lib/isFieldRequired";
-import { Person } from "../lib/types";
-import { locationStepSchema, LocationStepValues } from "./partials/create/project/steps/LocationStep";
+import { LocationStepValues, locationStepSchema } from "./partials/create/project/steps/LocationStep";
+
+// Partials
+import ProfileImageEditor from "./partials/profile/[id]/ProfileImageEditor";
 import EditFormLayout from "./partials/project/edit/EditFormLayout";
-import PDivider from "./polaris/PDivider";
-import PTitleSubtitle from "./polaris/PTitleSubtitle";
+
+// Components
+import { Card, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import SelectLocation2 from "./SelectLocation2";
 import TableOfContents from "./TableOfContents";
+import PDivider from "./polaris/PDivider";
+import PTitleSubtitle from "./polaris/PTitleSubtitle";
+
+//
 
 const UPDATE_USER =
   gql(`mutation updateUser($name: String, $id: ID!, $note:String, $primaryLocation: ID, $user: String) {
@@ -118,19 +127,33 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
   const { formState, control, setValue, watch, trigger } = form;
   const { errors } = formState;
 
+  const onImageChange = async (f: File) => {
+    console.log(f);
+  };
+
   return (
     <EditFormLayout nav={EditProfileNav()} formMethods={form} onSubmit={onSubmit}>
       <Stack vertical spacing="extraLoose">
         <PTitleSubtitle
           title={t("Update your profile")}
-          subtitle={t(
-            "Edit your profile picture, bio and location info"
-          )}
+          subtitle={t("Edit your profile picture, bio and location info")}
         />
         <PDivider id={sections[0].replace(" ", "-")} />
+
         <Card sectioned>
           <Stack vertical spacing="extraLoose">
-            <PTitleSubtitle title={t("Personal info")} subtitle={t("This information will be visible to any logged-in user")}/>
+            <PTitleSubtitle
+              title={t("Personal info")}
+              subtitle={t("This information will be visible to any logged-in user")}
+            />
+
+            <ProfileImageEditor
+              label={t("Avatar")}
+              onChange={onImageChange}
+              helpText={t("Upload a file or drag and drop.")}
+              initialImage="https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8&w=1000&q=80"
+            />
+
             <Controller
               control={control}
               name="name"
@@ -150,6 +173,7 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
                 />
               )}
             />
+
             <Controller
               control={control}
               name="note"
@@ -175,7 +199,12 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
         <PDivider id={sections[1]} />
         <Card sectioned>
           <Stack vertical spacing="extraLoose">
-            <PTitleSubtitle title={t("Set location")} subtitle={t("We value your privacy and will only use your location for the purpose of connecting you with other members of the community")} />
+            <PTitleSubtitle
+              title={t("Set location")}
+              subtitle={t(
+                "We value your privacy and will only use your location for the purpose of connecting you with other members of the community"
+              )}
+            />
             <Controller
               control={control}
               name="address.locationName"
