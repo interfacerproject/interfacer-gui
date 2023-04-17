@@ -91,13 +91,13 @@ const Project: NextPageWithLayout = () => {
 
 //
 
-Project.getLayout = page => {
-  return (
-    <Layout>
-      <FetchProjectLayout>{page}</FetchProjectLayout>
-    </Layout>
-  );
-};
+// Project.getLayout = page => {
+//   return (
+//     <Layout>
+//       <FetchProjectLayout>{page}</FetchProjectLayout>
+//     </Layout>
+//   );
+// };
 
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   return {

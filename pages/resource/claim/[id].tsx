@@ -42,6 +42,7 @@ import { errorFormatter } from "../../../lib/errorFormatter";
 import { LocationLookup } from "../../../lib/fetchLocation";
 import { isRequired } from "../../../lib/isFieldRequired";
 import { NextPageWithLayout } from "../../_app";
+import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 
 export namespace ClaimProjectNS {
   export interface Props extends CP {
@@ -59,16 +60,10 @@ export namespace ClaimProjectNS {
 
 const ClaimProject: NextPageWithLayout = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { project, loading } = useProject();
   const { user } = useAuth();
   const [error, setError] = useState<string>("");
-
-  const { sendMessage } = useInBox();
   const { t } = useTranslation("ResourceProps");
-  const { loading, data } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
-    variables: { id: id },
-  });
-  const e = data?.economicResource;
 
   const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
   const [transferProject, { data: economicResource }] = useMutation(TRANSFER_PROJECT);
@@ -103,20 +98,20 @@ const ClaimProject: NextPageWithLayout = () => {
       const contributors = formData.contributors.map(c => c.value);
       devLog("info: contributors prepared", contributors);
       const metadata = JSON.stringify({
-        ...e!.metadata,
-        repositoryOrId: e!.metadata.repo,
+        ...project.metadata,
+        repositoryOrId: project.metadata.repo,
         contributors: contributors.map(c => c.id),
       });
       devLog("info: metadata prepared", metadata);
 
       const variables: TransferProjectMutationVariables = {
-        resource: e!.id,
+        resource: project.id!,
         agent: user!.ulid,
-        name: e!.name,
-        note: e!.note || "",
+        name: project.name!,
+        note: project.note || "",
         metadata: metadata,
         location: location?.id!,
-        oneUnit: e!.onhandQuantity.hasUnit!.id,
+        oneUnit: project.onhandQuantity!.hasUnit!.id,
         creationTime: dayjs().toISOString(),
         tags: tags.length > 0 ? tags : undefined,
       };
@@ -127,16 +122,16 @@ const ClaimProject: NextPageWithLayout = () => {
       if (errors) throw new Error("ProjectNotTransfered");
 
       const economicEvent = transferProjectData?.createEconomicEvent.economicEvent!;
-      const project = economicEvent?.toResourceInventoriedAs!;
+      const projectTransfered = economicEvent?.toResourceInventoriedAs!;
       devLog("success: project transfered");
       devLog("info: economicEvent", economicEvent);
-      devLog("info: project", project);
+      devLog("info: project", projectTransfered);
 
       // TODO: Send message
       // ...
 
       // Redirecting user
-      await router.replace(`/project/${project.id}`);
+      await router.replace(`/project/${projectTransfered.id}`);
     } catch (e) {
       devLog(e);
       let err = errorFormatter(e);
@@ -184,9 +179,9 @@ const ClaimProject: NextPageWithLayout = () => {
         </div>
       </div>
       {loading && <Spinner />}
-      {!loading && e && (
+      {!loading && project && (
         <>
-          <LoshPresentation economicResource={data?.economicResource} />
+          <LoshPresentation />
         </>
       )}
       <div className="grid grid-cols-1 gap-2 md:grid-cols-12 pt-14">
@@ -311,7 +306,11 @@ export async function getStaticProps({ locale }: any) {
   };
 }
 ClaimProject.getLayout = function getLayout(page: ReactElement) {
-  return <Layout>{page}</Layout>;
+  return (
+    <Layout>
+      <FetchProjectLayout>{page}</FetchProjectLayout>
+    </Layout>
+  );
 };
 
 export default ClaimProject;

@@ -14,57 +14,61 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
-import BrBreadcrumb from "components/brickroom/BrBreadcrumb";
-import { QUERY_RESOURCE } from "lib/QueryAndMutation";
-import { EconomicResource } from "lib/types";
-import type { GetStaticPaths, NextPage } from "next";
-import { useTranslation } from "next-i18next";
+import { Stack } from "@bbtgnn/polaris-interfacer";
+import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
+import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
+import Layout from "components/layout/Layout";
+import ProjectHeader from "components/partials/project/[id]/ProjectHeader";
+import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
+import type { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import Spinner from "../../components/brickroom/Spinner";
+import { NextPageWithLayout } from "pages/_app";
+import { ReactElement, useEffect, useState } from "react";
 import LoshPresentation from "../../components/LoshPresentation";
-import devLog from "../../lib/devLog";
 
-const Resource: NextPage = () => {
+const Resource: NextPageWithLayout = () => {
   const router = useRouter();
-  const { id } = router.query;
-  const { t } = useTranslation("ResourceProps");
-  const { loading, data } = useQuery<{ economicResource: EconomicResource }>(QUERY_RESOURCE, {
-    variables: { id: id },
-  });
-  devLog("data", data);
-  const e = data?.economicResource;
-  const m = e?.metadata;
-  !loading && loading !== undefined && console.log("e", e);
+  const { project, loading } = useProject();
+  const [images, setImages] = useState<string[]>([]);
+  const e = project;
 
   // (Temp)) Redirect if is not a reosurce owned by Losh
   if (e && process.env.NEXT_PUBLIC_LOSH_ID != e?.primaryAccountable?.id) {
-    router.push(`/project/${id}`);
+    router.push(`/project/${project.id}`);
   }
 
-  const handleClaim = () => router.push(`/resource/claim/${id}`);
-  const claimable = e?.accountingQuantity.hasNumericalValue > 0;
+  useEffect(() => {
+    const singleImage = typeof project?.metadata?.image === "string";
+    const metadataImage = singleImage ? [project?.metadata?.image] : project?.metadata?.image || [];
+    const _images =
+      project && project.images!.length > 0
+        ? project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
+        : metadataImage;
+    setImages(_images);
+  }, [project]);
+
+  const handleClaim = () => router.push(`/resource/claim/${project.id}`);
+  const claimable = e?.accountingQuantity?.hasNumericalValue > 0;
 
   return (
-    <div>
-      {loading && <Spinner />}
-      {!loading && e && (
-        <>
-          <div className="">
-            <div className="w-full p-2 md:p-8">
-              <BrBreadcrumb
-                crumbs={[
-                  { name: t("Projects"), href: "/projects" },
-                  { name: e.conformsTo.name, href: `/projects?conformTo=${e.conformsTo.id}` },
-                  { name: t("Imported from Losh"), href: `/resources` },
-                ]}
-              />
+    <div className="p-4 container mx-auto flex max-w-6xl bg-[#f8f7f4] space-x-4">
+      <Stack spacing="extraLoose">
+        <div className="grow">
+          <Stack vertical spacing="extraLoose">
+            <ProjectHeader isResource />
+            <BrThumbinailsGallery images={images} />
+            <div className="block lg:hidden">
+              <ProjectSidebar />
             </div>
-          </div>
-          <LoshPresentation economicResource={data?.economicResource} goToClaim={handleClaim} canClaim={claimable} />
-        </>
-      )}
+            {/* <ProjectTabs /> */}
+          </Stack>
+        </div>
+        <div className="hidden lg:block w-80">
+          <ProjectSidebar />
+        </div>
+        {/* <LoshPresentation goToClaim={handleClaim} canClaim={claimable} /> */}
+      </Stack>
     </div>
   );
 };
@@ -83,5 +87,13 @@ export async function getStaticProps({ locale }: any) {
     },
   };
 }
+
+Resource.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>
+      <FetchProjectLayout>{page}</FetchProjectLayout>
+    </Layout>
+  );
+};
 
 export default Resource;
