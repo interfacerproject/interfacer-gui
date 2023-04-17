@@ -43,19 +43,17 @@ const UPDATE_USER =
   }
   `);
 
-export namespace UpdateUserNS {
-  export interface FormValues {
-    name: string;
-    address?: LocationStepValues;
-    note: string;
-  }
+export interface UpdateProfileValues {
+  name: string;
+  address?: LocationStepValues;
+  note: string;
+}
 
-  export interface Props {
-    locationId: string;
-    lat: number;
-    long: number;
-    onSubmit: (data: FormValues) => void;
-  }
+export interface UpdateProfileProps {
+  locationId: string;
+  lat: number;
+  long: number;
+  onSubmit: (data: UpdateProfileValues) => void;
 }
 
 const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
@@ -66,7 +64,7 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
 
   const sections = ["personal info", "location"];
 
-  const onSubmit = async (formData: UpdateUserNS.FormValues) => {
+  const onSubmit = async (formData: UpdateProfileValues) => {
     try {
       let location = undefined;
       if (formData.address) location = await handleCreateLocation(formData.address, false);
@@ -96,7 +94,7 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
     remote: false,
   };
 
-  const defaultValues: UpdateUserNS.FormValues = {
+  const defaultValues: UpdateProfileValues = {
     name: user?.name || "",
     address: defaultAddress,
     note: user?.note || "",
@@ -111,7 +109,7 @@ const UpdateProfileForm = ({ user }: { user: Partial<Person> }) => {
     })
     .required();
 
-  const form = useForm<UpdateUserNS.FormValues>({
+  const form = useForm<UpdateProfileValues>({
     mode: "all",
     resolver: yupResolver(schema),
     defaultValues,
