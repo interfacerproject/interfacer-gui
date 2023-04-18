@@ -15,21 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { Stack } from "@bbtgnn/polaris-interfacer";
+import ProjectDetailOverview from "components/ProjectDetailOverview";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import ProjectHeader from "components/partials/project/[id]/ProjectHeader";
-import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
+import ResourceSidebar from "components/partials/resource/ResourceSidebar";
 import type { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement, useEffect, useState } from "react";
-import LoshPresentation from "../../components/LoshPresentation";
 
 const Resource: NextPageWithLayout = () => {
   const router = useRouter();
-  const { project, loading } = useProject();
+  const { project } = useProject();
   const [images, setImages] = useState<string[]>([]);
   const e = project;
 
@@ -48,8 +48,7 @@ const Resource: NextPageWithLayout = () => {
     setImages(_images);
   }, [project]);
 
-  const handleClaim = () => router.push(`/resource/claim/${project.id}`);
-  const claimable = e?.accountingQuantity?.hasNumericalValue > 0;
+  console.log("met", project.metadata);
 
   return (
     <div className="p-4 container mx-auto flex max-w-6xl bg-[#f8f7f4] space-x-4">
@@ -58,16 +57,15 @@ const Resource: NextPageWithLayout = () => {
           <Stack vertical spacing="extraLoose">
             <ProjectHeader isResource />
             <BrThumbinailsGallery images={images} />
+            <ProjectDetailOverview project={project} />
             <div className="block lg:hidden">
-              <ProjectSidebar />
+              <ResourceSidebar />
             </div>
-            {/* <ProjectTabs /> */}
           </Stack>
         </div>
         <div className="hidden lg:block w-80">
-          <ProjectSidebar />
+          <ResourceSidebar />
         </div>
-        {/* <LoshPresentation goToClaim={handleClaim} canClaim={claimable} /> */}
       </Stack>
     </div>
   );
