@@ -4,7 +4,6 @@ import { useTranslation } from "next-i18next";
 import {
   CreateLocationMutation,
   CreateLocationMutationVariables,
-  IFile,
   Person,
   UpdateUserMutation,
   UpdateUserMutationVariables,
@@ -25,7 +24,7 @@ import { Card, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import { CREATE_LOCATION } from "lib/QueryAndMutation";
 import devLog from "lib/devLog";
 import { prepFileForZenflows, uploadFile } from "lib/fileUpload";
-import { createImageSrc } from "lib/resourceImages";
+import { createImageSrc, fileToIfile } from "lib/resourceImages";
 import SelectLocation2, { SelectedLocation } from "./SelectLocation2";
 import TableOfContents from "./TableOfContents";
 import EditFormLayout from "./partials/project/edit/EditFormLayout";
@@ -116,31 +115,33 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
   const onSubmit = async (formData: UpdateProfileValues) => {
     formData = watch();
     try {
-      let locationId = user.primaryLocation?.id ?? null;
-      const locData = formData.address;
-      if (touchedFields.address && locData) {
-        const location = await createLocation({
-          variables: {
-            addr: locData.address,
-            name: locData.address,
-            lat: locData.lat,
-            lng: locData.lng,
-          },
-        });
-        locationId = location.data?.createSpatialThing.spatialThing.id!;
-      }
-      console.log(locationId);
-
-      let images = user.images as Array<IFile>;
-      if (formData.image) images = [await prepFileForZenflows(formData.image)];
-
       const variables: UpdateUserMutationVariables = {
         id: user.id!,
         name: formData.name,
         note: formData.note,
-        images,
-        primaryLocation: locationId,
+        primaryLocation: user.primaryLocation?.id,
+        images: user.images?.map(img => fileToIfile(img)),
       };
+
+      if (touchedFields.address) {
+        const locData = formData.address;
+        if (!locData) variables.primaryLocation = null;
+        else {
+          const location = await createLocation({
+            variables: {
+              addr: locData.address,
+              name: locData.address,
+              lat: locData.lat,
+              lng: locData.lng,
+            },
+          });
+          variables.primaryLocation = location.data?.createSpatialThing.spatialThing.id!;
+        }
+      }
+
+      if (touchedFields.image) {
+        variables.images = [await prepFileForZenflows(formData.image!)];
+      }
 
       await updateUser({ variables });
       if (formData.image) await uploadFile(formData.image);
