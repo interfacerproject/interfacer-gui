@@ -18,8 +18,8 @@ import { ApolloProvider, gql } from "@apollo/client";
 import useStorage from "hooks/useStorage";
 import { FETCH_SELF } from "lib/QueryAndMutation";
 import createApolloClient from "lib/createApolloClient";
-import { getUserImage } from "lib/resourceImages";
-import { FetchSelfQuery, FetchSelfQueryVariables, SpatialThing } from "lib/types";
+import { FetchSelfQuery, FetchSelfQueryVariables } from "lib/types";
+import { PersonWithFileEssential } from "lib/types/extensions";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
@@ -73,18 +73,13 @@ export const AuthContext = createContext(
   }
 );
 
-export type User = {
+export interface User extends PersonWithFileEssential {
   ulid: string;
-  email: string;
   username: string;
-  name: string;
   publicKey: string;
   privateKey: string;
   profileUrl: string;
-  image?: string;
-  primaryLocation?: Partial<SpatialThing> | undefined | null;
-  note?: string;
-};
+}
 
 export const AuthProvider = ({ children, publicPage = false }: any) => {
   const { getItem, setItem, clear } = useStorage();
@@ -116,16 +111,17 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
         const user = data.personCheck!;
 
         setUser({
+          id: user.id,
           ulid: user.id,
           email,
+          user: user.user,
           username: user.user,
           name: user.name,
           privateKey: getItem("eddsaPrivateKey") as string,
           publicKey: pubkey,
           profileUrl: `/profile/${user.id}`,
-          note: user.note!,
-          // @ts-ignore
-          image: getUserImage(user),
+          note: user.note,
+          images: user.images || [],
           primaryLocation: user.primaryLocation,
         });
 
@@ -294,7 +290,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   const logout = (redirect = "/sign_in") => {
     clear();
     setUser(null);
-    router.push(redirect || "/sign_in", undefined, { shallow: true });
+    router.push(redirect);
   };
 
   return (

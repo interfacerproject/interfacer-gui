@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { Button, Link, Stack, Text } from "@bbtgnn/polaris-interfacer";
-import Avatar from "boring-avatars";
 import DetailMap from "components/DetailMap";
+import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import { useUser } from "components/layout/FetchUserLayout";
 import { useAuth } from "hooks/useAuth";
 import { CLAIM_DID } from "lib/QueryAndMutation";
@@ -34,20 +34,13 @@ const ProfileHeading = () => {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <Stack spacing="tight" alignment="leading">
+      <div className="flex items-center space-x-2">
         <Text as="h2" variant="headingXl">
           {isUser ? <>{t("Hi,") + " "}</> : <> </>}
           <span className="text-primary">{person?.name}</span>
         </Text>
-        <div className="w-10 rounded-full">
-          <Avatar
-            size={"full"}
-            name={person?.name}
-            variant="beam"
-            colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
-          />
-        </div>
-      </Stack>
+        <BrUserAvatar user={person} size="48px" />
+      </div>
       <Heading label={t("Username:")}>
         <Text as="span" variant="bodyLg">
           <span className="text-primary">@{person?.user}</span>
@@ -60,7 +53,7 @@ const ProfileHeading = () => {
           </Text>
         </Heading>
       )}
-      <Heading label={t("DID:")}>
+      <Heading label={"DID:"}>
         <Text as="span" variant="bodyLg">
           <Link url={didUrl}>
             <a>

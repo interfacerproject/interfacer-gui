@@ -14,32 +14,30 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import React from "react";
-import Link from "next/link";
-import Avatar from "boring-avatars";
+import { PersonWithFileEssential } from "lib/types/extensions";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 
-const AgentsTableRow = (props: any) => {
-  const e = props.agent.node;
+const AgentsTableRow = (props: { agent: Partial<PersonWithFileEssential> }) => {
+  const { agent: e } = props;
   const { t } = useTranslation("common");
+
+  if (!e) return null;
+
   return (
-    <>
-      {e && (
-        <tr>
-          <td>
-            <BrDisplayUser id={e.id} name={e.name} />
-          </td>
-          <td className="">
-            <Link href={`/profile/${e.id}`}>
-              <a>{e.name}</a>
-            </Link>
-          </td>
-          <td className="max-w-[12rem]">{e.id}</td>
-          <td>{e.primaryLocation?.name || t("no location provide")}</td>
-        </tr>
-      )}
-    </>
+    <tr>
+      <td>
+        <BrDisplayUser user={e} />
+      </td>
+      <td className="">
+        <Link href={`/profile/${e.id}`}>
+          <a>{e.name}</a>
+        </Link>
+      </td>
+      <td className="max-w-[12rem]">{e.id}</td>
+      <td>{e.primaryLocation?.name || t("no location provide")}</td>
+    </tr>
   );
 };
 

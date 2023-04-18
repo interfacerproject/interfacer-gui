@@ -305,6 +305,10 @@ export const FETCH_AGENTS = gql`
           id
           name
           note
+          images {
+            bin
+            mimeType
+          }
           primaryLocation {
             id
             name
@@ -465,6 +469,10 @@ export const FETCH_RESOURCES = gql`
             id
             name
             note
+            images {
+              bin
+              mimeType
+            }
             primaryLocation {
               name
             }
@@ -917,10 +925,15 @@ export const REJECT_PROPOSAL = gql`
 export const ASK_RESOURCE_PRIMARY_ACCOUNTABLE = gql`
   query askResourcePrimaryAccountable($id: ID!) {
     economicResource(id: $id) {
+      id
       name
       primaryAccountable {
         id
         name
+        images {
+          bin
+          mimeType
+        }
       }
     }
   }
@@ -939,6 +952,10 @@ export const QUERY_RESOURCE_PROPOSAlS = gql`
             provider {
               id
               name
+              images {
+                bin
+                mimeType
+              }
             }
           }
         }

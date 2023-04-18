@@ -1,9 +1,9 @@
 import { Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
-import BrDisplayUser from "components/brickroom/BrDisplayUser";
-import { useProject } from "components/layout/FetchProjectLayout";
 import DetailMap from "components/DetailMap";
 import WatchButton from "components/WatchButton";
+import BrDisplayUser from "components/brickroom/BrDisplayUser";
+import { useProject } from "components/layout/FetchProjectLayout";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import { useTranslation } from "next-i18next";
@@ -43,11 +43,7 @@ const SocialCard = () => {
           <Text as="p" variant="bodyMd">
             {t("By:")}
           </Text>
-          <BrDisplayUser
-            id={project.primaryAccountable!.id}
-            name={project.primaryAccountable!.name}
-            location={project.currentLocation?.name}
-          />
+          <BrDisplayUser user={project.primaryAccountable!} />
           {project.currentLocation && <DetailMap location={project.currentLocation} height={180} />}
         </div>
       </Stack>

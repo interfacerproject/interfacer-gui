@@ -14,11 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
-import React from "react";
-import Avatar from "boring-avatars";
-import { useTranslation } from "next-i18next";
+import BrUserAvatar from "./brickroom/BrUserAvatar";
 
 export default function LoginBtn() {
   const { logout, user } = useAuth();
@@ -30,18 +29,9 @@ export default function LoginBtn() {
         <span className="flex flex-row items-center w-full pl-3 text-left">
           <div className="grid items-center grid-cols-2 p-2 pl-0">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar bordered border-accent">
-              <div className="w-10 rounded-full">
-                <Link href={user!.profileUrl}>
-                  <a>
-                    <Avatar
-                      size={"full"}
-                      name={user?.username}
-                      variant="beam"
-                      colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
-                    />
-                  </a>
-                </Link>
-              </div>
+              <Link href={user!.profileUrl}>
+                <a>{user && <BrUserAvatar user={user} size="40px" />}</a>
+              </Link>
             </label>
             <div className="grid grid-cols-1 ml-1 text-xs font-normal normal-case gap-y-1">
               <Link href={user!.profileUrl}>

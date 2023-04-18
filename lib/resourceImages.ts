@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import type { EconomicResource, File, IFile, Person } from "./types";
+import type { EconomicResource, File, IFile } from "./types";
+import { PersonWithFileEssential } from "./types/extensions";
 
 export function formatImageSrc(mimeType: string, bin: string): string {
   return `data:${mimeType};base64,${bin}`;
@@ -44,7 +45,7 @@ export function fileToIfile(file: File): IFile {
   };
 }
 
-export function getUserImage(user: Partial<Person>): string {
+export function getUserImage(user: Partial<PersonWithFileEssential>): string {
   const image = user.images?.[0];
   if (image) return formatImageSrc(image.mimeType, image.bin);
   else return "";
