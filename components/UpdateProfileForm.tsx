@@ -1,5 +1,4 @@
 import { gql, useMutation } from "@apollo/client";
-import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { useTranslation } from "next-i18next";
 import {
   CreateLocationMutation,
@@ -42,10 +41,7 @@ export interface UpdateProfileValues {
 
 export default function UpdateProfileForm(props: { user: Partial<Person> }) {
   const { user } = props;
-  console.log(user);
-
   const { t } = useTranslation("common");
-  const { handleCreateLocation } = useProjectCRUD();
 
   /* */
 

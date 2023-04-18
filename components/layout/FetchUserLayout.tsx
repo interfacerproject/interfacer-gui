@@ -63,6 +63,9 @@ export const GET_USER_LAYOUT = gql`
         name
         mimeType
         bin
+        size
+        extension
+        description
       }
       ethereumAddress
       primaryLocation {

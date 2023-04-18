@@ -3705,6 +3705,7 @@ export type GetUserImagesQuery = {
   person?: {
     __typename?: "Person";
     id: string;
+    name: string;
     images?: Array<{
       __typename?: "File";
       bin?: any | null;
@@ -3780,7 +3781,16 @@ export type GetUserLayoutQuery = {
     email: string;
     user: string;
     ethereumAddress?: string | null;
-    images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+    images?: Array<{
+      __typename?: "File";
+      hash: any;
+      name: string;
+      mimeType: string;
+      bin?: any | null;
+      size: number;
+      extension: string;
+      description: string;
+    }> | null;
     primaryLocation?: {
       __typename?: "SpatialThing";
       id: string;
