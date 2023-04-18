@@ -79,7 +79,7 @@ const ProfileHeading = () => {
           <Text as="span" variant="bodyLg" color="subdued">
             {t("Bio:")}
           </Text>
-          <pre className="whitespace-normal py-1 px-4 bg-white border-2 rounded-md">{person?.note}</pre>
+          <pre className="py-1 px-4 bg-white border-2 rounded-md">{person?.note}</pre>
         </div>
       )}
     </Stack>
