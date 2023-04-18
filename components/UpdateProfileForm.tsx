@@ -24,6 +24,7 @@ import { CREATE_LOCATION } from "lib/QueryAndMutation";
 import devLog from "lib/devLog";
 import { prepFileForZenflows, uploadFile } from "lib/fileUpload";
 import { createImageSrc, fileToIfile } from "lib/resourceImages";
+import { useRouter } from "next/router";
 import SelectLocation2, { SelectedLocation } from "./SelectLocation2";
 import TableOfContents from "./TableOfContents";
 import EditFormLayout from "./partials/project/edit/EditFormLayout";
@@ -42,6 +43,7 @@ export interface UpdateProfileValues {
 export default function UpdateProfileForm(props: { user: Partial<Person> }) {
   const { user } = props;
   const { t } = useTranslation("common");
+  const router = useRouter();
 
   /* */
 
@@ -146,10 +148,13 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
     }
   };
 
+  // Success route
+  router.query.success = "true";
+
   //
 
   return (
-    <EditFormLayout nav={EditProfileNav()} formMethods={form} onSubmit={onSubmit}>
+    <EditFormLayout nav={EditProfileNav()} formMethods={form} onSubmit={onSubmit} redirect={router}>
       <Stack vertical spacing="extraLoose">
         <PTitleSubtitle
           title={t("Update your profile")}

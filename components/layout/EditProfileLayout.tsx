@@ -1,4 +1,5 @@
 import { Link as PLink } from "@bbtgnn/polaris-interfacer";
+import SuccessBanner from "components/partials/project/[id]/SuccessBanner";
 import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
@@ -22,6 +23,7 @@ export default function EditProfileLayout(props: Props) {
     <div>
       {isOwner && (
         <>
+          <SuccessBanner>{t("Your profile has been updated successfully.")}</SuccessBanner>
           <div className="p-4">
             <Link href={user!.profileUrl}>
               <PLink>

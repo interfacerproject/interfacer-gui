@@ -2,10 +2,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
 
 // Components
+import UpdateProfileForm from "components/UpdateProfileForm";
 import EditProfileLayout from "components/layout/EditProfileLayout";
 import FetchUserLayout, { useUser } from "components/layout/FetchUserLayout";
 import Layout from "components/layout/Layout";
-import UpdateProfileForm from "components/UpdateProfileForm";
 import { GetStaticPaths } from "next";
 
 //

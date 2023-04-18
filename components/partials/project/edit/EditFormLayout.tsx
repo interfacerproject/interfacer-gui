@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form";
 
@@ -15,12 +15,13 @@ export interface EditFormLayoutProps<T extends FieldValues> {
   formMethods: UseFormReturn<T, any>;
   nav?: React.ReactNode;
   onSubmit: (values: T) => Promise<void>;
+  redirect?: string | NextRouter;
 }
 
 //
 
 export default function EditFormLayout<T extends FieldValues>(props: EditFormLayoutProps<T>) {
-  const { children, formMethods, nav, onSubmit = () => {} } = props;
+  const { children, formMethods, nav, onSubmit = () => {}, redirect } = props;
   const { t } = useTranslation("common");
   const router = useRouter();
   const { handleSubmit } = formMethods;
@@ -29,7 +30,8 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
   async function onSubmitWrapper(values: T) {
     setLoading(true);
     await onSubmit(values);
-    router.reload();
+    if (!redirect) router.reload();
+    else router.push(redirect);
   }
 
   /* Prevent navigation if unsaved changes */
