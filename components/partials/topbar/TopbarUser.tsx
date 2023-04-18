@@ -17,7 +17,7 @@ export default function TopbarUser() {
   const { t } = useTranslation("common");
 
   return (
-    <TopbarPopover id="user-menu" buttonContent={<BrUserAvatar name={user?.name} />}>
+    <TopbarPopover id="user-menu" buttonContent={<BrUserAvatar />}>
       <div className="w-40 divide-y-1 divide-slate-200">
         <MenuLink href={user!.profileUrl}>
           <UserSection user={user!} />
