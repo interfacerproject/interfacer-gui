@@ -1,4 +1,4 @@
-import { Banner, DropZone, List } from "@bbtgnn/polaris-interfacer";
+import { DropZone } from "@bbtgnn/polaris-interfacer";
 import { Upload } from "@carbon/icons-react";
 import PFieldInfo from "components/polaris/PFieldInfo";
 import { useCallback, useState } from "react";
@@ -24,27 +24,13 @@ export default function ProfileImageEditor(props: Props) {
 
   const validImageTypes = ["image/gif", "image/jpeg", "image/png"];
 
-  const fileUpload = <DropZone.FileUpload />;
-
-  const errorMessage = hasError && (
-    <Banner title="The following images couldn’t be uploaded:" status="critical">
-      <List type="bullet">
-        {rejectedFiles.map((file, index) => (
-          <List.Item key={index}>
-            {`"${file.name}" is not supported. File type must be .gif, .jpg, .png or .svg.`}
-          </List.Item>
-        ))}
-      </List>
-    </Banner>
-  );
-
   return (
     <PFieldInfo helpText={helpText} label={label} error={error}>
       <div className="w-40 h-40 rounded-full overflow-hidden ring-1 ring-border hover:ring-4 hover:ring-primary hover:cursor-pointer">
         <DropZone
           outline={false}
           overlay={false}
-          accept="image/*"
+          accept={validImageTypes.join(", ")}
           type="image"
           onDrop={handleDrop}
           allowMultiple={false}
