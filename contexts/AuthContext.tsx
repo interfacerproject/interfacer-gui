@@ -282,6 +282,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
 
   const logout = (redirect = "/sign_in") => {
     clear();
+    setUser(null);
     router.push(redirect || "/sign_in", undefined, { shallow: true });
   };
 
