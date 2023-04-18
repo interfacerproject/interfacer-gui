@@ -1096,3 +1096,26 @@ export const RELOCATE_PROJECT = gql`
     }
   }
 `;
+
+export const FETCH_SELF = gql`
+  query FetchSelf($email: String!, $pubkey: String!) {
+    personCheck(email: $email, eddsaPublicKey: $pubkey) {
+      name
+      user
+      email
+      primaryLocation {
+        id
+        name
+        mappableAddress
+        lat
+        long
+      }
+      id
+      note
+      images {
+        bin
+        mimeType
+      }
+    }
+  }
+`;

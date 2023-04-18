@@ -4527,6 +4527,32 @@ export type RelocateProjectMutation = {
   dropoff: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
 };
 
+export type FetchSelfQueryVariables = Exact<{
+  email: Scalars["String"];
+  pubkey: Scalars["String"];
+}>;
+
+export type FetchSelfQuery = {
+  __typename?: "RootQueryType";
+  personCheck: {
+    __typename?: "Person";
+    name: string;
+    user: string;
+    email: string;
+    id: string;
+    note?: string | null;
+    primaryLocation?: {
+      __typename?: "SpatialThing";
+      id: string;
+      name: string;
+      mappableAddress?: string | null;
+      lat?: any | null;
+      long?: any | null;
+    } | null;
+    images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+  };
+};
+
 export type EditMainMutationVariables = Exact<{
   id: Scalars["ID"];
   classifiedAs?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;

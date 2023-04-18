@@ -14,10 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import type { EconomicResource, File, IFile } from "./types";
+import type { EconomicResource, File, IFile, Person } from "./types";
+
+export function formatImageSrc(mimeType: string, bin: string): string {
+  return `data:${mimeType};base64,${bin}`;
+}
 
 export function createImageSrc(image: File) {
-  return `data:${image.mimeType};base64,${image.bin}`;
+  return formatImageSrc(image.mimeType, image.bin);
 }
 
 export function getResourceImage(resource: Partial<EconomicResource>): string {
@@ -38,4 +42,10 @@ export function fileToIfile(file: File): IFile {
     hash: file.hash,
     size: file.size,
   };
+}
+
+export function getUserImage(user: Partial<Person>): string {
+  const image = user.images?.[0];
+  if (image) return formatImageSrc(image.mimeType, image.bin);
+  else return "";
 }

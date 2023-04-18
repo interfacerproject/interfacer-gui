@@ -16,7 +16,10 @@
 
 import { ApolloProvider, gql } from "@apollo/client";
 import useStorage from "hooks/useStorage";
+import { FETCH_SELF } from "lib/QueryAndMutation";
 import createApolloClient from "lib/createApolloClient";
+import { getUserImage } from "lib/resourceImages";
+import { FetchSelfQuery, FetchSelfQueryVariables, SpatialThing } from "lib/types";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
@@ -78,6 +81,9 @@ export type User = {
   publicKey: string;
   privateKey: string;
   profileUrl: string;
+  image?: string;
+  primaryLocation?: Partial<SpatialThing> | undefined | null;
+  note?: string;
 };
 
 export const AuthProvider = ({ children, publicPage = false }: any) => {
@@ -95,24 +101,38 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
 
   useEffect(() => {
     const privateKey = getItem("eddsaPrivateKey");
-    const username = getItem("authUsername");
+    const email = getItem("authEmail");
+    const pubkey = getItem("eddsaPublicKey");
 
-    if (Boolean(privateKey) && Boolean(username)) {
-      const ulid = getItem("authId") as string;
-      const name = getItem("authName") as string;
-      const email = getItem("authEmail") as string;
-      const publicKey = getItem("eddsaPublicKey") as string;
+    if (Boolean(privateKey) && Boolean(email)) {
       setAuthenticated(true);
-      setUser({
-        ulid,
-        email,
-        username,
-        name,
-        privateKey,
-        publicKey,
-        profileUrl: `/profile/${ulid}`,
-      });
-      setLoading(false);
+      const client = createApolloClient(authenticated);
+
+      const fetchUser = async () => {
+        const { data } = await client.query<FetchSelfQuery, FetchSelfQueryVariables>({
+          query: FETCH_SELF,
+          variables: { email, pubkey },
+        });
+        const user = data.personCheck!;
+
+        setUser({
+          ulid: user.id,
+          email,
+          username: user.user,
+          name: user.name,
+          privateKey: getItem("eddsaPrivateKey") as string,
+          publicKey: pubkey,
+          profileUrl: `/profile/${user.id}`,
+          note: user.note!,
+          // @ts-ignore
+          image: getUserImage(user),
+          primaryLocation: user.primaryLocation,
+        });
+
+        setLoading(false);
+      };
+
+      fetchUser();
       return;
     } else {
       if (!publicPage) {
@@ -149,15 +169,6 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
         setItem("authUsername", data?.personCheck.user);
         setItem("authEmail", data?.personCheck.email);
         setAuthenticated(true);
-        setUser({
-          ulid: data?.personCheck.id,
-          email,
-          username: data?.personCheck.user,
-          name: data?.personCheck.name,
-          privateKey: getItem("eddsaPrivateKey") as string,
-          publicKey,
-          profileUrl: `/profile/${data?.personCheck.id}`,
-        });
       });
   };
 
