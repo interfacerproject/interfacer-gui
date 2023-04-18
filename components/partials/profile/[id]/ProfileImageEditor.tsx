@@ -1,4 +1,5 @@
 import { Banner, DropZone, List } from "@bbtgnn/polaris-interfacer";
+import { Upload } from "@carbon/icons-react";
 import PFieldInfo from "components/polaris/PFieldInfo";
 import { useCallback, useState } from "react";
 
@@ -48,9 +49,14 @@ export default function ProfileImageEditor(props: Props) {
           onDrop={handleDrop}
           allowMultiple={false}
         >
-          <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white bg-gray-100">
+          <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white bg-gray-100 group">
             {initialImage && !image && <img src={initialImage} className="w-full h-full object-cover" />}
             {image && <img src={window.URL.createObjectURL(image)} className="w-full h-full object-cover" />}
+            <div className="w-full h-full absolute top-0 left-0 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-white flex flex-col items-center justify-center shadow-md group-hover:bg-yellow-200">
+                <Upload size={32} />
+              </div>
+            </div>
           </div>
         </DropZone>
       </div>
