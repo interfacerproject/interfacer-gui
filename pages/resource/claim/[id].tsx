@@ -15,22 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useMutation } from "@apollo/client";
-import { Banner, Button, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Banner, Button, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import SelectTags from "components/SelectTags";
 import { ChildrenProp as CP } from "components/brickroom/types";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
+import ContributorsStep from "components/partials/create/project/steps/ContributorsStep";
+import LicenseStep, { LicenseStepValues } from "components/partials/create/project/steps/LicenseStep";
+import RelationsStep from "components/partials/create/project/steps/RelationsStep";
 import PDivider from "components/polaris/PDivider";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
+import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { TRANSFER_PROJECT } from "lib/QueryAndMutation";
 import devLog from "lib/devLog";
 import { errorFormatter } from "lib/errorFormatter";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
-import {  TransferProjectMutationVariables } from "lib/types";
+import { TransferProjectMutationVariables } from "lib/types";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -39,10 +43,7 @@ import { ReactElement, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { NextPageWithLayout } from "../../_app";
-import LicenseStep, { LicenseStepValues } from "components/partials/create/project/steps/LicenseStep";
-import { useProjectCRUD } from "hooks/useProjectCRUD";
-import ContributorsStep from "components/partials/create/project/steps/ContributorsStep";
-import RelationsStep from "components/partials/create/project/steps/RelationsStep";
+import ProjectDisplay from "components/ProjectDisplay";
 
 export namespace ClaimProjectNS {
   export interface Props extends CP {
@@ -59,11 +60,11 @@ export namespace ClaimProjectNS {
 
 const ClaimProject: NextPageWithLayout = () => {
   const router = useRouter();
-  const { project} = useProject();
+  const { project } = useProject();
   const { user } = useAuth();
   const [error, setError] = useState<string>("");
   const { t } = useTranslation("ResourceProps");
-  const {updateRelations, updateContributors} = useProjectCRUD();
+  const { updateRelations, updateContributors } = useProjectCRUD();
 
   const [transferProject, { data: economicResource }] = useMutation(TRANSFER_PROJECT);
 
@@ -105,9 +106,6 @@ const ClaimProject: NextPageWithLayout = () => {
       await updateContributors(projectTransfered.id!, contributors);
       await updateRelations(projectTransfered.id!, formData.relations);
 
-      // TODO: Send message
-      // ...
-
       // Redirecting user
       await router.replace(`/project/${projectTransfered.id}`);
     } catch (e) {
@@ -140,14 +138,35 @@ const ClaimProject: NextPageWithLayout = () => {
   });
 
   const { formState, control, handleSubmit, watch, setValue, trigger } = form;
-  const { isValid, errors, isSubmitting } = formState;
+  const { isValid, errors } = formState;
 
-  console.log("form", isValid, errors, isSubmitting);
+  const ClaimNav = () => {
+    return (
+      <div className="space-y-2">
+        <div className="border-b-1 pb-1 border-border-subdued px-2">
+          <Text as="p" variant="bodySm" color="subdued">
+            <span className="uppercase font-bold">{t("sections")}</span>
+          </Text>
+        </div>
+
+        <div className="space-y-1">
+          {["tags", "relations", "contributors", "licenses"].map(link => (
+            <a href={`#${link}`} key={link}>
+              <div className="px-2 py-1 rounded-md hover:cursor-pointer hover:bg-surface-neutral-hovered">{link}</div>
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <FormProvider {...form}>
       <form onSubmit={handleSubmit(handleClaim)}>
         <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
-          <div className="sticky top-24">{/* <EditProjectNav /> */}</div>
+          <div className="sticky top-24">
+            <ClaimNav />
+          </div>
           <div className="grow max-w-xl px-6 pb-24 pt-0">
             <Stack vertical spacing="extraLoose">
               <PTitleSubtitle
@@ -156,8 +175,13 @@ const ClaimProject: NextPageWithLayout = () => {
                   "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later."
                 )}
               />
+              <ProjectDisplay project={project} />
 
               <PDivider id={"tags"} />
+              <PTitleSubtitle
+                title={t("Add tags")}
+                subtitle={t("Help us to categorize your project. This will help other people to find it.")}
+              />
               <Controller
                 control={control}
                 name="tags"
@@ -180,7 +204,7 @@ const ClaimProject: NextPageWithLayout = () => {
               <RelationsStep />
 
               <PDivider id={"contributors"} />
-              <ContributorsStep/>
+              <ContributorsStep />
 
               <PDivider id={"licenses"} />
               <LicenseStep />
