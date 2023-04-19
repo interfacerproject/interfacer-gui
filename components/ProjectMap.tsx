@@ -44,6 +44,7 @@ const ProjectMap = (props: ProjectMapProps) => {
   }, [fullscreen, loaded]);
 
   const style = "mapbox://styles/mapbox/light-v11";
+  if (!project.currentLocation) return null;
 
   return (
     <>

@@ -20,7 +20,7 @@ import { LocationMarkerIcon } from "@heroicons/react/solid";
 
 type BrDisplayUserProps = {
   id: string;
-  name: string;
+  name?: string;
   location?: string;
 };
 

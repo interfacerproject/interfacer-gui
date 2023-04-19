@@ -27,6 +27,7 @@ const SocialCard = () => {
       setInList(true);
     }
   };
+  const location = !project.currentLocation ? project.primaryAccountable?.primaryLocation?.name : undefined;
   return (
     <Card sectioned>
       <Stack vertical>
@@ -46,7 +47,7 @@ const SocialCard = () => {
           <BrDisplayUser
             id={project.primaryAccountable!.id}
             name={project.primaryAccountable!.name}
-            location={project.currentLocation?.name}
+            location={location}
           />
           {project.currentLocation && <ProjectMap project={project} height={180} />}
         </div>
