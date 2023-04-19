@@ -13,6 +13,8 @@ const SuccessBanner = (props: Props) => {
   const router = useRouter();
 
   const isSuccess = router.query[param] === "true";
+  window.history.replaceState({}, document.title, window.location.pathname);
+
   const [viewSuccessBanner, setViewSuccessBanner] = useState(false);
 
   useEffect(() => {
