@@ -90,7 +90,7 @@ describe("Sign up process", () => {
     cy.visit("/sign_up");
   });
 
-  it.skip("should type the invitationKey", () => {
+  it("should type the invitationKey", () => {
     cy.get("#invitationButton").should("have.class", "Polaris-Button--disabled");
     cy.get("#invitationKey").type(Cypress.env("NEXT_PUBLIC_INVITATION_KEY"));
     cy.get("#invitationButton").should("not.have.class", "Polaris-Button--disabled");

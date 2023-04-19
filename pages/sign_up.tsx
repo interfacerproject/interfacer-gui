@@ -75,7 +75,7 @@ const SignUp: NextPageWithLayout = () => {
     HMAC: "",
   });
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [error, setError] = useState("");
 
   //
