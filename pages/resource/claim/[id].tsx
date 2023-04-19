@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useMutation } from "@apollo/client";
-import { Banner, Button, Stack, Text, TextField } from "@bbtgnn/polaris-interfacer";
+import { Banner, Button, Icon, Stack, Text, TextField } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { PlusMinor } from "@shopify/polaris-icons";
+import AddLicense, { ScopedLicense } from "components/AddLicense";
 import SearchUsers from "components/SearchUsers";
 import SelectLocation, { SelectedLocation } from "components/SelectLocation";
 import SelectTags from "components/SelectTags";
@@ -25,6 +27,7 @@ import { ChildrenProp as CP } from "components/brickroom/types";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import PCardWithAction from "components/polaris/PCardWithAction";
+import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
 import { CREATE_LOCATION, TRANSFER_PROJECT } from "lib/QueryAndMutation";
@@ -42,6 +45,7 @@ import { ReactElement, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { NextPageWithLayout } from "../../_app";
+import LicenseDisplay from "components/LicenseDisplay";
 
 export namespace ClaimProjectNS {
   export interface Props extends CP {
@@ -52,6 +56,7 @@ export namespace ClaimProjectNS {
     tags: Array<string>;
     location: SelectedLocation | null;
     locationName: string;
+    licenses: Array<ScopedLicense>;
     price: string;
     contributors: Array<string>;
   }
@@ -62,6 +67,7 @@ const ClaimProject: NextPageWithLayout = () => {
   const { project, loading } = useProject();
   const { user } = useAuth();
   const [error, setError] = useState<string>("");
+  const [showAdd, setShowAdd] = useState(false);
   const { t } = useTranslation("ResourceProps");
 
   const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
@@ -100,6 +106,7 @@ const ClaimProject: NextPageWithLayout = () => {
         ...project.metadata,
         repositoryOrId: project.metadata.repo,
         contributors: contributors,
+        licenses: [formData.licenses],
       });
       devLog("info: metadata prepared", metadata);
 
@@ -142,8 +149,9 @@ const ClaimProject: NextPageWithLayout = () => {
     tags: [],
     location: null,
     locationName: "",
+    licenses: [{ license: project.metadata?.license, scope: "main" }],
     price: "1",
-    contributors: [], // Array<{id:string, name:string}>
+    contributors: [],
   };
 
   const schema = yup
@@ -151,6 +159,7 @@ const ClaimProject: NextPageWithLayout = () => {
       tags: yup.array(yup.string()),
       location: yup.object().required(),
       locationName: yup.string().required(),
+      licenses: yup.array(yup.object({ license: yup.string().required(), scope: yup.string().required() })),
       price: yup.string().required(),
       contributors: yup.array(yup.string()),
     })
@@ -179,6 +188,36 @@ const ClaimProject: NextPageWithLayout = () => {
     );
   }
 
+  // licenses step
+  function handleShowAdd() {
+    setShowAdd(true);
+  }
+  function handleDiscard() {
+    setShowAdd(false);
+  }
+
+  const LICENSES_FORM_KEY = "licenses";
+  const licenses = watch(LICENSES_FORM_KEY);
+
+  function handleAdd(license: ScopedLicense) {
+    setValue(
+      LICENSES_FORM_KEY,
+      //@ts-ignore
+      [...licenses, { license: license.license.licenseId, scope: license.scope }],
+      formSetValueOptions
+    );
+    setShowAdd(false);
+  }
+
+  function removeLicense(licenseId: string) {
+    setValue(
+      LICENSES_FORM_KEY,
+      //@ts-ignore
+      licenses.filter(l => l.licenseId !== licenseId),
+      formSetValueOptions
+    );
+  }
+
   console.log("form", isValid, errors, isSubmitting, contributors);
 
   return (
@@ -188,12 +227,17 @@ const ClaimProject: NextPageWithLayout = () => {
           <div className="sticky top-24">{/* <EditProjectNav /> */}</div>
           <div className="grow max-w-xl px-6 pb-24 pt-0">
             <Stack vertical spacing="extraLoose">
+              <PTitleSubtitle
+                title={t("Claim ownership over this resource")}
+                subtitle={t(
+                  "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later."
+                )}
+              />
               <Controller
                 control={control}
                 name="tags"
-                render={({ field: { onChange, onBlur, name, ref } }) => (
+                render={() => (
                   <SelectTags
-                    //@ts-ignore
                     tags={watch("tags")}
                     setTags={tags => {
                       setValue("tags", tags, formSetValueOptions);
@@ -252,6 +296,32 @@ const ClaimProject: NextPageWithLayout = () => {
                   />
                 )}
               />
+
+              {!showAdd && (
+                <Button id="add-license" onClick={handleShowAdd} fullWidth icon={<Icon source={PlusMinor} />}>
+                  {t("Add new license")}
+                </Button>
+              )}
+
+              {showAdd && <AddLicense onAdd={handleAdd} onDiscard={handleDiscard} />}
+
+              {licenses.length && (
+                <Stack spacing="tight" vertical>
+                  <Text variant="bodyMd" as="p">
+                    {t("Licenses")}
+                  </Text>
+                  {licenses.map((l, i) => (
+                    <PCardWithAction
+                      key={l.license}
+                      onClick={() => {
+                        removeLicense(l.licenseId);
+                      }}
+                    >
+                      <LicenseDisplay licenseId={l.license} label={l.scope} />
+                    </PCardWithAction>
+                  ))}
+                </Stack>
+              )}
 
               <SelectLocation
                 id="search-location"
