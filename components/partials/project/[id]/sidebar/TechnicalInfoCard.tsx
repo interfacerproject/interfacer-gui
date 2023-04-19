@@ -31,7 +31,7 @@ const TechnicalInfoCard = () => {
         )}
         <Stack vertical spacing="tight">
           {" "}
-          {declarations.recyclable === "yes" && (
+          {declarations?.recyclable === "yes" && (
             <div className="flex items-center space-x-2 text-primary">
               <Tools />
               <Text as="p" variant="bodyMd" fontWeight="medium" id="recycling-availability">
@@ -39,7 +39,7 @@ const TechnicalInfoCard = () => {
               </Text>
             </div>
           )}
-          {declarations.repairable === "yes" && (
+          {declarations?.repairable === "yes" && (
             <div className="flex items-center space-x-2 text-primary">
               <Renew />
               <Text as="p" variant="bodyMd" fontWeight="medium" id="repairing-availability">

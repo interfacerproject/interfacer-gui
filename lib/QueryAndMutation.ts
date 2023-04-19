@@ -164,7 +164,6 @@ export const TRANSFER_PROJECT = gql`
     $metadata: JSONObject
     $agent: ID!
     $creationTime: DateTime!
-    $location: ID!
     $tags: [URI!]
     $oneUnit: ID!
   ) {
@@ -177,7 +176,6 @@ export const TRANSFER_PROJECT = gql`
         hasPointInTime: $creationTime
         resourceClassifiedAs: $tags
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
-        toLocation: $location
         resourceMetadata: $metadata
       }
       newInventoriedResource: { name: $name, note: $note}

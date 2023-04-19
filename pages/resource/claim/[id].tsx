@@ -15,28 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useMutation } from "@apollo/client";
-import { Banner, Button, Icon, Stack, Text, TextField } from "@bbtgnn/polaris-interfacer";
+import { Banner, Button, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { PlusMinor } from "@shopify/polaris-icons";
 import AddLicense, { ScopedLicense } from "components/AddLicense";
+import LicenseDisplay from "components/LicenseDisplay";
 import SearchUsers from "components/SearchUsers";
-import SelectLocation, { SelectedLocation } from "components/SelectLocation";
 import SelectTags from "components/SelectTags";
 import BrUserDisplay from "components/brickroom/BrUserDisplay";
 import { ChildrenProp as CP } from "components/brickroom/types";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import PCardWithAction from "components/polaris/PCardWithAction";
+import PDivider from "components/polaris/PDivider";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
-import { CREATE_LOCATION, TRANSFER_PROJECT } from "lib/QueryAndMutation";
+import { TRANSFER_PROJECT } from "lib/QueryAndMutation";
 import devLog from "lib/devLog";
 import { errorFormatter } from "lib/errorFormatter";
 import { formSetValueOptions } from "lib/formSetValueOptions";
-import getIdFromFormName from "lib/getIdFromFormName";
 import { isRequired } from "lib/isFieldRequired";
-import { CreateLocationMutation, Person, TransferProjectMutationVariables } from "lib/types";
+import { Person, TransferProjectMutationVariables } from "lib/types";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -45,7 +45,9 @@ import { ReactElement, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { NextPageWithLayout } from "../../_app";
-import LicenseDisplay from "components/LicenseDisplay";
+import LicenseStep, { LicenseStepValues } from "components/partials/create/project/steps/LicenseStep";
+import { useProjectCRUD } from "hooks/useProjectCRUD";
+import ContributorsStep from "components/partials/create/project/steps/ContributorsStep";
 
 export namespace ClaimProjectNS {
   export interface Props extends CP {
@@ -54,10 +56,7 @@ export namespace ClaimProjectNS {
 
   export interface FormValues {
     tags: Array<string>;
-    location: SelectedLocation | null;
-    locationName: string;
-    licenses: Array<ScopedLicense>;
-    price: string;
+    licenses: LicenseStepValues;
     contributors: Array<string>;
   }
 }
@@ -69,35 +68,12 @@ const ClaimProject: NextPageWithLayout = () => {
   const [error, setError] = useState<string>("");
   const [showAdd, setShowAdd] = useState(false);
   const { t } = useTranslation("ResourceProps");
+  const {updateRelations, updateContributors} = useProjectCRUD();
 
-  const [createLocation, { data: spatialThing }] = useMutation(CREATE_LOCATION);
   const [transferProject, { data: economicResource }] = useMutation(TRANSFER_PROJECT);
-
-  type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
-
-  async function handleCreateLocation(formData: ClaimProjectNS.FormValues): Promise<SpatialThingRes | undefined> {
-    try {
-      const { data } = await createLocation({
-        variables: {
-          name: formData.locationName,
-          addr: formData.location?.address,
-          lat: formData.location?.lat!,
-          lng: formData.location?.lng!,
-        },
-      });
-      const st = data?.createSpatialThing.spatialThing;
-      devLog("success: location created", st);
-      return st;
-    } catch (e) {
-      devLog("error: location not created", e);
-      throw e;
-    }
-  }
 
   async function handleClaim(formData: ClaimProjectNS.FormValues) {
     try {
-      const location = await handleCreateLocation(formData);
-      // devLog is in handleCreateLocation
       const tags = formData.tags;
       devLog("info: tags prepared", tags);
       const contributors = formData.contributors;
@@ -105,8 +81,7 @@ const ClaimProject: NextPageWithLayout = () => {
       const metadata = JSON.stringify({
         ...project.metadata,
         repositoryOrId: project.metadata.repo,
-        contributors: contributors,
-        licenses: [formData.licenses],
+        licenses: formData.licenses,
       });
       devLog("info: metadata prepared", metadata);
 
@@ -116,7 +91,6 @@ const ClaimProject: NextPageWithLayout = () => {
         name: project.name!,
         note: project.note || "",
         metadata: metadata,
-        location: location?.id!,
         oneUnit: project.onhandQuantity!.hasUnit!.id,
         creationTime: dayjs().toISOString(),
         tags: tags.length > 0 ? tags : undefined,
@@ -133,6 +107,8 @@ const ClaimProject: NextPageWithLayout = () => {
       devLog("info: economicEvent", economicEvent);
       devLog("info: project", projectTransfered);
 
+      await updateContributors(projectTransfered.id!, contributors);
+
       // TODO: Send message
       // ...
 
@@ -147,20 +123,14 @@ const ClaimProject: NextPageWithLayout = () => {
 
   const defaultValues: ClaimProjectNS.FormValues = {
     tags: [],
-    location: null,
-    locationName: "",
-    licenses: [{ license: project.metadata?.license, scope: "main" }],
-    price: "1",
+    licenses: [{ licenseId: project.metadata?.license, scope: "main" }],
     contributors: [],
   };
 
   const schema = yup
     .object({
       tags: yup.array(yup.string()),
-      location: yup.object().required(),
-      locationName: yup.string().required(),
-      licenses: yup.array(yup.object({ license: yup.string().required(), scope: yup.string().required() })),
-      price: yup.string().required(),
+      licenses: yup.array(yup.object({ licenseId: yup.string().required(), scope: yup.string().required() })),
       contributors: yup.array(yup.string()),
     })
     .required();
@@ -174,51 +144,27 @@ const ClaimProject: NextPageWithLayout = () => {
   const { formState, control, handleSubmit, watch, setValue, trigger } = form;
   const { isValid, errors, isSubmitting } = formState;
 
-  const CONTRIBUTORS_FORM_KEY = "contributors";
-  const contributors = watch(CONTRIBUTORS_FORM_KEY);
-
-  function handleSelect(option: Partial<Person>) {
-    setValue(CONTRIBUTORS_FORM_KEY, [...contributors, option.id!], formSetValueOptions);
-  }
-  function handleRemove(contributorId: string) {
-    setValue(
-      CONTRIBUTORS_FORM_KEY,
-      contributors.filter(id => id !== contributorId),
-      formSetValueOptions
-    );
-  }
-
-  // licenses step
-  function handleShowAdd() {
-    setShowAdd(true);
-  }
-  function handleDiscard() {
-    setShowAdd(false);
-  }
-
-  const LICENSES_FORM_KEY = "licenses";
-  const licenses = watch(LICENSES_FORM_KEY);
-
-  function handleAdd(license: ScopedLicense) {
-    setValue(
-      LICENSES_FORM_KEY,
-      //@ts-ignore
-      [...licenses, { license: license.license.licenseId, scope: license.scope }],
-      formSetValueOptions
-    );
-    setShowAdd(false);
-  }
-
-  function removeLicense(licenseId: string) {
-    setValue(
-      LICENSES_FORM_KEY,
-      //@ts-ignore
-      licenses.filter(l => l.licenseId !== licenseId),
-      formSetValueOptions
-    );
-  }
-
-  console.log("form", isValid, errors, isSubmitting, contributors);
+  console.log("form", isValid, errors, isSubmitting);
+  // const claimSections: Array<ProjectSection> = [
+  //   {
+  //     navLabel: "Licenses",
+  //     id: "licenses",
+  //     component: <LicenseStep />,
+  //     editPage: "edit/licenses",
+  //   },
+  //   {
+  //     navLabel: "Contributors",
+  //     id: "contributors",
+  //     component: <ContributorsStep />,
+  //     editPage: "edit/contributors",
+  //   },
+  //   {
+  //     navLabel: "Relations",
+  //     id: "relations",
+  //     component: <RelationsStep />,
+  //     editPage: "edit/relations",
+  //   },
+  // ];
 
   return (
     <FormProvider {...form}>
@@ -233,6 +179,8 @@ const ClaimProject: NextPageWithLayout = () => {
                   "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later."
                 )}
               />
+
+              <PDivider id={"tags"} />
               <Controller
                 control={control}
                 name="tags"
@@ -250,7 +198,10 @@ const ClaimProject: NextPageWithLayout = () => {
                   />
                 )}
               />
-              <SearchUsers
+
+              <PDivider id={"contributors"} />
+              <ContributorsStep/>
+              {/* <SearchUsers
                 id="add-contributors-search"
                 onSelect={handleSelect}
                 excludeIDs={[...contributors, user?.ulid!]}
@@ -272,66 +223,11 @@ const ClaimProject: NextPageWithLayout = () => {
                     </PCardWithAction>
                   ))}
                 </Stack>
-              )}
+              )} */}
 
-              <Controller
-                control={control}
-                name="locationName"
-                render={({ field: { onChange, onBlur, name, ref, value } }) => (
-                  <TextField
-                    type="text"
-                    id={getIdFromFormName(name)}
-                    name={name}
-                    value={value}
-                    autoComplete="off"
-                    onChange={value => {
-                      onChange(value), trigger("location");
-                    }}
-                    onBlur={() => {
-                      onBlur(), trigger("location");
-                    }}
-                    label={t("Location name")}
-                    helpText={t("For example: My Workshop")}
-                    error={errors.locationName?.message}
-                  />
-                )}
-              />
+              <PDivider id={"licenses"} />
+              <LicenseStep />
 
-              {!showAdd && (
-                <Button id="add-license" onClick={handleShowAdd} fullWidth icon={<Icon source={PlusMinor} />}>
-                  {t("Add new license")}
-                </Button>
-              )}
-
-              {showAdd && <AddLicense onAdd={handleAdd} onDiscard={handleDiscard} />}
-
-              {licenses.length && (
-                <Stack spacing="tight" vertical>
-                  <Text variant="bodyMd" as="p">
-                    {t("Licenses")}
-                  </Text>
-                  {licenses.map((l, i) => (
-                    <PCardWithAction
-                      key={l.license}
-                      onClick={() => {
-                        removeLicense(l.licenseId);
-                      }}
-                    >
-                      <LicenseDisplay licenseId={l.license} label={l.scope} />
-                    </PCardWithAction>
-                  ))}
-                </Stack>
-              )}
-
-              <SelectLocation
-                id="search-location"
-                label={t("Address")}
-                placeholder={t("An d. Alsterschleife 3, 22399 - Hamburg, Germany")}
-                location={watch("location")}
-                setLocation={value => setValue("location", value, formSetValueOptions)}
-                error={errors.location?.message}
-                requiredIndicator={true}
-              />
               {error && (
                 <Banner
                   title={t("Error in Project Claim")}
