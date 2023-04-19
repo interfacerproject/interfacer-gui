@@ -76,6 +76,11 @@ export const GET_PROJECT_LAYOUT = gql`
       accountingQuantity {
         hasNumericalValue
       }
+      onhandQuantity {
+        hasUnit {
+          id
+        }
+      }
       conformsTo {
         id
         name

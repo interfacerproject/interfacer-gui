@@ -1,6 +1,6 @@
 import { Tag } from "@bbtgnn/polaris-interfacer";
-import { FieldInfoProps } from "./polaris/types";
 import SearchTags from "./SearchTags";
+import { FieldInfoProps } from "./polaris/types";
 
 //
 
@@ -11,7 +11,7 @@ export interface SelectTags2Props extends Partial<FieldInfoProps> {
 
 //
 
-export default function SelectTags2(props: SelectTags2Props) {
+export default function SelectTags(props: SelectTags2Props) {
   const { tags, setTags } = props;
 
   function handleSelect(tag: string) {

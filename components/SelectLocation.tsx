@@ -1,7 +1,7 @@
 import PCardWithAction from "components/polaris/PCardWithAction";
 import { LocationLookup } from "lib/fetchLocation";
-import { PFieldInfoProps } from "./polaris/PFieldInfo";
 import SearchLocation from "./SearchLocation";
+import { PFieldInfoProps } from "./polaris/PFieldInfo";
 
 //
 
@@ -20,7 +20,7 @@ interface Props extends Partial<PFieldInfoProps> {
 
 //
 
-export default function SelectLocation2(props: Props) {
+export default function SelectLocation(props: Props) {
   const { location = null, setLocation = () => {}, id } = props;
 
   function handleSelect(loc: LocationLookup.Location | null) {

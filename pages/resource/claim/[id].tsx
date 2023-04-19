@@ -15,16 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useMutation } from "@apollo/client";
-import { Banner, Stack, Text, TextField } from "@bbtgnn/polaris-interfacer";
+import { Banner, Button, Stack, Text, TextField } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import SearchUsers from "components/SearchUsers";
-import SelectLocation2, { SelectedLocation } from "components/SelectLocation2";
-import SelectTags2 from "components/SelectTags2";
+import SelectLocation, { SelectedLocation } from "components/SelectLocation";
+import SelectTags from "components/SelectTags";
 import BrUserDisplay from "components/brickroom/BrUserDisplay";
 import { ChildrenProp as CP } from "components/brickroom/types";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
-import CreateProjectSubmit from "components/partials/create/project/parts/CreateProjectSubmit";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
@@ -149,16 +148,11 @@ const ClaimProject: NextPageWithLayout = () => {
 
   const schema = yup
     .object({
-      tags: yup.array(yup.object()),
+      tags: yup.array(yup.string()),
       location: yup.object().required(),
       locationName: yup.string().required(),
       price: yup.string().required(),
-      contributors: yup.array(
-        yup.object({
-          id: yup.string(),
-          name: yup.string(),
-        })
-      ),
+      contributors: yup.array(yup.string()),
     })
     .required();
 
@@ -185,6 +179,8 @@ const ClaimProject: NextPageWithLayout = () => {
     );
   }
 
+  console.log("form", isValid, errors, isSubmitting, contributors);
+
   return (
     <FormProvider {...form}>
       <form onSubmit={handleSubmit(handleClaim)}>
@@ -196,7 +192,7 @@ const ClaimProject: NextPageWithLayout = () => {
                 control={control}
                 name="tags"
                 render={({ field: { onChange, onBlur, name, ref } }) => (
-                  <SelectTags2
+                  <SelectTags
                     //@ts-ignore
                     tags={watch("tags")}
                     setTags={tags => {
@@ -257,7 +253,7 @@ const ClaimProject: NextPageWithLayout = () => {
                 )}
               />
 
-              <SelectLocation2
+              <SelectLocation
                 id="search-location"
                 label={t("Address")}
                 placeholder={t("An d. Alsterschleife 3, 22399 - Hamburg, Germany")}
@@ -280,7 +276,13 @@ const ClaimProject: NextPageWithLayout = () => {
             </Stack>
           </div>
         </div>
-        <CreateProjectSubmit />
+        <div className="sticky bottom-0 right-0 z-30 bg-background p-3 border-t-1 border-t-border-subdued">
+          <div className="flex flex-row justify-end">
+            <Button id="project-create-submit" submit primary disabled={!isValid}>
+              {t("Claim!")}
+            </Button>
+          </div>
+        </div>
       </form>
     </FormProvider>
   );

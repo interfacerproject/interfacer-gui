@@ -1,6 +1,6 @@
 import { Checkbox, Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import SelectLocation, { SelectedLocation } from "components/SelectLocation";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import SelectLocation2, { SelectedLocation } from "components/SelectLocation2";
 import { ProjectType } from "components/types";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import getIdFromFormName from "lib/getIdFromFormName";
@@ -101,7 +101,7 @@ export default function LocationStepProduct(props: Props) {
         )}
       />
 
-      <SelectLocation2
+      <SelectLocation
         id="search-location"
         label={t("Address")}
         placeholder={t("An d. Alsterschleife 3, 22399 - Hamburg, Germany")}
