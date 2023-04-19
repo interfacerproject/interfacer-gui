@@ -16,10 +16,10 @@
 
 import { ArrowSmUpIcon } from "@heroicons/react/outline";
 import cn from "classnames";
-import useWallet, { Token, TrendPeriod } from "hooks/useWallet";
+import useWallet, { Token, TrendPeriodValue } from "hooks/useWallet";
 import { useTranslation } from "next-i18next";
 
-const TokensResume = ({ stat, id, period }: { stat: string; id: string; period?: TrendPeriod }) => {
+const TokensDisplay = ({ stat, id, period }: { stat: string; id: string; period?: TrendPeriodValue }) => {
   const { t } = useTranslation("ProfileProps");
   const { getIdeaPoints, getStrengthsPoints, ideaTrend, strengthsTrend } = useWallet({ id, period });
   const value = stat === Token.Idea ? getIdeaPoints : getStrengthsPoints;
@@ -57,4 +57,4 @@ const TokensResume = ({ stat, id, period }: { stat: string; id: string; period?:
   );
 };
 
-export default TokensResume;
+export default TokensDisplay;

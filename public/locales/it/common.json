@@ -83,5 +83,8 @@
   "Scan QR": "Scansiona QR",
   "Error": "Errore",
   "An error occurred during email verification.": "Si è verificato un errore durante la verifica dell'email.",
-  "Email verified successfully!": "Email verificata con successo!"
+  "Email verified successfully!": "Email verificata con successo!",
+  "This week": "Questa settimana",
+  "This month": "Questo mese",
+  "This cycle": "Questo ciclo"
 }

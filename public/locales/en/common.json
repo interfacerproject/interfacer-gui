@@ -88,5 +88,8 @@
   "Scan QR": "Scan QR",
   "Error": "Error",
   "An error occurred during email verification.": "An error occurred during email verification.",
-  "Email verified successfully!": "Email verified successfully!"
+  "Email verified successfully!": "Email verified successfully!",
+  "This week": "This week",
+  "This month": "This month",
+  "This cycle": "This cycle"
 }

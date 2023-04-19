@@ -18,13 +18,13 @@ import { useMutation, useQuery } from "@apollo/client";
 import { Button, Card, Link, Stack, Tabs, Text } from "@bbtgnn/polaris-interfacer";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import Avatar from "boring-avatars";
+import ProjectsCards from "components/ProjectsCards";
+import TokensDisplay from "components/TokensDisplay";
 import Spinner from "components/brickroom/Spinner";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import ProjectsCards from "components/ProjectsCards";
-import TokensResume from "components/TokensResume";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
-import { Token, TrendPeriod } from "hooks/useWallet";
+import { Token, TrendPeriod, TrendPeriodType } from "hooks/useWallet";
 import { CLAIM_DID, FETCH_USER } from "lib/QueryAndMutation";
 import type { GetStaticPaths, NextPage } from "next";
 import { useTranslation } from "next-i18next";
@@ -68,35 +68,20 @@ const Profile: NextPage = () => {
     });
   }, []);
 
-  const tabs = [
-    {
-      id: "week",
-      content: t("This week"),
-    },
-    {
-      id: "month",
-      content: t("This month"),
-    },
-    {
-      id: "cycle",
-      content: t("This cycle"),
-    },
-  ];
+  const tabs = Object.keys(TrendPeriod).map(period => ({
+    id: period,
+    content: t(`This ${period}`),
+  }));
 
-  const tabsContent = [
-    <div className="flex" key={"week"}>
-      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} period={TrendPeriod.Week} />
-      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} period={TrendPeriod.Week} />
-    </div>,
-    <div className="flex" key={"month"}>
-      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} period={TrendPeriod.Month} />
-      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} period={TrendPeriod.Month} />
-    </div>,
-    <div className="flex" key="cyclal">
-      <TokensResume stat={t(Token.Idea)} id={idToBeFetch!} period={TrendPeriod.Cycle} />
-      <TokensResume stat={t(Token.Strengths)} id={idToBeFetch!} period={TrendPeriod.Cycle} />
-    </div>,
-  ];
+  const tabsContent = (() => {
+    const periods = Object.keys(TrendPeriod) as TrendPeriodType[];
+    return periods.map((period, index) => (
+      <div className="flex" key={index}>
+        <TokensDisplay stat={t(Token.Idea)} id={idToBeFetch!} period={TrendPeriod[period]} />
+        <TokensDisplay stat={t(Token.Strengths)} id={idToBeFetch!} period={TrendPeriod[period]} />
+      </div>
+    ));
+  })();
 
   return (
     <>
