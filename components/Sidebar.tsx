@@ -23,6 +23,7 @@ import IfSidebarDropdown from "./brickroom/IfSidebarDropdown";
 import { IfSidebarItemProps } from "./brickroom/IfSidebarItem";
 import IfSideBarLink, { IfSideBarLinkProps } from "./brickroom/IfSideBarLink";
 
+import { ScanAlt } from "@carbon/icons-react";
 import {
   BellIcon,
   BriefcaseIcon,
@@ -32,11 +33,12 @@ import {
   HomeIcon,
   SupportIcon,
 } from "@heroicons/react/outline";
-import { ScanAlt } from "@carbon/icons-react";
 
 function Sidebar() {
   const { t } = useTranslation("SideBarProps");
   const { user } = useAuth();
+
+  if (!user) return null;
 
   // Links
   const items: Record<string, IfSideBarLinkProps> = {
@@ -111,8 +113,6 @@ function Sidebar() {
       leftIcon: <BriefcaseIcon className="w-5 h-5" />,
     },
   };
-
-  const { authenticated } = useAuth();
 
   return (
     <div className="overflow-y-auto bg-white border-r title w-72 text-primary-content border-primary">
