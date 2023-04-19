@@ -33,5 +33,6 @@
   "Invitation key": "Chiave d'invito",
   "Type your invitation key": "Digitare la chiave di invito",
   "You will have to remember the answers and keep them for later as they are necessary for the log in": "Dovrai ricordare le risposte e conservarle per dopo poiché sono necessarie per il login.",
-  "this e-mail has already been used by another user": "questa e-mail è già stata utilizzata da un altro utente"
+  "this e-mail has already been used by another user": "questa e-mail è già stata utilizzata da un altro utente",
+  "Once registered, you will receive an email with a link to verify your email address.": "Una volta registrato, riceverai un'e-mail con un link per verificare il tuo indirizzo e-mail."
 }

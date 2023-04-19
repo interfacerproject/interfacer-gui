@@ -21,7 +21,7 @@ import { Button, TextField } from "@bbtgnn/polaris-interfacer";
 
 // Form imports
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
@@ -92,6 +92,7 @@ export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
               autoComplete="off"
               onChange={onChange}
               onBlur={onBlur}
+              focused={true}
               label={t("Your email")}
               placeholder={t("alice@email.com")}
               error={errors.email?.message}
