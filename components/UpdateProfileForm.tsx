@@ -149,12 +149,12 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
   };
 
   // Success route
-  router.query.success = "true";
+  const updateSuccessPath = `${location.pathname}?success=true`;
 
   //
 
   return (
-    <EditFormLayout nav={EditProfileNav()} formMethods={form} onSubmit={onSubmit} redirect={router}>
+    <EditFormLayout nav={EditProfileNav()} formMethods={form} onSubmit={onSubmit} redirect={updateSuccessPath}>
       <Stack vertical spacing="extraLoose">
         <PTitleSubtitle
           title={t("Update your profile")}

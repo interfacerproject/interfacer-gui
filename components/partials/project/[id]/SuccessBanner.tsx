@@ -22,6 +22,7 @@ const SuccessBanner = (props: Props) => {
   const closeBanner = () => {
     setViewSuccessBanner(false);
   };
+
   return (
     <FullWidthBanner open={viewSuccessBanner} onClose={closeBanner}>
       <Text as="p" variant="bodyMd" id="success-banner-content">
