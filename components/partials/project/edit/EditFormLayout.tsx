@@ -24,38 +24,47 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
   const { children, formMethods, nav, onSubmit = () => {}, redirect } = props;
   const { t } = useTranslation("common");
   const router = useRouter();
-  const { handleSubmit } = formMethods;
   const [loading, setLoading] = useState(false);
+
+  const { handleSubmit, formState } = formMethods;
+  const { isDirty, isSubmitSuccessful } = formState;
 
   async function onSubmitWrapper(values: T) {
     setLoading(true);
-    await onSubmit(values);
-    if (!redirect) router.reload();
-    else router.push(redirect);
+    try {
+      await onSubmit(values);
+    } catch (e) {
+      setLoading(false);
+    }
   }
 
   /* Prevent navigation if unsaved changes */
 
-  const unsavedChanges = formMethods.formState.isDirty;
+  const preventNavigation = isDirty && !isSubmitSuccessful;
 
   useEffect(() => {
     const handleWindowClose = (e: Event) => {
-      if (!unsavedChanges) return;
+      if (!preventNavigation) return;
       return e.preventDefault();
     };
     const handleBrowseAway = () => {
-      if (!unsavedChanges) return;
+      if (!preventNavigation) return;
       if (window.confirm(t("There are unsaved changes. Discard them?"))) return;
       router.events.emit("routeChangeError");
       throw "routeChange aborted.";
     };
-    window.addEventListener("beforeunload", handleWindowClose);
-    router.events.on("routeChangeStart", handleBrowseAway);
+    if (preventNavigation) {
+      window.addEventListener("beforeunload", handleWindowClose);
+      router.events.on("routeChangeStart", handleBrowseAway);
+    } else if (isSubmitSuccessful) {
+      if (!redirect) router.reload();
+      else router.push(redirect);
+    }
     return () => {
       window.removeEventListener("beforeunload", handleWindowClose);
       router.events.off("routeChangeStart", handleBrowseAway);
     };
-  }, [unsavedChanges, router.events, t]);
+  }, [preventNavigation, router.events, t]);
 
   /* Render */
 
