@@ -68,6 +68,13 @@ const ClaimProject: NextPageWithLayout = () => {
 
   const [transferProject, { data: economicResource }] = useMutation(TRANSFER_PROJECT);
 
+  const sectionsNames = {
+    tags: t("Tags"),
+    relations: t("Relations"),
+    licenses: t("Licenses"),
+    contributors: t("Contributors"),
+  };
+
   async function handleClaim(formData: ClaimProjectNS.FormValues) {
     try {
       const tags = formData.tags;
@@ -150,7 +157,7 @@ const ClaimProject: NextPageWithLayout = () => {
         </div>
 
         <div className="space-y-1">
-          {["tags", "relations", "contributors", "licenses"].map(link => (
+          {Object.values(sectionsNames).map(link => (
             <a href={`#${link}`} key={link}>
               <div className="px-2 py-1 rounded-md hover:cursor-pointer hover:bg-surface-neutral-hovered">{link}</div>
             </a>
@@ -177,7 +184,7 @@ const ClaimProject: NextPageWithLayout = () => {
               />
               <ProjectDisplay project={project} />
 
-              <PDivider id={"tags"} />
+              <PDivider id={sectionsNames.tags} />
               <PTitleSubtitle
                 title={t("Add tags")}
                 subtitle={t("Help us to categorize your project. This will help other people to find it.")}
@@ -200,13 +207,13 @@ const ClaimProject: NextPageWithLayout = () => {
                 )}
               />
 
-              <PDivider id={"relations"} />
+              <PDivider id={sectionsNames.relations} />
               <RelationsStep />
 
-              <PDivider id={"contributors"} />
+              <PDivider id={sectionsNames.contributors} />
               <ContributorsStep />
 
-              <PDivider id={"licenses"} />
+              <PDivider id={sectionsNames.licenses} />
               <LicenseStep />
 
               {error && (

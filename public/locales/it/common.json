@@ -80,5 +80,11 @@
   "contributor_one": "collaboratore",
   "contributor_other": "collaboratori",
   "See all notifications": "Visualizza tutte le notifiche",
-  "Scan QR": "Scansiona QR"
+  "Scan QR": "Scansiona QR",
+  "Claim!": "Reclama",
+  "Help us to categorize your project. This will help other people to find it.": "Aiutaci a classificare il tuo progetto. \nQuesto aiuterà altre persone a trovarlo.",
+  "Add tags": "Aggiungere etichette",
+  "Claim ownership over this resource": "Rivendica la proprietà su questa risorsa",
+  "Licenses": "Licenze",
+  "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later.": "Leggi le linee guida. \nAssicurati di compilare tutti i campi richiesti. \nPuoi sempre modificarli in seguito."
 }

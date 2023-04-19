@@ -80,5 +80,11 @@
   "contributor_one": "contributeur",
   "contributor_other": "contributeurs",
   "See all notifications": "Voir toutes les notifications",
-  "Scan QR": "Numériser QR"
+  "Scan QR": "Numériser QR",
+  "Claim!": "Réclamation",
+  "Help us to categorize your project. This will help other people to find it.": "Aidez-nous à classer votre projet. \nCela aidera d'autres personnes à le trouver.",
+  "Add tags": "Ajouter des balises",
+  "Claim ownership over this resource": "Revendiquer la propriété de cette ressource",
+  "Licenses": "Licences",
+  "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later.": "Lisez les directives. \nAssurez-vous de remplir tous les champs obligatoires. \nVous pourrez toujours les modifier ultérieurement."
 }

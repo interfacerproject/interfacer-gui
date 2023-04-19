@@ -76,5 +76,11 @@
   "There are unsaved changes. Discard them?": "Es gibt nicht gespeicherte Änderungen. Verwerfen?",
   "Logout": "Ausloggen",
   "My profile": "Mein Profil",
-  "See all notifications": "Alle Benachrichtigungen anzeigen"
+  "See all notifications": "Alle Benachrichtigungen anzeigen",
+  "Claim!": "Beanspruchen",
+  "Help us to categorize your project. This will help other people to find it.": "Helfen Sie uns, Ihr Projekt einzuordnen. \nDies wird anderen Menschen helfen, es zu finden.",
+  "Add tags": "Tags hinzufügen",
+  "Claim ownership over this resource": "Beanspruchen Sie das Eigentum an dieser Ressource",
+  "Licenses": "Lizenzen",
+  "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later.": "Lesen Sie die Richtlinien. \nAchten Sie darauf, alle erforderlichen Felder auszufüllen. \nSie können sie später jederzeit bearbeiten."
 }
