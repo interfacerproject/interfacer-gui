@@ -85,5 +85,8 @@
   "contributor_one": "contributor",
   "contributor_other": "contributors",
   "See all notifications": "See all notifications",
-  "Scan QR": "Scan QR"
+  "Scan QR": "Scan QR",
+  "Error": "Error",
+  "An error occurred during email verification.": "An error occurred during email verification.",
+  "Email verified successfully!": "Email verified successfully!"
 }

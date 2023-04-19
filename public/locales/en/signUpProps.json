@@ -22,5 +22,6 @@
   "LogIn": "LogIn",
   "Register and login": "Register and login",
   "You will have to remember the answers and keep them for later as they are necessary for the log in": "You will have to remember the answers and keep them for later as they are necessary for the log in.\n",
-  "this e-mail has already been used by another user": "this e-mail has already been used by another user"
+  "this e-mail has already been used by another user": "this e-mail has already been used by another user",
+  "Once registered, you will receive an email with a link to verify your email address.": "Once registered, you will receive an email with a link to verify your email address."
 }
