@@ -18,6 +18,7 @@
 import { useMutation } from "@apollo/client";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
+import { CLAIM_DID } from "lib/QueryAndMutation";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
@@ -35,10 +36,10 @@ import InvitationKey from "components/partials/sign_up/InvitationKey";
 import UserData, { UserDataNS } from "components/partials/sign_up/UserData";
 
 // Components
+import { Text } from "@bbtgnn/polaris-interfacer";
 import BrAuthSuggestion from "components/brickroom/BrAuthSuggestion";
 import BrError from "components/brickroom/BrError";
 import devLog from "lib/devLog";
-import { CLAIM_DID } from "lib/QueryAndMutation";
 
 export async function getStaticProps({ locale }: any) {
   return {
@@ -51,7 +52,7 @@ export async function getStaticProps({ locale }: any) {
 //
 
 const SignUp: NextPageWithLayout = () => {
-  const { signup, login, register } = useAuth();
+  const { signup, login, register, sendEmailVerification } = useAuth();
   const { setItem, getItem } = useStorage();
   const router = useRouter();
   const { t } = useTranslation("signUpProps");
@@ -112,8 +113,8 @@ const SignUp: NextPageWithLayout = () => {
         ecdhPublicKey: getItem("ecdhPublicKey"),
         reflowPublicKey: getItem("reflowPublicKey"),
       });
-
       await login({ email: signUpData.email });
+      await sendEmailVerification();
       await claim(getItem("authId"));
       router.push("/");
     } catch (err) {
@@ -142,13 +143,15 @@ const SignUp: NextPageWithLayout = () => {
         {/* Step 3: User creation */}
         {step === 3 && (
           <Passphrase>
-            {/* Displays eventual sign_up error */}
             {error && <BrError>{error}</BrError>}
 
-            {/* Submit button */}
             <button className="btn btn-block btn-accent" onClick={signUp} data-test="signUpBtn">
               {t("Register and login")}
             </button>
+
+            <Text as="p" variant="bodyMd" color="subdued">
+              {t("Once registered, you will receive an email with a link to verify your email address.")}
+            </Text>
           </Passphrase>
         )}
 

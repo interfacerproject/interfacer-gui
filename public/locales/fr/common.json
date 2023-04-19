@@ -80,5 +80,8 @@
   "contributor_one": "contributeur",
   "contributor_other": "contributeurs",
   "See all notifications": "Voir toutes les notifications",
-  "Scan QR": "Numériser QR"
+  "Scan QR": "Numériser QR",
+  "Error": "Erreur",
+  "An error occurred during email verification.": "Une erreur s'est produite lors de la vérification de l'e-mail.",
+  "Email verified successfully!": "Email vérifié avec succès !"
 }
