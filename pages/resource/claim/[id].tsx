@@ -17,16 +17,10 @@
 import { useMutation } from "@apollo/client";
 import { Banner, Button, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { PlusMinor } from "@shopify/polaris-icons";
-import AddLicense, { ScopedLicense } from "components/AddLicense";
-import LicenseDisplay from "components/LicenseDisplay";
-import SearchUsers from "components/SearchUsers";
 import SelectTags from "components/SelectTags";
-import BrUserDisplay from "components/brickroom/BrUserDisplay";
 import { ChildrenProp as CP } from "components/brickroom/types";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
-import PCardWithAction from "components/polaris/PCardWithAction";
 import PDivider from "components/polaris/PDivider";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import dayjs from "dayjs";
@@ -36,7 +30,7 @@ import devLog from "lib/devLog";
 import { errorFormatter } from "lib/errorFormatter";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
-import { Person, TransferProjectMutationVariables } from "lib/types";
+import {  TransferProjectMutationVariables } from "lib/types";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -48,6 +42,7 @@ import { NextPageWithLayout } from "../../_app";
 import LicenseStep, { LicenseStepValues } from "components/partials/create/project/steps/LicenseStep";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import ContributorsStep from "components/partials/create/project/steps/ContributorsStep";
+import RelationsStep from "components/partials/create/project/steps/RelationsStep";
 
 export namespace ClaimProjectNS {
   export interface Props extends CP {
@@ -56,6 +51,7 @@ export namespace ClaimProjectNS {
 
   export interface FormValues {
     tags: Array<string>;
+    relations: Array<string>;
     licenses: LicenseStepValues;
     contributors: Array<string>;
   }
@@ -63,10 +59,9 @@ export namespace ClaimProjectNS {
 
 const ClaimProject: NextPageWithLayout = () => {
   const router = useRouter();
-  const { project, loading } = useProject();
+  const { project} = useProject();
   const { user } = useAuth();
   const [error, setError] = useState<string>("");
-  const [showAdd, setShowAdd] = useState(false);
   const { t } = useTranslation("ResourceProps");
   const {updateRelations, updateContributors} = useProjectCRUD();
 
@@ -108,6 +103,7 @@ const ClaimProject: NextPageWithLayout = () => {
       devLog("info: project", projectTransfered);
 
       await updateContributors(projectTransfered.id!, contributors);
+      await updateRelations(projectTransfered.id!, formData.relations);
 
       // TODO: Send message
       // ...
@@ -125,12 +121,14 @@ const ClaimProject: NextPageWithLayout = () => {
     tags: [],
     licenses: [{ licenseId: project.metadata?.license, scope: "main" }],
     contributors: [],
+    relations: [],
   };
 
   const schema = yup
     .object({
       tags: yup.array(yup.string()),
       licenses: yup.array(yup.object({ licenseId: yup.string().required(), scope: yup.string().required() })),
+      relations: yup.array(yup.string()),
       contributors: yup.array(yup.string()),
     })
     .required();
@@ -145,27 +143,6 @@ const ClaimProject: NextPageWithLayout = () => {
   const { isValid, errors, isSubmitting } = formState;
 
   console.log("form", isValid, errors, isSubmitting);
-  // const claimSections: Array<ProjectSection> = [
-  //   {
-  //     navLabel: "Licenses",
-  //     id: "licenses",
-  //     component: <LicenseStep />,
-  //     editPage: "edit/licenses",
-  //   },
-  //   {
-  //     navLabel: "Contributors",
-  //     id: "contributors",
-  //     component: <ContributorsStep />,
-  //     editPage: "edit/contributors",
-  //   },
-  //   {
-  //     navLabel: "Relations",
-  //     id: "relations",
-  //     component: <RelationsStep />,
-  //     editPage: "edit/relations",
-  //   },
-  // ];
-
   return (
     <FormProvider {...form}>
       <form onSubmit={handleSubmit(handleClaim)}>
@@ -199,31 +176,11 @@ const ClaimProject: NextPageWithLayout = () => {
                 )}
               />
 
+              <PDivider id={"relations"} />
+              <RelationsStep />
+
               <PDivider id={"contributors"} />
               <ContributorsStep/>
-              {/* <SearchUsers
-                id="add-contributors-search"
-                onSelect={handleSelect}
-                excludeIDs={[...contributors, user?.ulid!]}
-                label={t("Search for contributors")}
-              />
-              {contributors.length && (
-                <Stack vertical spacing="tight">
-                  <Text variant="bodyMd" as="p">
-                    {t("Selected contributors")}
-                  </Text>
-                  {contributors.map(contributorId => (
-                    <PCardWithAction
-                      key={contributorId}
-                      onClick={() => {
-                        handleRemove(contributorId);
-                      }}
-                    >
-                      <BrUserDisplay userId={contributorId} />
-                    </PCardWithAction>
-                  ))}
-                </Stack>
-              )} */}
 
               <PDivider id={"licenses"} />
               <LicenseStep />
