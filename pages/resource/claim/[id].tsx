@@ -14,35 +14,35 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useMutation, useQuery } from "@apollo/client";
-import { Banner, Button, TextField } from "@bbtgnn/polaris-interfacer";
+import { useMutation } from "@apollo/client";
+import { Banner, Stack, Text, TextField } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Spinner from "components/brickroom/Spinner";
+import SearchUsers from "components/SearchUsers";
+import SelectLocation2, { SelectedLocation } from "components/SelectLocation2";
+import SelectTags2 from "components/SelectTags2";
+import BrUserDisplay from "components/brickroom/BrUserDisplay";
+import { ChildrenProp as CP } from "components/brickroom/types";
+import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
-import LoshPresentation from "components/LoshPresentation";
+import CreateProjectSubmit from "components/partials/create/project/parts/CreateProjectSubmit";
+import PCardWithAction from "components/polaris/PCardWithAction";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
+import { CREATE_LOCATION, TRANSFER_PROJECT } from "lib/QueryAndMutation";
 import devLog from "lib/devLog";
-import { CREATE_LOCATION, QUERY_RESOURCE, TRANSFER_PROJECT } from "lib/QueryAndMutation";
-import { CreateLocationMutation, EconomicResource, TransferProjectMutationVariables } from "lib/types";
-import type { GetStaticPaths } from "next";
+import { errorFormatter } from "lib/errorFormatter";
+import { formSetValueOptions } from "lib/formSetValueOptions";
+import getIdFromFormName from "lib/getIdFromFormName";
+import { isRequired } from "lib/isFieldRequired";
+import { CreateLocationMutation, Person, TransferProjectMutationVariables } from "lib/types";
+import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
-import { ChildrenProp as CP } from "../../../components/brickroom/types";
-import { SelectOption } from "../../../components/brickroom/utils/BrSelectUtils";
-import SelectContributors, { ContributorOption } from "../../../components/SelectContributors";
-import SelectLocation from "../../../components/SelectLocation";
-import SelectTags from "../../../components/SelectTags";
-import useInBox from "../../../hooks/useInBox";
-import { errorFormatter } from "../../../lib/errorFormatter";
-import { LocationLookup } from "../../../lib/fetchLocation";
-import { isRequired } from "../../../lib/isFieldRequired";
 import { NextPageWithLayout } from "../../_app";
-import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 
 export namespace ClaimProjectNS {
   export interface Props extends CP {
@@ -50,11 +50,11 @@ export namespace ClaimProjectNS {
   }
 
   export interface FormValues {
-    tags: Array<SelectOption<string>>;
-    location: LocationLookup.Location | null;
+    tags: Array<string>;
+    location: SelectedLocation | null;
     locationName: string;
     price: string;
-    contributors: Array<ContributorOption>;
+    contributors: Array<string>;
   }
 }
 
@@ -75,9 +75,9 @@ const ClaimProject: NextPageWithLayout = () => {
       const { data } = await createLocation({
         variables: {
           name: formData.locationName,
-          addr: formData.location?.address.label!,
-          lat: formData.location?.position.lat!,
-          lng: formData.location?.position.lng!,
+          addr: formData.location?.address,
+          lat: formData.location?.lat!,
+          lng: formData.location?.lng!,
         },
       });
       const st = data?.createSpatialThing.spatialThing;
@@ -93,14 +93,14 @@ const ClaimProject: NextPageWithLayout = () => {
     try {
       const location = await handleCreateLocation(formData);
       // devLog is in handleCreateLocation
-      const tags = formData.tags.map(t => encodeURI(t.value));
+      const tags = formData.tags;
       devLog("info: tags prepared", tags);
-      const contributors = formData.contributors.map(c => c.value);
+      const contributors = formData.contributors;
       devLog("info: contributors prepared", contributors);
       const metadata = JSON.stringify({
         ...project.metadata,
         repositoryOrId: project.metadata.repo,
-        contributors: contributors.map(c => c.id),
+        contributors: contributors,
       });
       devLog("info: metadata prepared", metadata);
 
@@ -168,126 +168,121 @@ const ClaimProject: NextPageWithLayout = () => {
     defaultValues,
   });
 
-  const { formState, handleSubmit, control } = form;
+  const { formState, control, handleSubmit, watch, setValue, trigger } = form;
   const { isValid, errors, isSubmitting } = formState;
 
+  const CONTRIBUTORS_FORM_KEY = "contributors";
+  const contributors = watch(CONTRIBUTORS_FORM_KEY);
+
+  function handleSelect(option: Partial<Person>) {
+    setValue(CONTRIBUTORS_FORM_KEY, [...contributors, option.id!], formSetValueOptions);
+  }
+  function handleRemove(contributorId: string) {
+    setValue(
+      CONTRIBUTORS_FORM_KEY,
+      contributors.filter(id => id !== contributorId),
+      formSetValueOptions
+    );
+  }
+
   return (
-    <div className="pb-6">
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-12 pt-14">
-        <div className="md:col-start-2 md:col-end-7">
-          <h2>{t("claim your ownership over this project")}</h2>
-        </div>
-      </div>
-      {loading && <Spinner />}
-      {!loading && project && (
-        <>
-          <LoshPresentation />
-        </>
-      )}
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-12 pt-14">
-        <div className="md:col-start-2 md:col-end-7">
-          <form onSubmit={handleSubmit(handleClaim)} className="w-full pt-12 space-y-12">
-            <Controller
-              control={control}
-              name="tags"
-              render={({ field: { onChange, onBlur, name, ref } }) => (
-                <SelectTags
-                  name={name}
-                  id={name}
-                  ref={ref}
-                  onBlur={onBlur}
-                  onChange={onChange}
-                  label={`${t("Tags")}:`}
-                  isMulti
-                  placeholder={t("Open-source, 3D Printing, Medical use")}
-                  helpText={t("Select a tag from the list, or type to create a new one")}
-                  error={errors.tags?.message}
-                  creatable={true}
-                  requiredIndicator={isRequired(schema, name)}
-                />
+    <FormProvider {...form}>
+      <form onSubmit={handleSubmit(handleClaim)}>
+        <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
+          <div className="sticky top-24">{/* <EditProjectNav /> */}</div>
+          <div className="grow max-w-xl px-6 pb-24 pt-0">
+            <Stack vertical spacing="extraLoose">
+              <Controller
+                control={control}
+                name="tags"
+                render={({ field: { onChange, onBlur, name, ref } }) => (
+                  <SelectTags2
+                    //@ts-ignore
+                    tags={watch("tags")}
+                    setTags={tags => {
+                      setValue("tags", tags, formSetValueOptions);
+                      trigger("tags");
+                    }}
+                    error={errors.tags?.message}
+                    label={t("Tags")}
+                    helpText={t("Add relevant keywords that describe your project.")}
+                    requiredIndicator={isRequired(schema, "tags")}
+                  />
+                )}
+              />
+              <SearchUsers
+                id="add-contributors-search"
+                onSelect={handleSelect}
+                excludeIDs={[...contributors, user?.ulid!]}
+                label={t("Search for contributors")}
+              />
+              {contributors.length && (
+                <Stack vertical spacing="tight">
+                  <Text variant="bodyMd" as="p">
+                    {t("Selected contributors")}
+                  </Text>
+                  {contributors.map(contributorId => (
+                    <PCardWithAction
+                      key={contributorId}
+                      onClick={() => {
+                        handleRemove(contributorId);
+                      }}
+                    >
+                      <BrUserDisplay userId={contributorId} />
+                    </PCardWithAction>
+                  ))}
+                </Stack>
               )}
-            />
 
-            <Controller
-              control={control}
-              name="contributors"
-              render={({ field: { onChange, onBlur, name, ref } }) => (
-                <SelectContributors
-                  name={name}
-                  ref={ref}
-                  id={name}
-                  onBlur={onBlur}
-                  onChange={onChange}
-                  label={`${t("Contributors")}:`}
-                  isMulti
-                  placeholder={t("Type to search for a user")}
-                  error={errors.contributors?.message}
-                  removeCurrentUser
-                  creatable={false}
-                  requiredIndicator={isRequired(schema, name)}
-                />
-              )}
-            />
-
-            <div className="space-y-4">
               <Controller
                 control={control}
                 name="locationName"
-                render={({ field: { onChange, onBlur, name, value } }) => (
+                render={({ field: { onChange, onBlur, name, ref, value } }) => (
                   <TextField
                     type="text"
-                    id={name}
+                    id={getIdFromFormName(name)}
                     name={name}
                     value={value}
                     autoComplete="off"
-                    onChange={onChange}
-                    onBlur={onBlur}
+                    onChange={value => {
+                      onChange(value), trigger("location");
+                    }}
+                    onBlur={() => {
+                      onBlur(), trigger("location");
+                    }}
                     label={t("Location name")}
-                    placeholder={t("Cool fablab")}
-                    helpText={t("The name of the place where the project is stored")}
+                    helpText={t("For example: My Workshop")}
                     error={errors.locationName?.message}
-                    requiredIndicator={isRequired(schema, name)}
                   />
                 )}
               />
 
-              <Controller
-                control={control}
-                name="location"
-                render={({ field: { onChange, onBlur, name, ref } }) => (
-                  <SelectLocation
-                    id={name}
-                    name={name}
-                    ref={ref}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    label={t("Select the address")}
-                    placeholder={t("Hamburg")}
-                    error={errors.location?.message}
-                    creatable={false}
-                    requiredIndicator={isRequired(schema, name)}
-                  />
-                )}
+              <SelectLocation2
+                id="search-location"
+                label={t("Address")}
+                placeholder={t("An d. Alsterschleife 3, 22399 - Hamburg, Germany")}
+                location={watch("location")}
+                setLocation={value => setValue("location", value, formSetValueOptions)}
+                error={errors.location?.message}
+                requiredIndicator={true}
               />
-            </div>
-            {error && (
-              <Banner
-                title={t("Error in Project Claim")}
-                status="critical"
-                onDismiss={() => {
-                  setError("");
-                }}
-              >
-                <p className="whitespace-pre-wrap">{error}</p>
-              </Banner>
-            )}
-            <Button size="large" primary fullWidth submit disabled={!isValid || isSubmitting} id="submit">
-              {t("Claim Ownership")}
-            </Button>
-          </form>
+              {error && (
+                <Banner
+                  title={t("Error in Project Claim")}
+                  status="critical"
+                  onDismiss={() => {
+                    setError("");
+                  }}
+                >
+                  <p className="whitespace-pre-wrap">{error}</p>
+                </Banner>
+              )}
+            </Stack>
+          </div>
         </div>
-      </div>
-    </div>
+        <CreateProjectSubmit />
+      </form>
+    </FormProvider>
   );
 };
 
