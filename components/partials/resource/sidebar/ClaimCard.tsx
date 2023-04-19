@@ -12,7 +12,7 @@ const ClaimCard = () => {
   const { t } = useTranslation("common");
   const { getItem, setItem } = useStorage();
   const [inList, setInList] = useState<boolean>(false);
-  const handleClaim = () => router.push(`/resource/claim/${project.id}`);
+  const handleClaim = () => router.push(`/resource/${project.id}/claim`);
   const handleCollect = () => {
     const _list = getItem("projectsCollected");
     const _listParsed = _list ? JSON.parse(_list) : [];
