@@ -66,7 +66,7 @@ const Profile: NextPage = () => {
     claimPerson({ variables: { id: idToBeFetch } }).then(data => {
       setDidUrl(`${process.env.NEXT_PUBLIC_DID_EXPLORER!}details/${data.data.claimPerson.did.didDocument?.id}`);
     });
-  }, []);
+  }, [idToBeFetch, claimPerson]);
 
   const tabs = [
     {

@@ -41,28 +41,27 @@ const ContributionMessage = ({
 }) => {
   const [ownerName, setOwnerName] = useState("");
   const [userId, setUserId] = useState("");
-  const [originalResourceId, setOriginalResourceId] = useState("");
   const [originalResourceName, setOriginalResourceName] = useState("");
   const router = useRouter();
   const { t } = useTranslation("notificationProps");
   const { message: parsedMessage } = message;
+  const { refetch: fetchUser } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
+
   useEffect(() => {
+    const findResourceData = async (id: string) => {
+      const { data } = await fetchUser({ id });
+      const economicResource = data?.economicResource;
+      if (!economicResource) return;
+      setOwnerName(economicResource.primaryAccountable.name);
+      setUserId(economicResource.primaryAccountable.id);
+      setOriginalResourceName(economicResource.name);
+    };
     if (message.subject !== MessageSubject.ADDED_AS_CONTRIBUTOR) findResourceData(parsedMessage.originalResourceID);
     else {
       findResourceData(message.message.resourceID);
     }
-  }, [parsedMessage.originalResourceID]);
+  }, [parsedMessage.originalResourceID, message.subject, message.message.resourceID, fetchUser]);
 
-  const { refetch: fetchUser } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
-  const findResourceData = async (id: string) => {
-    const { data } = await fetchUser({ id });
-    const economicResource = data?.economicResource;
-    if (!economicResource) return;
-    setOwnerName(economicResource.primaryAccountable.name);
-    setUserId(economicResource.primaryAccountable.id);
-    setOriginalResourceId(economicResource.id);
-    setOriginalResourceName(economicResource.name);
-  };
   const commonProps = {
     data,
     userId: sender,
@@ -103,11 +102,6 @@ const ContributionMessage = ({
     [MessageSubject.ADDED_AS_CONTRIBUTOR]: t("added you as a contributor to"),
     [MessageSubject.PROJECT_CITED]: t("just mentioned your"),
   };
-  const className = cn({
-    "": m.subject === MessageSubject.CONTRIBUTION_REQUEST,
-    "bg-success": m.subject === MessageSubject.CONTRIBUTION_ACCEPTED,
-    "bg-error": m.subject === MessageSubject.CONTRIBUTION_REJECTED,
-  });
 
   const hasMessage = Boolean(m.message);
   const request = MessageSubject.CONTRIBUTION_REQUEST === m.subject;
