@@ -17,13 +17,13 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { Banner, Button, TextField } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
+import LoshPresentation from "components/LoshPresentation";
 import Spinner from "components/brickroom/Spinner";
 import Layout from "components/layout/Layout";
-import LoshPresentation from "components/LoshPresentation";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
-import devLog from "lib/devLog";
 import { CREATE_LOCATION, QUERY_RESOURCE, TRANSFER_PROJECT } from "lib/QueryAndMutation";
+import devLog from "lib/devLog";
 import { CreateLocationMutation, EconomicResource, TransferProjectMutationVariables } from "lib/types";
 import type { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
@@ -32,16 +32,17 @@ import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
-import { ChildrenProp as CP } from "../../../components/brickroom/types";
-import { SelectOption } from "../../../components/brickroom/utils/BrSelectUtils";
 import SelectContributors, { ContributorOption } from "../../../components/SelectContributors";
 import SelectLocation from "../../../components/SelectLocation";
 import SelectTags from "../../../components/SelectTags";
+import { ChildrenProp as CP } from "../../../components/brickroom/types";
+import { SelectOption } from "../../../components/brickroom/utils/BrSelectUtils";
 import useInBox from "../../../hooks/useInBox";
 import { errorFormatter } from "../../../lib/errorFormatter";
 import { LocationLookup } from "../../../lib/fetchLocation";
 import { isRequired } from "../../../lib/isFieldRequired";
 import { NextPageWithLayout } from "../../_app";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 export namespace ClaimProjectNS {
   export interface Props extends CP {
@@ -152,20 +153,25 @@ const ClaimProject: NextPageWithLayout = () => {
     contributors: [], // Array<{id:string, name:string}>
   };
 
-  const schema = yup
-    .object({
-      tags: yup.array(yup.object()),
-      location: yup.object().required(),
-      locationName: yup.string().required(),
-      price: yup.string().required(),
-      contributors: yup.array(
-        yup.object({
-          id: yup.string(),
-          name: yup.string(),
-        })
-      ),
-    })
-    .required();
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup
+      .object({
+        tags: yup.array(yup.object()),
+        location: yup.object().required(),
+        locationName: yup.string().required(),
+        price: yup.string().required(),
+        contributors: yup.array(
+          yup.object({
+            id: yup.string(),
+            name: yup.string(),
+          })
+        ),
+      })
+      .required())();
 
   const form = useForm<ClaimProjectNS.FormValues>({
     mode: "all",

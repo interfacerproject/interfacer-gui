@@ -15,6 +15,7 @@ import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLa
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
 import { GetStaticPaths } from "next";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
@@ -53,9 +54,14 @@ const EditMain: NextPageWithLayout = () => {
     },
   };
 
-  const schema = yup.object({
-    main: mainStepSchema,
-  });
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup.object({
+      main: mainStepSchema,
+    }))();
 
   const formMethods = useForm<EditMainValues>({
     mode: "all",
