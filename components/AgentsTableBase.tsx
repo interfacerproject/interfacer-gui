@@ -17,13 +17,14 @@
 import { useTranslation } from "next-i18next";
 
 // Components
-import BrTable from "./brickroom/BrTable";
+import { GetAgentsQuery } from "lib/types";
 import AgentsTableRow from "./AgentsTableRow";
+import BrTable from "./brickroom/BrTable";
 
 //
 
 export interface ProjectsTableBaseProps {
-  data: any;
+  data: GetAgentsQuery;
   hidePagination?: boolean;
   onLoadMore?: () => void;
 }
@@ -35,7 +36,7 @@ export default function AgentsTableBase(props: ProjectsTableBaseProps) {
   const { t } = useTranslation("common");
 
   const agents = data.people?.edges;
-  const hasNextPage = data.agents?.pageInfo.hasNextPage;
+  const hasNextPage = data.people?.pageInfo.hasNextPage;
   const showEmptyState = !Boolean(agents) || agents?.length == 0;
 
   //
@@ -43,8 +44,8 @@ export default function AgentsTableBase(props: ProjectsTableBaseProps) {
   return (
     <div>
       <BrTable headArray={[t(""), t("name"), t("id"), t("location")]}>
-        {agents?.map((e: any) => (
-          <AgentsTableRow agent={e} key={e.cursor} />
+        {agents?.map(e => (
+          <AgentsTableRow agent={e.node} key={e.cursor} />
         ))}
       </BrTable>
 

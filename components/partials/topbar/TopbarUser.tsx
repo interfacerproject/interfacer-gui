@@ -16,14 +16,16 @@ export default function TopbarUser() {
   const { user } = useAuth();
   const { t } = useTranslation("common");
 
+  if (!user) return null;
+
   return (
-    <TopbarPopover id="user-menu" buttonContent={<BrUserAvatar name={user?.name} />}>
+    <TopbarPopover id="user-menu" buttonContent={<BrUserAvatar user={user} />}>
       <div className="w-40 divide-y-1 divide-slate-200">
-        <MenuLink href="/profile/my_profile">
+        <MenuLink href={user!.profileUrl}>
           <UserSection user={user!} />
         </MenuLink>
         <div>
-          <MenuLink href="/profile/my_profile">
+          <MenuLink href={user!.profileUrl}>
             <Text as="p" variant="bodyMd">
               {t("My profile")}
             </Text>
@@ -62,7 +64,7 @@ function UserSection(props: { user: User }) {
   return (
     <div className="flex flex-row items-center space-x-3">
       <div className="w-10 h-10">
-        <BrUserAvatar name={user?.name} />
+        <BrUserAvatar user={user} />
       </div>
       <div>
         <Text as="p" variant="bodyMd" fontWeight="bold">

@@ -1,18 +1,19 @@
 import { gql, useQuery } from "@apollo/client";
 import { Spinner, Text } from "@bbtgnn/polaris-interfacer";
 import LocationText from "components/LocationText";
-import { GetPersonQuery, GetPersonQueryVariables, Person } from "lib/types";
+import { GetPersonQuery, GetPersonQueryVariables } from "lib/types";
+import { PersonWithFileEssential } from "lib/types/extensions";
 import BrUserAvatar from "./BrUserAvatar";
 
 export interface Props {
-  user?: Person;
+  user?: PersonWithFileEssential;
   userId?: string;
 }
 
 export default function BrUserDisplay(props: Props) {
   const { user, userId } = props;
 
-  let u: Partial<Person>;
+  let u: Partial<PersonWithFileEssential>;
 
   const { data, loading } = useQuery<GetPersonQuery, GetPersonQueryVariables>(SEARCH_PERSON, {
     variables: { id: userId! },
@@ -27,9 +28,7 @@ export default function BrUserDisplay(props: Props) {
 
   return (
     <div className="flex flex-row items-center">
-      <div className="w-12">
-        <BrUserAvatar name={u.name} />
-      </div>
+      <BrUserAvatar user={u} size="48px" />
 
       <div className="ml-4">
         <Text as="p" variant="bodyMd">
@@ -48,6 +47,10 @@ export const SEARCH_PERSON = gql`
       id
       name
       user
+      images {
+        bin
+        mimeType
+      }
       primaryLocation {
         id
         name
