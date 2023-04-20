@@ -1,3 +1,4 @@
+import { Process } from "./../../lib/types/index";
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 //
@@ -70,7 +71,7 @@ describe("when user is logged in", () => {
   });
 
   it("Should see /profile/my_profile", () => {
-    cy.visit("/profile/my_profile");
+    cy.visit(`/profile/${Cypress.env("authId")}`);
     cy.contains(Cypress.env("authName"));
   });
 

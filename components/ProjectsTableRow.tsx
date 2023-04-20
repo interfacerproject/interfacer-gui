@@ -19,9 +19,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import dayjs from "../lib/dayjs";
 import AvatarUsers from "./AvatarUsers";
+import ProjectThumb from "./ProjectThumb";
 import BrDisplayUser from "./brickroom/BrDisplayUser";
 import BrTags from "./brickroom/BrTags";
-import ProjectThumb from "./ProjectThumb";
 
 const ProjectsTableRow = (props: { project: { node: EconomicResource } }) => {
   const e = props.project.node;
@@ -78,7 +78,7 @@ const ProjectsTableRow = (props: { project: { node: EconomicResource } }) => {
       </td>
 
       <td>
-        <BrDisplayUser id={e.primaryAccountable.id} name={e.primaryAccountable.name} />
+        <BrDisplayUser user={e.primaryAccountable} />
         <AvatarUsers users={e.metadata?.contributors} />
       </td>
     </tr>

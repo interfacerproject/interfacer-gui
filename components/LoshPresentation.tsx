@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useTranslation } from "next-i18next";
-import { EconomicResource } from "../lib/types";
-import BrDisplayUser from "./brickroom/BrDisplayUser";
 import { LinkIcon } from "@heroicons/react/outline";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import BrTags from "./brickroom/BrTags";
-import MdParser from "../lib/MdParser";
-import HandleCollect from "../lib/HandleCollect";
 import { useEffect, useState } from "react";
 import useStorage from "../hooks/useStorage";
+import HandleCollect from "../lib/HandleCollect";
+import MdParser from "../lib/MdParser";
+import { EconomicResource } from "../lib/types";
+import BrDisplayUser from "./brickroom/BrDisplayUser";
+import BrTags from "./brickroom/BrTags";
 
 const LoshPresentation = ({
   economicResource,
@@ -99,11 +99,7 @@ const LoshPresentation = ({
                 </>
               )}
               <span className="pt-9">{t("Owner")}</span>
-              <BrDisplayUser
-                id={economicResource.primaryAccountable.id}
-                name={economicResource.primaryAccountable.name}
-                location={economicResource.currentLocation?.name}
-              />
+              <BrDisplayUser user={economicResource.primaryAccountable} />
             </div>
           </div>
         </div>
