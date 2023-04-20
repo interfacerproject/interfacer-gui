@@ -19,7 +19,6 @@ export interface ProjectCardProps {
 }
 
 export default function ProjectCard(props: ProjectCardProps) {
-  const { t } = useTranslation("common");
   const { project } = props;
   const { user } = useAuth();
 
@@ -45,7 +44,10 @@ export default function ProjectCard(props: ProjectCardProps) {
         <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse}>
           <Link href={`/project/${project.id}`}>
             <a className="space-y-3">
-              <ProjectCardImage projectType={project.conformsTo!.name as ProjectType} image={project.images?.[0]} />
+              <ProjectCardImage
+                projectType={project.conformsTo!.name as ProjectType}
+                image={project.images?.[0] || project.metadata?.image}
+              />
               <div>
                 <Text variant="headingLg" as="h4">
                   {project.name}
