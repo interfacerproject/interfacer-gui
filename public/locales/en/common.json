@@ -91,5 +91,8 @@
   "Add tags": "Add tags",
   "Claim ownership over this resource": "Claim ownership over this resource",
   "Licenses": "Licenses",
-  "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later.": "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later."
+  "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later.": "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later.",
+  "Error": "Error",
+  "An error occurred during email verification.": "An error occurred during email verification.",
+  "Email verified successfully!": "Email verified successfully!"
 }

@@ -4122,6 +4122,42 @@ export type RelocateProjectMutationVariables = Exact<{
 
 export type RelocateProjectMutation = { __typename?: 'RootMutationType', pickup: { __typename?: 'EconomicEventResponse', economicEvent: { __typename?: 'EconomicEvent', id: string } }, dropoff: { __typename?: 'EconomicEventResponse', economicEvent: { __typename?: 'EconomicEvent', id: string } } };
 
+export type SendEmailVerificationMutationVariables = Exact<{
+  template: EmailTemplate;
+}>;
+
+
+export type SendEmailVerificationMutation = { __typename?: 'RootMutationType', personRequestEmailVerification: boolean };
+
+export type SignInQueryVariables = Exact<{
+  email: Scalars['String'];
+  pubkey: Scalars['String'];
+}>;
+
+
+export type SignInQuery = { __typename?: 'RootQueryType', personCheck: { __typename?: 'Person', name: string, user: string, email: string, id: string, isVerified: boolean } };
+
+export type SignUpMutationVariables = Exact<{
+  name: Scalars['String'];
+  user: Scalars['String'];
+  email: Scalars['String'];
+  eddsaPublicKey: Scalars['String'];
+  reflowPublicKey: Scalars['String'];
+  ethereumAddress: Scalars['String'];
+  ecdhPublicKey: Scalars['String'];
+  bitcoinPublicKey: Scalars['String'];
+}>;
+
+
+export type SignUpMutation = { __typename?: 'RootMutationType', createPerson: { __typename?: 'PersonResponse', agent: { __typename?: 'Person', id: string, name: string, user: string, email: string, eddsaPublicKey?: string | null } } };
+
+export type VerifyEmailMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type VerifyEmailMutation = { __typename?: 'RootMutationType', personVerifyEmailVerification: boolean };
+
 export type EditMainMutationVariables = Exact<{
   id: Scalars['ID'];
   classifiedAs?: InputMaybe<Array<Scalars['URI']> | Scalars['URI']>;

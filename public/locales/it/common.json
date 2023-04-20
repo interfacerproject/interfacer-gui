@@ -86,5 +86,8 @@
   "Add tags": "Aggiungere etichette",
   "Claim ownership over this resource": "Rivendica la proprietà su questa risorsa",
   "Licenses": "Licenze",
-  "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later.": "Leggi le linee guida. \nAssicurati di compilare tutti i campi richiesti. \nPuoi sempre modificarli in seguito."
+  "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later.": "Leggi le linee guida. \nAssicurati di compilare tutti i campi richiesti. \nPuoi sempre modificarli in seguito.",
+  "Error": "Errore",
+  "An error occurred during email verification.": "Si è verificato un errore durante la verifica dell'email.",
+  "Email verified successfully!": "Email verificata con successo!"
 }
