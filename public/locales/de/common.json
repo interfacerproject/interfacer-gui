@@ -98,5 +98,8 @@
   "We value your privacy and will only use your location for the purpose of connecting you with other members of the community": "Wir schätzen Ihre Privatsphäre und verwenden Ihren Standort nur, um Sie mit anderen Mitgliedern der Community zu verbinden",
   "Start to type the address and select the correct one from the list": "Beginnen Sie mit der Eingabe der Adresse und wählen Sie die richtige aus der Liste aus",
   "Location:": "Standort:",
-  "Project succesfully created!": "Projekt erfolgreich erstellt!"
+  "Project succesfully created!": "Projekt erfolgreich erstellt!",
+  "Error": "Fehler",
+  "An error occurred during email verification.": "Bei der E-Mail-Bestätigung ist ein Fehler aufgetreten.",
+  "Email verified successfully!": "E-Mail erfolgreich verifiziert!"
 }

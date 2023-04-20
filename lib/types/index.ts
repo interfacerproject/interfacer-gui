@@ -670,6 +670,13 @@ export type EconomicResourceUpdateParams = {
   repo?: InputMaybe<Scalars["String"]>;
 };
 
+export enum EmailTemplate {
+  InterfacerDebugging = "INTERFACER_DEBUGGING",
+  InterfacerDeployment = "INTERFACER_DEPLOYMENT",
+  InterfacerStaging = "INTERFACER_STAGING",
+  InterfacerTesting = "INTERFACER_TESTING",
+}
+
 export type File = {
   __typename?: "File";
   bin?: Maybe<Scalars["Base64"]>;
@@ -1153,6 +1160,8 @@ export type Person = Agent & {
   id: Scalars["ID"];
   /** The image files relevant to the agent, such as a logo, avatar, photo, etc. */
   images?: Maybe<Array<File>>;
+  /** Has the user verified their email address. */
+  isVerified: Scalars["Boolean"];
   /** The name that this agent will be referred to by. */
   name: Scalars["String"];
   /** A textual description or comment. */
@@ -2380,6 +2389,17 @@ export type RootMutationType = {
   importRepos?: Maybe<Scalars["String"]>;
   keypairoomServer: Scalars["String"];
   /**
+   * Send an email verification request to the user via email using email address if
+   * available, else fails (some users are registered by admin without an email
+   * address).
+   */
+  personRequestEmailVerification: Scalars["Boolean"];
+  /**
+   * Verify an email verification request of the user using the token provided in
+   * the verification request.
+   */
+  personVerifyEmailVerification: Scalars["Boolean"];
+  /**
    * Include an existing intent as part of a proposal.
    * @param publishedIn the (`Proposal`) to include the intent in
    * @param publishes the (`Intent`) to include as part of the proposal
@@ -2627,6 +2647,14 @@ export type RootMutationTypeImportReposArgs = {
 export type RootMutationTypeKeypairoomServerArgs = {
   firstRegistration: Scalars["Boolean"];
   userData: Scalars["String"];
+};
+
+export type RootMutationTypePersonRequestEmailVerificationArgs = {
+  template: EmailTemplate;
+};
+
+export type RootMutationTypePersonVerifyEmailVerificationArgs = {
+  token: Scalars["String"];
 };
 
 export type RootMutationTypeProposeIntentArgs = {
@@ -4586,6 +4614,15 @@ export type RelocateProjectMutation = {
   dropoff: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
 };
 
+export type SendEmailVerificationMutationVariables = Exact<{
+  template: EmailTemplate;
+}>;
+
+export type SendEmailVerificationMutation = {
+  __typename?: "RootMutationType";
+  personRequestEmailVerification: boolean;
+};
+
 export type FetchSelfQueryVariables = Exact<{
   email: Scalars["String"];
   pubkey: Scalars["String"];
@@ -4599,6 +4636,7 @@ export type FetchSelfQuery = {
     user: string;
     email: string;
     id: string;
+    isVerified: boolean;
     note?: string | null;
     primaryLocation?: {
       __typename?: "SpatialThing";
@@ -4611,6 +4649,38 @@ export type FetchSelfQuery = {
     images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
   };
 };
+
+export type SignUpMutationVariables = Exact<{
+  name: Scalars["String"];
+  user: Scalars["String"];
+  email: Scalars["String"];
+  eddsaPublicKey: Scalars["String"];
+  reflowPublicKey: Scalars["String"];
+  ethereumAddress: Scalars["String"];
+  ecdhPublicKey: Scalars["String"];
+  bitcoinPublicKey: Scalars["String"];
+}>;
+
+export type SignUpMutation = {
+  __typename?: "RootMutationType";
+  createPerson: {
+    __typename?: "PersonResponse";
+    agent: {
+      __typename?: "Person";
+      id: string;
+      name: string;
+      user: string;
+      email: string;
+      eddsaPublicKey?: string | null;
+    };
+  };
+};
+
+export type VerifyEmailMutationVariables = Exact<{
+  token: Scalars["String"];
+}>;
+
+export type VerifyEmailMutation = { __typename?: "RootMutationType"; personVerifyEmailVerification: boolean };
 
 export type EditMainMutationVariables = Exact<{
   id: Scalars["ID"];

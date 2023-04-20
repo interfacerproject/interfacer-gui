@@ -107,5 +107,8 @@
   "We value your privacy and will only use your location for the purpose of connecting you with other members of the community": "We value your privacy and will only use your location for the purpose of connecting you with other members of the community",
   "Start to type the address and select the correct one from the list": "Start to type the address and select the correct one from the list",
   "Location:": "Location:",
-  "Project succesfully created!": "Project succesfully created!"
+  "Project succesfully created!": "Project succesfully created!",
+  "Error": "Error",
+  "An error occurred during email verification.": "An error occurred during email verification.",
+  "Email verified successfully!": "Email verified successfully!"
 }
