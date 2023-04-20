@@ -57,7 +57,7 @@ const EditContributors: NextPageWithLayout = () => {
 
   const schema = (() =>
     yup.object({
-      contributors: contributorsStepSchema,
+      contributors: contributorsStepSchema(),
     }))();
 
   const formMethods = useForm<EditContributorsValues>({

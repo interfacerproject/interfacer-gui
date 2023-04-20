@@ -60,7 +60,7 @@ const EditMain: NextPageWithLayout = () => {
 
   const schema = (() =>
     yup.object({
-      main: mainStepSchema,
+      main: mainStepSchema(),
     }))();
 
   const formMethods = useForm<EditMainValues>({

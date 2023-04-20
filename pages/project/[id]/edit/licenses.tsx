@@ -57,7 +57,7 @@ const EditLicenses: NextPageWithLayout = () => {
 
   const schema = (() =>
     yup.object({
-      licenses: licenseStepSchema,
+      licenses: licenseStepSchema(),
     }))();
 
   const formMethods = useForm<EditLicensesValues>({

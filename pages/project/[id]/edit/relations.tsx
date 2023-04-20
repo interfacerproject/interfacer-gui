@@ -57,7 +57,7 @@ const EditMain: NextPageWithLayout = () => {
 
   const schema = (() =>
     yup.object({
-      relations: relationsStepSchema,
+      relations: relationsStepSchema(),
     }))();
 
   const formMethods = useForm<EditRelationsValues>({
