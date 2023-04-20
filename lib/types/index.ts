@@ -1234,6 +1234,8 @@ export type PersonResponse = {
 
 export type PersonUpdateParams = {
   id: Scalars["ID"];
+  /** The image files relevant to the agent, such as a logo, avatar, photo, etc. */
+  images?: InputMaybe<Array<IFile>>;
   /** The name that this agent will be referred to by. */
   name?: InputMaybe<Scalars["String"]>;
   /** A textual description or comment. */
@@ -3665,6 +3667,7 @@ export type SearchPeopleQuery = {
         name: string;
         user: string;
         note?: string | null;
+        images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
         primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
       };
     }>;
@@ -3691,6 +3694,60 @@ export type GetTagsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
 
+export type UpdateUserMutationVariables = Exact<{
+  id: Scalars["ID"];
+  name?: InputMaybe<Scalars["String"]>;
+  note?: InputMaybe<Scalars["String"]>;
+  primaryLocation?: InputMaybe<Scalars["ID"]>;
+  user?: InputMaybe<Scalars["String"]>;
+  images?: InputMaybe<Array<IFile> | IFile>;
+}>;
+
+export type UpdateUserMutation = {
+  __typename?: "RootMutationType";
+  updatePerson: {
+    __typename?: "PersonResponse";
+    agent: {
+      __typename?: "Person";
+      id: string;
+      name: string;
+      note?: string | null;
+      images?: Array<{ __typename?: "File"; name: string }> | null;
+      primaryLocation?: {
+        __typename?: "SpatialThing";
+        id: string;
+        lat?: any | null;
+        long?: any | null;
+        name: string;
+      } | null;
+    };
+  };
+};
+
+export type GetUserImagesQueryVariables = Exact<{
+  userId: Scalars["ID"];
+}>;
+
+export type GetUserImagesQuery = {
+  __typename?: "RootQueryType";
+  person?: {
+    __typename?: "Person";
+    id: string;
+    name: string;
+    images?: Array<{
+      __typename?: "File";
+      bin?: any | null;
+      mimeType: string;
+      date: any;
+      description: string;
+      extension: string;
+      hash: any;
+      name: string;
+      size: number;
+    }> | null;
+  } | null;
+};
+
 export type GetPersonQueryVariables = Exact<{
   id: Scalars["ID"];
 }>;
@@ -3702,6 +3759,7 @@ export type GetPersonQuery = {
     id: string;
     name: string;
     user: string;
+    images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
     primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
   } | null;
 };
@@ -3734,6 +3792,41 @@ export type GetProjectLayoutQuery = {
       long?: any | null;
     } | null;
     images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+  } | null;
+};
+
+export type GetUserLayoutQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type GetUserLayoutQuery = {
+  __typename?: "RootQueryType";
+  person?: {
+    __typename?: "Person";
+    id: string;
+    name: string;
+    note?: string | null;
+    email: string;
+    user: string;
+    ethereumAddress?: string | null;
+    images?: Array<{
+      __typename?: "File";
+      hash: any;
+      name: string;
+      mimeType: string;
+      bin?: any | null;
+      size: number;
+      extension: string;
+      description: string;
+    }> | null;
+    primaryLocation?: {
+      __typename?: "SpatialThing";
+      id: string;
+      name: string;
+      mappableAddress?: string | null;
+      lat?: any | null;
+      long?: any | null;
+    } | null;
   } | null;
 };
 
@@ -3969,6 +4062,7 @@ export type GetAgentsQuery = {
         id: string;
         name: string;
         note?: string | null;
+        images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
         primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
       };
     }>;
@@ -4119,6 +4213,7 @@ export type FetchInventoryQuery = {
               id: string;
               name: string;
               note?: string | null;
+              images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
               primaryLocation?: { __typename?: "SpatialThing"; name: string } | null;
             }
           | {
@@ -4126,6 +4221,7 @@ export type FetchInventoryQuery = {
               id: string;
               name: string;
               note?: string | null;
+              images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
               primaryLocation?: { __typename?: "SpatialThing"; name: string } | null;
             };
         custodian:
@@ -4385,10 +4481,21 @@ export type AskResourcePrimaryAccountableQuery = {
   __typename?: "RootQueryType";
   economicResource?: {
     __typename?: "EconomicResource";
+    id: string;
     name: string;
     primaryAccountable:
-      | { __typename?: "Organization"; id: string; name: string }
-      | { __typename?: "Person"; id: string; name: string };
+      | {
+          __typename?: "Organization";
+          id: string;
+          name: string;
+          images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+        }
+      | {
+          __typename?: "Person";
+          id: string;
+          name: string;
+          images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+        };
   } | null;
 };
 
@@ -4411,8 +4518,18 @@ export type ResourceProposalsQuery = {
         primaryIntents?: Array<{
           __typename?: "Intent";
           provider?:
-            | { __typename?: "Organization"; id: string; name: string }
-            | { __typename?: "Person"; id: string; name: string }
+            | {
+                __typename?: "Organization";
+                id: string;
+                name: string;
+                images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+              }
+            | {
+                __typename?: "Person";
+                id: string;
+                name: string;
+                images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+              }
             | null;
         }> | null;
       };
@@ -4506,14 +4623,31 @@ export type SendEmailVerificationMutation = {
   personRequestEmailVerification: boolean;
 };
 
-export type SignInQueryVariables = Exact<{
+export type FetchSelfQueryVariables = Exact<{
   email: Scalars["String"];
   pubkey: Scalars["String"];
 }>;
 
-export type SignInQuery = {
+export type FetchSelfQuery = {
   __typename?: "RootQueryType";
-  personCheck: { __typename?: "Person"; name: string; user: string; email: string; id: string; isVerified: boolean };
+  personCheck: {
+    __typename?: "Person";
+    name: string;
+    user: string;
+    email: string;
+    id: string;
+    isVerified: boolean;
+    note?: string | null;
+    primaryLocation?: {
+      __typename?: "SpatialThing";
+      id: string;
+      name: string;
+      mappableAddress?: string | null;
+      lat?: any | null;
+      long?: any | null;
+    } | null;
+    images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+  };
 };
 
 export type SignUpMutationVariables = Exact<{

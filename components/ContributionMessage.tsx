@@ -20,6 +20,11 @@ import cn from "classnames";
 import useInBox, { Notification } from "hooks/useInBox";
 import MdParser from "lib/MdParser";
 import { ASK_RESOURCE_PRIMARY_ACCOUNTABLE } from "lib/QueryAndMutation";
+import {
+  AskResourcePrimaryAccountableQuery as ARPAQuery,
+  AskResourcePrimaryAccountableQueryVariables as ARPAQueryVariables,
+  Person,
+} from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -40,8 +45,7 @@ const ContributionMessage = ({
   id: number;
 }) => {
   const [ownerName, setOwnerName] = useState("");
-  const [userId, setUserId] = useState("");
-  const [originalResourceId, setOriginalResourceId] = useState("");
+  const [user, setUser] = useState<Partial<Person>>();
   const [originalResourceName, setOriginalResourceName] = useState("");
   const router = useRouter();
   const { t } = useTranslation("notificationProps");
@@ -53,16 +57,18 @@ const ContributionMessage = ({
     }
   }, [parsedMessage.originalResourceID]);
 
-  const { refetch: fetchUser } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
+  const { refetch: fetchUser } = useQuery<ARPAQuery, ARPAQueryVariables>(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
+
   const findResourceData = async (id: string) => {
     const { data } = await fetchUser({ id });
     const economicResource = data?.economicResource;
     if (!economicResource) return;
     setOwnerName(economicResource.primaryAccountable.name);
-    setUserId(economicResource.primaryAccountable.id);
-    setOriginalResourceId(economicResource.id);
+    // @ts-ignore
+    setUser(economicResource.primaryAccountable);
     setOriginalResourceName(economicResource.name);
   };
+
   const commonProps = {
     data,
     userId: sender,
@@ -84,7 +90,7 @@ const ContributionMessage = ({
           resourceName: originalResourceName,
           resourceId: addedAsContributorMessage.resourceID,
           userName: ownerName,
-          proposalId: userId,
+          proposalId: user?.id,
         };
       case MessageSubject.PROJECT_CITED:
       case MessageSubject.CONTRIBUTION_REQUEST:
@@ -120,9 +126,7 @@ const ContributionMessage = ({
         <p className="text-xs">{dayjs(m.data).format("HH:mm DD/MM/YYYY")}</p>
       </div>
       <div className="flex flex-row my-2 center">
-        <div className="mr-2">
-          <BrDisplayUser id={m.userId} name={m.userName} />
-        </div>
+        <div className="mr-2">{user && <BrDisplayUser user={user} />}</div>
         <div className="pt-3.5">
           <span className="mr-1">{headlinesDict[m.subject as MessageSubject]}</span>
           <Link href={`/project/${m.resourceId}`}>

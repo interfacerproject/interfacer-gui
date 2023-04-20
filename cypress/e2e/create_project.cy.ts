@@ -80,7 +80,7 @@ const checkUrl = (type: string) => {
 };
 
 const checkMainValues = (v: CompileMainValuesParams) => {
-  cy.get("#created-banner-content").should("exist");
+  cy.get("#success-banner-content").should("exist");
   cy.get("#is-owner-banner-content").should("exist");
   cy.get("#project-title").should("contain", v.title);
   cy.get("#project-overview").should("contain", v.description);

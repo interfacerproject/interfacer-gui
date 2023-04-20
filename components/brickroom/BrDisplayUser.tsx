@@ -14,36 +14,33 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Avatar from "boring-avatars";
-import Link from "next/link";
 import { LocationMarkerIcon } from "@heroicons/react/solid";
+import { PersonWithFileEssential } from "lib/types/extensions";
+import Link from "next/link";
+import BrUserAvatar from "./BrUserAvatar";
 
 type BrDisplayUserProps = {
-  id: string;
-  name: string;
-  location?: string;
+  user: Partial<PersonWithFileEssential>;
 };
 
 const BrDisplayUser = (props: BrDisplayUserProps) => {
+  const { user } = props;
+  const location = user.primaryLocation;
+
   return (
-    <Link href={`/profile/${props.id}`}>
+    <Link href={`/profile/${user.id}`}>
       <a className="flex items-center pl-0">
         <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
           <div className="w-12 rounded-full">
-            <Avatar
-              size={"full"}
-              name={props.name}
-              variant="beam"
-              colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
-            />
+            <BrUserAvatar user={user} size="48px"></BrUserAvatar>
           </div>
         </label>
         <div className="ml-4">
-          <h4 className="flex-auto">{props.name}</h4>
-          {props.location && (
+          <h4 className="flex-auto">{user.name}</h4>
+          {location && (
             <span className="flex items-center text-primary">
               <LocationMarkerIcon className="w-4 h-4 mr-1" />
-              {props.location}
+              {location.mappableAddress}
             </span>
           )}
         </div>
