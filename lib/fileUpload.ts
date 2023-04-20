@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import base64url from "base64url";
 import { IFile } from "lib/types";
 // @ts-ignore
 import signFile from "zenflows-crypto/src/sign_file.zen";
-import { zencode_exec, zenroom_hash_final, zenroom_hash_init, zenroom_hash_update } from "zenroom";
+import { zenroom_hash_final, zenroom_hash_init, zenroom_hash_update } from "zenroom";
 import devLog from "./devLog";
-import base64url from "base64url";
 
 //
 
@@ -66,19 +66,9 @@ export async function hashFile(ab: ArrayBuffer): Promise<string> {
 
 //
 
-export async function createFileSignature(hash: string, eddsa: string): Promise<string> {
-  const { result } = await zencode_exec(signFile, {
-    data: createZenData(hash),
-    keys: createZenKeys(eddsa),
-  });
-  return await JSON.parse(result).eddsa_signature;
-}
 
-//
-
-export async function prepFileForZenflows(file: File, eddsa: string): Promise<IFile> {
+export async function prepFileForZenflows(file: File): Promise<IFile> {
   const hash = await createFileHash(file);
-  const signature = await createFileSignature(hash, eddsa);
 
   return {
     name: file.name,
@@ -87,19 +77,18 @@ export async function prepFileForZenflows(file: File, eddsa: string): Promise<IF
     hash,
     mimeType: file.type,
     size: file.size,
-    signature,
   };
 }
 
 //
 
-export async function prepFilesForZenflows(images: Array<File>, eddsa: string): Promise<Array<IFile>> {
-  const prepImages: Array<IFile> = [];
-  for (let i of images) {
-    const image = await prepFileForZenflows(i, eddsa);
-    prepImages.push(image);
+export async function prepFilesForZenflows(files: Array<File>): Promise<Array<IFile>> {
+  const preppedFiles: Array<IFile> = [];
+  for (let f of files) {
+    const file = await prepFileForZenflows(f);
+    preppedFiles.push(file);
   }
-  return prepImages;
+  return preppedFiles;
 }
 
 //

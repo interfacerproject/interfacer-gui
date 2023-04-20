@@ -670,6 +670,13 @@ export type EconomicResourceUpdateParams = {
   repo?: InputMaybe<Scalars["String"]>;
 };
 
+export enum EmailTemplate {
+  InterfacerDebugging = "INTERFACER_DEBUGGING",
+  InterfacerDeployment = "INTERFACER_DEPLOYMENT",
+  InterfacerStaging = "INTERFACER_STAGING",
+  InterfacerTesting = "INTERFACER_TESTING",
+}
+
 export type File = {
   __typename?: "File";
   bin?: Maybe<Scalars["Base64"]>;
@@ -677,12 +684,10 @@ export type File = {
   description: Scalars["String"];
   extension: Scalars["String"];
   hash: Scalars["Url64"];
-  height?: Maybe<Scalars["Int"]>;
   mimeType: Scalars["String"];
   name: Scalars["String"];
-  signature: Scalars["String"];
+  signature?: Maybe<Scalars["String"]>;
   size: Scalars["Int"];
-  width?: Maybe<Scalars["Int"]>;
 };
 
 /** Mutation input structure for defining time durations. */
@@ -697,12 +702,9 @@ export type IFile = {
   description: Scalars["String"];
   extension: Scalars["String"];
   hash: Scalars["Url64"];
-  height?: InputMaybe<Scalars["Int"]>;
   mimeType: Scalars["String"];
   name: Scalars["String"];
-  signature: Scalars["String"];
   size: Scalars["Int"];
-  width?: InputMaybe<Scalars["Int"]>;
 };
 
 /**
@@ -777,8 +779,8 @@ export type Intent = {
    */
   hasPointInTime?: Maybe<Scalars["DateTime"]>;
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the intent, such as a photo. */
-  image?: Maybe<Scalars["Base64"]>;
+  /** The image files relevant to the intent, such as a photo. */
+  images?: Maybe<Array<File>>;
   /** Defines the process to which this intent is an input. */
   inputOf?: Maybe<Process>;
   /**
@@ -865,8 +867,8 @@ export type IntentCreateParams = {
    * and end.
    */
   hasPointInTime?: InputMaybe<Scalars["DateTime"]>;
-  /** The base64-encoded image binary relevant to the intent, such as a photo. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the intent, such as a photo. */
+  images?: InputMaybe<Array<IFile>>;
   /** (`Process`) Defines the process to which this intent is an input. */
   inputOf?: InputMaybe<Scalars["ID"]>;
   /**
@@ -958,8 +960,8 @@ export type IntentUpdateParams = {
    */
   hasPointInTime?: InputMaybe<Scalars["DateTime"]>;
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the intent, such as a photo. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the intent, such as a photo. */
+  images?: InputMaybe<Array<IFile>>;
   /** (`Process`) Defines the process to which this intent is an input. */
   inputOf?: InputMaybe<Scalars["ID"]>;
   /**
@@ -1158,6 +1160,8 @@ export type Person = Agent & {
   id: Scalars["ID"];
   /** The image files relevant to the agent, such as a logo, avatar, photo, etc. */
   images?: Maybe<Array<File>>;
+  /** Has the user verified their email address. */
+  isVerified: Scalars["Boolean"];
   /** The name that this agent will be referred to by. */
   name: Scalars["String"];
   /** A textual description or comment. */
@@ -1230,6 +1234,8 @@ export type PersonResponse = {
 
 export type PersonUpdateParams = {
   id: Scalars["ID"];
+  /** The image files relevant to the agent, such as a logo, avatar, photo, etc. */
+  images?: InputMaybe<Array<IFile>>;
   /** The name that this agent will be referred to by. */
   name?: InputMaybe<Scalars["String"]>;
   /** A textual description or comment. */
@@ -2057,8 +2063,8 @@ export type RecipeProcessUpdateParams = {
 export type RecipeResource = {
   __typename?: "RecipeResource";
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the entity, such as a photo, diagram, etc. */
-  image?: Maybe<Scalars["Base64"]>;
+  /** The image files relevant to the entity, such as a photo, diagram, etc. */
+  images?: Maybe<Array<File>>;
   /**
    * An informal or formal textual identifier for a recipe resource.  Does not
    * imply uniqueness.
@@ -2098,8 +2104,8 @@ export type RecipeResourceConnection = {
 };
 
 export type RecipeResourceCreateParams = {
-  /** The base64-encoded image binary relevant to the entity, such as a photo, diagram, etc. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the entity, such as a photo, diagram, etc. */
+  images?: InputMaybe<Array<IFile>>;
   /**
    * An informal or formal textual identifier for a recipe resource.  Does not
    * imply uniqueness.
@@ -2142,8 +2148,8 @@ export type RecipeResourceResponse = {
 
 export type RecipeResourceUpdateParams = {
   id: Scalars["ID"];
-  /** The base64-encoded image binary relevant to the entity, such as a photo, diagram, etc. */
-  image?: InputMaybe<Scalars["Base64"]>;
+  /** The image files relevant to the entity, such as a photo, diagram, etc. */
+  images?: InputMaybe<Array<IFile>>;
   /**
    * An informal or formal textual identifier for a recipe resource.  Does not
    * imply uniqueness.
@@ -2382,6 +2388,17 @@ export type RootMutationType = {
   /** Import repositories from a softwarepassport instance. */
   importRepos?: Maybe<Scalars["String"]>;
   keypairoomServer: Scalars["String"];
+  /**
+   * Send an email verification request to the user via email using email address if
+   * available, else fails (some users are registered by admin without an email
+   * address).
+   */
+  personRequestEmailVerification: Scalars["Boolean"];
+  /**
+   * Verify an email verification request of the user using the token provided in
+   * the verification request.
+   */
+  personVerifyEmailVerification: Scalars["Boolean"];
   /**
    * Include an existing intent as part of a proposal.
    * @param publishedIn the (`Proposal`) to include the intent in
@@ -2630,6 +2647,14 @@ export type RootMutationTypeImportReposArgs = {
 export type RootMutationTypeKeypairoomServerArgs = {
   firstRegistration: Scalars["Boolean"];
   userData: Scalars["String"];
+};
+
+export type RootMutationTypePersonRequestEmailVerificationArgs = {
+  template: EmailTemplate;
+};
+
+export type RootMutationTypePersonVerifyEmailVerificationArgs = {
+  token: Scalars["String"];
 };
 
 export type RootMutationTypeProposeIntentArgs = {
@@ -3642,6 +3667,7 @@ export type SearchPeopleQuery = {
         name: string;
         user: string;
         note?: string | null;
+        images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
         primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
       };
     }>;
@@ -3668,6 +3694,60 @@ export type GetTagsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
 
+export type UpdateUserMutationVariables = Exact<{
+  id: Scalars["ID"];
+  name?: InputMaybe<Scalars["String"]>;
+  note?: InputMaybe<Scalars["String"]>;
+  primaryLocation?: InputMaybe<Scalars["ID"]>;
+  user?: InputMaybe<Scalars["String"]>;
+  images?: InputMaybe<Array<IFile> | IFile>;
+}>;
+
+export type UpdateUserMutation = {
+  __typename?: "RootMutationType";
+  updatePerson: {
+    __typename?: "PersonResponse";
+    agent: {
+      __typename?: "Person";
+      id: string;
+      name: string;
+      note?: string | null;
+      images?: Array<{ __typename?: "File"; name: string }> | null;
+      primaryLocation?: {
+        __typename?: "SpatialThing";
+        id: string;
+        lat?: any | null;
+        long?: any | null;
+        name: string;
+      } | null;
+    };
+  };
+};
+
+export type GetUserImagesQueryVariables = Exact<{
+  userId: Scalars["ID"];
+}>;
+
+export type GetUserImagesQuery = {
+  __typename?: "RootQueryType";
+  person?: {
+    __typename?: "Person";
+    id: string;
+    name: string;
+    images?: Array<{
+      __typename?: "File";
+      bin?: any | null;
+      mimeType: string;
+      date: any;
+      description: string;
+      extension: string;
+      hash: any;
+      name: string;
+      size: number;
+    }> | null;
+  } | null;
+};
+
 export type GetPersonQueryVariables = Exact<{
   id: Scalars["ID"];
 }>;
@@ -3679,6 +3759,7 @@ export type GetPersonQuery = {
     id: string;
     name: string;
     user: string;
+    images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
     primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
   } | null;
 };
@@ -3711,6 +3792,41 @@ export type GetProjectLayoutQuery = {
       long?: any | null;
     } | null;
     images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+  } | null;
+};
+
+export type GetUserLayoutQueryVariables = Exact<{
+  id: Scalars["ID"];
+}>;
+
+export type GetUserLayoutQuery = {
+  __typename?: "RootQueryType";
+  person?: {
+    __typename?: "Person";
+    id: string;
+    name: string;
+    note?: string | null;
+    email: string;
+    user: string;
+    ethereumAddress?: string | null;
+    images?: Array<{
+      __typename?: "File";
+      hash: any;
+      name: string;
+      mimeType: string;
+      bin?: any | null;
+      size: number;
+      extension: string;
+      description: string;
+    }> | null;
+    primaryLocation?: {
+      __typename?: "SpatialThing";
+      id: string;
+      name: string;
+      mappableAddress?: string | null;
+      lat?: any | null;
+      long?: any | null;
+    } | null;
   } | null;
 };
 
@@ -3946,6 +4062,7 @@ export type GetAgentsQuery = {
         id: string;
         name: string;
         note?: string | null;
+        images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
         primaryLocation?: { __typename?: "SpatialThing"; id: string; name: string } | null;
       };
     }>;
@@ -4091,8 +4208,22 @@ export type FetchInventoryQuery = {
         } | null;
         images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
         primaryAccountable:
-          | { __typename?: "Organization"; id: string; name: string; note?: string | null }
-          | { __typename?: "Person"; id: string; name: string; note?: string | null };
+          | {
+              __typename?: "Organization";
+              id: string;
+              name: string;
+              note?: string | null;
+              images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+              primaryLocation?: { __typename?: "SpatialThing"; name: string } | null;
+            }
+          | {
+              __typename?: "Person";
+              id: string;
+              name: string;
+              note?: string | null;
+              images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+              primaryLocation?: { __typename?: "SpatialThing"; name: string } | null;
+            };
         custodian:
           | { __typename?: "Organization"; id: string; name: string; note?: string | null }
           | { __typename?: "Person"; id: string; name: string; note?: string | null };
@@ -4350,10 +4481,21 @@ export type AskResourcePrimaryAccountableQuery = {
   __typename?: "RootQueryType";
   economicResource?: {
     __typename?: "EconomicResource";
+    id: string;
     name: string;
     primaryAccountable:
-      | { __typename?: "Organization"; id: string; name: string }
-      | { __typename?: "Person"; id: string; name: string };
+      | {
+          __typename?: "Organization";
+          id: string;
+          name: string;
+          images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+        }
+      | {
+          __typename?: "Person";
+          id: string;
+          name: string;
+          images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+        };
   } | null;
 };
 
@@ -4376,8 +4518,18 @@ export type ResourceProposalsQuery = {
         primaryIntents?: Array<{
           __typename?: "Intent";
           provider?:
-            | { __typename?: "Organization"; id: string; name: string }
-            | { __typename?: "Person"; id: string; name: string }
+            | {
+                __typename?: "Organization";
+                id: string;
+                name: string;
+                images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+              }
+            | {
+                __typename?: "Person";
+                id: string;
+                name: string;
+                images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+              }
             | null;
         }> | null;
       };
@@ -4461,6 +4613,74 @@ export type RelocateProjectMutation = {
   pickup: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
   dropoff: { __typename?: "EconomicEventResponse"; economicEvent: { __typename?: "EconomicEvent"; id: string } };
 };
+
+export type SendEmailVerificationMutationVariables = Exact<{
+  template: EmailTemplate;
+}>;
+
+export type SendEmailVerificationMutation = {
+  __typename?: "RootMutationType";
+  personRequestEmailVerification: boolean;
+};
+
+export type FetchSelfQueryVariables = Exact<{
+  email: Scalars["String"];
+  pubkey: Scalars["String"];
+}>;
+
+export type FetchSelfQuery = {
+  __typename?: "RootQueryType";
+  personCheck: {
+    __typename?: "Person";
+    name: string;
+    user: string;
+    email: string;
+    id: string;
+    isVerified: boolean;
+    note?: string | null;
+    primaryLocation?: {
+      __typename?: "SpatialThing";
+      id: string;
+      name: string;
+      mappableAddress?: string | null;
+      lat?: any | null;
+      long?: any | null;
+    } | null;
+    images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
+  };
+};
+
+export type SignUpMutationVariables = Exact<{
+  name: Scalars["String"];
+  user: Scalars["String"];
+  email: Scalars["String"];
+  eddsaPublicKey: Scalars["String"];
+  reflowPublicKey: Scalars["String"];
+  ethereumAddress: Scalars["String"];
+  ecdhPublicKey: Scalars["String"];
+  bitcoinPublicKey: Scalars["String"];
+}>;
+
+export type SignUpMutation = {
+  __typename?: "RootMutationType";
+  createPerson: {
+    __typename?: "PersonResponse";
+    agent: {
+      __typename?: "Person";
+      id: string;
+      name: string;
+      user: string;
+      email: string;
+      eddsaPublicKey?: string | null;
+    };
+  };
+};
+
+export type VerifyEmailMutationVariables = Exact<{
+  token: Scalars["String"];
+}>;
+
+export type VerifyEmailMutation = { __typename?: "RootMutationType"; personVerifyEmailVerification: boolean };
 
 export type EditMainMutationVariables = Exact<{
   id: Scalars["ID"];

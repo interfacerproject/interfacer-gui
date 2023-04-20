@@ -1,7 +1,7 @@
 import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import SelectTags2 from "components/SelectTags2";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import SelectTags2 from "components/SelectTags2";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import getIdFromFormName from "lib/getIdFromFormName";
 import { isRequired } from "lib/isFieldRequired";
@@ -73,6 +73,7 @@ export default function MainStep() {
             value={value}
             autoComplete="off"
             onChange={onChange}
+            focused={true}
             onBlur={onBlur}
             label={t("Project title")}
             helpText={t("A clear and concise name for your project that summarizes its purpose or main focus.")}
