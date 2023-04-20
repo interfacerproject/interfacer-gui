@@ -2,7 +2,8 @@ import { gql, useQuery } from "@apollo/client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
 import { SelectOption } from "components/types";
-import { Person, PersonFilterParams, SearchPeopleQuery, SearchPeopleQueryVariables } from "lib/types";
+import { PersonFilterParams, SearchPeopleQuery, SearchPeopleQueryVariables } from "lib/types";
+import { PersonWithFileEssential } from "lib/types/extensions";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
@@ -10,7 +11,7 @@ import BrUserAvatar from "./brickroom/BrUserAvatar";
 //
 
 export interface Props {
-  onSelect?: (value: Partial<Person>) => void;
+  onSelect?: (value: Partial<PersonWithFileEssential>) => void;
   excludeIDs?: Array<string>;
   label?: string;
   placeholder?: string;
@@ -53,7 +54,7 @@ export default function SearchUsers(props: Props) {
       return {
         value: person.node.id,
         label: `${person.node.user} (${person.node.name})`,
-        media: <BrUserAvatar name={person.node.name} size={24} />,
+        media: <BrUserAvatar user={person.node} size="24px" />,
       };
     });
 
@@ -68,7 +69,7 @@ export default function SearchUsers(props: Props) {
 
   /* Handling selection */
 
-  function getPersonFromData(id: string): Partial<Person> | undefined {
+  function getPersonFromData(id: string): Partial<PersonWithFileEssential> | undefined {
     const person = data?.people?.edges.find(person => person.node.id === id);
     return person?.node;
   }
@@ -110,6 +111,10 @@ export const SEARCH_PEOPLE = gql`
           name
           user
           note
+          images {
+            bin
+            mimeType
+          }
           primaryLocation {
             id
             name

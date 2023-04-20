@@ -40,10 +40,8 @@ const ContributionsTable = ({ id, title }: { id: string; title?: string }) => {
             <Link href={`/proposal/${proposal.node.id}`} key={proposal.node.id}>
               <tr className="cursor-pointer">
                 <td>
-                  <BrDisplayUser
-                    id={proposal.node.primaryIntents![0].provider?.id!}
-                    name={proposal.node.primaryIntents![0].provider?.name!}
-                  />
+                  {/* @ts-ignore */}
+                  <BrDisplayUser user={proposal.node.primaryIntents![0].provider!} />
                 </td>
                 <td>{proposal.node.note}</td>
                 <td>
