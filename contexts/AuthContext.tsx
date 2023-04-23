@@ -31,7 +31,8 @@ import { PersonWithFileEssential } from "lib/types/extensions";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
-import keypairoomClient from "../zenflows-crypto/src/keypairoomClient-8-9-10-11-12";
+//@ts-ignore
+import keypairoomClient from "zenflows-crypto/src/keypairoomClient-8-9-10-11-12.zen";
 
 /* Definitions */
 

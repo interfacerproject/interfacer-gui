@@ -16,6 +16,8 @@
 
 import base64url from "base64url";
 import { IFile } from "lib/types";
+// @ts-ignore
+import signFile from "zenflows-crypto/src/sign_file.zen";
 import { zenroom_hash_final, zenroom_hash_init, zenroom_hash_update } from "zenroom";
 import devLog from "./devLog";
 
@@ -63,6 +65,7 @@ export async function hashFile(ab: ArrayBuffer): Promise<string> {
 }
 
 //
+
 
 export async function prepFileForZenflows(file: File): Promise<IFile> {
   const hash = await createFileHash(file);
