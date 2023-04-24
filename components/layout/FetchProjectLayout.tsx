@@ -47,7 +47,7 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
         </div>
       </div>
     );
-  if (!project) return null;
+  if (!project) router.push("/404");
 
   const contextValue: ProjectContextValue = {
     project,
