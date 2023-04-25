@@ -305,6 +305,10 @@ export const FETCH_AGENTS = gql`
           id
           name
           note
+          images {
+            bin
+            mimeType
+          }
           primaryLocation {
             id
             name
@@ -465,6 +469,13 @@ export const FETCH_RESOURCES = gql`
             id
             name
             note
+            images {
+              bin
+              mimeType
+            }
+            primaryLocation {
+              name
+            }
           }
           custodian {
             id
@@ -914,10 +925,15 @@ export const REJECT_PROPOSAL = gql`
 export const ASK_RESOURCE_PRIMARY_ACCOUNTABLE = gql`
   query askResourcePrimaryAccountable($id: ID!) {
     economicResource(id: $id) {
+      id
       name
       primaryAccountable {
         id
         name
+        images {
+          bin
+          mimeType
+        }
       }
     }
   }
@@ -936,6 +952,10 @@ export const QUERY_RESOURCE_PROPOSAlS = gql`
             provider {
               id
               name
+              images {
+                bin
+                mimeType
+              }
             }
           }
         }
@@ -1089,6 +1109,70 @@ export const RELOCATE_PROJECT = gql`
     ) {
       economicEvent {
         id
+      }
+    }
+  }
+`;
+
+export const SEND_EMAIL_VERIFICATION = gql`
+  mutation SendEmailVerification($template: EmailTemplate!) {
+    personRequestEmailVerification(template: $template)
+  }
+`;
+
+export const FETCH_SELF = gql`
+  query FetchSelf($email: String!, $pubkey: String!) {
+    personCheck(email: $email, eddsaPublicKey: $pubkey) {
+      name
+      user
+      email
+      primaryLocation {
+        id
+        name
+        mappableAddress
+        lat
+        long
+      }
+      id
+      isVerified
+      note
+      images {
+        bin
+        mimeType
+      }
+    }
+  }
+`;
+
+export const SIGN_UP = gql`
+  mutation SignUp(
+    $name: String!
+    $user: String!
+    $email: String!
+    $eddsaPublicKey: String!
+    $reflowPublicKey: String!
+    $ethereumAddress: String!
+    $ecdhPublicKey: String!
+    $bitcoinPublicKey: String!
+  ) {
+    createPerson(
+      person: {
+        name: $name
+        user: $user
+        email: $email
+        eddsaPublicKey: $eddsaPublicKey
+        reflowPublicKey: $reflowPublicKey
+        ethereumAddress: $ethereumAddress
+        ecdhPublicKey: $ecdhPublicKey
+        bitcoinPublicKey: $bitcoinPublicKey
+      }
+    ) {
+      agent {
+        id
+        name
+        user
+        email
+        eddsaPublicKey
       }
     }
   }

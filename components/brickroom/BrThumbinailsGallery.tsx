@@ -41,10 +41,10 @@ const BrThumbinailsGallery = ({ images }: { images: string[] | undefined }) => {
     );
 
   return (
-    <>
-      <div className="h-96 rounded-lg overflow-hidden" id="images-gallery">
+    <div className="max-w-3xl">
+      <div className="h-96 rounded-lg overflow-hidden w-full" id="images-gallery">
         {/* Single image */}
-        {images.length === 1 && <img className="w-full h-full fit  rounded-xl object-contain" src={images[0]} alt="" />}
+        {images.length === 1 && <img className="w-full h-full fit rounded-xl object-contain" src={images[0]} alt="" />}
 
         {/* Multiple images */}
         {images.length > 1 && (
@@ -57,7 +57,7 @@ const BrThumbinailsGallery = ({ images }: { images: string[] | undefined }) => {
             >
               {images.map((image, index) => (
                 <SwiperSlide key={index}>
-                  <img src={image} alt="" />
+                  <img src={image} alt="" style={{ objectFit: "contain" }} />
                 </SwiperSlide>
               ))}
             </Swiper>
@@ -83,7 +83,7 @@ const BrThumbinailsGallery = ({ images }: { images: string[] | undefined }) => {
           </Swiper>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

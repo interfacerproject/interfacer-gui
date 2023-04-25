@@ -16,75 +16,85 @@
 
 import { ApolloProvider, gql } from "@apollo/client";
 import useStorage from "hooks/useStorage";
+import { FETCH_SELF, SEND_EMAIL_VERIFICATION, SIGN_UP } from "lib/QueryAndMutation";
 import createApolloClient from "lib/createApolloClient";
+import {
+  EmailTemplate,
+  FetchSelfQuery,
+  FetchSelfQueryVariables,
+  SendEmailVerificationMutation,
+  SendEmailVerificationMutationVariables,
+  SignUpMutation,
+  SignUpMutationVariables,
+} from "lib/types";
+import { PersonWithFileEssential } from "lib/types/extensions";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
-import keypairoomClient from "../zenflows-crypto/src/keypairoomClient-8-9-10-11-12";
+//@ts-ignore
+import keypairoomClient from "zenflows-crypto/src/keypairoomClient-8-9-10-11-12.zen";
 
-export const AuthContext = createContext(
-  {} as {
-    user: User | null;
-    login: ({ email }: { email: string }) => Promise<void>;
-    logout: (redirect?: string) => void;
-    authenticated: boolean;
-    loading: boolean;
-    authenticationProcess: boolean;
-    register: (email: string, firstRegistration: boolean) => Promise<any>;
-    keypair: ({
-      question1,
-      question2,
-      question3,
-      question4,
-      question5,
-      email,
-      HMAC,
-    }: {
-      question1: string;
-      question2: string;
-      question3: string;
-      question4: string;
-      question5: string;
-      email: string;
-      HMAC: string;
-    }) => Promise<void>;
-    signup: ({
-      name,
-      user,
-      email,
-      eddsaPublicKey,
-      ethereumAddress,
-      ecdhPublicKey,
-      reflowPublicKey,
-      bitcoinPublicKey,
-    }: {
-      name: string;
-      user: string;
-      email: string;
-      eddsaPublicKey: string;
-      ethereumAddress: string;
-      ecdhPublicKey: string;
-      reflowPublicKey: string;
-      bitcoinPublicKey: string;
-    }) => Promise<void>;
-  }
-);
+/* Definitions */
 
-export type User = {
+export interface User extends PersonWithFileEssential {
   ulid: string;
-  email: string;
   username: string;
-  name: string;
   publicKey: string;
   privateKey: string;
-};
+  profileUrl: string;
+}
+
+type LoginFn = (props: { email: string }) => Promise<void>;
+type LogoutFn = (redirect?: string) => void;
+type RegisterFn = (email: string, firstRegistration: boolean) => Promise<any>;
+
+interface KeypairFnProps {
+  question1: string;
+  question2: string;
+  question3: string;
+  question4: string;
+  question5: string;
+  email: string;
+  HMAC: string;
+}
+type KeypairFn = (props: KeypairFnProps) => Promise<void>;
+
+interface SignupFnProps {
+  name: string;
+  user: string;
+  email: string;
+  eddsaPublicKey: string;
+  ethereumAddress: string;
+  ecdhPublicKey: string;
+  reflowPublicKey: string;
+  bitcoinPublicKey: string;
+}
+type SignupFn = (props: SignupFnProps) => Promise<void>;
+
+interface AuthContextValue {
+  user: User | null;
+  authenticated: boolean;
+  loading: boolean;
+  isAuthenticationProcess: () => boolean;
+  login: LoginFn;
+  logout: LogoutFn;
+  register: RegisterFn;
+  keypair: KeypairFn;
+  signup: SignupFn;
+  sendEmailVerification: () => Promise<void>;
+}
+
+/* Context */
+
+export const AuthContext = createContext<AuthContextValue>({} as AuthContextValue);
 
 export const AuthProvider = ({ children, publicPage = false }: any) => {
   const { getItem, setItem, clear } = useStorage();
-  const [authenticated, setAuthenticated] = useState(false);
-  const [user, setUser] = useState(null as User | null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  const [authenticated, setAuthenticated] = useState<AuthContextValue["authenticated"]>(false);
+  const [user, setUser] = useState<AuthContextValue["user"]>(null);
+  const [loading, setLoading] = useState<AuthContextValue["loading"]>(true);
 
   const isAuthenticationProcess = () => {
     const path = router.asPath;
@@ -94,23 +104,40 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
 
   useEffect(() => {
     const privateKey = getItem("eddsaPrivateKey");
-    const username = getItem("authUsername");
+    const email = getItem("authEmail");
+    const pubkey = getItem("eddsaPublicKey");
 
-    if (Boolean(privateKey) && Boolean(username)) {
-      const ulid = getItem("authId") as string;
-      const name = getItem("authName") as string;
-      const email = getItem("authEmail") as string;
-      const publicKey = getItem("eddsaPublicKey") as string;
+    if (Boolean(privateKey) && Boolean(email)) {
       setAuthenticated(true);
-      setUser({
-        ulid,
-        email,
-        username,
-        name,
-        privateKey,
-        publicKey,
-      });
-      setLoading(false);
+      const client = createApolloClient(authenticated);
+
+      const fetchUser = async () => {
+        const { data } = await client.query<FetchSelfQuery, FetchSelfQueryVariables>({
+          query: FETCH_SELF,
+          variables: { email, pubkey },
+        });
+        const user = data.personCheck!;
+
+        setUser({
+          id: user.id,
+          ulid: user.id,
+          email,
+          user: user.user,
+          username: user.user,
+          name: user.name,
+          privateKey: getItem("eddsaPrivateKey") as string,
+          publicKey: pubkey,
+          profileUrl: `/profile/${user.id}`,
+          note: user.note,
+          images: user.images || [],
+          primaryLocation: user.primaryLocation,
+          isVerified: user.isVerified,
+        });
+
+        setLoading(false);
+      };
+
+      fetchUser();
       return;
     } else {
       if (!publicPage) {
@@ -121,9 +148,8 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     }
   }, [router.asPath]);
 
-  const login = async ({ email }: { email: string }) => {
+  const login: LoginFn = async ({ email }) => {
     if (authenticated) return;
-
     const client = createApolloClient(false);
     const publicKey = getItem("eddsaPublicKey") as string;
     const SignInMutation = gql`
@@ -147,18 +173,10 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
         setItem("authUsername", data?.personCheck.user);
         setItem("authEmail", data?.personCheck.email);
         setAuthenticated(true);
-        setUser({
-          ulid: data?.personCheck.id,
-          email,
-          username: data?.personCheck.user,
-          name: data?.personCheck.name,
-          privateKey: getItem("eddsaPrivateKey") as string,
-          publicKey,
-        });
       });
   };
 
-  const register = async (email: string, firstRegistration: boolean) => {
+  const register: RegisterFn = async (email, firstRegistration) => {
     const client = createApolloClient(false);
     const KEYPAIROOM_SERVER_MUTATION = gql`mutation {keypairoomServer(firstRegistration: ${firstRegistration}, userData: "{\\"email\\": \\"${email}\\"}")}`;
     try {
@@ -175,23 +193,9 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     }
   };
 
-  const keypair = async ({
-    question1,
-    question2,
-    question3,
-    question4,
-    question5,
-    email,
-    HMAC,
-  }: {
-    question1: string;
-    question2: string;
-    question3: string;
-    question4: string;
-    question5: string;
-    email: string;
-    HMAC: string;
-  }) => {
+  const keypair: KeypairFn = async props => {
+    const { question1, question2, question3, question4, question5, email, HMAC } = props;
+
     const zenData = `
             {
                 "userChallenges": {
@@ -205,82 +209,83 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
                 "seedServerSideShard.HMAC": "${HMAC}"
             }`;
 
-    return await zencode_exec(keypairoomClient, { data: zenData }).then(({ result }) => {
-      const res = JSON.parse(result);
-      setItem("eddsaPrivateKey", res.keyring.eddsa);
-      setItem("ethereumPrivateKey", res.keyring.ethereum);
-      setItem("reflowPrivateKey", res.keyring.reflow);
-      setItem("bitcoinPrivateKey", res.keyring.bitcoin);
-      setItem("ecdhPrivateKey", res.keyring.ecdh);
-      setItem("seed", res.seed);
-      setItem("ecdhPublicKey", res.ecdh_public_key);
-      setItem("bitcoinPublicKey", res.bitcoin_public_key);
-      setItem("eddsaPublicKey", res.eddsa_public_key);
-      setItem("reflowPublicKey", res.reflow_public_key);
-      setItem("ethereumAddress", res.ethereum_address);
-    });
+    const { result } = await zencode_exec(keypairoomClient, { data: zenData });
+    const parsedResult = JSON.parse(result);
+
+    setItem("eddsaPrivateKey", parsedResult.keyring.eddsa);
+    setItem("ethereumPrivateKey", parsedResult.keyring.ethereum);
+    setItem("reflowPrivateKey", parsedResult.keyring.reflow);
+    setItem("bitcoinPrivateKey", parsedResult.keyring.bitcoin);
+    setItem("ecdhPrivateKey", parsedResult.keyring.ecdh);
+    setItem("seed", parsedResult.seed);
+    setItem("ecdhPublicKey", parsedResult.ecdh_public_key);
+    setItem("bitcoinPublicKey", parsedResult.bitcoin_public_key);
+    setItem("eddsaPublicKey", parsedResult.eddsa_public_key);
+    setItem("reflowPublicKey", parsedResult.reflow_public_key);
+    setItem("ethereumAddress", parsedResult.ethereum_address);
   };
 
-  const signup = async ({
-    name,
-    user,
-    email,
-    eddsaPublicKey,
-    ethereumAddress,
-    ecdhPublicKey,
-    reflowPublicKey,
-    bitcoinPublicKey,
-  }: {
-    name: string;
-    user: string;
-    email: string;
-    eddsaPublicKey: string;
-    reflowPublicKey: string;
-    ethereumAddress: string;
-    ecdhPublicKey: string;
-    bitcoinPublicKey: string;
-  }) => {
+  const signup: SignupFn = async props => {
     const client = createApolloClient(false);
-    const SignUpMutation = gql`mutation  {
-              createPerson(person: {
-                name: "${name}"
-                user: "${user}"
-                email: "${email}"
-                eddsaPublicKey: "${eddsaPublicKey}"
-                reflowPublicKey: "${reflowPublicKey}"
-                ethereumAddress: "${ethereumAddress}"
-                ecdhPublicKey: "${ecdhPublicKey}"
-                bitcoinPublicKey: "${bitcoinPublicKey}"
-              }) {
-              agent{
-                id
-                name
-                user
-                email
-                eddsaPublicKey
-              }
-              }
-            }`;
-
-    await client
-      .mutate({
-        mutation: SignUpMutation,
-        context: {
-          headers: { "zenflows-admin": process.env.NEXT_PUBLIC_ZENFLOWS_ADMIN },
-        },
-      })
-      .then(({ data }) => {
-        setItem("authId", data?.createPerson.agent.id);
-        setItem("authName", data?.createPerson.agent.name);
-        setItem("authUsername", data?.createPerson.agent.user);
-        setItem("authEmail", data?.createPerson.agent.email);
-      });
+    const { data } = await client.mutate<SignUpMutation, SignUpMutationVariables>({
+      mutation: SIGN_UP,
+      variables: props,
+      context: {
+        headers: { "zenflows-admin": process.env.NEXT_PUBLIC_ZENFLOWS_ADMIN },
+      },
+    });
+    const agent = data?.createPerson.agent;
+    if (!agent) return;
+    setItem("authId", agent.id);
+    setItem("authName", agent.name);
+    setItem("authUsername", agent.user);
+    setItem("authEmail", agent.email);
   };
 
-  const logout = (redirect = "/sign_in") => {
+  const logout: LogoutFn = (redirect = "/sign_in") => {
     clear();
-    router.push(redirect || "/sign_in", undefined, { shallow: true });
+    setUser(null);
+    router.push(redirect);
   };
+
+  /* Email verification */
+
+  const SEND_EMAIL_VERIFICATION_TEMPLATES: Array<{ template: EmailTemplate; url: string }> = [
+    {
+      template: EmailTemplate.InterfacerTesting,
+      url: "https://gateway0.interfacer.dyne.org",
+    },
+    {
+      template: EmailTemplate.InterfacerStaging,
+      url: "https://gateway1.interfacer.dyne.org",
+    },
+  ];
+
+  function getEmailVerificationTemplateFromEnv() {
+    for (let t of SEND_EMAIL_VERIFICATION_TEMPLATES) {
+      if (process.env.BASE_URL === t.url) {
+        return t.template;
+      }
+    }
+    return EmailTemplate.InterfacerTesting;
+  }
+
+  async function sendEmailVerification() {
+    if (!authenticated) {
+      throw new Error("User not authenticated");
+    }
+
+    const client = createApolloClient(authenticated);
+
+    await client.mutate<SendEmailVerificationMutation, SendEmailVerificationMutationVariables>({
+      mutation: SEND_EMAIL_VERIFICATION,
+      variables: {
+        template: getEmailVerificationTemplateFromEnv(),
+      },
+    });
+  }
+
+  //
 
   return (
     <AuthContext.Provider
@@ -290,10 +295,11 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
         loading,
         logout,
         login,
-        authenticationProcess: isAuthenticationProcess(),
+        isAuthenticationProcess,
         register,
         signup,
         keypair,
+        sendEmailVerification,
       }}
     >
       {loading ? (

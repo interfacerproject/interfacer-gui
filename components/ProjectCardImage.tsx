@@ -15,37 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { File } from "lib/types";
+import ProjectTypeRoundIcon from "./ProjectTypeRoundIcon";
 import { ProjectType } from "./types";
-
-import DesignIcon from "public/project-icons/design.svg";
-import ProductIcon from "public/project-icons/product.svg";
-import ServiceIcon from "public/project-icons/service.svg";
 
 interface Props {
   image: File | string | undefined;
-  className?: string;
   projectType?: ProjectType;
 }
 
 const ProjectImage = (props: Props) => {
-  const { image, className, projectType } = props;
-
-  const icons: Record<ProjectType, string> = {
-    [ProjectType.DESIGN]: DesignIcon.src,
-    [ProjectType.PRODUCT]: ProductIcon.src,
-    [ProjectType.SERVICE]: ServiceIcon.src,
-  };
+  const { image, projectType } = props;
 
   const src = typeof image === "string" ? image : `data:${image?.mimeType};base64,${image?.bin}`;
 
   return (
-    <div className="w-full h-60 bg-base-300 rounded-lg">
+    <div className="h-60 bg-base-200 rounded-lg flex items-center justify-center overflow-hidden">
       {!image && projectType && (
-        <div className="w-full h-full flex items-center justify-center opacity-50">
-          <img className="h-20 w-20" src={icons[projectType]} alt={`${projectType} icon`} />
+        <div className="opacity-40">
+          <ProjectTypeRoundIcon projectType={projectType} />
         </div>
       )}
-      {image && src && <img src={src} className={className} alt="" />}
+      {image && src && <img src={src} className="w-full h-full object-cover" alt="" />}
     </div>
   );
 };

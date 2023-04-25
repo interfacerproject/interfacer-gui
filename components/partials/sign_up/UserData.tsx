@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Functionality
-import { useTranslation } from "next-i18next";
-import { ChangeEvent } from "react";
 import { useAuth } from "hooks/useAuth";
+import { useTranslation } from "next-i18next";
 
 // Form imports
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -116,6 +115,7 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
               autoComplete="off"
               onChange={onChange}
               onBlur={onBlur}
+              focused={true}
               label={t("Your email")}
               helpText={t("Your email address that will be used for your login")}
               placeholder={t("alice@email&#183;com")}

@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { zencode_exec } from "zenroom";
-import sign from "../zenflows-crypto/src/sign_graphql";
+//@ts-ignore
+import sign from "zenflows-crypto/src/sign_graphql.zen";
 import { useAuth } from "./useAuth";
 import useStorage from "./useStorage";
 
@@ -25,7 +26,7 @@ const useSignedPost = (idInHeader?: boolean) => {
   const signRequest = async (json: string) => {
     const data = `{"gql": "${Buffer.from(json, "utf8").toString("base64")}"}`;
     const keys = `{"keyring": {"eddsa": "${getItem("eddsaPrivateKey")}"}}`;
-    const { result } = await zencode_exec(sign(), { data, keys });
+    const { result } = await zencode_exec(sign, { data, keys });
     const headers: { "zenflows-sign": string; "zenflows-id"?: string } = {
       "zenflows-sign": JSON.parse(result).eddsa_signature,
     };
