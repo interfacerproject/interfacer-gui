@@ -114,18 +114,16 @@ export default function PFileUpload(props: Props) {
   /* Rendering */
 
   const fileDisplay = (file: File) => (
-    <div className="flex flex-row justify-between" key={file.name}>
-      <div className="flex flex-row items-center">
-        <Thumbnail size="small" alt={file.name} source={window.URL.createObjectURL(file)} />
+    <div className="flex flex-row justify-between space-x-3" key={file.name}>
+      <Thumbnail size="small" alt={file.name} source={window.URL.createObjectURL(file)} />
 
-        <div className="ml-3">
-          <Text variant="bodyMd" as="p">
-            {file.name}
-          </Text>
-          <Text variant="bodySm" as="p">
-            {file.size} {"bytes"}
-          </Text>
-        </div>
+      <div className="whitespace-nowrap w-0 grow flex flex-col overflow-hidden">
+        <Text variant="bodyMd" as="p">
+          {file.name}
+        </Text>
+        <Text variant="bodySm" as="p">
+          {file.size} {"bytes"}
+        </Text>
       </div>
 
       <div
