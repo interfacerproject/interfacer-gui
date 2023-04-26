@@ -37,7 +37,6 @@ import LoadingOverlay from "components/LoadingOverlay";
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormProvider, useForm } from "react-hook-form";
-import useFormPersist from "react-hook-form-persist";
 import * as yup from "yup";
 import useStorage from "hooks/useStorage";
 
@@ -114,14 +113,7 @@ export default function CreateProjectForm(props: Props) {
     },
   });
 
-  const { handleSubmit, watch, setValue, getValues } = formMethods;
-
-  useFormPersist("creationForm", {
-    watch,
-    setValue,
-    storage: window.localStorage,
-    exclude: ["images"],
-  });
+  const { handleSubmit } = formMethods;
 
   async function onSubmit(values: CreateProjectValues) {
     setLoading(true);
