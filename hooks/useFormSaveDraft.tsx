@@ -13,7 +13,8 @@ const useFormSaveDraft = (name?: string, basePath = "/create/project", prefix = 
   const router = useRouter();
   const [hasDraftChange, setHasDraftChange] = useState(false);
   const { draft_name } = router.query;
-  const draftName = draft_name || name;
+  //@ts-ignore
+  const draftName = draft_name?.split("-")[3] || name;
   const { isDirty } = formState || {};
   const formValues = JSON.stringify(getValues && getValues());
   const draft = getItem(prefix + String(draftName));
@@ -25,7 +26,10 @@ const useFormSaveDraft = (name?: string, basePath = "/create/project", prefix = 
   const onSaveDraft = () => {
     setItem(prefix + String(draftName), JSON.stringify(getValues()));
     setHasDraftChange(false);
-    router.query["draft_saved"] = "true";
+    router.query = {
+      draft_saved: "true",
+      draft_name: draftName,
+    };
     router.push(router);
   };
   const onDeleteDraft = (draftName: string) => {
