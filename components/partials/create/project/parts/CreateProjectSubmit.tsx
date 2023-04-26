@@ -7,14 +7,15 @@ import { useFormContext } from "react-hook-form";
 export default function CreateProjectSubmit() {
   const { t } = useTranslation();
   const router = useRouter();
-  const prefix = router.asPath.split("/")[3];
+  const prefix = router.asPath.split("/")[3].split("?")[0];
   const { formState, getValues } = useFormContext();
   const { isValid } = formState;
-  const { SaveDraftButton } = useFormSaveDraft(`${prefix}-${getValues("main.title")}`);
+  const { SaveDraftButton, DeleteDraftButton } = useFormSaveDraft(`${prefix}-${getValues("main.title")}`);
 
   return (
     <div className="sticky bottom-0 right-0 z-30 bg-background p-3 border-t-1 border-t-border-subdued">
       <div className="flex flex-row justify-end gap-2">
+        <DeleteDraftButton />
         <SaveDraftButton />
         <Button id="project-create-submit" submit primary disabled={!isValid}>
           {t("Submit!")}
