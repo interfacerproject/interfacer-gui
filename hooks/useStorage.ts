@@ -17,27 +17,26 @@
 type UseStorageReturnValue = {
   getItem: (key: string) => string;
   setItem: (key: string, value: string) => void;
+  removeItem: (key: string) => void;
+  items?: Record<string, string>;
   clear: () => void;
 };
 
 const useStorage = (): UseStorageReturnValue => {
-  // TODO: fix the prerendering by enforce client side rendering
-  const isBrowser: boolean = ((): boolean => typeof window !== "undefined")();
-  const getItem = (key: string): string => {
-    return isBrowser ? window["localStorage"][key] : undefined;
-  };
-
-  const setItem = (key: string, value: string): void => {
-    return isBrowser ? window["localStorage"].setItem(key, value) : undefined;
-  };
-
+  const localStorage = typeof window !== "undefined" ? window.localStorage : undefined;
+  const getItem = (key: string): string => localStorage?.[key];
+  const setItem = (key: string, value: string): void => localStorage?.setItem(key, value);
+  const removeItem = (key: string): void => localStorage?.removeItem(key);
+  const items = { ...localStorage };
   const clear = () => {
-    if (isBrowser) window["localStorage"].clear();
+    localStorage?.clear();
   };
 
   return {
     getItem,
+    removeItem,
     setItem,
+    items,
     clear,
   };
 };

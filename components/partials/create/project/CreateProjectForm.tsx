@@ -100,7 +100,9 @@ export default function CreateProjectForm(props: Props) {
   const { getItem } = useStorage();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const storedValues: CreateProjectValues | undefined = getItem("creationForm") && JSON.parse(getItem("creationForm"));
+  const { draft_name } = router.query;
+  const storedItem = draft_name && getItem(draft_name as string);
+  const storedValues: CreateProjectValues | undefined = storedItem && JSON.parse(storedItem);
 
   const formMethods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",
@@ -112,7 +114,7 @@ export default function CreateProjectForm(props: Props) {
     },
   });
 
-  const { handleSubmit, watch, setValue } = formMethods;
+  const { handleSubmit, watch, setValue, getValues } = formMethods;
 
   useFormPersist("creationForm", {
     watch,
