@@ -25,7 +25,7 @@ type layoutProps = {
 };
 
 const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
-  const { authenticated } = useAuth();
+  const { authenticated, loading } = useAuth();
   const router = useRouter();
 
   // Closes sidebar automatically when route changes
@@ -38,9 +38,11 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
     });
   }, [router.events]);
 
+  if (!authenticated) return <div className="bg-[#F3F3F1]">{layoutProps?.children}</div>;
+
   return (
     <>
-      {authenticated ? (
+      {!loading && (
         <div className="drawer">
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content">
@@ -52,8 +54,6 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
             <Sidebar />
           </div>
         </div>
-      ) : (
-        <div className="bg-[#F3F3F1]">{layoutProps?.children}</div>
       )}
     </>
   );

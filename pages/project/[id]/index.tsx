@@ -17,7 +17,7 @@
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { createContext, Dispatch, ReactElement, SetStateAction, useContext, useEffect, useRef, useState } from "react";
+import { createContext, Dispatch, ReactElement, SetStateAction, useContext, useEffect, useState } from "react";
 
 // Components
 import { Stack } from "@bbtgnn/polaris-interfacer";
@@ -26,12 +26,13 @@ import { Stack } from "@bbtgnn/polaris-interfacer";
 import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
-import CreatedBanner from "components/partials/project/[id]/CreatedBanner";
 import EditBanner from "components/partials/project/[id]/EditBanner";
+import ProjectHeader from "components/partials/project/[id]/ProjectHeader";
 import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
 import ProjectTabs from "components/partials/project/[id]/ProjectTabs";
+import SuccessBanner from "components/partials/project/[id]/SuccessBanner";
+import { useTranslation } from "next-i18next";
 import { NextPageWithLayout } from "pages/_app";
-import ProjectHeader from "components/partials/project/[id]/ProjectHeader";
 
 interface ProjectTabsContextValue {
   selected: number;
@@ -43,6 +44,7 @@ export const useProjectTabs = () => useContext(ProjectTabsContext);
 
 const Project: NextPageWithLayout = () => {
   const router = useRouter();
+  const { t } = useTranslation("common");
   const { id } = router.query;
   const [images, setImages] = useState<string[]>([]);
   const [selected, setSelected] = useState(0);
@@ -68,7 +70,7 @@ const Project: NextPageWithLayout = () => {
 
   return (
     <ProjectTabsContext.Provider value={{ selected, setSelected }}>
-      <CreatedBanner />
+      <SuccessBanner param="created">{t("Project succesfully created!")}</SuccessBanner>
       <EditBanner />
       <div className="p-4 container mx-auto flex max-w-6xl bg-[#f8f7f4] space-x-4">
         <div className="grow">

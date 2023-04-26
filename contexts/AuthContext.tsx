@@ -16,33 +16,33 @@
 
 import { ApolloProvider, gql } from "@apollo/client";
 import useStorage from "hooks/useStorage";
-import { SEND_EMAIL_VERIFICATION, SIGN_IN, SIGN_UP } from "lib/QueryAndMutation";
+import { FETCH_SELF, SEND_EMAIL_VERIFICATION, SIGN_UP } from "lib/QueryAndMutation";
 import createApolloClient from "lib/createApolloClient";
 import {
   EmailTemplate,
+  FetchSelfQuery,
+  FetchSelfQueryVariables,
   SendEmailVerificationMutation,
   SendEmailVerificationMutationVariables,
-  SignInQuery,
-  SignInQueryVariables,
   SignUpMutation,
   SignUpMutationVariables,
 } from "lib/types";
+import { PersonWithFileEssential } from "lib/types/extensions";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
-import keypairoomClient from "../zenflows-crypto/src/keypairoomClient-8-9-10-11-12";
+//@ts-ignore
+import keypairoomClient from "zenflows-crypto/src/keypairoomClient-8-9-10-11-12.zen";
 
 /* Definitions */
 
-export type User = {
+export interface User extends PersonWithFileEssential {
   ulid: string;
-  email: string;
   username: string;
-  name: string;
   publicKey: string;
   privateKey: string;
-  isVerified: boolean;
-};
+  profileUrl: string;
+}
 
 type LoginFn = (props: { email: string }) => Promise<void>;
 type LogoutFn = (redirect?: string) => void;
@@ -104,25 +104,40 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
 
   useEffect(() => {
     const privateKey = getItem("eddsaPrivateKey");
-    const username = getItem("authUsername");
+    const email = getItem("authEmail");
+    const pubkey = getItem("eddsaPublicKey");
 
-    if (Boolean(privateKey) && Boolean(username)) {
-      const ulid = getItem("authId") as string;
-      const name = getItem("authName") as string;
-      const email = getItem("authEmail") as string;
-      const publicKey = getItem("eddsaPublicKey") as string;
-      const isVerified = Boolean(getItem("authIsVerified"));
+    if (Boolean(privateKey) && Boolean(email)) {
       setAuthenticated(true);
-      setUser({
-        ulid,
-        email,
-        username,
-        name,
-        privateKey,
-        publicKey,
-        isVerified,
-      });
-      setLoading(false);
+      const client = createApolloClient(authenticated);
+
+      const fetchUser = async () => {
+        const { data } = await client.query<FetchSelfQuery, FetchSelfQueryVariables>({
+          query: FETCH_SELF,
+          variables: { email, pubkey },
+        });
+        const user = data.personCheck!;
+
+        setUser({
+          id: user.id,
+          ulid: user.id,
+          email,
+          user: user.user,
+          username: user.user,
+          name: user.name,
+          privateKey: getItem("eddsaPrivateKey") as string,
+          publicKey: pubkey,
+          profileUrl: `/profile/${user.id}`,
+          note: user.note,
+          images: user.images || [],
+          primaryLocation: user.primaryLocation,
+          isVerified: user.isVerified,
+        });
+
+        setLoading(false);
+      };
+
+      fetchUser();
       return;
     } else {
       if (!publicPage) {
@@ -137,29 +152,28 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     if (authenticated) return;
     const client = createApolloClient(false);
     const publicKey = getItem("eddsaPublicKey") as string;
-
-    const { data } = await client.query<SignInQuery, SignInQueryVariables>({
-      query: SIGN_IN,
-      variables: { email, pubkey: publicKey },
-    });
-    const personCheck = data?.personCheck;
-    if (!personCheck) return;
-
-    setItem("authId", personCheck.id);
-    setItem("authName", personCheck.name);
-    setItem("authUsername", personCheck.user);
-    setItem("authEmail", personCheck.email);
-    setItem("authIsVerified", personCheck.email);
-    setAuthenticated(true);
-    setUser({
-      ulid: personCheck.id,
-      email,
-      username: personCheck.user,
-      name: personCheck.name,
-      isVerified: personCheck.isVerified,
-      privateKey: getItem("eddsaPrivateKey") as string,
-      publicKey,
-    });
+    const SignInMutation = gql`
+      query ($email: String!, $pubkey: String!) {
+        personCheck(email: $email, eddsaPublicKey: $pubkey) {
+          name
+          user
+          email
+          id
+        }
+      }
+    `;
+    await client
+      .query({
+        query: SignInMutation,
+        variables: { email, pubkey: publicKey },
+      })
+      .then(({ data }) => {
+        setItem("authId", data?.personCheck.id);
+        setItem("authName", data?.personCheck.name);
+        setItem("authUsername", data?.personCheck.user);
+        setItem("authEmail", data?.personCheck.email);
+        setAuthenticated(true);
+      });
   };
 
   const register: RegisterFn = async (email, firstRegistration) => {
@@ -231,7 +245,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   const logout: LogoutFn = (redirect = "/sign_in") => {
     clear();
     setUser(null);
-    router.push(redirect || "/sign_in", undefined, { shallow: true });
+    router.push(redirect);
   };
 
   /* Email verification */

@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form";
 
@@ -13,46 +13,58 @@ import SubmitChangesBar from "./SubmitChangesBar";
 export interface EditFormLayoutProps<T extends FieldValues> {
   children: React.ReactNode;
   formMethods: UseFormReturn<T, any>;
+  nav?: React.ReactNode;
   onSubmit: (values: T) => Promise<void>;
+  redirect?: string | NextRouter;
 }
 
 //
 
 export default function EditFormLayout<T extends FieldValues>(props: EditFormLayoutProps<T>) {
+  const { children, formMethods, nav, onSubmit = () => {}, redirect } = props;
   const { t } = useTranslation("common");
-  const { children, formMethods, onSubmit = () => {} } = props;
   const router = useRouter();
-  const { handleSubmit } = formMethods;
   const [loading, setLoading] = useState(false);
+
+  const { handleSubmit, formState } = formMethods;
+  const { isDirty, isSubmitSuccessful } = formState;
 
   async function onSubmitWrapper(values: T) {
     setLoading(true);
-    await onSubmit(values);
-    router.reload();
+    try {
+      await onSubmit(values);
+    } catch (e) {
+      setLoading(false);
+    }
   }
 
   /* Prevent navigation if unsaved changes */
 
-  const unsavedChanges = formMethods.formState.isDirty;
+  const preventNavigation = isDirty && !isSubmitSuccessful;
 
   useEffect(() => {
     const handleWindowClose = (e: Event) => {
-      if (!unsavedChanges) return;
+      if (!preventNavigation) return;
       return e.preventDefault();
     };
     const handleBrowseAway = () => {
-      if (!unsavedChanges) return;
+      if (!preventNavigation) return;
       if (window.confirm(t("There are unsaved changes. Discard them?"))) return;
       router.events.emit("routeChangeError");
       throw "routeChange aborted.";
     };
-    window.addEventListener("beforeunload", handleWindowClose);
-    router.events.on("routeChangeStart", handleBrowseAway);
+    if (preventNavigation) {
+      window.addEventListener("beforeunload", handleWindowClose);
+      router.events.on("routeChangeStart", handleBrowseAway);
+    } else if (isSubmitSuccessful) {
+      if (!redirect) router.reload();
+      else router.push(redirect);
+    }
     return () => {
       window.removeEventListener("beforeunload", handleWindowClose);
       router.events.off("routeChangeStart", handleBrowseAway);
     };
-  }, [unsavedChanges, router.events, t]);
+  }, [preventNavigation, router.events, t]);
 
   /* Render */
 
@@ -61,7 +73,8 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
       <form onSubmit={handleSubmit(onSubmitWrapper)}>
         <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
           <div className="sticky top-24">
-            <EditProjectNav />
+            {!nav && <EditProjectNav />}
+            {nav}
           </div>
           <div className="grow max-w-xl px-6 pb-24 pt-0">{children}</div>
         </div>

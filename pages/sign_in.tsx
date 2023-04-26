@@ -24,7 +24,8 @@ import { useAuth } from "../hooks/useAuth";
 import type { NextPageWithLayout } from "./_app";
 
 // Login functions
-import keypairoomClientRecreateKeys from "zenflows-crypto/src/keypairoomClientRecreateKeys";
+//@ts-ignore
+import keypairoomClientRecreateKeys from "zenflows-crypto/src/keypairoomClientRecreateKeys.zen";
 import { zencode_exec } from "zenroom";
 
 // Layout
