@@ -4682,6 +4682,22 @@ export type VerifyEmailMutationVariables = Exact<{
 
 export type VerifyEmailMutation = { __typename?: "RootMutationType"; personVerifyEmailVerification: boolean };
 
+export type EditImagesMutationVariables = Exact<{
+  id: Scalars["ID"];
+  classifiedAs?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
+  note?: InputMaybe<Scalars["String"]>;
+  name?: InputMaybe<Scalars["String"]>;
+  repo?: InputMaybe<Scalars["String"]>;
+}>;
+
+export type EditImagesMutation = {
+  __typename?: "RootMutationType";
+  updateEconomicResource: {
+    __typename?: "EconomicResourceResponse";
+    economicResource: { __typename?: "EconomicResource"; id: string };
+  };
+};
+
 export type EditMainMutationVariables = Exact<{
   id: Scalars["ID"];
   classifiedAs?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
