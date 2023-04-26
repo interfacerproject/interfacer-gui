@@ -13,6 +13,7 @@ import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
+import { dataURLtoFile } from "lib/resourceImages";
 import { GetStaticPaths } from "next";
 
 //
@@ -27,7 +28,7 @@ const EditImages: NextPageWithLayout = () => {
   /* Form setup */
 
   const defaultValues: EditImagesValues = {
-    images: [],
+    images: project.images!.map(i => dataURLtoFile(i.bin, i.mimeType, `${i.name}@${i.hash}`)),
   };
 
   const schema = yup.object({
