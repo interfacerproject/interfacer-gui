@@ -17,6 +17,7 @@ import { ProjectType } from "components/types";
 import useFormSaveDraft from "hooks/useFormSaveDraft";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useAuth } from "hooks/useAuth";
 
 //
 
@@ -36,18 +37,8 @@ const CreateProject: NextPageWithLayout = () => {
   const { draftsSaved } = useFormSaveDraft();
   const router = useRouter();
   const { draft_deleted } = router.query;
+  const { user } = useAuth();
   const [isOpenBanner, setIsOpenBanner] = useState(!!draft_deleted);
-  const draftSections = draftsSaved?.reduce((acc, draft) => {
-    const draftName = draft.split("-")[3];
-    const sectionTitle = draft.split("-")[2];
-    const section = acc.find(section => section.title === sectionTitle);
-    if (section) {
-      section.options.push({ label: draftName, value: draft });
-    } else {
-      acc.push({ title: sectionTitle, options: [{ label: draftName, value: draft }] });
-    }
-    return acc;
-  }, [] as SectionDescriptor[]);
 
   const sections: Array<{ title: string; description: string; url: string; projectType: ProjectType }> = [
     {
@@ -108,16 +99,11 @@ const CreateProject: NextPageWithLayout = () => {
           />
           <Stack vertical>
             {draftsSaved && (
-              <Banner status="info" title={t("You have some draft saved") + ":"}>
-                <OptionList
-                  onChange={d => {
-                    console.log(d);
-                    router.push(`/create/project/${d[0].split("-")[2]}?draft_name=${d[0]}`);
-                  }}
-                  sections={draftSections}
-                  selected={[]}
-                />
-              </Banner>
+              <Banner
+                status="info"
+                title={t("You have some draft saved") + ":"}
+                action={{ content: t("-> to yours draft"), url: `/profile/${user?.ulid}?tab=2` }}
+              />
             )}
             {sections.map(s => (
               <Card key={s.url}>

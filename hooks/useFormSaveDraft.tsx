@@ -11,46 +11,51 @@ const useFormSaveDraft = (name?: string, basePath = "/create/project", prefix = 
   const formContext = useFormContext() || undefined;
   const { formState, getValues } = formContext || {};
   const router = useRouter();
-  const [hasDraftChange, setHasDraftChange] = useState(false);
   const { draft_name } = router.query;
-  //@ts-ignore
-  const draftName = draft_name?.split("-")[3] || name;
+  const draftName = draft_name && draft_name.toString().split("-").slice(2).join("-");
+  const [hasDraftChange, setHasDraftChange] = useState(false);
   const { isDirty } = formState || {};
   const formValues = JSON.stringify(getValues && getValues());
-  const draft = getItem(prefix + String(draftName));
-  const draftsSaved = items && Object.keys(items).filter(item => item.startsWith(prefix));
+  const draft = getItem(prefix + name);
+  const draftsSaved =
+    items &&
+    Object.keys(items)
+      .map(k => k.startsWith(prefix) && JSON.parse(items[k]))
+      .filter(item => item);
+
+  console.log("draftsSaved", draftsSaved);
 
   useEffect(() => {
     setHasDraftChange(isDirty && formValues !== draft);
   }, [isDirty, formValues, draft]);
-  const onSaveDraft = () => {
-    setItem(prefix + String(draftName), JSON.stringify(getValues()));
+  const saveDraft = () => {
+    setItem(prefix + name, JSON.stringify(getValues()));
     setHasDraftChange(false);
     router.query = {
       draft_saved: "true",
-      draft_name: draftName,
+      draft_name: prefix + name,
     };
     router.push(router);
   };
-  const onDeleteDraft = (draftName: string) => {
-    removeItem(draftName);
+  const deleteDraft = (item: string) => {
+    removeItem(item);
     router.push(basePath + "?draft_deleted=true");
   };
   const SaveDraftButton = () => (
-    <Button id="project-save-draft" disabled={!hasDraftChange} onClick={onSaveDraft}>
+    <Button id="project-save-draft" disabled={!hasDraftChange} onClick={saveDraft}>
       {t("Save Draft")}
     </Button>
   );
   const DeleteDraftButton = () => {
-    if (!draftName) return null;
+    if (!name) return null;
     return (
-      <Button id="project-delete-draft" onClick={() => onDeleteDraft(String(draftName))}>
+      <Button id="project-delete-draft" onClick={() => deleteDraft(prefix + draftName)}>
         {t("Delete Draft")}
       </Button>
     );
   };
 
-  return { hasDraftChange, onSaveDraft, onDeleteDraft, SaveDraftButton, DeleteDraftButton, draftsSaved };
+  return { hasDraftChange, saveDraft, deleteDraft, SaveDraftButton, DeleteDraftButton, draftsSaved };
 };
 
 export default useFormSaveDraft;

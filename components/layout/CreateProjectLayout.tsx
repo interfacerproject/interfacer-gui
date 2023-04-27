@@ -31,13 +31,6 @@ const CreateProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: 
   const router = useRouter();
   const { draft_saved } = router.query;
   const [isOpenBanner, setIsOpenBanner] = useState(!!draft_saved);
-  useEffect(() => {
-    if (isOpenBanner) {
-      setTimeout(() => {
-        setIsOpenBanner(false);
-      }, 5000);
-    }
-  }, [isOpenBanner]);
 
   return (
     <div className="h-full">

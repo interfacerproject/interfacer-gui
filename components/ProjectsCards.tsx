@@ -20,8 +20,17 @@ import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 import CardsGroup from "./CardsGroup";
+import DraftCard from "./DraftCard";
 import ProjectCard from "./ProjectCard";
 import ProjectDisplay from "./ProjectDisplay";
+import { CreateProjectValues } from "./partials/create/project/CreateProjectForm";
+import { ProjectType, projectTypes } from "./types";
+
+export enum CardType {
+  PROJECT = "project",
+  DRAFT = "draft",
+  TINY = "tiny",
+}
 
 export interface ProjectsCardsProps {
   filter?: EconomicResourceFilterParams;
@@ -31,6 +40,8 @@ export interface ProjectsCardsProps {
   hideFilters?: boolean;
   header?: string;
   tiny?: boolean;
+  type?: CardType;
+  drafts?: Partial<CreateProjectValues>[];
 }
 
 const ProjectsCards = (props: ProjectsCardsProps) => {
@@ -39,8 +50,10 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     hideHeader = false,
     hidePagination = false,
     hideFilters = false,
+    type = CardType.PROJECT,
     tiny = false,
     header = "Latest projects",
+    drafts,
   } = props;
   const dataQueryIdentifier = "economicResources";
 
@@ -59,7 +72,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
 
   return (
     <>
-      {!tiny && (
+      {!tiny && !(type === CardType.DRAFT) && (
         <CardsGroup
           onLoadMore={loadMore}
           nextPage={!!getHasNextPage}
@@ -84,6 +97,27 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
             </Link>
           </div>
         ))}
+      {type === CardType.DRAFT && drafts && (
+        <CardsGroup
+          onLoadMore={loadMore}
+          nextPage={false}
+          loading={false}
+          header={hideHeader ? undefined : header}
+          hidePagination={hidePagination}
+          length={drafts?.length || 0}
+          hideFilters
+        >
+          {drafts.map((d: Partial<CreateProjectValues>) => (
+            <div className="py-2 hover:bg-base-300" key={d.main?.title}>
+              <Link href={`/create/project/${projectTypes}?draft_name=form-create-product-${d.main?.title}`}>
+                <a>
+                  <DraftCard project={d} projectType={ProjectType.PRODUCT} />
+                </a>
+              </Link>
+            </div>
+          ))}
+        </CardsGroup>
+      )}
     </>
   );
 };

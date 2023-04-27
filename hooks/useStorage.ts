@@ -26,7 +26,9 @@ const useStorage = (): UseStorageReturnValue => {
   const localStorage = typeof window !== "undefined" ? window.localStorage : undefined;
   const getItem = (key: string): string => localStorage?.[key];
   const setItem = (key: string, value: string): void => localStorage?.setItem(key, value);
-  const removeItem = (key: string): void => localStorage?.removeItem(key);
+  const removeItem = (key: string): void => {
+    localStorage?.removeItem(key);
+  };
   const items = { ...localStorage };
   const clear = () => {
     localStorage?.clear();
