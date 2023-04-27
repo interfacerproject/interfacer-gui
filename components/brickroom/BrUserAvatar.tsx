@@ -13,7 +13,7 @@ export interface Props {
 export default function BrUserAvatar(props: Props) {
   const { user, userId, size = "100%" } = props;
 
-  const { data } = useQuery<GetUserImagesQuery, GetUserImagesQueryVariables>(GET_USER_IMAGES, {
+  const { data, loading } = useQuery<GetUserImagesQuery, GetUserImagesQueryVariables>(GET_USER_IMAGES, {
     variables: { userId: userId! },
     skip: !userId,
   });
@@ -26,13 +26,15 @@ export default function BrUserAvatar(props: Props) {
 
   const img = getUserImage(u);
 
+  if (loading) return <AvatarContainer size={size} />;
+
   return (
     <AvatarContainer size={size}>
       {img && <img className="w-full h-full object-cover" src={img} />}
       {!img && (
         <Avatar
           size="full"
-          name={user!.name}
+          name={u!.name}
           variant="beam"
           colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]}
         />
