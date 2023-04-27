@@ -162,7 +162,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
         }
       }
     `;
-    await client
+    client
       .query({
         query: SignInMutation,
         variables: { email, pubkey: publicKey },
