@@ -133,7 +133,6 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
           primaryLocation: user.primaryLocation,
           isVerified: user.isVerified,
         });
-
         setLoading(false);
       };
 
@@ -151,29 +150,32 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   const login: LoginFn = async ({ email }) => {
     if (authenticated) return;
     const client = createApolloClient(false);
-    const publicKey = getItem("eddsaPublicKey") as string;
-    const SignInMutation = gql`
-      query ($email: String!, $pubkey: String!) {
-        personCheck(email: $email, eddsaPublicKey: $pubkey) {
-          name
-          user
-          email
-          id
-        }
-      }
-    `;
-    client
-      .query({
-        query: SignInMutation,
-        variables: { email, pubkey: publicKey },
-      })
-      .then(({ data }) => {
-        setItem("authId", data?.personCheck.id);
-        setItem("authName", data?.personCheck.name);
-        setItem("authUsername", data?.personCheck.user);
-        setItem("authEmail", data?.personCheck.email);
-        setAuthenticated(true);
-      });
+    const pubkey = getItem("eddsaPublicKey") as string;
+    const { data } = await client.query<FetchSelfQuery, FetchSelfQueryVariables>({
+      query: FETCH_SELF,
+      variables: { email: email, pubkey: pubkey },
+    });
+    const user = await data?.personCheck;
+    setItem("authId", user.id);
+    setItem("authName", user.name);
+    setItem("authUsername", user.user);
+    setItem("authEmail", user.email);
+    setUser({
+      id: user.id,
+      ulid: user.id,
+      email,
+      user: user.user,
+      username: user.user,
+      name: user.name,
+      privateKey: getItem("eddsaPrivateKey") as string,
+      publicKey: pubkey,
+      profileUrl: `/profile/${user.id}`,
+      note: user.note,
+      images: user.images || [],
+      primaryLocation: user.primaryLocation,
+      isVerified: user.isVerified,
+    });
+    setAuthenticated(true);
   };
 
   const register: RegisterFn = async (email, firstRegistration) => {
@@ -245,6 +247,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   const logout: LogoutFn = (redirect = "/sign_in") => {
     clear();
     setUser(null);
+    setAuthenticated(false);
     router.push(redirect);
   };
 
@@ -271,11 +274,10 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   }
 
   async function sendEmailVerification() {
-    if (!authenticated) {
+    if (!Boolean(getItem("eddsaPrivateKey")) && !Boolean(getItem("authEmail"))) {
       throw new Error("User not authenticated");
     }
-
-    const client = createApolloClient(authenticated);
+    const client = createApolloClient(true);
 
     await client.mutate<SendEmailVerificationMutation, SendEmailVerificationMutationVariables>({
       mutation: SEND_EMAIL_VERIFICATION,
