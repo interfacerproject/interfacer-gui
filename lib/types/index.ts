@@ -659,6 +659,8 @@ export type EconomicResourceUpdateParams = {
    */
   classifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   id: Scalars["ID"];
+  /** The image files relevant to the entity, such as a photo, diagram, etc. */
+  images?: InputMaybe<Array<IFile>>;
   /**
    * An informal or formal textual identifier for an item.  Does not imply
    * uniqueness.
@@ -2646,7 +2648,7 @@ export type RootMutationTypeImportReposArgs = {
 
 export type RootMutationTypeKeypairoomServerArgs = {
   firstRegistration: Scalars["Boolean"];
-  userData: Scalars["String"];
+  userData: Scalars["JSONObject"];
 };
 
 export type RootMutationTypePersonRequestEmailVerificationArgs = {
@@ -3791,7 +3793,17 @@ export type GetProjectLayoutQuery = {
       lat?: any | null;
       long?: any | null;
     } | null;
-    images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+    images?: Array<{
+      __typename?: "File";
+      hash: any;
+      name: string;
+      mimeType: string;
+      bin?: any | null;
+      date: any;
+      description: string;
+      extension: string;
+      size: number;
+    }> | null;
   } | null;
 };
 
@@ -4684,10 +4696,7 @@ export type VerifyEmailMutation = { __typename?: "RootMutationType"; personVerif
 
 export type EditImagesMutationVariables = Exact<{
   id: Scalars["ID"];
-  classifiedAs?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
-  note?: InputMaybe<Scalars["String"]>;
-  name?: InputMaybe<Scalars["String"]>;
-  repo?: InputMaybe<Scalars["String"]>;
+  images?: InputMaybe<Array<IFile> | IFile>;
 }>;
 
 export type EditImagesMutation = {

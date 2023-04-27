@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
 
@@ -13,7 +13,9 @@ import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
-import { dataURLtoFile } from "lib/resourceImages";
+import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
+import { dataURLtoFile, fileToIfile } from "lib/resourceImages";
+import { EditImagesMutation, EditImagesMutationVariables, File as ZenflowsFile } from "lib/types";
 import { GetStaticPaths } from "next";
 
 //
@@ -24,11 +26,19 @@ export interface EditImagesValues {
 
 const EditImages: NextPageWithLayout = () => {
   const { project } = useProject();
+  console.log("project.images", project.images);
 
   /* Form setup */
 
+  /*
+    In order to display the images in the form, we need to convert them to files.
+    We use the hash as the filename, so we can check if the image has been changed.
+    The separator is used to split the filename and the hash.
+ */
+  const SEPARATOR = " @ ";
+
   const defaultValues: EditImagesValues = {
-    images: project.images!.map(i => dataURLtoFile(i.bin, i.mimeType, `${i.name}@${i.hash}`)),
+    images: project.images!.map(i => dataURLtoFile(i.bin, i.mimeType, `${i.name}${SEPARATOR}${i.hash}`)),
   };
 
   const schema = yup.object({
@@ -41,23 +51,33 @@ const EditImages: NextPageWithLayout = () => {
     defaultValues,
   });
 
+  /* Images update logic */
+
+  function getAlreadyUploadedImage(filename: string): ZenflowsFile | undefined {
+    const filenameParts = filename.split(SEPARATOR);
+    const hash = filenameParts[filenameParts.length - 1];
+    const name = filenameParts.slice(0, filenameParts.length - 1).join(SEPARATOR);
+    return project.images!.find(i => i.hash === hash && i.name === name);
+  }
+
+  function isImageAlreadyUploaded(filename: string): boolean {
+    return Boolean(getAlreadyUploadedImage(filename));
+  }
+
+  function getAlreadyUploadedImages(images: File[]): ZenflowsFile[] {
+    return images.map(image => getAlreadyUploadedImage(image.name)).filter(Boolean) as ZenflowsFile[];
+  }
+
   /* Submit logic */
 
-  //   const [editImagesMutation] = useMutation<EditImagesMutation, EditImagesMutationVariables>(EDIT_MAIN);
-
-  //   function valuesToVariables(values: EditImagesValues): EditImagesMutationVariables {
-  //     const classifiedAs = values.main.tags.length ? values.main.tags : undefined;
-  //     return {
-  //       id: project.id!,
-  //       name: values.main.title,
-  //       note: values.main.description,
-  //       repo: values.main.link,
-  //       classifiedAs,
-  //     };
-  //   }
+  const [editImagesMutation] = useMutation<EditImagesMutation, EditImagesMutationVariables>(EDIT_IMAGES);
 
   async function onSubmit(values: EditImagesValues) {
-    // await editImagesMutation({ variables: valuesToVariables(values) });
+    const existingImages = getAlreadyUploadedImages(values.images);
+    const newImages = values.images.filter(f => !isImageAlreadyUploaded(f.name));
+    const mutationImages = [...existingImages.map(fileToIfile), ...(await prepFilesForZenflows(newImages))];
+    await editImagesMutation({ variables: { images: mutationImages, id: project.id! } });
+    await uploadFiles(newImages);
   }
 
   /* Render */
@@ -72,8 +92,8 @@ const EditImages: NextPageWithLayout = () => {
 //
 
 export const EDIT_IMAGES = gql`
-  mutation EditImages($id: ID!, $classifiedAs: [URI!], $note: String, $name: String, $repo: String) {
-    updateEconomicResource(resource: { id: $id, classifiedAs: $classifiedAs, name: $name, note: $note, repo: $repo }) {
+  mutation EditImages($id: ID!, $images: [IFile!]) {
+    updateEconomicResource(resource: { id: $id, images: $images }) {
       economicResource {
         id
       }
