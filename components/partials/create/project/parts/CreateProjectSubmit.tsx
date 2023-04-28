@@ -1,4 +1,5 @@
 import { Button } from "@bbtgnn/polaris-interfacer";
+import { ProjectType } from "components/types";
 import useFormSaveDraft from "hooks/useFormSaveDraft";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -7,11 +8,12 @@ import { useFormContext } from "react-hook-form";
 export default function CreateProjectSubmit() {
   const { t } = useTranslation();
   const router = useRouter();
-  const prefix = router.asPath.split("/")[3].split("?")[0];
+  const type = router.asPath.split("/")[3].split("?")[0];
   const { formState, getValues } = useFormContext();
   const { isValid } = formState;
   const { SaveDraftButton, DeleteDraftButton, EditDraftButton } = useFormSaveDraft(
-    `${prefix}-${getValues("main.title")}`
+    `${getValues("main.title")}`,
+    type as ProjectType
   );
 
   return (

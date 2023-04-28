@@ -9,12 +9,11 @@ import { ChevronRightMinor } from "@shopify/polaris-icons";
 import Layout from "components/layout/Layout";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectTypeRoundIcon from "components/ProjectTypeRoundIcon";
+import useStorageCRUD from "hooks/useStorageCrud";
+import FullWidthBanner from "components/FullWidthBanner";
 
 // Icons
-import { SectionDescriptor } from "@bbtgnn/polaris-interfacer/build/ts/latest/src/types";
-import FullWidthBanner from "components/FullWidthBanner";
 import { ProjectType } from "components/types";
-import useFormSaveDraft from "hooks/useFormSaveDraft";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuth } from "hooks/useAuth";
@@ -34,7 +33,9 @@ export async function getStaticProps({ locale }: any) {
 
 const CreateProject: NextPageWithLayout = () => {
   const { t } = useTranslation(["createProjectProps", "common"]);
-  const { draftsSaved } = useFormSaveDraft();
+  const { get } = useStorageCRUD("draft");
+  const draftsSaved = get();
+  console.log(draftsSaved);
   const router = useRouter();
   const { draft_deleted } = router.query;
   const { user } = useAuth();

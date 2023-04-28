@@ -1,67 +1,81 @@
 import { Button } from "@bbtgnn/polaris-interfacer";
+import { CreateProjectValues } from "components/partials/create/project/CreateProjectForm";
 import { ProjectType } from "components/types";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import useStorage from "./useStorage";
+import useStorageCRUD, { StorageItem } from "./useStorageCrud";
 
-const useFormSaveDraft = (name?: string, basePath = "/create/project", tableName = "draft") => {
-  const { setItem, getItem, removeItem, items } = useStorage();
+export interface DraftProjectType extends StorageItem {
+  name: string;
+  type: ProjectType;
+  project: CreateProjectValues;
+}
+
+const useFormSaveDraft = (name: string, type: ProjectType, basePath = "/create/project", tableName = "draft") => {
+  const { getItem } = useStorage();
+  const { save, update, remove, get } = useStorageCRUD(tableName);
   const { t } = useTranslation("common");
-  const formContext = useFormContext() || undefined;
-  const { formState, getValues } = formContext || {};
+  const formContext = useFormContext();
+  const { formState, getValues } = formContext;
   const router = useRouter();
   const { draft_id } = router.query;
   const [hasDraftChange, setHasDraftChange] = useState(false);
-  const { isDirty } = formState || {};
-  const formValues = JSON.stringify(getValues && getValues());
+  const { isDirty } = formState;
+  const formValues = getValues();
   const draftsSaved = getItem("draft") && JSON.parse(getItem("draft"));
-  const draft = draftsSaved?.find((item: any) => item.id === Number(draft_id));
-  const draftName = draft?.name || name;
+  const draft: DraftProjectType = get(Number(draft_id))?.project;
 
   const progressiveId = draftsSaved?.map((item: any) => item.id).sort((a: number, b: number) => b - a)[0] + 1 || 0;
+
   useEffect(() => {
     setHasDraftChange(isDirty && formValues !== draft);
   }, [isDirty, formValues, draft]);
+
   const saveDraft = () => {
-    const newItem = {
+    const newItem: DraftProjectType = {
       id: progressiveId,
-      name: draftName,
+      name: name,
       type: ProjectType.DESIGN,
-      project: getValues(),
+      project: getValues() as CreateProjectValues,
     };
-    const draftTable = getItem("draft");
-    draftTable
-      ? setItem("draft", JSON.stringify([...JSON.parse(draftTable), newItem]))
-      : setItem("draft", JSON.stringify([newItem]));
-    // setItem(prefix + name, JSON.stringify(getValues()));
+    save(newItem);
     setHasDraftChange(false);
     router.query = {
       draft_saved: "true",
-      draft_id: newItem.id,
+      draft_id: String(newItem.id),
     };
     router.push(router);
   };
+
   const deleteDraft = (id: number) => {
-    setItem("draft", JSON.stringify(draftsSaved?.filter((draft: any) => draft.id !== id)));
+    remove(id);
     router.push(basePath + "?draft_deleted=true");
   };
+
   const editDraft = (id: number) => {
-    if (!draft) return;
-    const index = draftsSaved.indexOf(draft);
-    draftsSaved[index] = {
-      ...draft,
-      project: getValues(),
-    };
-    setItem("draft", JSON.stringify(draftsSaved));
+    try {
+      const itemToUpdate: DraftProjectType = {
+        id,
+        name: name,
+        type: ProjectType.DESIGN,
+        project: getValues() as CreateProjectValues,
+      };
+      update(id, itemToUpdate);
+    } catch (error) {
+      console.error(error);
+    }
+    setHasDraftChange(false);
     router.query = {
       draft_saved: "true",
-      draft_id: draft.id,
+      draft_id: String(draft.id),
     };
     router.push(router);
     router.reload();
   };
+
   const SaveDraftButton = () => {
     if (draft) return null;
     return (
@@ -70,6 +84,7 @@ const useFormSaveDraft = (name?: string, basePath = "/create/project", tableName
       </Button>
     );
   };
+
   const EditDraftButton = () => {
     if (!draft) return null;
     return (
@@ -78,6 +93,7 @@ const useFormSaveDraft = (name?: string, basePath = "/create/project", tableName
       </Button>
     );
   };
+
   const DeleteDraftButton = () => {
     if (!draft) return null;
     return (
@@ -87,7 +103,7 @@ const useFormSaveDraft = (name?: string, basePath = "/create/project", tableName
     );
   };
 
-  return { hasDraftChange, saveDraft, deleteDraft, SaveDraftButton, DeleteDraftButton, EditDraftButton, draftsSaved };
+  return { saveDraft, SaveDraftButton, DeleteDraftButton, EditDraftButton };
 };
 
 export default useFormSaveDraft;

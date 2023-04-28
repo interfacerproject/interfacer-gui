@@ -6,8 +6,8 @@ import ProjectsCards, { CardType } from "components/ProjectsCards";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
 import useFilters from "hooks/useFilters";
-import useFormSaveDraft from "hooks/useFormSaveDraft";
 import useStorage from "hooks/useStorage";
+import useStorageCRUD from "hooks/useStorageCrud";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
@@ -26,7 +26,8 @@ const ProfileTabs = () => {
   const handleProjectTabChange = useCallback((selectedTabIndex: number) => setProjectTabSelected(selectedTabIndex), []);
   const hasCollectedProjects = isUser && !!getItem("projectsCollected");
 
-  const { draftsSaved } = useFormSaveDraft();
+  const { get } = useStorageCRUD("draft");
+  const draftsSaved = get();
 
   let collectedProjects: { id: string[] } = {
     id: [],
