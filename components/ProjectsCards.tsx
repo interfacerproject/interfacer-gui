@@ -41,7 +41,7 @@ export interface ProjectsCardsProps {
   header?: string;
   tiny?: boolean;
   type?: CardType;
-  drafts?: Partial<CreateProjectValues>[];
+  drafts?: { id: number; project: Partial<CreateProjectValues>; type: ProjectType }[];
 }
 
 const ProjectsCards = (props: ProjectsCardsProps) => {
@@ -67,7 +67,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     data,
     dataQueryIdentifier,
   });
-
+  console.log("drafts", drafts);
   const projects = items;
 
   return (
@@ -107,11 +107,11 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
           length={drafts?.length || 0}
           hideFilters
         >
-          {drafts.map((d: Partial<CreateProjectValues>) => (
-            <div className="py-2 hover:bg-base-300" key={d.main?.title}>
-              <Link href={`/create/project/${projectTypes}?draft_name=form-create-product-${d.main?.title}`}>
+          {drafts?.map(d => (
+            <div className="py-2 hover:bg-base-300" key={d.project.main?.title}>
+              <Link href={`/create/project/${projectTypes}?draft_name=form-create-product-${d.project.main?.title}`}>
                 <a>
-                  <DraftCard project={d} projectType={ProjectType.PRODUCT} />
+                  <DraftCard project={d.project} projectType={d.type} id={d.id} />
                 </a>
               </Link>
             </div>

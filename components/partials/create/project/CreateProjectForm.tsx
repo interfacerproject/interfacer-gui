@@ -99,9 +99,10 @@ export default function CreateProjectForm(props: Props) {
   const { getItem } = useStorage();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { draft_name } = router.query;
-  const storedItem = draft_name && getItem(draft_name as string);
-  const storedValues: CreateProjectValues | undefined = storedItem && JSON.parse(storedItem);
+  const { draft_id } = router.query;
+  const storedItem = draft_id && JSON.parse(getItem("draft")).find((item: any) => item.id == draft_id);
+  const storedValues: CreateProjectValues | undefined = storedItem && storedItem.project;
+  console.log("pp", storedValues, storedItem);
 
   const formMethods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",

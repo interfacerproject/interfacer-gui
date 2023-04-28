@@ -13,10 +13,11 @@ import { CreateProjectValues } from "./partials/create/project/CreateProjectForm
 export interface DraftCardProps {
   project: Partial<CreateProjectValues>;
   projectType: ProjectType;
+  id?: number;
 }
 
 export default function DraftCard(props: DraftCardProps) {
-  const { project, projectType } = props;
+  const { project, projectType, id } = props;
   const [hover, setHover] = useState(false);
   const setHoverTrue = () => setHover(true);
   const setHoverFalse = () => setHover(false);
@@ -30,12 +31,12 @@ export default function DraftCard(props: DraftCardProps) {
       <div className="space-y-3 p-3">
         <div className="flex justify-between items-center"></div>
         <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse}>
-          <Link href={`/create/project/${projectType}?${project?.main?.title}`}>
+          <Link href={`/create/project/design?draft_id=${id}`}>
             <a className="space-y-3">
               <ProjectCardImage projectType={projectType} image={undefined} />
               <div>
                 <Text variant="headingLg" as="h4">
-                  {}
+                  {project.main?.title}
                 </Text>
                 <StatsDisplay project={project} />
               </div>
