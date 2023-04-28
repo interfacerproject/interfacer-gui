@@ -26,7 +26,6 @@ export interface EditImagesValues {
 
 const EditImages: NextPageWithLayout = () => {
   const { project } = useProject();
-  console.log("project.images", project.images);
 
   /* Form setup */
 
@@ -38,7 +37,11 @@ const EditImages: NextPageWithLayout = () => {
   const SEPARATOR = " @ ";
 
   const defaultValues: EditImagesValues = {
-    images: project.images!.map(i => dataURLtoFile(i.bin, i.mimeType, `${i.name}${SEPARATOR}${i.hash}`)),
+    images: project.images!.map(i => {
+      const filename = `${i.name}${SEPARATOR}${i.hash}`;
+      if (i.bin) return dataURLtoFile(i.bin, i.mimeType, filename);
+      else return new File([], filename);
+    }),
   };
 
   const schema = yup.object({
