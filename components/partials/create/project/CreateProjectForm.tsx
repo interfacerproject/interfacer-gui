@@ -35,10 +35,11 @@ import CreateProjectSubmit from "./parts/CreateProjectSubmit";
 import LoadingOverlay from "components/LoadingOverlay";
 
 // Form
+import { Spinner } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useDrafts } from "hooks/useFormSaveDraft";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
-import useStorage from "hooks/useStorage";
 
 //
 
@@ -96,13 +97,17 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
   const { handleProjectCreation } = useProjectCRUD();
-  const { getItem } = useStorage();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { draft_id } = router.query;
-  const storedItem = draft_id && JSON.parse(getItem("draft")).find((item: any) => item.id == draft_id);
-  const storedValues: CreateProjectValues | undefined = storedItem && storedItem.project;
-  console.log("pp", storedValues, storedItem);
+  const { draft } = useDrafts(Number(draft_id));
+  const [storedValues, setStoredValues] = useState<CreateProjectValues | undefined>(undefined);
+
+  useEffect(() => {
+    if (draft_id && !storedValues && draft) {
+      setStoredValues(draft?.project);
+    }
+  }, [draft_id, draft, storedValues]);
 
   const formMethods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",
@@ -114,6 +119,13 @@ export default function CreateProjectForm(props: Props) {
     },
   });
 
+  const { reset, formState } = formMethods;
+  const { isDirty, isSubmitting } = formState;
+
+  useEffect(() => {
+    if (storedValues && !isSubmitting && !isDirty) reset(storedValues);
+  }, [storedValues, isSubmitting, isDirty, reset]);
+
   const { handleSubmit } = formMethods;
 
   async function onSubmit(values: CreateProjectValues) {
@@ -123,14 +135,14 @@ export default function CreateProjectForm(props: Props) {
     setLoading(false);
   }
 
-  // Focus on first element
+  //Focus on first element
   useEffect(() => {
     if (projectType == ProjectType.DESIGN) return;
     const field = document.getElementById("main.title");
     field?.focus();
   }, [projectType]);
 
-  //
+  if (!storedValues && draft_id) return <Spinner />;
 
   return (
     <FormProvider {...formMethods}>

@@ -67,6 +67,9 @@ const CreateProject: NextPageWithLayout = () => {
       projectType: ProjectType.SERVICE,
     },
   ];
+  if ("indexedDB" in window) {
+    console.log(window.indexedDB);
+  }
 
   return (
     <>

@@ -3,11 +3,10 @@ import { SectionDescriptor } from "@bbtgnn/polaris-interfacer/build/ts/latest/sr
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import { useUser } from "components/layout/FetchUserLayout";
 import ProjectsCards, { CardType } from "components/ProjectsCards";
-import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
 import useFilters from "hooks/useFilters";
+import { useDrafts } from "hooks/useFormSaveDraft";
 import useStorage from "hooks/useStorage";
-import useStorageCRUD from "hooks/useStorageCrud";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
@@ -26,8 +25,7 @@ const ProfileTabs = () => {
   const handleProjectTabChange = useCallback((selectedTabIndex: number) => setProjectTabSelected(selectedTabIndex), []);
   const hasCollectedProjects = isUser && !!getItem("projectsCollected");
 
-  const { get } = useStorageCRUD("draft");
-  const draftsSaved = get();
+  const { drafts: draftsSaved } = useDrafts();
 
   let collectedProjects: { id: string[] } = {
     id: [],
@@ -91,8 +89,6 @@ const ProfileTabs = () => {
     drafts: draftsSaved,
   };
   const projectsCardsProps = [userProjects, inListProjects, draftProjects];
-
-  // const projectsCardsProps = projectTabSelected === 0 ? { ...userProjects } : { ...inListProjects };
 
   return (
     <Tabs tabs={tabs} selected={projectTabSelected} onSelect={handleProjectTabChange}>

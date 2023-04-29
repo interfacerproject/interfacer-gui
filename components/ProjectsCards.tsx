@@ -25,6 +25,7 @@ import ProjectCard from "./ProjectCard";
 import ProjectDisplay from "./ProjectDisplay";
 import { CreateProjectValues } from "./partials/create/project/CreateProjectForm";
 import { ProjectType, projectTypes } from "./types";
+import { DraftProject } from "lib/db";
 
 export enum CardType {
   PROJECT = "project",
@@ -41,7 +42,7 @@ export interface ProjectsCardsProps {
   header?: string;
   tiny?: boolean;
   type?: CardType;
-  drafts?: { id: number; project: Partial<CreateProjectValues>; type: ProjectType }[];
+  drafts?: DraftProject[];
 }
 
 const ProjectsCards = (props: ProjectsCardsProps) => {
