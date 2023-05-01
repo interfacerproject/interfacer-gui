@@ -68,7 +68,6 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     data,
     dataQueryIdentifier,
   });
-  console.log("drafts", drafts);
   const projects = items;
 
   return (

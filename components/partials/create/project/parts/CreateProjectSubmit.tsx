@@ -9,11 +9,12 @@ export default function CreateProjectSubmit() {
   const { t } = useTranslation();
   const router = useRouter();
   const type = router.asPath.split("/")[3].split("?")[0];
+  const typeAsProjectType = type.charAt(0).toUpperCase() + type.slice(1);
   const { formState, getValues } = useFormContext();
   const { isValid } = formState;
   const { SaveDraftButton, DeleteDraftButton, EditDraftButton } = useFormSaveDraft(
     `${getValues("main.title")}`,
-    type as ProjectType
+    typeAsProjectType as ProjectType
   );
 
   return (

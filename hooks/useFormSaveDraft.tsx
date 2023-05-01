@@ -1,8 +1,9 @@
 import { Button } from "@bbtgnn/polaris-interfacer";
 import { CreateProjectValues } from "components/partials/create/project/CreateProjectForm";
 import { ProjectType } from "components/types";
+import { IndexableType } from "dexie";
 import { useLiveQuery } from "dexie-react-hooks";
-import { DraftProject, db } from "lib/db";
+import useIndexedDb, { DraftProject } from "lib/db";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -14,76 +15,143 @@ export interface DraftProjectType {
   project: CreateProjectValues;
 }
 
+enum CommandTable {
+  PROJECTS = "projects",
+}
+
+enum Commands {
+  ADD = "add",
+  DELETE = "delete",
+  UPDATE = "update",
+}
+
+interface Command<T> {
+  table: CommandTable;
+  data?: T;
+  id?: IndexableType;
+  action: Commands;
+  cbOnSuccess?: (id?: IndexableType) => void;
+  cbOnError?: (error: any) => void;
+}
+
+type DraftCallbacks = {
+  cbOnEdit?: (id?: IndexableType) => void;
+  cbOnError?: (error: any) => void;
+};
+
+interface DraftOperationResult<T = IndexableType> {
+  error: any;
+  idReturned?: T;
+}
+
+type SaveDraftFunction = (project: DraftProjectType, callbacks?: DraftCallbacks) => Promise<DraftOperationResult>;
+
+type EditDraftFunction = (
+  id: number,
+  project: DraftProjectType,
+  callbacks?: DraftCallbacks
+) => Promise<DraftOperationResult>;
+
+type DeleteDraftFunction = (id: number, callbacks?: DraftCallbacks) => Promise<{ error: any }>;
+
 type useDraftsReturnType = {
   drafts: DraftProject[] | undefined;
   draft: DraftProject | undefined;
-  saveDraft: (
-    project: DraftProjectType,
-    cbOnSave?: ((id: number) => void) | undefined,
-    cbOnError?: ((error: any) => void) | undefined
-  ) => Promise<void>;
-  deleteDraft: (id: number, cbOnDelete?: () => void, cbOnError?: ((error: any) => void) | undefined) => Promise<void>;
-  editDraft: (
-    id: number,
-    project: DraftProjectType,
-    cbOnEdit?: () => void,
-    cbOnError?: ((error: any) => void) | undefined
-  ) => Promise<void>;
+  saveDraft: SaveDraftFunction;
+  deleteDraft: DeleteDraftFunction;
+  editDraft: EditDraftFunction;
 };
 
 export const useDrafts = (id?: number): useDraftsReturnType => {
+  const db = useIndexedDb();
   const drafts = useLiveQuery(() => db.projects.toArray());
-  const [draft, setDraft] = useState<DraftProject | undefined>(undefined);
-  useEffect(() => {
-    const getD = async (id: number) =>
-      db.projects
-        .where("id")
-        .equals(id)
-        .first()
-        .then(d => setDraft(d));
-    if (id) getD(Number(id));
-  }, [id]);
-  async function saveDraft(
-    project: DraftProjectType,
-    cbOnSave?: (id: number) => void,
-    cbOnError?: (error: any) => void
-  ) {
+  const draft = useLiveQuery(() =>
+    db.projects
+      .where("id")
+      .equals(id || 0)
+      .first()
+  );
+
+  const executeCommand = async (command: Command<DraftProjectType>) => {
+    let error;
+    let idReturned: IndexableType | undefined = undefined;
+
+    const { table, data, action, cbOnSuccess, cbOnError, id } = command;
+
     try {
-      const id = await db.projects.add(project);
-      cbOnSave && cbOnSave(Number(id));
+      switch (action) {
+        case Commands.ADD:
+          if (!data) {
+            throw new Error("No data provided");
+          }
+          idReturned = await db[table].add(data);
+          break;
+        case Commands.DELETE:
+          if (!id) {
+            throw new Error("No id provided");
+          }
+          await db[table].delete(id);
+          break;
+        case Commands.UPDATE:
+          if (!id || !data) {
+            throw new Error("No id or data provided");
+          }
+          await db[table].update(id, data);
+          break;
+      }
+      if (cbOnSuccess) {
+        cbOnSuccess(idReturned || id);
+      }
     } catch (error) {
-      cbOnError && cbOnError(error);
+      error = error;
+      if (cbOnError) {
+        cbOnError(error);
+      }
     }
-  }
-  async function deleteDraft(id: number, cbOnDelete?: () => void, cbOnError?: (error: any) => void) {
-    try {
-      await db.projects.delete(id);
-      cbOnDelete && cbOnDelete();
-    } catch (error) {
-      cbOnError && cbOnError(error);
-    }
-  }
-  async function editDraft(
-    id: number,
-    project: DraftProjectType,
-    cbOnEdit?: () => void,
-    cbOnError?: (error: any) => void
-  ) {
-    try {
-      const itemToUpdate: DraftProjectType = {
-        ...project,
-      };
-      await db.projects.update(id, itemToUpdate);
-      cbOnEdit && cbOnEdit();
-    } catch (error) {
-      cbOnError && cbOnError(error);
-    }
-  }
+    return { error, idReturned };
+  };
+
+  const saveDraft: SaveDraftFunction = async (project, callbacks) =>
+    await executeCommand({
+      table: CommandTable.PROJECTS,
+      data: project,
+      action: Commands.ADD,
+      cbOnSuccess: callbacks?.cbOnEdit,
+      cbOnError: callbacks?.cbOnError,
+    });
+  const deleteDraft: DeleteDraftFunction = async (id, callbacks) =>
+    await executeCommand({
+      table: CommandTable.PROJECTS,
+      action: Commands.DELETE,
+      id,
+      cbOnSuccess: callbacks?.cbOnEdit,
+      cbOnError: callbacks?.cbOnError,
+    });
+
+  const editDraft: EditDraftFunction = async (id, project, callbacks) =>
+    await executeCommand({
+      table: CommandTable.PROJECTS,
+      action: Commands.UPDATE,
+      id,
+      data: project,
+      cbOnSuccess: callbacks?.cbOnEdit,
+      cbOnError: callbacks?.cbOnError,
+    });
 
   return { drafts, draft, saveDraft, deleteDraft, editDraft };
 };
 
-const useFormSaveDraft = (name: string, type: ProjectType, basePath = "/create/project") => {
+type UseFormSaveDraftReturnType = {
+  SaveDraftButton: () => JSX.Element | null;
+  DeleteDraftButton: () => JSX.Element | null;
+  EditDraftButton: () => JSX.Element | null;
+};
+
+const useFormSaveDraft = (
+  name: string,
+  type: ProjectType,
+  basePath = "/create/project"
+): UseFormSaveDraftReturnType => {
   const { t } = useTranslation("common");
   const formContext = useFormContext();
   const { formState, getValues } = formContext;
@@ -91,88 +159,73 @@ const useFormSaveDraft = (name: string, type: ProjectType, basePath = "/create/p
   const { draft_id: id } = router.query;
   const [hasDraftChange, setHasDraftChange] = useState(false);
   const [draft, setDraft] = useState<DraftProject | undefined>();
-  const [status, setStatus] = useState<string | null>(null);
   const { isDirty } = formState;
-  const formValues = getValues();
+  const formValues = getValues() as CreateProjectValues;
+  const draftToSave = {
+    name,
+    type,
+    project: formValues,
+  };
+
+  const onPositiveChanges = (id: IndexableType | undefined) => {
+    setHasDraftChange(false);
+    router.query = {
+      draft_saved: "true",
+      draft_id: String(id),
+    };
+    router.push(router).then(() => router.reload());
+  };
+
+  const onPsitiveErrors = (error: any) => {
+    console.error(error);
+    router.query = {
+      draft_saved: "false",
+    };
+    router.push(router);
+  };
 
   const {
-    drafts,
-    draft: dd,
+    draft: currentDraft,
     saveDraft: addDraft,
     deleteDraft: removeDraft,
     editDraft: updateDraft,
   } = useDrafts(Number(id));
 
   useEffect(() => {
-    if (dd) {
-      setDraft(dd);
-      setHasDraftChange(isDirty && formValues !== dd);
+    if (currentDraft) {
+      setDraft(currentDraft);
+      setHasDraftChange(isDirty && formValues !== currentDraft.project);
     } else {
       setHasDraftChange(isDirty);
     }
-  }, [dd, isDirty, formValues]);
+  }, [currentDraft, isDirty, formValues]);
 
   async function saveDraft() {
-    await addDraft(
-      {
-        name,
-        type,
-        project: getValues() as CreateProjectValues,
-      },
-      id => {
-        setHasDraftChange(false);
-        router.query = {
-          draft_saved: "true",
-          draft_id: String(id),
-        };
-        router.push(router);
-      },
-      error => {
-        setStatus(`Failed to add ${name}: ${error}`);
-        console.log(status);
-        console.error(error);
-      }
-    );
+    await addDraft(draftToSave, {
+      cbOnEdit: onPositiveChanges,
+      cbOnError: onPsitiveErrors,
+    });
   }
 
   async function deleteDraft(id: number) {
-    await removeDraft(
-      id,
-      () => {
+    await removeDraft(id, {
+      cbOnEdit: () => {
         router.push(basePath + "?draft_deleted=true");
       },
-      error => {
-        setStatus(`Failed to delete ${name}: ${error}`);
-        console.log(status);
+      cbOnError: error => {
         console.error(error);
-      }
-    );
-  }
-  async function editDraft(id: number) {
-    console.log("editing");
-    await updateDraft(
-      id,
-      {
-        name,
-        type,
-        project: getValues() as CreateProjectValues,
-      },
-      () => {
-        console.log("edited");
-        setHasDraftChange(false);
         router.query = {
-          draft_saved: "true",
-          draft_id: String(id),
+          draft_deleted: "false",
         };
         router.push(router);
-        router.reload();
       },
-      error => {
-        setStatus(`Failed to edit ${name}: ${error}`);
-        console.log(status);
-        console.error(error);
-      }
-    );
+    });
+  }
+  async function editDraft(id: number) {
+    await updateDraft(id, draftToSave, {
+      cbOnEdit: onPositiveChanges,
+      cbOnError: onPsitiveErrors,
+    });
   }
   const SaveDraftButton = () => {
     if (draft) return null;
@@ -201,7 +254,7 @@ const useFormSaveDraft = (name: string, type: ProjectType, basePath = "/create/p
     );
   };
 
-  return { saveDraft, SaveDraftButton, DeleteDraftButton, EditDraftButton, drafts };
+  return { SaveDraftButton, DeleteDraftButton, EditDraftButton };
 };
 
 export default useFormSaveDraft;

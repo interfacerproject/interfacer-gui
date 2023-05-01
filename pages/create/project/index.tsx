@@ -35,7 +35,6 @@ const CreateProject: NextPageWithLayout = () => {
   const { t } = useTranslation(["createProjectProps", "common"]);
   const { get } = useStorageCRUD("draft");
   const draftsSaved = get();
-  console.log(draftsSaved);
   const router = useRouter();
   const { draft_deleted } = router.query;
   const { user } = useAuth();
@@ -67,9 +66,6 @@ const CreateProject: NextPageWithLayout = () => {
       projectType: ProjectType.SERVICE,
     },
   ];
-  if ("indexedDB" in window) {
-    console.log(window.indexedDB);
-  }
 
   return (
     <>

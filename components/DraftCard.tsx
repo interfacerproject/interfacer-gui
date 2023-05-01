@@ -18,7 +18,6 @@ export interface DraftCardProps {
 
 export default function DraftCard(props: DraftCardProps) {
   const { project, projectType, id } = props;
-  console.log(project);
   const [hover, setHover] = useState(false);
   const setHoverTrue = () => setHover(true);
   const setHoverFalse = () => setHover(false);
