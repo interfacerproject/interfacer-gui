@@ -176,7 +176,7 @@ const useFormSaveDraft = (
     router.push(router).then(() => router.reload());
   };
 
-  const onPsitiveErrors = (error: any) => {
+  const onPositiveErrors = (error: any) => {
     console.error(error);
     router.query = {
       draft_saved: "false",
@@ -203,7 +203,7 @@ const useFormSaveDraft = (
   async function saveDraft() {
     await addDraft(draftToSave, {
       cbOnEdit: onPositiveChanges,
-      cbOnError: onPsitiveErrors,
+      cbOnError: onPositiveErrors,
     });
   }
 
@@ -224,7 +224,7 @@ const useFormSaveDraft = (
   async function editDraft(id: number) {
     await updateDraft(id, draftToSave, {
       cbOnEdit: onPositiveChanges,
-      cbOnError: onPsitiveErrors,
+      cbOnError: onPositiveErrors,
     });
   }
   const SaveDraftButton = () => {
