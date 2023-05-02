@@ -132,7 +132,7 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
               focused={true}
               label={t("Your email")}
               helpText={t("Your email address that will be used for your login")}
-              placeholder={t("alice@email&#183;com")}
+              placeholder={"alice@email.com"}
               error={errors.email?.message}
               requiredIndicator={isRequired(schema, name)}
             />
