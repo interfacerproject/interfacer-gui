@@ -101,5 +101,6 @@
   "Project succesfully created!": "Projekt erfolgreich erstellt!",
   "Error": "Fehler",
   "An error occurred during email verification.": "Bei der E-Mail-Bestätigung ist ein Fehler aufgetreten.",
-  "Email verified successfully!": "E-Mail erfolgreich verifiziert!"
+  "Email verified successfully!": "E-Mail erfolgreich verifiziert!",
+  "verified": "verifiziert"
 }

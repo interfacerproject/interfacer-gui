@@ -110,5 +110,6 @@
   "Project succesfully created!": "Project succesfully created!",
   "Error": "Error",
   "An error occurred during email verification.": "An error occurred during email verification.",
-  "Email verified successfully!": "Email verified successfully!"
+  "Email verified successfully!": "Email verified successfully!",
+  "verified": "verified"
 }
