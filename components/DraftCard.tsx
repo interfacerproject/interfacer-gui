@@ -4,11 +4,11 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useState } from "react";
 import LocationText from "./LocationText";
-import ProjectCardImage from "./ProjectCardImage";
 import ProjectTypeChip from "./ProjectTypeChip";
+import ProjectTypeRoundIcon from "./ProjectTypeRoundIcon";
 import BrTags from "./brickroom/BrTags";
-import { ProjectType } from "./types";
 import { CreateProjectValues } from "./partials/create/project/CreateProjectForm";
+import { ProjectType } from "./types";
 
 export interface DraftCardProps {
   project: Partial<CreateProjectValues>;
@@ -26,6 +26,7 @@ export default function DraftCard(props: DraftCardProps) {
   });
   const location = project.location?.locationData?.address;
   const isDesign = projectType === ProjectType.DESIGN;
+  const image = project.images?.[0];
   return (
     <div className={classes}>
       <div className="space-y-3 p-3">
@@ -33,7 +34,14 @@ export default function DraftCard(props: DraftCardProps) {
         <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse}>
           <Link href={`/create/project/design?draft_id=${id}`}>
             <a className="space-y-3">
-              <ProjectCardImage projectType={projectType} image={undefined} />
+              <div className="h-60 bg-base-200 rounded-lg flex items-center justify-center overflow-hidden">
+                {!image && projectType && (
+                  <div className="opacity-40">
+                    <ProjectTypeRoundIcon projectType={projectType} />
+                  </div>
+                )}
+                {image && <img alt={image.name} src={window.URL.createObjectURL(image)} />}
+              </div>
               <div>
                 <Text variant="headingLg" as="h4">
                   {project.main?.title}
