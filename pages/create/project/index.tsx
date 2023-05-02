@@ -36,9 +36,10 @@ const CreateProject: NextPageWithLayout = () => {
   const { get } = useStorageCRUD("draft");
   const draftsSaved = get();
   const router = useRouter();
-  const { draft_deleted } = router.query;
+  const { draft_deleted, draft_saved } = router.query;
   const { user } = useAuth();
-  const [isOpenBanner, setIsOpenBanner] = useState(!!draft_deleted);
+  const [isOpenSavedBanner, setIsOpenSavedBanner] = useState(!!draft_saved);
+  const [isOpenDeletedBanner, setIsOpenDeletedBanner] = useState(!!draft_deleted);
 
   const sections: Array<{ title: string; description: string; url: string; projectType: ProjectType }> = [
     {
@@ -69,9 +70,14 @@ const CreateProject: NextPageWithLayout = () => {
 
   return (
     <>
-      <FullWidthBanner open={isOpenBanner} onClose={() => setIsOpenBanner(false)} status="info">
+      <FullWidthBanner open={isOpenDeletedBanner} onClose={() => setIsOpenDeletedBanner(false)} status="info">
         <Text as="p" variant="bodySm">
           {t("Your draft project was deleted")}
+        </Text>
+      </FullWidthBanner>
+      <FullWidthBanner open={isOpenSavedBanner} onClose={() => setIsOpenSavedBanner(false)}>
+        <Text as="p" variant="bodySm">
+          {t("Your project was saved as draft successfully")}
         </Text>
       </FullWidthBanner>
       <div className="max-w-xl mx-auto p-4">

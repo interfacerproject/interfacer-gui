@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useFormContext } from "react-hook-form";
 
 export default function CreateProjectSubmit() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("common");
   const router = useRouter();
   const type = router.asPath.split("/")[3].split("?")[0];
   const typeAsProjectType = type.charAt(0).toUpperCase() + type.slice(1);

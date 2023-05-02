@@ -15,11 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { Link as PLink, Text } from "@bbtgnn/polaris-interfacer";
-import FullWidthBanner from "components/FullWidthBanner";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -28,17 +25,9 @@ type LayoutProps = {
 const CreateProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: LayoutProps) => {
   const { t } = useTranslation();
   const { children } = layoutProps;
-  const router = useRouter();
-  const { draft_saved } = router.query;
-  const [isOpenBanner, setIsOpenBanner] = useState(!!draft_saved);
 
   return (
     <div className="h-full">
-      <FullWidthBanner open={isOpenBanner} onClose={() => setIsOpenBanner(false)}>
-        <Text as="p" variant="bodySm">
-          {t("Your project was saved as draft successfully")}
-        </Text>
-      </FullWidthBanner>
       <div className="p-4">
         <Link href="/create/project">
           <PLink>

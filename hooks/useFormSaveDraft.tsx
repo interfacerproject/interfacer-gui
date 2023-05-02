@@ -169,11 +169,7 @@ const useFormSaveDraft = (
 
   const onPositiveChanges = (id: IndexableType | undefined) => {
     setHasDraftChange(false);
-    router.query = {
-      draft_saved: "true",
-      draft_id: String(id),
-    };
-    router.push(router).then(() => router.reload());
+    router.push(basePath + "?draft_saved=true");
   };
 
   const onPositiveErrors = (error: any) => {
