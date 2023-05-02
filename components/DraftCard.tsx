@@ -9,6 +9,7 @@ import ProjectTypeRoundIcon from "./ProjectTypeRoundIcon";
 import BrTags from "./brickroom/BrTags";
 import { CreateProjectValues } from "./partials/create/project/CreateProjectForm";
 import { ProjectType } from "./types";
+import IfSidebarTag from "./brickroom/IfSidebarTag";
 
 export interface DraftCardProps {
   project: Partial<CreateProjectValues>;
@@ -17,6 +18,7 @@ export interface DraftCardProps {
 }
 
 export default function DraftCard(props: DraftCardProps) {
+  const { t } = useTranslation("common");
   const { project, projectType, id } = props;
   const [hover, setHover] = useState(false);
   const setHoverTrue = () => setHover(true);
@@ -30,7 +32,9 @@ export default function DraftCard(props: DraftCardProps) {
   return (
     <div className={classes}>
       <div className="space-y-3 p-3">
-        <div className="flex justify-between items-center"></div>
+        <div className="flex justify-between items-center">
+          <IfSidebarTag text={t("draft")} />
+        </div>
         <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse}>
           <Link href={`/create/project/design?draft_id=${id}`}>
             <a className="space-y-3">
