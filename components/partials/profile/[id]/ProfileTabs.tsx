@@ -33,6 +33,7 @@ const ProfileTabs = () => {
   if (hasCollectedProjects) {
     collectedProjects["id"] = JSON.parse(getItem("projectsCollected"));
   }
+  proposalFilter.primaryAccountable = [id];
 
   const tabs = [
     {
