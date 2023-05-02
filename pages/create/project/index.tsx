@@ -35,7 +35,6 @@ const CreateProject: NextPageWithLayout = () => {
   const { t } = useTranslation(["createProjectProps", "common"]);
   const { get } = useStorageCRUD("draft");
   const draftsSaved = get();
-  console.log(draftsSaved);
   const router = useRouter();
   const { draft_deleted } = router.query;
   const { user } = useAuth();
