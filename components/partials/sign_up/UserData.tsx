@@ -24,8 +24,11 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
+import { gql } from "@apollo/client";
 import { Button, TextField } from "@bbtgnn/polaris-interfacer";
-import { isRequired } from "../../../lib/isFieldRequired";
+import createApolloClient from "lib/createApolloClient";
+import { isRequired } from "lib/isFieldRequired";
+import { PersonExistsQuery, PersonExistsQueryVariables } from "lib/types";
 
 //
 
@@ -44,11 +47,9 @@ export namespace UserDataNS {
 //
 
 export default function UserData({ onSubmit }: UserDataNS.Props) {
-  // Loading translations
   const { t } = useTranslation("signUpProps");
-
-  // Getting function that checks for email
   const { register } = useAuth();
+  const client = createApolloClient();
 
   /* Form setup */
 
@@ -61,21 +62,34 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
   const schema: yup.AnyObjectSchema = yup
     .object({
       name: yup.string().required(),
-      user: yup.string().required(),
+      user: yup
+        .string()
+        .required()
+        .test("username-exists", t("This username is already in use"), async (value, testContext) => {
+          return userExistsTest({ user: value });
+        }),
       email: yup
         .string()
         .email()
         .required()
-        .test("email-exists", t("this e-mail has already been used by another user"), async (value, testContext) => {
-          return await testEmail(value!);
+        .test("email-exists", t("This email is already in use"), async (value, testContext) => {
+          return userExistsTest({ email: value });
         }),
     })
     .required();
 
-  // This function checks if the provided email exists
-  async function testEmail(email: string) {
-    const result = await register(email, true);
-    return Boolean(result?.keypairoomServer);
+  async function userExistsTest(variables: PersonExistsQueryVariables) {
+    try {
+      const { data } = await client.query<PersonExistsQuery, PersonExistsQueryVariables>({
+        query: PERSON_EXISTS,
+        variables,
+      });
+      return !data.personExists;
+    } catch (e) {
+      console.warn("userExistsTest validation GQL error: ↓");
+      console.warn(e);
+      return true; // In order not to block the form
+    }
   }
 
   // Creating form
@@ -174,3 +188,11 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
     </div>
   );
 }
+
+//
+
+const PERSON_EXISTS = gql`
+  query PersonExists($email: String, $user: String) {
+    personExists(email: $email, user: $user)
+  }
+`;
