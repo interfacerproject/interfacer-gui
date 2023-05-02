@@ -73,6 +73,7 @@ export const SEARCH_PROJECT = gql`
       }
       conformsTo {
         name
+        id
       }
       primaryAccountable {
         name
