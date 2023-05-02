@@ -123,8 +123,10 @@ export default function CreateProjectForm(props: Props) {
   const { isDirty, isSubmitting } = formState;
 
   useEffect(() => {
-    if (storedValues && !isSubmitting && !isDirty) reset(storedValues);
-    trigger();
+    if (storedValues && !isSubmitting && !isDirty) {
+      reset(storedValues);
+      trigger();
+    }
   }, [storedValues, isSubmitting, isDirty, reset, trigger]);
 
   const { handleSubmit } = formMethods;
