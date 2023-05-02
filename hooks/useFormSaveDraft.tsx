@@ -60,11 +60,13 @@ type useDraftsReturnType = {
   saveDraft: SaveDraftFunction;
   deleteDraft: DeleteDraftFunction;
   editDraft: EditDraftFunction;
+  hasDrafts: boolean;
 };
 
 export const useDrafts = (id?: number): useDraftsReturnType => {
   const db = useIndexedDb();
   const drafts = useLiveQuery(() => db.projects.toArray());
+  const hasDrafts = Boolean(drafts && drafts.length > 0);
   const draft = useLiveQuery(() =>
     db.projects
       .where("id")
@@ -138,7 +140,7 @@ export const useDrafts = (id?: number): useDraftsReturnType => {
       cbOnError: callbacks?.cbOnError,
     });
 
-  return { drafts, draft, saveDraft, deleteDraft, editDraft };
+  return { drafts, draft, saveDraft, deleteDraft, editDraft, hasDrafts };
 };
 
 type UseFormSaveDraftReturnType = {

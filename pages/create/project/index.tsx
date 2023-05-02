@@ -9,7 +9,6 @@ import { ChevronRightMinor } from "@shopify/polaris-icons";
 import Layout from "components/layout/Layout";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectTypeRoundIcon from "components/ProjectTypeRoundIcon";
-import useStorageCRUD from "hooks/useStorageCrud";
 import FullWidthBanner from "components/FullWidthBanner";
 
 // Icons
@@ -17,6 +16,7 @@ import { ProjectType } from "components/types";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuth } from "hooks/useAuth";
+import { useDrafts } from "hooks/useFormSaveDraft";
 
 //
 
@@ -33,8 +33,7 @@ export async function getStaticProps({ locale }: any) {
 
 const CreateProject: NextPageWithLayout = () => {
   const { t } = useTranslation(["createProjectProps", "common"]);
-  const { get } = useStorageCRUD("draft");
-  const draftsSaved = get();
+  const { hasDrafts } = useDrafts();
   const router = useRouter();
   const { draft_deleted, draft_saved } = router.query;
   const { user } = useAuth();
@@ -104,7 +103,7 @@ const CreateProject: NextPageWithLayout = () => {
             }
           />
           <Stack vertical>
-            {draftsSaved && (
+            {hasDrafts && (
               <Banner
                 status="info"
                 title={t("You have some draft saved") + ":"}
