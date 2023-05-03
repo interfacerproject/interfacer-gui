@@ -1,7 +1,8 @@
 import { Tabs } from "@bbtgnn/polaris-interfacer";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
+import EmptyState from "components/EmptyState";
 import { useUser } from "components/layout/FetchUserLayout";
-import ProjectsCards from "components/ProjectsCards";
+import ProjectsCards, { ProjectsCardsProps } from "components/ProjectsCards";
 import { useAuth } from "hooks/useAuth";
 import useFilters from "hooks/useFilters";
 import useStorage from "hooks/useStorage";
@@ -11,16 +12,19 @@ import { useCallback, useState } from "react";
 
 const ProfileTabs = () => {
   const router = useRouter();
-  const { tab } = router.query;
   const { t } = useTranslation();
+
+  const { tab } = router.query;
+  const initialTab = tab ? Number(tab) : 0;
+  const [projectTabSelected, setProjectTabSelected] = useState(initialTab);
+  const handleProjectTabChange = useCallback((selectedTabIndex: number) => setProjectTabSelected(selectedTabIndex), []);
+
   const { proposalFilter } = useFilters();
   const { user } = useAuth();
   const { id } = useUser();
   const { getItem } = useStorage();
   const isUser = user?.ulid === id;
-  const initialTab = tab ? Number(tab) : 0;
-  const [projectTabSelected, setProjectTabSelected] = useState(initialTab);
-  const handleProjectTabChange = useCallback((selectedTabIndex: number) => setProjectTabSelected(selectedTabIndex), []);
+
   const hasCollectedProjects = isUser && !!getItem("projectsCollected");
   let collectedProjects: { id: string[] } = {
     id: [],
@@ -52,25 +56,40 @@ const ProfileTabs = () => {
     },
   ];
 
-  const userProjects = {
+  const userProjects: ProjectsCardsProps = {
     filter: proposalFilter,
     hideHeader: false,
     hideFilters: false,
     header: isUser ? t("My projects") : t("Projects"),
+    emptyState: (
+      <EmptyState
+        heading={t("No projects yet")}
+        description={t("Create a project to get started :)")}
+        primaryAction={{ label: t("Create a new project"), url: "/create/project" }}
+      />
+    ),
   };
 
-  const inListProjects = {
+  const inListProjects: ProjectsCardsProps = {
     header: t("My list"),
     filter: collectedProjects,
     hideHeader: false,
+    emptyState: (
+      <EmptyState
+        heading={t("Empty list")}
+        description={t("Use the ‘Add to list’ button to save your favorite projects here")}
+      />
+    ),
   };
 
   const projectsCardsProps = projectTabSelected === 0 ? { ...userProjects } : { ...inListProjects };
+  console.log(projectsCardsProps);
 
   return (
-    <Tabs tabs={tabs} selected={projectTabSelected} onSelect={handleProjectTabChange}>
+    <div className="space-y-4">
+      <Tabs tabs={tabs} selected={projectTabSelected} onSelect={handleProjectTabChange} />
       <ProjectsCards {...projectsCardsProps} />
-    </Tabs>
+    </div>
   );
 };
 
