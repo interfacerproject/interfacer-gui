@@ -17,7 +17,6 @@
 import { useQuery } from "@apollo/client";
 import Map, {
   FullscreenControl,
-  GeolocateControl,
   Layer,
   LayerProps,
   MapRef,
@@ -174,7 +173,6 @@ const ProjectsMaps = () => {
           scrollZoom={false}
           touchZoomRotate
         >
-          <GeolocateControl position="top-left" />
           <FullscreenControl position="top-left" />
           <NavigationControl position="top-left" />
           <ScaleControl />
