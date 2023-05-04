@@ -107,5 +107,6 @@
   "An error occurred during email verification.": "Une erreur s'est produite lors de la vérification de l'e-mail.",
   "Email verified successfully!": "Email vérifié avec succès!",
   "My drafts": "Mes brouillons",
-  "draft": "brouillon"
+  "draft": "brouillon",
+  "verified": "vérifié"
 }

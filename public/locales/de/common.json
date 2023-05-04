@@ -103,5 +103,6 @@
   "An error occurred during email verification.": "Bei der E-Mail-Bestätigung ist ein Fehler aufgetreten.",
   "Email verified successfully!": "E-Mail erfolgreich verifiziert!",
   "My drafts": "Meine Entwürfe",
-  "draft": "Entwurf"
+  "draft": "Entwurf",
+  "verified": "verifiziert"
 }
