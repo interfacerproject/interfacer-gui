@@ -104,6 +104,7 @@
     "zenroom": "2.2.3-f0193d51"
   },
   "devDependencies": {
+    "@playwright/test": "^1.33.0",
     "@types/lodash": "^4.14.191",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "cypress": "^10.7.0",
@@ -116,6 +117,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.31.8",
+    "expect-playwright": "^0.8.0",
     "prettier": "^2.7.1",
     "start-server-and-test": "^1.14.0"
   }
