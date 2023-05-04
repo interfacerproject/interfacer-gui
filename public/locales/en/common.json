@@ -111,6 +111,8 @@
   "Error": "Error",
   "An error occurred during email verification.": "An error occurred during email verification.",
   "Email verified successfully!": "Email verified successfully!",
+  "My drafts": "My drafts",
+  "draft": "draft",
   "verified": "verified",
   "Certifications": "Certifications"
 }

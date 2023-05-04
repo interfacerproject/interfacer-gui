@@ -17,15 +17,16 @@ const icons: Record<ProjectType, ReactNode> = {
 
 interface Props {
   project?: Partial<EconomicResource>;
+  projectType?: ProjectType;
   introduction?: boolean;
   link?: boolean;
 }
 
 export default function ProjectTypeChip(props: Props) {
   const { t } = useTranslation("common");
-  const { project, introduction = false, link = true } = props;
+  const { project, projectType, introduction = false, link = true } = props;
 
-  const name = (project?.conformsTo?.name as ProjectType) || ProjectType.DESIGN;
+  const name = (project?.conformsTo?.name as ProjectType) || projectType || ProjectType.DESIGN;
   const href = `/projects?conformsTo=${project?.conformsTo?.id}`;
 
   const renderProps = ProjectTypeRenderProps[name];

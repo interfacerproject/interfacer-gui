@@ -106,6 +106,12 @@ dependencies:
   dayjs:
     specifier: ^1.11.5
     version: 1.11.6
+  dexie:
+    specifier: ^3.2.3
+    version: 3.2.3
+  dexie-react-hooks:
+    specifier: ^1.1.3
+    version: 1.1.3(@types/react@18.0.18)(dexie@3.2.3)(react@18.2.0)
   eslint-plugin-i18next:
     specifier: 6.0.0-6
     version: 6.0.0-6
@@ -4218,6 +4224,23 @@ packages:
       commander: 7.2.0
       ts-interface-checker: 1.0.0
     dev: true
+
+  /dexie-react-hooks@1.1.3(@types/react@18.0.18)(dexie@3.2.3)(react@18.2.0):
+    resolution: {integrity: sha512-bXXE1gfYtfuVYTNiOlyam+YVaO8KaqacgRuxFuP37YtpS6o/jxT6KOl5h+hhqY36s0UavlHWbL+HWJFMcQumIg==}
+    peerDependencies:
+      '@types/react': '>=16'
+      dexie: '>=3.1.0-alpha.1 <5.0.0'
+      react: '>=16'
+    dependencies:
+      '@types/react': 18.0.18
+      dexie: 3.2.3
+      react: 18.2.0
+    dev: false
+
+  /dexie@3.2.3:
+    resolution: {integrity: sha512-iHayBd4UYryDCVUNa3PMsJMEnd8yjyh5p7a+RFeC8i8n476BC9wMhVvqiImq5zJZJf5Tuer+s4SSj+AA3x+ZbQ==}
+    engines: {node: '>=6.0'}
+    dev: false
 
   /didyoumean@1.2.2:
     resolution: {integrity: sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==}
