@@ -106,9 +106,6 @@ dependencies:
   dayjs:
     specifier: ^1.11.5
     version: 1.11.6
-  dotenv:
-    specifier: ^16.0.3
-    version: 16.0.3
   eslint-plugin-i18next:
     specifier: 6.0.0-6
     version: 6.0.0-6
@@ -249,6 +246,9 @@ devDependencies:
   devmoji:
     specifier: ^2.3.0
     version: 2.3.0
+  dotenv:
+    specifier: ^16.0.3
+    version: 16.0.3
   eslint:
     specifier: ^8.23.0
     version: 8.28.0
@@ -4312,7 +4312,6 @@ packages:
   /dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
-    dev: false
 
   /dset@3.1.2:
     resolution: {integrity: sha512-g/M9sqy3oHe477Ar4voQxWtaPIFw1jTdKZuomOjhCcBx9nHUNn0pu6NopuFFrTh/TRZIKEj+76vLWFu9BNKk+Q==}
