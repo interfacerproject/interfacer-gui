@@ -46,7 +46,13 @@ export default function ProjectTypeChip(props: Props) {
     </span>
   );
 
-  const chipWithLink = !link ? baseChip : <LinkWrapper href={href}>{baseChip}</LinkWrapper>;
+  const chipWithLink = !link ? (
+    baseChip
+  ) : (
+    <LinkWrapper href={href} openInNewTab>
+      {baseChip}
+    </LinkWrapper>
+  );
 
   if (!introduction) return chipWithLink;
   else

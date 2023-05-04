@@ -3839,6 +3839,13 @@ export type GetDppQuery = {
   economicResource?: { __typename?: "EconomicResource"; traceDpp: any } | null;
 };
 
+export type PersonExistsQueryVariables = Exact<{
+  email?: InputMaybe<Scalars["String"]>;
+  user?: InputMaybe<Scalars["String"]>;
+}>;
+
+export type PersonExistsQuery = { __typename?: "RootQueryType"; personExists: boolean };
+
 export type GetVariablesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetVariablesQuery = {

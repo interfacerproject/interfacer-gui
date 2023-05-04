@@ -15,7 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useQuery } from "@apollo/client";
-import Map, { Layer, LayerProps, MapRef, Popup, Source } from "react-map-gl";
+import Map, {
+  FullscreenControl,
+  Layer,
+  LayerProps,
+  MapRef,
+  NavigationControl,
+  Popup,
+  ScaleControl,
+  Source,
+} from "react-map-gl";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { FetchInventoryQuery, FetchInventoryQueryVariables } from "../lib/types";
 
@@ -23,8 +32,8 @@ import useFilters from "hooks/useFilters";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
-import WithFilterLayout from "./layout/WithFilterLayout";
 import ProjectDisplay from "./ProjectDisplay";
+import WithFilterLayout from "./layout/WithFilterLayout";
 
 const ProjectsMaps = () => {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
@@ -49,6 +58,7 @@ const ProjectsMaps = () => {
             longitude={p.geometry.coordinates[0]}
             closeButton={false}
             closeOnClick={false}
+            focusAfterOpen={false}
           >
             <Link href={`/project/${p.properties.id}`}>
               <a>
@@ -161,7 +171,13 @@ const ProjectsMaps = () => {
           cursor={cursor}
           onZoomEnd={onZoomChange}
           onLoad={onZoomChange}
+          scrollZoom={false}
+          touchZoomRotate
         >
+          <FullscreenControl position="top-left" />
+          <NavigationControl position="top-left" />
+          <ScaleControl />
+
           <Source
             id="projects"
             type="geojson"
