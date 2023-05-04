@@ -1,23 +1,22 @@
 // import { InterceptedRequest } from 'playwright/types/protocol';
 import { Route, type Page } from "@playwright/test";
 
-const storageObject = {
-  ethereumPrivateKey: "35394f33359a391dc177df909cfaa68ae9c206ef5bbb8d2a501edd07bc36a52c",
-  authName: "pippo",
-  authUsername: "pippo",
-  bitcoinPrivateKey: "KwQTBaMFje9BairZM7r1irxDQ4dPvbcwuQNw4H3Mcdsk82cHuXev",
-  ecdhPublicKey: "NtHMQN8seboQtfPPpGzQyFCxX1cXJwaR9bTKrxEaAfdFfJ32TNa3sniy6fje6UjmNoKMvHQymeWLVA6Rsdmqy5Ba",
-  seed: "skin buyer sunset person run push elevator under debris soft surge man",
-  authEmail: "pippo@dyne.org",
-  reflowPrivateKey: "m0TjAQtJs7/+mJiyk/S3PvN8lyOwZEcYFjUm0oSl0is=",
-  ecdhPrivateKey: "Yi69UJBXfwVWq7qXXOj3YI+ix5WhJC+DDPYAi7FqyEs=",
-  eddsaPublicKey: "2S8qn196efFgyrC1dYms6UkkhCnweYM6DJhLgd3kuPEm",
-  reflowPublicKey:
-    "2LexKLUQez348DGPQi3cWHZ1HQbepnnxoV5dTArz1RzyimgUm1Z6zY7n4V9ttdzDbP6vDEuznbDFB489gjcMdTzNiKziCDY42Md4ezTAqiaRzoChGmC4oRtox8apUpCgmSQd4o1z6JyJ74kgAQHsPq6hxBF3ooScsehtwQTdd231gSTTmXkcBToQx1u2GTj3VTKfdMdAtYFKUv4KunhM6goiJifoJUNsjjKS74HFLEv4YhkuenBptu8pmawccJz9PoYmYK",
-  bitcoinPublicKey: "cAb9KBaR42zf4z6F6fZwUBUesJvZMEnhNxMek52nQJJW",
-  ethereumAddress: "6b252998de193cfc303066ac518488c11869723d",
-  eddsaPrivateKey: "5iNX7QCGKXXF2Lrvxk2p6C3miUd5d8jm8rDg77nGLUv",
-  HMAC: "HsF2xuY/lM3xftrR3dKaJ1lC6YDnDjbwzknX0qRV6D0=",
+export const storageObject = {
+  ethereumPrivateKey: process.env.ETHEREUMPRIVATEKEY,
+  authName: process.env.AUTHNAME,
+  authUsername: process.env.AUTHUSERNAME,
+  bitcoinPrivateKey: process.env.BITCOINPRIVATEKEY,
+  ecdhPublicKey: process.env.ECDHPUBLICKEY,
+  seed: process.env.SEED,
+  authEmail: process.env.AUTHEMAIL,
+  reflowPrivateKey: process.env.REFLOWPRIVATEKEY,
+  ecdhPrivateKey: process.env.ECDHPRIVATEKEY,
+  eddsaPublicKey: process.env.EDDSAPUBLICKEY,
+  reflowPublicKey: process.env.REFLOWPUBLICKEY,
+  bitcoinPublicKey: process.env.BITCOINPUBLICKEY,
+  ethereumAddress: process.env.ETHEREUMADDRESS,
+  eddsaPrivateKey: process.env.EDDSAPRIVATEKEY,
+  HMAC: process.env.HMAC,
 };
 
 type StorageObjectKeys = keyof typeof storageObject;
@@ -26,7 +25,7 @@ export async function login(page: Page) {
   await page.goto("");
   await page.evaluate(storageObject => {
     Object.keys(storageObject).forEach(key => {
-      localStorage.setItem(key, storageObject[key as StorageObjectKeys]);
+      localStorage.setItem(key, storageObject[key as StorageObjectKeys]!);
     });
   }, storageObject);
 }
