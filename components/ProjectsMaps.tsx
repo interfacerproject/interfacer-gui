@@ -23,8 +23,8 @@ import useFilters from "hooks/useFilters";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
-import WithFilterLayout from "./layout/WithFilterLayout";
 import ProjectDisplay from "./ProjectDisplay";
+import WithFilterLayout from "./layout/WithFilterLayout";
 
 const ProjectsMaps = () => {
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
@@ -49,6 +49,7 @@ const ProjectsMaps = () => {
             longitude={p.geometry.coordinates[0]}
             closeButton={false}
             closeOnClick={false}
+            focusAfterOpen={false}
           >
             <Link href={`/project/${p.properties.id}`}>
               <a>
