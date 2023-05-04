@@ -3597,7 +3597,7 @@ export type SearchProjectQuery = {
     id: string;
     name: string;
     images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
-    conformsTo: { __typename?: "ResourceSpecification"; name: string };
+    conformsTo: { __typename?: "ResourceSpecification"; name: string; id: string };
     primaryAccountable: { __typename?: "Organization"; name: string } | { __typename?: "Person"; name: string };
   } | null;
 };
@@ -3847,6 +3847,13 @@ export type PersonExistsQueryVariables = Exact<{
 }>;
 
 export type PersonExistsQuery = { __typename?: "RootQueryType"; personExists: boolean };
+
+export type RegisterUserMutationVariables = Exact<{
+  firstRegistration: Scalars["Boolean"];
+  userData: Scalars["JSONObject"];
+}>;
+
+export type RegisterUserMutation = { __typename?: "RootMutationType"; keypairoomServer: string };
 
 export type GetVariablesQueryVariables = Exact<{ [key: string]: never }>;
 

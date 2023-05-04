@@ -14,14 +14,15 @@ const TechnicalInfoCard = () => {
 
   const declarations = project.metadata?.declarations;
   const haveDeclarations = declarations?.recyclable === "yes" || declarations?.repairable === "yes";
-  const licenses = project.metadata?.licenses?.length > 0 && project?.metadata?.licenses;
+  const licenses = project.metadata?.licenses?.length && project?.metadata?.licenses;
   const design = project.metadata?.design;
-  const certifications: Array<ILink> = project.metadata.declarations.certifications;
+  const certifications: Array<ILink> | undefined = project.metadata.declarations?.certifications;
 
-  if (!(licenses || design || haveDeclarations)) return null;
+  if (!(licenses || design || haveDeclarations || certifications?.length)) return null;
+
 
   return (
-    <Card sectioned>
+    <Card sectioned >
       <Stack vertical spacing="loose">
         {licenses && <ProjectLicenses project={project} />}
 
@@ -54,7 +55,7 @@ const TechnicalInfoCard = () => {
           )}
         </Stack>
 
-        {certifications && (
+        {certifications?.length && (
           <div>
             <Text as="h3" variant="headingMd" fontWeight="bold">
               {t("Certifications")}
