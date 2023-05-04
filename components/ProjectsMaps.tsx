@@ -15,7 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useQuery } from "@apollo/client";
-import Map, { Layer, LayerProps, MapRef, Popup, Source } from "react-map-gl";
+import Map, {
+  FullscreenControl,
+  Layer,
+  LayerProps,
+  MapRef,
+  NavigationControl,
+  Popup,
+  ScaleControl,
+  Source,
+} from "react-map-gl";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { FetchInventoryQuery, FetchInventoryQueryVariables } from "../lib/types";
 
@@ -162,7 +171,13 @@ const ProjectsMaps = () => {
           cursor={cursor}
           onZoomEnd={onZoomChange}
           onLoad={onZoomChange}
+          scrollZoom={false}
+          touchZoomRotate
         >
+          <FullscreenControl position="top-left" />
+          <NavigationControl position="top-left" />
+          <ScaleControl />
+
           <Source
             id="projects"
             type="geojson"
