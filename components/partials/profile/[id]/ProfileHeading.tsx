@@ -40,6 +40,13 @@ const ProfileHeading = () => {
           <span className="text-primary">{person?.name}</span>
         </Text>
         <BrUserAvatar user={person} size="48px" />
+        {user && user.isVerified && (
+          <div className="bg-gray-200 px-2 py-1 rounded-full">
+            <Text as="span" variant="bodySm" color="subdued">
+              {t("verified")} {"✅"}
+            </Text>
+          </div>
+        )}
       </div>
       <Heading label={t("Username:")}>
         <Text as="span" variant="bodyLg">

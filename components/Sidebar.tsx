@@ -77,6 +77,10 @@ function Sidebar() {
       text: t("My list"),
       link: `${user?.profileUrl}?tab=1`,
     },
+    my_drafts: {
+      text: t("My drafts"),
+      link: `${user?.profileUrl}?tab=2`,
+    },
     ScanQr: {
       text: t("Scan QR"),
       link: "/scan",
@@ -136,10 +140,10 @@ function Sidebar() {
             <IfSideBarLink {...items.myProjects} />
             <IfSideBarLink {...items.latestProjects} />
             <IfSideBarLink {...items.my_list} />
+            <IfSideBarLink {...items.my_drafts} />
             <IfSideBarLink {...items.resources} />
           </IfSidebarDropdown>
           <IfSideBarLink {...items.ScanQr} />
-
           <IfSideBarLink {...items.reportBug} />
           <IfSideBarLink {...items.userGuide} />
           {/*<IfSideBarLink {...items.map} />*/}
