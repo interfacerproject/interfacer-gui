@@ -100,7 +100,7 @@ describe("Sign up process", () => {
   it("should type all the data", () => {
     cy.get("#submit").should("have.class", "Polaris-Button--disabled");
     get("email").clear().type(Cypress.env("authEmail"));
-    cy.get("#emailError").should("be.visible").should("contain", "this e-mail has already been used by another user");
+    cy.get("#emailError").should("be.visible").should("contain", "This email is already in use");
     get("email").clear().type(email);
     get("name").type(randomString());
     get("user").type(randomString());

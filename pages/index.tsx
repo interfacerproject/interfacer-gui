@@ -14,14 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Button, ButtonGroup, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, ButtonGroup, Text } from "@bbtgnn/polaris-interfacer";
 import { GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
-import Layout from "components/layout/Layout";
 import ProjectsCards from "components/ProjectsCards";
 import ProjectMaps from "components/ProjectsMaps";
+import Layout from "components/layout/Layout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
+import { ReactNode } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { NextPageWithLayout } from "./_app";
 
@@ -43,73 +44,6 @@ export async function getStaticProps({ locale }: any) {
 const Home: NextPageWithLayout = () => {
   const { t } = useTranslation("homeProps");
   const { authenticated } = useAuth();
-  const features = [
-    {
-      icon: <LightningBoltIcon />,
-      title: t("Reinforcing collaboration"),
-      description: (
-        <ul className="list-disc pl-5 space-y-1">
-          <li>{t("Discover the work of your peers")}</li>
-          <li>
-            {t(
-              "Upload your existing projects and get support for making your work more visible and readable, both by people and by machines"
-            )}
-          </li>
-          <li>{t("Propose improvements, feedback and remixingDiscover the work of your peers")}</li>
-        </ul>
-      ),
-    },
-    {
-      icon: <ScaleIcon />,
-      title: t("‘Passwordless’ Log in"),
-
-      description: (
-        <ul className="list-disc pl-5 space-y-1">
-          <li>{t("Based on 5 security questions, a set of keys are generated for you")}</li>
-          <li>
-            {t(
-              "We create a seed as mnemonic passphrase (you will have to safely safeguard) that we use to recreate the private keys and enable you to sign in from different devices"
-            )}
-          </li>
-          <li>{t("In case you lose the seed, it can be recreated by answering the security questions again")}</li>
-        </ul>
-      ),
-    },
-    {
-      icon: <GlobeAltIcon />,
-      title: t("End-to-end crypto wallet"),
-      description: (
-        <ul className="list-disc pl-5 space-y-1">
-          <li>{t("Your sovereign identity")}</li>
-          <li>{t("W3C compliant")}</li>
-          <li>{t("Served by a Distributed identity controller")}</li>
-        </ul>
-      ),
-    },
-    {
-      icon: <LightningBoltIcon />,
-      title: t("Your first Digital Product Passport"),
-      description: (
-        <ul className="list-disc pl-5 space-y-1">
-          <li>{t("Track resources, locations and contributions trough the whole supply-chain")}</li>
-          <li>{t("Value and incentivate the production of products that recyclable and repairable")}</li>
-        </ul>
-      ),
-    },
-    {
-      icon: <GlobeAltIcon />,
-      title: t("Built-in Economic Model"),
-      description: (
-        <ul className="pl-5">
-          <li>
-            {t(
-              "We introduce a transparent way to track the activity of your collaborators. The platform automatically assign points based on people’s contributions to a project. This makes an easy way to know which projects gather more participation"
-            )}
-          </li>
-        </ul>
-      ),
-    },
-  ];
 
   return (
     <>
@@ -171,30 +105,7 @@ const Home: NextPageWithLayout = () => {
         <ProjectMaps />
       </div>
 
-      <div className="container mx-auto grid gap-8 md:grid-cols-2 mt-20 justify-between">
-        <div className="col-span-2">
-          <Text as="h2" variant="heading2xl">
-            {t("What’s included 👌")}
-          </Text>
-        </div>
-        {features.map((f, i) => {
-          return (
-            <div key={i} className="flex md:flex-col">
-              <Card sectioned>
-                <Stack vertical spacing="loose">
-                  <Stack alignment="center">
-                    <div className="w-12 h-12 p-3 mr-2 rounded-lg bg-[#E1EFEC] text-[#0B1324]">{f.icon}</div>
-                    <h3 className="mt-5 mb-2">{f.title}</h3>
-                  </Stack>
-                  <Text as="p" variant="bodyMd" color="subdued">
-                    {f.description}
-                  </Text>
-                </Stack>
-              </Card>
-            </div>
-          );
-        })}
-      </div>
+      <Features />
 
       <div className="flex items-center justify-center bg-[#335259] w-full text-white mt-20 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-5 items-center container mx-auto">
@@ -249,3 +160,95 @@ Home.publicPage = true;
 Home.getLayout = page => <Layout>{page}</Layout>;
 
 export default Home;
+
+/* Partials */
+
+type Feature = { icon: ReactNode; title: string; items: Array<string> };
+
+function Feature(props: { feature: Feature }) {
+  const { feature } = props;
+  return (
+    <div className="p-4 space-y-4 rounded-md border-1 border-border-subdued bg-white">
+      <div className="flex flex-row items-center space-x-3">
+        <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-lg bg-primary/10 text-text">
+          <div className="w-6 h-6">{feature.icon}</div>
+        </div>
+        <Text as="h3" variant="headingLg">
+          {feature.title}
+        </Text>
+      </div>
+
+      <ul className="list-disc pl-4">
+        {feature.items.map((item, i) => (
+          <li key={i} className="text-text-subdued">
+            <Text as="p" variant="bodyMd">
+              {item}
+            </Text>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function Features() {
+  const { t } = useTranslation("homeProps");
+
+  const features: Array<Feature> = [
+    {
+      icon: <LightningBoltIcon />,
+      title: t("Your designs, products, services"),
+      items: [
+        t("Showcase your digital designs, physical products and services"),
+        t("Import from git, thingiverse, losh"),
+      ],
+    },
+    {
+      icon: <ScaleIcon />,
+      title: t("Collaboration and relations"),
+      items: [t("Collaborate on projects"), t("Compose your projects from other users’ projects")],
+    },
+    {
+      icon: <GlobeAltIcon />,
+      title: t("Geolocation"),
+      items: [t("See who and what is near you"), t("Search projects, collaborators, experts and labs on the map")],
+    },
+    {
+      icon: <LightningBoltIcon />,
+      title: t("Digital Product Passport"),
+      items: [
+        t("Trace and visualize your projects components"),
+        t("Prove the green factor and recyclability of your products"),
+      ],
+    },
+    {
+      icon: <GlobeAltIcon />,
+      title: t("W3C-DID, password-less crypto wallet"),
+      items: [
+        t("Your user is linked to a W3C-DID based crypto wallet"),
+        t("Complete end-to-end encryption with password-less login"),
+      ],
+    },
+    {
+      icon: <ScaleIcon />,
+      title: t("Economic model"),
+      items: [
+        t("Reward system for continous activity on the platform"),
+        t("Reward points are converted to crypto-tokens"),
+      ],
+    },
+  ];
+
+  return (
+    <div className="container mx-auto space-y-4 max-sm:px-4">
+      <Text as="h2" variant="heading2xl">
+        {t("What’s included")} {"👌"}
+      </Text>
+      <div className="grid max-sm:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+        {features.map((f, i) => {
+          return <Feature feature={f} key={f.title} />;
+        })}
+      </div>
+    </div>
+  );
+}
