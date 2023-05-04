@@ -21,6 +21,7 @@ import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 import CardsGroup from "./CardsGroup";
 import DraftCard from "./DraftCard";
+import EmptyState from "./EmptyState";
 import ProjectCard from "./ProjectCard";
 import ProjectDisplay from "./ProjectDisplay";
 import { CreateProjectValues } from "./partials/create/project/CreateProjectForm";
@@ -43,6 +44,7 @@ export interface ProjectsCardsProps {
   tiny?: boolean;
   type?: CardType;
   drafts?: DraftProject[];
+  emptyState?: React.ReactElement;
 }
 
 const ProjectsCards = (props: ProjectsCardsProps) => {
@@ -55,6 +57,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     tiny = false,
     header = "Latest projects",
     drafts,
+    emptyState = <EmptyState heading="No projects found" />,
   } = props;
   const dataQueryIdentifier = "economicResources";
 
@@ -69,6 +72,8 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     dataQueryIdentifier,
   });
   const projects = items;
+
+  if (showEmptyState || !projects || !projects.length) return emptyState;
 
   return (
     <>
