@@ -20,6 +20,7 @@ import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 import CardsGroup from "./CardsGroup";
+import EmptyState from "./EmptyState";
 import ProjectCard from "./ProjectCard";
 import ProjectDisplay from "./ProjectDisplay";
 
@@ -31,6 +32,7 @@ export interface ProjectsCardsProps {
   hideFilters?: boolean;
   header?: string;
   tiny?: boolean;
+  emptyState?: React.ReactElement;
 }
 
 const ProjectsCards = (props: ProjectsCardsProps) => {
@@ -41,6 +43,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     hideFilters = false,
     tiny = false,
     header = "Latest projects",
+    emptyState = <EmptyState heading="No projects found" />,
   } = props;
   const dataQueryIdentifier = "economicResources";
 
@@ -56,6 +59,8 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
   });
 
   const projects = items;
+
+  if (showEmptyState || !projects || !projects.length) return emptyState;
 
   return (
     <>
