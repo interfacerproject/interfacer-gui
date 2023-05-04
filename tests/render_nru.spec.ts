@@ -14,7 +14,7 @@ test.describe("When user is not logged in", () => {
 
   test("Should see /sign_in", async ({ page }) => {
     await page.goto("/sign_in");
-    await expect(page.getByText("Login")).toBeTruthy();
+    expect(page.getByText("Login")).toBeTruthy();
   });
 
   test("Should see /sign_up", async ({ page }) => {

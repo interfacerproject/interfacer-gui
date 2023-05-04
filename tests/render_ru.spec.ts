@@ -47,7 +47,7 @@ test.describe("when user is logged in", () => {
   test("Should see every link", async ({ page }) => {
     test.setTimeout(600000);
     page.goto("");
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(500);
     console.log("start url", page.url());
     console.log("Checking links");
     const checkLinks = async (page: Page) => {
@@ -65,11 +65,12 @@ test.describe("when user is logged in", () => {
         seenURLs.add(url);
         console.log(`Visiting ${url}`);
         await page.goto(url);
-        await page.waitForTimeout(1000);
-        expect(page.url()).not.toContain("404");
+        await page.waitForTimeout(2000);
+        expect(page.url(), `for url ${url}`).not.toContain("404");
         const urls = await page.$$eval("a", elements =>
           elements.filter(el => !el.innerHTML.includes("Go to source")).map(el => el.href)
         );
+        expect(urls.length, `for url ${url}`).toBeGreaterThan(0);
         console.log(`Found ${urls.length}`);
         for await (const u of urls) {
           await crawl(u);
