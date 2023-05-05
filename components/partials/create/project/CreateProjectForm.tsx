@@ -37,6 +37,7 @@ import LoadingOverlay from "components/LoadingOverlay";
 // Form
 import { Spinner } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useAuth } from "hooks/useAuth";
 import { useDrafts } from "hooks/useFormSaveDraft";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -59,17 +60,6 @@ export interface CreateProjectValues {
   relations: RelationsStepValues;
   licenses: LicenseStepValues;
 }
-
-export const createProjectDefaultValues: CreateProjectValues = {
-  main: mainStepDefaultValues,
-  linkedDesign: linkDesignStepDefaultValues,
-  location: locationStepDefaultValues,
-  images: imagesStepDefaultValues,
-  declarations: declarationsStepDefaultValues,
-  contributors: contributorsStepDefaultValues,
-  relations: relationsStepDefaultValues,
-  licenses: licenseStepDefaultValues,
-};
 
 export const createProjectSchema = yup.object({
   main: mainStepSchema,
@@ -100,8 +90,32 @@ export default function CreateProjectForm(props: Props) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { draft_id } = router.query;
+  const { user } = useAuth();
   const { draft } = useDrafts(Number(draft_id));
   const [storedValues, setStoredValues] = useState<CreateProjectValues | undefined>(undefined);
+
+  const locationStepDefaultUserValues: LocationStepValues | undefined = user?.primaryLocation
+    ? {
+        locationName: user.primaryLocation.name,
+        locationData: {
+          address: user.primaryLocation.mappableAddress!,
+          lat: user.primaryLocation.lat,
+          lng: user.primaryLocation.long,
+        },
+        remote: false,
+      }
+    : locationStepDefaultValues;
+
+  const createProjectDefaultValues: CreateProjectValues = {
+    main: mainStepDefaultValues,
+    linkedDesign: linkDesignStepDefaultValues,
+    location: locationStepDefaultUserValues,
+    images: imagesStepDefaultValues,
+    declarations: declarationsStepDefaultValues,
+    contributors: contributorsStepDefaultValues,
+    relations: relationsStepDefaultValues,
+    licenses: licenseStepDefaultValues,
+  };
 
   useEffect(() => {
     if (draft_id && !storedValues && draft) {
