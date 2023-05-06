@@ -3623,6 +3623,7 @@ export type SearchProjectsQueryVariables = Exact<{
   IDs?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
   name?: InputMaybe<Scalars["String"]>;
   conformsTo?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
+  primaryAccountable?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
 }>;
 
 export type SearchProjectsQuery = {

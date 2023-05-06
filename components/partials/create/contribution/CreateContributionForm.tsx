@@ -18,7 +18,7 @@ import { useTranslation } from "next-i18next";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
@@ -27,9 +27,14 @@ import BrMdEditor from "components/brickroom/BrMdEditor";
 import { ChildrenProp as CP } from "components/brickroom/types";
 
 // Other
+import PButtonRadio from "components/polaris/PButtonRadio";
+import PFieldInfo from "components/polaris/PFieldInfo";
+import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
 import React from "react";
+import SelectProjectForContribution from "../project/steps/SelectProjectForContribution";
+import PDivider from "components/polaris/PDivider";
 
 //
 
@@ -39,9 +44,17 @@ export interface Props extends CP {
   setError?: React.Dispatch<React.SetStateAction<string>>;
 }
 
+export enum ContributionSource {
+  NEW = "new",
+  OWNED = "owned",
+}
+
 export interface FormValues {
-  contributionRepositoryID: string; // also: url
+  name: string;
+  contributionRepository?: string;
+  project?: string;
   description: string;
+  source: ContributionSource;
 }
 
 //
@@ -53,8 +66,11 @@ export default function CreateContributionForm(props: Props) {
   //
 
   const defaultValues: FormValues = {
-    contributionRepositoryID: "",
+    name: "",
+    contributionRepository: undefined,
+    project: undefined,
     description: "",
+    source: ContributionSource.NEW,
   };
 
   const schema = yup
@@ -69,6 +85,14 @@ export default function CreateContributionForm(props: Props) {
     resolver: yupResolver(schema),
     defaultValues,
   });
+  function handleSourceChange(value: string) {
+    setValue("source", value as ContributionSource, formSetValueOptions);
+  }
+
+  const contributionOptions = [
+    { label: "New Project", value: ContributionSource.NEW },
+    { label: "One of yours projects", value: ContributionSource.OWNED },
+  ];
 
   const { formState, handleSubmit, register, control, setValue, watch } = form;
   const { isValid, errors, isSubmitting } = formState;
@@ -76,72 +100,107 @@ export default function CreateContributionForm(props: Props) {
   //
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Stack vertical spacing="extraLoose">
-        <Controller
-          control={control}
-          name="contributionRepositoryID"
-          render={({ field: { onChange, onBlur, name, value } }) => (
-            <TextField
-              type="text"
-              id={name}
-              name={name}
-              value={value}
-              autoComplete="off"
-              onChange={onChange}
-              onBlur={onBlur}
-              label={t("Contribution repository link or Interfacer ID")}
-              placeholder={t("github.com/my-repo")}
-              helpText={t("Reference to the resource's repository or Interfacer ID of the resource")}
-              error={errors[name]?.message}
-              requiredIndicator={isRequired(schema, name)}
+    <FormProvider {...form}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack vertical spacing="extraLoose">
+          <PDivider id={"name"} />
+
+          <Controller
+            control={control}
+            name="name"
+            render={({ field: { onChange, onBlur, name, value } }) => (
+              <TextField
+                type="text"
+                id={name}
+                name={name}
+                value={value}
+                autoComplete="off"
+                onChange={onChange}
+                onBlur={onBlur}
+                label={t("Contribution title")}
+                placeholder={t("github.com/my-repo")}
+                helpText={t("A good title helps the project owner evaluate your proposal")}
+                error={errors[name]?.message}
+                requiredIndicator={isRequired(schema, name)}
+              />
+            )}
+          />
+          <PDivider id={""} />
+
+          <PFieldInfo label={t("Select")} helpText={t("")}>
+            <PButtonRadio options={contributionOptions} onChange={handleSourceChange} selected={watch("source")} />
+          </PFieldInfo>
+
+          {watch("source") === ContributionSource.OWNED && <SelectProjectForContribution />}
+
+          {watch("source") === ContributionSource.NEW && (
+            <Controller
+              control={control}
+              name="contributionRepository"
+              render={({ field: { onChange, onBlur, name, value } }) => (
+                <TextField
+                  type="text"
+                  id={name}
+                  name={name}
+                  value={value}
+                  autoComplete="off"
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  label={t("Contribution repository link or Interfacer ID")}
+                  placeholder={t("github.com/my-repo")}
+                  helpText={t("Reference to the resource's repository or Interfacer ID of the resource")}
+                  error={errors[name]?.message}
+                  requiredIndicator={isRequired(schema, name)}
+                />
+              )}
             />
           )}
-        />
+          <PDivider id={"description"} />
 
-        <BrMdEditor
-          id="description"
-          name="description"
-          editorClass="h-60"
-          value={watch("description")}
-          label={t("General information")}
-          helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t(
-            "Type up to 2048 characters"
-          )}.`}
-          subtitle={t("Short description to be displayed on the project page")}
-          onChange={({ text }) => {
-            setValue("description", text, formSetValueOptions);
-          }}
-          requiredIndicator={isRequired(schema, "description")}
-          error={errors.description?.message}
-        />
-
-        {/* Slot to display errors, for example */}
-        {error && setError && (
-          <Banner
-            title={t("Error in contribution creation")}
-            status="critical"
-            onDismiss={() => {
-              setError("");
+          <BrMdEditor
+            id="description"
+            name="description"
+            editorClass="h-60"
+            value={watch("description")}
+            label={t("Project Description")}
+            helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t(
+              "Type up to 2048 characters"
+            )}.`}
+            subtitle={t("Short description to be displayed on the project page")}
+            onChange={({ text }) => {
+              setValue("description", text, formSetValueOptions);
             }}
-          >
-            {error}
-          </Banner>
-        )}
+            requiredIndicator={isRequired(schema, "description")}
+            error={errors.description?.message}
+          />
 
-        {isSubmitting && (
-          <Card>
-            <div className="flex flex-col items-center justify-center p-4">
-              <Spinner />
-              <p className="pt-2">{`${t("Creating contribution...")}`}</p>
-            </div>
-          </Card>
-        )}
+          {/* Slot to display errors, for example */}
+          {error && setError && (
+            <Banner
+              title={t("Error in contribution creation")}
+              status="critical"
+              onDismiss={() => {
+                setError("");
+              }}
+            >
+              {error}
+            </Banner>
+          )}
 
-        <Button size="large" primary fullWidth submit id="submit">
-          {t("Send contribution")}
-        </Button>
-      </Stack>
-    </form>
+          {isSubmitting && (
+            <Card>
+              <div className="flex flex-col items-center justify-center p-4">
+                <Spinner />
+                <p className="pt-2">{`${t("Creating contribution...")}`}</p>
+              </div>
+            </Card>
+          )}
+
+          <Button size="large" primary fullWidth submit id="submit">
+            {t("Send contribution")}
+          </Button>
+        </Stack>
+      </form>
+    </FormProvider>
   );
 }
