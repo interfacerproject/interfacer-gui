@@ -166,6 +166,9 @@ dependencies:
   next-i18next:
     specifier: ^12.0.1
     version: 12.1.0(next@12.2.5)(react-dom@18.2.0)(react@18.2.0)
+  next-seo:
+    specifier: ^6.0.0
+    version: 6.0.0(next@12.2.5)(react-dom@18.2.0)(react@18.2.0)
   octokit:
     specifier: ^2.0.14
     version: 2.0.14
@@ -6929,6 +6932,18 @@ packages:
     transitivePeerDependencies:
       - react-dom
       - react-native
+    dev: false
+
+  /next-seo@6.0.0(next@12.2.5)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-jKKt1p1z4otMA28AyeoAONixVjdYmgFCWwpEFtu+DwRHQDllVX3RjtyXbuCQiUZEfQ9rFPBpAI90vDeLZlMBdg==}
+    peerDependencies:
+      next: ^8.1.1-canary.54 || >=9.0.0
+      react: '>=16.0.0'
+      react-dom: '>=16.0.0'
+    dependencies:
+      next: 12.2.5(@babel/core@7.20.2)(react-dom@18.2.0)(react@18.2.0)(sass@1.56.1)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /next@12.2.5(@babel/core@7.20.2)(react-dom@18.2.0)(react@18.2.0)(sass@1.56.1):
