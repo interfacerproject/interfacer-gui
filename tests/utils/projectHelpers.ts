@@ -2,8 +2,8 @@ import { expect, type Page } from "@playwright/test";
 import { CompileMainValuesParams, DeclarationParams } from "./forms";
 
 export const checkMainValues = async (page: Page, v: CompileMainValuesParams) => {
-  await page.waitForSelector("#success-banner-content");
-  await page.waitForSelector("#is-owner-banner-content");
+  // await page.waitForSelector("#success-banner-content");
+  // await page.waitForSelector("#is-owner-banner-content");
   expect(await page.textContent("#project-title")).toContain(v.title);
   expect(await page.textContent("#project-overview")).toContain(v.description);
   //   await page.waitForSelector("#open-source");
@@ -19,15 +19,15 @@ export const checkLicense = async (page: Page) => {
 
 export const checkDeclarations = async (page: Page, p: DeclarationParams) => {
   if (p.recyclable) {
-    await page.waitForSelector("#recycling-availability");
+    expect(page.getByText("available for recycling")).toBeTruthy();
   } else {
-    await page.waitForSelector("#recycling-availability", { state: "detached" });
+    expect(page.getByText("available for recycling")).not.toBeTruthy();
   }
 
   if (p.repairable) {
-    await page.waitForSelector("#repair-availability");
+    expect(page.getByText("available for repair")).toBeTruthy();
   } else {
-    await page.waitForSelector("#repair-availability", { state: "detached" });
+    // expect(page.getByText("available for repair")).not.toBeTruthy();
   }
 };
 

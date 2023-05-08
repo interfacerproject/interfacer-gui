@@ -67,22 +67,24 @@ test.describe("Authentication process", () => {
   test("Sign up", async ({ page }) => {
     await page.goto("/sign_up");
 
+    //Enter invitation key
+    await page.fill("#invitationKey", "123");
+    await page.getByRole("button", { name: "Next step" }).click();
+
     // Enter email and submit
-    await page.fill("#email", "pippo@dyne");
-    await page.click("#submit");
+    await page.fill("#email", randomString(10) + "@dyne.org");
+    await page.getByLabel("Your name").fill(randomString(10));
+    await page.getByLabel("Choose a username").fill(randomString(10));
+    await page.getByRole("button", { name: "Next step" }).click();
 
     // Sign up via questions
-    await page.click("#viaQuestions");
-
-    // Type questions
     await page.fill("#question1", question1);
     await page.fill("#question2", question2);
     await page.fill("#question3", question3);
 
     // Submit
     await page.click("#submit");
-    await page.click("#loginBtn");
-
+    await page.getByRole("button", { name: "Register and login" }).click();
     // Log out
     // await page.goto("");
     await page.locator("#user-menu").click();

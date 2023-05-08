@@ -47,7 +47,7 @@ export function randomString(length: number) {
 
 export const randomCity = () => {
   const cities = [
-    "Rome",
+    "Roma",
     "Milan",
     "Naples",
     "Turin",

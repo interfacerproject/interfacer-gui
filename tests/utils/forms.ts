@@ -16,7 +16,7 @@ export type DeclarationParams = {
 export const searchMenuAdd = async (page: Page, id: string, query: string) => {
   await page.type(id, query);
   await page.waitForTimeout(500);
-  await page.getByText(query).click();
+  await page.getByRole("option", { name: query }).first().click();
 };
 
 export const visitCreateProject = async (page: Page, type: string) => {
@@ -42,18 +42,17 @@ export const addRelatedProjects = async (page: Page, query: string) => {
 };
 
 export const submit = async (page: Page) => {
-  await page.click("#project-create-submit");
-  await page.waitForTimeout(10000);
-  //   await interceptGQL(page, "createProjectMutation");
-  //   await interceptGQL(page, "getProjectLayoutQuery");
-  // You may need to intercept requests for GraphQL and wait for the specific queries/mutations
+  // Promise.all([await page.click("#project-create-submit"), await interceptGQL(page, "createProjectMutation")]);
+  // //   await interceptGQL(page, "createProjectMutation");
+  // //   await interceptGQL(page, "getProjectLayoutQuery");
+  // // You may need to intercept requests for GraphQL and wait for the specific queries/mutations
 };
 
 export const addLocation = async (page: Page, type: string, query: string) => {
   await page.type("#location-locationName", randomString(9));
   await page.type("#search-location", query);
   await page.waitForTimeout(500);
-  await page.click("#PolarisPortalsContainer >> :nth-child(1)");
+  await page.getByText(query).nth(0).click();
 };
 
 export const addDeclarations = async (page: Page, p: DeclarationParams) => {

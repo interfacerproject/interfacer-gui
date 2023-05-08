@@ -30,6 +30,6 @@ test.describe("When user visit the profile page", () => {
     const authId = "0634YMEGWHNGCVVBKETRXJQCWM"; //process.env.auth_id
     await page.goto(`/profile/${authId}`);
     await page.click("text=DID Explorer");
-    await expect(page).toHaveURL("explorer.did.dyne.org");
+    await expect(page.url()).toContain("https://explorer.did.dyne.org/");
   });
 });

@@ -30,6 +30,7 @@ test.describe("When user want to contribute", () => {
     const submitBtn = await page.getByRole("button", { name: "Send contribution" });
     expect(submitBtn).toBeEnabled();
     await submitBtn?.click();
+    await page.waitForTimeout(2000);
     await expect(page).toHaveURL(/proposal/);
   });
 });

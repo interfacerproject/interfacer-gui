@@ -1,17 +1,17 @@
-import { expect, test, Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
+import { test } from "./fixtures/test";
 import { login, randomCity, randomString } from "./utils";
 import {
-  CompileMainValuesParams,
   addContributors,
   addDeclarations,
   addLocation,
   addRelatedProjects,
   compileMainValues,
-  submit,
+  CompileMainValuesParams,
   uploadImage,
   visitCreateProject,
 } from "./utils/forms";
-import { checkContributors, checkDeclarations, checkLicense, checkMainValues } from "./utils/projectHelpers";
+import { checkContributors, checkDeclarations, checkMainValues } from "./utils/projectHelpers";
 
 const checkUrl = async (page: Page, type: string) => {
   const url = page.url();
@@ -26,6 +26,10 @@ test.describe("when user visits create design and submits autoimport field", () 
   test.beforeEach(async ({ context }) => {
     page = await context.newPage();
     await login(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await page.close();
   });
 
   test("should give error if url provided is not correct", async () => {
@@ -51,7 +55,7 @@ test.describe("when user visits create design and submits autoimport field", () 
     expect(tagText).toContain("arm");
   });
 
-  test("should create a new design", async () => {
+  test("should create a new design", async ({ interceptGQL }) => {
     await visitCreateProject(page, "design");
     const mainValues: CompileMainValuesParams = {
       title: "Vegeta",
@@ -64,7 +68,10 @@ test.describe("when user visits create design and submits autoimport field", () 
     // addLicense(page);
     await addContributors(page, "nenn");
     await addRelatedProjects(page, "milano");
-    await submit(page);
+    Promise.all([
+      await page.click("#project-create-submit"),
+      await interceptGQL(page, "getProjectLayout", (route, request) => console.log(route, request)),
+    ]);
     await checkUrl(page, "design");
     await checkMainValues(page, mainValues);
     await checkContributors(page);
@@ -73,7 +80,8 @@ test.describe("when user visits create design and submits autoimport field", () 
     // cy.get("#related-projects-list").should("exist").should("contain", "perenzio");
   });
 
-  test("should create a new product", async () => {
+  test("should create a new product", async ({ interceptGQL }) => {
+    await visitCreateProject(page, "product");
     const mainValues: CompileMainValuesParams = {
       title: "Goku",
       description: "The project description",
@@ -82,7 +90,7 @@ test.describe("when user visits create design and submits autoimport field", () 
     };
     await compileMainValues(page, mainValues);
     await uploadImage(page);
-    await addContributors(page, "nenn");
+    await addContributors(page, "gio");
     const city = randomCity();
     await addLocation(page, "product", city);
     const declaration = {
@@ -90,14 +98,16 @@ test.describe("when user visits create design and submits autoimport field", () 
       repairable: false,
     };
     await addDeclarations(page, declaration);
-    await submit(page);
+    await page.click("#project-create-submit");
+    await interceptGQL(page, "getProjectLayout", (route, request) => console.log(route, request));
     await checkUrl(page, "product");
     await checkMainValues(page, mainValues);
     await checkDeclarations(page, declaration);
     await checkContributors(page);
   });
 
-  test("should create a new service", async () => {
+  test("should create a new service", async ({ interceptGQL }) => {
+    await visitCreateProject(page, "services");
     const mainValues: CompileMainValuesParams = {
       title: "Maijin Bu",
       description: "The project description",
@@ -110,7 +120,10 @@ test.describe("when user visits create design and submits autoimport field", () 
     await addLocation(page, "service", city);
     await addContributors(page, "nenn");
     await addRelatedProjects(page, "bonomelli");
-    await submit(page);
+    Promise.all([
+      await page.click("#project-create-submit"),
+      await interceptGQL(page, "getProjectLayout", (route, request) => console.log(route, request)),
+    ]);
     await checkUrl(page, "service");
     await checkMainValues(page, mainValues);
     await checkContributors(page);

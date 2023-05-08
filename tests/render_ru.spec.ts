@@ -10,10 +10,9 @@ test.describe("when user is logged in", () => {
     await login(page);
   });
 
-  //   test.afterEach(async ({ page }) => {
-  //     await page.goto("");
-  //     await page.click("#logout");
-  //   });
+  test.afterEach(async ({ page }) => {
+    await page.close();
+  });
 
   test("Should see /resources", async ({ page }) => {
     await page.goto("/resources");
@@ -44,6 +43,11 @@ test.describe("when user is logged in", () => {
     expect(page.getByRole("button", { name: "Filter by" })).toBeTruthy();
   });
 
+  test("Should see /scan", async ({ page }) => {
+    await page.goto("/scan");
+    await expect(page.getByRole("heading", { name: "Scan your QR code" })).toBeVisible();
+  });
+
   test("Should see every link", async ({ page }) => {
     test.setTimeout(600000);
     page.goto("");
@@ -66,7 +70,12 @@ test.describe("when user is logged in", () => {
         console.log(`Visiting ${url}`);
         await page.goto(url);
         await page.waitForTimeout(2000);
+        // No link to 404 page
         expect(page.url(), `for url ${url}`).not.toContain("404");
+        // Every page has a sidebar
+        expect(page.locator("#sidebarOpener"), `for url ${url}`).toBeVisible();
+        //TODO: add more checks?
+
         const urls = await page.$$eval("a", elements =>
           elements.filter(el => !el.innerHTML.includes("Go to source")).map(el => el.href)
         );
@@ -80,7 +89,7 @@ test.describe("when user is logged in", () => {
       console.log(`Checked ${seenURLs.size} URLs`);
       return seenURLs.size;
     };
-    const pp = await checkLinks(page);
-    expect(pp).toBeGreaterThan(100);
+    const linksLenght = await checkLinks(page);
+    expect(linksLenght).toBeGreaterThan(100);
   });
 });
