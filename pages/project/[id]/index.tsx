@@ -34,6 +34,9 @@ import SuccessBanner from "components/partials/project/[id]/SuccessBanner";
 import { useTranslation } from "next-i18next";
 import { NextPageWithLayout } from "pages/_app";
 
+//opengraph
+import { NextSeo } from "next-seo";
+
 interface ProjectTabsContextValue {
   selected: number;
   setSelected: Dispatch<SetStateAction<number>>;
@@ -69,25 +72,52 @@ const Project: NextPageWithLayout = () => {
   if (!project) return null;
 
   return (
-    <ProjectTabsContext.Provider value={{ selected, setSelected }}>
-      <SuccessBanner param="created">{t("Project succesfully created!")}</SuccessBanner>
-      <EditBanner />
-      <div className="p-4 container mx-auto flex max-w-6xl bg-[#f8f7f4] space-x-4">
-        <div className="grow">
-          <Stack vertical spacing="extraLoose">
-            <ProjectHeader />
-            <BrThumbinailsGallery images={images} />
-            <div className="block lg:hidden">
-              <ProjectSidebar />
-            </div>
-            <ProjectTabs />
-          </Stack>
+    <>
+      <NextSeo
+        title={project?.name}
+        description={project?.note || undefined}
+        canonical="https://www.canonical.ie/"
+        openGraph={{
+          url: window.location.origin + router.asPath,
+          title: project?.name,
+          description: project?.note || undefined,
+          images: [
+            {
+              url: images[0],
+              width: 800,
+              height: 600,
+              alt: project?.name,
+              type: project?.images?.[0]?.mimeType || "image/jpeg",
+            },
+          ],
+          siteName: "Interfacer-gui",
+        }}
+        twitter={{
+          handle: "@handle",
+          site: "@site",
+          cardType: "summary_large_image",
+        }}
+      />
+      <ProjectTabsContext.Provider value={{ selected, setSelected }}>
+        <SuccessBanner param="created">{t("Project succesfully created!")}</SuccessBanner>
+        <EditBanner />
+        <div className="p-4 container mx-auto flex max-w-6xl bg-[#f8f7f4] space-x-4">
+          <div className="grow">
+            <Stack vertical spacing="extraLoose">
+              <ProjectHeader />
+              <BrThumbinailsGallery images={images} />
+              <div className="block lg:hidden">
+                <ProjectSidebar />
+              </div>
+              <ProjectTabs />
+            </Stack>
+          </div>
+          <div className="hidden lg:block w-80">
+            <ProjectSidebar />
+          </div>
         </div>
-        <div className="hidden lg:block w-80">
-          <ProjectSidebar />
-        </div>
-      </div>
-    </ProjectTabsContext.Provider>
+      </ProjectTabsContext.Provider>
+    </>
   );
 };
 
