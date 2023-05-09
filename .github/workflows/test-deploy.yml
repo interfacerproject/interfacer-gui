@@ -82,17 +82,17 @@ jobs:
         with:
           version: latest
           run_install: false
-      - name: Download the built folders ⏬
-        uses: actions/download-artifact@v3
-        with:
-          name: built
-          path: .next
-      - name: Run the build folder
-        run: pnpm run start
+      # - name: Download the built folders ⏬
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: built
+      #     path: .next
+      # - name: Run the build folder
+      #   run: cd .next && pnpm run start
       # - name: Install Playwright Browsers
       #   run: pnpm exec playwright install --with-deps
       - name: Run Playwright tests
-        run: pnpm exec playwright test
+        run: pnpm test
       - uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -102,7 +102,6 @@ jobs:
 
   deploy:
     name: 🚀 Deploy on staging server
-    # needs: [e2e, components]
     needs: [test]
     if: github.ref == 'refs/heads/main'
     uses: interfacerproject/workflows/.github/workflows/node-staging-deploy.yml@main

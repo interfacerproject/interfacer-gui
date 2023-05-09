@@ -1,6 +1,5 @@
 import { expect, Page } from "@playwright/test";
 import { test } from "./fixtures/test";
-import { login, randomCity, randomString } from "./utils";
 import {
   addContributors,
   addDeclarations,
@@ -23,7 +22,7 @@ const checkUrl = async (page: Page, type: string) => {
 test.describe("when user visits create design and submits autoimport field", () => {
   let page: Page;
 
-  test.beforeEach(async ({ context }) => {
+  test.beforeEach(async ({ context, login }) => {
     page = await context.newPage();
     await login(page);
   });
@@ -32,9 +31,9 @@ test.describe("when user visits create design and submits autoimport field", () 
     await page.close();
   });
 
-  test("should give error if url provided is not correct", async () => {
+  test("should give error if url provided is not correct", async ({ random }) => {
     await visitCreateProject(page, "design");
-    await page.fill("#autoimport-github-url", randomString(4));
+    await page.fill("#autoimport-github-url", random.randomString(4));
     const errorMessage = await page.textContent("#autoimport-github-urlError");
     expect(errorMessage).toContain("github.url must be a valid URL");
   });
@@ -55,7 +54,7 @@ test.describe("when user visits create design and submits autoimport field", () 
     expect(tagText).toContain("arm");
   });
 
-  test("should create a new design", async ({ interceptGQL }) => {
+  test("should create a new design", async ({ interceptGQL, random }) => {
     await visitCreateProject(page, "design");
     const mainValues: CompileMainValuesParams = {
       title: "Vegeta",
@@ -64,7 +63,7 @@ test.describe("when user visits create design and submits autoimport field", () 
       tag: "open-source",
     };
     await compileMainValues(page, mainValues);
-    await uploadImage(page);
+    await uploadImage(page, `image-${random.randomString(4)}`);
     // addLicense(page);
     await addContributors(page, "nenn");
     await addRelatedProjects(page, "milano");
@@ -80,7 +79,7 @@ test.describe("when user visits create design and submits autoimport field", () 
     // cy.get("#related-projects-list").should("exist").should("contain", "perenzio");
   });
 
-  test("should create a new product", async ({ interceptGQL }) => {
+  test("should create a new product", async ({ interceptGQL, random }) => {
     await visitCreateProject(page, "product");
     const mainValues: CompileMainValuesParams = {
       title: "Goku",
@@ -89,10 +88,10 @@ test.describe("when user visits create design and submits autoimport field", () 
       tag: "open-source",
     };
     await compileMainValues(page, mainValues);
-    await uploadImage(page);
+    await uploadImage(page, `image-${random.randomString(4)}`);
     await addContributors(page, "gio");
-    const city = randomCity();
-    await addLocation(page, "product", city);
+    const city = random.randomCity();
+    await addLocation(page, city, city);
     const declaration = {
       recyclable: true,
       repairable: false,
@@ -106,7 +105,7 @@ test.describe("when user visits create design and submits autoimport field", () 
     await checkContributors(page);
   });
 
-  test("should create a new service", async ({ interceptGQL }) => {
+  test("should create a new service", async ({ interceptGQL, random }) => {
     await visitCreateProject(page, "services");
     const mainValues: CompileMainValuesParams = {
       title: "Maijin Bu",
@@ -115,9 +114,9 @@ test.describe("when user visits create design and submits autoimport field", () 
       tag: "open-source",
     };
     await compileMainValues(page, mainValues);
-    await uploadImage(page);
-    const city = randomCity();
-    await addLocation(page, "service", city);
+    await uploadImage(page, `image-${random.randomString(4)}`);
+    const city = random.randomCity();
+    await addLocation(page, city, city);
     await addContributors(page, "nenn");
     await addRelatedProjects(page, "bonomelli");
     Promise.all([

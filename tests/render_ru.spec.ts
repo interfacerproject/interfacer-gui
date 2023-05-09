@@ -1,10 +1,10 @@
-import { Page, expect, test } from "@playwright/test";
-import { login } from "./utils";
+import { Page, expect } from "@playwright/test";
+import { test } from "./fixtures/test";
 
 test.describe("when user is logged in", () => {
   let page: Page;
 
-  test.beforeEach(async ({ context }) => {
+  test.beforeEach(async ({ context, login }) => {
     page = await context.newPage();
     await page.goto("");
     await login(page);

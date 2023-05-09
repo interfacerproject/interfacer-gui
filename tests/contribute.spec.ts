@@ -1,10 +1,10 @@
-import { test, expect, BrowserContext, Page } from "@playwright/test";
-import { login } from "./utils";
+import { expect, BrowserContext, Page } from "@playwright/test";
+import { test } from "./fixtures/test";
 
 test.describe("When user want to contribute", () => {
   let context: BrowserContext, page: Page;
 
-  test.beforeAll(async ({ browser }) => {
+  test.beforeAll(async ({ browser, login }) => {
     context = await browser.newContext();
     page = await context.newPage();
     await page.goto("");

@@ -1,5 +1,4 @@
 import { Page } from "@playwright/test";
-import { login, randomString } from "./index";
 
 export type CompileMainValuesParams = {
   title: string;
@@ -20,7 +19,6 @@ export const searchMenuAdd = async (page: Page, id: string, query: string) => {
 };
 
 export const visitCreateProject = async (page: Page, type: string) => {
-  await login(page);
   await page.goto("/create/project");
   await page.click(`#create-${type}-button`);
 };
@@ -48,8 +46,8 @@ export const submit = async (page: Page) => {
   // // You may need to intercept requests for GraphQL and wait for the specific queries/mutations
 };
 
-export const addLocation = async (page: Page, type: string, query: string) => {
-  await page.type("#location-locationName", randomString(9));
+export const addLocation = async (page: Page, locationName: string, query: string) => {
+  await page.type("#location-locationName", locationName);
   await page.type("#search-location", query);
   await page.waitForTimeout(500);
   await page.getByText(query).nth(0).click();
@@ -64,8 +62,7 @@ export const addDeclarations = async (page: Page, p: DeclarationParams) => {
   // Assertions for classes should be replaced with custom logic if needed
 };
 
-export const uploadImage = async (page: Page) => {
-  const imageName = `image-${randomString(4)}`;
+export const uploadImage = async (page: Page, imageName: string) => {
   const path = `./screenshots/${imageName}.png`;
   await page.screenshot({ path });
   const input = await page.$("input[type=file]#dropzone-images");

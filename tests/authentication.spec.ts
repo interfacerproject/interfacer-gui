@@ -1,12 +1,6 @@
-import { test } from "@playwright/test";
-import { randomString } from "./utils";
+import { test } from "./fixtures/test";
 
 test.describe("Authentication process", () => {
-  //   let email = randomEmail();
-  let question1 = randomString(2);
-  let question2 = randomString(2);
-  let question3 = randomString(2);
-
   // Change the base URL to your local development server URL
   const baseURL = "http://localhost:3000";
 
@@ -16,43 +10,22 @@ test.describe("Authentication process", () => {
     await context.storageState({ path: baseURL });
   });
 
-  test("Sign in", async ({ page }) => {
-    const {
-      NEXT_PUBLIC_ZENFLOWS_URL = "",
-      authEmail = "",
-      answer1 = "",
-      answer2 = "",
-      answer3 = "",
-      answer4 = "",
-      answer5 = "",
-      reflowPrivateKey = "",
-      reflowPublicKey = "",
-      eddsaPublicKey = "",
-      eddsaPrivateKey = "",
-      seed = "",
-      ethereumAddress = "",
-      ethereumPrivateKey = "",
-      ecdhPublicKey = "",
-      ecdhPrivateKey = "",
-      bitcoinPrivateKey = "",
-      bitcoinPublicKey = "",
-    } = process.env;
-
+  test("Sign in", async ({ page, authVariables }) => {
     await page.goto("/sign_in");
 
     // Enter email and submit
-    await page.fill("#email", "pippo@dyne.org");
+    await page.fill("#email", authVariables.authEmail!);
     await page.click("#submit");
 
     // Sign in via questions
     await page.click("#viaQuestions");
 
     // Type questions
-    await page.fill("#question1", "p");
-    await page.fill("#question2", "p");
-    await page.fill("#question3", "p");
-    await page.fill("#question4", "p");
-    await page.fill("#question5", "p");
+    await page.fill("#question1", authVariables.answer1!);
+    await page.fill("#question2", authVariables.answer2!);
+    await page.fill("#question3", authVariables.answer3!);
+    await page.fill("#question4", authVariables.answer3!);
+    await page.fill("#question5", authVariables.answer3!);
 
     // Submit
     await page.click("#submit");
@@ -64,23 +37,23 @@ test.describe("Authentication process", () => {
     await page.getByRole("button", { name: "Logout", exact: true }).click();
   });
 
-  test("Sign up", async ({ page }) => {
+  test("Sign up", async ({ page, random, authVariables }) => {
     await page.goto("/sign_up");
 
     //Enter invitation key
-    await page.fill("#invitationKey", "123");
+    await page.fill("#invitationKey", authVariables.invitationKey!);
     await page.getByRole("button", { name: "Next step" }).click();
 
     // Enter email and submit
-    await page.fill("#email", randomString(10) + "@dyne.org");
-    await page.getByLabel("Your name").fill(randomString(10));
-    await page.getByLabel("Choose a username").fill(randomString(10));
+    await page.fill("#email", random.randomEmail());
+    await page.getByLabel("Your name").fill(random.randomString(10));
+    await page.getByLabel("Choose a username").fill(random.randomString(10));
     await page.getByRole("button", { name: "Next step" }).click();
 
     // Sign up via questions
-    await page.fill("#question1", question1);
-    await page.fill("#question2", question2);
-    await page.fill("#question3", question3);
+    await page.fill("#question1", authVariables.answer1!);
+    await page.fill("#question2", authVariables.answer2!);
+    await page.fill("#question3", authVariables.answer3!);
 
     // Submit
     await page.click("#submit");
