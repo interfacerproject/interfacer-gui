@@ -70,57 +70,25 @@ jobs:
           name: built
           if-no-files-found: error
           path: .next
-
-  # e2e:
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   steps:
-  #     - name: Checkout 🛎️
-  #       uses: actions/checkout@v3
-  #     - name: Set up pnpm
-  #       uses: pnpm/action-setup@v2
-  #       with:
-  #         version: latest
-  #         run_install: false
-  #     - name: Download the built folders ⏬
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: built
-  #         path: .next
-  #     - name: Write the cypress.env.json file 📝
-  #       run: |
-  #         echo '${{ secrets.CYPRESS_ENV_CI }}' > cypress.env.json
-  #     - name: Cypress E2E tests 🧪
-  #       uses: cypress-io/github-action@v4
-  #       with:
-  #         start: npm run start
-  #         wait-on: "http://localhost:3000"
-  #         wait-on-timeout: 130
-  #         record: true 
-  #         tag: node-${{ matrix.node }}
-  #         browser: chrome
-  #         config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
-  #       env:
-  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - uses: actions/checkout@v3
-    
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
+    - name: Checkout 🛎️
+      uses: actions/checkout@v3
     - name: Set up pnpm
       uses: pnpm/action-setup@v2
       with:
         version: latest
         run_install: false
-    - name: Install Playwright Browsers
-      run: pnpm exec playwright install --with-deps
+    - name: Download the built folders ⏬
+      uses: actions/download-artifact@v3
+      with:
+        name: built
+        path: .next
+    # - name: Install Playwright Browsers
+    #   run: pnpm exec playwright install --with-deps
     - name: Run Playwright tests
       run: pnpm exec playwright test
     - uses: actions/upload-artifact@v3
@@ -129,46 +97,7 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
-
-  # components:
-  #   runs-on: ubuntu-latest
-  #   needs: [build, e2e]
-  #   steps:
-  #     - name: Checkout 🛎️
-  #       uses: actions/checkout@v3
-  #     - name: Set up pnpm
-  #       uses: pnpm/action-setup@v2
-  #       with:
-  #         version: latest
-  #         install: false
-  #     - name: Get pnpm store directory
-  #       id: pnpm-cache
-  #       shell: bash
-  #       run: |
-  #         echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-  #     - name: Download the built folders ⏬
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: built
-  #         path: .next
-  #     - name: Write the cypress.env.json file 📝
-  #       run: |
-  #         echo '${{ secrets.CYPRESS_ENV_CI }}' > cypress.env.json
-  #     - name: Cypress Component tests 🧪
-  #       uses: cypress-io/github-action@v4
-  #       with:
-  #         start: npm run start
-  #         command: npm run test:component
-  #         wait-on: "http://localhost:3000"
-  #         wait-on-timeout: 130
-  #         record: true
-  #         tag: node-${{ matrix.node }}
-  #         browser: chrome
-  #         config: pageLoadTimeout=60000,baseUrl=http://localhost:3000
-  #       env:
-  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY_COMPONENTS }}
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         CYPRESS_PROJECT_ID: 7iq8xz
+        
 
   deploy:
     name: 🚀 Deploy on staging server
