@@ -75,29 +75,30 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - name: Checkout 🛎️
-      uses: actions/checkout@v3
-    - name: Set up pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: latest
-        run_install: false
-    - name: Download the built folders ⏬
-      uses: actions/download-artifact@v3
-      with:
-        name: built
-        path: .next
-    # - name: Install Playwright Browsers
-    #   run: pnpm exec playwright install --with-deps
-    - name: Run Playwright tests
-      run: pnpm exec playwright test
-    - uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
-        
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          run_install: false
+      - name: Download the built folders ⏬
+        uses: actions/download-artifact@v3
+        with:
+          name: built
+          path: .next
+      - name: Run the build folder
+        run: pnpm run start
+      # - name: Install Playwright Browsers
+      #   run: pnpm exec playwright install --with-deps
+      - name: Run Playwright tests
+        run: pnpm exec playwright test
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
 
   deploy:
     name: 🚀 Deploy on staging server
