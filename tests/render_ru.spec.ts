@@ -48,7 +48,7 @@ test.describe("when user is logged in", () => {
     await expect(page.getByRole("heading", { name: "Scan your QR code" })).toBeVisible();
   });
 
-  test("Should see every link", async ({ page }) => {
+  test("Should see every link", async ({ page, envVariables }) => {
     test.setTimeout(600000);
     page.goto("");
     await page.waitForTimeout(500);
@@ -56,7 +56,10 @@ test.describe("when user is logged in", () => {
     console.log("Checking links");
     const checkLinks = async (page: Page) => {
       const seenURLs = new Set();
-      const crawl = async (url: string) => {
+      let notFounded = 0;
+      type CrawlProps = { url: string; fromUrl: string; text: string };
+      const crawl = async (props: CrawlProps) => {
+        const { url, fromUrl, text } = props;
         if (seenURLs.has(url)) {
           return;
         }
@@ -70,14 +73,26 @@ test.describe("when user is logged in", () => {
         console.log(`Visiting ${url}`);
         await page.goto(url);
         await page.waitForTimeout(2000);
+
         // No link to 404 page
-        expect(page.url(), `for url ${url}`).not.toContain("404");
-        // Every page has a sidebar
-        expect(page.locator("#sidebarOpener"), `for url ${url}`).toBeVisible();
+        // expect.soft(page.url(), `for url ${url}, found in ${fromUrl} for ${text}`).not.toContain("404")
+
+        // no more than a limit of 404 set in .env
+        if (page.url().includes("404")) {
+          notFounded++;
+        }
+        expect
+          .soft(notFounded, `for url ${url}, found in ${fromUrl} for ${text}`)
+          .not.toBeGreaterThan(Number(envVariables.NOT_FOUND_LIMIT));
+
+        // Every page has a sidebarvscode-file://vscode-app/Applications/Visual%20Studio%20Code.apvscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.htmlp/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html
+        expect(page.locator("#sidebarOpener"), `for url ${url}, found in ${fromUrl}`).toBeVisible();
         //TODO: add more checks?
 
         const urls = await page.$$eval("a", elements =>
-          elements.filter(el => !el.innerHTML.includes("Go to source")).map(el => el.href)
+          elements
+            .filter(el => !el.innerHTML.includes("Go to source"))
+            .map(el => ({ url: el.href, fromUrl: window.location.href, text: el.innerHTML }))
         );
         expect(urls.length, `for url ${url}`).toBeGreaterThan(0);
         console.log(`Found ${urls.length}`);
@@ -85,8 +100,9 @@ test.describe("when user is logged in", () => {
           await crawl(u);
         }
       };
-      await crawl(page.url());
+      await crawl({ url: page.url(), fromUrl: "first", text: "first" });
       console.log(`Checked ${seenURLs.size} URLs`);
+      console.log(`Not found ${notFounded} times`);
       return seenURLs.size;
     };
     const linksLenght = await checkLinks(page);

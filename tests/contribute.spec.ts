@@ -1,18 +1,17 @@
-import { expect, BrowserContext, Page } from "@playwright/test";
+import { BrowserContext, Page, expect } from "@playwright/test";
 import { test } from "./fixtures/test";
 
 test.describe("When user want to contribute", () => {
-  let context: BrowserContext, page: Page;
+  let page: Page;
 
-  test.beforeAll(async ({ browser, login }) => {
-    context = await browser.newContext();
+  test.beforeAll(async ({ context }) => {
     page = await context.newPage();
     await page.goto("");
     await page.context().storageState();
-    await login(page);
   });
 
-  test.beforeEach(async () => {
+  test.beforeEach(async ({ login }) => {
+    await login(page);
     await page.goto("");
   });
 
@@ -29,8 +28,6 @@ test.describe("When user want to contribute", () => {
     await page.type("textarea", "testDescription");
     const submitBtn = await page.getByRole("button", { name: "Send contribution" });
     expect(submitBtn).toBeEnabled();
-    await submitBtn?.click();
-    await page.waitForTimeout(2000);
-    await expect(page).toHaveURL(/proposal/);
+    Promise.all([await submitBtn?.click(), await expect(page).toHaveURL(/proposal/)]);
   });
 });

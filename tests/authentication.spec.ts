@@ -1,16 +1,18 @@
 import { test } from "./fixtures/test";
+import { Page } from "@playwright/test";
 
 test.describe("Authentication process", () => {
-  // Change the base URL to your local development server URL
-  const baseURL = "http://localhost:3000";
+  let page: Page;
 
-  test.beforeEach(async ({ context }) => {
-    await context.clearCookies();
-    await context.clearPermissions();
-    await context.storageState({ path: baseURL });
+  test.beforeEach(async ({ context, logout }) => {
+    page = await context.newPage();
+    await page.goto("");
+  });
+  test.afterEach(async ({ logout }) => {
+    await logout(page);
   });
 
-  test("Sign in", async ({ page, authVariables }) => {
+  test("Sign in", async ({ authVariables }) => {
     await page.goto("/sign_in");
 
     // Enter email and submit
@@ -34,14 +36,13 @@ test.describe("Authentication process", () => {
     // Log out
     // await page.goto("");
     await page.locator("#user-menu").click();
-    await page.getByRole("button", { name: "Logout", exact: true }).click();
   });
 
-  test("Sign up", async ({ page, random, authVariables }) => {
+  test("Sign up", async ({ random, authVariables }) => {
     await page.goto("/sign_up");
 
     //Enter invitation key
-    await page.fill("#invitationKey", authVariables.invitationKey!);
+    await page.fill("#invitationKey", "123");
     await page.getByRole("button", { name: "Next step" }).click();
 
     // Enter email and submit
@@ -61,6 +62,5 @@ test.describe("Authentication process", () => {
     // Log out
     // await page.goto("");
     await page.locator("#user-menu").click();
-    await page.getByRole("button", { name: "Logout", exact: true }).click();
   });
 });

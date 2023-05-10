@@ -35,7 +35,7 @@ test.describe("when user visits create design and submits autoimport field", () 
     await visitCreateProject(page, "design");
     await page.fill("#autoimport-github-url", random.randomString(4));
     const errorMessage = await page.textContent("#autoimport-github-urlError");
-    expect(errorMessage).toContain("github.url must be a valid URL");
+    expect(errorMessage).toContain("Invalid URL");
   });
 
   test("should import from an external repository title", async () => {
@@ -89,7 +89,7 @@ test.describe("when user visits create design and submits autoimport field", () 
     };
     await compileMainValues(page, mainValues);
     await uploadImage(page, `image-${random.randomString(4)}`);
-    await addContributors(page, "gio");
+    await addContributors(page, "nenn");
     const city = random.randomCity();
     await addLocation(page, city, city);
     const declaration = {
