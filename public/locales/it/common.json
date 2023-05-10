@@ -120,5 +120,9 @@
   "Must be a positive number": "deve essere un numero positivo",
   "Must be a negative number": "Deve essere un numero negativo",
   "Must be an integer": "Deve essere un numero intero",
-  "Must have at least ${min} items": "Deve contenere almeno ${min} elementi"
+  "Must have at least ${min} items": "Deve contenere almeno ${min} elementi",
+  "My drafts": "Le mie bozze",
+  "draft": "bozza",
+  "verified": "verificato",
+  "Certifications": "Certificazioni"
 }

@@ -125,5 +125,9 @@
   "Must be a positive number": "Must be a positive number",
   "Must be a negative number": "Must be a negative number",
   "Must be an integer": "Must be an integer",
-  "Must have at least ${min} items": "Must have at least ${min} items"
+  "Must have at least ${min} items": "Must have at least ${min} items",
+  "My drafts": "My drafts",
+  "draft": "draft",
+  "verified": "verified",
+  "Certifications": "Certifications"
 }

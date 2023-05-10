@@ -30,6 +30,16 @@ export default function TopbarUser() {
               {t("My profile")}
             </Text>
           </MenuLink>
+          <MenuLink href={`${user!.profileUrl}?tab=1`}>
+            <Text as="p" variant="bodyMd">
+              {t("My list")}
+            </Text>
+          </MenuLink>
+          <MenuLink href={`${user!.profileUrl}?tab=2`}>
+            <Text as="p" variant="bodyMd">
+              {t("My drafts")}
+            </Text>
+          </MenuLink>
         </div>
         <MenuSection>
           <LogoutButton text={t("Logout")} />

@@ -22,6 +22,8 @@ import {
   EmailTemplate,
   FetchSelfQuery,
   FetchSelfQueryVariables,
+  RegisterUserMutation,
+  RegisterUserMutationVariables,
   SendEmailVerificationMutation,
   SendEmailVerificationMutationVariables,
   SignUpMutation,
@@ -31,7 +33,8 @@ import { PersonWithFileEssential } from "lib/types/extensions";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
 import { zencode_exec } from "zenroom";
-import keypairoomClient from "../zenflows-crypto/src/keypairoomClient-8-9-10-11-12";
+//@ts-ignore
+import keypairoomClient from "zenflows-crypto/src/keypairoomClient-8-9-10-11-12.zen";
 
 /* Definitions */
 
@@ -132,7 +135,6 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
           primaryLocation: user.primaryLocation,
           isVerified: user.isVerified,
         });
-
         setLoading(false);
       };
 
@@ -150,36 +152,44 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   const login: LoginFn = async ({ email }) => {
     if (authenticated) return;
     const client = createApolloClient(false);
-    const publicKey = getItem("eddsaPublicKey") as string;
-    const SignInMutation = gql`
-      query ($email: String!, $pubkey: String!) {
-        personCheck(email: $email, eddsaPublicKey: $pubkey) {
-          name
-          user
-          email
-          id
-        }
-      }
-    `;
-    await client
-      .query({
-        query: SignInMutation,
-        variables: { email, pubkey: publicKey },
-      })
-      .then(({ data }) => {
-        setItem("authId", data?.personCheck.id);
-        setItem("authName", data?.personCheck.name);
-        setItem("authUsername", data?.personCheck.user);
-        setItem("authEmail", data?.personCheck.email);
-        setAuthenticated(true);
-      });
+    const pubkey = getItem("eddsaPublicKey") as string;
+    const { data } = await client.query<FetchSelfQuery, FetchSelfQueryVariables>({
+      query: FETCH_SELF,
+      variables: { email: email, pubkey: pubkey },
+    });
+    const user = await data?.personCheck;
+    setItem("authId", user.id);
+    setItem("authName", user.name);
+    setItem("authUsername", user.user);
+    setItem("authEmail", user.email);
+    setUser({
+      id: user.id,
+      ulid: user.id,
+      email,
+      user: user.user,
+      username: user.user,
+      name: user.name,
+      privateKey: getItem("eddsaPrivateKey") as string,
+      publicKey: pubkey,
+      profileUrl: `/profile/${user.id}`,
+      note: user.note,
+      images: user.images || [],
+      primaryLocation: user.primaryLocation,
+      isVerified: user.isVerified,
+    });
+    setAuthenticated(true);
   };
 
   const register: RegisterFn = async (email, firstRegistration) => {
     const client = createApolloClient(false);
-    const KEYPAIROOM_SERVER_MUTATION = gql`mutation {keypairoomServer(firstRegistration: ${firstRegistration}, userData: "{\\"email\\": \\"${email}\\"}")}`;
     try {
-      const { data } = await client.mutate({ mutation: KEYPAIROOM_SERVER_MUTATION });
+      const { data } = await client.mutate<RegisterUserMutation, RegisterUserMutationVariables>({
+        mutation: REGISTER_USER,
+        variables: {
+          firstRegistration,
+          userData: JSON.stringify({ email }),
+        },
+      });
       return data;
     } catch (error) {
       if (`${error}`.includes("email doesn't exists")) {
@@ -244,6 +254,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   const logout: LogoutFn = (redirect = "/sign_in") => {
     clear();
     setUser(null);
+    setAuthenticated(false);
     router.push(redirect);
   };
 
@@ -270,11 +281,10 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   }
 
   async function sendEmailVerification() {
-    if (!authenticated) {
+    if (!Boolean(getItem("eddsaPrivateKey")) && !Boolean(getItem("authEmail"))) {
       throw new Error("User not authenticated");
     }
-
-    const client = createApolloClient(authenticated);
+    const client = createApolloClient(true);
 
     await client.mutate<SendEmailVerificationMutation, SendEmailVerificationMutationVariables>({
       mutation: SEND_EMAIL_VERIFICATION,
@@ -309,3 +319,9 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     </AuthContext.Provider>
   );
 };
+
+const REGISTER_USER = gql`
+  mutation RegisterUser($firstRegistration: Boolean!, $userData: JSONObject!) {
+    keypairoomServer(firstRegistration: $firstRegistration, userData: $userData)
+  }
+`;

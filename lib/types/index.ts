@@ -659,6 +659,8 @@ export type EconomicResourceUpdateParams = {
    */
   classifiedAs?: InputMaybe<Array<Scalars["URI"]>>;
   id: Scalars["ID"];
+  /** The image files relevant to the entity, such as a photo, diagram, etc. */
+  images?: InputMaybe<Array<IFile>>;
   /**
    * An informal or formal textual identifier for an item.  Does not imply
    * uniqueness.
@@ -2646,7 +2648,7 @@ export type RootMutationTypeImportReposArgs = {
 
 export type RootMutationTypeKeypairoomServerArgs = {
   firstRegistration: Scalars["Boolean"];
-  userData: Scalars["String"];
+  userData: Scalars["JSONObject"];
 };
 
 export type RootMutationTypePersonRequestEmailVerificationArgs = {
@@ -3595,7 +3597,7 @@ export type SearchProjectQuery = {
     id: string;
     name: string;
     images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
-    conformsTo: { __typename?: "ResourceSpecification"; name: string };
+    conformsTo: { __typename?: "ResourceSpecification"; name: string; id: string };
     primaryAccountable: { __typename?: "Organization"; name: string } | { __typename?: "Person"; name: string };
   } | null;
 };
@@ -3838,6 +3840,20 @@ export type GetDppQuery = {
   __typename?: "RootQueryType";
   economicResource?: { __typename?: "EconomicResource"; traceDpp: any } | null;
 };
+
+export type PersonExistsQueryVariables = Exact<{
+  email?: InputMaybe<Scalars["String"]>;
+  user?: InputMaybe<Scalars["String"]>;
+}>;
+
+export type PersonExistsQuery = { __typename?: "RootQueryType"; personExists: boolean };
+
+export type RegisterUserMutationVariables = Exact<{
+  firstRegistration: Scalars["Boolean"];
+  userData: Scalars["JSONObject"];
+}>;
+
+export type RegisterUserMutation = { __typename?: "RootMutationType"; keypairoomServer: string };
 
 export type GetVariablesQueryVariables = Exact<{ [key: string]: never }>;
 

@@ -120,5 +120,10 @@
   "Must be a positive number": "Doit être un nombre positif",
   "Must be a negative number": "Doit être un nombre négatif",
   "Must be an integer": "Doit être un entier",
-  "Must have at least ${min} items": "Doit avoir au moins ${min} éléments"
+  "Must have at least ${min} items": "Doit avoir au moins ${min} éléments",
+  "Email verified successfully!": "Email vérifié avec succès!",
+  "My drafts": "Mes brouillons",
+  "draft": "brouillon",
+  "verified": "vérifié",
+  "Certifications": "Certificats"
 }

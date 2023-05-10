@@ -116,5 +116,9 @@
   "Must be a positive number": "Muss eine positive Zahl sein",
   "Must be a negative number": "Muss eine negative Zahl sein",
   "Must be an integer": "Muss eine ganze Zahl sein",
-  "Must have at least ${min} items": "Muss mindestens ${min} Artikel haben"
+  "Must have at least ${min} items": "Muss mindestens ${min} Artikel haben",
+  "My drafts": "Meine Entwürfe",
+  "draft": "Entwurf",
+  "verified": "verifiziert",
+  "Certifications": "Zertifizierungen"
 }
