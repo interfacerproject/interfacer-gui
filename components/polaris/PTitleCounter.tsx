@@ -22,7 +22,7 @@ export default function PTitleSubtitle(props: Props) {
           {title}
         </Text>
       )}
-      {length > 0 && <Badge status="success">{t("{{length}} results", { length: length })}</Badge>}
+      {length > 0 && <Badge status="success">{`${length} ${t("results")}`}</Badge>}
     </Stack>
   );
 }
