@@ -88,6 +88,12 @@ export const GET_PROJECT_LAYOUT = gql`
       primaryAccountable {
         id
         name
+        primaryLocation {
+          name
+          mappableAddress
+          lat
+          long
+        }
       }
       currentLocation {
         id
