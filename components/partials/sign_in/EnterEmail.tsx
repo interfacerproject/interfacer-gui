@@ -27,6 +27,7 @@ import * as yup from "yup";
 // Components
 import { ChildrenComponent as CC } from "components/brickroom/types";
 import { isRequired } from "../../../lib/isFieldRequired";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -52,11 +53,16 @@ export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
     email: "",
   };
 
-  const schema = yup
-    .object({
-      email: yup.string().email().required(),
-    })
-    .required();
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup
+      .object({
+        email: yup.string().email().required(),
+      })
+      .required())();
 
   // Creating form
   const form = useForm<EnterEmailNS.FormValues>({

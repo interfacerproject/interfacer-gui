@@ -35,6 +35,7 @@ import { isRequired } from "lib/isFieldRequired";
 import React from "react";
 import SelectProjectForContribution from "../project/steps/SelectProjectForContribution";
 import PDivider from "components/polaris/PDivider";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -73,12 +74,17 @@ export default function CreateContributionForm(props: Props) {
     source: ContributionSource.NEW,
   };
 
-  const schema = yup
-    .object({
-      contributionRepositoryID: yup.string().required(),
-      description: yup.string().required(),
-    })
-    .required();
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup
+      .object({
+        contributionRepositoryID: yup.string().required(),
+        description: yup.string().required(),
+      })
+      .required())();
 
   const form = useForm<FormValues>({
     mode: "all",

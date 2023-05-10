@@ -1,20 +1,18 @@
-import { Button, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Icon, Stack } from "@bbtgnn/polaris-interfacer";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
-import DetailMap from "components/DetailMap";
-import WatchButton from "components/WatchButton";
-import BrDisplayUser from "components/brickroom/BrDisplayUser";
 import { useProject } from "components/layout/FetchProjectLayout";
-import { useAuth } from "hooks/useAuth";
+import WatchButton from "components/WatchButton";
 import useStorage from "hooks/useStorage";
 import { useTranslation } from "next-i18next";
+import router from "next/router";
 import { useState } from "react";
 
-const SocialCard = () => {
-  const { user } = useAuth();
+const ClaimCard = () => {
   const { project } = useProject();
   const { t } = useTranslation("common");
   const { getItem, setItem } = useStorage();
   const [inList, setInList] = useState<boolean>(false);
+  const handleClaim = () => router.push(`/resource/${project.id}/claim`);
   const handleCollect = () => {
     const _list = getItem("projectsCollected");
     const _listParsed = _list ? JSON.parse(_list) : [];
@@ -27,29 +25,24 @@ const SocialCard = () => {
       setInList(true);
     }
   };
-  const location = !project.currentLocation ? project.primaryAccountable?.primaryLocation?.name : undefined;
   return (
     <Card sectioned>
       <Stack vertical>
+        <Button primary size="large" fullWidth onClick={handleClaim}>
+          {t("Claim")}
+        </Button>
         {project.repo && (
-          <Button primary url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
+          <Button url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
             {t("Go to source")}
           </Button>
         )}
         <Button id="addToList" size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>
           {inList ? t("Remove from list") : t("Add to list")}
         </Button>
-        {user && <WatchButton id={project.id!} owner={project.primaryAccountable!.id} />}
-        <div className="space-y-1">
-          <Text as="p" variant="bodyMd">
-            {t("By:")}
-          </Text>
-          <BrDisplayUser user={project.primaryAccountable!} />
-          {project.currentLocation && <DetailMap location={project.currentLocation} height={180} />}
-        </div>
+        <WatchButton id={project.id!} owner={project.primaryAccountable!.id} />
       </Stack>
     </Card>
   );
 };
 
-export default SocialCard;
+export default ClaimCard;

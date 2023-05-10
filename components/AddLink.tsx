@@ -11,6 +11,7 @@ import * as yup from "yup";
 // Components
 import { Button, Card, Icon, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import { CancelMinor, PlusMinor } from "@shopify/polaris-icons";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -44,10 +45,15 @@ export default function AddLink(props: Props) {
     label: "",
   };
 
-  const schema = yup.object().shape({
-    url: yup.string().matches(url, t("URL shape is not valid")).required(),
-    label: yup.string().required(),
-  });
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup.object().shape({
+      url: yup.string().matches(url, t("URL shape is not valid")).required(),
+      label: yup.string().required(),
+    }))();
 
   const form = useForm<Link>({
     mode: "all",

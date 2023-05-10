@@ -73,6 +73,14 @@ export const GET_PROJECT_LAYOUT = gql`
       license
       repo
       classifiedAs
+      accountingQuantity {
+        hasNumericalValue
+      }
+      onhandQuantity {
+        hasUnit {
+          id
+        }
+      }
       conformsTo {
         id
         name
@@ -80,6 +88,12 @@ export const GET_PROJECT_LAYOUT = gql`
       primaryAccountable {
         id
         name
+        primaryLocation {
+          name
+          mappableAddress
+          lat
+          long
+        }
       }
       currentLocation {
         id
