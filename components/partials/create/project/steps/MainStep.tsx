@@ -1,5 +1,5 @@
 import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
-import SelectTags2 from "components/SelectTags2";
+import SelectTags from "components/SelectTags";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
@@ -120,7 +120,7 @@ export default function MainStep() {
       />
 
       <div id="main-tags">
-        <SelectTags2
+        <SelectTags
           tags={watch("main.tags")}
           setTags={tags => {
             setValue("main.tags", tags, formSetValueOptions);
