@@ -35,7 +35,9 @@ import CreateProjectSubmit from "./parts/CreateProjectSubmit";
 import LoadingOverlay from "components/LoadingOverlay";
 
 // Form
+import { Spinner } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useDrafts } from "hooks/useFormSaveDraft";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -97,16 +99,35 @@ export default function CreateProjectForm(props: Props) {
   const { handleProjectCreation } = useProjectCRUD();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { draft_id } = router.query;
+  const { draft } = useDrafts(Number(draft_id));
+  const [storedValues, setStoredValues] = useState<CreateProjectValues | undefined>(undefined);
+
+  useEffect(() => {
+    if (draft_id && !storedValues && draft) {
+      setStoredValues(draft?.project);
+    }
+  }, [draft_id, draft, storedValues]);
 
   const formMethods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",
     resolver: yupResolver(createProjectSchema),
-    defaultValues: createProjectDefaultValues,
+    defaultValues: storedValues || createProjectDefaultValues,
     context: {
       projectType,
       isEdit: false,
     },
   });
+
+  const { reset, formState, trigger } = formMethods;
+  const { isDirty, isSubmitting } = formState;
+
+  useEffect(() => {
+    if (storedValues && !isSubmitting && !isDirty) {
+      reset(storedValues);
+      trigger();
+    }
+  }, [storedValues, isSubmitting, isDirty, reset, trigger]);
 
   const { handleSubmit } = formMethods;
 
@@ -117,14 +138,14 @@ export default function CreateProjectForm(props: Props) {
     setLoading(false);
   }
 
-  // Focus on first element
+  //Focus on first element
   useEffect(() => {
     if (projectType == ProjectType.DESIGN) return;
     const field = document.getElementById("main.title");
     field?.focus();
   }, [projectType]);
 
-  //
+  if (!storedValues && draft_id) return <Spinner />;
 
   return (
     <FormProvider {...formMethods}>

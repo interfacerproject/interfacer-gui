@@ -1,10 +1,12 @@
 import { Tabs } from "@bbtgnn/polaris-interfacer";
+import { SectionDescriptor } from "@bbtgnn/polaris-interfacer/build/ts/latest/src/types";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import EmptyState from "components/EmptyState";
 import { useUser } from "components/layout/FetchUserLayout";
-import ProjectsCards, { ProjectsCardsProps } from "components/ProjectsCards";
+import ProjectsCards, { CardType, ProjectsCardsProps } from "components/ProjectsCards";
 import { useAuth } from "hooks/useAuth";
 import useFilters from "hooks/useFilters";
+import { useDrafts } from "hooks/useFormSaveDraft";
 import useStorage from "hooks/useStorage";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -26,6 +28,9 @@ const ProfileTabs = () => {
   const isUser = user?.ulid === id;
 
   const hasCollectedProjects = isUser && !!getItem("projectsCollected");
+
+  const { drafts: draftsSaved } = useDrafts();
+
   let collectedProjects: { id: string[] } = {
     id: [],
   };
@@ -56,6 +61,20 @@ const ProfileTabs = () => {
     },
   ];
 
+  const draftTab = {
+    id: "Drafts",
+    content: (
+      <span className="flex items-center space-x-4">
+        <ClipboardListIcon className="w-5 h-5 mr-1" />
+        {t("Drafts")}
+      </span>
+    ),
+  };
+
+  if (isUser) {
+    tabs.push(draftTab);
+  }
+
   const userProjects: ProjectsCardsProps = {
     filter: proposalFilter,
     hideHeader: false,
@@ -82,14 +101,17 @@ const ProfileTabs = () => {
     ),
   };
 
-  const projectsCardsProps = projectTabSelected === 0 ? { ...userProjects } : { ...inListProjects };
-  console.log(projectsCardsProps);
+  const draftProjects = {
+    header: t("My drafts"),
+    type: CardType.DRAFT,
+    drafts: draftsSaved,
+  };
+  const projectsCardsProps = [userProjects, inListProjects, draftProjects];
 
   return (
-    <div className="space-y-4">
-      <Tabs tabs={tabs} selected={projectTabSelected} onSelect={handleProjectTabChange} />
-      <ProjectsCards {...projectsCardsProps} />
-    </div>
+    <Tabs tabs={tabs} selected={projectTabSelected} onSelect={handleProjectTabChange}>
+      <ProjectsCards {...projectsCardsProps[projectTabSelected]} />
+    </Tabs>
   );
 };
 

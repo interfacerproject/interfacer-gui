@@ -22,6 +22,8 @@ import {
   EmailTemplate,
   FetchSelfQuery,
   FetchSelfQueryVariables,
+  RegisterUserMutation,
+  RegisterUserMutationVariables,
   SendEmailVerificationMutation,
   SendEmailVerificationMutationVariables,
   SignUpMutation,
@@ -180,9 +182,14 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
 
   const register: RegisterFn = async (email, firstRegistration) => {
     const client = createApolloClient(false);
-    const KEYPAIROOM_SERVER_MUTATION = gql`mutation {keypairoomServer(firstRegistration: ${firstRegistration}, userData: "{\\"email\\": \\"${email}\\"}")}`;
     try {
-      const { data } = await client.mutate({ mutation: KEYPAIROOM_SERVER_MUTATION });
+      const { data } = await client.mutate<RegisterUserMutation, RegisterUserMutationVariables>({
+        mutation: REGISTER_USER,
+        variables: {
+          firstRegistration,
+          userData: JSON.stringify({ email }),
+        },
+      });
       return data;
     } catch (error) {
       if (`${error}`.includes("email doesn't exists")) {
@@ -312,3 +319,9 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     </AuthContext.Provider>
   );
 };
+
+const REGISTER_USER = gql`
+  mutation RegisterUser($firstRegistration: Boolean!, $userData: JSONObject!) {
+    keypairoomServer(firstRegistration: $firstRegistration, userData: $userData)
+  }
+`;
