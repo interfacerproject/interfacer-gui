@@ -719,6 +719,12 @@ export const QUERY_PROPOSAL = gql`
           name
           repo
           metadata
+          images {
+            hash
+            name
+            mimeType
+            bin
+          }
           primaryAccountable {
             id
             name

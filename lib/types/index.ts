@@ -3782,8 +3782,30 @@ export type GetProjectLayoutQuery = {
     onhandQuantity: { __typename?: "Measure"; hasUnit?: { __typename?: "Unit"; id: string } | null };
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     primaryAccountable:
-      | { __typename?: "Organization"; id: string; name: string }
-      | { __typename?: "Person"; id: string; name: string };
+      | {
+          __typename?: "Organization";
+          id: string;
+          name: string;
+          primaryLocation?: {
+            __typename?: "SpatialThing";
+            name: string;
+            mappableAddress?: string | null;
+            lat?: any | null;
+            long?: any | null;
+          } | null;
+        }
+      | {
+          __typename?: "Person";
+          id: string;
+          name: string;
+          primaryLocation?: {
+            __typename?: "SpatialThing";
+            name: string;
+            mappableAddress?: string | null;
+            lat?: any | null;
+            long?: any | null;
+          } | null;
+        };
     currentLocation?: {
       __typename?: "SpatialThing";
       id: string;
@@ -4397,6 +4419,7 @@ export type QueryProposalQuery = {
         name: string;
         repo?: string | null;
         metadata?: any | null;
+        images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
         primaryAccountable:
           | { __typename?: "Organization"; id: string; name: string }
           | { __typename?: "Person"; id: string; name: string };

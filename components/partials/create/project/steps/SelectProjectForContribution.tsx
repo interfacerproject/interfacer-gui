@@ -1,9 +1,7 @@
 import { Stack, Text } from "@bbtgnn/polaris-interfacer";
 import PCardWithAction from "components/polaris/PCardWithAction";
-import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectDisplay from "components/ProjectDisplay";
 import SearchProjects from "components/SearchProjects";
-import { ProjectType } from "components/types";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -41,7 +39,7 @@ export default function SelectProjectForContribution() {
     <Stack vertical spacing="extraLoose">
       <SearchProjects
         label={t("Search for a project")}
-        ownerId={user?.ulid}
+        // ownerId={user?.ulid}
         onSelect={handleSelect}
         id="link-design-search"
       />

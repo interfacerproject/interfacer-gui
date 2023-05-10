@@ -40,7 +40,7 @@ import { MessageSubject, ProposalNotification } from "../../notification";
 // Components
 import { Button, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import Layout from "components/layout/Layout";
-import CreateContributionFrom from "components/partials/create/contribution/CreateContributionForm";
+import CreateContributionFrom, { FormValues } from "components/partials/create/contribution/CreateContributionForm";
 import PLabel from "components/polaris/PLabel";
 import ResourceDetailsCard from "components/ResourceDetailsCard";
 import useWallet from "hooks/useWallet";
@@ -60,7 +60,6 @@ const CreateContribution: NextPageWithLayout = () => {
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [createProcess] = useMutation(CREATE_PROCESS);
-  const [forkProject] = useMutation(FORK_PROJECT);
   const [createProposal] = useMutation(CREATE_PROPOSAL);
   const [proposeContribution] = useMutation(PROPOSE_CONTRIBUTION);
   const [linkProposalAndIntents] = useMutation(LINK_CONTRIBUTION_PROPOSAL_INTENT);
@@ -76,7 +75,7 @@ const CreateContribution: NextPageWithLayout = () => {
     return _process?.id;
   };
 
-  const onSubmit = async (formData: any) => {
+  const onSubmit = async (formData: FormValues) => {
     if (!resource) throw new Error("No original resource found");
     else {
       const processName = `fork of ${resource.name} by ${user!.name}`;
@@ -87,30 +86,11 @@ const CreateContribution: NextPageWithLayout = () => {
       });
       if (errors) throw new Error(errors[0].message);
       devLog("The process was created successfully with id: " + processData.createProcess.process.id);
-      const forkVariables = {
-        resource: id,
-        process: processData.createProcess.process.id,
-        agent: user!.ulid,
-        name: `${resource!.name} forked by ${user!.name}`,
-        note: formData.description,
-        metadata: JSON.stringify({
-          ...resource?.metadata,
-          relations: Boolean(resource?.metadata?.relations) && [...resource?.metadata?.relations, id],
-        }),
-        location: resource!.currentLocation?.id,
-        unitOne: unitAndCurrency?.units.unitOne.id!,
-        creationTime: new Date().toISOString(),
-        repo: formData.contributionRepositoryID,
-        tags: resource!.classifiedAs,
-        spec: resource!.conformsTo.id,
-      };
-      devLog("The forking variables are: ", forkVariables);
-      const forkedProject = await forkProject({ variables: forkVariables });
-      devLog("The forked project was created successfully with id: " + JSON.stringify(forkedProject));
-      const forkedProjectId = forkedProject.data?.produce.economicEvent?.resourceInventoriedAs?.id;
+
+      const forkedProjectId = formData.project;
       if (!forkedProjectId) throw new Error("No forked project id found");
 
-      const processContributionName = `contribution of ${resource.name} by ${user!.name}`;
+      const processContributionName = formData.name || `contribution of ${resource.name} by ${user!.name}`;
       const proposeProcessVariables = {
         name: processContributionName,
       };
@@ -147,7 +127,6 @@ const CreateContribution: NextPageWithLayout = () => {
       const message: ProposalNotification = {
         proposalID: proposal.data?.createProposal.proposal.id,
         text: formData.description,
-        type: formData.type,
         originalResourceName: resource.name,
         originalResourceID: resource.id,
         proposerName: user!.name,

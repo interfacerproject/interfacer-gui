@@ -175,7 +175,7 @@ const Proposal = () => {
             </Stack>
 
             <Stack vertical spacing="extraTight">
-              <PLabel label={t("Forked project")} />
+              <PLabel label={t("Project with contributions")} />
               {/* @ts-ignore           */}
               <ResourceDetailsCard resource={proposal.primaryIntents[0].resourceInventoriedAs} />
             </Stack>

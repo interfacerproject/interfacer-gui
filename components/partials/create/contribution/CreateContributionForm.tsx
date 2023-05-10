@@ -27,15 +27,12 @@ import BrMdEditor from "components/brickroom/BrMdEditor";
 import { ChildrenProp as CP } from "components/brickroom/types";
 
 // Other
-import PButtonRadio from "components/polaris/PButtonRadio";
-import PFieldInfo from "components/polaris/PFieldInfo";
-import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import PDivider from "components/polaris/PDivider";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
 import React from "react";
 import SelectProjectForContribution from "../project/steps/SelectProjectForContribution";
-import PDivider from "components/polaris/PDivider";
-import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -45,17 +42,10 @@ export interface Props extends CP {
   setError?: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export enum ContributionSource {
-  NEW = "new",
-  OWNED = "owned",
-}
-
 export interface FormValues {
   name: string;
-  contributionRepository?: string;
-  project?: string;
+  project: string;
   description: string;
-  source: ContributionSource;
 }
 
 //
@@ -68,10 +58,8 @@ export default function CreateContributionForm(props: Props) {
 
   const defaultValues: FormValues = {
     name: "",
-    contributionRepository: undefined,
-    project: undefined,
+    project: "",
     description: "",
-    source: ContributionSource.NEW,
   };
 
   const yupLocaleObject = useYupLocaleObject();
@@ -81,7 +69,8 @@ export default function CreateContributionForm(props: Props) {
   const schema = (() =>
     yup
       .object({
-        contributionRepositoryID: yup.string().required(),
+        name: yup.string().required(),
+        project: yup.string().required(),
         description: yup.string().required(),
       })
       .required())();
@@ -91,14 +80,6 @@ export default function CreateContributionForm(props: Props) {
     resolver: yupResolver(schema),
     defaultValues,
   });
-  function handleSourceChange(value: string) {
-    setValue("source", value as ContributionSource, formSetValueOptions);
-  }
-
-  const contributionOptions = [
-    { label: "New Project", value: ContributionSource.NEW },
-    { label: "One of yours projects", value: ContributionSource.OWNED },
-  ];
 
   const { formState, handleSubmit, register, control, setValue, watch } = form;
   const { isValid, errors, isSubmitting } = formState;
@@ -131,38 +112,11 @@ export default function CreateContributionForm(props: Props) {
               />
             )}
           />
-          <PDivider id={""} />
 
-          <PFieldInfo label={t("Select")} helpText={t("")}>
-            <PButtonRadio options={contributionOptions} onChange={handleSourceChange} selected={watch("source")} />
-          </PFieldInfo>
+          <PDivider id={"Select-Project"} />
+          <SelectProjectForContribution />
 
-          {watch("source") === ContributionSource.OWNED && <SelectProjectForContribution />}
-
-          {watch("source") === ContributionSource.NEW && (
-            <Controller
-              control={control}
-              name="contributionRepository"
-              render={({ field: { onChange, onBlur, name, value } }) => (
-                <TextField
-                  type="text"
-                  id={name}
-                  name={name}
-                  value={value}
-                  autoComplete="off"
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  label={t("Contribution repository link or Interfacer ID")}
-                  placeholder={t("github.com/my-repo")}
-                  helpText={t("Reference to the resource's repository or Interfacer ID of the resource")}
-                  error={errors[name]?.message}
-                  requiredIndicator={isRequired(schema, name)}
-                />
-              )}
-            />
-          )}
           <PDivider id={"description"} />
-
           <BrMdEditor
             id="description"
             name="description"
