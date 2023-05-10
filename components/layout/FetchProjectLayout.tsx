@@ -73,6 +73,14 @@ export const GET_PROJECT_LAYOUT = gql`
       license
       repo
       classifiedAs
+      accountingQuantity {
+        hasNumericalValue
+      }
+      onhandQuantity {
+        hasUnit {
+          id
+        }
+      }
       conformsTo {
         id
         name
