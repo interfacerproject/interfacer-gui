@@ -27,7 +27,6 @@ export default function SearchTags(props: Props) {
     label = t("Search for a tag or create one"),
     placeholder = t("software, hardware, 3D printing, etc."),
   } = props;
-  console.log(exclude);
 
   /* Polaris field logic */
 
