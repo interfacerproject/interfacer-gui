@@ -24,6 +24,7 @@ import * as yup from "yup";
 // Components
 import { Button, TextField } from "@bbtgnn/polaris-interfacer";
 import { isRequired } from "../../../lib/isFieldRequired";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -49,14 +50,19 @@ export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
     passphrase: "",
   };
 
-  const schema = yup
-    .object({
-      passphrase: yup
-        .string()
-        .required()
-        .test("name", t("Invalid passphrase"), value => value?.split(" ").length == 12),
-    })
-    .required();
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup
+      .object({
+        passphrase: yup
+          .string()
+          .required()
+          .test("name", t("Invalid passphrase"), value => value?.split(" ").length == 12),
+      })
+      .required())();
 
   // Creating form
   const form = useForm<ViaPassphraseNS.FormValues>({
