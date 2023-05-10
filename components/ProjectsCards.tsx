@@ -20,8 +20,19 @@ import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 import CardsGroup from "./CardsGroup";
+import DraftCard from "./DraftCard";
+import EmptyState from "./EmptyState";
 import ProjectCard from "./ProjectCard";
 import ProjectDisplay from "./ProjectDisplay";
+import { CreateProjectValues } from "./partials/create/project/CreateProjectForm";
+import { ProjectType, projectTypes } from "./types";
+import { DraftProject } from "lib/db";
+
+export enum CardType {
+  PROJECT = "project",
+  DRAFT = "draft",
+  TINY = "tiny",
+}
 
 export interface ProjectsCardsProps {
   filter?: EconomicResourceFilterParams;
@@ -31,6 +42,9 @@ export interface ProjectsCardsProps {
   hideFilters?: boolean;
   header?: string;
   tiny?: boolean;
+  type?: CardType;
+  drafts?: DraftProject[];
+  emptyState?: React.ReactElement;
 }
 
 const ProjectsCards = (props: ProjectsCardsProps) => {
@@ -39,13 +53,16 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     hideHeader = false,
     hidePagination = false,
     hideFilters = false,
+    type = CardType.PROJECT,
     tiny = false,
     header = "Latest projects",
+    drafts,
+    emptyState = <EmptyState heading="No projects found" />,
   } = props;
   const dataQueryIdentifier = "economicResources";
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
-    variables: { last: 8, filter: filter },
+    variables: { last: 12, filter: filter },
   });
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
@@ -54,12 +71,13 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     data,
     dataQueryIdentifier,
   });
-
   const projects = items;
+
+  if (showEmptyState || !projects || !projects.length) return emptyState;
 
   return (
     <>
-      {!tiny && (
+      {!tiny && !(type === CardType.DRAFT) && (
         <CardsGroup
           onLoadMore={loadMore}
           nextPage={!!getHasNextPage}
@@ -84,6 +102,27 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
             </Link>
           </div>
         ))}
+      {type === CardType.DRAFT && drafts && (
+        <CardsGroup
+          onLoadMore={loadMore}
+          nextPage={false}
+          loading={false}
+          header={hideHeader ? undefined : header}
+          hidePagination={hidePagination}
+          length={drafts?.length || 0}
+          hideFilters
+        >
+          {drafts?.map(d => (
+            <div className="py-2 hover:bg-base-300" key={d.project.main?.title}>
+              <Link href={`/create/project/${projectTypes}?draft_name=form-create-product-${d.project.main?.title}`}>
+                <a>
+                  <DraftCard project={d.project} projectType={d.type} id={d.id} />
+                </a>
+              </Link>
+            </div>
+          ))}
+        </CardsGroup>
+      )}
     </>
   );
 };

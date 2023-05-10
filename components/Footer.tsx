@@ -1,4 +1,4 @@
-import { Stack, Text, Link } from "@bbtgnn/polaris-interfacer";
+import { Link, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { useTranslation } from "next-i18next";
 import NextLink from "next/link";
 
@@ -49,8 +49,8 @@ const Footer = () => {
               <Text as="h3" variant="headingLg">
                 {t("About")}
               </Text>
-              <NextLink href="https://dyne.org/">
-                <a>
+              <NextLink href="https://interfacerproject.dyne.org/">
+                <a target="_blank" rel="noreferrer">
                   <Text as="p" color="subdued" variant="headingMd">
                     {t("This platform")}
                   </Text>

@@ -16,19 +16,18 @@
 
 import Map, { FullscreenControl, MapRef, Marker, Popup } from "react-map-gl";
 
-import devLog from "lib/devLog";
-import { EconomicResource } from "lib/types";
+import { Text } from "@bbtgnn/polaris-interfacer";
+import { SpatialThing } from "lib/types";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Text } from "@bbtgnn/polaris-interfacer";
 
-export interface ProjectMapProps {
-  project: Partial<EconomicResource>;
+export interface DetailMapProps {
+  location: Partial<SpatialThing>;
   height?: number;
 }
 
-const ProjectMap = (props: ProjectMapProps) => {
-  const { project, height = 600 } = props;
+const DetailMap = (props: DetailMapProps) => {
+  const { height = 600, location } = props;
   const mapRef = useRef<MapRef>(null);
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
@@ -42,15 +41,17 @@ const ProjectMap = (props: ProjectMapProps) => {
   useEffect(() => {
     setIsFullscreen(fullscreen);
   }, [fullscreen, loaded]);
-
+  const lat = location.lat;
+  const long = location.long;
+  const mappableAddress = location.mappableAddress;
   const style = "mapbox://styles/mapbox/light-v11";
 
   return (
-    <>
+    <div className="w-full">
       <Map
         initialViewState={{
-          latitude: project.currentLocation?.lat,
-          longitude: project.currentLocation?.long,
+          latitude: lat,
+          longitude: long,
           zoom: 7,
         }}
         style={{ width: "full", height: height, borderRadius: "0.5rem" }}
@@ -69,22 +70,16 @@ const ProjectMap = (props: ProjectMapProps) => {
         maxZoom={15}
         minZoom={6}
       >
-        <Marker longitude={project.currentLocation?.long} latitude={project.currentLocation?.lat} color="red" />
-        <Popup
-          longitude={project.currentLocation?.long}
-          latitude={project.currentLocation?.lat}
-          closeButton={false}
-          anchor="top"
-          closeOnClick={false}
-        >
+        <Marker longitude={long} latitude={lat} color="red" />
+        <Popup longitude={long} latitude={lat} closeButton={false} anchor="top" closeOnClick={false}>
           <Text as="p" variant="bodySm">
-            {project.currentLocation?.mappableAddress}
+            {mappableAddress}
           </Text>
         </Popup>
         <FullscreenControl position="top-right" />
       </Map>
-    </>
+    </div>
   );
 };
 
-export default ProjectMap;
+export default DetailMap;

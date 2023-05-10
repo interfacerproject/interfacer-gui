@@ -21,7 +21,7 @@ describe("CreateProjectLayout component", () => {
   });
 
   // The path of the page that will be used to check "back" functionality
-  const backPage = "/profile/my_profile";
+  const backPage = `/profile/${Cypress.env("authId")}`;
 
   it.skip("should allow the logged user to go to /create_project", () => {
     cy.login();

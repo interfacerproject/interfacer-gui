@@ -18,6 +18,7 @@ import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { GetStaticPaths } from "next";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
@@ -51,9 +52,14 @@ const EditDeclarations: NextPageWithLayout = () => {
     declarations: project.metadata.declarations || declarationsStepDefaultValues,
   };
 
-  const schema = yup.object({
-    declarations: declarationsStepSchema,
-  });
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup.object({
+      declarations: declarationsStepSchema,
+    }))();
 
   const formMethods = useForm<EditDeclarationsValues>({
     mode: "all",

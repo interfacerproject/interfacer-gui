@@ -24,7 +24,8 @@ import { useAuth } from "../hooks/useAuth";
 import type { NextPageWithLayout } from "./_app";
 
 // Login functions
-import keypairoomClientRecreateKeys from "zenflows-crypto/src/keypairoomClientRecreateKeys";
+//@ts-ignore
+import keypairoomClientRecreateKeys from "zenflows-crypto/src/keypairoomClientRecreateKeys.zen";
 import { zencode_exec } from "zenroom";
 
 // Layout
@@ -145,7 +146,7 @@ const Sign_in: NextPageWithLayout = () => {
         .validateSync(signInData);
 
       // Then logging in
-      doLogin();
+      (async () => await doLogin())();
 
       //
     } catch (error) {}
@@ -207,7 +208,7 @@ const Sign_in: NextPageWithLayout = () => {
           {/* Displaying seed */}
           {step === 3 && isQuestions && (
             <Passphrase>
-              <Button size="large" primary fullWidth onClick={doLogin} id="loginBtn">
+              <Button size="large" primary fullWidth onClick={async () => await doLogin()} id="loginBtn">
                 {t("Login")}
               </Button>
             </Passphrase>

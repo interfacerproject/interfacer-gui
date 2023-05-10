@@ -17,6 +17,7 @@ import EditFormLayout from "components/partials/project/edit/EditFormLayout";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
@@ -50,9 +51,14 @@ const EditContributors: NextPageWithLayout = () => {
     contributors: project.metadata.contributors || [],
   };
 
-  const schema = yup.object({
-    contributors: contributorsStepSchema,
-  });
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup.object({
+      contributors: contributorsStepSchema(),
+    }))();
 
   const formMethods = useForm<EditContributorsValues>({
     mode: "all",

@@ -14,15 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import Avatar from "boring-avatars";
-import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import BrUserAvatar from "./brickroom/BrUserAvatar";
 
-const AvatarUsers = ({ users, size = 4 }: { users: Array<string>; size?: number }) => {
+interface Props {
+  users: Array<string>;
+  size?: number;
+}
+
+export default function AvatarUsers(props: Props) {
+  const { users, size = 4 } = props;
+
   const length = users?.length;
   const overflow = length > size;
   const cut = overflow ? users.slice(0, length) : users;
-  const { t } = useTranslation("common");
 
   return (
     <div className="flex">
@@ -30,11 +35,7 @@ const AvatarUsers = ({ users, size = 4 }: { users: Array<string>; size?: number 
         {cut?.map((u, i) => (
           <Link key={u} href={`/profile/${u}`}>
             <a>
-              <div className="avatar">
-                <div className="w-9">
-                  <Avatar name={u} variant="beam" colors={["#F1BD4D", "#D8A946", "#02604B", "#F3F3F3", "#014837"]} />
-                </div>
-              </div>
+              <BrUserAvatar userId={u} size="36px" />
             </a>
           </Link>
         ))}
@@ -42,11 +43,10 @@ const AvatarUsers = ({ users, size = 4 }: { users: Array<string>; size?: number 
       {overflow && (
         <div className="-ml-4 z-50 w-10 h-10 rounded-full bg-base-200 grid place-items-center">
           <span>
-            {t("+")} {length - size}
+            {"+"} {length - size}
           </span>
         </div>
       )}
     </div>
   );
-};
-export default AvatarUsers;
+}

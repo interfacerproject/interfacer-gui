@@ -29,7 +29,7 @@ type layoutProps = {
 
 const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
   const { bottomPadding = "lg" } = layoutProps;
-  const { authenticated } = useAuth();
+  const { authenticated, loading } = useAuth();
   const router = useRouter();
 
   // Closes sidebar automatically when route changes
@@ -47,9 +47,17 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
     "pb-20": bottomPadding === "lg",
   });
 
+  if (!authenticated)
+    return (
+      <div>
+        <div>{layoutProps?.children}</div>
+        <Footer />
+      </div>
+    );
+
   return (
     <>
-      {authenticated ? (
+      {!loading && (
         <div className="drawer">
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content flex flex-col">
@@ -61,11 +69,6 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
             <label htmlFor="my-drawer" className="drawer-overlay" />
             <Sidebar />
           </div>
-        </div>
-      ) : (
-        <div>
-          <div>{layoutProps?.children}</div>
-          <Footer />
         </div>
       )}
     </>
