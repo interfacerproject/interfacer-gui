@@ -34,6 +34,7 @@ export default function SearchTags(props: Props) {
   const handleInputChange = useCallback((value: string) => {
     setInputValue(value);
   }, []);
+  const trimmedValue = inputValue.trim();
 
   /* Loading projects */
 
@@ -68,18 +69,23 @@ export default function SearchTags(props: Props) {
 
   /* Rendering */
 
+  const isInputValid = trimmedValue.length > 0;
+  const isTextValueInExclude = exclude.includes(encodeURIComponent(trimmedValue));
+  const displayAction = options.length === 0 && !loading && creatable && isInputValid;
+
+  let actionContent = `${t("Create")}: "${trimmedValue}"`;
+  if (isTextValueInExclude) actionContent = t("Tag already selected");
+
   const action: ActionListItemDescriptor = {
     accessibilityLabel: "Action label",
-    content: `${t("Create")}: "${inputValue.trim()}"`,
+    content: actionContent,
     icon: CirclePlusMinor,
     onAction: () => {
-      onSelect(encodeURIComponent(inputValue.trim()));
+      onSelect(encodeURIComponent(trimmedValue));
       setInputValue("");
     },
+    disabled: isTextValueInExclude,
   };
-
-  const isInputValid = inputValue.trim().length > 0;
-  const displayAction = options.length === 0 && !loading && creatable && isInputValid;
 
   const textField = (
     <Autocomplete.TextField

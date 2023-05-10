@@ -128,5 +128,9 @@
   "My drafts": "Mes brouillons",
   "draft": "brouillon",
   "verified": "vérifié",
-  "Certifications": "Certificats"
+  "Certifications": "Certificats",
+  "common.results": "résultats",
+  "Tag already selected": "Balise déjà sélectionnée",
+  "Search for a tag or create one": "Rechercher un tag ou en créer un",
+  "software, hardware, 3D printing, etc.": "logiciel, matériel, impression 3D, etc."
 }

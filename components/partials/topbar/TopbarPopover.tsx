@@ -32,7 +32,7 @@ export default function TopbarPopover(props: TopbarPopoverProps) {
   );
 
   return (
-    <Popover active={popoverActive} activator={activator} onClose={togglePopoverActive} fullHeight>
+    <Popover active={popoverActive} activator={activator} onClose={togglePopoverActive} fullHeight fluidContent>
       {children}
     </Popover>
   );

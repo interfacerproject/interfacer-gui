@@ -127,5 +127,9 @@
   "My drafts": "Le mie bozze",
   "draft": "bozza",
   "verified": "verificato",
-  "Certifications": "Certificazioni"
+  "Certifications": "Certificazioni",
+  "common.results": "risultati",
+  "Tag already selected": "Tag già selezionato",
+  "Search for a tag or create one": "Cerca un tag o creane uno",
+  "software, hardware, 3D printing, etc.": "software, hardware, stampa 3D, ecc."
 }
