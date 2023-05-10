@@ -41,6 +41,7 @@ import { useAuth } from "hooks/useAuth";
 import { useDrafts } from "hooks/useFormSaveDraft";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -61,24 +62,37 @@ export interface CreateProjectValues {
   licenses: LicenseStepValues;
 }
 
-export const createProjectSchema = yup.object({
-  main: mainStepSchema,
-  linkedDesign: linkDesignStepSchema,
-  location: yup
-    .object()
-    .when("$projectType", (projectType: ProjectType, schema) =>
-      projectType == ProjectType.DESIGN ? schema : locationStepSchema
-    ),
-  images: imagesStepSchema,
-  declarations: yup
-    .object()
-    .when("$projectType", (projectType: ProjectType, schema) =>
-      projectType == ProjectType.PRODUCT ? declarationsStepSchema : schema
-    ),
-  contributors: contributorsStepSchema,
-  relations: relationsStepSchema,
-  licenses: licenseStepSchema,
-});
+
+export const createProjectDefaultValues: CreateProjectValues = {
+  main: mainStepDefaultValues,
+  linkedDesign: linkDesignStepDefaultValues,
+  location: locationStepDefaultValues,
+  images: imagesStepDefaultValues,
+  declarations: declarationsStepDefaultValues,
+  contributors: contributorsStepDefaultValues,
+  relations: relationsStepDefaultValues,
+  licenses: licenseStepDefaultValues,
+};
+
+export const createProjectSchema = () =>
+  yup.object({
+    main: mainStepSchema(),
+    linkedDesign: linkDesignStepSchema(),
+    location: yup
+      .object()
+      .when("$projectType", (projectType: ProjectType, schema) =>
+        projectType == ProjectType.DESIGN ? schema : locationStepSchema
+      ),
+    images: imagesStepSchema(),
+    declarations: yup
+      .object()
+      .when("$projectType", (projectType: ProjectType, schema) =>
+        projectType == ProjectType.PRODUCT ? declarationsStepSchema : schema
+      ),
+    contributors: contributorsStepSchema(),
+    relations: relationsStepSchema(),
+    licenses: licenseStepSchema(),
+  });
 
 export type CreateProjectSchemaContext = LocationStepSchemaContext;
 
@@ -89,6 +103,9 @@ export default function CreateProjectForm(props: Props) {
   const { handleProjectCreation } = useProjectCRUD();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const yupLocaleObject = useYupLocaleObject();
+  yup.setLocale(yupLocaleObject);
+
   const { draft_id } = router.query;
   const { user } = useAuth();
   const { draft } = useDrafts(Number(draft_id));
@@ -125,7 +142,7 @@ export default function CreateProjectForm(props: Props) {
 
   const formMethods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",
-    resolver: yupResolver(createProjectSchema),
+    resolver: yupResolver(createProjectSchema()),
     defaultValues: storedValues || createProjectDefaultValues,
     context: {
       projectType,

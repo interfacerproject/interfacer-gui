@@ -21,11 +21,11 @@ import { useState } from "react";
 // Select components
 import { Button, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { getOptionValue } from "components/brickroom/utils/BrSelectUtils";
-import BrUserDisplay from "./brickroom/BrUserDisplay";
-import PCardWithAction from "./polaris/PCardWithAction";
 import SearchUsers from "./SearchUsers";
 import SelectProjectType from "./SelectProjectType";
-import SelectTags2 from "./SelectTags2";
+import SelectTags from "./SelectTags";
+import BrUserDisplay from "./brickroom/BrUserDisplay";
+import PCardWithAction from "./polaris/PCardWithAction";
 
 //
 
@@ -122,7 +122,7 @@ export default function ProjectsFilters(props: ProjectsFiltersProps) {
           />
         )}
 
-        <SelectTags2
+        <SelectTags
           label={t("Tags")}
           tags={queryFilters.tags}
           setTags={tags => {

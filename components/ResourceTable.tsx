@@ -62,7 +62,7 @@ const ResourceTable = ({ filter }: { filter?: any }) => {
                     <div className="table-cell">
                       <Link href={`/resource/${e.node.id}`}>
                         <a className="flex items-center space-x-4">
-                          <img src={e.node.metadata?.image} className="w-20 h-20" />
+                          <img src={e.node.metadata?.image} className="w-20 h-20" alt={e.node.name} />
                           <div className="flex flex-col h-24 space-y-1 w-60">
                             <h4 className="truncate w-60">{e.node.name}</h4>
                             <p className="h-16 overflow-hidden text-sm whitespace-normal text-thin">
