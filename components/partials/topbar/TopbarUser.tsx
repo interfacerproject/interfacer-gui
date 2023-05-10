@@ -80,7 +80,7 @@ function UserSection(props: { user: User }) {
         <Text as="p" variant="bodyMd" fontWeight="bold">
           <span className="text-primary">{user?.name}</span>
         </Text>
-        <Text as="p" variant="bodySm" color="subdued">{`@${user?.username}`}</Text>
+        <Text as="p" variant="bodySm" color="subdued">{`${user?.username}`}</Text>
       </div>
     </div>
   );
