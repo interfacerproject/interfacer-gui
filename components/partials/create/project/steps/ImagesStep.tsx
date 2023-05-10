@@ -13,7 +13,7 @@ import { isRequired } from "lib/isFieldRequired";
 //
 
 export type ImagesStepValues = Array<File>;
-export const imagesStepSchema = yup.array().min(1).required();
+export const imagesStepSchema = () => yup.array().min(1).required();
 export const imagesStepDefaultValues: ImagesStepValues = [];
 
 //
@@ -21,7 +21,8 @@ export const imagesStepDefaultValues: ImagesStepValues = [];
 export default function ImagesStep() {
   const { t } = useTranslation("createProjectProps");
 
-  const { setValue, watch } = useFormContext<CreateProjectValues>();
+  const { setValue, watch, formState } = useFormContext<CreateProjectValues>();
+  const { errors } = formState;
   const images = watch("images");
 
   function handleUpdate(images: Array<File>) {
@@ -47,6 +48,7 @@ export default function ImagesStep() {
         label={t("Upload up to {{MAX_FILES}} pictures", { MAX_FILES })}
         helpText={`${t("Max file size")}: 2MB | ${t("Accepted formats")}: JPG, PNG, GIF, SVG`}
         requiredIndicator={true}
+        error={errors?.images?.message}
       />
     </Stack>
   );

@@ -40,6 +40,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDrafts } from "hooks/useFormSaveDraft";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -71,24 +72,25 @@ export const createProjectDefaultValues: CreateProjectValues = {
   licenses: licenseStepDefaultValues,
 };
 
-export const createProjectSchema = yup.object({
-  main: mainStepSchema,
-  linkedDesign: linkDesignStepSchema,
-  location: yup
-    .object()
-    .when("$projectType", (projectType: ProjectType, schema) =>
-      projectType == ProjectType.DESIGN ? schema : locationStepSchema
-    ),
-  images: imagesStepSchema,
-  declarations: yup
-    .object()
-    .when("$projectType", (projectType: ProjectType, schema) =>
-      projectType == ProjectType.PRODUCT ? declarationsStepSchema : schema
-    ),
-  contributors: contributorsStepSchema,
-  relations: relationsStepSchema,
-  licenses: licenseStepSchema,
-});
+export const createProjectSchema = () =>
+  yup.object({
+    main: mainStepSchema(),
+    linkedDesign: linkDesignStepSchema(),
+    location: yup
+      .object()
+      .when("$projectType", (projectType: ProjectType, schema) =>
+        projectType == ProjectType.DESIGN ? schema : locationStepSchema
+      ),
+    images: imagesStepSchema(),
+    declarations: yup
+      .object()
+      .when("$projectType", (projectType: ProjectType, schema) =>
+        projectType == ProjectType.PRODUCT ? declarationsStepSchema : schema
+      ),
+    contributors: contributorsStepSchema(),
+    relations: relationsStepSchema(),
+    licenses: licenseStepSchema(),
+  });
 
 export type CreateProjectSchemaContext = LocationStepSchemaContext;
 
@@ -99,6 +101,9 @@ export default function CreateProjectForm(props: Props) {
   const { handleProjectCreation } = useProjectCRUD();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const yupLocaleObject = useYupLocaleObject();
+  yup.setLocale(yupLocaleObject);
+
   const { draft_id } = router.query;
   const { draft } = useDrafts(Number(draft_id));
   const [storedValues, setStoredValues] = useState<CreateProjectValues | undefined>(undefined);
@@ -111,7 +116,7 @@ export default function CreateProjectForm(props: Props) {
 
   const formMethods = useForm<CreateProjectValues, CreateProjectSchemaContext>({
     mode: "all",
-    resolver: yupResolver(createProjectSchema),
+    resolver: yupResolver(createProjectSchema()),
     defaultValues: storedValues || createProjectDefaultValues,
     context: {
       projectType,
