@@ -20,9 +20,8 @@ const TechnicalInfoCard = () => {
 
   if (!(licenses || design || haveDeclarations || certifications?.length)) return null;
 
-
   return (
-    <Card sectioned >
+    <Card sectioned>
       <Stack vertical spacing="loose">
         {licenses && <ProjectLicenses project={project} />}
 

@@ -25,7 +25,7 @@ import devLog from "lib/devLog";
 import { prepFileForZenflows, uploadFile } from "lib/fileUpload";
 import { createImageSrc, fileToIfile } from "lib/resourceImages";
 import { useRouter } from "next/router";
-import SelectLocation2, { SelectedLocation } from "./SelectLocation2";
+import SelectLocation, { SelectedLocation } from "./SelectLocation";
 import TableOfContents from "./TableOfContents";
 import EditFormLayout from "./partials/project/edit/EditFormLayout";
 import PDivider from "./polaris/PDivider";
@@ -228,7 +228,7 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
                 "We value your privacy and will only use your location for the purpose of connecting you with other members of the community"
               )}
             />
-            <SelectLocation2
+            <SelectLocation
               label={t("Address")}
               placeholder={t("An d. Alsterschleife 3, 22399 - Hamburg, Germany")}
               location={watch("address")}

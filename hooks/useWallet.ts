@@ -37,15 +37,19 @@ type UseWalletReturnValue = {
   addStrengthsPoints: (id: string, amount?: number) => Promise<Response>;
 };
 
-export enum TrendPeriod {
-  Week = "week",
-  Month = "month",
-  Cycle = "cycle",
-}
+export const TrendPeriod = {
+  Week: "week",
+  Month: "month",
+  Cycle: "cycle",
+} as const;
+
+export type TrendPeriodType = keyof typeof TrendPeriod;
+
+export type TrendPeriodValue = typeof TrendPeriod[TrendPeriodType];
 
 type UseWalletProps = {
   id?: string;
-  period?: TrendPeriod;
+  period?: TrendPeriodValue;
 };
 
 const useWallet = (props: UseWalletProps): UseWalletReturnValue => {
@@ -64,12 +68,11 @@ const useWallet = (props: UseWalletProps): UseWalletReturnValue => {
     return dayjs().subtract(-daysFromCycleBegin, "day").startOf("day").valueOf();
   };
 
-  const firstDayOfPeriod: Record<TrendPeriod, number> = {
+  const firstDayOfPeriod: Record<TrendPeriodValue, number> = {
     [TrendPeriod.Week]: dayjs().startOf("week").valueOf(),
     [TrendPeriod.Month]: dayjs().startOf("month").valueOf(),
     [TrendPeriod.Cycle]: getCycleDay0(),
   };
-
   useEffect(() => {
     if (!id) return;
     getPoints(id, Token.Idea).then(amount => setIdeaPoints(amount));

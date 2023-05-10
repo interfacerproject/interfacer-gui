@@ -1,5 +1,5 @@
 import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
-import SelectTags2 from "components/SelectTags2";
+import SelectTags from "components/SelectTags";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
@@ -10,6 +10,7 @@ import { useTranslation } from "next-i18next";
 import { Controller, useFormContext } from "react-hook-form";
 import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -27,21 +28,22 @@ export const mainStepDefaultValues: MainStepValues = {
   tags: [],
 };
 
-export const mainStepSchema = yup.object({
-  title: yup.string().required(),
-  link: yup.string().matches(url, "Invalid URL").required(),
-  tags: yup.array().of(yup.string()),
-  description: yup
-    .string()
-    .test(
-      "size-check",
-      "Description length must be less than 2048 characters. If it's longer, please use the 'external link' field to reference it.",
-      value => {
-        if (value) return new Blob([value]).size < 2048;
-        else return true;
-      }
-    ),
-});
+export const mainStepSchema = () =>
+  yup.object({
+    title: yup.string().required(),
+    link: yup.string().url().required(),
+    tags: yup.array().of(yup.string()),
+    description: yup
+      .string()
+      .test(
+        "size-check",
+        "Description length must be less than 2048 characters. If it's longer, please use the 'external link' field to reference it.",
+        value => {
+          if (value) return new Blob([value]).size < 2048;
+          else return true;
+        }
+      ),
+  });
 
 //
 
@@ -78,7 +80,7 @@ export default function MainStep() {
             label={t("Project title")}
             helpText={t("A clear and concise name for your project that summarizes its purpose or main focus.")}
             error={errors.main?.title?.message}
-            requiredIndicator={isRequired(mainStepSchema, "title")}
+            requiredIndicator={isRequired(mainStepSchema(), "title")}
           />
         )}
       />
@@ -98,7 +100,7 @@ export default function MainStep() {
             placeholder={"projectsite.com/info"}
             label={t("External link")}
             error={errors.main?.link?.message}
-            requiredIndicator={isRequired(mainStepSchema, "link")}
+            requiredIndicator={isRequired(mainStepSchema(), "link")}
           />
         )}
       />
@@ -113,12 +115,12 @@ export default function MainStep() {
         onChange={({ text, html }) => {
           setValue("main.description", text, formSetValueOptions);
         }}
-        requiredIndicator={isRequired(mainStepSchema, "description")}
+        requiredIndicator={isRequired(mainStepSchema(), "description")}
         error={errors.main?.description?.message}
       />
 
       <div id="main-tags">
-        <SelectTags2
+        <SelectTags
           tags={watch("main.tags")}
           setTags={tags => {
             setValue("main.tags", tags, formSetValueOptions);
@@ -127,7 +129,7 @@ export default function MainStep() {
           error={errors.main?.tags?.message}
           label={t("Tags")}
           helpText={t("Add relevant keywords that describe your project.")}
-          requiredIndicator={isRequired(mainStepSchema, "tags")}
+          requiredIndicator={isRequired(mainStepSchema(), "tags")}
         />
       </div>
     </Stack>

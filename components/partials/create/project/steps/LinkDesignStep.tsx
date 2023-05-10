@@ -14,7 +14,7 @@ import { CreateProjectValues } from "../CreateProjectForm";
 //
 
 export type LinkDesignStepValues = string;
-export const linkDesignStepSchema = yup.string();
+export const linkDesignStepSchema = () => yup.string();
 export const linkDesignStepDefaultValues: LinkDesignStepValues = "";
 
 //

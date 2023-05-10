@@ -24,6 +24,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { isRequired } from "../../../lib/isFieldRequired";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -101,22 +102,27 @@ const Questions = (props: QuestionsNS.Props) => {
     question5: "",
   };
 
-  const schema = yup
-    .object({
-      question1: yup.string(),
-      question2: yup.string(),
-      question3: yup.string(),
-      question4: yup.string(),
-      question5: yup.string(),
-    })
-    .required()
-    .test("three-questions", value => {
-      const v = value as QuestionsNS.FormValues;
-      setMissingQuestions(
-        t("At least {{missingQuestions}} questions are missing!", { missingQuestions: countMissingQuestions(v) })
-      );
-      return areEnoughQuestions(v);
-    });
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup
+      .object({
+        question1: yup.string(),
+        question2: yup.string(),
+        question3: yup.string(),
+        question4: yup.string(),
+        question5: yup.string(),
+      })
+      .required()
+      .test("three-questions", value => {
+        const v = value as QuestionsNS.FormValues;
+        setMissingQuestions(
+          t("At least {{missingQuestions}} questions are missing!", { missingQuestions: countMissingQuestions(v) })
+        );
+        return areEnoughQuestions(v);
+      }))();
 
   const form = useForm<QuestionsNS.FormValues>({
     mode: "all",
