@@ -427,6 +427,7 @@ export const useProjectCRUD = () => {
       const processId = await createProcess(`relations update @ ${project.name}`);
       await updateMetadata(project, relationsToUpdate, processId, true);
     }
+    if (!projectToUpdate.metadata.relations) return;
     // remove relation from children
     for (const relation of projectToUpdate.metadata.relations) {
       if (relations.includes(relation)) continue;

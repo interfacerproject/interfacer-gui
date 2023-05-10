@@ -11,6 +11,7 @@ import * as yup from "yup";
 // Components
 import { Button, Card, Icon, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import { CancelMinor, PlusMinor } from "@shopify/polaris-icons";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 import SearchLicense from "./SearchLicense";
 
 //
@@ -36,10 +37,15 @@ export default function AddLicense(props: Props) {
     licenseID: "",
   };
 
-  const schema = yup.object().shape({
-    scope: yup.string().required(),
-    licenseID: yup.string().oneOf(licensesIDs).required(),
-  });
+  const schema = (() =>
+    yup.object().shape({
+      scope: yup.string().required(),
+      licenseID: yup.string().oneOf(licensesIDs).required(),
+    }))();
+
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
 
   const form = useForm({
     mode: "all",

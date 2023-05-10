@@ -36,7 +36,11 @@ const NRULayout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProp
       </Topbar>
       <div className="container bg-[#F3F3F1] max-w-full">
         <div className="grid grid-cols-1 md:grid-cols-2">
-          <img src="/about.svg" className={"w-full h-full object-contain bg-[#013026] md:h-screen hidden md:block"} />
+          <img
+            src="/about.svg"
+            className={"w-full h-full object-contain bg-[#013026] md:h-screen hidden md:block"}
+            alt="about"
+          />
           <div className="h-full">{layoutProps?.children}</div>
         </div>
         <Footer />

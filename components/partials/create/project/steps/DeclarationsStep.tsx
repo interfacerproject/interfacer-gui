@@ -27,6 +27,15 @@ export interface DeclarationsStepValues {
   certifications: Array<ILink>;
 }
 
+yup.setLocale({
+  mixed: {
+    required: "Required",
+  },
+  string: {
+    url: "Invalid URL",
+  },
+});
+
 export const declarationsStepSchema = yup.object({
   repairable: yup
     .string()
