@@ -63,7 +63,7 @@ const ProfileHeading = () => {
       <Heading label={"DID:"}>
         <Text as="span" variant="bodyLg">
           <Link url={didUrl}>
-            <a>
+            <a target="_blank">
               <Button primary>{t("DID Explorer")}</Button>
             </a>
           </Link>
