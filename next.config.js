@@ -28,6 +28,11 @@ const nextConfig = {
       crypto: false,
     };
 
+    config.module.rules.push({
+      test: /\.zen$/,
+      type: "asset/source",
+    });
+
     return config;
   },
 };

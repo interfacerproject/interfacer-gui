@@ -164,7 +164,6 @@ export const TRANSFER_PROJECT = gql`
     $metadata: JSONObject
     $agent: ID!
     $creationTime: DateTime!
-    $location: ID!
     $tags: [URI!]
     $oneUnit: ID!
   ) {
@@ -177,7 +176,6 @@ export const TRANSFER_PROJECT = gql`
         hasPointInTime: $creationTime
         resourceClassifiedAs: $tags
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $oneUnit }
-        toLocation: $location
         resourceMetadata: $metadata
       }
       newInventoriedResource: { name: $name, note: $note}
@@ -305,6 +303,10 @@ export const FETCH_AGENTS = gql`
           id
           name
           note
+          images {
+            bin
+            mimeType
+          }
           primaryLocation {
             id
             name
@@ -465,6 +467,10 @@ export const FETCH_RESOURCES = gql`
             id
             name
             note
+            images {
+              bin
+              mimeType
+            }
             primaryLocation {
               name
             }
@@ -917,10 +923,15 @@ export const REJECT_PROPOSAL = gql`
 export const ASK_RESOURCE_PRIMARY_ACCOUNTABLE = gql`
   query askResourcePrimaryAccountable($id: ID!) {
     economicResource(id: $id) {
+      id
       name
       primaryAccountable {
         id
         name
+        images {
+          bin
+          mimeType
+        }
       }
     }
   }
@@ -939,6 +950,10 @@ export const QUERY_RESOURCE_PROPOSAlS = gql`
             provider {
               id
               name
+              images {
+                bin
+                mimeType
+              }
             }
           }
         }
@@ -1103,14 +1118,26 @@ export const SEND_EMAIL_VERIFICATION = gql`
   }
 `;
 
-export const SIGN_IN = gql`
-  query SignIn($email: String!, $pubkey: String!) {
+export const FETCH_SELF = gql`
+  query FetchSelf($email: String!, $pubkey: String!) {
     personCheck(email: $email, eddsaPublicKey: $pubkey) {
       name
       user
       email
+      primaryLocation {
+        id
+        name
+        mappableAddress
+        lat
+        long
+      }
       id
       isVerified
+      note
+      images {
+        bin
+        mimeType
+      }
     }
   }
 `;

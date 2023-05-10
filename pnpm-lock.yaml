@@ -2,10 +2,10 @@ lockfileVersion: '6.0'
 
 dependencies:
   '@apollo/client':
-    specifier: ^3.6.9
+    specifier: ^3.7.1
     version: 3.7.1(graphql@15.8.0)(react-dom@18.2.0)(react@18.2.0)
   '@babel/core':
-    specifier: ^7.19.3
+    specifier: ^7.20.2
     version: 7.20.2
   '@bbtgnn/polaris-interfacer':
     specifier: ^0.1.0
@@ -20,13 +20,13 @@ dependencies:
     specifier: ^2.6.1
     version: 2.6.1
   '@graphql-codegen/cli':
-    specifier: ^2.13.7
+    specifier: ^2.13.12
     version: 2.13.12(@types/node@18.7.15)(graphql@15.8.0)(ts-node@10.9.1)(typescript@4.9.3)
   '@graphql-codegen/typescript':
-    specifier: ^2.7.4
+    specifier: ^2.8.2
     version: 2.8.2(graphql@15.8.0)
   '@graphql-codegen/typescript-operations':
-    specifier: ^2.5.4
+    specifier: ^2.5.7
     version: 2.5.7(graphql@15.8.0)
   '@heroicons/react':
     specifier: ^1.0.6
@@ -38,10 +38,10 @@ dependencies:
     specifier: ^6.5.0
     version: 6.5.0
   '@tailwindcss/typography':
-    specifier: ^0.5.7
+    specifier: ^0.5.8
     version: 0.5.8(tailwindcss@3.2.4)
   '@testing-library/cypress':
-    specifier: ^8.0.3
+    specifier: ^8.0.7
     version: 8.0.7(cypress@12.9.0)
   '@types/base45':
     specifier: ^2.0.0
@@ -65,10 +65,10 @@ dependencies:
     specifier: 18.0.6
     version: 18.0.6
   '@typescript-eslint/parser':
-    specifier: ^5.40.1
+    specifier: ^5.43.0
     version: 5.43.0(eslint@8.28.0)(typescript@4.9.3)
   '@uiw/react-markdown-preview':
-    specifier: ^4.1.0
+    specifier: ^4.1.5
     version: 4.1.5(@types/react@18.0.18)(react-dom@18.2.0)(react@18.2.0)
   apollo-client:
     specifier: ^2.6.10
@@ -77,7 +77,7 @@ dependencies:
     specifier: ^1.3.4
     version: 1.3.4(graphql@15.8.0)
   autoprefixer:
-    specifier: ^10.4.8
+    specifier: ^10.4.13
     version: 10.4.13(postcss@8.4.19)
   base45:
     specifier: ^2.0.1
@@ -89,7 +89,7 @@ dependencies:
     specifier: ^1.7.0
     version: 1.7.0
   classnames:
-    specifier: ^2.3.1
+    specifier: ^2.3.2
     version: 2.3.2
   cypress:
     specifier: ^12.9.0
@@ -101,11 +101,17 @@ dependencies:
     specifier: ^1.7.2
     version: 1.7.2
   daisyui:
-    specifier: ^2.25.0
+    specifier: ^2.41.0
     version: 2.41.0(autoprefixer@10.4.13)(postcss@8.4.19)(ts-node@10.9.1)
   dayjs:
-    specifier: ^1.11.5
+    specifier: ^1.11.6
     version: 1.11.6
+  dexie:
+    specifier: ^3.2.3
+    version: 3.2.3
+  dexie-react-hooks:
+    specifier: ^1.1.3
+    version: 1.1.3(@types/react@18.0.18)(dexie@3.2.3)(react@18.2.0)
   eslint-plugin-i18next:
     specifier: 6.0.0-6
     version: 6.0.0-6
@@ -113,10 +119,10 @@ dependencies:
     specifier: ^10.1.0
     version: 10.1.0(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
   graphql:
-    specifier: ^15.0.0
+    specifier: ^15.8.0
     version: 15.8.0
   husky:
-    specifier: ^8.0.1
+    specifier: ^8.0.2
     version: 8.0.2
   lint-staged:
     specifier: ^13.0.3
@@ -158,16 +164,16 @@ dependencies:
     specifier: 12.2.5
     version: 12.2.5(@babel/core@7.20.2)(react-dom@18.2.0)(react@18.2.0)(sass@1.56.1)
   next-i18next:
-    specifier: ^12.0.1
+    specifier: ^12.1.0
     version: 12.1.0(next@12.2.5)(react-dom@18.2.0)(react@18.2.0)
   octokit:
     specifier: ^2.0.14
     version: 2.0.14
   postcss:
-    specifier: ^8.4.16
+    specifier: ^8.4.19
     version: 8.4.19
   postcss-preset-env:
-    specifier: ^7.8.0
+    specifier: ^7.8.3
     version: 7.8.3(postcss@8.4.19)
   prepend-http:
     specifier: ^4.0.0
@@ -185,7 +191,7 @@ dependencies:
     specifier: ^14.2.3
     version: 14.2.3(react@18.2.0)
   react-hook-form:
-    specifier: ^7.38.0
+    specifier: ^7.39.5
     version: 7.39.5(react@18.2.0)
   react-json-view:
     specifier: ^1.21.3
@@ -203,10 +209,13 @@ dependencies:
     specifier: 3.0.0-beta-1
     version: 3.0.0-beta-1(react-dom@18.2.0)(react@18.2.0)
   react-select:
-    specifier: ^5.4.0
+    specifier: ^5.6.1
     version: 5.6.1(@babel/core@7.20.2)(@types/react@18.0.18)(react-dom@18.2.0)(react@18.2.0)
+  react-share:
+    specifier: ^4.4.1
+    version: 4.4.1(react@18.2.0)
   sass:
-    specifier: ^1.54.8
+    specifier: ^1.56.1
     version: 1.56.1
   swiper:
     specifier: ^8.4.4
@@ -215,13 +224,13 @@ dependencies:
     specifier: ^2.0.4
     version: 2.0.4(react@18.2.0)
   tailwindcss:
-    specifier: ^3.1.8
+    specifier: ^3.2.4
     version: 3.2.4(postcss@8.4.19)(ts-node@10.9.1)
   ts-node:
     specifier: ^10.9.1
     version: 10.9.1(@types/node@18.7.15)(typescript@4.9.3)
   typescript:
-    specifier: ^4.8.2
+    specifier: ^4.9.3
     version: 4.9.3
   yup:
     specifier: ^0.32.11
@@ -235,7 +244,7 @@ devDependencies:
     specifier: ^4.14.191
     version: 4.14.191
   '@typescript-eslint/eslint-plugin':
-    specifier: ^5.0.0
+    specifier: ^5.43.0
     version: 5.43.0(@typescript-eslint/parser@5.43.0)(eslint@8.28.0)(typescript@4.9.3)
   cypress-fail-fast:
     specifier: ^5.0.1
@@ -244,7 +253,7 @@ devDependencies:
     specifier: ^2.3.0
     version: 2.3.0
   eslint:
-    specifier: ^8.23.0
+    specifier: ^8.28.0
     version: 8.28.0
   eslint-config-next:
     specifier: 12.2.5
@@ -253,16 +262,16 @@ devDependencies:
     specifier: ^8.5.0
     version: 8.5.0(eslint@8.28.0)
   eslint-plugin-import:
-    specifier: ^2.25.2
+    specifier: ^2.26.0
     version: 2.26.0(@typescript-eslint/parser@5.43.0)(eslint-import-resolver-typescript@2.7.1)(eslint@8.28.0)
   eslint-plugin-prettier:
     specifier: ^4.2.1
     version: 4.2.1(eslint-config-prettier@8.5.0)(eslint@8.28.0)(prettier@2.7.1)
   eslint-plugin-promise:
-    specifier: ^6.0.0
+    specifier: ^6.1.1
     version: 6.1.1(eslint@8.28.0)
   eslint-plugin-react:
-    specifier: ^7.31.8
+    specifier: ^7.31.11
     version: 7.31.11(eslint@8.28.0)
   prettier:
     specifier: ^2.7.1
@@ -4087,7 +4096,6 @@ packages:
         optional: true
     dependencies:
       ms: 2.0.0
-    dev: true
 
   /debug@3.2.7(supports-color@8.1.1):
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
@@ -4216,6 +4224,23 @@ packages:
       commander: 7.2.0
       ts-interface-checker: 1.0.0
     dev: true
+
+  /dexie-react-hooks@1.1.3(@types/react@18.0.18)(dexie@3.2.3)(react@18.2.0):
+    resolution: {integrity: sha512-bXXE1gfYtfuVYTNiOlyam+YVaO8KaqacgRuxFuP37YtpS6o/jxT6KOl5h+hhqY36s0UavlHWbL+HWJFMcQumIg==}
+    peerDependencies:
+      '@types/react': '>=16'
+      dexie: '>=3.1.0-alpha.1 <5.0.0'
+      react: '>=16'
+    dependencies:
+      '@types/react': 18.0.18
+      dexie: 3.2.3
+      react: 18.2.0
+    dev: false
+
+  /dexie@3.2.3:
+    resolution: {integrity: sha512-iHayBd4UYryDCVUNa3PMsJMEnd8yjyh5p7a+RFeC8i8n476BC9wMhVvqiImq5zJZJf5Tuer+s4SSj+AA3x+ZbQ==}
+    engines: {node: '>=6.0'}
+    dev: false
 
   /didyoumean@1.2.2:
     resolution: {integrity: sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==}
@@ -6021,6 +6046,14 @@ packages:
     resolution: {integrity: sha512-2/Ki0GcmuqSrgFyelQq9M05y7PS0mEwuIzrf3f1fPqkVDVRvZrPZtVSMHxdgo8Aq0sxAOb/cr2aqqA3LeWHVPg==}
     dev: false
 
+  /jsonp@0.2.1:
+    resolution: {integrity: sha512-pfog5gdDxPdV4eP7Kg87M8/bHgshlZ5pybl+yKxAnCZ5O7lCIn7Ixydj03wOlnDQesky2BPyA91SQ+5Y/mNwzw==}
+    dependencies:
+      debug: 2.6.9
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /jsonwebtoken@8.5.1:
     resolution: {integrity: sha512-XjwVfRS6jTMsqYs0EsuJ4LGxXV14zQybNd4L2r0UvbVnSF9Af8x7p5MzbJ90Ioz/9TI41/hTCvznF/loiSzn8w==}
     engines: {node: '>=4', npm: '>=1.4.28'}
@@ -6845,7 +6878,6 @@ packages:
 
   /ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
-    dev: true
 
   /ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
@@ -7862,7 +7894,7 @@ packages:
     dev: false
 
   /qr.js@0.0.0:
-    resolution: {integrity: sha1-ys6GOG9ZoNuAUPqQ2baw6IoeNk8=}
+    resolution: {integrity: sha512-c4iYnWb+k2E+vYpRimHqSu575b1/wKl4XFeJGpFmrJQz5I88v9aY2czh7s0w36srfCM1sXgC/xpoJz5dJfq+OQ==}
     dev: false
 
   /qs@6.10.4:
@@ -8095,6 +8127,19 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - '@types/react'
+    dev: false
+
+  /react-share@4.4.1(react@18.2.0):
+    resolution: {integrity: sha512-AJ9m9RiJssqvYg7MoJUc9J0D7b/liWrsfQ99ndKc5vJ4oVHHd4Fy87jBlKEQPibT40oYA3AQ/a9/oQY6/yaigw==}
+    engines: {node: '>=6.9.0', npm: '>=5.0.0'}
+    peerDependencies:
+      react: ^16.3.0 || ^17 || ^18
+    dependencies:
+      classnames: 2.3.2
+      jsonp: 0.2.1
+      react: 18.2.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /react-textarea-autosize@8.4.0(@types/react@18.0.18)(react@18.2.0):

@@ -1,50 +1,51 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-import { gql, useQuery } from "@apollo/client";
-import { formatSelectOption, SelectOption } from "components/brickroom/utils/BrSelectUtils";
-import type { GetTagsQuery } from "lib/types";
-import { forwardRef } from "react";
-
-// Components
-import BrSelectSearchable, { BrSelectSearchableProps } from "components/brickroom/BrSelectSearchable";
+import { Tag } from "@bbtgnn/polaris-interfacer";
+import SearchTags from "./SearchTags";
+import { FieldInfoProps } from "./polaris/types";
 
 //
 
-const GET_TAGS = gql`
-  query GetTags {
-    economicResourceClassifications
+export interface SelectTags2Props extends Partial<FieldInfoProps> {
+  tags: Array<string>;
+  setTags: (tags: Array<string>) => void;
+}
+
+//
+
+export default function SelectTags(props: SelectTags2Props) {
+  const { tags, setTags } = props;
+
+  function handleSelect(tag: string) {
+    setTags([...tags, tag]);
   }
-`;
+  function handleRemove(tag: string) {
+    setTags(tags.filter(t => t !== tag));
+  }
 
-const SelectTags = forwardRef<any, BrSelectSearchableProps>((props, ref) => {
-  const { defaultValueRaw } = props;
-  const tags = useQuery<GetTagsQuery>(GET_TAGS).data?.economicResourceClassifications;
+  return (
+    <div className="space-y-4">
+      <SearchTags
+        exclude={tags}
+        onSelect={handleSelect}
+        creatable
+        label={props.label}
+        placeholder={props.placeholder}
+        requiredIndicator={props.requiredIndicator}
+        error={props.error}
+        helpText={props.helpText}
+      />
 
-  let defaultValue;
-  // Next iteration of the component will use an async loading
-  // ToDo – Return proper error
-  let options: Array<SelectOption<string>> = [];
-  if (tags) options = tags.map((tag: string) => formatSelectOption(tag, tag));
-  if (defaultValueRaw) defaultValue = options?.filter(a => defaultValueRaw.includes(a.value));
-
-  return <BrSelectSearchable {...props} options={options} ref={ref} value={defaultValue} />;
-});
-
-//
-
-SelectTags.displayName = "SelectTags";
-export default SelectTags;
+      <div className="flex flex-wrap gap-y-2 gap-2">
+        {tags?.map(tag => (
+          <Tag
+            key={tag}
+            onRemove={() => {
+              handleRemove(tag);
+            }}
+          >
+            {decodeURIComponent(tag)}
+          </Tag>
+        ))}
+      </div>
+    </div>
+  );
+}

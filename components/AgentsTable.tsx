@@ -16,17 +16,16 @@
 
 import cn from "classnames";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
 
 // Request
 import { useQuery } from "@apollo/client";
 import { FETCH_AGENTS } from "lib/QueryAndMutation";
 
 // Components
-import { AdjustmentsIcon } from "@heroicons/react/outline";
-import Spinner from "./brickroom/Spinner";
+import { GetAgentsQuery, GetAgentsQueryVariables } from "lib/types";
 import useLoadMore from "../hooks/useLoadMore";
 import AgentsTableBase from "./AgentsTableBase";
+import Spinner from "./brickroom/Spinner";
 
 //
 
@@ -44,9 +43,12 @@ export default function AgentsTable(props: AgentsTableProps) {
   const { t } = useTranslation("lastUpdatedProps");
   const { hideHeader = false, hidePagination = false, searchTerm, searchFilter } = props;
 
-  const { loading, data, fetchMore, refetch, variables } = useQuery(FETCH_AGENTS, {
-    variables: { last: 10, userOrName: searchTerm || "" },
-  });
+  const { loading, data, fetchMore, refetch, variables } = useQuery<GetAgentsQuery, GetAgentsQueryVariables>(
+    FETCH_AGENTS,
+    {
+      variables: { last: 10, userOrName: searchTerm || "" },
+    }
+  );
 
   const dataQueryIdentifier = "people";
 

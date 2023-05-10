@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { zencode_exec } from "zenroom";
-import sign from "../zenflows-crypto/src/sign_graphql";
 import useStorage from "../hooks/useStorage";
+//@ts-ignore
+import sign from "zenflows-crypto/src/sign_graphql.zen";
 
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 
@@ -30,7 +31,7 @@ const useAuthAndFetch = async (uri: RequestInfo, options: RequestInit) => {
   const signRequest = async (body: string) => {
     const zenKeys = JSON.stringify({ keyring: { eddsa: getItem("eddsaPrivateKey") } });
     const zenData = JSON.stringify({ gql: Buffer.from(body, "utf8").toString("base64") });
-    return await zencode_exec(sign(), { data: zenData, keys: zenKeys });
+    return await zencode_exec(sign, { data: zenData, keys: zenKeys });
   };
   options.headers = await signRequest(options.body?.toString() || "").then(({ result, logs }) => {
     return {

@@ -16,7 +16,7 @@ import { CreateProjectValues } from "../CreateProjectForm";
 //
 
 export type RelationsStepValues = Array<string>;
-export const relationsStepSchema = yup.array().of(yup.string().required());
+export const relationsStepSchema = () => yup.array().of(yup.string().required());
 export const relationsStepDefaultValues: RelationsStepValues = [];
 
 //

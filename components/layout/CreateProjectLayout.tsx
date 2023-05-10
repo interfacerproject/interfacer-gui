@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Link as PLink } from "@bbtgnn/polaris-interfacer";
+import { Link as PLink, Text } from "@bbtgnn/polaris-interfacer";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 

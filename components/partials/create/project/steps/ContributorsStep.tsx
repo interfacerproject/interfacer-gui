@@ -3,13 +3,13 @@ import { useTranslation } from "next-i18next";
 
 // Components
 import { Stack, Text } from "@bbtgnn/polaris-interfacer";
+import SearchUsers from "components/SearchUsers";
 import BrUserDisplay from "components/brickroom/BrUserDisplay";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import SearchUsers from "components/SearchUsers";
 import { useAuth } from "hooks/useAuth";
 import { formSetValueOptions } from "lib/formSetValueOptions";
-import { Person } from "lib/types";
+import { PersonWithFileEssential } from "lib/types/extensions";
 import { useFormContext } from "react-hook-form";
 import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
@@ -17,7 +17,7 @@ import { CreateProjectValues } from "../CreateProjectForm";
 //
 
 export type ContributorsStepValues = Array<string>;
-export const contributorsStepSchema = yup.array().of(yup.string().required());
+export const contributorsStepSchema = () => yup.array().of(yup.string().required());
 export const contributorsStepDefaultValues: ContributorsStepValues = [];
 
 //
@@ -30,7 +30,7 @@ export default function ContributorsStep() {
   const CONTRIBUTORS_FORM_KEY = "contributors";
   const contributors = watch(CONTRIBUTORS_FORM_KEY);
 
-  function handleSelect(option: Partial<Person>) {
+  function handleSelect(option: Partial<PersonWithFileEssential>) {
     setValue(CONTRIBUTORS_FORM_KEY, [...contributors, option.id!], formSetValueOptions);
   }
   function handleRemove(contributorId: string) {

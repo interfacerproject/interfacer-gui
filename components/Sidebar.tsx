@@ -23,6 +23,7 @@ import IfSidebarDropdown from "./brickroom/IfSidebarDropdown";
 import { IfSidebarItemProps } from "./brickroom/IfSidebarItem";
 import IfSideBarLink, { IfSideBarLinkProps } from "./brickroom/IfSideBarLink";
 
+import { ScanAlt } from "@carbon/icons-react";
 import {
   BellIcon,
   BriefcaseIcon,
@@ -32,10 +33,12 @@ import {
   HomeIcon,
   SupportIcon,
 } from "@heroicons/react/outline";
-import { ScanAlt } from "@carbon/icons-react";
 
 function Sidebar() {
   const { t } = useTranslation("SideBarProps");
+  const { user } = useAuth();
+
+  if (!user) return null;
 
   // Links
   const items: Record<string, IfSideBarLinkProps> = {
@@ -58,7 +61,7 @@ function Sidebar() {
     },
     myProjects: {
       text: t("My Projects"),
-      link: "/profile/my_profile",
+      link: user!.profileUrl,
     },
     // Dropdown -> Projects
     latestProjects: {
@@ -72,7 +75,11 @@ function Sidebar() {
     },
     my_list: {
       text: t("My list"),
-      link: "/profile/my_profile?tab=1",
+      link: `${user?.profileUrl}?tab=1`,
+    },
+    my_drafts: {
+      text: t("My drafts"),
+      link: `${user?.profileUrl}?tab=2`,
     },
     ScanQr: {
       text: t("Scan QR"),
@@ -111,8 +118,6 @@ function Sidebar() {
     },
   };
 
-  const { authenticated } = useAuth();
-
   return (
     <div className="overflow-y-auto bg-white border-r title w-72 text-primary-content border-primary">
       <div className="flex flex-col items-stretch justify-between flex-nowrap">
@@ -135,10 +140,10 @@ function Sidebar() {
             <IfSideBarLink {...items.myProjects} />
             <IfSideBarLink {...items.latestProjects} />
             <IfSideBarLink {...items.my_list} />
+            <IfSideBarLink {...items.my_drafts} />
             <IfSideBarLink {...items.resources} />
           </IfSidebarDropdown>
           <IfSideBarLink {...items.ScanQr} />
-
           <IfSideBarLink {...items.reportBug} />
           <IfSideBarLink {...items.userGuide} />
           {/*<IfSideBarLink {...items.map} />*/}

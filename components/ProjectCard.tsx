@@ -7,11 +7,11 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useState } from "react";
 import AddStar from "./AddStar";
-import BrTags from "./brickroom/BrTags";
-import BrUserAvatar from "./brickroom/BrUserAvatar";
 import LocationText from "./LocationText";
 import ProjectCardImage from "./ProjectCardImage";
 import ProjectTypeChip from "./ProjectTypeChip";
+import BrTags from "./brickroom/BrTags";
+import BrUserAvatar from "./brickroom/BrUserAvatar";
 import { ProjectType } from "./types";
 
 export interface ProjectCardProps {
@@ -19,7 +19,6 @@ export interface ProjectCardProps {
 }
 
 export default function ProjectCard(props: ProjectCardProps) {
-  const { t } = useTranslation("common");
   const { project } = props;
   const { user } = useAuth();
 
@@ -45,7 +44,10 @@ export default function ProjectCard(props: ProjectCardProps) {
         <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse}>
           <Link href={`/project/${project.id}`}>
             <a className="space-y-3">
-              <ProjectCardImage projectType={project.conformsTo!.name as ProjectType} image={project.images?.[0]} />
+              <ProjectCardImage
+                projectType={project.conformsTo!.name as ProjectType}
+                image={project.images?.[0] || project.metadata?.image}
+              />
               <div>
                 <Text variant="headingLg" as="h4">
                   {project.name}
@@ -78,7 +80,7 @@ function UserDisplay(props: { user: Partial<Agent> }) {
     <Link href={`/profile/${user.id}`}>
       <a>
         <div className="flex items-center space-x-2 hover:underline">
-          <BrUserAvatar name={user.name} size="36px" />
+          <BrUserAvatar user={user} size="36px" />
           <Text as="p" variant="bodyMd" fontWeight="medium">
             <span className="text-primary">{user.name}</span>
           </Text>
