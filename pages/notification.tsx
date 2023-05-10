@@ -80,45 +80,42 @@ const Notification = () => {
     [MessageGroup.ADDED_AS_CONTRIBUTOR]: [],
   });
 
-  function clearGroupedMessages() {
-    groupedMessages.contributionRequests = [];
-    groupedMessages.contributionResponses = [];
-    groupedMessages.citations = [];
-  }
-
-  function groupMessagesBySubject(messages: Array<Message>): void {
-    // Contribution requests
-    let group: Record<MessageGroup, Array<Message>> = {
-      [MessageGroup.CONTRIBUTION_REQUESTS]: [],
-      [MessageGroup.CONTRIBUTION_RESPONSES]: [],
-      [MessageGroup.CITATIONS]: [],
-      [MessageGroup.ADDED_AS_CONTRIBUTOR]: [],
-    };
-    for (let m of messages) {
-      if (m.content.subject === MessageSubject.CONTRIBUTION_REQUEST) {
-        group.contributionRequests.push(m);
-      } else if (
-        m.content.subject === MessageSubject.CONTRIBUTION_ACCEPTED ||
-        m.content.subject === MessageSubject.CONTRIBUTION_REJECTED
-      ) {
-        group.contributionResponses.push(m);
-      } else if (m.content.subject === "Project cited") {
-        group.citations.push(m);
-      } else if (m.content.subject === MessageSubject.ADDED_AS_CONTRIBUTOR) {
-        group.addedAsContributor.push(m);
-      }
-    }
-    //
-    setGroupedMessages(group);
-  }
-
   useEffect(() => {
-    console.log(isLoading, error, messages);
+    function clearGroupedMessages() {
+      groupedMessages.contributionRequests = [];
+      groupedMessages.contributionResponses = [];
+      groupedMessages.citations = [];
+    }
+    function groupMessagesBySubject(messages: Array<Message>): void {
+      // Contribution requests
+      let group: Record<MessageGroup, Array<Message>> = {
+        [MessageGroup.CONTRIBUTION_REQUESTS]: [],
+        [MessageGroup.CONTRIBUTION_RESPONSES]: [],
+        [MessageGroup.CITATIONS]: [],
+        [MessageGroup.ADDED_AS_CONTRIBUTOR]: [],
+      };
+      for (let m of messages) {
+        if (m.content.subject === MessageSubject.CONTRIBUTION_REQUEST) {
+          group.contributionRequests.push(m);
+        } else if (
+          m.content.subject === MessageSubject.CONTRIBUTION_ACCEPTED ||
+          m.content.subject === MessageSubject.CONTRIBUTION_REJECTED
+        ) {
+          group.contributionResponses.push(m);
+        } else if (m.content.subject === "Project cited") {
+          group.citations.push(m);
+        } else if (m.content.subject === MessageSubject.ADDED_AS_CONTRIBUTOR) {
+          group.addedAsContributor.push(m);
+        }
+      }
+      //
+      setGroupedMessages(group);
+    }
     if (!isLoading && !error) {
       clearGroupedMessages();
       groupMessagesBySubject(messages);
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, error, groupedMessages]);
 
   const groupsLabels: Record<MessageGroup, string> = {
     [MessageGroup.CONTRIBUTION_REQUESTS]: t("Contribution Requests"),

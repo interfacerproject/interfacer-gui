@@ -1,7 +1,7 @@
 import { Card, Stack, Tabs } from "@bbtgnn/polaris-interfacer";
+import TokensDisplay from "components/TokensDisplay";
 import { useUser } from "components/layout/FetchUserLayout";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
-import TokensResume from "components/TokensResume";
 import { Token, TrendPeriod } from "hooks/useWallet";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
@@ -29,16 +29,16 @@ const TrackRecord = () => {
 
   const tabsContent = [
     <div className="flex" key={"week"}>
-      <TokensResume stat={t(Token.Idea)} id={id} period={TrendPeriod.Week} />
-      <TokensResume stat={t(Token.Strengths)} id={id} period={TrendPeriod.Week} />
+      <TokensDisplay stat={t(Token.Idea)} id={id} period={TrendPeriod.Week} />
+      <TokensDisplay stat={t(Token.Strengths)} id={id} period={TrendPeriod.Week} />
     </div>,
     <div className="flex" key={"month"}>
-      <TokensResume stat={t(Token.Idea)} id={id} period={TrendPeriod.Month} />
-      <TokensResume stat={t(Token.Strengths)} id={id} period={TrendPeriod.Month} />
+      <TokensDisplay stat={t(Token.Idea)} id={id} period={TrendPeriod.Month} />
+      <TokensDisplay stat={t(Token.Strengths)} id={id} period={TrendPeriod.Month} />
     </div>,
     <div className="flex" key="cyclal">
-      <TokensResume stat={t(Token.Idea)} id={id} period={TrendPeriod.Cycle} />
-      <TokensResume stat={t(Token.Strengths)} id={id} period={TrendPeriod.Cycle} />
+      <TokensDisplay stat={t(Token.Idea)} id={id} period={TrendPeriod.Cycle} />
+      <TokensDisplay stat={t(Token.Strengths)} id={id} period={TrendPeriod.Cycle} />
     </div>,
   ];
   return (

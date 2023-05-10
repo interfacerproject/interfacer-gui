@@ -24,6 +24,7 @@ import * as yup from "yup";
 // Components
 import { Button, TextField } from "@bbtgnn/polaris-interfacer";
 import { isRequired } from "../../../lib/isFieldRequired";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -47,12 +48,16 @@ export default function InvitationKey({ onSubmit }: InvitationKeyNS.Props) {
   const defaultValues: InvitationKeyNS.FormValues = {
     invitationKey: "",
   };
+  const yupLocaleObject = useYupLocaleObject();
 
-  const schema = yup
-    .object({
-      invitationKey: yup.string().required().oneOf([process.env.NEXT_PUBLIC_INVITATION_KEY], t("formError")),
-    })
-    .required();
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup
+      .object({
+        invitationKey: yup.string().required().oneOf([process.env.NEXT_PUBLIC_INVITATION_KEY], t("formError")),
+      })
+      .required())();
 
   const form = useForm<InvitationKeyNS.FormValues>({
     mode: "all",

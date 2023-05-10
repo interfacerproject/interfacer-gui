@@ -50,7 +50,7 @@ const ProfileHeading = () => {
       </div>
       <Heading label={t("Username:")}>
         <Text as="span" variant="bodyLg">
-          <span className="text-primary">@{person?.user}</span>
+          <span className="text-primary">{person?.user}</span>
         </Text>
       </Heading>
       {isUser && (

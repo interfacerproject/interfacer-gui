@@ -18,8 +18,9 @@ import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
-import { SelectedLocation } from "components/SelectLocation2";
+import { SelectedLocation } from "components/SelectLocation";
 import { GetStaticPaths } from "next";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
@@ -66,9 +67,14 @@ const EditLocation: NextPageWithLayout = () => {
     },
   };
 
-  const schema = yup.object({
-    location: locationStepSchema,
-  });
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup.object({
+      location: locationStepSchema,
+    }))();
 
   const formMethods = useForm<EditLocationValues, LocationStepSchemaContext>({
     mode: "all",
