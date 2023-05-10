@@ -18,7 +18,7 @@ const ProjectTabs = () => {
   const { t } = useTranslation("common");
   const { id } = router.query;
 
-  const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), []);
+  const handleTabChange = useCallback((selectedTabIndex: number) => setSelected(selectedTabIndex), [setSelected]);
 
   return (
     <Stack vertical spacing="loose">

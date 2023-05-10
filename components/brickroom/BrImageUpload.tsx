@@ -71,7 +71,7 @@ const BrImageUpload = React.forwardRef<HTMLInputElement, BrImageUploadProps>((pr
   // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
   useEffect(() => {
     return () => files.forEach(file => URL.revokeObjectURL(file.preview));
-  }, []);
+  }, [files]);
 
   /* Error translation management */
 
