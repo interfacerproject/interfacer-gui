@@ -29,7 +29,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    name: Test on Node v${{ matrix.node }}
+    name: Test on Node
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
@@ -39,7 +39,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
       - name: Install dependencies
         run: npm install
       - name: Write local env file
