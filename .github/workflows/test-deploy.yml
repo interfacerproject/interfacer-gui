@@ -67,10 +67,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download zipped HTML report
-      uses: actions/download-artifact@v2
-      with:
-        name: playwright-report
-        path: playwright-report/
+        uses: actions/download-artifact@v2
+        with:
+          name: playwright-report
+          path: playwright-report/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
