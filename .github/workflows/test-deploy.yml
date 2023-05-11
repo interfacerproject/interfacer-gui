@@ -61,9 +61,11 @@ jobs:
           retention-days: 30
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
+        if: always()
         with:
           path: playwright-report/
       - name: Deploy Playwright result to Github Pages
+        if: always()
         id: deployment
         uses: actions/deploy-pages@v2
 
