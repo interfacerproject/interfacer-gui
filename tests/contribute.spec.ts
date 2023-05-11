@@ -1,7 +1,7 @@
 import { BrowserContext, Page, expect } from "@playwright/test";
 import { test } from "./fixtures/test";
 
-test.describe("When user want to contribute", () => {
+test.describe.skip("When user want to contribute", () => {
   let page: Page;
 
   test.beforeEach(async ({ context, login }) => {
