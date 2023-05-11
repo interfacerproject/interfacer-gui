@@ -55,7 +55,9 @@ jobs:
           retention-days: 30
 
   report:
+    name: 📋 Test reports
     needs: test
+    if: always()
     permissions:
       pages: write
       id-token: write
