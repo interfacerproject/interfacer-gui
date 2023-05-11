@@ -42,7 +42,7 @@ test.describe("Authentication process", () => {
     await page.goto("/sign_up");
 
     //Enter invitation key
-    await page.fill("#invitationKey", "123");
+    await page.fill("#invitationKey", authVariables.invitationKey!);
     await page.getByRole("button", { name: "Next step" }).click();
 
     // Enter email and submit
