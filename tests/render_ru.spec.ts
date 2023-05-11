@@ -1,7 +1,7 @@
 import { Page, expect } from "@playwright/test";
 import { test } from "./fixtures/test";
 
-test.describe.skip("when user is logged in", () => {
+test.describe("when user is logged in", () => {
   let page: Page;
 
   test.beforeEach(async ({ context, login }) => {

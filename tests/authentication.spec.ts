@@ -1,7 +1,7 @@
 import { test } from "./fixtures/test";
 import { Page } from "@playwright/test";
 
-test.describe.skip("Authentication process", () => {
+test.describe("Authentication process", () => {
   let page: Page;
 
   test.beforeEach(async ({ context, logout }) => {

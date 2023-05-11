@@ -19,7 +19,7 @@ const checkUrl = async (page: Page, type: string) => {
   //   expect(url).toContain("created=true");
 };
 
-test.describe.skip("when user visits create design and submits autoimport field", () => {
+test.describe("when user visits create design and submits autoimport field", () => {
   let page: Page;
 
   test.beforeEach(async ({ context, login }) => {
