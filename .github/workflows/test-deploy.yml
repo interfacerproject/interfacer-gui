@@ -27,12 +27,6 @@ concurrency:
 
 jobs:
   test:
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     name: Test on Node
     steps:
@@ -59,15 +53,25 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+  report:
+    needs: test
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
-        if: always()
         with:
           path: playwright-report/
       - name: Deploy Playwright result to Github Pages
-        if: always()
         id: deployment
         uses: actions/deploy-pages@v2
+
 
   deploy:
     name: 🚀 Deploy on staging server
