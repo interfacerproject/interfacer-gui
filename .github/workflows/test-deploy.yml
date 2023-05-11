@@ -1,4 +1,4 @@
-#dw   SPDX-License-Identifier: AGPL-3.0-or-later
+#SPDX-License-Identifier: AGPL-3.0-or-later
 # Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tdw  est:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
