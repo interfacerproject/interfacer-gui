@@ -8,7 +8,7 @@ const TEST_BASE_URL = process.env.TEST_BASE_URL || `http://localhost:${PORT}`;
 
 export default defineConfig({
   webServer: {
-    command: "pnpm build && pnpm start",
+    command: "pnpm start",
     url: TEST_BASE_URL,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,

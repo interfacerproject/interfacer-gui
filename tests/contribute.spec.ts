@@ -4,15 +4,10 @@ import { test } from "./fixtures/test";
 test.describe("When user want to contribute", () => {
   let page: Page;
 
-  test.beforeAll(async ({ context }) => {
+  test.beforeEach(async ({ context, login }) => {
     page = await context.newPage();
     await page.goto("");
-    await page.context().storageState();
-  });
-
-  test.beforeEach(async ({ login }) => {
     await login(page);
-    await page.goto("");
   });
 
   test("Should go to contribution page", async () => {
