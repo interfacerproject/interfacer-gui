@@ -28,9 +28,6 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [18]
 
     name: Test on Node v${{ matrix.node }}
     steps:
@@ -39,6 +36,10 @@ jobs:
       - name: Git Sumbodule Update
         run: |
           git submodule update --init
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
       - name: Install dependencies
         run: npm install
       - name: Write local env file
