@@ -82,6 +82,11 @@ jobs:
         with:
           version: latest
           run_install: false
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
       - name: Download the built folders ⏬
         uses: actions/download-artifact@v3
         with:
@@ -141,7 +146,7 @@ jobs:
   deploy:
     name: 🚀 Deploy on staging server
     # needs: [e2e, components]
-    needs: [e2e]
+    needs: e2e
     if: github.ref == 'refs/heads/main'
     uses: interfacerproject/workflows/.github/workflows/node-staging-deploy.yml@main
     secrets: inherit
