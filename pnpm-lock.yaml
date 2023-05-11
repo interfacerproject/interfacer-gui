@@ -157,6 +157,9 @@ dependencies:
   octokit:
     specifier: ^2.0.14
     version: 2.0.14
+  playwright:
+    specifier: 1.34.0-alpha-may-11-2023
+    version: 1.34.0-alpha-may-11-2023
   postcss:
     specifier: ^8.4.19
     version: 8.4.19
@@ -7448,6 +7451,20 @@ packages:
     hasBin: true
     dev: true
 
+  /playwright-core@1.34.0-alpha-may-11-2023:
+    resolution: {integrity: sha512-tRXXyiPP8tb/DhOvkqnVcmMKHieHtSCv6nYEbtKnmfZCybsLqUIjeFLWYdI8p69LE54WZKdZolRstLg8WKb+4A==}
+    engines: {node: '>=14'}
+    dev: false
+
+  /playwright@1.34.0-alpha-may-11-2023:
+    resolution: {integrity: sha512-sgy3x9LC/oek8/IDyKnCTcasiitRWFyA9B80pc47fhCDnq+Ashbrw6JirP5keN9H3W4gdImorMTsIMAwhPtsNA==}
+    engines: {node: '>=14'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      playwright-core: 1.34.0-alpha-may-11-2023
+    dev: false
+
   /postcss-attribute-case-insensitive@5.0.2(postcss@8.4.19):
     resolution: {integrity: sha512-XIidXV8fDr0kKt28vqki84fRK8VW8eTuIa4PChv2MqKuT6C9UjmSKzen6KaWhWEoYvwxFCa7n/tC1SZ3tyq4SQ==}
     engines: {node: ^12 || ^14 || >=16}
@@ -7927,7 +7944,7 @@ packages:
     dev: false
 
   /proxy-from-env@1.0.0:
-    resolution: {integrity: sha1-M8UDmPcOp+uW0h97gXYwpVeRx+4=}
+    resolution: {integrity: sha512-F2JHgJQ1iqwnHDcQjVBsq3n/uoaFL+iPW/eAeL7kVxy/2RrWaN4WroKjjvbsoRtv0ftelNyC01bjRhn/bhcf4A==}
     dev: false
 
   /ps-tree@1.2.0:
