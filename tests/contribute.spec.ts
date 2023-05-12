@@ -2,7 +2,7 @@ import { Page, expect } from "@playwright/test";
 import { test } from "./fixtures/test";
 
 test.describe("When user want to contribute", () => {
-  test.describe.configure({ timeout: 200000 });
+  test.describe.configure({ timeout: 60000, retries: 3 });
   let page: Page;
 
   test.beforeEach(async ({ context, login }) => {
@@ -11,8 +11,8 @@ test.describe("When user want to contribute", () => {
     await login(page);
   });
 
-  test("Should go to contribution page", async () => {
-    await page.goto("/project/063FZRMJ1X6W12MG5SGRYHZ2P0");
+  test("Should go to contribution page", async ({ envVariables }) => {
+    await page.goto(`/project/${envVariables.PROJECT_ID}`);
     await page.waitForLoadState();
     const contributeBtn = page.getByRole("button", { name: "Make a contribution" });
     expect(contributeBtn).toBeTruthy();
@@ -24,6 +24,6 @@ test.describe("When user want to contribute", () => {
     await page.type("textarea", "testDescription");
     const submitBtn = page.getByRole("button", { name: "Send contribution" });
     expect(submitBtn).toBeEnabled();
-    Promise.all([await submitBtn?.click(), await page.waitForURL("**/proposal/**")]);
+    Promise.all([await submitBtn.click(), await page.waitForURL("**/proposal/**")]);
   });
 });
