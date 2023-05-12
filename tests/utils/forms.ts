@@ -50,7 +50,7 @@ export const addLocation = async (page: Page, locationName: string, query: strin
   await page.type("#location-locationName", locationName);
   await page.type("#search-location", query);
   await page.waitForTimeout(600);
-  await page.getByText(query).nth(0).click();
+  await page.getByRole("option").locator("div").first().click();
 };
 
 export const addDeclarations = async (page: Page, p: DeclarationParams) => {
