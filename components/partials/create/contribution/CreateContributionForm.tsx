@@ -22,17 +22,23 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import { Banner, Button, Card, Spinner, Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import { Banner, Button, Card, Spinner, Stack, Text, TextField } from "@bbtgnn/polaris-interfacer";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import { ChildrenProp as CP } from "components/brickroom/types";
 
 // Other
+import ResourceDetailsCard from "components/ResourceDetailsCard";
+import TableOfContents from "components/TableOfContents";
+import { useProject } from "components/layout/FetchProjectLayout";
 import PDivider from "components/polaris/PDivider";
+import PLabel from "components/polaris/PLabel";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { ReactNode } from "react";
 import SelectProjectForContribution from "../project/steps/SelectProjectForContribution";
+import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
 //
 
@@ -50,9 +56,22 @@ export interface FormValues {
 
 //
 
-export default function CreateContributionForm(props: Props) {
+// export default function CreateContributionForm(props: Props) {
+const CreateContributionForm = (props: Props) => {
   const { onSubmit, error, setError } = props;
   const { t } = useTranslation("createProjectProps");
+
+  const sections = ["Title", "Linked-Project", "Description"];
+
+  function ProposeContributionNav() {
+    const { t } = useTranslation("common");
+
+    const links = sections.map(section => ({
+      label: <span className="capitalize">{section}</span>,
+      href: `#${section.replace(" ", "-")}`,
+    }));
+    return <TableOfContents title={t("Make a contribution")} links={links} />;
+  }
 
   //
 
@@ -82,15 +101,42 @@ export default function CreateContributionForm(props: Props) {
   });
 
   const { formState, handleSubmit, register, control, setValue, watch } = form;
-  const { isValid, errors, isSubmitting } = formState;
+  const { errors, isSubmitting } = formState;
+
+  const { project: resource } = useProject();
+
+  const Heading = () => (
+    <>
+      <Stack vertical spacing="extraLoose">
+        <Stack vertical spacing="tight">
+          <Text as="h1" variant="headingXl">
+            {t("Make a Contribution")}
+          </Text>
+        </Stack>
+        {/* <Stack vertical spacing="tight">
+          <Text as="h2" variant="headingLg">
+            {t("Contribution info")}
+          </Text>
+          <Text as="p" variant="bodyMd">
+            {t("Help us display your proposal correctly.")}
+          </Text>
+        </Stack> */}
+        <Stack vertical spacing="extraTight">
+          <PLabel label={t("You are about to propose a contribution to:")} />
+          <ResourceDetailsCard resource={resource} />
+        </Stack>
+      </Stack>
+    </>
+  );
 
   //
 
-  return (
+  const Fields = () => (
     <FormProvider {...form}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack vertical spacing="extraLoose">
-          <PDivider id={"name"} />
+          <PDivider id={sections[0]} />
+          <PTitleSubtitle title={t(sections[0])} />
 
           <Controller
             control={control}
@@ -113,10 +159,12 @@ export default function CreateContributionForm(props: Props) {
             )}
           />
 
-          <PDivider id={"Select-Project"} />
+          <PDivider id={sections[1]} />
+          <PTitleSubtitle title={t(sections[1])} subtitle={t("Select the project with the contributions")} />
           <SelectProjectForContribution />
 
-          <PDivider id={"description"} />
+          <PDivider id={sections[2]} />
+          <PTitleSubtitle title={t(sections[2])} subtitle={t("Describe what your contribution is about")} />
           <BrMdEditor
             id="description"
             name="description"
@@ -163,4 +211,41 @@ export default function CreateContributionForm(props: Props) {
       </form>
     </FormProvider>
   );
-}
+
+  //
+
+  const Layout = ({ children }: { children: ReactNode }) => {
+    const router = useRouter();
+    const { t } = useTranslation("common");
+    return (
+      <>
+        <div className="p-4 text-text-primary">
+          <Button
+            onClick={() => {
+              router.back();
+            }}
+            plain
+            monochrome
+          >
+            {t("← Discard and go back")}
+          </Button>
+        </div>
+        <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
+          <div className="sticky top-24">
+            <ProposeContributionNav />
+          </div>
+          <div className="grow max-w-xl px-6 pb-24 pt-0">{children}</div>
+        </div>
+      </>
+    );
+  };
+
+  return (
+    <Layout>
+      <Heading />
+      <Fields />
+    </Layout>
+  );
+};
+
+export default CreateContributionForm;
