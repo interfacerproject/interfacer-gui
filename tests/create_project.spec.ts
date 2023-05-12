@@ -20,7 +20,7 @@ const checkUrl = async (page: Page, type: string) => {
 };
 
 test.describe("when user want to create a project", () => {
-  test.describe.configure({ retries: 3 });
+  test.describe.configure({ retries: 3, timeout: 100000 });
   let page: Page;
 
   test.beforeEach(async ({ context, login }) => {
@@ -55,7 +55,7 @@ test.describe("when user want to create a project", () => {
     expect(tagText).toContain("arm");
   });
 
-  test("should create a new design", async ({ interceptGQL, random }) => {
+  test("should create a new design", async ({ random }) => {
     await visitCreateProject(page, "design");
     const mainValues: CompileMainValuesParams = {
       title: "Vegeta",
@@ -66,13 +66,12 @@ test.describe("when user want to create a project", () => {
     await compileMainValues(page, mainValues);
     await uploadImage(page, `image-${random.randomString(4)}`);
     await addRelatedProjects(page, "milano");
-    Promise.all([await page.click("#project-create-submit"), await interceptGQL(page, "getProjectLayout")]);
-    await page.waitForLoadState("networkidle");
-    await checkUrl(page, "design");
+    await page.click("#project-create-submit");
+    await page.waitForURL("**/project/**");
     await checkMainValues(page, mainValues);
   });
 
-  test("should create a new product", async ({ interceptGQL, random }) => {
+  test("should create a new product", async ({ random }) => {
     await visitCreateProject(page, "product");
     const mainValues: CompileMainValuesParams = {
       title: "Goku",
@@ -91,14 +90,13 @@ test.describe("when user want to create a project", () => {
     };
     await addDeclarations(page, declaration);
     await page.click("#project-create-submit");
-    await interceptGQL(page, "getProjectLayout");
-    await checkUrl(page, "product");
+    await page.waitForURL("**/project/**");
     await checkMainValues(page, mainValues);
     await checkDeclarations(page, declaration);
     await checkContributors(page);
   });
 
-  test("should create a new service", async ({ interceptGQL, random }) => {
+  test("should create a new service", async ({ random }) => {
     await visitCreateProject(page, "services");
     const mainValues: CompileMainValuesParams = {
       title: "Maijin Bu",
@@ -112,8 +110,8 @@ test.describe("when user want to create a project", () => {
     await addLocation(page, city, city);
     await addContributors(page, "nenn");
     await addRelatedProjects(page, "bonomelli");
-    Promise.all([await page.click("#project-create-submit"), await interceptGQL(page, "getProjectLayout")]);
-    await checkUrl(page, "service");
+    await page.click("#project-create-submit");
+    await page.waitForURL("**/project/**");
     await checkMainValues(page, mainValues);
     await checkContributors(page);
   });

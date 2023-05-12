@@ -49,7 +49,7 @@ export const submit = async (page: Page) => {
 export const addLocation = async (page: Page, locationName: string, query: string) => {
   await page.type("#location-locationName", locationName);
   await page.type("#search-location", query);
-  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(600);
   await page.getByText(query).nth(0).click();
 };
 
