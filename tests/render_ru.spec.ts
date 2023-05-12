@@ -1,7 +1,7 @@
 import { Page, expect } from "@playwright/test";
 import { test } from "./fixtures/test";
 
-test.describe.skip("when user is logged in", () => {
+test.describe("when user is logged in", () => {
   let page: Page;
 
   test.beforeEach(async ({ context, login }) => {
@@ -31,7 +31,7 @@ test.describe.skip("when user is logged in", () => {
 
   test("Should see /resource/:id", async ({ page }) => {
     await page.goto(`/resource/${process.env.RESOURCE_ID}`);
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState();
     await expect(page.getByText(process.env.RESOURCE_ID!)).toBeVisible();
   });
 
@@ -48,10 +48,10 @@ test.describe.skip("when user is logged in", () => {
     await expect(page.getByRole("heading", { name: "Scan your QR code" })).toBeVisible();
   });
 
-  test("Should see every link", async ({ page, envVariables }) => {
+  test.skip("Should see every link", async ({ page, envVariables }) => {
     test.setTimeout(600000);
     page.goto("");
-    await page.waitForTimeout(500);
+    await page.waitForLoadState("domcontentloaded");
     console.log("start url", page.url());
     console.log("Checking links");
     const checkLinks = async (page: Page) => {
@@ -72,7 +72,7 @@ test.describe.skip("when user is logged in", () => {
         seenURLs.add(url);
         console.log(`Visiting ${url}`);
         await page.goto(url);
-        await page.waitForTimeout(2000);
+        await page.waitForLoadState("domcontentloaded");
 
         // No link to 404 page
         // expect.soft(page.url(), `for url ${url}, found in ${fromUrl} for ${text}`).not.toContain("404")

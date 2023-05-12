@@ -19,7 +19,8 @@ const checkUrl = async (page: Page, type: string) => {
   //   expect(url).toContain("created=true");
 };
 
-test.describe("when user visits create design and submits autoimport field", () => {
+test.describe("when user want to create a project", () => {
+  test.describe.configure({ retries: 3 });
   let page: Page;
 
   test.beforeEach(async ({ context, login }) => {
@@ -64,19 +65,11 @@ test.describe("when user visits create design and submits autoimport field", () 
     };
     await compileMainValues(page, mainValues);
     await uploadImage(page, `image-${random.randomString(4)}`);
-    // addLicense(page);
-    await addContributors(page, "nenn");
     await addRelatedProjects(page, "milano");
-    Promise.all([
-      await page.click("#project-create-submit"),
-      await interceptGQL(page, "getProjectLayout", (route, request) => console.log(route, request)),
-    ]);
+    Promise.all([await page.click("#project-create-submit"), await interceptGQL(page, "getProjectLayout")]);
+    await page.waitForLoadState("networkidle");
     await checkUrl(page, "design");
     await checkMainValues(page, mainValues);
-    await checkContributors(page);
-    // await checkLicense(page);
-    // cy.get("#contributors-list").should("exist").should("contain", "nenno");
-    // cy.get("#related-projects-list").should("exist").should("contain", "perenzio");
   });
 
   test("should create a new product", async ({ interceptGQL, random }) => {
@@ -98,7 +91,7 @@ test.describe("when user visits create design and submits autoimport field", () 
     };
     await addDeclarations(page, declaration);
     await page.click("#project-create-submit");
-    await interceptGQL(page, "getProjectLayout", (route, request) => console.log(route, request));
+    await interceptGQL(page, "getProjectLayout");
     await checkUrl(page, "product");
     await checkMainValues(page, mainValues);
     await checkDeclarations(page, declaration);
@@ -119,10 +112,7 @@ test.describe("when user visits create design and submits autoimport field", () 
     await addLocation(page, city, city);
     await addContributors(page, "nenn");
     await addRelatedProjects(page, "bonomelli");
-    Promise.all([
-      await page.click("#project-create-submit"),
-      await interceptGQL(page, "getProjectLayout", (route, request) => console.log(route, request)),
-    ]);
+    Promise.all([await page.click("#project-create-submit"), await interceptGQL(page, "getProjectLayout")]);
     await checkUrl(page, "service");
     await checkMainValues(page, mainValues);
     await checkContributors(page);

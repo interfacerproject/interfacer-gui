@@ -14,7 +14,7 @@ export type DeclarationParams = {
 
 export const searchMenuAdd = async (page: Page, id: string, query: string) => {
   await page.type(id, query);
-  await page.waitForTimeout(500);
+  await page.waitForLoadState("networkidle");
   await page.getByRole("option", { name: query }).first().click();
 };
 
@@ -49,7 +49,7 @@ export const submit = async (page: Page) => {
 export const addLocation = async (page: Page, locationName: string, query: string) => {
   await page.type("#location-locationName", locationName);
   await page.type("#search-location", query);
-  await page.waitForTimeout(500);
+  await page.waitForLoadState("networkidle");
   await page.getByText(query).nth(0).click();
 };
 

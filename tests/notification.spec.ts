@@ -84,7 +84,6 @@ test.describe("Notification", () => {
       await route.fulfill({ json });
     });
 
-    await page.waitForTimeout(2000);
     const notification = await page.getByRole("heading", { name: "Contribution Responses (1)" });
     const notification2 = await page.getByRole("heading", { name: "Citations (3)" });
 

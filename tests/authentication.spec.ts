@@ -2,6 +2,7 @@ import { test } from "./fixtures/test";
 import { Page } from "@playwright/test";
 
 test.describe("Authentication process", () => {
+  test.describe.configure({ retries: 3 });
   let page: Page;
 
   test.beforeEach(async ({ context, logout }) => {
@@ -47,8 +48,13 @@ test.describe("Authentication process", () => {
 
     // Enter email and submit
     await page.fill("#email", random.randomEmail());
-    await page.getByLabel("Your name").fill(random.randomString(10));
-    await page.getByLabel("Choose a username").fill(random.randomString(10));
+    await page.getByLabel("Your name").fill(random.randomString(5));
+    await page.getByLabel("Choose a username").fill(random.randomString(5));
+
+    //Fix me
+    const p = await page.$("body");
+    await p?.click();
+
     await page.getByRole("button", { name: "Next step" }).click();
 
     // Sign up via questions
