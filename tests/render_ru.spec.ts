@@ -31,7 +31,8 @@ test.describe("when user is logged in", () => {
 
   test("Should see /resource/:id", async ({ page }) => {
     await page.goto(`/resource/${process.env.RESOURCE_ID}`);
-    await page.waitForLoadState();
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
     await expect(page.getByText(process.env.RESOURCE_ID!)).toBeVisible();
   });
 

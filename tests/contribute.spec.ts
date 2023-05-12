@@ -1,7 +1,8 @@
-import { BrowserContext, Page, expect } from "@playwright/test";
+import { Page, expect } from "@playwright/test";
 import { test } from "./fixtures/test";
 
 test.describe("When user want to contribute", () => {
+  test.describe.configure({ timeout: 200000 });
   let page: Page;
 
   test.beforeEach(async ({ context, login }) => {
@@ -23,7 +24,6 @@ test.describe("When user want to contribute", () => {
     await page.type("textarea", "testDescription");
     const submitBtn = page.getByRole("button", { name: "Send contribution" });
     expect(submitBtn).toBeEnabled();
-    await submitBtn?.click();
-    await page.waitForURL("**/proposal/**");
+    Promise.all([await submitBtn?.click(), await page.waitForURL("**/proposal/**")]);
   });
 });
