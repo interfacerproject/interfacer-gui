@@ -63,67 +63,57 @@ const ProposeContribution: NextPageWithLayout = () => {
 
   const onSubmit = async (formData: FormValues) => {
     if (!resource) throw new Error("No original resource found");
-    else {
-      const processName = `fork of ${resource.name} by ${user!.name}`;
-      const processVariables = { name: processName };
-      devLog("processVariables", processVariables);
-      const { data: processData, errors } = await createProcess({
-        variables: processVariables,
-      });
-      if (errors) throw new Error(errors[0].message);
-      devLog("The process was created successfully with id: " + processData.createProcess.process.id);
+    const forkedProjectId = formData.project;
+    if (!forkedProjectId) throw new Error("No forked project id found");
 
-      const forkedProjectId = formData.project;
-      if (!forkedProjectId) throw new Error("No forked project id found");
+    const processContributionName = formData.name || `contribution of ${resource.name} by ${user!.name}`;
+    const proposeProcessVariables = {
+      name: processContributionName,
+    };
+    const processContribution = await createProcess({ variables: proposeProcessVariables });
 
-      const processContributionName = formData.name || `contribution of ${resource.name} by ${user!.name}`;
-      const proposeProcessVariables = {
-        name: processContributionName,
-      };
-      const processContribution = await createProcess({ variables: proposeProcessVariables });
+    const proposalVariables = { name: processContributionName, note: formData.description };
+    devLog("proposallVariables", proposalVariables);
+    const proposal = await createProposal({ variables: proposalVariables });
+    devLog("The proposal was created successfully with id: " + JSON.stringify(proposal));
 
-      const proposalVariables = { name: processName, note: formData.description };
-      devLog("proposallVariables", processVariables);
-      const proposal = await createProposal({ variables: proposalVariables });
-      devLog("The proposal was created successfully with id: " + JSON.stringify(proposal));
+    const contributionVariables = {
+      resourceForked: forkedProjectId,
+      resourceOrigin: resource.id,
+      process: processContribution.data?.createProcess.process.id,
+      owner: resource.primaryAccountable!.id,
+      proposer: user!.ulid,
+      unitOne: unitAndCurrency!.units.unitOne.id!,
+      creationTime: new Date().toISOString(),
+    };
+    devLog("The contribution variables are: ", contributionVariables);
+    const contribution = await proposeContribution({ variables: contributionVariables });
+    devLog("The intent is " + JSON.stringify(contribution));
+    const linkProposalAndIntentsVariables = {
+      proposal: proposal.data?.createProposal.proposal.id,
+      citeIntent: contribution.data?.citeResourceForked.intent.id,
+      acceptIntent: contribution.data?.acceptResourceOrigin.intent.id,
+      modifyIntent: contribution.data?.modifyResourceOrigin.intent.id,
+    };
+    devLog("The link variables are: ", linkProposalAndIntentsVariables);
+    const linkProposalAndIntentsResult = await linkProposalAndIntents({ variables: linkProposalAndIntentsVariables });
+    devLog("The link result is " + JSON.stringify(linkProposalAndIntentsResult));
+    const message: ProposalNotification = {
+      proposalID: proposal.data?.createProposal.proposal.id,
+      text: formData.description,
+      originalResourceName: resource.name!,
+      originalResourceID: resource.id!,
+      proposerName: user!.name,
+      ownerName: resource.primaryAccountable!.name,
+    };
 
-      const contributionVariables = {
-        resourceForked: forkedProjectId,
-        resourceOrigin: resource.id,
-        process: processContribution.data?.createProcess.process.id,
-        owner: resource.primaryAccountable!.id,
-        proposer: user!.ulid,
-        unitOne: unitAndCurrency!.units.unitOne.id!,
-        creationTime: new Date().toISOString(),
-      };
-      devLog("The contribution variables are: ", contributionVariables);
-      const contribution = await proposeContribution({ variables: contributionVariables });
-      devLog("The intent is " + JSON.stringify(contribution));
-      const linkProposalAndIntentsVariables = {
-        proposal: proposal.data?.createProposal.proposal.id,
-        citeIntent: contribution.data?.citeResourceForked.intent.id,
-        acceptIntent: contribution.data?.acceptResourceOrigin.intent.id,
-        modifyIntent: contribution.data?.modifyResourceOrigin.intent.id,
-      };
-      devLog("The link variables are: ", linkProposalAndIntentsVariables);
-      const linkProposalAndIntentsResult = await linkProposalAndIntents({ variables: linkProposalAndIntentsVariables });
-      devLog("The link result is " + JSON.stringify(linkProposalAndIntentsResult));
-      const message: ProposalNotification = {
-        proposalID: proposal.data?.createProposal.proposal.id,
-        text: formData.description,
-        originalResourceName: resource.name!,
-        originalResourceID: resource.id!,
-        proposerName: user!.name,
-        ownerName: resource.primaryAccountable!.name,
-      };
-      sendMessage(message, [resource.primaryAccountable!.id], MessageSubject.CONTRIBUTION_REQUEST);
+    sendMessage(message, [resource.primaryAccountable!.id], MessageSubject.CONTRIBUTION_REQUEST);
 
-      //economic system: points assignments
-      addIdeaPoints(resource.primaryAccountable!.id, IdeaPoints.OnFork);
-      addStrengthsPoints(user!.ulid, StrengthsPoints.OnFork);
+    //economic system: points assignments
+    addIdeaPoints(resource.primaryAccountable!.id, IdeaPoints.OnFork);
+    addStrengthsPoints(user!.ulid, StrengthsPoints.OnFork);
 
-      router.push(`/proposal/${proposal.data?.createProposal.proposal.id}`);
-    }
+    router.push(`/proposal/${proposal.data?.createProposal.proposal.id}`);
   };
 
   return <CreateContributionFrom onSubmit={onSubmit} error={formError} setError={setFormError} />;

@@ -25,6 +25,7 @@ type BrDisplayUserProps = {
 
 const BrDisplayUser = (props: BrDisplayUserProps) => {
   const { user } = props;
+  if (!user) return null;
   const location = user.primaryLocation;
 
   return (
