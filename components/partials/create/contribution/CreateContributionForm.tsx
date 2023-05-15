@@ -27,18 +27,19 @@ import BrMdEditor from "components/brickroom/BrMdEditor";
 import { ChildrenProp as CP } from "components/brickroom/types";
 
 // Other
+import { MagicWand } from "@carbon/icons-react";
 import ResourceDetailsCard from "components/ResourceDetailsCard";
 import TableOfContents from "components/TableOfContents";
 import { useProject } from "components/layout/FetchProjectLayout";
 import PDivider from "components/polaris/PDivider";
 import PLabel from "components/polaris/PLabel";
+import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
 import { useRouter } from "next/router";
 import React, { ReactNode } from "react";
 import SelectProjectForContribution from "../project/steps/SelectProjectForContribution";
-import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
 //
 
@@ -101,7 +102,7 @@ const CreateContributionForm = (props: Props) => {
   });
 
   const { formState, handleSubmit, register, control, setValue, watch } = form;
-  const { errors, isSubmitting } = formState;
+  const { errors, isSubmitting, isValid } = formState;
 
   const { project: resource } = useProject();
 
@@ -113,14 +114,6 @@ const CreateContributionForm = (props: Props) => {
             {t("Make a Contribution")}
           </Text>
         </Stack>
-        {/* <Stack vertical spacing="tight">
-          <Text as="h2" variant="headingLg">
-            {t("Contribution info")}
-          </Text>
-          <Text as="p" variant="bodyMd">
-            {t("Help us display your proposal correctly.")}
-          </Text>
-        </Stack> */}
         <Stack vertical spacing="extraTight">
           <PLabel label={t("You are about to propose a contribution to:")} />
           <ResourceDetailsCard resource={resource} />
@@ -132,84 +125,91 @@ const CreateContributionForm = (props: Props) => {
   //
 
   const Fields = () => (
-    <FormProvider {...form}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack vertical spacing="extraLoose">
-          <PDivider id={sections[0]} />
-          <PTitleSubtitle title={t(sections[0])} />
+    <>
+      <Stack vertical spacing="extraLoose">
+        <PDivider id={sections[0]} />
+        <PTitleSubtitle title={t(sections[0])} />
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { onChange, onBlur, name, value } }) => (
+            <TextField
+              type="text"
+              id={name}
+              name={name}
+              value={value}
+              autoComplete="off"
+              onChange={onChange}
+              onBlur={onBlur}
+              label={t("Contribution title")}
+              placeholder={t("github.com/my-repo")}
+              helpText={t("A good title helps the project owner evaluate your proposal")}
+              error={errors[name]?.message}
+              requiredIndicator={isRequired(schema, name)}
+            />
+          )}
+        />
 
-          <Controller
-            control={control}
-            name="name"
-            render={({ field: { onChange, onBlur, name, value } }) => (
-              <TextField
-                type="text"
-                id={name}
-                name={name}
-                value={value}
-                autoComplete="off"
-                onChange={onChange}
-                onBlur={onBlur}
-                label={t("Contribution title")}
-                placeholder={t("github.com/my-repo")}
-                helpText={t("A good title helps the project owner evaluate your proposal")}
-                error={errors[name]?.message}
-                requiredIndicator={isRequired(schema, name)}
-              />
-            )}
-          />
+        <PDivider id={sections[1]} />
+        <PTitleSubtitle title={t(sections[1])} subtitle={t("Select the project with the contributions")} />
+        <SelectProjectForContribution />
 
-          <PDivider id={sections[1]} />
-          <PTitleSubtitle title={t(sections[1])} subtitle={t("Select the project with the contributions")} />
-          <SelectProjectForContribution />
+        <PDivider id={sections[2]} />
+        <PTitleSubtitle title={t(sections[2])} subtitle={t("Describe what your contribution is about")} />
+        <BrMdEditor
+          id="description"
+          name="description"
+          editorClass="h-60"
+          value={watch("description")}
+          label={t("Project Description")}
+          helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t(
+            "Type up to 2048 characters"
+          )}.`}
+          subtitle={t("Short description to be displayed on the project page")}
+          onChange={({ text }) => {
+            setValue("description", text, formSetValueOptions);
+          }}
+          requiredIndicator={isRequired(schema, "description")}
+          error={errors.description?.message}
+        />
 
-          <PDivider id={sections[2]} />
-          <PTitleSubtitle title={t(sections[2])} subtitle={t("Describe what your contribution is about")} />
-          <BrMdEditor
-            id="description"
-            name="description"
-            editorClass="h-60"
-            value={watch("description")}
-            label={t("Project Description")}
-            helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t(
-              "Type up to 2048 characters"
-            )}.`}
-            subtitle={t("Short description to be displayed on the project page")}
-            onChange={({ text }) => {
-              setValue("description", text, formSetValueOptions);
+        {/* Slot to display errors, for example */}
+        {error && setError && (
+          <Banner
+            title={t("Error in contribution creation")}
+            status="critical"
+            onDismiss={() => {
+              setError("");
             }}
-            requiredIndicator={isRequired(schema, "description")}
-            error={errors.description?.message}
-          />
+          >
+            {error}
+          </Banner>
+        )}
 
-          {/* Slot to display errors, for example */}
-          {error && setError && (
-            <Banner
-              title={t("Error in contribution creation")}
-              status="critical"
-              onDismiss={() => {
-                setError("");
-              }}
-            >
-              {error}
-            </Banner>
-          )}
+        {isSubmitting && (
+          <Card>
+            <div className="flex flex-col items-center justify-center p-4">
+              <Spinner />
+              <p className="pt-2">{`${t("Creating contribution...")}`}</p>
+            </div>
+          </Card>
+        )}
+      </Stack>
+    </>
+  );
 
-          {isSubmitting && (
-            <Card>
-              <div className="flex flex-col items-center justify-center p-4">
-                <Spinner />
-                <p className="pt-2">{`${t("Creating contribution...")}`}</p>
-              </div>
-            </Card>
-          )}
+  //
 
-          <Button size="large" primary fullWidth submit id="submit">
-            {t("Send contribution")}
+  const SubmitBar = () => (
+    <>
+      <div className="bg-yellow-100 border-t-1 border-t-border-warning-subdued p-4 flex justify-end items-center space-x-6 sticky bottom-0 z-20">
+        <div className="space-x-2">
+          <Button primary submit disabled={!isValid} icon={<MagicWand />}>
+            {t("Propose contribution")}
           </Button>
-        </Stack>
-      </form>
-    </FormProvider>
+        </div>
+      </div>
+    </>
   );
 
   //
@@ -218,25 +218,28 @@ const CreateContributionForm = (props: Props) => {
     const router = useRouter();
     const { t } = useTranslation("common");
     return (
-      <>
-        <div className="p-4 text-text-primary">
-          <Button
-            onClick={() => {
-              router.back();
-            }}
-            plain
-            monochrome
-          >
-            {t("← Discard and go back")}
-          </Button>
-        </div>
-        <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
-          <div className="sticky top-24">
-            <ProposeContributionNav />
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="p-4 text-text-primary">
+            <Button
+              onClick={() => {
+                router.back();
+              }}
+              plain
+              monochrome
+            >
+              {t("← Discard and go back")}
+            </Button>
           </div>
-          <div className="grow max-w-xl px-6 pb-24 pt-0">{children}</div>
-        </div>
-      </>
+          <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
+            <div className="sticky top-24">
+              <ProposeContributionNav />
+            </div>
+            <div className="grow max-w-xl px-6 pb-24 pt-0">{children}</div>
+          </div>
+          <SubmitBar />
+        </form>
+      </FormProvider>
     );
   };
 
