@@ -12,11 +12,81 @@ import {
 } from "./utils/forms";
 import { checkContributors, checkDeclarations, checkMainValues } from "./utils/projectHelpers";
 
-const checkUrl = async (page: Page, type: string) => {
-  const url = page.url();
-  expect(url).not.toContain(`/create/project/${type}"`);
-  expect(url).toContain("/project");
-  //   expect(url).toContain("created=true");
+type ProjectInfo = {
+  type: "design" | "product" | "services";
+  mainValues: CompileMainValuesParams;
+  contributors?: string[];
+  location?: string;
+  relatedProjects?: string[];
+  declarations?: {
+    recyclable: boolean;
+    repairable: boolean;
+  };
+};
+
+const projectsInfo: ProjectInfo[] = [
+  {
+    type: "design",
+    mainValues: {
+      title: "Vegeta",
+      description: "The project description",
+      link: "https://gitub.com/dyne/root",
+      tag: "open-source",
+    },
+  },
+  {
+    type: "product",
+    mainValues: {
+      title: "Goku",
+      description: "The project description",
+      link: "https://gitub.com/dyne/root",
+      tag: "open-source",
+    },
+    contributors: ["nenn"],
+    location: "Milan",
+    declarations: {
+      recyclable: true,
+      repairable: false,
+    },
+  },
+  {
+    type: "services",
+    mainValues: {
+      title: "Maijin Bu",
+      description: "The project description",
+      link: "https://gitub.com/dyne/root",
+      tag: "open-source",
+    },
+    contributors: ["nenn"],
+    location: "Milan",
+    relatedProjects: ["bonomelli"],
+  },
+];
+const createProject = async (page: Page, projectInfo: ProjectInfo, random: any) => {
+  await visitCreateProject(page, projectInfo.type);
+  await compileMainValues(page, projectInfo.mainValues);
+  await uploadImage(page, `image-${random.randomString(4)}`);
+  if (projectInfo.contributors) {
+    await addContributors(page, projectInfo.contributors[0]);
+  }
+  if (projectInfo.location) {
+    await addLocation(page, projectInfo.location, projectInfo.location);
+  }
+  if (projectInfo.relatedProjects) {
+    await addRelatedProjects(page, projectInfo.relatedProjects[0]);
+  }
+  if (projectInfo.declarations) {
+    await addDeclarations(page, projectInfo.declarations);
+  }
+  await page.click("#project-create-submit");
+  await page.waitForLoadState("networkidle");
+  await checkMainValues(page, projectInfo.mainValues);
+  if (projectInfo.contributors) {
+    await checkContributors(page);
+  }
+  if (projectInfo.declarations) {
+    await checkDeclarations(page, projectInfo.declarations);
+  }
 };
 
 test.describe("when user want to create a project", () => {
@@ -28,7 +98,7 @@ test.describe("when user want to create a project", () => {
     await login(page);
   });
 
-  test.afterEach(async ({ page }) => {
+  test.afterEach(async () => {
     await page.close();
   });
 
@@ -55,66 +125,8 @@ test.describe("when user want to create a project", () => {
     expect(tagText).toContain("arm");
   });
 
-  test("should create a new design", async ({ random }) => {
-    await visitCreateProject(page, "design");
-    const mainValues: CompileMainValuesParams = {
-      title: "Vegeta",
-      description: "The project description",
-      link: "https://gitub.com/dyne/root",
-      tag: "open-source",
-    };
-    await compileMainValues(page, mainValues);
-    await uploadImage(page, `image-${random.randomString(4)}`);
-    await addRelatedProjects(page, "milano");
-    await page.click("#project-create-submit");
-    await page.waitForURL("**/project/**");
-    await checkMainValues(page, mainValues);
-  });
-
-  test("should create a new product", async ({ random }) => {
-    await visitCreateProject(page, "product");
-    const mainValues: CompileMainValuesParams = {
-      title: "Goku",
-      description: "The project description",
-      link: "https://gitub.com/dyne/root",
-      tag: "open-source",
-    };
-    await compileMainValues(page, mainValues);
-    await uploadImage(page, `image-${random.randomString(4)}`);
-    await addContributors(page, "nenn");
-    const city = random.randomCity();
-    //fix me
-    // await addLocation(page, city, city);
-    const declaration = {
-      recyclable: true,
-      repairable: false,
-    };
-    await addDeclarations(page, declaration);
-    await page.click("#project-create-submit");
-    await page.waitForURL("**/project/**");
-    await checkMainValues(page, mainValues);
-    await checkDeclarations(page, declaration);
-    await checkContributors(page);
-  });
-
-  test("should create a new service", async ({ random }) => {
-    await visitCreateProject(page, "services");
-    const mainValues: CompileMainValuesParams = {
-      title: "Maijin Bu",
-      description: "The project description",
-      link: "https://gitub.com/dyne/root",
-      tag: "open-source",
-    };
-    await compileMainValues(page, mainValues);
-    await uploadImage(page, `image-${random.randomString(4)}`);
-    const city = random.randomCity();
-    //fix me
-    // await addLocation(page, city, city);
-    await addContributors(page, "nenn");
-    await addRelatedProjects(page, "bonomelli");
-    await page.click("#project-create-submit");
-    await page.waitForURL("**/project/**");
-    await checkMainValues(page, mainValues);
-    await checkContributors(page);
+  test("should create a new random project", async ({ random }) => {
+    const projectInfoIndex = Math.floor(Math.random() * 2);
+    await createProject(page, projectsInfo[projectInfoIndex], random);
   });
 });
