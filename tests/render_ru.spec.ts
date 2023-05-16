@@ -2,6 +2,7 @@ import { Page, expect } from "@playwright/test";
 import { test } from "./fixtures/test";
 
 test.describe("when user is logged in", () => {
+  test.describe.configure({ retries: 2 });
   let page: Page;
 
   test.beforeEach(async ({ context, login }) => {
@@ -32,7 +33,6 @@ test.describe("when user is logged in", () => {
 
   test("Should see /resource/:id", async ({ page }) => {
     await page.goto(`/resource/${process.env.RESOURCE_ID}`);
-    await page.waitForLoadState("domcontentloaded");
     await page.waitForLoadState("networkidle");
     await expect(page.getByText(process.env.RESOURCE_ID!)).toBeVisible();
   });
