@@ -41,7 +41,7 @@ export default function SelectProjectForContribution() {
         label={t("Search for a project")}
         // ownerId={user?.ulid}
         onSelect={handleSelect}
-        id="link-design-search"
+        id="search-project"
       />
 
       {selected && (
