@@ -81,15 +81,13 @@ const Project: NextPageWithLayout = () => {
           url: window.location.origin + router.asPath,
           title: project?.name,
           description: project?.note || undefined,
-          images: [
-            {
-              url: images[0],
-              width: 800,
-              height: 600,
-              alt: project?.name,
-              type: project?.images?.[0]?.mimeType || "image/jpeg",
-            },
-          ],
+          images: images?.map((image, i) => ({
+            url: image,
+            width: 800,
+            height: 600,
+            alt: project?.name,
+            type: project?.images![i].mimeType || "image/jpeg",
+          })),
           siteName: "Interfacer-gui",
         }}
         twitter={{
