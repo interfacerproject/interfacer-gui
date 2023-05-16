@@ -85,8 +85,8 @@ const Project: NextPageWithLayout = () => {
             url: image,
             width: 800,
             height: 600,
-            alt: project?.name,
-            type: project?.images![i].mimeType || "image/jpeg",
+            alt: `${project?.name}${i > 0 ? " " + i : ""}`,
+            type: project?.images?.[i]?.mimeType || "image/jpeg",
           })),
           siteName: "Interfacer-gui",
         }}
@@ -121,14 +121,6 @@ const Project: NextPageWithLayout = () => {
 
 //
 
-// Project.getLayout = page => {
-//   return (
-//     <Layout>
-//       <FetchProjectLayout>{page}</FetchProjectLayout>
-//     </Layout>
-//   );
-// };
-
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   return {
     paths: [],
@@ -145,6 +137,7 @@ export async function getStaticProps({ locale }: any) {
 }
 
 Project.publicPage = true;
+
 Project.getLayout = (page: ReactElement) => (
   <FetchProjectLayout>
     <Layout>{page}</Layout>
