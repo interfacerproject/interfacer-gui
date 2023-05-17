@@ -37,7 +37,7 @@ export default function DraftCard(props: DraftCardProps) {
   const image = draft.images?.[0];
   const { t } = useTranslation("common");
   return (
-    <GeneralCard project={project} baseUrl="/create/project/design?draft_id=">
+    <GeneralCard project={project} baseUrl={`/create/project/${projectType.toLowerCase()}?draft_id=`}>
       <GeneralCard.CardHeader>
         <div className="flex justify-between items-center">
           <IfSidebarTag text={t("draft")} />

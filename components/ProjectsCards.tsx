@@ -16,16 +16,14 @@
 
 import { useQuery } from "@apollo/client";
 import { DraftProject } from "lib/db";
-import Link from "next/link";
 import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 import CardsGroup from "./CardsGroup";
 import DraftCard from "./DraftCard";
 import EmptyState from "./EmptyState";
-import ProjectCard from "./ProjectCard";
 import LoshCard from "./LoshCard";
-import { projectTypes } from "./types";
+import ProjectCard from "./ProjectCard";
 
 export enum CardType {
   PROJECT = "project",
@@ -83,6 +81,8 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     );
   };
 
+  if (type === CardType.DRAFT && !drafts) return <EmptyState heading="No drafts found" />;
+
   return (
     <>
       {type === CardType.PROJECT && (
@@ -119,13 +119,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
           hideFilters
         >
           {drafts?.map(d => (
-            <div className="py-2 hover:bg-base-300" key={d.project.main?.title}>
-              <Link href={`/create/project/${projectTypes}?draft_name=form-create-product-${d.project.main?.title}`}>
-                <a>
-                  <DraftCard project={d.project} projectType={d.type} id={d.id} />
-                </a>
-              </Link>
-            </div>
+            <DraftCard project={d.project} projectType={d.type} id={d.id} key={d.id} />
           ))}
         </CardsGroup>
       )}
