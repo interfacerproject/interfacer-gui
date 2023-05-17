@@ -80,22 +80,35 @@ const CardBody = (props: { children?: React.ReactNode }) => {
     <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse}>
       <Link href={`/project/${project.id}`}>
         <a className="space-y-3">
-          <ProjectCardImage
-            projectType={project.conformsTo!.name as ProjectType}
-            image={project.images?.[0] || project.metadata?.image}
-          />
-          <div>
-            <Text variant="headingLg" as="h4">
-              {project.name}
-            </Text>
-            {children}
-          </div>
+          {children}
           <div className="space-y-1">
             <ProjectTypeChip project={project} link={false} />
             {location && !isDesign && <LocationText color="primary" name={location} />}
           </div>
         </a>
       </Link>
+    </div>
+  );
+};
+
+const RemoteImage = () => {
+  const { project } = useCardProject();
+  return (
+    <ProjectCardImage
+      projectType={project.conformsTo!.name as ProjectType}
+      image={project.images?.[0] || project.metadata?.image}
+    />
+  );
+};
+
+const ProjectTitleAndStats = () => {
+  const { project } = useCardProject();
+  return (
+    <div>
+      <Text variant="headingLg" as="h4">
+        {project.name}
+      </Text>
+      <StatsDisplay />
     </div>
   );
 };
@@ -170,7 +183,8 @@ CardBody.DisplayName = "CardBody";
 CardFooter.DisplayName = "CardFooter";
 CardHeader.DisplayName = "CardHeader";
 
-GeneralCard.StatsDisplay = StatsDisplay;
+GeneralCard.RemoteImage = RemoteImage;
+GeneralCard.ProjectTitleAndStats = ProjectTitleAndStats;
 GeneralCard.UserAndStarHeader = UserAndStarHeader;
 GeneralCard.CardBody = CardBody;
 GeneralCard.CardFooter = CardFooter;

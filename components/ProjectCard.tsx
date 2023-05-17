@@ -14,7 +14,8 @@ export default function ProjectCard(props: ProjectCardProps) {
         <GeneralCard.UserAndStarHeader />
       </GeneralCard.CardHeader>
       <GeneralCard.CardBody>
-        <GeneralCard.StatsDisplay />
+        <GeneralCard.RemoteImage />
+        <GeneralCard.ProjectTitleAndStats />
       </GeneralCard.CardBody>
       <GeneralCard.CardFooter>
         <GeneralCard.Tags />
