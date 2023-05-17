@@ -17,19 +17,21 @@ import { ProjectType } from "./types";
 export interface GeneralCardProps {
   project: Partial<EconomicResource>;
   children: JSX.Element[];
+  baseUrl?: string;
 }
 
 interface ProjectContextValue {
   project: Partial<EconomicResource>;
   setHoverTrue: () => void;
   setHoverFalse: () => void;
+  baseUrl?: string;
 }
 
 const CardProjectContext = createContext<ProjectContextValue>({} as ProjectContextValue);
 export const useCardProject = () => useContext(CardProjectContext);
 
 const GeneralCard = (props: GeneralCardProps) => {
-  const { project, children } = props;
+  const { project, children, baseUrl } = props;
 
   const getChildrenOnDisplayName = (children: JSX.Element[], displayName: string) =>
     React.Children.map(children, child => (child.type.DisplayName === displayName ? child : null));
@@ -47,7 +49,7 @@ const GeneralCard = (props: GeneralCardProps) => {
   });
 
   return (
-    <CardProjectContext.Provider value={{ project, setHoverTrue, setHoverFalse }}>
+    <CardProjectContext.Provider value={{ project, setHoverTrue, setHoverFalse, baseUrl }}>
       <div className={classes}>
         <div className="space-y-3 p-3">
           {header}
@@ -71,14 +73,14 @@ const Tags = () => {
   );
 };
 
-const CardBody = (props: { children?: React.ReactNode }) => {
+const CardBody = (props: { children?: React.ReactNode; baseUrl?: string }) => {
   const { children } = props;
-  const { project, setHoverTrue, setHoverFalse } = useCardProject();
+  const { project, setHoverTrue, setHoverFalse, baseUrl = "/project/" } = useCardProject();
   const location = project.currentLocation?.mappableAddress;
   const isDesign = isProjectType(project.conformsTo?.name!).Design;
   return (
     <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse}>
-      <Link href={`/project/${project.id}`}>
+      <Link href={`${baseUrl}${project.id}`}>
         <a className="space-y-3">
           {children}
           <div className="space-y-1">
