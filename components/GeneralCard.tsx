@@ -5,7 +5,7 @@ import { isProjectType } from "lib/isProjectType";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import AddStar from "./AddStar";
 import LocationText from "./LocationText";
 import ProjectCardImage from "./ProjectCardImage";
@@ -16,8 +16,7 @@ import { ProjectType } from "./types";
 
 export interface GeneralCardProps {
   project: Partial<EconomicResource>;
-  children?: React.ReactNode;
-  CardFooter?: React.ReactNode;
+  children: JSX.Element[];
 }
 
 interface ProjectContextValue {
@@ -30,7 +29,14 @@ const CardProjectContext = createContext<ProjectContextValue>({} as ProjectConte
 export const useCardProject = () => useContext(CardProjectContext);
 
 const GeneralCard = (props: GeneralCardProps) => {
-  const { project, children, CardFooter } = props;
+  const { project, children } = props;
+
+  const getChildrenOnDisplayName = (children: JSX.Element[], displayName: string) =>
+    React.Children.map(children, child => (child.type.DisplayName === displayName ? child : null));
+
+  const header = getChildrenOnDisplayName(children, "CardHeader");
+  const body = getChildrenOnDisplayName(children, "CardBody");
+  const footer = getChildrenOnDisplayName(children, "CardFooter");
 
   const [hover, setHover] = useState(false);
   const setHoverTrue = () => setHover(true);
@@ -43,8 +49,11 @@ const GeneralCard = (props: GeneralCardProps) => {
   return (
     <CardProjectContext.Provider value={{ project, setHoverTrue, setHoverFalse }}>
       <div className={classes}>
-        <div className="space-y-3 p-3">{children}</div>
-        {CardFooter}
+        <div className="space-y-3 p-3">
+          {header}
+          {body}
+        </div>
+        {footer}
       </div>
     </CardProjectContext.Provider>
   );
@@ -91,19 +100,6 @@ const CardBody = (props: { children?: React.ReactNode }) => {
   );
 };
 
-const CardFooter = ({ children }: { children?: React.ReactNode }) => <>{children}</>;
-
-const UserAndStarHeader = () => {
-  const { project } = useCardProject();
-  const { user } = useAuth();
-  return (
-    <div className="flex justify-between items-center">
-      <UserDisplay />
-      {user && <AddStar id={project.id!} owner={project.primaryAccountable!.id} tiny />}
-    </div>
-  );
-};
-
 function UserDisplay() {
   const { project } = useCardProject();
   const user = project.primaryAccountable;
@@ -122,9 +118,19 @@ function UserDisplay() {
   );
 }
 
+const UserAndStarHeader = () => {
+  const { project } = useCardProject();
+  const { user } = useAuth();
+  return (
+    <div className="flex justify-between items-center">
+      <UserDisplay />
+      {user && <AddStar id={project?.id!} owner={project?.primaryAccountable!.id} tiny />}
+    </div>
+  );
+};
+
 function StatDisplay(props: { stat: number; label: string }) {
   const { stat, label } = props;
-
   return (
     <>
       {Boolean(stat) && (
@@ -157,12 +163,18 @@ function StatsDisplay() {
   );
 }
 
-CardBody.StatsDisplay = StatsDisplay;
-GeneralCard.CardFooter = CardFooter;
-GeneralCard.UserDisplay = UserDisplay;
+const CardFooter = ({ children }: { children: JSX.Element }) => <>{children}</>;
+const CardHeader = ({ children }: { children: JSX.Element }) => <>{children}</>;
+
+CardBody.DisplayName = "CardBody";
+CardFooter.DisplayName = "CardFooter";
+CardHeader.DisplayName = "CardHeader";
+
+GeneralCard.StatsDisplay = StatsDisplay;
 GeneralCard.UserAndStarHeader = UserAndStarHeader;
 GeneralCard.CardBody = CardBody;
-GeneralCard.CardBody;
+GeneralCard.CardFooter = CardFooter;
+GeneralCard.CardHeader = CardHeader;
 GeneralCard.Tags = Tags;
 
 export default GeneralCard;

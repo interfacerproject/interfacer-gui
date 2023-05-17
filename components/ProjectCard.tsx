@@ -9,11 +9,16 @@ export default function ProjectCard(props: ProjectCardProps) {
   const { project } = props;
 
   return (
-    <GeneralCard project={project} CardFooter={<GeneralCard.Tags />}>
-      <GeneralCard.UserAndStarHeader />
+    <GeneralCard project={project}>
+      <GeneralCard.CardHeader>
+        <GeneralCard.UserAndStarHeader />
+      </GeneralCard.CardHeader>
       <GeneralCard.CardBody>
-        <GeneralCard.CardBody.StatsDisplay />
+        <GeneralCard.StatsDisplay />
       </GeneralCard.CardBody>
+      <GeneralCard.CardFooter>
+        <GeneralCard.Tags />
+      </GeneralCard.CardFooter>
     </GeneralCard>
   );
 }
