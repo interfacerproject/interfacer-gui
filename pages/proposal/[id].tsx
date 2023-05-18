@@ -206,7 +206,7 @@ const Proposal = () => {
                     {t("Go to project")}
                   </Button>
                 </div>
-                <Button onClick={() => router.push(contributionProject!.repo!)}>{t("Go to source")}</Button>
+                <Button onClick={() => router.push(contributionProject!.repo!)}>{t("External data")}</Button>
               </Stack>
             </div>
           </Stack>

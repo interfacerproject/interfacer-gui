@@ -40,11 +40,13 @@ import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLa
 import Layout from "components/layout/Layout";
 import CreateContributionFrom, { FormValues } from "components/partials/create/contribution/CreateContributionForm";
 import useWallet from "hooks/useWallet";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { GetStaticPaths } from "next";
 
 //
 
 const ProposeContribution: NextPageWithLayout = () => {
-  const { t } = useTranslation("CreateContributionProps");
+  const { t } = useTranslation("common");
   const [formError, setFormError] = useState("");
 
   const router = useRouter();
@@ -126,5 +128,20 @@ ProposeContribution.getLayout = function getLayout(page: ReactElement) {
     </Layout>
   );
 };
+
+export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
+};
+
+export async function getStaticProps({ locale }: any) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}
 
 export default ProposeContribution;

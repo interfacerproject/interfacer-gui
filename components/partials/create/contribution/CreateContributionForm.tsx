@@ -60,13 +60,11 @@ export interface FormValues {
 // export default function CreateContributionForm(props: Props) {
 const CreateContributionForm = (props: Props) => {
   const { onSubmit, error, setError } = props;
-  const { t } = useTranslation("createProjectProps");
+  const { t } = useTranslation();
 
-  const sections = ["Title", "Linked-Project", "Description"];
+  const sections = ["Title", t("Project to be included"), t("Description of the contribution")];
 
   function ProposeContributionNav() {
-    const { t } = useTranslation("common");
-
     const links = sections.map(section => ({
       label: <span className="capitalize">{section}</span>,
       href: `#${section.replace(" ", "-")}`,
@@ -111,11 +109,11 @@ const CreateContributionForm = (props: Props) => {
       <Stack vertical spacing="extraLoose">
         <Stack vertical spacing="tight">
           <Text as="h1" variant="headingXl">
-            {t("Make a Contribution")}
+            {t("Propose a contribution")}
           </Text>
         </Stack>
         <Stack vertical spacing="extraTight">
-          <PLabel label={t("You are about to propose a contribution to:")} />
+          <PLabel label={t("You are about to propose to include a project into:")} />
           <ResourceDetailsCard resource={resource} />
         </Stack>
       </Stack>
@@ -142,7 +140,7 @@ const CreateContributionForm = (props: Props) => {
               onChange={onChange}
               onBlur={onBlur}
               label={t("Contribution title")}
-              placeholder={t("github.com/my-repo")}
+              placeholder={t("My awesome contribution")}
               helpText={t("A good title helps the project owner evaluate your proposal")}
               error={errors[name]?.message}
               requiredIndicator={isRequired(schema, name)}
@@ -151,21 +149,27 @@ const CreateContributionForm = (props: Props) => {
         />
 
         <PDivider id={sections[1]} />
-        <PTitleSubtitle title={t(sections[1])} subtitle={t("Select the project with the contributions")} />
+        <PTitleSubtitle
+          title={t(sections[1])}
+          subtitle={t("Select the project you propose to include in the original project")}
+        />
         <SelectProjectForContribution />
 
         <PDivider id={sections[2]} />
-        <PTitleSubtitle title={t(sections[2])} subtitle={t("Describe what your contribution is about")} />
+        <PTitleSubtitle
+          title={t(sections[2])}
+          subtitle={t(
+            "Describe what your contribution adds to the original project,  and why you are proposing it. This description will be readable in the history of the project you are contributing to."
+          )}
+        />
         <BrMdEditor
           id="description"
           name="description"
           editorClass="h-60"
           value={watch("description")}
-          label={t("Project Description")}
           helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t(
             "Type up to 2048 characters"
           )}.`}
-          subtitle={t("Short description to be displayed on the project page")}
           onChange={({ text }) => {
             setValue("description", text, formSetValueOptions);
           }}

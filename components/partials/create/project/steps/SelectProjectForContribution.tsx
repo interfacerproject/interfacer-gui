@@ -19,7 +19,7 @@ export const selectProjectForContributionDefaultValues: SelectProjectForContribu
 //
 
 export default function SelectProjectForContribution() {
-  const { t } = useTranslation("createProjectProps");
+  const { t } = useTranslation("common");
   const { user } = useAuth();
 
   const { setValue, watch } = useFormContext<FormValues>();
