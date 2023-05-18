@@ -30,7 +30,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import dayjs from "../lib/dayjs";
 import { MessageSubject } from "../pages/notification";
-import BrDisplayUser from "./brickroom/BrDisplayUser";
+import BrUserDisplay from "./brickroom/BrUserDisplay";
 
 const ContributionMessage = ({
   message,
@@ -119,7 +119,12 @@ const ContributionMessage = ({
         <p className="text-xs">{dayjs(m.data).format("HH:mm DD/MM/YYYY")}</p>
       </div>
       <div className="flex flex-row my-2 center">
-        <div className="mr-2">{user && <BrDisplayUser user={user} />}</div>
+        <div className="mr-2">
+          <BrUserDisplay userId={m.userId}>
+            <BrUserDisplay.Avatar />
+            <BrUserDisplay.Name />
+          </BrUserDisplay>
+        </div>
         <div className="pt-3.5">
           <span className="mr-1">{headlinesDict[m.subject as MessageSubject]}</span>
           <Link href={`/project/${m.resourceId}`}>
