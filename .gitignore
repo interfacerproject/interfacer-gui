@@ -61,3 +61,6 @@ cypress.env.json
 
 # translate
 .json-autotranslate-cache/
+/test-results/
+/playwright-report/
+/playwright/.cache/
