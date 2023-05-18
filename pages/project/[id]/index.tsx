@@ -33,6 +33,7 @@ import ProjectTabs from "components/partials/project/[id]/ProjectTabs";
 import SuccessBanner from "components/partials/project/[id]/SuccessBanner";
 import { useTranslation } from "next-i18next";
 import { NextPageWithLayout } from "pages/_app";
+import findProjectImages from "lib/findProjectImages";
 
 interface ProjectTabsContextValue {
   selected: number;
@@ -57,12 +58,7 @@ const Project: NextPageWithLayout = () => {
   }
 
   useEffect(() => {
-    const singleImage = typeof project?.metadata?.image === "string";
-    const metadataImage = singleImage ? [project?.metadata?.image] : project?.metadata?.image || [];
-    const _images =
-      project && project.images!.length > 0
-        ? project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
-        : metadataImage;
+    const _images = findProjectImages(project);
     setImages(_images);
   }, [project]);
 

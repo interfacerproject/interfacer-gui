@@ -13,6 +13,7 @@ import ProjectTypeChip from "./ProjectTypeChip";
 import BrTags from "./brickroom/BrTags";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
 import { ProjectType } from "./types";
+import findProjectImages from "lib/findProjectImages";
 
 export interface GeneralCardProps {
   project: Partial<EconomicResource>;
@@ -95,12 +96,8 @@ const CardBody = (props: { children?: React.ReactNode; baseUrl?: string }) => {
 
 const RemoteImage = () => {
   const { project } = useCardProject();
-  return (
-    <ProjectCardImage
-      projectType={project.conformsTo!.name as ProjectType}
-      image={project.images?.[0] || project.metadata?.image}
-    />
-  );
+  const images = findProjectImages(project);
+  return <ProjectCardImage projectType={project.conformsTo!.name as ProjectType} image={images?.[0]} />;
 };
 
 const ProjectTitleAndStats = () => {
