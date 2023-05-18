@@ -19,7 +19,6 @@ import Layout from "components/layout/Layout";
 import EditProfileBanner from "components/partials/profile/[id]/EditProfileBanner";
 import ProfileHeading from "components/partials/profile/[id]/ProfileHeading";
 import ProfileTabs from "components/partials/profile/[id]/ProfileTabs";
-import TrackRecord from "components/partials/profile/[id]/TrackRecord";
 import type { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
@@ -31,14 +30,7 @@ const Profile: NextPageWithLayout = () => {
     <>
       <EditProfileBanner />
       <div className="p-4 container mx-auto space-y-8 pb-12">
-        <div className="flex flex-col md:flex-row pt-7 lg:space-x-8 space-y-2">
-          <div className="flex grow">
-            <ProfileHeading />
-          </div>
-          <div className="max-w-2xl ">
-            <TrackRecord />
-          </div>
-        </div>
+        <ProfileHeading />
         <ProfileTabs />
       </div>
     </>

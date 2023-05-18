@@ -107,7 +107,7 @@ const ProjectTitleAndStats = () => {
   const title = project.name!.length > 55 ? project.name?.slice(0, 55) + "..." : project.name;
   return (
     <div>
-      <Text variant="headingLg" as="h4">
+      <Text variant="headingLg" as="h4" breakWord={true}>
         {title}
       </Text>
       <StatsDisplay />
