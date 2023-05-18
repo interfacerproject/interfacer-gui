@@ -17,6 +17,7 @@
 import { useMutation } from "@apollo/client";
 import { Banner, Button, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
+import ProjectDisplay from "components/ProjectDisplay";
 import SelectTags from "components/SelectTags";
 import { ChildrenProp as CP } from "components/brickroom/types";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
@@ -43,7 +44,6 @@ import { ReactElement, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { NextPageWithLayout } from "../../_app";
-import ProjectDisplay from "components/ProjectDisplay";
 
 export namespace ClaimProjectNS {
   export interface Props extends CP {
@@ -70,7 +70,7 @@ const ClaimProject: NextPageWithLayout = () => {
 
   const sectionsNames = {
     tags: t("Tags"),
-    relations: t("Relations"),
+    relations: t("Included"),
     licenses: t("Licenses"),
     contributors: t("Contributors"),
   };

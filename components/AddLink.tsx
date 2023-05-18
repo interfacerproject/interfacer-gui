@@ -36,7 +36,7 @@ export default function AddLink(props: Props) {
     onSubmit = () => {},
     onDiscard = () => {},
     textLabel = t("Link title"),
-    urlLabel = t("External link"),
+    urlLabel = t("External data"),
     addButtonLabel = t("Add link"),
   } = props;
 
@@ -96,6 +96,9 @@ export default function AddLink(props: Props) {
           render={({ field: { onChange, onBlur, name, value } }) => (
             <TextField
               label={urlLabel}
+              helpText={t(
+                "Add here a link to the repository or page where the projects files are contained. The link will be visible in the project page."
+              )}
               autoComplete="off"
               value={value}
               onBlur={onBlur}

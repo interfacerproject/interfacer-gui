@@ -48,7 +48,7 @@ export default function ContributorsStep() {
       <PTitleSubtitle
         title={t("Add contributors")}
         subtitle={t(
-          "Collaborating with others is an important part of the open source hardware movement, and adding contributors to your project can help expand its reach and impact."
+          "Add the users who contributed to the project. You can also add contributors and modofy the project later."
         )}
       />
       <SearchUsers
