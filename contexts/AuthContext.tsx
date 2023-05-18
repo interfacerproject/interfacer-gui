@@ -260,24 +260,18 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
 
   /* Email verification */
 
-  const SEND_EMAIL_VERIFICATION_TEMPLATES: Array<{ template: EmailTemplate; url: string }> = [
-    {
-      template: EmailTemplate.InterfacerTesting,
-      url: "https://gateway0.interfacer.dyne.org",
-    },
-    {
-      template: EmailTemplate.InterfacerStaging,
-      url: "https://gateway1.interfacer.dyne.org",
-    },
-  ];
+  /**
+   * Sync with: https://github.com/interfacerproject/zenflows/blob/7b0d263532377b35daab59a649aaf6af3a44d92b/src/zenflows/vf/person/domain.ex#L78
+   */
+  const SEND_EMAIL_VERIFICATION_TEMPLATES: Record<string, EmailTemplate> = {
+    "https://interfacer.dyne.org": EmailTemplate.InterfacerDeployment,
+    "https://interfacer-gui-staging.dyne.org": EmailTemplate.InterfacerStaging,
+    "http://localhost:3000": EmailTemplate.InterfacerTesting,
+  };
 
-  function getEmailVerificationTemplateFromEnv() {
-    for (let t of SEND_EMAIL_VERIFICATION_TEMPLATES) {
-      if (process.env.BASE_URL === t.url) {
-        return t.template;
-      }
-    }
-    return EmailTemplate.InterfacerTesting;
+  function getEmailVerificationTemplate() {
+    if (window && window.location.origin) return SEND_EMAIL_VERIFICATION_TEMPLATES[window.location.origin];
+    else return EmailTemplate.InterfacerTesting;
   }
 
   async function sendEmailVerification() {
@@ -289,7 +283,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     await client.mutate<SendEmailVerificationMutation, SendEmailVerificationMutationVariables>({
       mutation: SEND_EMAIL_VERIFICATION,
       variables: {
-        template: getEmailVerificationTemplateFromEnv(),
+        template: getEmailVerificationTemplate(),
       },
     });
   }

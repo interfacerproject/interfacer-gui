@@ -14,6 +14,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
+# TODO: move config to runtime https://github.com/vercel/next.js/discussions/17641
+
 FROM node:lts-alpine AS builder
 
 ARG HOST=0.0.0.0
@@ -31,22 +34,8 @@ WORKDIR /build
 
 COPY . .
 
-RUN pnpm install --frozen-lockfile && \
-    pnpm build
-
-FROM node:lts-alpine AS worker
-
-WORKDIR /app
-
-COPY --chown=node --from=builder /build/package.json            ./
-COPY --chown=node --from=builder /build/next.config.js          ./
-COPY --chown=node --from=builder /build/next-i18next.config.js  ./
-COPY --chown=node --from=builder /build/node_modules            ./node_modules
-COPY --chown=node --from=builder /build/public                  ./public
-COPY --chown=node --from=builder /build/.next                   ./.next
-
-USER node
+RUN pnpm install --frozen-lockfile
 
 EXPOSE $NODE_PORT
 
-CMD [ "npm", "start" ]
+CMD pnpm build && pnpm start
