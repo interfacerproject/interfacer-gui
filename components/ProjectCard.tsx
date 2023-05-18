@@ -1,6 +1,4 @@
-import { useAuth } from "hooks/useAuth";
 import { EconomicResource } from "lib/types";
-import AddStar from "./AddStar";
 import GeneralCard from "./GeneralCard";
 
 export interface ProjectCardProps {
@@ -9,7 +7,6 @@ export interface ProjectCardProps {
 
 export default function LoshCard(props: ProjectCardProps) {
   const { project } = props;
-
   return (
     <GeneralCard project={project}>
       <GeneralCard.CardHeader>
