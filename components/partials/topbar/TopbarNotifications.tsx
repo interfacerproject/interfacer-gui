@@ -16,7 +16,7 @@ export default function TopbarNotifications() {
 
   return (
     <TopbarPopover notification={Boolean(unread)} buttonContent={<BellIcon className="w-5 h-5" />}>
-      <div className="divide-y-1 divide-slate-200">
+      <div className="divide-y-1 divide-slate-200 w-screen md:w-96">
         {messages &&
           messages.slice(undefined, MAX_MESSAGES).map(m => (
             <div className="p-4" key={m.id}>
