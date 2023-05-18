@@ -120,7 +120,10 @@ const ContributionMessage = ({
       </div>
       <div className="flex flex-row my-2 center">
         <div className="mr-2">
-          <BrUserDisplay userId={m.userId} />
+          <BrUserDisplay userId={m.userId}>
+            <BrUserDisplay.Avatar />
+            <BrUserDisplay.Name />
+          </BrUserDisplay>
         </div>
         <div className="pt-3.5">
           <span className="mr-1">{headlinesDict[m.subject as MessageSubject]}</span>
