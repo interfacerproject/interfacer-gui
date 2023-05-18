@@ -21,7 +21,7 @@ const ProfileHeading = () => {
     claimPerson({ variables: { id: id } }).then(data => {
       setDidUrl(`${process.env.NEXT_PUBLIC_DID_EXPLORER!}details/${data.data.claimPerson.did.didDocument?.id}`);
     });
-  }, []);
+  }, [claimPerson, id]);
 
   const Heading = ({ label, children }: { label: string; children: React.ReactNode }) => (
     <Stack>
@@ -63,7 +63,7 @@ const ProfileHeading = () => {
       <Heading label={"DID:"}>
         <Text as="span" variant="bodyLg">
           <Link url={didUrl}>
-            <a>
+            <a target="_blank">
               <Button primary>{t("DID Explorer")}</Button>
             </a>
           </Link>
@@ -86,7 +86,9 @@ const ProfileHeading = () => {
           <Text as="span" variant="bodyLg" color="subdued">
             {t("Bio:")}
           </Text>
-          <pre className="py-1 px-4 bg-white border-2 rounded-md">{person?.note}</pre>
+          <div className="py-1 px-4 bg-white border-2 rounded-md whitespace-pre-wrap max-w-xl w-fit">
+            {person?.note}
+          </div>
         </div>
       )}
     </Stack>
