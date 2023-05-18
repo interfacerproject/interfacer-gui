@@ -17,7 +17,7 @@
 import { PersonWithFileEssential } from "lib/types/extensions";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import BrDisplayUser from "./brickroom/BrDisplayUser";
+import BrUserDisplay from "./brickroom/BrUserDisplay";
 
 const AgentsTableRow = (props: { agent: Partial<PersonWithFileEssential> }) => {
   const { agent: e } = props;
@@ -28,7 +28,7 @@ const AgentsTableRow = (props: { agent: Partial<PersonWithFileEssential> }) => {
   return (
     <tr>
       <td>
-        <BrDisplayUser user={e} />
+        <BrUserDisplay userId={e.id} />
       </td>
       <td className="">
         <Link href={`/profile/${e.id}`}>

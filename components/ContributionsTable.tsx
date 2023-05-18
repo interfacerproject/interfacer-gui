@@ -20,9 +20,9 @@ import { QUERY_RESOURCE_PROPOSAlS } from "lib/QueryAndMutation";
 import { ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import BrDisplayUser from "./brickroom/BrDisplayUser";
 import BrTable from "./brickroom/BrTable";
 import PTitleCounter from "./polaris/PTitleCounter";
+import BrUserDisplay from "./brickroom/BrUserDisplay";
 
 const ContributionsTable = ({ id, title }: { id: string; title?: string }) => {
   const { t } = useTranslation("common");
@@ -41,7 +41,7 @@ const ContributionsTable = ({ id, title }: { id: string; title?: string }) => {
               <tr className="cursor-pointer">
                 <td>
                   {/* @ts-ignore */}
-                  <BrDisplayUser user={proposal.node.primaryIntents![0].provider!} />
+                  <BrUserDisplay userId={proposal.node.primaryIntents![0].provider.id} />
                 </td>
                 <td>{proposal.node.note}</td>
                 <td>
