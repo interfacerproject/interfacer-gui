@@ -673,6 +673,7 @@ export type EconomicResourceUpdateParams = {
 };
 
 export enum EmailTemplate {
+  InterfacerBeta = "INTERFACER_BETA",
   InterfacerDebugging = "INTERFACER_DEBUGGING",
   InterfacerDeployment = "INTERFACER_DEPLOYMENT",
   InterfacerStaging = "INTERFACER_STAGING",
@@ -3781,8 +3782,30 @@ export type GetProjectLayoutQuery = {
     onhandQuantity: { __typename?: "Measure"; hasUnit?: { __typename?: "Unit"; id: string } | null };
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     primaryAccountable:
-      | { __typename?: "Organization"; id: string; name: string }
-      | { __typename?: "Person"; id: string; name: string };
+      | {
+          __typename?: "Organization";
+          id: string;
+          name: string;
+          primaryLocation?: {
+            __typename?: "SpatialThing";
+            name: string;
+            mappableAddress?: string | null;
+            lat?: any | null;
+            long?: any | null;
+          } | null;
+        }
+      | {
+          __typename?: "Person";
+          id: string;
+          name: string;
+          primaryLocation?: {
+            __typename?: "SpatialThing";
+            name: string;
+            mappableAddress?: string | null;
+            lat?: any | null;
+            long?: any | null;
+          } | null;
+        };
     currentLocation?: {
       __typename?: "SpatialThing";
       id: string;
