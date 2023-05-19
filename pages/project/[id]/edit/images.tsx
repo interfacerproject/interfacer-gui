@@ -45,6 +45,7 @@ const EditImages: NextPageWithLayout = () => {
   };
 
   const schema = yup.object({
+    // @ts-ignore
     images: imagesStepSchema,
   });
 
