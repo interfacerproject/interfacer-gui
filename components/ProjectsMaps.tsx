@@ -26,7 +26,7 @@ import Map, {
   Source,
 } from "react-map-gl";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
-import { FetchInventoryQuery, FetchInventoryQueryVariables } from "../lib/types";
+import { EconomicResource, FetchInventoryQuery, FetchInventoryQueryVariables } from "../lib/types";
 
 import useFilters from "hooks/useFilters";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -35,7 +35,14 @@ import { useCallback, useRef, useState } from "react";
 import ProjectDisplay from "./ProjectDisplay";
 import WithFilterLayout from "./layout/WithFilterLayout";
 
-const ProjectsMaps = () => {
+type pp = {
+  __typename?: "EconomicResourceEdge" | undefined;
+  cursor: string;
+  node: EconomicResource;
+}[];
+
+const ProjectsMaps = (props: { projects?: pp; filters?: any }) => {
+  const { projects: givenProjects, filters } = props;
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
   const [cursor, setCursor] = useState<string>("grab");
@@ -45,7 +52,8 @@ const ProjectsMaps = () => {
 
   const { mapFilter: filter } = useFilters();
   const { data } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(FETCH_RESOURCES, {
-    variables: { last: 200, filter: filter },
+    variables: { last: 200, filter: filters || filter },
+    skip: Boolean(givenProjects),
   });
 
   const PopUps = () => {
@@ -70,7 +78,7 @@ const ProjectsMaps = () => {
       </>
     );
   };
-  const projects = data?.economicResources?.edges;
+  const projects = givenProjects || data?.economicResources?.edges;
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
   const onGrab = useCallback(() => setCursor("grabbing"), []);

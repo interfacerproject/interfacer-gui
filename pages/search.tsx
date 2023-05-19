@@ -17,18 +17,20 @@
 import { Checkbox, Stack, Tabs } from "@bbtgnn/polaris-interfacer";
 import { Cube, Events } from "@carbon/icons-react";
 import ProjectsCards from "components/ProjectsCards";
+import ProjectsMaps from "components/ProjectsMaps";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
 import AgentsTable from "../components/AgentsTable";
-import Layout from "../components/layout/SearchLayout";
 import SearchBar from "../components/SearchBar";
+import Layout from "../components/layout/SearchLayout";
 import useFilters from "../hooks/useFilters";
 import { NextPageWithLayout } from "./_app";
 
 const Search: NextPageWithLayout = () => {
   const { q } = useRouter().query;
-  const [checked, setChecked] = useState(false);
+  const [checkedNotDescription, setCheckedNotDescription] = useState(false);
+  const [checkedShowMap, setCheckedShowMap] = useState(false);
   const [searchType, setSearchType] = useState(0);
   const { proposalFilter } = useFilters();
   const { t } = useTranslation("common");
@@ -38,11 +40,11 @@ const Search: NextPageWithLayout = () => {
   delete proposalFilter.notCustodian;
   const projectsOrFilter = {
     orName: q?.toString(),
-    ...(!checked && { orNote: q?.toString() }),
+    ...(!checkedNotDescription && { orNote: q?.toString() }),
   };
   const projectsFilter = {
     name: q?.toString(),
-    ...(!checked && { orNote: q?.toString() }),
+    ...(!checkedNotDescription && { orNote: q?.toString() }),
   };
   const filters = isNotEmptyObj(proposalFilter) ? { ...proposalFilter, ...projectsFilter } : projectsOrFilter;
 
@@ -59,7 +61,20 @@ const Search: NextPageWithLayout = () => {
 
           <div className="flex flex-col gap-2 my-8">
             <SearchBar />
-            <Checkbox label={t("do not search inside the the description")} checked={checked} onChange={setChecked} />
+            {searchType === 0 && (
+              <>
+                <Checkbox
+                  label={t("do not search inside the the description")}
+                  checked={checkedNotDescription}
+                  onChange={setCheckedNotDescription}
+                />
+                <Checkbox
+                  label={t("show results inside the map")}
+                  checked={checkedShowMap}
+                  onChange={setCheckedShowMap}
+                />
+              </>
+            )}
           </div>
         </div>
         <Stack vertical spacing="loose">
@@ -91,7 +106,8 @@ const Search: NextPageWithLayout = () => {
             selected={searchType}
             onSelect={setSearchType}
           />
-          {searchType === 0 && <ProjectsCards filter={filters} hideFilters />}
+          {checkedShowMap && <ProjectsMaps filters={filters} />}
+          {searchType === 0 && !checkedShowMap && <ProjectsCards filter={filters} hideFilters />}
           {searchType === 1 && <AgentsTable hideHeader searchTerm={q?.toString() || ""} />}
         </Stack>
       </div>
