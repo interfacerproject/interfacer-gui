@@ -3,12 +3,12 @@ import * as yup from "yup";
 
 // Components
 import { Stack } from "@bbtgnn/polaris-interfacer";
+import PError from "components/polaris/PError";
 import PFileUpload from "components/polaris/PFileUpload";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useFormContext } from "react-hook-form";
 import { CreateProjectValues } from "../CreateProjectForm";
-import { isRequired } from "lib/isFieldRequired";
 
 //
 
@@ -23,7 +23,8 @@ export default function ImagesStep() {
 
   const { setValue, watch, formState } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
-  const images = watch("images");
+  const images = watch().images;
+  const imagesError = errors.images?.message;
 
   function handleUpdate(images: Array<File>) {
     setValue("images", images, formSetValueOptions);
@@ -39,17 +40,19 @@ export default function ImagesStep() {
           "Adding pictures to your open source hardware project is an important way to showcase your work and help others understand your design."
         )}
       />
-      <PFileUpload
-        maxFiles={MAX_FILES}
-        files={images}
-        onUpdate={handleUpdate}
-        accept="image"
-        maxSize={2000000}
-        label={t("Upload up to {{MAX_FILES}} pictures", { MAX_FILES })}
-        helpText={`${t("Max file size")}: 2MB | ${t("Accepted formats")}: JPG, PNG, GIF, SVG`}
-        requiredIndicator={true}
-        error={errors?.images?.message}
-      />
+      <div>
+        <PFileUpload
+          maxFiles={MAX_FILES}
+          files={images}
+          onUpdate={handleUpdate}
+          accept="image"
+          maxSize={2000000}
+          label={t("Upload up to {{MAX_FILES}} pictures", { MAX_FILES })}
+          helpText={`${t("Max file size")}: 2MB | ${t("Accepted formats")}: JPG, PNG, GIF, SVG`}
+          requiredIndicator={true}
+        />
+        {imagesError && <PError error={imagesError} />}
+      </div>
     </Stack>
   );
 }

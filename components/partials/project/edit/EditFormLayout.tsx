@@ -47,24 +47,29 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
       if (!preventNavigation) return;
       return e.preventDefault();
     };
+
     const handleBrowseAway = () => {
       if (!preventNavigation) return;
       if (window.confirm(t("There are unsaved changes. Discard them?"))) return;
       router.events.emit("routeChangeError");
       throw "routeChange aborted.";
     };
+
     if (preventNavigation) {
       window.addEventListener("beforeunload", handleWindowClose);
       router.events.on("routeChangeStart", handleBrowseAway);
-    } else if (isSubmitSuccessful) {
+    }
+    //
+    else if (isSubmitSuccessful) {
       if (!redirect) router.reload();
       else router.push(redirect);
     }
+
     return () => {
       window.removeEventListener("beforeunload", handleWindowClose);
       router.events.off("routeChangeStart", handleBrowseAway);
     };
-  }, [preventNavigation, router.events, t]);
+  }, [isSubmitSuccessful, redirect, router, preventNavigation, t]);
 
   /* Render */
 
