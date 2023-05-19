@@ -26,7 +26,7 @@ import Map, {
   Source,
 } from "react-map-gl";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
-import { EconomicResource, FetchInventoryQuery, FetchInventoryQueryVariables } from "../lib/types";
+import { EconomicResourceEdge, FetchInventoryQuery, FetchInventoryQueryVariables } from "../lib/types";
 
 import useFilters from "hooks/useFilters";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -35,18 +35,31 @@ import { useCallback, useRef, useState } from "react";
 import ProjectDisplay from "./ProjectDisplay";
 import WithFilterLayout from "./layout/WithFilterLayout";
 
-type pp = {
-  __typename?: "EconomicResourceEdge" | undefined;
-  cursor: string;
-  node: EconomicResource;
-}[];
+function groupByCoordinates(arr: mapboxgl.MapboxGeoJSONFeature[]): mapboxgl.MapboxGeoJSONFeature[][] {
+  const objGroups = arr.reduce((groups, item) => {
+    // @ts-ignore
+    const key = `${item.geometry.coordinates[0]}-${item.geometry.coordinates[1]}`;
 
-const ProjectsMaps = (props: { projects?: pp; filters?: any }) => {
+    if (!groups[key]) {
+      groups[key] = [];
+    }
+    if (!groups[key].find((g: any) => g.properties.id === item.properties?.id)) {
+      groups[key].push(item);
+    }
+    return groups;
+  }, {} as Record<string, mapboxgl.MapboxGeoJSONFeature[]>);
+  return Object.values(objGroups);
+}
+
+const ProjectsMaps = (props: { projects?: EconomicResourceEdge[]; filters?: any }) => {
   const { projects: givenProjects, filters } = props;
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
   const [cursor, setCursor] = useState<string>("grab");
   const [popUpsAnchors, setPopUpsAnchor] = useState<any>(null);
+
+  const pepp = popUpsAnchors && groupByCoordinates(popUpsAnchors);
+  console.log("pepp", pepp);
 
   const mapRef = useRef<MapRef>(null);
 
@@ -57,22 +70,31 @@ const ProjectsMaps = (props: { projects?: pp; filters?: any }) => {
   });
 
   const PopUps = () => {
+    const haveOverflows = (p: mapboxgl.MapboxGeoJSONFeature[]) => (p.length > 1 ? "max-h-56 overflow-y-scroll" : "");
     return (
       <>
-        {popUpsAnchors?.map((p: any, i: number) => (
+        {groupByCoordinates(popUpsAnchors)?.map((p: mapboxgl.MapboxGeoJSONFeature[], i: number) => (
           <Popup
             key={i}
-            latitude={p.geometry.coordinates[1]}
-            longitude={p.geometry.coordinates[0]}
+            // @ts-ignore
+            latitude={p[0].geometry.coordinates[1]}
+            // @ts-ignore
+            longitude={p[0].geometry.coordinates[0]}
             closeButton={false}
             closeOnClick={false}
             focusAfterOpen={false}
           >
-            <Link href={`/project/${p.properties.id}`}>
-              <a>
-                <ProjectDisplay projectId={p.properties.id} />
-              </a>
-            </Link>
+            <div className={haveOverflows(p)}>
+              <div className="flex flex-col gap-1">
+                {p.map((e: any, i: number) => (
+                  <Link href={`/project/${e.properties.id}`} key={i}>
+                    <a className="m-1 rounded shadow border hover:shadow-primary hover:shadow-lg">
+                      <ProjectDisplay projectId={e.properties.id} />
+                    </a>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </Popup>
         ))}
       </>
