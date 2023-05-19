@@ -30,6 +30,7 @@ import { ChildrenProp as CP } from "components/brickroom/types";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
 import React from "react";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -57,12 +58,17 @@ export default function CreateContributionForm(props: Props) {
     description: "",
   };
 
-  const schema = yup
-    .object({
-      contributionRepositoryID: yup.string().required(),
-      description: yup.string().required(),
-    })
-    .required();
+  const yupLocaleObject = useYupLocaleObject();
+
+  yup.setLocale(yupLocaleObject);
+
+  const schema = (() =>
+    yup
+      .object({
+        contributionRepositoryID: yup.string().required(),
+        description: yup.string().required(),
+      })
+      .required())();
 
   const form = useForm<FormValues>({
     mode: "all",

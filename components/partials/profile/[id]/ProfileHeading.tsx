@@ -21,7 +21,7 @@ const ProfileHeading = () => {
     claimPerson({ variables: { id: id } }).then(data => {
       setDidUrl(`${process.env.NEXT_PUBLIC_DID_EXPLORER!}details/${data.data.claimPerson.did.didDocument?.id}`);
     });
-  }, []);
+  }, [claimPerson, id]);
 
   const Heading = ({ label, children }: { label: string; children: React.ReactNode }) => (
     <Stack>
@@ -40,10 +40,17 @@ const ProfileHeading = () => {
           <span className="text-primary">{person?.name}</span>
         </Text>
         <BrUserAvatar user={person} size="48px" />
+        {user && user.isVerified && (
+          <div className="bg-gray-200 px-2 py-1 rounded-full">
+            <Text as="span" variant="bodySm" color="subdued">
+              {t("verified")} {"✅"}
+            </Text>
+          </div>
+        )}
       </div>
       <Heading label={t("Username:")}>
         <Text as="span" variant="bodyLg">
-          <span className="text-primary">@{person?.user}</span>
+          <span className="text-primary">{person?.user}</span>
         </Text>
       </Heading>
       {isUser && (
@@ -56,7 +63,7 @@ const ProfileHeading = () => {
       <Heading label={"DID:"}>
         <Text as="span" variant="bodyLg">
           <Link url={didUrl}>
-            <a>
+            <a target="_blank">
               <Button primary>{t("DID Explorer")}</Button>
             </a>
           </Link>
@@ -79,7 +86,9 @@ const ProfileHeading = () => {
           <Text as="span" variant="bodyLg" color="subdued">
             {t("Bio:")}
           </Text>
-          <pre className="py-1 px-4 bg-white border-2 rounded-md">{person?.note}</pre>
+          <div className="py-1 px-4 bg-white border-2 rounded-md whitespace-pre-wrap max-w-xl w-fit">
+            {person?.note}
+          </div>
         </div>
       )}
     </Stack>

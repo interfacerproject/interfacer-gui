@@ -22,6 +22,8 @@ import {
   EmailTemplate,
   FetchSelfQuery,
   FetchSelfQueryVariables,
+  RegisterUserMutation,
+  RegisterUserMutationVariables,
   SendEmailVerificationMutation,
   SendEmailVerificationMutationVariables,
   SignUpMutation,
@@ -133,7 +135,6 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
           primaryLocation: user.primaryLocation,
           isVerified: user.isVerified,
         });
-
         setLoading(false);
       };
 
@@ -151,36 +152,44 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   const login: LoginFn = async ({ email }) => {
     if (authenticated) return;
     const client = createApolloClient(false);
-    const publicKey = getItem("eddsaPublicKey") as string;
-    const SignInMutation = gql`
-      query ($email: String!, $pubkey: String!) {
-        personCheck(email: $email, eddsaPublicKey: $pubkey) {
-          name
-          user
-          email
-          id
-        }
-      }
-    `;
-    await client
-      .query({
-        query: SignInMutation,
-        variables: { email, pubkey: publicKey },
-      })
-      .then(({ data }) => {
-        setItem("authId", data?.personCheck.id);
-        setItem("authName", data?.personCheck.name);
-        setItem("authUsername", data?.personCheck.user);
-        setItem("authEmail", data?.personCheck.email);
-        setAuthenticated(true);
-      });
+    const pubkey = getItem("eddsaPublicKey") as string;
+    const { data } = await client.query<FetchSelfQuery, FetchSelfQueryVariables>({
+      query: FETCH_SELF,
+      variables: { email: email, pubkey: pubkey },
+    });
+    const user = await data?.personCheck;
+    setItem("authId", user.id);
+    setItem("authName", user.name);
+    setItem("authUsername", user.user);
+    setItem("authEmail", user.email);
+    setUser({
+      id: user.id,
+      ulid: user.id,
+      email,
+      user: user.user,
+      username: user.user,
+      name: user.name,
+      privateKey: getItem("eddsaPrivateKey") as string,
+      publicKey: pubkey,
+      profileUrl: `/profile/${user.id}`,
+      note: user.note,
+      images: user.images || [],
+      primaryLocation: user.primaryLocation,
+      isVerified: user.isVerified,
+    });
+    setAuthenticated(true);
   };
 
   const register: RegisterFn = async (email, firstRegistration) => {
     const client = createApolloClient(false);
-    const KEYPAIROOM_SERVER_MUTATION = gql`mutation {keypairoomServer(firstRegistration: ${firstRegistration}, userData: "{\\"email\\": \\"${email}\\"}")}`;
     try {
-      const { data } = await client.mutate({ mutation: KEYPAIROOM_SERVER_MUTATION });
+      const { data } = await client.mutate<RegisterUserMutation, RegisterUserMutationVariables>({
+        mutation: REGISTER_USER,
+        variables: {
+          firstRegistration,
+          userData: JSON.stringify({ email }),
+        },
+      });
       return data;
     } catch (error) {
       if (`${error}`.includes("email doesn't exists")) {
@@ -245,42 +254,36 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   const logout: LogoutFn = (redirect = "/sign_in") => {
     clear();
     setUser(null);
+    setAuthenticated(false);
     router.push(redirect);
   };
 
   /* Email verification */
 
-  const SEND_EMAIL_VERIFICATION_TEMPLATES: Array<{ template: EmailTemplate; url: string }> = [
-    {
-      template: EmailTemplate.InterfacerTesting,
-      url: "https://gateway0.interfacer.dyne.org",
-    },
-    {
-      template: EmailTemplate.InterfacerStaging,
-      url: "https://gateway1.interfacer.dyne.org",
-    },
-  ];
+  /**
+   * Sync with: https://github.com/interfacerproject/zenflows/blob/7b0d263532377b35daab59a649aaf6af3a44d92b/src/zenflows/vf/person/domain.ex#L78
+   */
+  const SEND_EMAIL_VERIFICATION_TEMPLATES: Record<string, EmailTemplate> = {
+    "https://interfacer.dyne.org": EmailTemplate.InterfacerDeployment,
+    "https://interfacer-gui-staging.dyne.org": EmailTemplate.InterfacerStaging,
+    "http://localhost:3000": EmailTemplate.InterfacerTesting,
+  };
 
-  function getEmailVerificationTemplateFromEnv() {
-    for (let t of SEND_EMAIL_VERIFICATION_TEMPLATES) {
-      if (process.env.BASE_URL === t.url) {
-        return t.template;
-      }
-    }
-    return EmailTemplate.InterfacerTesting;
+  function getEmailVerificationTemplate() {
+    if (window && window.location.origin) return SEND_EMAIL_VERIFICATION_TEMPLATES[window.location.origin];
+    else return EmailTemplate.InterfacerTesting;
   }
 
   async function sendEmailVerification() {
-    if (!authenticated) {
+    if (!Boolean(getItem("eddsaPrivateKey")) && !Boolean(getItem("authEmail"))) {
       throw new Error("User not authenticated");
     }
-
-    const client = createApolloClient(authenticated);
+    const client = createApolloClient(true);
 
     await client.mutate<SendEmailVerificationMutation, SendEmailVerificationMutationVariables>({
       mutation: SEND_EMAIL_VERIFICATION,
       variables: {
-        template: getEmailVerificationTemplateFromEnv(),
+        template: getEmailVerificationTemplate(),
       },
     });
   }
@@ -310,3 +313,9 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     </AuthContext.Provider>
   );
 };
+
+const REGISTER_USER = gql`
+  mutation RegisterUser($firstRegistration: Boolean!, $userData: JSONObject!) {
+    keypairoomServer(firstRegistration: $firstRegistration, userData: $userData)
+  }
+`;

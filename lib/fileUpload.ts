@@ -66,7 +66,6 @@ export async function hashFile(ab: ArrayBuffer): Promise<string> {
 
 //
 
-
 export async function prepFileForZenflows(file: File): Promise<IFile> {
   const hash = await createFileHash(file);
 

@@ -10,7 +10,7 @@ import PLabel from "./PLabel";
 export interface Props {
   files?: Array<File>;
   onUpdate?: (files: Array<File>) => void;
-
+  error?: string;
   maxFiles?: number;
   maxSize?: number;
   accept?: "image" | "file";
@@ -31,7 +31,7 @@ export default function PFileUpload(props: Props) {
   const {
     files = [],
     onUpdate = () => {},
-
+    error,
     maxFiles,
     maxSize,
     accept = "file",
@@ -157,7 +157,7 @@ export default function PFileUpload(props: Props) {
     </Text>
   );
 
-  const errorBanner = (
+  const fileErrorBanner = (
     <div className="pt-4">
       <Banner
         title={t("The following files couldn’t be uploaded:")}
@@ -176,6 +176,17 @@ export default function PFileUpload(props: Props) {
     </div>
   );
 
+  const errorBanner = (
+    <div className="pt-4">
+      <Banner
+        title={error}
+        status="critical"
+        onDismiss={() => {
+          setShowError(false);
+        }}
+      ></Banner>
+    </div>
+  );
   return (
     <Stack vertical spacing="tight">
       {props.label && <PLabel label={props.label} requiredIndicator={requiredIndicator} />}
@@ -184,8 +195,8 @@ export default function PFileUpload(props: Props) {
         {!files.length && <DropZone.FileUpload actionTitle={actionTitle} />}
       </DropZone>
       {helpText && <PHelp helpText={helpText} />}
-
-      {hasError && showError && errorBanner}
+      {error && showError && errorBanner}
+      {hasError && showError && fileErrorBanner}
     </Stack>
   );
 }

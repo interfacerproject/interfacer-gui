@@ -16,7 +16,6 @@
 
 import { useQuery } from "@apollo/client";
 import { Button } from "@bbtgnn/polaris-interfacer";
-import cn from "classnames";
 import useInBox, { Notification } from "hooks/useInBox";
 import MdParser from "lib/MdParser";
 import { ASK_RESOURCE_PRIMARY_ACCOUNTABLE } from "lib/QueryAndMutation";
@@ -31,7 +30,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import dayjs from "../lib/dayjs";
 import { MessageSubject } from "../pages/notification";
-import BrDisplayUser from "./brickroom/BrDisplayUser";
+import BrUserDisplay from "./brickroom/BrUserDisplay";
 
 const ContributionMessage = ({
   message,
@@ -50,24 +49,23 @@ const ContributionMessage = ({
   const router = useRouter();
   const { t } = useTranslation("notificationProps");
   const { message: parsedMessage } = message;
+  const { refetch: fetchUser } = useQuery<ARPAQuery, ARPAQueryVariables>(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
+
   useEffect(() => {
+    const findResourceData = async (id: string) => {
+      const { data } = await fetchUser({ id });
+      const economicResource = data?.economicResource;
+      if (!economicResource) return;
+      setOwnerName(economicResource.primaryAccountable.name);
+      // @ts-ignore
+      setUser(economicResource.primaryAccountable);
+      setOriginalResourceName(economicResource.name);
+    };
     if (message.subject !== MessageSubject.ADDED_AS_CONTRIBUTOR) findResourceData(parsedMessage.originalResourceID);
     else {
       findResourceData(message.message.resourceID);
     }
-  }, [parsedMessage.originalResourceID]);
-
-  const { refetch: fetchUser } = useQuery<ARPAQuery, ARPAQueryVariables>(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
-
-  const findResourceData = async (id: string) => {
-    const { data } = await fetchUser({ id });
-    const economicResource = data?.economicResource;
-    if (!economicResource) return;
-    setOwnerName(economicResource.primaryAccountable.name);
-    // @ts-ignore
-    setUser(economicResource.primaryAccountable);
-    setOriginalResourceName(economicResource.name);
-  };
+  }, [parsedMessage.originalResourceID, message.subject, message.message.resourceID, fetchUser]);
 
   const commonProps = {
     data,
@@ -109,11 +107,6 @@ const ContributionMessage = ({
     [MessageSubject.ADDED_AS_CONTRIBUTOR]: t("added you as a contributor to"),
     [MessageSubject.PROJECT_CITED]: t("just mentioned your"),
   };
-  const className = cn({
-    "": m.subject === MessageSubject.CONTRIBUTION_REQUEST,
-    "bg-success": m.subject === MessageSubject.CONTRIBUTION_ACCEPTED,
-    "bg-error": m.subject === MessageSubject.CONTRIBUTION_REJECTED,
-  });
 
   const hasMessage = Boolean(m.message);
   const request = MessageSubject.CONTRIBUTION_REQUEST === m.subject;
@@ -126,11 +119,16 @@ const ContributionMessage = ({
         <p className="text-xs">{dayjs(m.data).format("HH:mm DD/MM/YYYY")}</p>
       </div>
       <div className="flex flex-row my-2 center">
-        <div className="mr-2">{user && <BrDisplayUser user={user} />}</div>
+        <div className="mr-2">
+          <BrUserDisplay userId={m.userId}>
+            <BrUserDisplay.Avatar />
+            <BrUserDisplay.Name />
+          </BrUserDisplay>
+        </div>
         <div className="pt-3.5">
           <span className="mr-1">{headlinesDict[m.subject as MessageSubject]}</span>
           <Link href={`/project/${m.resourceId}`}>
-            <a className="text-primary hover:underline break-all">{m.resourceName}</a>
+            <a className="break-all text-primary hover:underline">{m.resourceName}</a>
           </Link>
         </div>
       </div>

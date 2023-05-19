@@ -3597,7 +3597,7 @@ export type SearchProjectQuery = {
     id: string;
     name: string;
     images?: Array<{ __typename?: "File"; bin?: any | null; mimeType: string }> | null;
-    conformsTo: { __typename?: "ResourceSpecification"; name: string };
+    conformsTo: { __typename?: "ResourceSpecification"; name: string; id: string };
     primaryAccountable: { __typename?: "Organization"; name: string } | { __typename?: "Person"; name: string };
   } | null;
 };
@@ -3692,10 +3692,6 @@ export type FetchResourcesQuery = {
   } | null;
 };
 
-export type GetTagsQueryVariables = Exact<{ [key: string]: never }>;
-
-export type GetTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
-
 export type UpdateUserMutationVariables = Exact<{
   id: Scalars["ID"];
   name?: InputMaybe<Scalars["String"]>;
@@ -3781,6 +3777,8 @@ export type GetProjectLayoutQuery = {
     license?: string | null;
     repo?: string | null;
     classifiedAs?: Array<any> | null;
+    accountingQuantity: { __typename?: "Measure"; hasNumericalValue: any };
+    onhandQuantity: { __typename?: "Measure"; hasUnit?: { __typename?: "Unit"; id: string } | null };
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     primaryAccountable:
       | { __typename?: "Organization"; id: string; name: string }
@@ -3850,6 +3848,20 @@ export type GetDppQuery = {
   __typename?: "RootQueryType";
   economicResource?: { __typename?: "EconomicResource"; traceDpp: any } | null;
 };
+
+export type PersonExistsQueryVariables = Exact<{
+  email?: InputMaybe<Scalars["String"]>;
+  user?: InputMaybe<Scalars["String"]>;
+}>;
+
+export type PersonExistsQuery = { __typename?: "RootQueryType"; personExists: boolean };
+
+export type RegisterUserMutationVariables = Exact<{
+  firstRegistration: Scalars["Boolean"];
+  userData: Scalars["JSONObject"];
+}>;
+
+export type RegisterUserMutation = { __typename?: "RootMutationType"; keypairoomServer: string };
 
 export type GetVariablesQueryVariables = Exact<{ [key: string]: never }>;
 
@@ -3954,7 +3966,6 @@ export type TransferProjectMutationVariables = Exact<{
   metadata?: InputMaybe<Scalars["JSONObject"]>;
   agent: Scalars["ID"];
   creationTime: Scalars["DateTime"];
-  location: Scalars["ID"];
   tags?: InputMaybe<Array<Scalars["URI"]> | Scalars["URI"]>;
   oneUnit: Scalars["ID"];
 }>;
@@ -4080,6 +4091,10 @@ export type GetAgentsQuery = {
     }>;
   } | null;
 };
+
+export type GetTagsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetTagsQuery = { __typename?: "RootQueryType"; economicResourceClassifications?: Array<any> | null };
 
 export type GetProjectsQueryVariables = Exact<{
   first?: InputMaybe<Scalars["Int"]>;

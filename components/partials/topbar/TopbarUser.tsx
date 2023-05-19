@@ -20,7 +20,7 @@ export default function TopbarUser() {
 
   return (
     <TopbarPopover id="user-menu" buttonContent={<BrUserAvatar user={user} />}>
-      <div className="w-40 divide-y-1 divide-slate-200">
+      <div className="divide-y-1 divide-slate-200">
         <MenuLink href={user!.profileUrl}>
           <UserSection user={user!} />
         </MenuLink>
@@ -28,6 +28,16 @@ export default function TopbarUser() {
           <MenuLink href={user!.profileUrl}>
             <Text as="p" variant="bodyMd">
               {t("My profile")}
+            </Text>
+          </MenuLink>
+          <MenuLink href={`${user!.profileUrl}?tab=1`}>
+            <Text as="p" variant="bodyMd">
+              {t("My list")}
+            </Text>
+          </MenuLink>
+          <MenuLink href={`${user!.profileUrl}?tab=2`}>
+            <Text as="p" variant="bodyMd">
+              {t("My drafts")}
             </Text>
           </MenuLink>
         </div>
@@ -70,7 +80,7 @@ function UserSection(props: { user: User }) {
         <Text as="p" variant="bodyMd" fontWeight="bold">
           <span className="text-primary">{user?.name}</span>
         </Text>
-        <Text as="p" variant="bodySm" color="subdued">{`@${user?.username}`}</Text>
+        <Text as="p" variant="bodySm" color="subdued">{`${user?.username}`}</Text>
       </div>
     </div>
   );

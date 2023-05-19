@@ -27,6 +27,7 @@ const SocialCard = () => {
       setInList(true);
     }
   };
+  const location = !project.currentLocation ? project.primaryAccountable?.primaryLocation?.name : undefined;
   return (
     <Card sectioned>
       <Stack vertical>

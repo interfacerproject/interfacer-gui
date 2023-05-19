@@ -16,11 +16,10 @@
 
 import Map, { FullscreenControl, MapRef, Marker, Popup } from "react-map-gl";
 
-import devLog from "lib/devLog";
+import { Text } from "@bbtgnn/polaris-interfacer";
 import { SpatialThing } from "lib/types";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Text } from "@bbtgnn/polaris-interfacer";
 
 export interface DetailMapProps {
   location: Partial<SpatialThing>;

@@ -1,59 +1,61 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-import { SelectOnChange, SelectOption } from "components/brickroom/utils/BrSelectUtils";
-import { FetchLocation, getLocationOptions, LocationLookup, lookupLocation } from "lib/fetchLocation";
-import { forwardRef } from "react";
-
-// Components
-import BrSelectSearchableAsync, { BrSelectSearchableAsyncProps } from "./brickroom/BrSelectSearchableAsync";
+import PCardWithAction from "components/polaris/PCardWithAction";
+import { LocationLookup } from "lib/fetchLocation";
+import SearchLocation from "./SearchLocation";
+import { PFieldInfoProps } from "./polaris/PFieldInfo";
 
 //
 
-export type OnChangeBaseType = SelectOnChange<SelectOption<FetchLocation.Location>>;
+export interface SelectedLocation {
+  address: string;
+  lat: number;
+  lng: number;
+}
 
-export interface SelectLocationProps extends BrSelectSearchableAsyncProps, BrSelectSearchableAsyncProps {
-  onChange?: SelectOnChange<SelectOption<LocationLookup.Location>>;
+interface Props extends Partial<PFieldInfoProps> {
+  location?: SelectedLocation | null;
+  setLocation?: (location: SelectedLocation | null) => void;
+  placeholder?: string;
+  id?: string;
 }
 
 //
 
-const SelectLocation = forwardRef<any, SelectLocationProps>((props, ref) => {
-  const promiseOptions = (inputValue: string) => getLocationOptions(inputValue);
+export default function SelectLocation(props: Props) {
+  const { location = null, setLocation = () => {}, id } = props;
 
-  // Custom onChange fetches location with coordinates
-  const onChange: OnChangeBaseType = async (newValue, actionMeta) => {
-    const location = await lookupLocation(newValue.value.id);
-    // @ts-ignore
-    if (props.onChange) props.onChange(location, actionMeta);
-  };
+  function handleSelect(loc: LocationLookup.Location | null) {
+    setLocation(loc ? { address: loc.title, lat: loc.position.lat, lng: loc.position.lng } : null);
+  }
+
+  function handleRemove() {
+    setLocation(null);
+  }
 
   return (
-    <BrSelectSearchableAsync
-      {...props}
-      cacheOptions
-      loadOptions={promiseOptions}
-      defaultOptions
-      onChange={onChange} // Has to be after {...props} in order to being not overwritten by spread props
-      ref={ref}
-    />
+    <div className="space-y-3">
+      <SearchLocation
+        id={id}
+        onSelect={handleSelect}
+        label={props.label}
+        error={props.error}
+        helpText={props.helpText}
+        placeholder={props.placeholder}
+        requiredIndicator={props.requiredIndicator}
+      />
+      {location && (
+        <PCardWithAction onClick={handleRemove}>
+          <div>
+            <p>{location.address}</p>
+            <p className="font-mono">
+              <span className="font-bold">{"Lat: "}</span>
+              <span>{location.lat}</span>
+              <span>{" | "}</span>
+              <span className="font-bold">{"Lng :"}</span>
+              <span>{location.lng}</span>
+            </p>
+          </div>
+        </PCardWithAction>
+      )}
+    </div>
   );
-});
-
-//
-
-SelectLocation.displayName = "SelectLocation";
-export default SelectLocation;
+}
