@@ -673,6 +673,7 @@ export type EconomicResourceUpdateParams = {
 };
 
 export enum EmailTemplate {
+  InterfacerBeta = "INTERFACER_BETA",
   InterfacerDebugging = "INTERFACER_DEBUGGING",
   InterfacerDeployment = "INTERFACER_DEPLOYMENT",
   InterfacerStaging = "INTERFACER_STAGING",
@@ -3814,7 +3815,17 @@ export type GetProjectLayoutQuery = {
       lat?: any | null;
       long?: any | null;
     } | null;
-    images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+    images?: Array<{
+      __typename?: "File";
+      hash: any;
+      name: string;
+      mimeType: string;
+      bin?: any | null;
+      date: any;
+      description: string;
+      extension: string;
+      size: number;
+    }> | null;
   } | null;
 };
 
@@ -4722,6 +4733,19 @@ export type VerifyEmailMutationVariables = Exact<{
 }>;
 
 export type VerifyEmailMutation = { __typename?: "RootMutationType"; personVerifyEmailVerification: boolean };
+
+export type EditImagesMutationVariables = Exact<{
+  id: Scalars["ID"];
+  images?: InputMaybe<Array<IFile> | IFile>;
+}>;
+
+export type EditImagesMutation = {
+  __typename?: "RootMutationType";
+  updateEconomicResource: {
+    __typename?: "EconomicResourceResponse";
+    economicResource: { __typename?: "EconomicResource"; id: string };
+  };
+};
 
 export type EditMainMutationVariables = Exact<{
   id: Scalars["ID"];

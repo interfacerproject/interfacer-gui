@@ -48,6 +48,7 @@ export const projectSections: Array<ProjectSection> = [
     id: "images",
     component: <ImagesStep />,
     required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN],
+    editPage: "edit/images",
   },
   {
     navLabel: "Location",
