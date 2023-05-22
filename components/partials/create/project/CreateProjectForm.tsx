@@ -62,7 +62,6 @@ export interface CreateProjectValues {
   licenses: LicenseStepValues;
 }
 
-
 export const createProjectDefaultValues: CreateProjectValues = {
   main: mainStepDefaultValues,
   linkedDesign: linkDesignStepDefaultValues,
