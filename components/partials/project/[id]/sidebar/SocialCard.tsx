@@ -33,7 +33,7 @@ const SocialCard = () => {
       <Stack vertical>
         {project.repo && (
           <Button primary url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
-            {t("Go to source")}
+            {t("Project data")}
           </Button>
         )}
         <Button id="addToList" size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>
