@@ -50,3 +50,8 @@ export function getUserImage(user: Partial<PersonWithFileEssential>): string {
   if (image) return formatImageSrc(image.mimeType, image.bin);
   else return "";
 }
+
+export function dataURLtoFile(bin: string, mimeType: string, filename: string): globalThis.File {
+  const bstr = Buffer.from(bin, "base64");
+  return new File([new Blob([bstr], { type: mimeType })], filename, { type: mimeType });
+}
