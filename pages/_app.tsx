@@ -17,6 +17,10 @@
 import "@fontsource/space-grotesk";
 import "@fontsource/space-grotesk/700.css";
 import "@fontsource/space-grotesk/600.css";
+import "@fontsource/ibm-plex-sans";
+import "@fontsource/ibm-plex-sans/700.css";
+import "@fontsource/ibm-plex-sans/600.css";
+
 import "styles/globals.scss";
 import Layout from "components/layout/Layout";
 import { AuthProvider } from "contexts/AuthContext";
