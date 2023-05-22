@@ -205,7 +205,7 @@ function Features() {
     },
     {
       icon: <ScaleIcon />,
-      title: t("Collaboration and relations"),
+      title: t("Collaboration"),
       items: [t("Collaborate on projects"), t("Compose your projects from other users’ projects")],
     },
     {

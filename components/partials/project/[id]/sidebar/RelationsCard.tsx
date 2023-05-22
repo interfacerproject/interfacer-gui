@@ -12,10 +12,10 @@ const RelationsCard = () => {
     <Card sectioned>
       <Stack vertical spacing="loose">
         <Text as="h2" variant="headingMd">
-          {t("Relations")}
+          {t("Included")}
         </Text>
         <Text color="success" as="p" variant="bodyMd">
-          {t("{{related}} related projects", { related: project.metadata?.relations?.length || 0 })}
+          {t("{{related}} included projects", { related: project.metadata?.relations?.length || 0 })}
         </Text>
         <Button
           id="seeRelations"
@@ -25,7 +25,7 @@ const RelationsCard = () => {
           monochrome
           onClick={() => setSelected(1)}
         >
-          {t("All relations")}
+          {t("Included projects")}
         </Button>
       </Stack>
     </Card>
