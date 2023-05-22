@@ -22,6 +22,7 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import { ReactElement, ReactNode } from "react";
 import "styles/globals.scss";
+import "@fontsource/space-grotesk";
 
 import { AppProvider } from "@bbtgnn/polaris-interfacer";
 import enTranslations from "@bbtgnn/polaris-interfacer/locales/en.json";

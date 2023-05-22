@@ -16,6 +16,9 @@ dependencies:
   '@carbon/icons-react':
     specifier: ^11.16.1
     version: 11.16.1(react@18.2.0)
+  '@fontsource/space-grotesk':
+    specifier: ^5.0.0
+    version: 5.0.0
   '@graphql-codegen/cli':
     specifier: ^2.13.12
     version: 2.13.12(@types/node@18.7.15)(graphql@15.8.0)(ts-node@10.9.1)(typescript@4.9.3)
@@ -1313,6 +1316,10 @@ packages:
     resolution: {integrity: sha512-kt/tg1oip9OAH1xjCTcx1OpcUpu9rjDw3GKJ/rEhUqhO7QyJWfrHU0DpLTNsH67+JyFL5Kv9X1utsXwKFVtyEQ==}
     dependencies:
       '@floating-ui/core': 1.0.2
+    dev: false
+
+  /@fontsource/space-grotesk@5.0.0:
+    resolution: {integrity: sha512-wi3A+VanTtsccTHvzMhxYEUzgFuYzrSVOV12xfx1tlXSSD3dDk4awZR2chV9w+nngYdzaNE80H1O03Ugc3xsEQ==}
     dev: false
 
   /@graphql-codegen/cli@2.13.12(@types/node@18.7.15)(graphql@15.8.0)(ts-node@10.9.1)(typescript@4.9.3):
@@ -7966,7 +7973,7 @@ packages:
     dev: false
 
   /proxy-from-env@1.0.0:
-    resolution: {integrity: sha512-F2JHgJQ1iqwnHDcQjVBsq3n/uoaFL+iPW/eAeL7kVxy/2RrWaN4WroKjjvbsoRtv0ftelNyC01bjRhn/bhcf4A==}
+    resolution: {integrity: sha1-M8UDmPcOp+uW0h97gXYwpVeRx+4=}
     dev: false
 
   /ps-tree@1.2.0:
