@@ -24,6 +24,8 @@ import DraftCard from "./DraftCard";
 import EmptyState from "./EmptyState";
 import LoshCard from "./LoshCard";
 import ProjectCard from "./ProjectCard";
+import Link from "next/link";
+import ProjectDisplay from "./ProjectDisplay";
 
 export enum CardType {
   PROJECT = "project",
@@ -51,7 +53,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     hidePagination = false,
     hideFilters = false,
     type = CardType.PROJECT,
-    // tiny = false,
+    tiny = false,
     header = "Latest projects",
     drafts,
     emptyState = <EmptyState heading="No projects found" />,
@@ -85,7 +87,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
 
   return (
     <>
-      {type === CardType.PROJECT && (
+      {type === CardType.PROJECT && !tiny && (
         <CardsGroup
           onLoadMore={loadMore}
           nextPage={!!getHasNextPage}
@@ -98,7 +100,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
           {projects?.map(({ node }: { node: EconomicResource }) => distinguishProjects(node))}
         </CardsGroup>
       )}
-      {/* {tiny &&
+      {tiny &&
         projects?.map(({ node }: { node: EconomicResource }) => (
           <div className="py-2 hover:bg-base-300" key={node.id}>
             <Link href={`/project/${node.id}`}>
@@ -107,8 +109,8 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
               </a>
             </Link>
           </div>
-        ))} */}
-      {type === CardType.DRAFT && drafts && (
+        ))}
+      {type === CardType.DRAFT && !tiny && drafts && (
         <CardsGroup
           onLoadMore={loadMore}
           nextPage={false}
