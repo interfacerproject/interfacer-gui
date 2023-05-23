@@ -33,13 +33,14 @@ import {
   FetchInventoryQueryVariables,
 } from "../lib/types";
 
+import { LocationHazard } from "@carbon/icons-react";
 import useFilters from "hooks/useFilters";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
+import EmptyState from "./EmptyState";
 import ProjectDisplay from "./ProjectDisplay";
 import WithFilterLayout from "./layout/WithFilterLayout";
-import EmptyState from "./EmptyState";
 
 function groupByCoordinates(arr: mapboxgl.MapboxGeoJSONFeature[]): mapboxgl.MapboxGeoJSONFeature[][] {
   const objGroups = arr.reduce((groups, item) => {
@@ -184,9 +185,15 @@ const ProjectsMaps = (props: {
     }),
   };
 
-  const MapEmptyState = <EmptyState description={"No project with location"} heading="Nothing to show" />;
-
-  if (!geoJSON.features.length) return MapEmptyState;
+  if (!geoJSON.features.length)
+    return (
+      <EmptyState
+        description={"No project with location"}
+        heading="Nothing to show"
+        // @ts-ignore
+        icon={<LocationHazard size={60} />}
+      />
+    );
 
   return (
     <WithFilterLayout hideConformsTo>
