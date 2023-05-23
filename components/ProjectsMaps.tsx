@@ -66,7 +66,7 @@ const ProjectsMaps = (props: { projects?: EconomicResourceEdge[]; filters?: any 
   });
 
   const PopUps = () => {
-    const haveOverflows = (p: mapboxgl.MapboxGeoJSONFeature[]) => (p.length > 1 ? "max-h-56 overflow-y-scroll" : "");
+    const haveOverflows = (p: mapboxgl.MapboxGeoJSONFeature[]) => (p.length > 1 ? "max-h-128 overflow-y-scroll" : "");
     return (
       <>
         {groupByCoordinates(popUpsAnchors)?.map((p: mapboxgl.MapboxGeoJSONFeature[], i: number) => (
@@ -79,6 +79,7 @@ const ProjectsMaps = (props: { projects?: EconomicResourceEdge[]; filters?: any 
             closeButton={false}
             closeOnClick={false}
             focusAfterOpen={false}
+            anchor="left"
           >
             <div className={haveOverflows(p)}>
               <div className="flex flex-col gap-1">
@@ -144,8 +145,8 @@ const ProjectsMaps = (props: { projects?: EconomicResourceEdge[]; filters?: any 
       const zoom = mapRef.current?.getZoom();
       mapRef.current?.easeTo({
         center: features[0].geometry.coordinates,
-        zoom: zoom! * 1.4,
-        duration: 500,
+        zoom: zoom! * 2.2,
+        duration: 300,
       });
     }
   };
