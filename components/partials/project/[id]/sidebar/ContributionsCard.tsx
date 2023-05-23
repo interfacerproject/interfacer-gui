@@ -44,7 +44,7 @@ const ContributionsCard = () => {
           size="large"
           fullWidth
           primary
-          onClick={() => router.push(`/create/contribution/${project.id}`)}
+          onClick={() => router.push(`/project/${project.id}/propose_contribution`)}
         >
           {t("Make a contribution")}
         </Button>

@@ -40,12 +40,23 @@ const SocialCard = () => {
           {inList ? t("Remove from list") : t("Add to list")}
         </Button>
         {user && <WatchButton id={project.id!} owner={project.primaryAccountable!.id} />}
-        <div className="space-y-1">
-          <Text as="p" variant="bodyMd">
-            {t("By:")}
-          </Text>
-          <BrDisplayUser user={project.primaryAccountable!} />
-          {project.currentLocation && <DetailMap location={project.currentLocation} height={180} />}
+        <div className="space-y-4">
+          <div>
+            <Text as="p" variant="bodyMd">
+              {t("Project location:")}
+            </Text>
+            {project.currentLocation && (
+              <div className="mt-1">
+                <DetailMap location={project.currentLocation} height={180} />
+              </div>
+            )}
+          </div>
+          <div>
+            <Text as="p" variant="bodyMd">
+              {t("Project by:")}
+            </Text>
+            <BrDisplayUser user={project.primaryAccountable!} />
+          </div>
         </div>
       </Stack>
     </Card>
