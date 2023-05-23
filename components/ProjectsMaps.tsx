@@ -57,10 +57,6 @@ const ProjectsMaps = (props: { projects?: EconomicResourceEdge[]; filters?: any 
 
   const [cursor, setCursor] = useState<string>("grab");
   const [popUpsAnchors, setPopUpsAnchor] = useState<any>(null);
-
-  const pepp = popUpsAnchors && groupByCoordinates(popUpsAnchors);
-  console.log("pepp", pepp);
-
   const mapRef = useRef<MapRef>(null);
 
   const { mapFilter: filter } = useFilters();
