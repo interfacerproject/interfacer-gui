@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Checkbox, Stack, Tabs } from "@bbtgnn/polaris-interfacer";
+import { Checkbox, Stack, Tabs, Button } from "@bbtgnn/polaris-interfacer";
 import { Cube, Events } from "@carbon/icons-react";
 import ProjectsCards from "components/ProjectsCards";
 import ProjectsMaps from "components/ProjectsMaps";
@@ -68,11 +68,11 @@ const Search: NextPageWithLayout = () => {
                   checked={checkedNotDescription}
                   onChange={setCheckedNotDescription}
                 />
-                <Checkbox
-                  label={t("show results inside the map")}
-                  checked={checkedShowMap}
-                  onChange={setCheckedShowMap}
-                />
+                <div>
+                  <Button primary onClick={() => setCheckedShowMap(!checkedShowMap)}>
+                    {t(checkedShowMap ? "show a list" : "show on map")}
+                  </Button>
+                </div>
               </>
             )}
           </div>
