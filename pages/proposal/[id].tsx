@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useMutation, useQuery } from "@apollo/client";
-import { Button, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Badge, Button, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Status } from "@bbtgnn/polaris-interfacer/build/ts/latest/src/components/Badge";
+import { AddProductMajor, RemoveProductMajor } from "@shopify/polaris-icons";
+import ResourceDetailsCard from "components/ResourceDetailsCard";
 import Spinner from "components/brickroom/Spinner";
 import PLabel from "components/polaris/PLabel";
-import ResourceDetailsCard from "components/ResourceDetailsCard";
+import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { useAuth } from "hooks/useAuth";
 import useWallet from "hooks/useWallet";
-import devLog from "lib/devLog";
 import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import {
   ACCEPT_PROPOSAL,
@@ -30,8 +32,10 @@ import {
   REJECT_PROPOSAL,
   SATISFY_INTENTS,
 } from "lib/QueryAndMutation";
+import devLog from "lib/devLog";
 import { GetUnitAndCurrencyQuery, ProposedStatus, QueryProposalQuery, QueryProposalQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import useInBox from "../../hooks/useInBox";
 import MdParser from "../../lib/MdParser";
@@ -150,10 +154,10 @@ const Proposal = () => {
     await refetch();
   };
 
-  const switchStatus = {
-    [ProposedStatus.Pending]: { text: t("The proposal is still pending"), color: "bg-warning" },
-    [ProposedStatus.Accepted]: { text: t("The proposal has been accepted"), color: "bg-success" },
-    [ProposedStatus.Refused]: { text: t("The proposal has been rejected"), color: "bg-danger" },
+  const switchStatus: Record<ProposedStatus, { text: string; color: Status }> = {
+    [ProposedStatus.Pending]: { text: t("The proposal is still pending"), color: "attention" },
+    [ProposedStatus.Accepted]: { text: t("The proposal has been accepted"), color: "success" },
+    [ProposedStatus.Refused]: { text: t("The proposal has been rejected"), color: "critical" },
   };
 
   const renderActions =
@@ -161,88 +165,87 @@ const Proposal = () => {
     user?.ulid === proposal?.primaryIntents?.[2].resourceInventoriedAs?.primaryAccountable.id &&
     proposal?.status === ProposedStatus.Pending;
 
+  if (loading) return <Spinner />;
+  if (!proposal) return router.push("/404");
+  const contributionProject = proposal.primaryIntents![1].resourceInventoriedAs;
+  const originalProject = proposal.primaryIntents![0].resourceInventoriedAs;
+
   return (
-    <div className="mx-auto max-w-lg p-6">
-      {loading && !Boolean(proposal?.primaryIntents) ? (
-        <Spinner />
-      ) : (
-        <>
-          <Stack vertical spacing="extraLoose">
-            <Stack vertical spacing="tight">
-              <Text as="h1" variant="headingXl">
-                {t("Contribution from ")} {proposal!.primaryIntents![0].resourceInventoriedAs!.primaryAccountable.name}
-              </Text>
-            </Stack>
+    <>
+      <div className="mx-auto max-w-lg pt-6 min-h-full">
+        <Stack vertical spacing="extraLoose">
+          <div className="flex justify-between">
+            <PTitleSubtitle title={t("Contribution Proposal")} subtitle={t("Read the comunity guidelines")} />
+            <div className="flex-shrink">
+              <Badge status={switchStatus[proposal!.status].color}>{proposal!.status}</Badge>
+            </div>
+          </div>
 
-            <Stack vertical spacing="extraTight">
-              <PLabel label={t("Forked project")} />
-              {/* @ts-ignore           */}
-              <ResourceDetailsCard resource={proposal.primaryIntents[0].resourceInventoriedAs} />
-            </Stack>
-
-            <Stack vertical spacing="tight">
-              <Text as="h2" variant="headingLg">
-                {t("Status")}
-              </Text>
-              <div className={`p-4 rounded ${switchStatus[proposal!.status].color}`}>
-                <Text as="p" variant="bodyMd">
-                  {switchStatus[proposal!.status].text}
-                </Text>
-              </div>
-            </Stack>
-
-            <Stack vertical spacing="tight">
-              <Text as="h2" variant="headingLg">
-                {t("Contribution info")}
-                {":"}
-              </Text>
-              <div className="mb-2" dangerouslySetInnerHTML={{ __html: MdParser.render(proposal!.note!) }} />
-            </Stack>
-
-            <Stack vertical spacing="tight">
-              <Text as="h2" variant="headingLg">
-                {t("Repository link")}
-              </Text>
-              <Text as="p" variant="bodyMd">
-                {proposal!.primaryIntents![0].resourceInventoriedAs?.repo}
-              </Text>
-            </Stack>
-
-            {renderActions && (
-              <Stack vertical spacing="tight">
-                <Text as="h2" variant="headingLg">
-                  {t("Your actions")}
-                </Text>
-                <Button
-                  size="large"
-                  primary
-                  fullWidth
-                  submit
-                  onClick={onReject}
-                  id="submit"
-                  disabled={!(status === "PENDING")}
-                >
-                  {t("Reject contribution")}
-                </Button>{" "}
-                <Button
-                  size="large"
-                  primary
-                  fullWidth
-                  submit
-                  onClick={onAccept}
-                  disabled={!(status === "PENDING")}
-                  id="submit"
-                >
-                  {t("Accept contribution")}
-                </Button>
-              </Stack>
-            )}
-
-            {/*<CreateContributionFrom onSubmit={onSubmit} error={formError} setError={setFormError} />*/}
+          <Stack vertical spacing="extraTight">
+            <Text as="h2" variant="headingXl">
+              {proposal!.name}
+            </Text>
+            <Text as="p" variant="bodyLg">
+              {t("this is a contribution proposal to yours ")}
+              <Link href={`/project/${originalProject!.id}`}>
+                <a>{originalProject!.name}</a>
+              </Link>
+            </Text>
           </Stack>
-        </>
+
+          <Stack vertical spacing="extraTight">
+            <PLabel label={t("Project:")} />
+            <div className="flex flex-row justify-between gap-2">
+              <div className="flex-grow">
+                {/* @ts-ignore */}
+                <ResourceDetailsCard resource={contributionProject} />
+              </div>
+              <Stack vertical spacing="extraTight">
+                <div className="float-right">
+                  <Button primary onClick={() => router.push(`/project/${contributionProject!.id}`)}>
+                    {t("Go to project")}
+                  </Button>
+                </div>
+                <Button onClick={() => router.push(contributionProject!.repo!)}>{t("External data")}</Button>
+              </Stack>
+            </div>
+          </Stack>
+
+          <Stack vertical spacing="tight">
+            <PLabel label={t("Contribution info") + ":"} />
+            <div className="mb-2" dangerouslySetInnerHTML={{ __html: MdParser.render(proposal!.note!) }} />
+          </Stack>
+        </Stack>
+      </div>
+
+      {renderActions && (
+        <div className="bg-yellow-100 border-t-1 border-t-border-warning-subdued p-4 flex justify-end items-center space-x-6 sticky bottom-0 z-20">
+          <div className="space-x-2">
+            <Button
+              size="large"
+              submit
+              onClick={onReject}
+              id="submit"
+              icon={<Icon source={RemoveProductMajor} />}
+              disabled={!(status === "PENDING")}
+            >
+              {t("Reject contribution")}
+            </Button>
+            <Button
+              size="large"
+              primary
+              submit
+              onClick={onAccept}
+              icon={<Icon source={AddProductMajor} />}
+              disabled={!(status === "PENDING")}
+              id="submit"
+            >
+              {t("Accept contribution")}
+            </Button>
+          </div>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

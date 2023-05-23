@@ -5,12 +5,10 @@ import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import getIdFromFormName from "lib/getIdFromFormName";
 import { isRequired } from "lib/isFieldRequired";
-import { url } from "lib/regex";
 import { useTranslation } from "next-i18next";
 import { Controller, useFormContext } from "react-hook-form";
 import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
-import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -37,7 +35,7 @@ export const mainStepSchema = () =>
       .string()
       .test(
         "size-check",
-        "Description length must be less than 2048 characters. If it's longer, please use the 'external link' field to reference it.",
+        "Description length must be less than 2048 characters. If it's longer, please use the 'project data' field to reference it.",
         value => {
           if (value) return new Blob([value]).size < 2048;
           else return true;
@@ -98,7 +96,10 @@ export default function MainStep() {
             onChange={onChange}
             onBlur={onBlur}
             placeholder={"projectsite.com/info"}
-            label={t("External link")}
+            label={t("Project data")}
+            helpText={t(
+              "Add here a link to the repository or page where the projects files or description are contained. The link will be visible in the project page."
+            )}
             error={errors.main?.link?.message}
             requiredIndicator={isRequired(mainStepSchema(), "link")}
           />

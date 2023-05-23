@@ -43,7 +43,7 @@ const ContributionsTable = ({ id, title }: { id: string; title?: string }) => {
                   {/* @ts-ignore */}
                   <BrDisplayUser user={proposal.node.primaryIntents![0].provider!} />
                 </td>
-                <td>{proposal.node.note}</td>
+                <td className="whitespace-normal">{proposal.node.note}</td>
                 <td>
                   <p className="mr-1">{dayjs(proposal.node.created).fromNow()}</p>
                   <p className="text-xs">{dayjs(proposal.node.created).format("HH:mm")}</p>

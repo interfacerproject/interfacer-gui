@@ -3,7 +3,7 @@ import { Spinner } from "@bbtgnn/polaris-interfacer";
 import { useAuth } from "hooks/useAuth";
 import { EconomicResource, GetProjectLayoutQuery, GetProjectLayoutQueryVariables } from "lib/types";
 import { useRouter } from "next/router";
-import { createContext, Dispatch, SetStateAction, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 
 //
 interface ProjectContextValue {
@@ -80,6 +80,7 @@ export const GET_PROJECT_LAYOUT = gql`
         hasUnit {
           id
         }
+        hasNumericalValue
       }
       conformsTo {
         id
@@ -107,6 +108,10 @@ export const GET_PROJECT_LAYOUT = gql`
         name
         mimeType
         bin
+        date
+        description
+        extension
+        size
       }
     }
   }

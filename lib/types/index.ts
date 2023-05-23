@@ -673,6 +673,7 @@ export type EconomicResourceUpdateParams = {
 };
 
 export enum EmailTemplate {
+  InterfacerBeta = "INTERFACER_BETA",
   InterfacerDebugging = "INTERFACER_DEBUGGING",
   InterfacerDeployment = "INTERFACER_DEPLOYMENT",
   InterfacerStaging = "INTERFACER_STAGING",
@@ -3623,6 +3624,7 @@ export type SearchProjectsQueryVariables = Exact<{
   IDs?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
   name?: InputMaybe<Scalars["String"]>;
   conformsTo?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
+  primaryAccountable?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
 }>;
 
 export type SearchProjectsQuery = {
@@ -3781,8 +3783,30 @@ export type GetProjectLayoutQuery = {
     onhandQuantity: { __typename?: "Measure"; hasUnit?: { __typename?: "Unit"; id: string } | null };
     conformsTo: { __typename?: "ResourceSpecification"; id: string; name: string };
     primaryAccountable:
-      | { __typename?: "Organization"; id: string; name: string }
-      | { __typename?: "Person"; id: string; name: string };
+      | {
+          __typename?: "Organization";
+          id: string;
+          name: string;
+          primaryLocation?: {
+            __typename?: "SpatialThing";
+            name: string;
+            mappableAddress?: string | null;
+            lat?: any | null;
+            long?: any | null;
+          } | null;
+        }
+      | {
+          __typename?: "Person";
+          id: string;
+          name: string;
+          primaryLocation?: {
+            __typename?: "SpatialThing";
+            name: string;
+            mappableAddress?: string | null;
+            lat?: any | null;
+            long?: any | null;
+          } | null;
+        };
     currentLocation?: {
       __typename?: "SpatialThing";
       id: string;
@@ -3791,7 +3815,17 @@ export type GetProjectLayoutQuery = {
       lat?: any | null;
       long?: any | null;
     } | null;
-    images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
+    images?: Array<{
+      __typename?: "File";
+      hash: any;
+      name: string;
+      mimeType: string;
+      bin?: any | null;
+      date: any;
+      description: string;
+      extension: string;
+      size: number;
+    }> | null;
   } | null;
 };
 
@@ -4396,6 +4430,7 @@ export type QueryProposalQuery = {
         name: string;
         repo?: string | null;
         metadata?: any | null;
+        images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
         primaryAccountable:
           | { __typename?: "Organization"; id: string; name: string }
           | { __typename?: "Person"; id: string; name: string };
@@ -4698,6 +4733,19 @@ export type VerifyEmailMutationVariables = Exact<{
 }>;
 
 export type VerifyEmailMutation = { __typename?: "RootMutationType"; personVerifyEmailVerification: boolean };
+
+export type EditImagesMutationVariables = Exact<{
+  id: Scalars["ID"];
+  images?: InputMaybe<Array<IFile> | IFile>;
+}>;
+
+export type EditImagesMutation = {
+  __typename?: "RootMutationType";
+  updateEconomicResource: {
+    __typename?: "EconomicResourceResponse";
+    economicResource: { __typename?: "EconomicResource"; id: string };
+  };
+};
 
 export type EditMainMutationVariables = Exact<{
   id: Scalars["ID"];
