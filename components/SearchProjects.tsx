@@ -17,6 +17,7 @@ export interface Props {
   label?: string;
   placeholder?: string;
   conformsTo?: Array<ProjectType>;
+  ownerId?: string;
   id?: string;
 }
 
@@ -49,6 +50,7 @@ export default function SearchProjects(props: Props) {
 
   let baseVariables: SearchProjectsQueryVariables = {
     last: 5,
+    primaryAccountable: props.ownerId,
     ...(conformsTo.length && projectTypes && { conformsTo: conformsTo.map(type => projectTypes[type]) }),
   };
 
@@ -139,8 +141,11 @@ export default function SearchProjects(props: Props) {
 //
 
 export const SEARCH_PROJECTS = gql`
-  query SearchProjects($last: Int, $IDs: [ID!], $name: String, $conformsTo: [ID!]) {
-    economicResources(last: $last, filter: { id: $IDs, name: $name, conformsTo: $conformsTo }) {
+  query SearchProjects($last: Int, $IDs: [ID!], $name: String, $conformsTo: [ID!], $primaryAccountable: [ID!]) {
+    economicResources(
+      last: $last
+      filter: { id: $IDs, name: $name, conformsTo: $conformsTo, primaryAccountable: $primaryAccountable }
+    ) {
       edges {
         node {
           id

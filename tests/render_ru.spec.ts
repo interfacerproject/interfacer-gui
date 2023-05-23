@@ -93,7 +93,7 @@ test.describe("when user is logged in", () => {
 
         const urls = await page.$$eval("a", elements =>
           elements
-            .filter(el => !el.innerHTML.includes("Go to source"))
+            .filter(el => !el.innerHTML.includes("External data"))
             .map(el => ({ url: el.href, fromUrl: window.location.href, text: el.innerHTML }))
         );
         expect(urls.length, `for url ${url}`).toBeGreaterThan(0);
