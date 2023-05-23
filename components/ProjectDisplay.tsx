@@ -44,7 +44,7 @@ export default function ProjectDisplay(props: Props) {
             <Text as="p" variant="bodyMd" fontWeight="bold">
               {p.name}
             </Text>
-            {!isProductDesign && <ProjectTypeChip project={p} introduction />}
+            {!isProductDesign && <ProjectTypeChip project={p} introduction link={false} />}
           </div>
           <div className="font-mono">
             <Text as="p" variant="bodyMd">
