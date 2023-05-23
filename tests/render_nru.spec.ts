@@ -1,10 +1,7 @@
-import { Page, expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { test } from "./fixtures/test";
 
 test.describe("When user is not logged in", () => {
-  let page: Page;
-  test.beforeEach(async ({ context }) => {
-    page = await context.newPage();
-  });
   test("Should see /", async ({ page }) => {
     await page.goto("");
     await expect(page.getByRole("heading", { name: "Empowering the Open Source Hardware Community" })).toBeVisible();
@@ -17,8 +14,23 @@ test.describe("When user is not logged in", () => {
     expect(page.getByText("Login")).toBeTruthy();
   });
 
-  test("Should see /sign_up", async ({ page }) => {
+  test("Should see /sign_up", async ({ page, envVariables }) => {
     await page.goto("/sign_up");
     await expect(page.getByText("Sign up")).toBeVisible();
+  });
+
+  test("Should see /project/:id", async ({ page, envVariables }) => {
+    await page.goto(`/project/${envVariables.projectId}`);
+    await expect(page.getByText("Project")).toBeTruthy();
+  });
+
+  test("Should see /resource/:id", async ({ page, envVariables }) => {
+    await page.goto(`/resource/${envVariables.resourceId}`);
+    await expect(page.getByText("Resource")).toBeVisible();
+  });
+
+  test("Should see /resources", async ({ page }) => {
+    await page.goto("/resources");
+    await expect(page.getByText("Resources")).toBeTruthy();
   });
 });
