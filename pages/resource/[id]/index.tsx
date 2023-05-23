@@ -21,6 +21,7 @@ import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLa
 import Layout from "components/layout/Layout";
 import ProjectHeader from "components/partials/project/[id]/ProjectHeader";
 import ResourceSidebar from "components/partials/resource/ResourceSidebar";
+import findProjectImages from "lib/findProjectImages";
 import type { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
@@ -39,12 +40,7 @@ const Resource: NextPageWithLayout = () => {
   }
 
   useEffect(() => {
-    const singleImage = typeof project?.metadata?.image === "string";
-    const metadataImage = singleImage ? [project?.metadata?.image] : project?.metadata?.image || [];
-    const _images =
-      project && project.images!.length > 0
-        ? project?.images?.filter(image => !!image.bin).map(image => `data:${image.mimeType};base64,${image.bin}`)
-        : metadataImage;
+    const _images = findProjectImages(project);
     setImages(_images);
   }, [project]);
 

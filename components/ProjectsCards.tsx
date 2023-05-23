@@ -15,18 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useQuery } from "@apollo/client";
-import Link from "next/link";
+import { DraftProject } from "lib/db";
 import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 import CardsGroup from "./CardsGroup";
 import DraftCard from "./DraftCard";
 import EmptyState from "./EmptyState";
+import LoshCard from "./LoshCard";
 import ProjectCard from "./ProjectCard";
-import ProjectDisplay from "./ProjectDisplay";
-import { CreateProjectValues } from "./partials/create/project/CreateProjectForm";
-import { ProjectType, projectTypes } from "./types";
-import { DraftProject } from "lib/db";
 
 export enum CardType {
   PROJECT = "project",
@@ -54,7 +51,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     hidePagination = false,
     hideFilters = false,
     type = CardType.PROJECT,
-    tiny = false,
+    // tiny = false,
     header = "Latest projects",
     drafts,
     emptyState = <EmptyState heading="No projects found" />,
@@ -75,9 +72,20 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
 
   if (showEmptyState || !projects || !projects.length) return emptyState;
 
+  const distinguishProjects = (project: EconomicResource) => {
+    const isLosh = project.primaryAccountable.id === process.env.NEXT_PUBLIC_LOSH_ID;
+    return !isLosh ? (
+      <ProjectCard project={project} key={project.id} />
+    ) : (
+      <LoshCard project={project} key={project.id} />
+    );
+  };
+
+  if (type === CardType.DRAFT && !drafts) return <EmptyState heading="No drafts found" />;
+
   return (
     <>
-      {!tiny && !(type === CardType.DRAFT) && (
+      {type === CardType.PROJECT && (
         <CardsGroup
           onLoadMore={loadMore}
           nextPage={!!getHasNextPage}
@@ -87,12 +95,10 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
           length={projects?.length || 0}
           hideFilters={hideFilters}
         >
-          {projects?.map(({ node }: { node: EconomicResource }) => (
-            <ProjectCard project={node} key={node.id} />
-          ))}
+          {projects?.map(({ node }: { node: EconomicResource }) => distinguishProjects(node))}
         </CardsGroup>
       )}
-      {tiny &&
+      {/* {tiny &&
         projects?.map(({ node }: { node: EconomicResource }) => (
           <div className="py-2 hover:bg-base-300" key={node.id}>
             <Link href={`/project/${node.id}`}>
@@ -101,7 +107,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
               </a>
             </Link>
           </div>
-        ))}
+        ))} */}
       {type === CardType.DRAFT && drafts && (
         <CardsGroup
           onLoadMore={loadMore}
@@ -113,13 +119,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
           hideFilters
         >
           {drafts?.map(d => (
-            <div className="py-2 hover:bg-base-300" key={d.project.main?.title}>
-              <Link href={`/create/project/${projectTypes}?draft_name=form-create-product-${d.project.main?.title}`}>
-                <a>
-                  <DraftCard project={d.project} projectType={d.type} id={d.id} />
-                </a>
-              </Link>
-            </div>
+            <DraftCard project={d.project} projectType={d.type} id={d.id} key={d.id} />
           ))}
         </CardsGroup>
       )}

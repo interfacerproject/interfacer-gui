@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { NextPage } from "next";
-import ResourceTable from "../components/ResourceTable";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import useFilters from "../hooks/useFilters";
 import devLog from "../lib/devLog";
+import ProjectsCards from "components/ProjectsCards";
 
 const Resources: NextPage = () => {
   const { resourceFilter } = useFilters();
@@ -31,7 +31,7 @@ const Resources: NextPage = () => {
         <h1>{t("Resources")}</h1>
         <p>{t("Use this page to generate digital product passports of resources")}</p>
       </div>
-      <ResourceTable filter={resourceFilter} />
+      <ProjectsCards filter={resourceFilter} />
     </div>
   );
 };
