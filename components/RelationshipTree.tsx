@@ -16,8 +16,8 @@
 
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
-import PTitleCounter from "./polaris/PTitleCounter";
 import ProjectsCards from "./ProjectsCards";
+import PTitleCounter from "./polaris/PTitleCounter";
 
 const RelationshipTree = ({ project }: { project: Partial<EconomicResource> | undefined }) => {
   const { t } = useTranslation("update");
@@ -28,7 +28,7 @@ const RelationshipTree = ({ project }: { project: Partial<EconomicResource> | un
   };
   return (
     <div className="w-full mt-2" id="relationshipTree">
-      <PTitleCounter title={t("Relations")} length={relatedProjects?.length ?? 0} />
+      <PTitleCounter title={t("Included")} length={relatedProjects?.length ?? 0} />
       {project && relatedProjects && <ProjectsCards filter={proposalFilter} tiny />}
     </div>
   );

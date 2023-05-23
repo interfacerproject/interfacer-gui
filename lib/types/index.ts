@@ -3624,6 +3624,7 @@ export type SearchProjectsQueryVariables = Exact<{
   IDs?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
   name?: InputMaybe<Scalars["String"]>;
   conformsTo?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
+  primaryAccountable?: InputMaybe<Array<Scalars["ID"]> | Scalars["ID"]>;
 }>;
 
 export type SearchProjectsQuery = {
@@ -4429,6 +4430,7 @@ export type QueryProposalQuery = {
         name: string;
         repo?: string | null;
         metadata?: any | null;
+        images?: Array<{ __typename?: "File"; hash: any; name: string; mimeType: string; bin?: any | null }> | null;
         primaryAccountable:
           | { __typename?: "Organization"; id: string; name: string }
           | { __typename?: "Person"; id: string; name: string };

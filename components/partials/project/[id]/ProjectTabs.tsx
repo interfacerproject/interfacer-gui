@@ -40,7 +40,7 @@ const ProjectTabs = () => {
             content: (
               <span className="flex items-center gap-2">
                 <ParentChild />
-                {t("Relationship tree")}
+                {t("Included")}
               </span>
             ),
             accessibilityLabel: t("Relationship tree"),

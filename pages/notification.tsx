@@ -120,7 +120,7 @@ const Notification = () => {
   const groupsLabels: Record<MessageGroup, string> = {
     [MessageGroup.CONTRIBUTION_REQUESTS]: t("Contribution Requests"),
     [MessageGroup.CONTRIBUTION_RESPONSES]: t("Contribution Responses"),
-    [MessageGroup.CITATIONS]: t("Citations"),
+    [MessageGroup.CITATIONS]: t("Included"),
     [MessageGroup.ADDED_AS_CONTRIBUTOR]: t("Added as contributor"),
   };
 

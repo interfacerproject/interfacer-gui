@@ -18,19 +18,28 @@ import { useTranslation } from "next-i18next";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import { Banner, Button, Card, Spinner, Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import { Banner, Button, Card, Spinner, Stack, Text, TextField } from "@bbtgnn/polaris-interfacer";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import { ChildrenProp as CP } from "components/brickroom/types";
 
 // Other
+import { MagicWand } from "@carbon/icons-react";
+import ResourceDetailsCard from "components/ResourceDetailsCard";
+import TableOfContents from "components/TableOfContents";
+import { useProject } from "components/layout/FetchProjectLayout";
+import PDivider from "components/polaris/PDivider";
+import PLabel from "components/polaris/PLabel";
+import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
-import React from "react";
-import useYupLocaleObject from "hooks/useYupLocaleObject";
+import { useRouter } from "next/router";
+import React, { ReactNode } from "react";
+import SelectProjectForContribution from "../project/steps/SelectProjectForContribution";
 
 //
 
@@ -41,20 +50,33 @@ export interface Props extends CP {
 }
 
 export interface FormValues {
-  contributionRepositoryID: string; // also: url
+  name: string;
+  project: string;
   description: string;
 }
 
 //
 
-export default function CreateContributionForm(props: Props) {
+// export default function CreateContributionForm(props: Props) {
+const CreateContributionForm = (props: Props) => {
   const { onSubmit, error, setError } = props;
-  const { t } = useTranslation("createProjectProps");
+  const { t } = useTranslation();
+
+  const sections = ["Title", t("Project to be included"), t("Description of the contribution")];
+
+  function ProposeContributionNav() {
+    const links = sections.map(section => ({
+      label: <span className="capitalize">{section}</span>,
+      href: `#${section.replace(" ", "-")}`,
+    }));
+    return <TableOfContents title={t("Make a contribution")} links={links} />;
+  }
 
   //
 
   const defaultValues: FormValues = {
-    contributionRepositoryID: "",
+    name: "",
+    project: "",
     description: "",
   };
 
@@ -65,7 +87,8 @@ export default function CreateContributionForm(props: Props) {
   const schema = (() =>
     yup
       .object({
-        contributionRepositoryID: yup.string().required(),
+        name: yup.string().required(),
+        project: yup.string().required(),
         description: yup.string().required(),
       })
       .required())();
@@ -77,16 +100,36 @@ export default function CreateContributionForm(props: Props) {
   });
 
   const { formState, handleSubmit, register, control, setValue, watch } = form;
-  const { isValid, errors, isSubmitting } = formState;
+  const { errors, isSubmitting, isValid } = formState;
+
+  const { project: resource } = useProject();
+
+  const Heading = () => (
+    <>
+      <Stack vertical spacing="extraLoose">
+        <Stack vertical spacing="tight">
+          <Text as="h1" variant="headingXl">
+            {t("Propose a contribution")}
+          </Text>
+        </Stack>
+        <Stack vertical spacing="extraTight">
+          <PLabel label={t("You are about to propose to include a project into:")} />
+          <ResourceDetailsCard resource={resource} />
+        </Stack>
+      </Stack>
+    </>
+  );
 
   //
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+  const Fields = () => (
+    <>
       <Stack vertical spacing="extraLoose">
+        <PDivider id={sections[0]} />
+        <PTitleSubtitle title={t(sections[0])} />
         <Controller
           control={control}
-          name="contributionRepositoryID"
+          name="name"
           render={({ field: { onChange, onBlur, name, value } }) => (
             <TextField
               type="text"
@@ -96,25 +139,37 @@ export default function CreateContributionForm(props: Props) {
               autoComplete="off"
               onChange={onChange}
               onBlur={onBlur}
-              label={t("Contribution repository link or Interfacer ID")}
-              placeholder={t("github.com/my-repo")}
-              helpText={t("Reference to the resource's repository or Interfacer ID of the resource")}
+              label={t("Contribution title")}
+              placeholder={t("My awesome contribution")}
+              helpText={t("A good title helps the project owner evaluate your proposal")}
               error={errors[name]?.message}
               requiredIndicator={isRequired(schema, name)}
             />
           )}
         />
 
+        <PDivider id={sections[1]} />
+        <PTitleSubtitle
+          title={t(sections[1])}
+          subtitle={t("Select the project you propose to include in the original project")}
+        />
+        <SelectProjectForContribution />
+
+        <PDivider id={sections[2]} />
+        <PTitleSubtitle
+          title={t(sections[2])}
+          subtitle={t(
+            "Describe what your contribution adds to the original project,  and why you are proposing it. This description will be readable in the history of the project you are contributing to."
+          )}
+        />
         <BrMdEditor
           id="description"
           name="description"
           editorClass="h-60"
           value={watch("description")}
-          label={t("General information")}
           helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t(
             "Type up to 2048 characters"
           )}.`}
-          subtitle={t("Short description to be displayed on the project page")}
           onChange={({ text }) => {
             setValue("description", text, formSetValueOptions);
           }}
@@ -143,11 +198,61 @@ export default function CreateContributionForm(props: Props) {
             </div>
           </Card>
         )}
-
-        <Button size="large" primary fullWidth submit id="submit">
-          {t("Send contribution")}
-        </Button>
       </Stack>
-    </form>
+    </>
   );
-}
+
+  //
+
+  const SubmitBar = () => (
+    <>
+      <div className="bg-yellow-100 border-t-1 border-t-border-warning-subdued p-4 flex justify-end items-center space-x-6 sticky bottom-0 z-20">
+        <div className="space-x-2">
+          <Button primary submit disabled={!isValid} icon={<MagicWand />}>
+            {t("Propose contribution")}
+          </Button>
+        </div>
+      </div>
+    </>
+  );
+
+  //
+
+  const Layout = ({ children }: { children: ReactNode }) => {
+    const router = useRouter();
+    const { t } = useTranslation("common");
+    return (
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="p-4 text-text-primary">
+            <Button
+              onClick={() => {
+                router.back();
+              }}
+              plain
+              monochrome
+            >
+              {t("← Discard and go back")}
+            </Button>
+          </div>
+          <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
+            <div className="sticky top-24">
+              <ProposeContributionNav />
+            </div>
+            <div className="grow max-w-xl px-6 pb-24 pt-0">{children}</div>
+          </div>
+          <SubmitBar />
+        </form>
+      </FormProvider>
+    );
+  };
+
+  return (
+    <Layout>
+      <Heading />
+      <Fields />
+    </Layout>
+  );
+};
+
+export default CreateContributionForm;
