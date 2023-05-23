@@ -163,7 +163,7 @@ function StatsDisplay() {
 
   const stats = [
     { stat: contributorsNum, label: t("contributor", { count: contributorsNum }) },
-    { stat: relationsNum, label: t("relation", { count: relationsNum }) },
+    { stat: relationsNum, label: t("included", { count: relationsNum }) },
   ];
 
   return (
