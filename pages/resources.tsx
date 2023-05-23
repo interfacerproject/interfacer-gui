@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import useFilters from "../hooks/useFilters";
 import devLog from "../lib/devLog";
 import ProjectsCards from "components/ProjectsCards";
+import { NextPageWithLayout } from "./_app";
 
-const Resources: NextPage = () => {
+const Resources: NextPageWithLayout = () => {
   const { resourceFilter } = useFilters();
   devLog("Resources", resourceFilter);
   const { t } = useTranslation("resourcesProps");
@@ -43,5 +43,7 @@ export async function getStaticProps({ locale }: any) {
     },
   };
 }
+
+Resources.publicPage = true;
 
 export default Resources;
