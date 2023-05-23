@@ -82,6 +82,8 @@ export async function getStaticProps({ locale }: any) {
   };
 }
 
+Resource.publicPage = true;
+
 Resource.getLayout = function getLayout(page: ReactElement) {
   return (
     <Layout>

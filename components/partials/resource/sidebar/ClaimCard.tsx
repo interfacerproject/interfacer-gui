@@ -2,6 +2,7 @@ import { Button, Card, Icon, Stack } from "@bbtgnn/polaris-interfacer";
 import { LinkMinor, PlusMinor } from "@shopify/polaris-icons";
 import { useProject } from "components/layout/FetchProjectLayout";
 import WatchButton from "components/WatchButton";
+import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import { useTranslation } from "next-i18next";
 import router from "next/router";
@@ -11,6 +12,7 @@ const ClaimCard = () => {
   const { project } = useProject();
   const { t } = useTranslation("common");
   const { getItem, setItem } = useStorage();
+  const { user } = useAuth();
   const [inList, setInList] = useState<boolean>(false);
   const handleClaim = () => router.push(`/resource/${project.id}/claim`);
   const handleCollect = () => {
@@ -28,18 +30,21 @@ const ClaimCard = () => {
   return (
     <Card sectioned>
       <Stack vertical>
-        <Button primary size="large" fullWidth onClick={handleClaim}>
-          {t("Claim")}
-        </Button>
+        {user && (
+          <Button primary size="large" fullWidth onClick={handleClaim}>
+            {t("Claim")}
+          </Button>
+        )}
         {project.repo && (
           <Button url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
             {t("Project data")}
           </Button>
         )}
+
         <Button id="addToList" size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>
           {inList ? t("Remove from list") : t("Add to list")}
         </Button>
-        <WatchButton id={project.id!} owner={project.primaryAccountable!.id} />
+        {user && <WatchButton id={project.id!} owner={project.primaryAccountable!.id} />}
       </Stack>
     </Card>
   );
