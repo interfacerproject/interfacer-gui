@@ -80,6 +80,7 @@ export const GET_PROJECT_LAYOUT = gql`
         hasUnit {
           id
         }
+        hasNumericalValue
       }
       conformsTo {
         id
