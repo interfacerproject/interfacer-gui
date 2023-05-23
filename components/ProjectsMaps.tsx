@@ -84,7 +84,7 @@ const ProjectsMaps = (props: { projects?: EconomicResourceEdge[]; filters?: any 
               <div className="flex flex-col gap-1">
                 {p.map((e: any, i: number) => (
                   <Link href={`/project/${e.properties.id}`} key={i}>
-                    <a className="m-1 rounded shadow border hover:shadow-primary hover:shadow-lg">
+                    <a className="m-1 p-1 rounded border hover:cursor-pointer hover:ring-primary hover:fill-primary hover:ring-2">
                       <ProjectDisplay projectId={e.properties.id} />
                     </a>
                   </Link>
