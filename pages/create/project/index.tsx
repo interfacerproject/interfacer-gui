@@ -107,7 +107,7 @@ const CreateProject: NextPageWithLayout = () => {
               <Banner
                 status="info"
                 title={t("You have some draft saved") + ":"}
-                action={{ content: t("-> to yours draft"), url: `/profile/${user?.ulid}?tab=2` }}
+                action={{ content: t("-> to your drafts"), url: `/profile/${user?.ulid}?tab=2` }}
               />
             )}
             {sections.map(s => (

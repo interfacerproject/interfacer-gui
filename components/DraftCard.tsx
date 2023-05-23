@@ -7,9 +7,9 @@ import LocationText from "./LocationText";
 import ProjectTypeChip from "./ProjectTypeChip";
 import ProjectTypeRoundIcon from "./ProjectTypeRoundIcon";
 import BrTags from "./brickroom/BrTags";
+import IfSidebarTag from "./brickroom/IfSidebarTag";
 import { CreateProjectValues } from "./partials/create/project/CreateProjectForm";
 import { ProjectType } from "./types";
-import IfSidebarTag from "./brickroom/IfSidebarTag";
 
 export interface DraftCardProps {
   project: Partial<CreateProjectValues>;
@@ -94,7 +94,7 @@ function StatsDisplay(props: { project: Partial<CreateProjectValues> }) {
 
   const stats = [
     { stat: contributorsNum || 0, label: t("contributor", { count: contributorsNum }) },
-    { stat: relationsNum || 0, label: t("relation", { count: relationsNum }) },
+    { stat: relationsNum || 0, label: t("included", { count: relationsNum }) },
   ];
 
   return (

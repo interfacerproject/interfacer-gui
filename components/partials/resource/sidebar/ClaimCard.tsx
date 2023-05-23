@@ -33,7 +33,7 @@ const ClaimCard = () => {
         </Button>
         {project.repo && (
           <Button url={project.repo} icon={<Icon source={LinkMinor} />} fullWidth size="large">
-            {t("External data")}
+            {t("Project data")}
           </Button>
         )}
         <Button id="addToList" size="large" onClick={handleCollect} fullWidth icon={<Icon source={PlusMinor} />}>

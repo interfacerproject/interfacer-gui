@@ -135,5 +135,14 @@
   "Description of the contribution": "Beschreibung des Beitrags",
   "Describe what your contribution adds to the original project,  and why you are proposing it. This description will be readable in the history of the project you are contributing to.": "Beschreiben Sie, was Ihr Beitrag zum ursprünglichen Projekt beiträgt und warum Sie ihn vorschlagen. \nDiese Beschreibung ist im Verlauf des Projekts, zu dem Sie beitragen, lesbar.",
   "Project location:": "Projektstandort:",
-  "Project by:": "Projekt von:"
+  "Project by:": "Projekt von:",
+  "createProjectProps.-> to your drafts": "-> zu Ihren Entwürfen",
+  "External data": "Externe Daten",
+  "Add here a link to the repository or page where the projects files are contained. The link will be visible in the project page.": "Fügen Sie hier einen Link zum Repository oder zur Seite hinzu, in dem die Projektdateien enthalten sind. \nDer Link wird auf der Projektseite sichtbar sein.",
+  "Project data": "Projektdaten",
+  "createProjectProps.Add the users who contributed to the project. You can also add contributors and modofy the project later.": "Fügen Sie die Benutzer hinzu, die zum Projekt beigetragen haben. \nSie können auch Mitwirkende hinzufügen und das Projekt später ändern.",
+  "{{related}} included projects": "{{related}} enthaltene Projekte",
+  "Included projects": "Enthaltene Projekte",
+  "Included": "Enthaltene",
+  "createProjectProps.Include": "Enthalten"
 }

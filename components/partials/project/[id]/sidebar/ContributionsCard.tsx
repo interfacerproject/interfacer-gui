@@ -23,6 +23,7 @@ const ContributionsCard = () => {
       variables: { id: id as string },
     }
   );
+  const url = window.location.protocol + "//" + window.location.host + router.asPath;
 
   return (
     <Card sectioned>
@@ -58,9 +59,9 @@ const ContributionsCard = () => {
           {t("All contributions")}
         </Button>
         <Text as="h2" variant="headingMd">
-          {t("Dpp Qr-Code")}
+          {t("DPP QR-Code")}
         </Text>
-        <QRCode size={128} value={project.id || ""} />
+        <QRCode size={128} value={url} />
       </Stack>
     </Card>
   );
