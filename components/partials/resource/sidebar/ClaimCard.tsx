@@ -32,7 +32,7 @@ const ClaimCard = () => {
       <Stack vertical>
         {user && (
           <Button primary size="large" fullWidth onClick={handleClaim}>
-            {t("Claim")}
+            {t("Import")}
           </Button>
         )}
         {project.repo && (
