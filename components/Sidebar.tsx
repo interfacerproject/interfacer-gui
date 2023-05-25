@@ -69,7 +69,7 @@ function Sidebar() {
       link: "/projects",
     },
     resources: {
-      text: t("Imported from LOSH"),
+      text: t("Import from LOSH"),
       link: "/resources",
       // tag: "NEW",
     },

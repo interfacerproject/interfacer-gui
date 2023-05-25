@@ -1,7 +1,6 @@
 {
   "projects": "projets",
   "home": "Accueil",
-  "Imported losh": "Importé de Losh",
   "Latest projects": "Derniers projets",
   "Report bug": "Signaler un bug",
   "Home": "Accueil",
@@ -10,7 +9,7 @@
   "My projects": "Mes projets",
   "Projects": "Projets",
   "All projects": "Tous les projets",
-  "Imported from LOSH": "Importé de LOSH",
+  "Import from LOSH": "Importé de LOSH",
   "User manual": "Manuel d'utilisation",
   "Map": "Carte",
   "Report a bug": "Signaler un bug",

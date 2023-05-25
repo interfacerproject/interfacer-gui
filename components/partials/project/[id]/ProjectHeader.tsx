@@ -9,7 +9,7 @@ const ProjectHeader = ({ isResource }: { isResource?: boolean }) => {
   const { t } = useTranslation("common");
   const crumbs = isResource
     ? [
-        { name: t("Imported from Losh"), href: `/resources` },
+        { name: t("Import from Losh"), href: `/resources` },
         { name: project.conformsTo!.name, href: `/resources?conformTo=${project.conformsTo!.id}` },
       ]
     : [

@@ -40,7 +40,7 @@ const Footer = () => {
               <NextLink href="/resources">
                 <a>
                   <Text as="p" color="subdued" variant="headingMd">
-                    {t("Imported from LOSH")}
+                    {t("Import from LOSH")}
                   </Text>
                 </a>
               </NextLink>
