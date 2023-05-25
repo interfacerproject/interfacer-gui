@@ -12,7 +12,7 @@ import RelationsStep from "../create/project/steps/RelationsStep";
 
 //
 
-export type ProjectSectionsIDs = keyof CreateProjectValues | "importDesign";
+export type ProjectSectionsIDs = keyof CreateProjectValues | "importDesign" | "included";
 
 export type ProjectSection = {
   navLabel: string;
@@ -87,8 +87,8 @@ export const projectSections: Array<ProjectSection> = [
     editPage: "edit/contributors",
   },
   {
-    navLabel: "Relations",
-    id: "relations",
+    navLabel: "Included",
+    id: "included",
     component: <RelationsStep />,
     editPage: "edit/relations",
   },
