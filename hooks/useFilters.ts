@@ -31,6 +31,11 @@ const useFilters = () => {
 
   const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
   const specs = queryProjectTypes.data?.instanceVariables.specs;
+  const coformsToIds = {
+    service: specs?.specProjectService.id,
+    product: specs?.specProjectProduct.id,
+    design: specs?.specProjectDesign.id,
+  };
   const conformsToNoDesign = specs ? [specs.specProjectService.id, specs.specProjectProduct.id] : undefined;
 
   const resourceFilter: EconomicResourceFilterParams = {
@@ -51,7 +56,16 @@ const useFilters = () => {
     primaryAccountable: primaryAccountableList,
   };
 
-  return { proposalFilter, resourceFilter, mapFilter };
+  return {
+    proposalFilter,
+    resourceFilter,
+    mapFilter,
+    serviceId: coformsToIds.service,
+    productId: coformsToIds.product,
+    designId: coformsToIds.design,
+  };
 };
+
+export type UseFiltersReturnsValue = ReturnType<typeof useFilters>;
 
 export default useFilters;

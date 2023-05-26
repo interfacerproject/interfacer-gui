@@ -26,12 +26,19 @@ import Map, {
   Source,
 } from "react-map-gl";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
-import { EconomicResourceEdge, FetchInventoryQuery, FetchInventoryQueryVariables } from "../lib/types";
+import {
+  EconomicResourceEdge,
+  EconomicResourceFilterParams,
+  FetchInventoryQuery,
+  FetchInventoryQueryVariables,
+} from "../lib/types";
 
+import { LocationHazard } from "@carbon/icons-react";
 import useFilters from "hooks/useFilters";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
+import EmptyState from "./EmptyState";
 import ProjectDisplay from "./ProjectDisplay";
 import WithFilterLayout from "./layout/WithFilterLayout";
 
@@ -51,17 +58,20 @@ function groupByCoordinates(arr: mapboxgl.MapboxGeoJSONFeature[]): mapboxgl.Mapb
   return Object.values(objGroups);
 }
 
-const ProjectsMaps = (props: { projects?: EconomicResourceEdge[]; filters?: any }) => {
+const ProjectsMaps = (props: {
+  projects?: EconomicResourceEdge[];
+  filters?: Partial<EconomicResourceFilterParams>;
+}) => {
   const { projects: givenProjects, filters } = props;
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
   const [cursor, setCursor] = useState<string>("grab");
   const [popUpsAnchors, setPopUpsAnchor] = useState<any>(null);
   const mapRef = useRef<MapRef>(null);
-
-  const { mapFilter: filter } = useFilters();
+  const { mapFilter, designId } = useFilters();
+  const filter = filters || mapFilter;
   const { data } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(FETCH_RESOURCES, {
-    variables: { last: 200, filter: filters || filter },
+    variables: { last: 200, filter: filter },
     skip: Boolean(givenProjects),
   });
 
@@ -97,7 +107,7 @@ const ProjectsMaps = (props: { projects?: EconomicResourceEdge[]; filters?: any 
       </>
     );
   };
-  const projects = givenProjects || data?.economicResources?.edges;
+  const projects = givenProjects || data?.economicResources?.edges.filter(e => e.node.conformsTo?.id !== designId);
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
   const onGrab = useCallback(() => setCursor("grabbing"), []);
@@ -174,6 +184,16 @@ const ProjectsMaps = (props: { projects?: EconomicResourceEdge[]; filters?: any 
       };
     }),
   };
+
+  if (!geoJSON.features.length)
+    return (
+      <EmptyState
+        description={"No project with location"}
+        heading="Nothing to show"
+        // @ts-ignore
+        icon={<LocationHazard size={60} />}
+      />
+    );
 
   return (
     <WithFilterLayout hideConformsTo>

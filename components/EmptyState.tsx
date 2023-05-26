@@ -7,12 +7,13 @@ import Card from "./Card";
 interface Props {
   image?: string;
   heading?: string;
+  icon?: React.ReactNode;
   description?: string;
   primaryAction?: ILink;
 }
 
 export default function EmptyState(props: Props) {
-  const { image, heading, description, primaryAction } = props;
+  const { image, heading, description, primaryAction, icon } = props;
 
   return (
     <Card>
@@ -24,7 +25,8 @@ export default function EmptyState(props: Props) {
           {!image && (
             <div className="text-text-subdued">
               {/* @ts-ignore */}
-              <Close size={60} />
+              {!icon && <Close size={60} />}
+              {icon}
             </div>
           )}
         </div>
