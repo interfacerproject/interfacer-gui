@@ -39,7 +39,6 @@
   "DPP copied!": "DPP copié !",
   "Remove from list": "Retirer de la liste",
   "Add to list": "Ajouter à la liste",
-  "External data": "Aller à la source",
   "Copy DPP": "Copie DPP",
   "Digital Product Passport": "Passeport pour produits numériques",
   "DPP": "DPP",
@@ -140,13 +139,14 @@
   "Describe what your contribution adds to the original project,  and why you are proposing it. This description will be readable in the history of the project you are contributing to.": "Décrivez ce que votre contribution ajoute au projet initial et pourquoi vous le proposez. \nCette description sera lisible dans l'historique du projet auquel vous contribuez.",
   "Project location:": "Emplacement du projet :",
   "Project by:": "Projet par :",
-  "createProjectProps.-> to your drafts": "-> à vos brouillons",
+  "-> to your drafts": "-> à vos brouillons",
   "External data": "Données externes",
   "Add here a link to the repository or page where the projects files are contained. The link will be visible in the project page.": "Ajoutez ici un lien vers le référentiel ou la page où les fichiers de projets sont contenus. \nLe lien sera visible dans la page du projet.",
   "Project data": "Données du projet",
-  "createProjectProps.Add the users who contributed to the project. You can also add contributors and modofy the project later.": "Ajoutez les utilisateurs qui ont contribué au projet. \nVous pouvez également ajouter des contributeurs et modifier le projet ultérieurement.",
+  "Add the users who contributed to the project. You can also add contributors and modofy the project later.": "Ajoutez les utilisateurs qui ont contribué au projet. \nVous pouvez également ajouter des contributeurs et modifier le projet ultérieurement.",
   "{{related}} included projects": "{{related}} projets inclus",
   "Included projects": "Projets inclus",
   "Included": "Inclus",
-  "createProjectProps.Include": "Inclure"
+  "Include": "Inclure",
+  "Interfacer ID:": "ID de l'interface :"
 }

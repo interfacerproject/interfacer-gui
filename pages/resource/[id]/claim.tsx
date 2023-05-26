@@ -177,7 +177,7 @@ const ClaimProject: NextPageWithLayout = () => {
           <div className="grow max-w-xl px-6 pb-24 pt-0">
             <Stack vertical spacing="extraLoose">
               <PTitleSubtitle
-                title={t("Claim ownership over this resource")}
+                title={t("import this resource")}
                 subtitle={t(
                   "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later."
                 )}
@@ -218,7 +218,7 @@ const ClaimProject: NextPageWithLayout = () => {
 
               {error && (
                 <Banner
-                  title={t("Error in Project Claim")}
+                  title={t("Import")}
                   status="critical"
                   onDismiss={() => {
                     setError("");
@@ -233,7 +233,7 @@ const ClaimProject: NextPageWithLayout = () => {
         <div className="sticky bottom-0 right-0 z-30 bg-background p-3 border-t-1 border-t-border-subdued">
           <div className="flex flex-row justify-end">
             <Button id="project-create-submit" submit primary disabled={!isValid}>
-              {t("Claim!")}
+              {t("Import")}
             </Button>
           </div>
         </div>

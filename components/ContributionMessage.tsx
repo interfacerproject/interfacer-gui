@@ -102,8 +102,8 @@ const ContributionMessage = ({
 
   const headlinesDict = {
     [MessageSubject.CONTRIBUTION_REQUEST]: t("wants to contribute to your"),
-    [MessageSubject.CONTRIBUTION_ACCEPTED]: "✅" + t("accepted your contribution to"),
-    [MessageSubject.CONTRIBUTION_REJECTED]: "❌" + t("rejected your contribution to"),
+    [MessageSubject.CONTRIBUTION_ACCEPTED]: "✅ " + t("accepted your contribution to"),
+    [MessageSubject.CONTRIBUTION_REJECTED]: "❌ " + t("rejected your contribution to"),
     [MessageSubject.ADDED_AS_CONTRIBUTOR]: t("added you as a contributor to"),
     [MessageSubject.PROJECT_CITED]: t("just included your"),
   };

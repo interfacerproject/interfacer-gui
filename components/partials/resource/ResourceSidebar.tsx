@@ -1,9 +1,9 @@
 import AddStar from "components/AddStar";
 import OshTool from "components/Osh";
 import { useProject } from "components/layout/FetchProjectLayout";
-import ClaimCard from "./sidebar/ClaimCard";
-import TechnicalInfoCard from "./sidebar/TechnicalInfoCard";
 import { useAuth } from "hooks/useAuth";
+import TechnicalInfoCard from "./sidebar/TechnicalInfoCard";
+import ClaimCard from "./sidebar/ClaimCard";
 
 export default function ResourceSidebar() {
   const { project } = useProject();

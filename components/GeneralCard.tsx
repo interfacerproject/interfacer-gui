@@ -1,6 +1,7 @@
 import { Text } from "@bbtgnn/polaris-interfacer";
 import classNames from "classnames";
 import { useAuth } from "hooks/useAuth";
+import findProjectImages from "lib/findProjectImages";
 import { isProjectType } from "lib/isProjectType";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -13,7 +14,6 @@ import ProjectTypeChip from "./ProjectTypeChip";
 import BrTags from "./brickroom/BrTags";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
 import { ProjectType } from "./types";
-import findProjectImages from "lib/findProjectImages";
 
 export interface GeneralCardProps {
   project: Partial<EconomicResource>;
@@ -52,7 +52,7 @@ const GeneralCard = (props: GeneralCardProps) => {
   return (
     <CardProjectContext.Provider value={{ project, setHoverTrue, setHoverFalse, baseUrl }}>
       <div className={classes}>
-        <div className="space-y-3 p-3">
+        <div className="flex flex-grow flex-col space-y-3 p-3">
           {header}
           {body}
         </div>
@@ -80,13 +80,15 @@ const CardBody = (props: { children?: React.ReactNode; baseUrl?: string }) => {
   const location = project.currentLocation?.mappableAddress;
   const isDesign = isProjectType(project.conformsTo?.name!).Design;
   return (
-    <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse}>
+    <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse} className="flex flex-col flex-grow">
       <Link href={`${baseUrl}${project.id}`}>
-        <a className="space-y-3">
-          {children}
-          <div className="space-y-1">
-            <ProjectTypeChip project={project} link={false} />
-            {location && !isDesign && <LocationText color="primary" name={location} />}
+        <a className="space-y-3 flex-grow">
+          <div className="flex flex-col h-full justify-between">
+            <div>{children}</div>
+            <div className="space-y-1">
+              {location && !isDesign && <LocationText color="primary" name={location} />}
+              <ProjectTypeChip project={project} link={false} />
+            </div>
           </div>
         </a>
       </Link>
@@ -102,10 +104,11 @@ const RemoteImage = () => {
 
 const ProjectTitleAndStats = () => {
   const { project } = useCardProject();
+  const title = project.name!.length > 55 ? project.name?.slice(0, 55) + "..." : project.name;
   return (
     <div>
-      <Text variant="headingLg" as="h4">
-        {project.name}
+      <Text variant="headingLg" as="h4" breakWord={true}>
+        {title}
       </Text>
       <StatsDisplay />
     </div>

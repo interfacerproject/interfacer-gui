@@ -42,7 +42,7 @@ export default function LoshCard(props: ProjectCardProps) {
           </div>
           <div className="w-fit">
             <Button primary size="slim" onClick={() => router.push(`/resource/${project.id}/claim`)}>
-              {t("Claim")}
+              {t("Import")}
             </Button>
           </div>
         </div>

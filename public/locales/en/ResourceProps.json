@@ -1,15 +1,13 @@
 {
   "add to list +": "add to list +",
   "by": "by",
-  "Claim ownership": "Claim ownership",
   "ID: {{id}}": "ID: {{id}}",
   "Losh project": "Losh project",
   "Owner": "Owner",
   "This is a {{type}}": "This is a {{type}}",
   "This is a &nbsp; {{type}}": "This is a &nbsp; {{type}}",
-  "CLAIM OWNERSHIP": "Claim ownership",
   "Version": "Version",
-  "claim your ownership over this project": "claim your ownership over this project",
+  "import this project": "import this project",
   "Open-source, 3D Printing, Medical use": "Open-source, 3D Printing, Medical use",
   "Contributors": "Contributors",
   "Type to search for a user": "Type to search for a user",
@@ -18,7 +16,6 @@
   "The name of the place where the project is stored": "The name of the place where the project is stored",
   "Select the address": "Select the address",
   "Hamburg": "E.g. Hamburg",
-  "Error in Project Claim": "Error in Project Claim",
-  "Claim Ownership": "Claim ownership",
+  "Import": "Import",
   "remove from list -": "remove from list -"
 }
