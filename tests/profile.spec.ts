@@ -29,7 +29,7 @@ test.describe("When user visit the profile page", () => {
   test("Click to DID Explorer button should redirect to the explorer", async ({ page }) => {
     const authId = "0634YMEGWHNGCVVBKETRXJQCWM"; //process.env.auth_id
     await page.goto(`/profile/${authId}`);
-    await page.click("text=DID Explorer");
+    await page.getByRole("button", { name: "DID Explorer" }).click();
     await expect(page.url()).toContain("https://explorer.did.dyne.org/");
   });
 });
