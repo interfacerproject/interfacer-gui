@@ -224,13 +224,15 @@ const random = {
   randomCity,
 };
 
+export type EnvVariables = typeof envVariables;
+
 export const test = baseTest.extend<{
   interceptGQL: typeof interceptGQL;
   authVariables: typeof storageObject;
   login: typeof login;
   logout: typeof logout;
   random: typeof random;
-  envVariables: typeof envVariables;
+  envVariables: EnvVariables;
 }>({
   interceptGQL: async ({ browser }, use) => {
     await use(interceptGQL);
