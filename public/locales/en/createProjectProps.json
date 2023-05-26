@@ -115,7 +115,11 @@
   "Services": "Services",
   "Offer your expertise, training courses, or equipment rentals on our platform, supporting the development and collaboration of open source hardware projects in the community.": "Offer your expertise, training courses, or equipment rentals on our platform, supporting the development and collaboration of open source hardware projects in the community.",
   "Submit a new project": "Submit a new project",
+  "Add the users who contributed to the project. You can also add contributors and modofy the project later.": "Add the users who contributed to the project. You can also add contributors and modofy the project later.",
   "Submit your new open source hardware project and ensure that all relevant information is included. This information will be used to identify your project and provide context to users who may be interested in it.": "Submit your new open source hardware project and ensure that all relevant information is included. This information will be used to identify your project and provide context to users who may be interested in it.",
   "Read the User Guide": "Read the User Guide",
-  "Need help? Read the User Guide to get started.": "Need help? Read the User Guide to get started."
+  "Need help? Read the User Guide to get started.": "Need help? Read the User Guide to get started.",
+  "Project data": "Project data",
+  "Add here a link to the repository or page where the projects files or description are contained. The link will be visible in the project page.": "Add here a link to the repository or page where the projects files or description are contained. The link will be visible in the project page.",
+  "Save Draft": "Save draft"
 }

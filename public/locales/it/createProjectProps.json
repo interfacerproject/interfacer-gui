@@ -63,7 +63,7 @@
   "How to start with your OSH Repository in 10 Steps": "Come iniziare con il tuo archivio OSH in 10 passaggi",
   "Select repo type": "Seleziona il tipo di repository",
   "We currently support only GitHub and GitLab": "Al momento supportiamo solo GitHub e GitLab",
-  "Repo URL": "URL del deposito",
+  "Repo URL": "URL del repository",
   "Please include the protocol (https://...) in the URL": "Si prega di includere il protocollo (https://...) nell'URL",
   "GitLab host": "Host GitLab",
   "Repo ID": "ID deposito",
@@ -94,5 +94,11 @@
   "Services": "Servizi",
   "Add contributors": "Aggiungi contributori",
   "Search for a user": "Cerca un utente",
-  "Search by username": "Cerca per username"
+  "Search by username": "Cerca per username",
+  "Included": "Incluso",
+  "Project data": "Dati del progetto",
+  "Add the users who contributed to the project. You can also add contributors and modofy the project later.": "Aggiungi gli utenti che hanno contribuito al progetto. \nPuoi anche aggiungere contributori e modificare il progetto in un secondo momento.",
+  "Add here a link to the repository or page where the projects files or description are contained. The link will be visible in the project page.": "Aggiungi qui un collegamento al repository o alla pagina in cui sono contenuti i file o la descrizione del progetto. \nIl link sarà visibile nella pagina del progetto.",
+  "Add new license": "Aggiungi nuova licenza",
+  "Click here to upload or Drag and drop": "Fare clic qui per caricare o trascinare e rilasciare"
 }

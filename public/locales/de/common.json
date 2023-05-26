@@ -139,10 +139,10 @@
   "External data": "Externe Daten",
   "Add here a link to the repository or page where the projects files are contained. The link will be visible in the project page.": "Fügen Sie hier einen Link zum Repository oder zur Seite hinzu, in dem die Projektdateien enthalten sind. \nDer Link wird auf der Projektseite sichtbar sein.",
   "Project data": "Projektdaten",
-  "Add the users who contributed to the project. You can also add contributors and modofy the project later.": "Fügen Sie die Benutzer hinzu, die zum Projekt beigetragen haben. \nSie können auch Mitwirkende hinzufügen und das Projekt später ändern.",
   "{{related}} included projects": "{{related}} enthaltene Projekte",
   "Included projects": "Enthaltene Projekte",
   "Included": "Enthaltene",
-  "Include": "Enthalten",
-  "Interfacer ID:": "Schnittstellen-ID:"
+  "Interfacer ID:": "Interfacer-ID:",
+  "Save Draft": "Entwurf speichern",
+  "Save": "Speichern"
 }

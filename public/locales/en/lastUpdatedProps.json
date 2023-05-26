@@ -4,7 +4,7 @@
   "Load more": "Load more...",
   "It looks like you haven't created an project yet&#46; Proceed by pressing the button below to create a new one": "It looks like you have no projects yet.",
   "Project": "Project",
-  "Create a new project": "Create a new projects",
+  "Create a new project": "Create a new project",
   "Create project": "Create project",
   "Report a bug": "Report a bug",
   "Tags": "Tags",
@@ -20,5 +20,6 @@
   "Included or cited projects": "Related projects",
   "Project Type": "Project type",
   "Projects": "Projects",
+  "Filter by": "Filter by",
   "Filter by": "Filter by"
 }

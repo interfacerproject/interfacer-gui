@@ -43,7 +43,7 @@ export default function Projects() {
       <div className="mb-6 w-96">
         <h1>{t("Latest projects")}</h1>
         <p className="my-2">{t("Most recently updated projects")}</p>
-        <NewProjectButton />
+        <NewProjectButton text={t("Create a new project")} />
         <Link href="https://github.com/dyne/interfacer-gui/issues/new">
           <a target="_blank" className="ml-2 normal-case btn btn-accent btn-outline btn-md">
             {t("Report a bug")}

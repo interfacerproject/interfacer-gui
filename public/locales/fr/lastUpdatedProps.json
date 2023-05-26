@@ -3,9 +3,8 @@
   "Most recently updated projects": "Les actifs les plus récemment mis à jour",
   "Load more": "Chargez plus",
   "It looks like you haven't created an project yet&#46; Proceed by pressing the button below to create a new one": "Il semble que vous n'ayez pas encore créé d'actif&#46 ; Procédez en cliquant sur le bouton ci-dessous pour en créer un nouveau.",
-  "Project": "Actif",
-  "Create a new project": "Créer un nouvel actif",
-  "Create project": "Créer un actif",
+  "Project": "Projet",
+  "Create project": "Créer un projet",
   "Tags": "Tags",
   "reset": "réinitialiser",
   "apply": "appliquer",
@@ -18,5 +17,7 @@
   "filters": "filtres",
   "Type": "Type",
   "Included or cited projects": "Actifs inclus ou cités",
-  "Project Type": "Type d'actif"
+  "Project Type": "Type d'actif",
+  "Create a new project": "Créer un nouveau projet",
+  "Filter by": "Filtrer par"
 }

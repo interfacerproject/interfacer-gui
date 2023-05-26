@@ -112,8 +112,14 @@
   "Offer your expertise, training courses, or equipment rentals on our platform, supporting the development and collaboration of open source hardware projects in the community.": "Bieten Sie Ihr Fachwissen, Schulungen oder Mietgeräte auf unserer Plattform an und unterstützen Sie so die Entwicklung und Zusammenarbeit von Open-Source-Hardwareprojekten in der Community.",
   "Submit a new project": "Reichen Sie ein neues Projekt ein",
   "Need help? Read the User Guide to get started.": "Brauchen Sie Hilfe? Lesen Sie das Benutzerhandbuch, um loszulegen.",
+  "Add the users who contributed to the project. You can also add contributors and modofy the project later.": "Fügen Sie die Benutzer hinzu, die zum Projekt beigetragen haben. \nSie können auch Mitwirkende hinzufügen und das Projekt später ändern.",
   "Submit your new open source hardware project and ensure that all relevant information is included. This information will be used to identify your project and provide context to users who may be interested in it.": "Reichen Sie Ihr neues Open-Source-Hardwareprojekt ein und stellen Sie sicher, dass alle relevanten Informationen enthalten sind. \nDiese Informationen werden verwendet, um Ihr Projekt zu identifizieren und Benutzern, die daran interessiert sein könnten, einen Kontext bereitzustellen.",
   "Add contributors": "Mitwirkende hinzufügen",
   "Search for a user": "Suchen Sie nach einem Benutzer",
-  "Search by username": "Suche nach Benutzernamen"
+  "Search by username": "Suche nach Benutzernamen",
+  "Project data": "Projektdaten",
+  "Include": "Beifügen",
+  "Add here a link to the repository or page where the projects files or description are contained. The link will be visible in the project page.": "Fügen Sie hier einen Link zum Repository oder zur Seite hinzu, wo die Projektdateien oder die Beschreibung enthalten sind. \nDer Link wird auf der Projektseite sichtbar sein.",
+  "Add new license": "Neue Lizenz hinzufügen",
+  "Click here to upload or Drag and drop": "Klicken Sie hier zum Hochladen oder per Drag & Drop"
 }

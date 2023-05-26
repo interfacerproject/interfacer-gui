@@ -142,11 +142,10 @@
   "-> to your drafts": "-> alle tue bozze",
   "External data": "Dati esterni",
   "Add here a link to the repository or page where the projects files are contained. The link will be visible in the project page.": "Aggiungi qui un collegamento al repository o alla pagina in cui sono contenuti i file del progetto. \nIl link sarà visibile nella pagina del progetto.",
-  "Project data": "Dati del progetto",
-  "Add the users who contributed to the project. You can also add contributors and modofy the project later.": "Aggiungi gli utenti che hanno contribuito al progetto. \nPuoi anche aggiungere contributori e modificare il progetto in un secondo momento.",
   "{{related}} included projects": "{{related}} progetti inclusi",
   "Included projects": "Progetti inclusi",
-  "Included": "Incluso",
   "Include": "Includere",
-  "Interfacer ID:": "ID interfaccia:"
+  "Interfacer ID:": "ID interfaccia:",
+  "Save Draft": "Salva la bozza",
+  "Save": "Salva"
 }
