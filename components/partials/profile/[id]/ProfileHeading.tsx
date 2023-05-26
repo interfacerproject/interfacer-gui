@@ -96,7 +96,9 @@ const ProfileHeading = () => {
               </Stack>
               {person?.note && (
                 <div className="flex flex-row space-x-2 lg:mr-2">
-                  <div className="py-1 px-4 bg-white border-2 rounded-md whitespace-pre-wrap w-fit">{person?.note}</div>
+                  <div className="py-1 px-4 bg-white border-2 rounded-md whitespace-pre-wrap w-156 prose">
+                    {person?.note}
+                  </div>
                 </div>
               )}
             </Stack>
