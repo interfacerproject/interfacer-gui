@@ -96,7 +96,7 @@ const Project: NextPageWithLayout = () => {
         <SuccessBanner param="created">{t("Project succesfully created!")}</SuccessBanner>
         <EditBanner />
         <div className="p-4 container mx-auto flex max-w-6xl bg-[#f8f7f4] space-x-4">
-          <div className="grow">
+          <div className="grow max-w-screen-md">
             <Stack vertical spacing="extraLoose">
               <ProjectHeader />
               <BrThumbinailsGallery images={images} />
