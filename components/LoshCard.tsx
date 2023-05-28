@@ -5,6 +5,7 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import GeneralCard from "./GeneralCard";
 import IfSidebarTag from "./brickroom/IfSidebarTag";
+import LoshImportedData from "./brickroom/LoshImportedData";
 
 export interface ProjectCardProps {
   project: Partial<EconomicResource>;
@@ -13,14 +14,8 @@ export interface ProjectCardProps {
 export default function LoshCard(props: ProjectCardProps) {
   const { project } = props;
   const { t } = useTranslation("common");
-  const executionDate = project?.metadata?.execution_date;
   const router = useRouter();
-  const addedOn = executionDate ? (
-    <Text variant="bodyMd" as="h3">
-      {t("Added on ") + dayjs(executionDate).format("YY-MM-DD")}
-    </Text>
-  ) : null;
-
+  const addedOn = <LoshImportedData projectId={project.id!} />;
   return (
     <GeneralCard project={project} baseUrl="/resource/">
       <GeneralCard.CardHeader>
