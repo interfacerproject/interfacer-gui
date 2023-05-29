@@ -109,7 +109,7 @@ const useWallet = (props: UseWalletProps): UseWalletReturnValue => {
       owner: id,
     };
 
-    return await signedPost(process.env.NEXT_PUBLIC_WALLET!, request);
+    return await signedPost(process.env.NEXT_PUBLIC_WALLET!, request, true);
   };
 
   return {
