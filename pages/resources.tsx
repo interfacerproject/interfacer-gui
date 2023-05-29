@@ -39,7 +39,7 @@ const Resources: NextPageWithLayout = () => {
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["resourcesProps", "signInProps", "SideBarProps"])),
+      ...(await serverSideTranslations(locale, ["resourcesProps", "signInProps", "SideBarProps", "common"])),
     },
   };
 }
