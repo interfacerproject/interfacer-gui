@@ -1,7 +1,7 @@
 import { Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
-import LoshImportedData from "components/brickroom/LoshImportedData";
-import { useProject } from "components/layout/FetchProjectLayout";
 import LicenseDisplay from "components/LicenseDisplay";
+import LoshImportedDate from "components/LoshImportedDate";
+import { useProject } from "components/layout/FetchProjectLayout";
 import { useTranslation } from "next-i18next";
 
 const TechnicalInfoCard = () => {
@@ -14,7 +14,7 @@ const TechnicalInfoCard = () => {
   return (
     <Card sectioned>
       <Stack vertical spacing="loose">
-        <LoshImportedData projectId={project.id!} />
+        <LoshImportedDate projectId={project.id!} />
         <Text as="h3" variant="headingMd">
           {t("Licenses")}
         </Text>

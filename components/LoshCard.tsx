@@ -1,11 +1,10 @@
-import { Button, Text } from "@bbtgnn/polaris-interfacer";
-import dayjs from "lib/dayjs";
+import { Button } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import GeneralCard from "./GeneralCard";
+import LoshImportedDate from "./LoshImportedDate";
 import IfSidebarTag from "./brickroom/IfSidebarTag";
-import LoshImportedData from "./brickroom/LoshImportedData";
 
 export interface ProjectCardProps {
   project: Partial<EconomicResource>;
@@ -15,7 +14,7 @@ export default function LoshCard(props: ProjectCardProps) {
   const { project } = props;
   const { t } = useTranslation("common");
   const router = useRouter();
-  const addedOn = <LoshImportedData projectId={project.id!} />;
+  const addedOn = <LoshImportedDate projectId={project.id!} />;
   return (
     <GeneralCard project={project} baseUrl="/resource/">
       <GeneralCard.CardHeader>
