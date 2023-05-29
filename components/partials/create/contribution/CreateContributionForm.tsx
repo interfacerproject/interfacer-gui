@@ -35,7 +35,6 @@ import PDivider from "components/polaris/PDivider";
 import PLabel from "components/polaris/PLabel";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
-import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
 import { useRouter } from "next/router";
 import React, { ReactNode } from "react";
