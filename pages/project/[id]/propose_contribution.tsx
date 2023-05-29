@@ -61,7 +61,6 @@ const ProposeContribution: NextPageWithLayout = () => {
   const [linkProposalAndIntents] = useMutation(LINK_CONTRIBUTION_PROPOSAL_INTENT);
 
   const { project: resource } = useProject();
-  console.log(resource);
 
   const onSubmit = async (formData: FormValues) => {
     if (!resource) throw new Error("No original resource found");
@@ -75,7 +74,7 @@ const ProposeContribution: NextPageWithLayout = () => {
     const processContribution = await createProcess({ variables: proposeProcessVariables });
 
     const proposalVariables = { name: processContributionName, note: formData.description };
-    devLog("proposallVariables", proposalVariables);
+    devLog("proposalVariables", proposalVariables);
     const proposal = await createProposal({ variables: proposalVariables });
     devLog("The proposal was created successfully with id: " + JSON.stringify(proposal));
 

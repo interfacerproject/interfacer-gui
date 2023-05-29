@@ -18,7 +18,7 @@ import { useTranslation } from "next-i18next";
 
 // Form
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
@@ -99,7 +99,7 @@ const CreateContributionForm = (props: Props) => {
     defaultValues,
   });
 
-  const { formState, handleSubmit, register, control, setValue, watch } = form;
+  const { formState, handleSubmit, control, setValue, trigger } = form;
   const { errors, isSubmitting, isValid } = formState;
 
   const { project: resource } = useProject();
@@ -166,12 +166,15 @@ const CreateContributionForm = (props: Props) => {
           id="description"
           name="description"
           editorClass="h-60"
-          value={watch("description")}
+          value={useWatch({ control, name: "description" })}
           helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t(
             "Type up to 2048 characters"
           )}.`}
           onChange={({ text }) => {
-            setValue("description", text, formSetValueOptions);
+            setValue("description", text, { shouldValidate: false, shouldDirty: false, shouldTouch: false });
+          }}
+          onBlur={() => {
+            trigger("description");
           }}
           requiredIndicator={isRequired(schema, "description")}
           error={errors.description?.message}
