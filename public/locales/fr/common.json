@@ -148,5 +148,13 @@
   "Include": "Inclure",
   "Interfacer ID:": "ID de l'interface :",
   "Save Draft": "Enregistrer le brouillon",
-  "Save": "Sauvegarder"
+  "Save": "Sauvegarder",
+  "All projects": "Tous les projets",
+  "Add project": "Ajouter un projet",
+  "Import from LOSH": "Importer depuis LOSH",
+  "Report a bug": "Signaler un bug",
+  "User manual": "Manuel de l'Utilisateur",
+  "Help pages": "Pages d'aide",
+  "This platform": "Cette plate-forme",
+  "About": "À propos"
 }
