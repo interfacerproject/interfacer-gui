@@ -20,6 +20,7 @@ const nextConfig = {
   i18n,
   reactStrictMode: true,
   swcMinify: true,
+  output: "standalone",
   webpack: config => {
     config.resolve.fallback = {
       fs: false,

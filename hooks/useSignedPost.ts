@@ -23,6 +23,7 @@ import useStorage from "./useStorage";
 const useSignedPost = (idInHeader?: boolean) => {
   const { getItem } = useStorage();
   const { user } = useAuth();
+
   const signRequest = async (json: string) => {
     const data = `{"gql": "${Buffer.from(json, "utf8").toString("base64")}"}`;
     const keys = `{"keyring": {"eddsa": "${getItem("eddsaPrivateKey")}"}}`;
@@ -35,16 +36,28 @@ const useSignedPost = (idInHeader?: boolean) => {
     }
     return headers;
   };
-  const signedPost = async (url: string, request: any) => {
+
+  const signDidRequest = async (json: string) => {
+    const data = `{"gql": "${Buffer.from(json, "utf8").toString("base64")}"}`;
+    const keys = `{"keyring": {"eddsa": "${getItem("eddsaPrivateKey")}"}}`;
+    const { result } = await zencode_exec(sign, { data, keys });
+    const headers: { "did-sign": string; "did-pk": string } = {
+      "did-sign": JSON.parse(result).eddsa_signature,
+      "did-pk": String(user?.publicKey),
+    };
+    return headers;
+  };
+
+  const signedPost = async (url: string, request: any, did = false) => {
     const requestJSON = JSON.stringify(request);
-    const requestHeaders = await signRequest(requestJSON);
+    const requestHeaders = did ? await signDidRequest(requestJSON) : await signRequest(requestJSON);
     return await fetch(url, {
       method: "POST",
       headers: requestHeaders,
       body: JSON.stringify(request),
     });
   };
-  return { signedPost, signRequest };
+  return { signedPost, signRequest, signDidRequest };
 };
 
 export default useSignedPost;
