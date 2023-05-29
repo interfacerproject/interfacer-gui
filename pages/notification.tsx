@@ -86,6 +86,12 @@ const Notification = () => {
       groupedMessages.contributionResponses = [];
       groupedMessages.citations = [];
     }
+    if (!isLoading && !error) {
+      clearGroupedMessages();
+    }
+  }, [messages, isLoading, error, groupedMessages]);
+
+  useEffect(() => {
     function groupMessagesBySubject(messages: Array<Message>): void {
       // Contribution requests
       let group: Record<MessageGroup, Array<Message>> = {
@@ -112,10 +118,9 @@ const Notification = () => {
       setGroupedMessages(group);
     }
     if (!isLoading && !error) {
-      clearGroupedMessages();
       groupMessagesBySubject(messages);
     }
-  }, [messages, isLoading, error, groupedMessages]);
+  }, [messages, isLoading, error]);
 
   const groupsLabels: Record<MessageGroup, string> = {
     [MessageGroup.CONTRIBUTION_REQUESTS]: t("Contribution Requests"),
