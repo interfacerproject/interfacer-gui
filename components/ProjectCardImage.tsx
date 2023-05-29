@@ -17,6 +17,7 @@
 import { File } from "lib/types";
 import ProjectTypeRoundIcon from "./ProjectTypeRoundIcon";
 import { ProjectType } from "./types";
+import { useState } from "react";
 
 interface Props {
   image: File | string | undefined;
@@ -25,17 +26,21 @@ interface Props {
 
 const ProjectImage = (props: Props) => {
   const { image, projectType } = props;
+  const [error, setError] = useState(false);
 
   const src = typeof image === "string" ? image : `data:${image?.mimeType};base64,${image?.bin}`;
+  const onImageError = () => {
+    setError(true);
+  };
 
   return (
     <div className="h-60 bg-base-200 rounded-lg flex items-center justify-center overflow-hidden">
-      {!image && projectType && (
+      {(!image || error) && (
         <div className="opacity-40">
           <ProjectTypeRoundIcon projectType={projectType} />
         </div>
       )}
-      {image && src && <img src={src} className="w-full h-full object-cover" alt="" />}
+      {image && src && !error && <img src={src} className="w-full h-full object-cover" alt="" onError={onImageError} />}
     </div>
   );
 };

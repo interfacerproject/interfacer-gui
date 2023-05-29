@@ -37,7 +37,6 @@ export default function AgentsTableBase(props: ProjectsTableBaseProps) {
 
   const agents = data.people?.edges;
   const hasNextPage = data.people?.pageInfo.hasNextPage;
-  const showEmptyState = !Boolean(agents) || agents?.length == 0;
 
   //
 
@@ -48,13 +47,6 @@ export default function AgentsTableBase(props: ProjectsTableBaseProps) {
           <AgentsTableRow agent={e.node} key={e.cursor} />
         ))}
       </BrTable>
-
-      {/* Empty state */}
-      {showEmptyState && (
-        <div className="p-4 pt-6">
-          <p className="pt-2 pb-5 font-light text-white-700">{t("empty_state_agents")}</p>
-        </div>
-      )}
 
       {/* Pagination */}
       {!hidePagination && (

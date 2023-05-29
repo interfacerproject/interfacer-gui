@@ -44,12 +44,10 @@ const Resource: NextPageWithLayout = () => {
     setImages(_images);
   }, [project]);
 
-  console.log("met", project.metadata);
-
   return (
     <div className="p-4 container mx-auto flex max-w-6xl bg-[#f8f7f4] space-x-4">
       <Stack spacing="extraLoose">
-        <div className="grow">
+        <div className="flex-grow max-w-screen-md">
           <Stack vertical spacing="extraLoose">
             <ProjectHeader isResource />
             <BrThumbinailsGallery images={images} />
