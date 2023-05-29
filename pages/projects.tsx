@@ -28,7 +28,7 @@ import useFilters from "../hooks/useFilters";
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["signInProps", "lastUpdatedProps", "SideBarProps"])),
+      ...(await serverSideTranslations(locale, ["signInProps", "lastUpdatedProps", "SideBarProps", "common"])),
     },
   };
 }
