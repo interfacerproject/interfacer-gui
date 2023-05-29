@@ -157,5 +157,9 @@
   "This platform": "Questa piattaforma",
   "About": "About",
   "Added on ": "Aggiunto il ",
-  "No agents found": "Nessun agente trovato"
+  "No agents found": "Nessun agente trovato",
+  "wants to contribute to your": "vuole contribuire al tuo",
+  "rejected your contribution to": "rifiutato il tuo contributo a",
+  "added you as a contributor to": "ti ha aggiunto come collaboratore a",
+  "just included your": "appena incluso il tuo"
 }

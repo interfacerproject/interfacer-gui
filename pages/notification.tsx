@@ -200,7 +200,7 @@ const Notification = () => {
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["signInProps", "notificationProps", "SideBarProps"])),
+      ...(await serverSideTranslations(locale, ["signInProps", "notificationProps", "SideBarProps", "common"])),
     },
   };
 }
