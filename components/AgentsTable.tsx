@@ -25,6 +25,7 @@ import { FETCH_AGENTS } from "lib/QueryAndMutation";
 import { GetAgentsQuery, GetAgentsQueryVariables } from "lib/types";
 import useLoadMore from "../hooks/useLoadMore";
 import AgentsTableBase from "./AgentsTableBase";
+import EmptyState from "./EmptyState";
 import Spinner from "./brickroom/Spinner";
 
 //
@@ -52,7 +53,7 @@ export default function AgentsTable(props: AgentsTableProps) {
 
   const dataQueryIdentifier = "people";
 
-  const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
+  const { loadMore, showEmptyState } = useLoadMore({
     fetchMore,
     refetch,
     variables,
@@ -78,11 +79,13 @@ export default function AgentsTable(props: AgentsTableProps) {
           </div>
           {/* Table and filters */}
           <div className="flex flex-row flex-nowrap items-start space-x-8">
-            {data && (
-              <div className="grow">
+            <div className="grow">
+              {showEmptyState || !data ? (
+                <EmptyState heading={t("No agents found")} />
+              ) : (
                 <AgentsTableBase data={data} onLoadMore={loadMore} hidePagination={hidePagination} />
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}
