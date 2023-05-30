@@ -263,13 +263,13 @@ export const useProjectCRUD = () => {
           process: processId,
           originalProjectId: projectId,
         });
-        // const project = await getProjectForMetadataUpdate(linkedDesign);
-        // if (project.metadata?.relations) {
-        //   const relations: string[] = [...project.metadata.relations, projectId];
-        //   await updateRelations(linkedDesign, relations, true);
-        // } else {
-        //   await updateRelations(linkedDesign, [projectId], true);
-        // }
+        const project = await getProjectForMetadataUpdate(linkedDesign);
+        if (project.metadata?.relations) {
+          const relations: string[] = [...project.metadata.relations, projectId];
+          await updateRelations(linkedDesign, relations, true);
+        } else {
+          await updateRelations(linkedDesign, [projectId], true);
+        }
       }
 
       for (const resource of formData.relations) {
