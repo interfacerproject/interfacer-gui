@@ -24,7 +24,6 @@ test.describe("When user want to contribute", () => {
     await searchMenuAdd(page, "#search-project", "c");
     await page.click("#description");
     await page.type("textarea", "testDescription");
-    await page.locator("textarea").evaluate(e => e.blur());
     const submitBtn = page.getByRole("button", { name: "Propose contribution" });
     expect(submitBtn).toBeEnabled();
     Promise.all([await submitBtn.click(), await page.waitForURL("**/proposal/**")]);
