@@ -4,7 +4,7 @@
   "Load more": "Per saperne di più",
   "It looks like you haven't created an project yet&#46; Proceed by pressing the button below to create a new one": "Sembra che non abbiate ancora creato una risorsa&#46; Procedete premendo il pulsante sottostante per crearne una nuova.",
   "Project": "Patrimonio",
-  "Create a new project": "Creare una nuova risorsa",
+  "Create a new project": "Crea un nuovo progetto",
   "Create project": "Crea attività",
   "Report a bug": "Segnala un bug",
   "Tags": "Tag",
@@ -18,5 +18,7 @@
   "filters": "filtri",
   "Type": "Tipo",
   "Included or cited projects": "Project incluso o citato",
-  "Project Type": "Tipo di project"
+  "Project Type": "Tipo di project",
+  "Filter by": "Filtra per",
+  "accepted your contribution to": "accettato il tuo contributo a"
 }

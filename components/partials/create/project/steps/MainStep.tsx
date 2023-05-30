@@ -98,7 +98,9 @@ export default function MainStep() {
             placeholder={"projectsite.com/info"}
             label={t("Project data")}
             helpText={t(
-              "Add here a link to the repository or page where the projects files or description are contained. The link will be visible in the project page."
+              t(
+                "Add here a link to the repository or page where the projects files or description are contained. The link will be visible in the project page."
+              )
             )}
             error={errors.main?.link?.message}
             requiredIndicator={isRequired(mainStepSchema(), "link")}

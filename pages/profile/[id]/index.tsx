@@ -51,7 +51,8 @@ export async function getStaticProps({ locale }: any) {
         "signInProps",
         "lastUpdatedProps",
         "SideBarProps",
-        "ProfileProps, common",
+        "ProfileProps",
+        "common",
       ])),
     },
   };

@@ -42,7 +42,7 @@ const CreateProject: NextPageWithLayout = () => {
 
   const sections: Array<{ title: string; description: string; url: string; projectType: ProjectType }> = [
     {
-      title: t("Design"),
+      title: "Design",
       description: t(
         "Import your project repository. Share your open source hardware project documentation and collaborate on building it."
       ),
@@ -50,7 +50,7 @@ const CreateProject: NextPageWithLayout = () => {
       projectType: ProjectType.DESIGN,
     },
     {
-      title: t("Product"),
+      title: "Product",
       description: t(
         "Showcase your open source hardware product and connect with a global network of makers. Import your product details to our platform."
       ),
@@ -58,7 +58,7 @@ const CreateProject: NextPageWithLayout = () => {
       projectType: ProjectType.PRODUCT,
     },
     {
-      title: t("Services"),
+      title: "Service",
       description: t(
         "Offer your expertise, training courses, or equipment rentals on our platform, supporting the development and collaboration of open source hardware projects in the community."
       ),

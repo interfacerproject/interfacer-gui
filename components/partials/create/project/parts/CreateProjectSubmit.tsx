@@ -24,7 +24,7 @@ export default function CreateProjectSubmit() {
         <EditDraftButton />
         <SaveDraftButton />
         <Button id="project-create-submit" submit primary disabled={!isValid}>
-          {t("Submit!")}
+          {t("Save")}
         </Button>
       </div>
     </div>
