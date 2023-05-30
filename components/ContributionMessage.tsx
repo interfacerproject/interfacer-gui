@@ -47,7 +47,7 @@ const ContributionMessage = ({
   const [user, setUser] = useState<Partial<Person>>();
   const [originalResourceName, setOriginalResourceName] = useState("");
   const router = useRouter();
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("notificationProps");
   const { message: parsedMessage } = message;
   const { refetch: fetchUser } = useQuery<ARPAQuery, ARPAQueryVariables>(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
 

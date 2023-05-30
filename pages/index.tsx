@@ -119,7 +119,7 @@ const Home: NextPageWithLayout = () => {
 
             <Text variant="bodyMd" as="p">
               {t(
-                "Our platform brings together makers, designers, and engineers from all over the world, creating a space for collaboration and innovation. Whether you"
+                "Our platform brings together makers, designers, and engineers from all over the world, creating a space for collaboration and innovation. Whether you're looking for inspiration, need help with a project, or want to showcase your latest creation, together, we can push the boundaries of what's possible and create a more open and sustainable future for all."
               )}
             </Text>
 

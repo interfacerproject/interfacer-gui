@@ -75,7 +75,7 @@ export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["ResourceProps", "common"])),
+      ...(await serverSideTranslations(locale, ["ResourceProps"])),
     },
   };
 }

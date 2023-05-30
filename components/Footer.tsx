@@ -63,7 +63,7 @@ const Footer = () => {
               </a>
               <a href="https://fab.city/" target="_blank" rel="noreferrer">
                 <Text as="p" color="subdued" variant="headingMd">
-                  {"Fab City Foundation"}
+                  {t("Fab City Foundation")}
                 </Text>
               </a>
             </Stack>
@@ -88,7 +88,7 @@ const Footer = () => {
               <NextLink href="https://github.com/interfacerproject">
                 <a target="_blank" rel="noreferrer">
                   <Text as="p" color="subdued" variant="headingMd">
-                    {"Github"}
+                    {t("Github")}
                   </Text>
                 </a>
               </NextLink>
