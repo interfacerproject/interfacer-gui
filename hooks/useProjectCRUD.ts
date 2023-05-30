@@ -263,6 +263,7 @@ export const useProjectCRUD = () => {
           process: processId,
           originalProjectId: projectId,
         });
+        /*
         const project = await getProjectForMetadataUpdate(linkedDesign);
         if (project.metadata?.relations) {
           const relations: string[] = [...project.metadata.relations, projectId];
@@ -270,6 +271,7 @@ export const useProjectCRUD = () => {
         } else {
           await updateRelations(linkedDesign, [projectId], true);
         }
+        */
       }
 
       for (const resource of formData.relations) {
