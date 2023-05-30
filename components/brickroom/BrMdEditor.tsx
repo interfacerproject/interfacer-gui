@@ -31,13 +31,12 @@ export interface BrMdEditorProps extends PFieldInfoProps {
   name?: string;
   id?: string;
   value?: string;
-  onBlur?: () => void;
 }
 
 //
 
 export default function BrMdEditor(props: BrMdEditorProps) {
-  const { editorClass, subtitle, name, onBlur = () => {}, onChange = () => {}, id, value = "" } = props;
+  const { editorClass, subtitle, name, onChange = () => {}, id, value = "" } = props;
 
   return (
     <PFieldInfo htmlFor={id} {...props}>
@@ -51,7 +50,6 @@ export default function BrMdEditor(props: BrMdEditorProps) {
           name={name}
           id={id}
           value={value}
-          onBlur={onBlur}
         />
       </div>
     </PFieldInfo>
