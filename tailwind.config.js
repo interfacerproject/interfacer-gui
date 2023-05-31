@@ -82,5 +82,5 @@ module.exports = {
       colors: tokens.colors,
     },
   },
-  plugins: [require("@tailwindcss/typography"), require("daisyui")],
+  plugins: [require("@tailwindcss/typography"), require("daisyui"), require("@tailwindcss/line-clamp")],
 };

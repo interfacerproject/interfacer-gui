@@ -104,11 +104,10 @@ const RemoteImage = () => {
 
 const ProjectTitleAndStats = () => {
   const { project } = useCardProject();
-  const title = project.name!.length > 55 ? project.name?.slice(0, 55) + "..." : project.name;
   return (
-    <div>
+    <div className="line-clamp-2">
       <Text variant="headingLg" as="h4" breakWord={true}>
-        {title}
+        {project.name}
       </Text>
       <StatsDisplay />
     </div>
