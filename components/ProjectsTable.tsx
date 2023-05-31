@@ -26,10 +26,10 @@ import { EconomicResourceFilterParams, FetchInventoryQuery, FetchInventoryQueryV
 // Components
 import { AdjustmentsIcon } from "@heroicons/react/outline";
 import useLoadMore from "../hooks/useLoadMore";
-import Spinner from "./brickroom/Spinner";
-import PTitleCounter from "./polaris/PTitleCounter";
 import ProjectsFilters from "./ProjectsFilters";
 import ProjectsTableBase from "./ProjectsTableBase";
+import Spinner from "./brickroom/Spinner";
+import PTitleCounter from "./polaris/PTitleCounter";
 
 //
 
@@ -128,7 +128,12 @@ export default function ProjectsTable(props: ProjectsTableProps) {
             )}
             {showFilter && !hideFilters && (
               <div className="basis-96 sticky top-8">
-                <ProjectsFilters hidePrimaryAccountable={hidePrimaryAccountable}>{searchFilter}</ProjectsFilters>
+                <ProjectsFilters>
+                  {searchFilter}
+                  <ProjectsFilters.ConformsTo />
+                  <ProjectsFilters.Tags />
+                  {hidePrimaryAccountable && <ProjectsFilters.PrimaryAccountable />}
+                </ProjectsFilters>
               </div>
             )}
           </div>

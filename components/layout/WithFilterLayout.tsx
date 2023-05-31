@@ -46,7 +46,11 @@ const WithFilterLayout = ({
           {children}
           {!hideFilters && showFilter && (
             <div className="basis-96 sticky top-8">
-              <ProjectsFilters hidePrimaryAccountable={hidePrimaryAccountable} hideConformsTo={hideConformsTo} />
+              <ProjectsFilters>
+                {hideConformsTo && <ProjectsFilters.ConformsTo />}
+                <ProjectsFilters.Tags />
+                {hidePrimaryAccountable && <ProjectsFilters.PrimaryAccountable />}
+              </ProjectsFilters>
             </div>
           )}
         </div>

@@ -1,6 +1,7 @@
 import { Tag } from "@bbtgnn/polaris-interfacer";
 import SearchTags from "./SearchTags";
 import { FieldInfoProps } from "./polaris/types";
+import BrTag from "./brickroom/BrTag";
 
 //
 
@@ -33,19 +34,19 @@ export default function SelectTags(props: SelectTags2Props) {
         error={props.error}
         helpText={props.helpText}
       />
-
-      <div className="flex flex-wrap gap-y-2 gap-2">
-        {tags?.map(tag => (
-          <Tag
-            key={tag}
-            onRemove={() => {
-              handleRemove(tag);
-            }}
-          >
-            {decodeURIComponent(tag)}
-          </Tag>
-        ))}
-      </div>
+      {tags?.length > 0 && (
+        <div className="flex flex-wrap gap-y-2 gap-2">
+          {tags?.map(tag => (
+            <BrTag
+              key={tag}
+              onRemove={() => {
+                handleRemove(tag);
+              }}
+              tag={decodeURIComponent(tag)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
