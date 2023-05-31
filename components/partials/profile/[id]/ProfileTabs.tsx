@@ -1,9 +1,8 @@
 import { Tabs } from "@bbtgnn/polaris-interfacer";
-import { SectionDescriptor } from "@bbtgnn/polaris-interfacer/build/ts/latest/src/types";
 import { ClipboardListIcon, CubeIcon } from "@heroicons/react/outline";
 import EmptyState from "components/EmptyState";
 import { useUser } from "components/layout/FetchUserLayout";
-import ProjectsCards, { CardType, ProjectsCardsProps } from "components/ProjectsCards";
+import ProjectsCards, { ProjectsCardsDrafts, ProjectsCardsProps } from "components/ProjectsCards";
 import { useAuth } from "hooks/useAuth";
 import useFilters from "hooks/useFilters";
 import { useDrafts } from "hooks/useFormSaveDraft";
@@ -101,16 +100,15 @@ const ProfileTabs = () => {
     ),
   };
 
-  const draftProjects = {
-    header: t("My drafts"),
-    type: CardType.DRAFT,
-    drafts: draftsSaved,
-  };
-  const projectsCardsProps = [userProjects, inListProjects, draftProjects];
+  const projectsCards = [
+    <ProjectsCards {...userProjects} key={0} />,
+    <ProjectsCards {...inListProjects} key={1} />,
+    <ProjectsCardsDrafts drafts={draftsSaved} header={t("My drafts")} key={2} />,
+  ];
 
   return (
     <Tabs tabs={tabs} selected={projectTabSelected} onSelect={handleProjectTabChange}>
-      <ProjectsCards {...projectsCardsProps[projectTabSelected]} />
+      {projectsCards[projectTabSelected]}
     </Tabs>
   );
 };

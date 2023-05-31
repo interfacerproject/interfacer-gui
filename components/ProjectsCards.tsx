@@ -27,12 +27,7 @@ import LoshCard from "./LoshCard";
 import ProjectCard from "./ProjectCard";
 import ProjectDisplay from "./ProjectDisplay";
 import WithFilterLayout from "./layout/WithFilterLayout";
-
-export enum CardType {
-  PROJECT = "project",
-  DRAFT = "draft",
-  TINY = "tiny",
-}
+import PTitleCounter from "./polaris/PTitleCounter";
 
 export interface ProjectsCardsProps {
   filter?: EconomicResourceFilterParams;
@@ -42,7 +37,6 @@ export interface ProjectsCardsProps {
   hideFilters?: boolean;
   header?: string;
   tiny?: boolean;
-  type?: CardType;
   drafts?: DraftProject[];
   emptyState?: React.ReactElement;
 }
@@ -53,10 +47,8 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     hideHeader = false,
     hidePagination = false,
     hideFilters = false,
-    type = CardType.PROJECT,
     tiny = false,
     header = "Latest projects",
-    drafts,
     emptyState = <EmptyState heading="No projects found" />,
   } = props;
   const dataQueryIdentifier = "economicResources";
@@ -84,8 +76,6 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     );
   };
 
-  if (type === CardType.DRAFT && !drafts) return <EmptyState heading="No drafts found" />;
-
   const FiltersWrapper = ({ children }: { children: React.ReactNode }) =>
     !hideFilters ? (
       <WithFilterLayout header={hideHeader ? undefined : header} length={projects?.length || 0}>
@@ -107,7 +97,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
 
   return (
     <>
-      {type === CardType.PROJECT && !tiny && (
+      {!tiny && (
         <FiltersWrapper>
           <PaginationWrapper>
             {projects?.map(({ node }: { node: EconomicResource }) => distinguishProjects(node))}
@@ -124,19 +114,25 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
             </Link>
           </div>
         ))}
-      {type === CardType.DRAFT && !tiny && drafts && (
-        <FiltersWrapper>
-          <div className="w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {drafts?.map(d => (
-                <DraftCard project={d.project} projectType={d.type} id={d.id} key={d.id} />
-              ))}
-            </div>
-          </div>
-        </FiltersWrapper>
-      )}
     </>
   );
 };
+
+export const ProjectsCardsDrafts = ({ header, drafts }: { header: string; drafts?: DraftProject[] }) => (
+  <div className="flex flex-col gap-4 mt-4">
+    <PTitleCounter title={header} titleTag="h2" length={drafts?.length || 0} />
+    {!drafts?.length ? (
+      <EmptyState heading="No drafts found" />
+    ) : (
+      <div className="w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {drafts?.map(d => (
+            <DraftCard project={d.project} projectType={d.type} id={d.id} key={d.id} />
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+);
 
 export default ProjectsCards;
