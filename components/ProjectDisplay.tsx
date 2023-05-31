@@ -41,9 +41,11 @@ export default function ProjectDisplay(props: Props) {
         {!isProductDesign && <ProjectThumb project={p} />}
         <div className={isProductDesign ? "" : "pl-4"}>
           <div className="mb-3 space-y-1">
-            <Text as="p" variant="bodyMd" fontWeight="bold">
-              {p.name}
-            </Text>
+            <div className="max-w-xs line-clamp-2">
+              <Text as="h2" variant="bodyMd" fontWeight="bold">
+                {p.name}
+              </Text>
+            </div>
             {!isProductDesign && <ProjectTypeChip project={p} introduction link={false} />}
           </div>
           <div className="font-mono">
