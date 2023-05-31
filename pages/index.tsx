@@ -17,8 +17,10 @@
 import { Button, ButtonGroup, Text } from "@bbtgnn/polaris-interfacer";
 import { GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
 import ProjectsCards from "components/ProjectsCards";
-import ProjectMaps from "components/ProjectsMaps";
+import ProjectsFilters from "components/ProjectsFilters";
+import ProjectsMaps from "components/ProjectsMaps";
 import Layout from "components/layout/Layout";
+import WithFilterLayout from "components/layout/WithFilterLayout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
@@ -102,7 +104,16 @@ const Home: NextPageWithLayout = () => {
 
       {/* MAP */}
       <div className="container mx-auto mb-24 mt-4">
-        <ProjectMaps />
+        <WithFilterLayout
+          filter={
+            <ProjectsFilters>
+              <ProjectsFilters.PrimaryAccountable />
+              <ProjectsFilters.Tags />
+            </ProjectsFilters>
+          }
+        >
+          <ProjectsMaps />
+        </WithFilterLayout>
       </div>
 
       <Features />

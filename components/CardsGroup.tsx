@@ -47,8 +47,24 @@ const CardsGroup = (props: CardsGroupProps) => {
 
   const { t } = useTranslation("lastUpdatedProps");
 
-  const [showFilter, setShowFilter] = useState(false);
-  const toggleFilter = () => setShowFilter(!showFilter);
+  const FiltersWrapper = ({ children }: { children: React.ReactNode }) =>
+    !hideFilters ? (
+      <WithFilterLayout
+        header={header}
+        length={length}
+        filter={
+          <ProjectsFilters>
+            <ProjectsFilters.ConformsTo />
+            <ProjectsFilters.Tags />
+            {!hidePrimaryAccountable && <ProjectsFilters.PrimaryAccountable />}
+          </ProjectsFilters>
+        }
+      >
+        {children}
+      </WithFilterLayout>
+    ) : (
+      <>{children}</>
+    );
 
   return (
     <>
@@ -58,33 +74,22 @@ const CardsGroup = (props: CardsGroupProps) => {
         </div>
       )}
       {!loading && (
-        <WithFilterLayout header={header} length={length}>
-          <WithFilterLayout.Header />
-          {!hideFilters && <WithFilterLayout.FilterButton />}
-          <WithFilterLayout.Filter>
-            <ProjectsFilters>
-              <ProjectsFilters.ConformsTo />
-              <ProjectsFilters.Tags />
-              {!hidePrimaryAccountable && <ProjectsFilters.PrimaryAccountable />}
-            </ProjectsFilters>
-          </WithFilterLayout.Filter>
-          <WithFilterLayout.Body>
-            <div className="w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* CARDS */}
-                {children}
-              </div>
-              {/* Pagination */}
-              {!hidePagination && nextPage && (
-                <div className="w-full pt-4 text-center">
-                  <button className="text-center btn btn-primary" onClick={onLoadMore} disabled={!nextPage}>
-                    {t("Load more")}
-                  </button>
-                </div>
-              )}
+        <FiltersWrapper>
+          <div className="w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* CARDS */}
+              {children}
             </div>
-          </WithFilterLayout.Body>
-        </WithFilterLayout>
+            {/* Pagination */}
+            {!hidePagination && nextPage && (
+              <div className="w-full pt-4 text-center">
+                <button className="text-center btn btn-primary" onClick={onLoadMore} disabled={!nextPage}>
+                  {t("Load more")}
+                </button>
+              </div>
+            )}
+          </div>
+        </FiltersWrapper>
       )}
     </>
   );
