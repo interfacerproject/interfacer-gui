@@ -15,17 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useQuery } from "@apollo/client";
+import { Spinner } from "@bbtgnn/polaris-interfacer";
 import { DraftProject } from "lib/db";
+import Link from "next/link";
 import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
-import CardsGroup from "./CardsGroup";
 import DraftCard from "./DraftCard";
 import EmptyState from "./EmptyState";
 import LoshCard from "./LoshCard";
 import ProjectCard from "./ProjectCard";
-import Link from "next/link";
 import ProjectDisplay from "./ProjectDisplay";
+import WithFilterLayout from "./layout/WithFilterLayout";
 
 export enum CardType {
   PROJECT = "project",
@@ -63,7 +64,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
   const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
     variables: { last: 12, filter: filter },
   });
-  const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
+  const { showEmptyState, items, WithPagination } = useLoadMore({
     fetchMore,
     refetch,
     variables,
@@ -85,20 +86,33 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
 
   if (type === CardType.DRAFT && !drafts) return <EmptyState heading="No drafts found" />;
 
+  const FiltersWrapper = ({ children }: { children: React.ReactNode }) =>
+    !hideFilters ? (
+      <WithFilterLayout header={hideHeader ? undefined : header} length={projects?.length || 0}>
+        {children}
+      </WithFilterLayout>
+    ) : (
+      <>{children}</>
+    );
+
+  const PaginationWrapper = ({ children }: { children: React.ReactNode }) =>
+    !hidePagination ? <WithPagination>{children}</WithPagination> : <>{children}</>;
+
+  if (loading)
+    return (
+      <div className="w-full mt-10">
+        <Spinner />
+      </div>
+    );
+
   return (
     <>
       {type === CardType.PROJECT && !tiny && (
-        <CardsGroup
-          onLoadMore={loadMore}
-          nextPage={!!getHasNextPage}
-          loading={loading}
-          header={hideHeader ? undefined : header}
-          hidePagination={hidePagination}
-          length={projects?.length || 0}
-          hideFilters={hideFilters}
-        >
-          {projects?.map(({ node }: { node: EconomicResource }) => distinguishProjects(node))}
-        </CardsGroup>
+        <FiltersWrapper>
+          <PaginationWrapper>
+            {projects?.map(({ node }: { node: EconomicResource }) => distinguishProjects(node))}
+          </PaginationWrapper>
+        </FiltersWrapper>
       )}
       {tiny &&
         projects?.map(({ node }: { node: EconomicResource }) => (
@@ -111,19 +125,15 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
           </div>
         ))}
       {type === CardType.DRAFT && !tiny && drafts && (
-        <CardsGroup
-          onLoadMore={loadMore}
-          nextPage={false}
-          loading={false}
-          header={hideHeader ? undefined : header}
-          hidePagination={hidePagination}
-          length={drafts?.length || 0}
-          hideFilters
-        >
-          {drafts?.map(d => (
-            <DraftCard project={d.project} projectType={d.type} id={d.id} key={d.id} />
-          ))}
-        </CardsGroup>
+        <FiltersWrapper>
+          <div className="w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {drafts?.map(d => (
+                <DraftCard project={d.project} projectType={d.type} id={d.id} key={d.id} />
+              ))}
+            </div>
+          </div>
+        </FiltersWrapper>
       )}
     </>
   );

@@ -14,7 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useEffect } from "react";
+import { useTranslation } from "next-i18next";
+import { ReactNode, useEffect } from "react";
+
+export interface PaginationProps {
+  children: React.ReactNode;
+  onLoadMore: () => void;
+  nextPage: boolean;
+}
 
 const useLoadMore = ({
   dataQueryIdentifier,
@@ -54,20 +61,32 @@ const useLoadMore = ({
   };
   const items = data?.[dataQueryIdentifier].edges;
   const showEmptyState = items?.length === 0;
+  const { t } = useTranslation("lastUpdatedProps");
 
-  const startCursor = data?.[dataQueryIdentifier].pageInfo.startCursor;
+  const WithPagination = ({ children }: { children: ReactNode }) => (
+    <div className="w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">{children}</div>
+      <div className="w-full pt-4 text-center">
+        <button className="text-center btn btn-primary" onClick={loadMore} disabled={!getHasNextPage}>
+          {t("Load more")}
+        </button>
+      </div>
+    </div>
+  );
+
   // Poll interval that works with pagination
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    const intervalId = setInterval(async () => {
       const total = data?.[dataQueryIdentifier].edges.length || 0;
-      refetch({
+      await refetch({
         ...variables,
         last: total,
       });
     }, 10000);
     return () => clearInterval(intervalId);
-  }, [...Object.values(variables!).flat(), startCursor]);
-  return { loadMore, showEmptyState, items, getHasNextPage };
+  }, [data, dataQueryIdentifier, variables]);
+
+  return { loadMore, showEmptyState, items, getHasNextPage, WithPagination };
 };
 
 export default useLoadMore;
