@@ -16,6 +16,7 @@
 
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
+import ProjectsFilters from "./ProjectsFilters";
 import Spinner from "./brickroom/Spinner";
 import WithFilterLayout from "./layout/WithFilterLayout";
 
@@ -57,26 +58,32 @@ const CardsGroup = (props: CardsGroupProps) => {
         </div>
       )}
       {!loading && (
-        <WithFilterLayout
-          header={header}
-          length={length}
-          hidePrimaryAccountable={hidePrimaryAccountable}
-          hideFilters={hideFilters}
-        >
-          <div className="w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* CARDS */}
-              {children}
-            </div>
-            {/* Pagination */}
-            {!hidePagination && nextPage && (
-              <div className="w-full pt-4 text-center">
-                <button className="text-center btn btn-primary" onClick={onLoadMore} disabled={!nextPage}>
-                  {t("Load more")}
-                </button>
+        <WithFilterLayout header={header} length={length}>
+          <WithFilterLayout.Header />
+          {!hideFilters && <WithFilterLayout.FilterButton />}
+          <WithFilterLayout.Filter>
+            <ProjectsFilters>
+              <ProjectsFilters.ConformsTo />
+              <ProjectsFilters.Tags />
+              {!hidePrimaryAccountable && <ProjectsFilters.PrimaryAccountable />}
+            </ProjectsFilters>
+          </WithFilterLayout.Filter>
+          <WithFilterLayout.Body>
+            <div className="w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* CARDS */}
+                {children}
               </div>
-            )}
-          </div>
+              {/* Pagination */}
+              {!hidePagination && nextPage && (
+                <div className="w-full pt-4 text-center">
+                  <button className="text-center btn btn-primary" onClick={onLoadMore} disabled={!nextPage}>
+                    {t("Load more")}
+                  </button>
+                </div>
+              )}
+            </div>
+          </WithFilterLayout.Body>
         </WithFilterLayout>
       )}
     </>

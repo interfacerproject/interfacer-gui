@@ -2,6 +2,7 @@ import { Text } from "@bbtgnn/polaris-interfacer";
 import classNames from "classnames";
 import { useAuth } from "hooks/useAuth";
 import findProjectImages from "lib/findProjectImages";
+import getChildrenOnDisplayName from "lib/getChildrenOnDisplayName";
 import { isProjectType } from "lib/isProjectType";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -33,9 +34,6 @@ export const useCardProject = () => useContext(CardProjectContext);
 
 const GeneralCard = (props: GeneralCardProps) => {
   const { project, children, baseUrl } = props;
-
-  const getChildrenOnDisplayName = (children: JSX.Element[], displayName: string) =>
-    React.Children.map(children, child => (child.type.DisplayName === displayName ? child : null));
 
   const header = getChildrenOnDisplayName(children, "CardHeader");
   const body = getChildrenOnDisplayName(children, "CardBody");

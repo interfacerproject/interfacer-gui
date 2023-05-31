@@ -5,7 +5,12 @@ import Link from "next/link";
 
 export default function BrTag(props: { tag: string; onRemove?: () => void }) {
   const { tag, onRemove } = props;
-  const classes = classNames("py-1 px-2", "bg-primary/5 hover:bg-primary/20", "border-1 border-primary/20 rounded-md");
+  const classes = classNames(
+    "py-1 px-2",
+    "bg-primary/5",
+    { "hover:bg-primary/20": !onRemove },
+    "border-1 border-primary/20 rounded-md"
+  );
 
   const LinkWrapper = ({ children }: { children: JSX.Element }) =>
     onRemove ? (

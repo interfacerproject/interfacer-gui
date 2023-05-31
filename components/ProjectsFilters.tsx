@@ -50,11 +50,8 @@ export const useFilterProject = () => useContext(FilterProjectContext);
 
 const ProjectsFilters = (props: ProjectsFiltersProps) => {
   const { children } = props;
-
   const { t } = useTranslation("lastUpdatedProps");
   const router = useRouter();
-
-  /* Filters */
 
   // Getting query values
   const query = router.query as QueryFilters<string>;
@@ -107,14 +104,12 @@ const ProjectsFilters = (props: ProjectsFiltersProps) => {
     <FilterProjectContext.Provider value={{ queryFilters, setQueryFilters }}>
       <Card sectioned>
         <Stack vertical>
-          {/* Heading */}
           <div className="flex flex-row items-center gap-2">
             <FilterEdit size={32} />
             <Text as="h2" variant="heading2xl">
               {t("filters") + ":"}
             </Text>
           </div>
-          {/* Filters */}
           {children && children}
           {!children && (
             <Stack vertical>
@@ -123,7 +118,6 @@ const ProjectsFilters = (props: ProjectsFiltersProps) => {
               <ProjectsFiltersPrimaryAccountable />
             </Stack>
           )}
-          {/* Control buttons */}
           <div className="flex gap-2 mt-2">
             <Button data-test="btn-reset" onClick={clearFilters} size="large" fullWidth>
               {t("reset")}
@@ -206,7 +200,6 @@ export const ProjectsFiltersPrimaryAccountable = () => {
               onClick={() => {
                 setQueryFilters({
                   ...queryFilters,
-                  // @ts-ignore
                   primaryAccountable: queryFilters.primaryAccountable.filter(e => e !== contributorId),
                 });
               }}

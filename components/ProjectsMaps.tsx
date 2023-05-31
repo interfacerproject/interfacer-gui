@@ -40,6 +40,7 @@ import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import EmptyState from "./EmptyState";
 import ProjectDisplay from "./ProjectDisplay";
+import ProjectsFilters from "./ProjectsFilters";
 import WithFilterLayout from "./layout/WithFilterLayout";
 
 function groupByCoordinates(arr: mapboxgl.MapboxGeoJSONFeature[]): mapboxgl.MapboxGeoJSONFeature[][] {
@@ -196,51 +197,60 @@ const ProjectsMaps = (props: {
     );
 
   return (
-    <WithFilterLayout hideConformsTo>
-      <div className="flex flex-col flex-nowrap w-full">
-        <Map
-          initialViewState={{
-            latitude: 53.3,
-            longitude: 9.98,
-            zoom: 4,
-          }}
-          interactive
-          style={{ width: "full", height: 600 }}
-          mapStyle="mapbox://styles/mapbox/light-v11"
-          mapboxAccessToken={MAPBOX_TOKEN}
-          interactiveLayerIds={[clusterLayer.id!]}
-          onClick={handleMapClick}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          onMouseDown={onGrab}
-          onMouseUp={onMouseLeave}
-          ref={mapRef}
-          cursor={cursor}
-          onZoomEnd={onZoomChange}
-          onLoad={onZoomChange}
-          scrollZoom={false}
-          touchZoomRotate
-        >
-          <FullscreenControl position="top-left" />
-          <NavigationControl position="top-left" />
-          <ScaleControl />
-
-          <Source
-            id="projects"
-            type="geojson"
-            // @ts-ignore
-            data={geoJSON}
-            cluster={true}
-            clusterMaxZoom={14}
-            clusterRadius={15}
+    <WithFilterLayout>
+      <WithFilterLayout.FilterButton />
+      <WithFilterLayout.Filter>
+        <ProjectsFilters>
+          <ProjectsFilters.PrimaryAccountable />
+          <ProjectsFilters.Tags />
+        </ProjectsFilters>
+      </WithFilterLayout.Filter>
+      <WithFilterLayout.Body>
+        <div className="flex flex-col flex-nowrap w-full">
+          <Map
+            initialViewState={{
+              latitude: 53.3,
+              longitude: 9.98,
+              zoom: 4,
+            }}
+            interactive
+            style={{ width: "full", height: 600 }}
+            mapStyle="mapbox://styles/mapbox/light-v11"
+            mapboxAccessToken={MAPBOX_TOKEN}
+            interactiveLayerIds={[clusterLayer.id!]}
+            onClick={handleMapClick}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            onMouseDown={onGrab}
+            onMouseUp={onMouseLeave}
+            ref={mapRef}
+            cursor={cursor}
+            onZoomEnd={onZoomChange}
+            onLoad={onZoomChange}
+            scrollZoom={false}
+            touchZoomRotate
           >
-            <Layer {...clusterLayer} />
-            <Layer {...clusterCountLayer} />
-            <Layer {...unclusteredPointLayer} />
-          </Source>
-          {popUpsAnchors && <PopUps />}
-        </Map>
-      </div>
+            <FullscreenControl position="top-left" />
+            <NavigationControl position="top-left" />
+            <ScaleControl />
+
+            <Source
+              id="projects"
+              type="geojson"
+              // @ts-ignore
+              data={geoJSON}
+              cluster={true}
+              clusterMaxZoom={14}
+              clusterRadius={15}
+            >
+              <Layer {...clusterLayer} />
+              <Layer {...clusterCountLayer} />
+              <Layer {...unclusteredPointLayer} />
+            </Source>
+            {popUpsAnchors && <PopUps />}
+          </Map>
+        </div>
+      </WithFilterLayout.Body>
     </WithFilterLayout>
   );
 };
