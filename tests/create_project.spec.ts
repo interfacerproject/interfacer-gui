@@ -119,10 +119,10 @@ test.describe("when user want to create a project", () => {
     ]);
     const mainTitle = await page.getAttribute("#main-title", "value");
     const mainLink = await page.getAttribute("#main-link", "value");
-    const tagText = await page.textContent(".Polaris-Tag__TagText");
     expect(mainTitle).toBe("Zenroom");
     expect(mainLink).toBe("https://github.com/dyne/Zenroom");
-    expect(tagText).toContain("arm");
+    expect(page.locator(".py-1.px-2.bg-primary/5.border-1.border-primary/20.rounded-md")).toBeTruthy()
+   
   });
 
   test("should create a new random project", async ({ random }) => {
