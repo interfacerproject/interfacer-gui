@@ -54,7 +54,6 @@
     "base64url": "^3.0.1",
     "boring-avatars": "^1.7.0",
     "classnames": "^2.3.2",
-    "daisyui": "^2.41.0",
     "dayjs": "^1.11.6",
     "dexie": "^3.2.3",
     "dexie-react-hooks": "^1.1.3",
