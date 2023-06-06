@@ -106,7 +106,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
       )}
       {tiny &&
         projects?.map(({ node }: { node: EconomicResource }) => (
-          <div className="py-2 hover:bg-base-300" key={node.id}>
+          <div className="m-1 p-1 rounded border hover:cursor-pointer hover:ring-primary hover:fill-primary hover:ring-2" key={node.id}>
             <Link href={`/project/${node.id}`}>
               <a>
                 <ProjectDisplay project={node} />
