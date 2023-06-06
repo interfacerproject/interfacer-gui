@@ -45,6 +45,8 @@ export default function BrMdEditor(props: BrMdEditorProps) {
 
       <div className="pt-2">
         <MdEditor
+          view={{ menu: true, md: true, html: false }}
+          plugins={["mode-toggle", "header", "font-bold", "font-italic", "font-underline"]}
           className={editorClass}
           renderHTML={text => MdParser.render(text)}
           onChange={onChange}

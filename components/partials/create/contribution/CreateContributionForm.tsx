@@ -167,7 +167,7 @@ const CreateContributionForm = (props: Props) => {
           editorClass="h-60"
           value={useWatch({ control, name: "description" })}
           helpText={`${t("In this markdown editor, the right box shows a preview")}. ${t(
-            "Type up to 2048 characters"
+            "Type up to 6000 characters"
           )}.`}
           onChange={({ text }) => {
             setValue("description", text, { shouldValidate: false, shouldDirty: false, shouldTouch: false });
