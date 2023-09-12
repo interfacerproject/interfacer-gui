@@ -58,7 +58,7 @@ To know more [DOWNLOAD THE WHITEPAPER](https://www.interfacerproject.eu/assets/n
 
 {screenshot}
 
-# [LIVE DEMO](https://beta.interfacer.dyne.org/)
+# [LIVE DEMO](https://interfacer.dyne.org/)
 
 <br>
 
