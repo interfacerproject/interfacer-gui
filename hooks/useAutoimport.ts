@@ -3,11 +3,12 @@ import { replaceMdRelativesUrl } from "lib/findMDRelativesUrl";
 // @ts-ignore
 import { Octokit } from "octokit";
 import { useState } from "react";
-import { zencode_exec } from "zenroom";
+
 import { CreateProjectValues } from "./../components/partials/create/project/CreateProjectForm";
 import { AutoimportInput, AutoimportSource } from "./useAutoimportDefs";
 
 const decodeBase64 = async (s: string) => {
+  const zencode_exec = (await import("zenroom")).zencode_exec;
   const contract = `Given I have a 'base64' named 'content'
       Then print 'content' as 'string'`;
   const result = await zencode_exec(contract, { data: JSON.stringify({ content: s }) });

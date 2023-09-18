@@ -17,6 +17,7 @@
 import useStorage from "hooks/useStorage";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect, useState } from "react";
 import * as yup from "yup";
@@ -26,23 +27,38 @@ import type { NextPageWithLayout } from "./_app";
 // Login functions
 //@ts-ignore
 import keypairoomClientRecreateKeys from "zenflows-crypto/src/keypairoomClientRecreateKeys.zen";
-import { zencode_exec } from "zenroom";
 
 // Layout
 import NRULayout from "../components/layout/NRULayout";
-
-// Partials
-import Passphrase from "components/partials/auth/Passphrase";
-import Questions, { QuestionsNS } from "components/partials/auth/Questions";
-import ChooseMode from "components/partials/sign_in/ChooseMode";
-import EnterEmail, { EnterEmailNS } from "components/partials/sign_in/EnterEmail";
-import ViaPassphrase, { ViaPassphraseNS } from "components/partials/sign_in/ViaPassphrase";
-import ViaQuestions from "components/partials/sign_in/ViaQuestions";
 
 // Components
 import { Button } from "@bbtgnn/polaris-interfacer";
 import BrAuthSuggestion from "components/brickroom/BrAuthSuggestion";
 import BrError from "components/brickroom/BrError";
+
+// Partials
+// import Passphrase from "components/partials/auth/Passphrase";
+import { QuestionsNS } from "components/partials/auth/Questions";
+// import ChooseMode from "components/partials/sign_in/ChooseMode";
+import EnterEmail, { EnterEmailNS } from "components/partials/sign_in/EnterEmail";
+import { ViaPassphraseNS } from "components/partials/sign_in/ViaPassphrase";
+// import ViaQuestions from "components/partials/sign_in/ViaQuestions";
+
+const Passphrase = dynamic(() => import("components/partials/auth/Passphrase"), {
+  ssr: false,
+});
+const Questions = dynamic(() => import("components/partials/auth/Questions"), {
+  ssr: false,
+});
+const ChooseMode = dynamic(() => import("components/partials/sign_in/ChooseMode"), {
+  ssr: false,
+});
+const ViaPassphrase = dynamic(() => import("components/partials/sign_in/ViaPassphrase"), {
+  ssr: false,
+});
+const ViaQuestions = dynamic(() => import("components/partials/sign_in/ViaQuestions"), {
+  ssr: false,
+});
 
 //
 
@@ -155,6 +171,7 @@ const Sign_in: NextPageWithLayout = () => {
   //
 
   async function doLogin() {
+    const zencode_exec = (await import("zenroom")).zencode_exec;
     // Requesting data
     const zenData = `
     {

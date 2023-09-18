@@ -19,13 +19,18 @@ import { DraftProject } from "lib/db";
 import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
-import CardsGroup from "./CardsGroup";
-import DraftCard from "./DraftCard";
+// import CardsGroup from "./CardsGroup";
+// import DraftCard from "./DraftCard";
 import EmptyState from "./EmptyState";
 import LoshCard from "./LoshCard";
 import ProjectCard from "./ProjectCard";
 import Link from "next/link";
-import ProjectDisplay from "./ProjectDisplay";
+// import ProjectDisplay from "./ProjectDisplay";
+import dynamic from "next/dynamic";
+
+const ProjectDisplay = dynamic(() => import("./ProjectDisplay"), { ssr: false });
+const CardsGroup = dynamic(() => import("./CardsGroup"), { ssr: false });
+const DraftCard = dynamic(() => import("./DraftCard"), { ssr: false });
 
 export enum CardType {
   PROJECT = "project",

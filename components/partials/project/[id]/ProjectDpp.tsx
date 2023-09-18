@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useCallback, useRef, useState } from "react";
 import Tree from "react-d3-tree";
-import QRCode from "react-qr-code";
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 export const QUERY_DPP = gql`
