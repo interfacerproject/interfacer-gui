@@ -28,7 +28,7 @@ export default function LicenseDisplay(props: Props) {
         {licenseId === "NOASSERTION" ? (
           "UNKNOW"
         ) : (
-          <Link external url={l?.reference}>
+          <Link external url={`https://spdx.org/licenses/${l?.licenseId}.html`}>
             {l?.name}
           </Link>
         )}
