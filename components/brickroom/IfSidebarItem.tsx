@@ -30,10 +30,10 @@ const IfSidebarItem = ({ text, tag, leftIcon, rightIcon, disabled = false, activ
   const classes = classNames({
     // Base styles
     "flex flex-row justify-between": true,
-    "btn btn-ghost font-medium normal-case rounded-lg border-2": true,
+    "font-medium normal-case rounded-lg border-2 p-4": true,
     // Disabled styles
     "text-primary hover:bg-amber-200": !disabled,
-    "btn-disabled text-gray-400 border-0": disabled,
+    "text-gray-400 border-0": disabled,
     // Active styles
     "border-none": !active,
     "border-amber-200": active,

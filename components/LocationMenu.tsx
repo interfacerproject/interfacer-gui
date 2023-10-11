@@ -14,29 +14,59 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import BrSelect from "./brickroom/BrSelect";
+import { Text } from "@bbtgnn/polaris-interfacer";
 import { useRouter } from "next/router";
+import { ChildrenProp } from "./brickroom/types";
+import TopbarPopover from "./partials/topbar/TopbarPopover";
 
 const LocationMenu = ({ className }: { className?: string }) => {
   const router = useRouter();
   const { pathname, asPath, query, locale } = router;
-  const handleSelect = (e: any) => {
-    e.preventDefault();
-    router.push({ pathname, query }, asPath, { locale: e.target.value });
+  const handleSelect = (loc: string) => {
+    router.push({ pathname, query }, asPath, { locale: loc });
   };
+  //locales with flag
+  const locales = [
+    { label: "en", flag: "🇬🇧" },
+    { label: "fr", flag: "🇫🇷" },
+    { label: "it", flag: "🇮🇹" },
+    { label: "de", flag: "🇩🇪" },
+  ];
+
   return (
-    <BrSelect
-      className={className}
-      array={[
-        { id: "en", name: "en" },
-        { id: "de", name: "de" },
-        { id: "fr", name: "fr" },
-        { id: "it", name: "it" },
-      ]}
-      handleSelect={handleSelect}
-      value={locale}
-      roundedLG
-    />
+    <TopbarPopover
+      id="user-menu"
+      buttonContent={
+        <Text as="p" variant="headingXl">
+          {locales.find(l => l.label === locale)?.flag}
+        </Text>
+      }
+    >
+      <div className="divide-y-1 divide-slate-200">
+        <div>
+          {locales.map(loc => (
+            <MenuLink onclick={() => handleSelect(loc.label)} key={loc.label}>
+              <Text as="p" variant="headingXl">
+                {loc.flag}
+              </Text>
+            </MenuLink>
+          ))}
+        </div>
+      </div>
+    </TopbarPopover>
   );
 };
 export default LocationMenu;
+
+function MenuLink(props: { onclick: () => void } & ChildrenProp) {
+  const { onclick, children } = props;
+  return (
+    <button onClick={onclick} className="block w-full">
+      <a>
+        <div className="hover:bg-slate-100 py-2 px-3">
+          <div className="">{children}</div>
+        </div>
+      </a>
+    </button>
+  );
+}
