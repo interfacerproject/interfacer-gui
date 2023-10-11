@@ -14,10 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Checkbox, Stack, Tabs, Button } from "@bbtgnn/polaris-interfacer";
+import { Button, Checkbox, Stack, Tabs } from "@bbtgnn/polaris-interfacer";
 import { Cube, Events } from "@carbon/icons-react";
 import ProjectsCards from "components/ProjectsCards";
+import ProjectsFilters from "components/ProjectsFilters";
 import ProjectsMaps from "components/ProjectsMaps";
+import WithFilterLayout from "components/layout/WithFilterLayout";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
@@ -106,7 +108,18 @@ const Search: NextPageWithLayout = () => {
             selected={searchType}
             onSelect={setSearchType}
           />
-          {checkedShowMap && <ProjectsMaps filters={filters} />}
+          {checkedShowMap && (
+            <WithFilterLayout
+              filter={
+                <ProjectsFilters>
+                  <ProjectsFilters.PrimaryAccountable />
+                  <ProjectsFilters.Tags />
+                </ProjectsFilters>
+              }
+            >
+              <ProjectsMaps filters={filters} />
+            </WithFilterLayout>
+          )}
           {searchType === 0 && !checkedShowMap && <ProjectsCards filter={filters} hideFilters />}
           {searchType === 1 && <AgentsTable hideHeader searchTerm={q?.toString() || ""} />}
         </Stack>
