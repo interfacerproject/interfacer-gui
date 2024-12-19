@@ -268,6 +268,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
     "https://interfacer-gui-staging.dyne.org": EmailTemplate.InterfacerStaging,
     "http://localhost:3000": EmailTemplate.InterfacerTesting,
     "https://beta.interfacer.dyne.org": EmailTemplate.InterfacerBeta,
+    "https://interfacer-test.dyne.im/": EmailTemplate.InterfacerAlpha,
   };
 
   function getEmailVerificationTemplate() {
