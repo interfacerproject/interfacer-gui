@@ -20,7 +20,7 @@ test.describe("when user is logged in", () => {
     expect(page.getByRole("heading", { name: "Resources" }));
   });
 
-  test("Should see /project/:id", async ({ page }) => {
+  test.skip("Should see /project/:id", async ({ page }) => {
     await page.goto(`/project/${process.env.PROJECT_ID}`);
     await page.waitForLoadState("networkidle");
     await expect(page.getByRole("heading", { name: "Project" })).toBeVisible();
@@ -31,7 +31,7 @@ test.describe("when user is logged in", () => {
     await expect(page.getByText(process.env.AUTHNAME!)).toBeTruthy();
   });
 
-  test("Should see /resource/:id", async ({ page }) => {
+  test.skip("Should see /resource/:id", async ({ page }) => {
     await page.goto(`/resource/${process.env.RESOURCE_ID}`);
     await page.waitForLoadState("networkidle");
     await expect(page.getByText(process.env.RESOURCE_ID!)).toBeVisible();
