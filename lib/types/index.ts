@@ -678,6 +678,7 @@ export enum EmailTemplate {
   InterfacerDeployment = "INTERFACER_DEPLOYMENT",
   InterfacerStaging = "INTERFACER_STAGING",
   InterfacerTesting = "INTERFACER_TESTING",
+  InterfacerSelf = "INTERFACER_SELF",
 }
 
 export type File = {

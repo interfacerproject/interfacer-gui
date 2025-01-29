@@ -1,15 +1,17 @@
 import { Stack, Tabs } from "@bbtgnn/polaris-interfacer";
 import { Cube, Events, ListBoxes, ParentChild, Purchase } from "@carbon/icons-react";
-import ContributionsTable from "components/ContributionsTable";
-import ContributorsTable from "components/ContributorsTable";
 import { useProject } from "components/layout/FetchProjectLayout";
 import ProjectDetailOverview from "components/ProjectDetailOverview";
-import RelationshipTree from "components/RelationshipTree";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useProjectTabs } from "pages/project/[id]";
-import { useCallback, useEffect, useState } from "react";
-import ProjectDpp from "./ProjectDpp";
+import { useCallback } from "react";
+import dynamic from "next/dynamic";
+
+const DynamicProjectDpp = dynamic(() => import("./ProjectDpp"), { ssr: false });
+const RelationshipTree = dynamic(() => import("components/RelationshipTree"), { ssr: false });
+const ContributorsTable = dynamic(() => import("components/ContributorsTable"), { ssr: false });
+const ContributionsTable = dynamic(() => import("components/ContributionsTable"), { ssr: false });
 
 const ProjectTabs = () => {
   const { project } = useProject();
@@ -86,7 +88,7 @@ const ProjectTabs = () => {
 
       {selected == 0 && <ProjectDetailOverview project={project} />}
       {selected == 1 && <RelationshipTree project={project} />}
-      {selected == 2 && <ProjectDpp id={project.id!} />}
+      {selected == 2 && <DynamicProjectDpp id={project.id!} />}
 
       {selected == 3 && (
         <ContributorsTable

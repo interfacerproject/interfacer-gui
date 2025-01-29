@@ -16,7 +16,7 @@
 
 import PFieldInfo, { PFieldInfoProps } from "components/polaris/PFieldInfo";
 import { forwardRef } from "react";
-import { GroupBase } from "react-select";
+import { CSSObjectWithLabel, GroupBase } from "react-select";
 import AsyncSelect, { AsyncProps } from "react-select/async";
 import AsyncCreatableSelect from "react-select/async-creatable";
 
@@ -37,14 +37,14 @@ const BrSelectSearchableAsync = forwardRef<any, BrSelectSearchableAsyncProps>((p
         <AsyncSelect
           {...props}
           ref={ref}
-          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          styles={{ menuPortal: (base: CSSObjectWithLabel) => ({ ...base, zIndex: 9999 }) }}
           menuPortalTarget={document.body}
         />
       ) : (
         <AsyncCreatableSelect
           {...props}
           ref={ref}
-          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          styles={{ menuPortal: (base: CSSObjectWithLabel) => ({ ...base, zIndex: 9999 }) }}
           menuPortalTarget={document.body}
         />
       )}

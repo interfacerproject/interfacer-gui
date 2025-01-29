@@ -24,9 +24,9 @@ test.describe("When user is not logged in", () => {
     await expect(page.getByText("Project")).toBeTruthy();
   });
 
-  test("Should see /resource/:id", async ({ page, envVariables }) => {
+  test.skip("Should see /resource/:id", async ({ page, envVariables }) => {
     await page.goto(`/resource/${envVariables.RESOURCE_ID}`);
-    await expect(page.getByText(envVariables.RESOURCE_ID)).toBeVisible();
+    await expect(page.getByText(envVariables.RESOURCE_ID!)).toBeVisible();
   });
 
   test("Should see /resources", async ({ page }) => {

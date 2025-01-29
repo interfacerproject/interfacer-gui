@@ -20,7 +20,7 @@ const ProjectHeader = ({ isResource }: { isResource?: boolean }) => {
     <Stack vertical spacing="tight">
       <BrBreadcrumb crumbs={crumbs} />
       <ProjectTypeChip project={project} />
-      <Text as="h1" variant="heading2xl" id="project-title">
+      <Text as="h1" variant="heading2xl" id="project-title" breakWord>
         {project.name}
       </Text>
       <p className="text-primary font-mono">

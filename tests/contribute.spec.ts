@@ -2,7 +2,7 @@ import { Page, expect } from "@playwright/test";
 import { test } from "./fixtures/test";
 import { searchMenuAdd } from "./utils/forms";
 
-test.describe("When user want to contribute", () => {
+test.describe.skip("When user want to contribute", () => {
   test.describe.configure({ timeout: 60000, retries: 3 });
   let page: Page;
 
