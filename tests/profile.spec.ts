@@ -17,10 +17,9 @@ test.describe("When user visit the profile page", () => {
     expect(page.getByRole("button", { name: "DID Explorer" })).toBeTruthy();
   });
 
-  test("The profile page should render slightly differently for other user", async ({ page }) => {
-    const otherUserId = "0634YN1WS21RMWRYTS8N2XGNAW"; //process.env.other_user_id
-    await page.goto(`/profile/${otherUserId}`);
-    expect(page.getByText(otherUserId)).toBeTruthy();
+  test("The profile page should render slightly differently for other user", async ({ page, envVariables }) => {
+    await page.goto(`/profile/${envVariables.otherUserId}`);
+    expect(page.getByText(envVariables.otherUserId!)).toBeTruthy();
     expect(page.getByRole("heading", { name: "Projects" })).toBeTruthy();
     await expect(page.locator("text=My List")).toBeHidden();
   });
