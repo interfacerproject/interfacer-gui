@@ -19,7 +19,7 @@ test.describe("When user is not logged in", () => {
     await expect(page.getByText("Sign up")).toBeTruthy();
   });
 
-  test.skip("Should see /project/:id", async ({ page, envVariables }) => {
+  test("Should see /project/:id", async ({ page, envVariables }) => {
     await page.goto(`/project/${envVariables.PROJECT_ID}`);
     await expect(page.getByText("Project")).toBeTruthy();
   });

@@ -20,7 +20,7 @@ test.describe("when user is logged in", () => {
     expect(page.getByRole("heading", { name: "Resources" }));
   });
 
-  test.skip("Should see /project/:id", async ({ page }) => {
+  test("Should see /project/:id", async ({ page }) => {
     await page.goto(`/project/${process.env.PROJECT_ID}`);
     await page.waitForLoadState("networkidle");
     await expect(page.getByRole("heading", { name: "Project" })).toBeVisible();

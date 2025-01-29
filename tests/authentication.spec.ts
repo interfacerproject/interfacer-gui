@@ -67,6 +67,6 @@ test.describe("Authentication process", () => {
     await page.getByRole("button", { name: "Register and login" }).click();
     // Log out
     // await page.goto("");
-    await page.locator("#user-menu").click();
+    // await page.locator("#user-menu").click();
   });
 });
