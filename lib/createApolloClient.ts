@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { zencode_exec } from "zenroom";
 import useStorage from "../hooks/useStorage";
 //@ts-ignore
 import sign from "zenflows-crypto/src/sign_graphql.zen";
@@ -27,6 +26,7 @@ interface FetchHttpOptions {
 }
 
 const useAuthAndFetch = async (uri: RequestInfo, options: RequestInit) => {
+  const zencode_exec = (await import("zenroom")).zencode_exec;
   const { getItem } = useStorage();
   const signRequest = async (body: string) => {
     const zenKeys = JSON.stringify({ keyring: { eddsa: getItem("eddsaPrivateKey") } });

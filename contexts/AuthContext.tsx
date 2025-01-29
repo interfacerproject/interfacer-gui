@@ -30,9 +30,11 @@ import {
   SignUpMutationVariables,
 } from "lib/types";
 import { PersonWithFileEssential } from "lib/types/extensions";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { createContext, useEffect, useState } from "react";
-import { zencode_exec } from "zenroom";
+
+const dynamicZencodeExec = dynamic;
 //@ts-ignore
 import keypairoomClient from "zenflows-crypto/src/keypairoomClient-8-9-10-11-12.zen";
 
@@ -203,6 +205,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   };
 
   const keypair: KeypairFn = async props => {
+    const zencode_exec = (await import("zenroom")).zencode_exec;
     const { question1, question2, question3, question4, question5, email, HMAC } = props;
 
     const zenData = `
