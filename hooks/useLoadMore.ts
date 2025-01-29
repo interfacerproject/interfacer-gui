@@ -59,7 +59,7 @@ const useLoadMore = ({
   // Poll interval that works with pagination
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const total = data?.[dataQueryIdentifier].edges.length || 0;
+      const total = data?.[dataQueryIdentifier].edges.length || variables.last;
       refetch({
         ...variables,
         last: total,
