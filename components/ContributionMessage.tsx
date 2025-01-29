@@ -133,9 +133,9 @@ const ContributionMessage = ({
         </div>
       </div>
       {hasMessage && (
-        <p className="text-xs bg-[#E0E0E0] p-2 my-2 overflow-x-scroll">
+        <div className="text-xs bg-[#E0E0E0] p-2 my-2 overflow-x-scroll">
           <div dangerouslySetInnerHTML={{ __html: MdParser.render(m.message) }} />
-        </p>
+        </div>
       )}
       {request && <p>{t("Make your call")}</p>}
       {request && (

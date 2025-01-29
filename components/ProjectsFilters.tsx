@@ -109,10 +109,9 @@ export default function ProjectsFilters(props: ProjectsFiltersProps) {
         {!hideConformsTo && (
           <SelectProjectType
             label={t("Type")}
-            onChange={v => {
+            onChange={(v: any) => {
               setQueryFilters({
                 ...queryFilters,
-                // @ts-ignore
                 conformsTo: v.map(getOptionValue),
               });
             }}

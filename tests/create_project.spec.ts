@@ -122,7 +122,7 @@ test.describe("when user want to create a project", () => {
     const tagText = await page.textContent(".Polaris-Tag__TagText");
     expect(mainTitle).toBe("Zenroom");
     expect(mainLink).toBe("https://github.com/dyne/Zenroom");
-    expect(tagText).toContain("arm");
+    expect(tagText).toContain("bdd");
   });
 
   test("should create a new random project", async ({ random }) => {

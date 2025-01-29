@@ -274,7 +274,8 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   };
 
   function getEmailVerificationTemplate() {
-    if (window && window.location.origin) return SEND_EMAIL_VERIFICATION_TEMPLATES[window.location.origin];
+    if (window && window.location.origin)
+      return SEND_EMAIL_VERIFICATION_TEMPLATES[window.location.origin] || EmailTemplate.InterfacerSelf;
     else return EmailTemplate.InterfacerTesting;
   }
 
