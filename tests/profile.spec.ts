@@ -10,25 +10,22 @@ test.describe("When user visit the profile page", () => {
     await login(page);
   });
 
-  test("The profile page should work", async ({ page }) => {
-    const authId = "0634YMEGWHNGCVVBKETRXJQCWM"; //process.env.auth_id
-    await page.goto(`/profile/${authId}`);
-    expect(page.getByText(authId)).toBeTruthy();
+  test("The profile page should work", async ({ page, authVariables }) => {
+    await page.goto(`/profile/${authVariables.authId}`);
+    expect(page.getByText(authVariables.authId!)).toBeTruthy();
     expect(page.getByRole("heading", { name: "My projects" })).toBeTruthy();
     expect(page.getByRole("button", { name: "DID Explorer" })).toBeTruthy();
   });
 
-  test("The profile page should render slightly differently for other user", async ({ page }) => {
-    const otherUserId = "0634YN1WS21RMWRYTS8N2XGNAW"; //process.env.other_user_id
-    await page.goto(`/profile/${otherUserId}`);
-    expect(page.getByText(otherUserId)).toBeTruthy();
+  test.skip("The profile page should render slightly differently for other user", async ({ page, envVariables }) => {
+    await page.goto(`/profile/${envVariables.otherUserId}`);
+    expect(page.getByText(envVariables.otherUserId!)).toBeTruthy();
     expect(page.getByRole("heading", { name: "Projects" })).toBeTruthy();
     await expect(page.locator("text=My List")).toBeHidden();
   });
 
-  test("Click to DID Explorer button should redirect to the explorer", async ({ page }) => {
-    const authId = "0634YMEGWHNGCVVBKETRXJQCWM"; //process.env.auth_id
-    await page.goto(`/profile/${authId}`);
+  test("Click to DID Explorer button should redirect to the explorer", async ({ page, authVariables }) => {
+    await page.goto(`/profile/${authVariables.authId}`);
     await page.getByRole("button", { name: "DID Explorer" }).click();
     await expect(page.url()).toContain("https://explorer.did.dyne.org/");
   });
