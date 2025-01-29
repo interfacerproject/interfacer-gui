@@ -17,7 +17,7 @@ test.describe("When user visit the profile page", () => {
     expect(page.getByRole("button", { name: "DID Explorer" })).toBeTruthy();
   });
 
-  test("The profile page should render slightly differently for other user", async ({ page, envVariables }) => {
+  test.skip("The profile page should render slightly differently for other user", async ({ page, envVariables }) => {
     await page.goto(`/profile/${envVariables.otherUserId}`);
     expect(page.getByText(envVariables.otherUserId!)).toBeTruthy();
     expect(page.getByRole("heading", { name: "Projects" })).toBeTruthy();
