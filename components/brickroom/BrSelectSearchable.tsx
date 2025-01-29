@@ -17,7 +17,7 @@
 import { SelectOptions } from "components/brickroom/utils/BrSelectUtils";
 import PFieldInfo, { PFieldInfoProps } from "components/polaris/PFieldInfo";
 import { forwardRef } from "react";
-import Select, { Props } from "react-select";
+import Select, { CSSObjectWithLabel, Props } from "react-select";
 import CreatableSelect from "react-select/creatable";
 
 //
@@ -60,7 +60,7 @@ const BrSelectSearchable = forwardRef<any, BrSelectSearchableProps>((props, ref)
           ref={ref}
           id={id}
           menuPortalTarget={document.body}
-          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          styles={{ menuPortal: (base: CSSObjectWithLabel) => ({ ...base, zIndex: 9999 }) }}
         />
       )}
       {creatable && (
@@ -69,7 +69,7 @@ const BrSelectSearchable = forwardRef<any, BrSelectSearchableProps>((props, ref)
           {...props}
           ref={ref}
           menuPortalTarget={document.body}
-          styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          styles={{ menuPortal: (base: CSSObjectWithLabel) => ({ ...base, zIndex: 9999 }) }}
           id={id}
         />
       )}
