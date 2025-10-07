@@ -36,9 +36,9 @@ import PLabel from "components/polaris/PLabel";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { isRequired } from "lib/isFieldRequired";
-import { useRouter } from "next/router";
 import React, { ReactNode } from "react";
 import SelectProjectForContribution from "../project/steps/SelectProjectForContribution";
+import Link from "next/dist/client/link";
 
 //
 
@@ -221,21 +221,16 @@ const CreateContributionForm = (props: Props) => {
   //
 
   const Layout = ({ children }: { children: ReactNode }) => {
-    const router = useRouter();
     const { t } = useTranslation("common");
     return (
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="p-4 text-text-primary">
-            <Button
-              onClick={() => {
-                router.back();
-              }}
-              plain
-              monochrome
+            <Link
+              href={`/project/${resource?.id}`}
             >
               {t("← Discard and go back")}
-            </Button>
+            </Link>
           </div>
           <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
             <div className="sticky top-24">
