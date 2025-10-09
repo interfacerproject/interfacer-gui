@@ -54,37 +54,37 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-  report:
-    name: 📋 Test reports
-    needs: test
-    if: always()
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download zipped HTML report
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: playwright-report
-          path: playwright-report/
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: playwright-report/
-      - name: Deploy Playwright result to Github Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+  # report:
+  #   name: 📋 Test reports
+  #   needs: test
+  #   if: always()
+  #   permissions:
+  #     pages: write
+  #     id-token: write
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download zipped HTML report
+  #       uses: actions/download-artifact@v4.1.8
+  #       with:
+  #         name: playwright-report
+  #         path: playwright-report/
+  #     - name: Upload artifact
+  #       uses: actions/upload-pages-artifact@v3
+  #       with:
+  #         path: playwright-report/
+  #     - name: Deploy Playwright result to Github Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v2
 
 
-  deploy:
-    name: 🚀 Deploy on staging server
-    needs: test 
-    if: github.ref == 'refs/heads/main'
-    uses: interfacerproject/workflows/.github/workflows/node-staging-deploy.yml@main
-    secrets: inherit
-    with:
-      deploy_url: https://interfacer-gui-staging.dyne.org
+  # deploy:
+  #   name: 🚀 Deploy on staging server
+  #   needs: test 
+  #   if: github.ref == 'refs/heads/main'
+  #   uses: interfacerproject/workflows/.github/workflows/node-staging-deploy.yml@main
+  #   secrets: inherit
+  #   with:
+  #     deploy_url: https://interfacer-gui-staging.dyne.org
