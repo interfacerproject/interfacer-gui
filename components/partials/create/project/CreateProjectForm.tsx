@@ -17,12 +17,7 @@ import {
 import { imagesStepDefaultValues, imagesStepSchema, ImagesStepValues } from "./steps/ImagesStep";
 import { licenseStepDefaultValues, licenseStepSchema, LicenseStepValues } from "./steps/LicenseStep";
 import { linkDesignStepDefaultValues, linkDesignStepSchema, LinkDesignStepValues } from "./steps/LinkDesignStep";
-import {
-  locationStepDefaultValues,
-  locationStepSchema,
-  LocationStepSchemaContext,
-  LocationStepValues,
-} from "./steps/LocationStep";
+import { locationStepDefaultValues, LocationStepSchemaContext, LocationStepValues } from "./steps/LocationStep";
 import { mainStepDefaultValues, mainStepSchema, MainStepValues } from "./steps/MainStep";
 import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep";
 
@@ -39,9 +34,9 @@ import { Spinner } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "hooks/useAuth";
 import { useDrafts } from "hooks/useFormSaveDraft";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
-import useYupLocaleObject from "hooks/useYupLocaleObject";
 
 //
 
@@ -60,6 +55,7 @@ export interface CreateProjectValues {
   contributors: ContributorsStepValues;
   relations: RelationsStepValues;
   licenses: LicenseStepValues;
+  dpp: string | undefined;
 }
 
 export const createProjectDefaultValues: CreateProjectValues = {
@@ -71,17 +67,17 @@ export const createProjectDefaultValues: CreateProjectValues = {
   contributors: contributorsStepDefaultValues,
   relations: relationsStepDefaultValues,
   licenses: licenseStepDefaultValues,
+  dpp: undefined,
 };
 
 export const createProjectSchema = () =>
   yup.object({
     main: mainStepSchema(),
     linkedDesign: linkDesignStepSchema(),
-    location: yup
-      .object()
-      .when("$projectType", (projectType: ProjectType, schema) =>
-        projectType == ProjectType.DESIGN ? schema : locationStepSchema
-      ),
+    location: yup.object(), //re add condition to make location required only for product
+    // .when("$projectType", (projectType: ProjectType, schema) =>
+    //   projectType == ProjectType.DESIGN ? schema : locationStepSchema
+    // ),
     images: imagesStepSchema(),
     declarations: yup
       .object()
@@ -91,6 +87,7 @@ export const createProjectSchema = () =>
     contributors: contributorsStepSchema(),
     relations: relationsStepSchema(),
     licenses: licenseStepSchema(),
+    dpp: yup.string().notRequired(),
   });
 
 export type CreateProjectSchemaContext = LocationStepSchemaContext;
@@ -131,6 +128,7 @@ export default function CreateProjectForm(props: Props) {
     contributors: contributorsStepDefaultValues,
     relations: relationsStepDefaultValues,
     licenses: licenseStepDefaultValues,
+    dpp: undefined,
   };
 
   useEffect(() => {
@@ -163,7 +161,27 @@ export default function CreateProjectForm(props: Props) {
 
   async function onSubmit(values: CreateProjectValues) {
     setLoading(true);
-    const projectID = await handleProjectCreation(values, projectType);
+
+    let dppUlid: string | undefined = undefined;
+
+    // Submit DPP if available
+    if (values.dpp) {
+      const response = await fetch("http://localhost:8080/dpp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: values.dpp,
+      });
+      if (!response.ok) {
+        console.error("Failed to submit DPP:", response.statusText);
+        setLoading(false);
+        return;
+      }
+      dppUlid = (await response.json()).insertedID;
+    }
+
+    const projectID = await handleProjectCreation(values, projectType, dppUlid);
     if (projectID) await router.replace(`/project/${projectID}?created=true`);
     setLoading(false);
   }

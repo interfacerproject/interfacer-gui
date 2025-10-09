@@ -38,7 +38,7 @@ const ProjectDpp = ({ id }: { id: string }) => {
     });
   };
   const ref = useRef(null);
-  const treeData = dppToTreeData(data?.economicResource.traceDpp);
+  const treeData = dppToTreeData(data?.economicResource.traceDpp[0]);
 
   function copyDPP() {
     navigator.clipboard.writeText(JSON.stringify(data?.economicResource.traceDpp, null, 2));
