@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { zencode_exec } from "zenroom";
 //@ts-ignore
 import sign from "zenflows-crypto/src/sign_graphql.zen";
 import { useAuth } from "./useAuth";
@@ -25,6 +24,7 @@ const useSignedPost = (idInHeader?: boolean) => {
   const { user } = useAuth();
 
   const signRequest = async (json: string) => {
+    const zencode_exec = (await import("zenroom")).zencode_exec;
     const data = `{"gql": "${Buffer.from(json, "utf8").toString("base64")}"}`;
     const keys = `{"keyring": {"eddsa": "${getItem("eddsaPrivateKey")}"}}`;
     const { result } = await zencode_exec(sign, { data, keys });
@@ -38,6 +38,7 @@ const useSignedPost = (idInHeader?: boolean) => {
   };
 
   const signDidRequest = async (json: string) => {
+    const zencode_exec = (await import("zenroom")).zencode_exec;
     const data = `{"gql": "${Buffer.from(json, "utf8").toString("base64")}"}`;
     const keys = `{"keyring": {"eddsa": "${getItem("eddsaPrivateKey")}"}}`;
     const { result } = await zencode_exec(sign, { data, keys });
