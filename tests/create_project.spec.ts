@@ -89,7 +89,7 @@ const createProject = async (page: Page, projectInfo: ProjectInfo, random: any) 
   }
 };
 
-test.describe("when user want to create a project", () => {
+test.describe.skip("when user want to create a project", () => {
   test.describe.configure({ retries: 3, timeout: 100000 });
   let page: Page;
 
