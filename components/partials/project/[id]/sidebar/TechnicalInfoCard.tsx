@@ -16,7 +16,7 @@ const TechnicalInfoCard = () => {
   const haveDeclarations = declarations?.recyclable === "yes" || declarations?.repairable === "yes";
   const licenses = project.metadata?.licenses?.length && project?.metadata?.licenses;
   const design = project.metadata?.design;
-  const certifications: Array<ILink> | undefined = project.metadata.declarations?.certifications;
+  const certifications: Array<ILink> | undefined = project.metadata?.declarations?.certifications;
 
   if (!(licenses || design || haveDeclarations || certifications?.length)) return null;
 
