@@ -22,6 +22,10 @@ interface DPPData {
   repairInformation: Record<string, DPPValue>;
   refurbishmentInformation: Record<string, DPPValue>;
   recyclingInformation: Record<string, DPPValue>;
+  dosageInstruction: Record<string, DPPValue>;
+  ingredients: Record<string, DPPValue>;
+  packaging: Record<string, DPPValue>;
+  consumerInformation: Record<string, DPPValue>;
 }
 
 interface CategoryConfig {
@@ -73,6 +77,30 @@ const categoryConfigs: CategoryConfig[] = [
     color: "rgb(0, 44, 108)",
   },
   {
+    key: "packaging",
+    title: "Packaging",
+    icon: "https://simbaimagestorage.blob.core.windows.net/dpp/Packaging.svg",
+    color: "rgb(0, 44, 108)",
+  },
+  {
+    key: "environmentalImpact",
+    title: "Environmental Impact",
+    icon: "https://simbaimagestorage.blob.core.windows.net/dpp/Environmental%20Impact.svg",
+    color: "rgb(0, 44, 108)",
+  },
+  {
+    key: "ingredients",
+    title: "Ingredients",
+    icon: "https://simbaimagestorage.blob.core.windows.net/dpp/Ingredients.svg",
+    color: "rgb(0, 44, 108)",
+  },
+  {
+    key: "dosageInstruction",
+    title: "Dosage Instructions",
+    icon: "https://simbaimagestorage.blob.core.windows.net/dpp/Dosage%20Instructions.svg",
+    color: "rgb(0, 44, 108)",
+  },
+  {
     key: "refurbishmentInformation",
     title: "Information about the Refurbishment",
     icon: "",
@@ -82,6 +110,12 @@ const categoryConfigs: CategoryConfig[] = [
     key: "recyclingInformation",
     title: "Information on the Recycling",
     icon: "",
+    color: "rgb(0, 44, 108)",
+  },
+  {
+    key: "consumerInformation",
+    title: "Consumer Information",
+    icon: "https://simbaimagestorage.blob.core.windows.net/dpp/Consumer%20%20Information.svg",
     color: "rgb(0, 44, 108)",
   },
 ];
@@ -95,7 +129,11 @@ const fieldNameMap: Record<string, string> = {
   productDescription: "Product Description",
   productName: "Product Name",
   netWeight: "Net Weight",
+  netContentAndUnitOfMeasure: "Net Content and Unit of Measure",
   gtin: "GTIN",
+  yearOfSale: "Year of Sale",
+  dimensions: "Dimensons",
+  consumerUnit: "Consumer Unit",
   countryOfOrigin: "Country of Origin",
   companyName: "Company name",
   gln: "GLN",
@@ -110,6 +148,24 @@ const fieldNameMap: Record<string, string> = {
   rohsCompliance: "EU Declaration of Conformity ID",
   recyclingInstructions: "Separate Collection",
   materialComposition: "End of Life Information",
+  chemicalConsumptionInPackaging:
+    "Chemical Consumption in Packaging, Unit [ppb] or [mg/kg] /// Ingredient List [Lead, Cadmium, Mercury and Hexavalent Chromium]",
+  disposalInstructions: "Disposal Instructions",
+  recyclablePackaging: "Recyclable Packaging",
+  minimumRecycledContentInPackaging: "Minimum Recycled Content in Packaging",
+  waterConsumptionPerUnit: "Water Consumption per Unit",
+  chemicalConsumptionPerUnit: "Chemical Consumption per Unit",
+  co2eEmissionsPerUnit: "CO₂e Emissions per Unit",
+  energyConsumptionPerUnit: "Energy Consumption per Unit",
+  cleaningPerformanceAtLowTemperature: "Cleaning Performance of the Product at Low Temperature",
+  minimumContentOfMaterialWithSustainabilityCertification:
+    "Minimum Content of Material with Sustainability Certification per kg or Unit of Product (or Component)",
+  ingredientList: "Ingredient List",
+  minimumContentOfBiodegradableSubstances: "Minimum Content of Biodegradable Substances/Materials",
+  presenceOfNonBiodegradableMicroplastics: "Presence of non-biodegradable microplastics and/or microbeads",
+  informationOnHowToCorrectlyUseAndDispose:
+    "Information on How to Correctly Use (Focus on Dosing) and Dispose the Product",
+  marketingClaim: "Marketing Claim",
 };
 
 const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
@@ -118,7 +174,7 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
   const [error, setError] = useState<string | null>(null);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
-  console.log(data)
+  console.log(data);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -242,7 +298,7 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
 
   const CategorySection: React.FC<{ config: CategoryConfig; data: Record<string, DPPValue> }> = ({ config, data }) => {
     const isOpen = openSections[config.key];
-    const hasData = Object.values(data).some(field => hasValidData(field));
+    const hasData = data && Object.values(data).some(field => hasValidData(field));
 
     if (!hasData) return null;
 
@@ -311,11 +367,11 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
   return (
     <div className="min-h-64 bg-white">
       <Card sectioned>
-        <Stack vertical>
+        <div className="flex flex-col gap-2">
           {categoryConfigs.map(config => (
             <CategorySection key={config.key} config={config} data={data[config.key] as Record<string, DPPValue>} />
           ))}
-        </Stack>
+        </div>
       </Card>
     </div>
   );
