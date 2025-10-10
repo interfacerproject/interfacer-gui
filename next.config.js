@@ -33,7 +33,7 @@ const nextConfig = {
     };
 
     config.module.rules.push({
-      test: /\.zen$/,
+      test: /\.(zen|lua|json)$/,
       type: "asset/source",
     });
 

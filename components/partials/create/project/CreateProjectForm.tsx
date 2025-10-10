@@ -37,6 +37,47 @@ import { useDrafts } from "hooks/useFormSaveDraft";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
+import { zenroom_exec } from "zenroom";
+
+//@ts-ignore
+import validationScript from "components/interfacer-dpp/validation/strdict_to_dpp.lua";
+// import validationKeys from "components/interfacer-dpp/validation/dataTypes.json";
+const validationKeys = {
+  boolean: ["ceMarking", "rohsCompliance", "conformityAssessmentCE", "euDeclarationOfConformityID"],
+  date: ["dateOfRecycling", "dateOfRefurbishment", "dateOfRepair"],
+  link: ["linkToDPP", "productImage", "serviceAndRepairInstructions"],
+  quantity: [
+    "dcVoltage",
+    "maximumCurrent",
+    "maximumElectricalPower",
+    "maximumVoltage",
+    "powerRating",
+    "chemicalConsumptionPerUnit",
+    "co2\neEmissionsPerUnit",
+    "energyConsumptionPerUnit",
+    "waterConsumptionPerUnit",
+    "netContent",
+    "netWeight",
+    "nominalMaximumRPM",
+    "numberOfGears",
+    "torque",
+    "warrantyDuration",
+    "co2eEmissionsPerUnit",
+    "voltage",
+    "energy",
+    "thermalCoefficient",
+    "lightTransmittance",
+    "amount",
+    "minimumRecycledContent",
+    "recyclablePackaging",
+    "netContentCapacity",
+    ".*PowerCapability.*",
+    "handleHeight",
+    "weight",
+    "capacityThresholdExhaustion",
+  ],
+  dimensions: ["dimensions", "size"],
+};
 
 //
 
@@ -87,7 +128,13 @@ export const createProjectSchema = () =>
     contributors: contributorsStepSchema(),
     relations: relationsStepSchema(),
     licenses: licenseStepSchema(),
-    dpp: yup.string().notRequired(),
+    dpp: yup
+      .string()
+      .when("$projectType", (projectType: ProjectType, schema) =>
+        projectType == ProjectType.PRODUCT
+          ? schema.required("A DPP is required for products")
+          : schema.notRequired().nullable()
+      ),
   });
 
 export type CreateProjectSchemaContext = LocationStepSchemaContext;
@@ -164,14 +211,24 @@ export default function CreateProjectForm(props: Props) {
 
     let dppUlid: string | undefined = undefined;
 
-    // Submit DPP if available
     if (values.dpp) {
+      const p = await zenroom_exec(validationScript, {
+        data: values.dpp,
+        keys: JSON.stringify(validationKeys),
+      });
+      if (p.result === null) {
+        console.error("Zenroom DPP parsing error:", p.logs);
+        setLoading(false);
+        return;
+      }
+      console.log(p.result)
+
       const response = await fetch("http://localhost:8080/dpp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: values.dpp,
+        body: JSON.stringify(JSON.parse(p.result)[JSON.parse(values.dpp)[0].productOverview.brandName]),
       });
       if (!response.ok) {
         console.error("Failed to submit DPP:", response.statusText);

@@ -57,6 +57,7 @@ export async function hashFile(ab: ArrayBuffer): Promise<string> {
   for (i = 0; i < ab.byteLength; i += bytesChunkSize) {
     const upperLimit = i + bytesChunkSize > ab.byteLength ? ab.byteLength : i + bytesChunkSize;
     const i8a = new Uint8Array(ab.slice(i, upperLimit));
+    //todo: needs fixing
     ctx = await zenroom_hash_update(ctx.result, i8a);
   }
   ctx = await zenroom_hash_final(ctx.result);

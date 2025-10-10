@@ -240,8 +240,8 @@ importers:
         specifier: ^0.32.11
         version: 0.32.11
       zenroom:
-        specifier: 2.2.3-f0193d51
-        version: 2.2.3-f0193d51
+        specifier: 5.26.1
+        version: 5.26.1
     devDependencies:
       '@playwright/test':
         specifier: ^1.56.0
@@ -5332,8 +5332,8 @@ packages:
   zen-observable@0.8.15:
     resolution: {integrity: sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==}
 
-  zenroom@2.2.3-f0193d51:
-    resolution: {integrity: sha512-J/qaIVKo4/oPhO8bmKVqYJ7S51QvFTfVvv4wYFYMiL/oKByO8+1gCu4gtWYb8Rqtv6/RV7hVRIu/ls3hddD/Xg==}
+  zenroom@5.26.1:
+    resolution: {integrity: sha512-1YVeUgdujYovaJqogkAELG7FBDlUwiDh9nRQJapRvpBpLIM7NtUTLKYdsh4DprSK15eoeQJsCHS+t3mx0fxo6Q==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -11453,6 +11453,6 @@ snapshots:
 
   zen-observable@0.8.15: {}
 
-  zenroom@2.2.3-f0193d51: {}
+  zenroom@5.26.1: {}
 
   zwitch@2.0.4: {}
