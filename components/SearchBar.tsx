@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 
 const SearchBar = () => {
   const router = useRouter();
@@ -34,7 +34,7 @@ const SearchBar = () => {
       <input
         type="text"
         placeholder={t("search") + "..."}
-        className="input rounded-xl input-bordered w-128"
+        className="p-3 rounded-xl input-bordered w-128 outline-offset-1 outline-primary"
         onKeyDown={handleKeyDown}
         onChange={e => setSearchString(e.target.value)}
       />
