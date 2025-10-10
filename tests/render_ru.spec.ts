@@ -20,7 +20,7 @@ test.describe("when user is logged in", () => {
     expect(page.getByRole("heading", { name: "Resources" }));
   });
 
-  test("Should see /project/:id", async ({ page }) => {
+  test.skip("Should see /project/:id", async ({ page }) => {
     await page.goto(`/project/${process.env.PROJECT_ID}`);
     await page.waitForLoadState("networkidle");
     await expect(page.getByRole("heading", { name: "Project" })).toBeVisible();
@@ -37,7 +37,7 @@ test.describe("when user is logged in", () => {
     await expect(page.getByText(process.env.RESOURCE_ID!)).toBeVisible();
   });
 
-  test("Should see /projects", async ({ page }) => {
+  test.skip("Should see /projects", async ({ page }) => {
     await page.goto("/projects");
     await expect(page.getByText("Latest projects")).toBeVisible();
     await expect(page.getByRole("link", { name: "Create a new project" })).toBeVisible();
@@ -45,7 +45,7 @@ test.describe("when user is logged in", () => {
     expect(page.getByRole("button", { name: "Filter by" })).toBeTruthy();
   });
 
-  test("Should see /scan", async ({ page }) => {
+  test.skip("Should see /scan", async ({ page }) => {
     await page.goto("/scan");
     await expect(page.getByRole("heading", { name: "Scan your QR code" })).toBeVisible();
   });

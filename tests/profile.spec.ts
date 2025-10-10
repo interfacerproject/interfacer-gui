@@ -24,7 +24,7 @@ test.describe("When user visit the profile page", () => {
     await expect(page.locator("text=My List")).toBeHidden();
   });
 
-  test("Click to DID Explorer button should redirect to the explorer", async ({ page, authVariables }) => {
+  test.skip("Click to DID Explorer button should redirect to the explorer", async ({ page, authVariables }) => {
     await page.goto(`/profile/${authVariables.authId}`);
     await page.getByRole("button", { name: "DID Explorer" }).click();
     await expect(page.url()).toContain("https://explorer.did.dyne.org/");

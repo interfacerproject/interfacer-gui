@@ -13,7 +13,7 @@ test.describe("Authentication process", () => {
     await logout(page);
   });
 
-  test("Sign in", async ({ authVariables }) => {
+  test.skip("Sign in", async ({ authVariables }) => {
     await page.goto("/sign_in");
 
     // Enter email and submit

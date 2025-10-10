@@ -14,14 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import "@fontsource/space-grotesk";
-import "@fontsource/space-grotesk/700.css";
-import "@fontsource/space-grotesk/600.css";
 import "@fontsource/ibm-plex-sans";
-import "@fontsource/ibm-plex-sans/700.css";
-import "@fontsource/ibm-plex-sans/600.css";
+import "@fontsource/space-grotesk";
 
-import "styles/globals.scss";
 import Layout from "components/layout/Layout";
 import { AuthProvider } from "contexts/AuthContext";
 import { NextPage } from "next";
@@ -29,6 +24,7 @@ import { appWithTranslation } from "next-i18next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { ReactElement, ReactNode } from "react";
+import "styles/globals.scss";
 
 import { AppProvider } from "@bbtgnn/polaris-interfacer";
 import enTranslations from "@bbtgnn/polaris-interfacer/locales/en.json";
@@ -55,7 +51,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <AuthProvider publicPage={publicPage}>{getLayout(<Component {...pageProps} />)}</AuthProvider>
-    </AppProvider>
+     </AppProvider>
   );
 }
 

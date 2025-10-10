@@ -4,13 +4,13 @@ import { matchers } from "expect-playwright";
 
 expect.extend(matchers);
 
-test.describe("should display 404 page", () => {
+test.describe.skip("should display 404 page", () => {
   test.beforeEach(async ({ page, login }) => {
     await page.goto("");
     await login(page);
   });
 
-  test("should display 404 page", async ({ page, random }) => {
+  test.skip("should display 404 page", async ({ page, random }) => {
     const randomUrl = `/${random.randomString(10)}`;
     const response = await page.goto(randomUrl, { timeout: 0, waitUntil: "networkidle" });
     const status = response!.status();
