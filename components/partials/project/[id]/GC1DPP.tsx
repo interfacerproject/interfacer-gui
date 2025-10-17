@@ -180,7 +180,7 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:8080/dpp/${ulid}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_DPP_URL}/dpp/${ulid}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

@@ -41,6 +41,7 @@ import { zenroom_exec } from "zenroom";
 
 //@ts-ignore
 import validationScript from "components/interfacer-dpp/validation/strdict_to_dpp.lua";
+import { dppStepDefaultValues, DPPStepValues } from "./steps/DPPStep";
 // import validationKeys from "components/interfacer-dpp/validation/dataTypes.json";
 const validationKeys = {
   boolean: ["ceMarking", "rohsCompliance", "conformityAssessmentCE", "euDeclarationOfConformityID"],
@@ -96,7 +97,7 @@ export interface CreateProjectValues {
   contributors: ContributorsStepValues;
   relations: RelationsStepValues;
   licenses: LicenseStepValues;
-  dpp: string | undefined;
+  dpp: DPPStepValues
 }
 
 export const createProjectDefaultValues: CreateProjectValues = {
@@ -108,7 +109,7 @@ export const createProjectDefaultValues: CreateProjectValues = {
   contributors: contributorsStepDefaultValues,
   relations: relationsStepDefaultValues,
   licenses: licenseStepDefaultValues,
-  dpp: undefined,
+  dpp: dppStepDefaultValues,
 };
 
 export const createProjectSchema = () =>
@@ -129,7 +130,7 @@ export const createProjectSchema = () =>
     relations: relationsStepSchema(),
     licenses: licenseStepSchema(),
     dpp: yup
-      .string()
+      .object()
       .when("$projectType", (projectType: ProjectType, schema) =>
         projectType == ProjectType.PRODUCT
           ? schema.required("A DPP is required for products")
@@ -175,7 +176,7 @@ export default function CreateProjectForm(props: Props) {
     contributors: contributorsStepDefaultValues,
     relations: relationsStepDefaultValues,
     licenses: licenseStepDefaultValues,
-    dpp: undefined,
+    dpp: dppStepDefaultValues,
   };
 
   useEffect(() => {
@@ -211,10 +212,14 @@ export default function CreateProjectForm(props: Props) {
 
     let dppUlid: string | undefined = undefined;
 
+    const key= localStorage.getItem("eddsaKey");
+
     if (values.dpp) {
+      console.log("Submitting DPP:", JSON.stringify([values.dpp]));
       const p = await zenroom_exec(validationScript, {
-        data: values.dpp,
+        data: JSON.stringify([values.dpp]),
         keys: JSON.stringify(validationKeys),
+        // keys: key
       });
       if (p.result === null) {
         console.error("Zenroom DPP parsing error:", p.logs);
@@ -223,12 +228,12 @@ export default function CreateProjectForm(props: Props) {
       }
       console.log(p.result)
 
-      const response = await fetch("http://localhost:8080/dpp", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_DPP_URL}/dpp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(JSON.parse(p.result)[JSON.parse(values.dpp)[0].productOverview.brandName]),
+        body: JSON.stringify(JSON.parse(p.result)[values.dpp.productOverview?.brandName || ""]),
       });
       if (!response.ok) {
         console.error("Failed to submit DPP:", response.statusText);
