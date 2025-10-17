@@ -49,6 +49,12 @@ export async function createFileHash(file: File): Promise<string> {
 
 //
 
+function uint8ArrayToHex(uint8Array: Uint8Array): string {
+  return Array.from(uint8Array)
+    .map(byte => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 export async function hashFile(ab: ArrayBuffer): Promise<string> {
   const bytesChunkSize = 1024 * 64;
   let ctx = await zenroom_hash_init("sha512");
@@ -57,9 +63,7 @@ export async function hashFile(ab: ArrayBuffer): Promise<string> {
   for (i = 0; i < ab.byteLength; i += bytesChunkSize) {
     const upperLimit = i + bytesChunkSize > ab.byteLength ? ab.byteLength : i + bytesChunkSize;
     const i8a = new Uint8Array(ab.slice(i, upperLimit));
-    //todo: needs fixing
-    //@ts-ignore
-    ctx = await zenroom_hash_update(ctx.result, i8a);
+    ctx = await zenroom_hash_update(ctx.result, uint8ArrayToHex(i8a));
   }
   ctx = await zenroom_hash_final(ctx.result);
 

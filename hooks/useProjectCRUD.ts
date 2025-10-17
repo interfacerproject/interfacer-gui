@@ -214,8 +214,8 @@ export const useProjectCRUD = () => {
       }
 
       //todo: This should be uncommented, seems broken with last zenroom version see lib/fileUpload.ts
-      // const images: IFile[] = await prepFilesForZenflows(formData.images);
-      // devLog("info: images prepared", images);
+      const images: IFile[] = await prepFilesForZenflows(formData.images);
+      devLog("info: images prepared", images);
       const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
       devLog("info: tags prepared", tags);
 
@@ -232,7 +232,7 @@ export const useProjectCRUD = () => {
         creationTime: new Date().toISOString(),
         repo: formData.main.link,
         license: formData.licenses[0]?.licenseId || "",
-        // images,
+        images,
         tags,
         metadata: JSON.stringify({
           contributors: formData.contributors,
