@@ -241,6 +241,7 @@ export default function CreateProjectForm(props: Props) {
         return;
       }
       dppUlid = (await response.json()).insertedID;
+      console.log("DPP submitted with ULID:", dppUlid);
     }
 
     const projectID = await handleProjectCreation(values, projectType, dppUlid);
