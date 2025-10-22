@@ -1,3 +1,4 @@
+import { Card } from "@bbtgnn/polaris-interfacer";
 import { getSectionsByProjectType } from "components/partials/project/projectSections";
 import TableOfContents from "components/TableOfContents";
 import { ProjectType } from "components/types";
@@ -20,5 +21,11 @@ export default function CreateProjectNav(props: Props) {
     };
   });
 
-  return <TableOfContents title={t("Sections")} links={links} />;
+  return (
+    <Card>
+      <div className="p-6">
+        <TableOfContents title={t("Sections")} links={links} />
+      </div>
+    </Card>
+  );
 }

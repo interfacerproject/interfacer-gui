@@ -97,7 +97,7 @@ export interface CreateProjectValues {
   contributors: ContributorsStepValues;
   relations: RelationsStepValues;
   licenses: LicenseStepValues;
-  dpp: DPPStepValues
+  dpp: DPPStepValues;
 }
 
 export const createProjectDefaultValues: CreateProjectValues = {
@@ -212,7 +212,7 @@ export default function CreateProjectForm(props: Props) {
 
     let dppUlid: string | undefined = undefined;
 
-    const key= localStorage.getItem("eddsaKey");
+    const key = localStorage.getItem("eddsaKey");
 
     if (values.dpp) {
       console.log("Submitting DPP:", JSON.stringify([values.dpp]));
@@ -226,7 +226,7 @@ export default function CreateProjectForm(props: Props) {
         setLoading(false);
         return;
       }
-      console.log(p.result)
+      console.log(p.result);
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_DPP_URL}/dpp`, {
         method: "POST",
@@ -261,7 +261,12 @@ export default function CreateProjectForm(props: Props) {
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-row justify-center space-x-8 md:space-x-16 lg:space-x-24 p-6">
+        <div
+          style={{
+            backgroundImage: 'url("/formBg.png")',
+          }}
+          className="flex flex-row justify-center space-x-8 md:space-x-16 lg:space-x-24 p-6 bg-background-subdued min-h-screen"
+        >
           <div className="max-w-xs">
             <div className="sticky top-24">
               <CreateProjectNav projectType={projectType} />

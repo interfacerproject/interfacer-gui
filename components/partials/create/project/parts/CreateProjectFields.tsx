@@ -7,7 +7,7 @@ import { getSectionsByProjectType } from "components/partials/project/projectSec
 
 // Components
 import { Stack } from "@bbtgnn/polaris-interfacer";
-import PDivider from "components/polaris/PDivider";
+import Card from "components/Card";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
 //
@@ -50,13 +50,23 @@ export default function CreateProjectFields(props: Props) {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={titles[projectType].title} subtitle={titles[projectType].subtitle} />
+      <Card>
+        <div className="p-6">
+          <PTitleSubtitle title={titles[projectType].title} subtitle={titles[projectType].subtitle} />
+        </div>
+      </Card>
 
       {sections.map((section, index) => (
-        <Stack vertical key={index} spacing="extraLoose">
-          <PDivider id={section.id} />
-          {section.component}
-        </Stack>
+        <div key={index}>
+          <div id={section.id} className="pb-16" />
+          <Card>
+            <div className="p-6">
+              <Stack vertical spacing="extraLoose">
+                {section.component}
+              </Stack>
+            </div>
+          </Card>
+        </div>
       ))}
     </Stack>
   );
