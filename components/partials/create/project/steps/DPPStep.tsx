@@ -336,6 +336,7 @@ export default function DPPStep() {
                               value={value || "kg"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -466,7 +467,7 @@ export default function DPPStep() {
                             <TextField
                               type="text"
                               label=""
-                              placeholder="e.g., 1 piece"
+                              placeholder="e.g., 1"
                               autoComplete="off"
                               value={value || ""}
                               onChange={onChange}
@@ -486,6 +487,7 @@ export default function DPPStep() {
                               value={value || "pieces"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -524,6 +526,7 @@ export default function DPPStep() {
                               value={value || "years"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -643,7 +646,7 @@ export default function DPPStep() {
                             <TextField
                               type="text"
                               label=""
-                              placeholder="e.g., 1 L"
+                              placeholder="e.g., 1"
                               autoComplete="off"
                               value={value || ""}
                               onChange={onChange}
@@ -663,6 +666,7 @@ export default function DPPStep() {
                               value={value || "L"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -681,7 +685,7 @@ export default function DPPStep() {
                             <TextField
                               type="text"
                               label=""
-                              placeholder="e.g., 1 kg"
+                              placeholder="e.g., 1"
                               autoComplete="off"
                               value={value || ""}
                               onChange={onChange}
@@ -701,6 +705,7 @@ export default function DPPStep() {
                               value={value || "kg"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -719,7 +724,7 @@ export default function DPPStep() {
                             <TextField
                               type="text"
                               label=""
-                              placeholder="e.g., 1 kg"
+                              placeholder="e.g., 1"
                               autoComplete="off"
                               value={value || ""}
                               onChange={onChange}
@@ -739,6 +744,7 @@ export default function DPPStep() {
                               value={value || "kg"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -757,7 +763,7 @@ export default function DPPStep() {
                             <TextField
                               type="text"
                               label=""
-                              placeholder="e.g., 1 kWh"
+                              placeholder="e.g., 1"
                               autoComplete="off"
                               value={value || ""}
                               onChange={onChange}
@@ -777,6 +783,7 @@ export default function DPPStep() {
                               value={value || "kWh"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -1025,6 +1032,7 @@ export default function DPPStep() {
                               value={value || "min"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -1063,6 +1071,7 @@ export default function DPPStep() {
                               value={value || "min"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -1097,7 +1106,7 @@ export default function DPPStep() {
                             <TextField
                               type="text"
                               label=""
-                              placeholder="e.g., 100 W"
+                              placeholder="e.g., 100"
                               autoComplete="off"
                               value={value || ""}
                               onChange={onChange}
@@ -1117,6 +1126,7 @@ export default function DPPStep() {
                               value={value || "W"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -1135,7 +1145,7 @@ export default function DPPStep() {
                             <TextField
                               type="text"
                               label=""
-                              placeholder="e.g., 100 V"
+                              placeholder="e.g., 100"
                               autoComplete="off"
                               value={value || ""}
                               onChange={onChange}
@@ -1155,6 +1165,7 @@ export default function DPPStep() {
                               value={value || "V"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -1173,7 +1184,7 @@ export default function DPPStep() {
                             <TextField
                               type="text"
                               label=""
-                              placeholder="e.g., 100 A"
+                              placeholder="e.g., 100"
                               autoComplete="off"
                               value={value || ""}
                               onChange={onChange}
@@ -1193,6 +1204,7 @@ export default function DPPStep() {
                               value={value || "A"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -1211,7 +1223,7 @@ export default function DPPStep() {
                             <TextField
                               type="text"
                               label=""
-                              placeholder="e.g., 100 W"
+                              placeholder="e.g., 100"
                               autoComplete="off"
                               value={value || ""}
                               onChange={onChange}
@@ -1231,6 +1243,7 @@ export default function DPPStep() {
                               value={value || "W"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
@@ -1249,7 +1262,7 @@ export default function DPPStep() {
                             <TextField
                               type="text"
                               label=""
-                              placeholder="e.g., 100 V"
+                              placeholder="e.g., 100"
                               autoComplete="off"
                               value={value || ""}
                               onChange={onChange}
@@ -1269,6 +1282,7 @@ export default function DPPStep() {
                               value={value || "V"}
                               onChange={onChange}
                               autoComplete="off"
+                              disabled
                             />
                           )}
                         />
