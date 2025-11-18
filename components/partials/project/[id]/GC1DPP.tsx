@@ -1,4 +1,4 @@
-import { Button, Card, Collapsible, Spinner, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Card, Collapsible, Spinner, Text } from "@bbtgnn/polaris-interfacer";
 import { ChevronDownMinor, ChevronUpMinor } from "@shopify/polaris-icons";
 import React, { useCallback, useEffect, useState } from "react";
 

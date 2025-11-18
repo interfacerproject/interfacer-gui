@@ -7,7 +7,7 @@ export interface SectionState {
 const SECTION_KEYS = [
   "overview",
   "repairability",
-  "environmental",
+  "environmentalImpact",
   "compliance",
   "certificates",
   "recyclability",

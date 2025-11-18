@@ -5,7 +5,7 @@ export const dppStepSchema = () =>
   yup.object().nullable().shape({
     productOverview: yup.object().nullable(),
     repairability: yup.object().nullable(),
-    environmental: yup.object().nullable(),
+    environmentalImpact: yup.object().nullable(),
     compliance: yup.object().nullable(),
     certificates: yup.object().nullable(),
     recyclability: yup.object().nullable(),

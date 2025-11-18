@@ -1,4 +1,4 @@
-import { Checkbox, Stack } from "@bbtgnn/polaris-interfacer";
+import { Stack } from "@bbtgnn/polaris-interfacer";
 import PHelp from "components/polaris/PHelp";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { useTranslation } from "next-i18next";
@@ -27,7 +27,6 @@ export type { DPPStepValues } from "./DPPStep/types";
 
 // Import the type for internal use
 import type { DPPStepValues } from "./DPPStep/types";
-import PLabel from "components/polaris/PLabel";
 
 export default function DPPStep() {
   const { t } = useTranslation("createProjectProps");
@@ -43,7 +42,7 @@ export default function DPPStep() {
   const [dppEnabled, setDppEnabled] = useState(Boolean(dpp));
   const [overviewOpen, setOverviewOpen] = useState(true);
   const [repairabilityOpen, setRepairabilityOpen] = useState(false);
-  const [environmentalOpen, setEnvironmentalOpen] = useState(false);
+  const [environmentalImpactOpen, setEnvironmentalOpen] = useState(false);
   const [complianceOpen, setComplianceOpen] = useState(false);
   const [certificatesOpen, setCertificatesOpen] = useState(false);
   const [recyclabilityOpen, setRecyclabilityOpen] = useState(false);
@@ -112,9 +111,9 @@ export default function DPPStep() {
           {/* Environmental Section */}
           <CollapsibleSection
             title={t("Environmental")}
-            isOpen={environmentalOpen}
-            onToggle={() => setEnvironmentalOpen(!environmentalOpen)}
-            id="environmental"
+            isOpen={environmentalImpactOpen}
+            onToggle={() => setEnvironmentalOpen(!environmentalImpactOpen)}
+            id="environmentalImpact"
           >
             <EnvironmentalSection />
           </CollapsibleSection>

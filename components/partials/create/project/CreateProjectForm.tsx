@@ -41,6 +41,7 @@ import { zenroom_exec } from "zenroom";
 
 //@ts-ignore
 import validationScript from "components/interfacer-dpp/validation/strdict_to_dpp.lua";
+import useSignedPost from "hooks/useSignedPost";
 import { dppStepDefaultValues, DPPStepValues } from "./steps/DPPStep";
 // import validationKeys from "components/interfacer-dpp/validation/dataTypes.json";
 const validationKeys = {
@@ -145,6 +146,7 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
   const { handleProjectCreation } = useProjectCRUD();
+  const { signRequest, signedPost } = useSignedPost();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const yupLocaleObject = useYupLocaleObject();
@@ -228,13 +230,11 @@ export default function CreateProjectForm(props: Props) {
       }
       console.log(p.result);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_DPP_URL}/dpp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(JSON.parse(p.result)[values.dpp.productOverview?.brandName || ""]),
-      });
+      const response = await signedPost(
+        `${process.env.NEXT_PUBLIC_DPP_URL}/dpp`,
+        JSON.parse(p.result)[values.dpp.productOverview?.brandName || ""],
+        true
+      );
       if (!response.ok) {
         console.error("Failed to submit DPP:", response.statusText);
         setLoading(false);

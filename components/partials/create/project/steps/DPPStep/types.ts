@@ -25,7 +25,7 @@ export type DPPStepValues = {
     spareParts?: string;
     serviceAndRepairInstructions?: string;
   };
-  environmental?: {
+  environmentalImpact?: {
     waterConsumption?: string;
     waterConsumptionUnit?: string;
     chemicalConsumption?: string;
