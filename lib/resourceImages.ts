@@ -53,5 +53,5 @@ export function getUserImage(user: Partial<PersonWithFileEssential>): string {
 
 export function dataURLtoFile(bin: string, mimeType: string, filename: string): globalThis.File {
   const bstr = Buffer.from(bin, "base64");
-  return new File([new Blob([bstr], { type: mimeType })], filename, { type: mimeType });
+  return new File([new Blob([new Uint8Array(bstr)], { type: mimeType })], filename, { type: mimeType });
 }
