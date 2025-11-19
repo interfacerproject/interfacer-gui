@@ -1,96 +1,117 @@
+export type TransformedValue = {
+  type: string;
+  value: any;
+  units?: string;
+};
+
 export type DPPStepValues = {
   productOverview?: {
-    brandName?: string;
-    productName?: string;
-    productImage?: string;
-    gpc?: string;
-    countryOfSale?: string;
-    productDescription?: string;
-    netWeight?: string;
-    netWeightUnit?: string;
-    gtin?: string;
-    color?: string;
-    countryOfOrigin?: string;
-    dimensions?: string;
-    modelName?: string;
-    taricCode?: string;
-    condition?: string;
-    netContent?: string;
-    netContentUnit?: string;
-    warrantyDuration?: string;
-    warrantyDurationUnit?: string;
-    safetyInstructions?: string;
+    brandName?: TransformedValue;
+    productImage?: TransformedValue;
+    globalProductClassificationCode?: TransformedValue;
+    countryOfSale?: TransformedValue;
+    productDescription?: TransformedValue;
+    productName?: TransformedValue;
+    netWeight?: TransformedValue;
+    gtin?: TransformedValue;
+    color?: TransformedValue;
+    countryOfOrigin?: TransformedValue;
+    dimensions?: TransformedValue;
+    modelName?: TransformedValue;
+    taricCode?: TransformedValue;
+    conditionOfTheProduct?: TransformedValue;
+    netContent?: TransformedValue;
+    nominalMaximumRPM?: TransformedValue;
+    maximumDrillingDiameter?: TransformedValue;
+    numberOfGears?: TransformedValue;
+    torque?: TransformedValue;
+    warrantyDuration?: TransformedValue;
+    safetyInstructions?: TransformedValue;
+    consumerUnit?: TransformedValue;
+    netContentAndUnitOfMeasure?: TransformedValue;
+    yearOfSale?: TransformedValue;
   };
-  repairability?: {
-    spareParts?: string;
-    serviceAndRepairInstructions?: string;
+  reparability?: {
+    serviceAndRepairInstructions?: TransformedValue;
+    availabilityOfSpareParts?: TransformedValue;
   };
   environmentalImpact?: {
-    waterConsumption?: string;
-    waterConsumptionUnit?: string;
-    chemicalConsumption?: string;
-    chemicalConsumptionUnit?: string;
-    co2Emissions?: string;
-    co2EmissionsUnit?: string;
-    energyConsumption?: string;
-    energyConsumptionUnit?: string;
+    waterConsumptionPerUnit?: TransformedValue;
+    chemicalConsumptionPerUnit?: TransformedValue;
+    co2eEmissionsPerUnit?: TransformedValue;
+    energyConsumptionPerUnit?: TransformedValue;
+    cleaningPerformanceAtLowTemperature?: TransformedValue;
+    minimumContentOfMaterialWithSustainabilityCertification?: TransformedValue;
   };
-  compliance?: {
-    ceMarking?: string;
-    rohsCompliance?: string;
+  complianceAndStandards?: {
+    ceMarking?: TransformedValue;
+    rohsCompliance?: TransformedValue;
   };
   certificates?: {
-    certificateName?: string;
+    nameOfCertificate?: TransformedValue;
   };
   recyclability?: {
-    recyclingInstructions?: string;
-    materialComposition?: string;
-    substancesOfConcern?: string;
+    recyclingInstructions?: TransformedValue;
+    materialComposition?: TransformedValue;
+    substancesOfConcern?: TransformedValue;
   };
-  energyUseEfficiency?: {
-    batteryType?: string;
-    batteryChargingTime?: string;
-    batteryChargingTimeUnit?: string;
-    batteryLife?: string;
-    batteryLifeUnit?: string;
-    chargerType?: string;
-    maximumElectricalPower?: string;
-    maximumElectricalPowerUnit?: string;
-    maximumVoltage?: string;
-    maximumVoltageUnit?: string;
-    maximumCurrent?: string;
-    maximumCurrentUnit?: string;
-    powerRating?: string;
-    powerRatingUnit?: string;
-    dcVoltage?: string;
-    dcVoltageUnit?: string;
+  energyUseAndEfficiency?: {
+    batteryType?: TransformedValue;
+    batteryChargingTime?: TransformedValue;
+    batteryLife?: TransformedValue;
+    chargerType?: TransformedValue;
+    maximumElectricalPower?: TransformedValue;
+    maximumVoltage?: TransformedValue;
+    maximumCurrent?: TransformedValue;
+    powerRating?: TransformedValue;
+    dcVoltage?: TransformedValue;
   };
-  componentInformation?: Array<{
-    componentDescription?: string;
-    componentGTIN?: string;
-    linkToDPP?: string;
+  components?: Array<{
+    componentDescription?: TransformedValue;
+    componentGTIN?: TransformedValue;
+    linkToDPP?: TransformedValue;
   }>;
   economicOperator?: {
-    companyName?: string;
-    gln?: string;
-    eoriNumber?: string;
-    addressLine1?: string;
-    addressLine2?: string;
-    contactInformation?: string;
+    companyName?: TransformedValue;
+    gln?: TransformedValue;
+    eoriNumber?: TransformedValue;
+    addressLine1?: TransformedValue;
+    addressLine2?: TransformedValue;
+    contactInformation?: TransformedValue;
   };
   repairInformation?: {
-    reasonForRepair?: string;
-    performedAction?: string;
-    materialsUsed?: string;
-    dateOfRepair?: string;
+    reasonForRepair?: TransformedValue;
+    performedAction?: TransformedValue;
+    materialsUsed?: TransformedValue;
+    dateOfRepair?: TransformedValue;
   };
   refurbishmentInformation?: {
-    performedAction?: string;
-    materialsUsed?: string;
-    dateOfRefurbishment?: string;
+    performedAction?: TransformedValue;
+    materialsUsed?: TransformedValue;
+    dateOfRefurbishment?: TransformedValue;
   };
   recyclingInformation?: {
-    performedAction?: string;
-    dateOfRecycling?: string;
+    performedAction?: TransformedValue;
+    dateOfRecycling?: TransformedValue;
+  };
+  consumerInformation?: {
+    marketingClaim?: TransformedValue;
+  };
+  dosageInstructions?: {
+    usageAndDisposalInfo?: TransformedValue;
+  };
+  ingredients?: {
+    ingredientList?: TransformedValue;
+    minimumContentOfBiodegradableSubstances?: TransformedValue;
+    presenceOfNonBiodegradableMicroplastics?: TransformedValue;
+  };
+  packaging?: {
+    chemicalConsumption?: {
+      amount?: TransformedValue;
+      ingredient?: TransformedValue;
+    };
+    disposalInstructions?: TransformedValue;
+    minimumRecycledContent?: TransformedValue;
+    recyclablePackaging?: TransformedValue;
   };
 } | null;

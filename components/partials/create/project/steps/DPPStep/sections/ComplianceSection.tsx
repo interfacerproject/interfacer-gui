@@ -7,9 +7,13 @@ export const ComplianceSection = () => {
 
   return (
     <Stack vertical spacing="loose">
-      <YesNoRadioField label={t("CE Marking")} name="dpp.compliance.ceMarking" id="ceMarking" />
+      <YesNoRadioField label={t("CE Marking")} name="dpp.complianceAndStandards.ceMarking.value" id="ceMarking" />
 
-      <YesNoRadioField label={t("RoHS Compliance")} name="dpp.compliance.rohsCompliance" id="rohsCompliance" />
+      <YesNoRadioField
+        label={t("RoHS Compliance")}
+        name="dpp.complianceAndStandards.rohsCompliance.value"
+        id="rohsCompliance"
+      />
     </Stack>
   );
 };

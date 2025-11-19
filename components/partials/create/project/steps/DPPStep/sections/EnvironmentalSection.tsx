@@ -9,29 +9,29 @@ export const EnvironmentalSection = () => {
     <Stack vertical spacing="loose">
       <FieldWithUnit
         label={t("Water Consumption per Unit")}
-        valueName="dpp.environmentalImpact.waterConsumption"
-        unitName="dpp.environmentalImpact.waterConsumptionUnit"
+        valueName="dpp.environmentalImpact.waterConsumptionPerUnit.value"
+        unitName="dpp.environmentalImpact.waterConsumptionPerUnit.units"
         defaultUnit="L"
       />
 
       <FieldWithUnit
         label={t("Chemical Consumption per Unit")}
-        valueName="dpp.environmentalImpact.chemicalConsumption"
-        unitName="dpp.environmentalImpact.chemicalConsumptionUnit"
+        valueName="dpp.environmentalImpact.chemicalConsumptionPerUnit.value"
+        unitName="dpp.environmentalImpact.chemicalConsumptionPerUnit.units"
         defaultUnit="kg"
       />
 
       <FieldWithUnit
         label={t("CO₂e Emissions per Unit")}
-        valueName="dpp.environmentalImpact.co2Emissions"
-        unitName="dpp.environmentalImpact.co2EmissionsUnit"
+        valueName="dpp.environmentalImpact.co2eEmissionsPerUnit.value"
+        unitName="dpp.environmentalImpact.co2eEmissionsPerUnit.units"
         defaultUnit="kg"
       />
 
       <FieldWithUnit
         label={t("Energy Consumption per Unit")}
-        valueName="dpp.environmentalImpact.energyConsumption"
-        unitName="dpp.environmentalImpact.energyConsumptionUnit"
+        valueName="dpp.environmentalImpact.energyConsumptionPerUnit.value"
+        unitName="dpp.environmentalImpact.energyConsumptionPerUnit.units"
         defaultUnit="kWh"
       />
     </Stack>

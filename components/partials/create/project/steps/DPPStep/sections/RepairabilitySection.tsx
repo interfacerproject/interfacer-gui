@@ -10,11 +10,15 @@ export const RepairabilitySection = () => {
     <Stack vertical spacing="loose">
       <FileUploadField
         label={t("Service and Repair Instructions")}
-        name="dpp.repairability.serviceAndRepairInstructions"
+        name="dpp.reparability.serviceAndRepairInstructions.value"
         fileName="Service Instructions.PDF"
       />
 
-      <YesNoRadioField label={t("Availability of Spare Parts")} name="dpp.repairability.spareParts" id="spareParts" />
+      <YesNoRadioField
+        label={t("Availability of Spare Parts")}
+        name="dpp.reparability.availabilityOfSpareParts.value"
+        id="spareParts"
+      />
     </Stack>
   );
 };

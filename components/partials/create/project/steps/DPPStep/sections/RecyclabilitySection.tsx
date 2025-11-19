@@ -9,19 +9,19 @@ export const RecyclabilitySection = () => {
     <Stack vertical spacing="loose">
       <FileUploadField
         label={t("Recycling Instructions")}
-        name="dpp.recyclability.recyclingInstructions"
+        name="dpp.recyclability.recyclingInstructions.value"
         fileName="Recycling Instructions.PDF"
       />
 
       <FileUploadField
         label={t("Material Composition")}
-        name="dpp.recyclability.materialComposition"
+        name="dpp.recyclability.materialComposition.value"
         fileName="Material Composition.PDF"
       />
 
       <FileUploadField
         label={t("Substances of Concern and their Concentration and Location")}
-        name="dpp.recyclability.substancesOfConcern"
+        name="dpp.recyclability.substancesOfConcern.value"
         fileName="Substances of Concern.PDF"
       />
     </Stack>

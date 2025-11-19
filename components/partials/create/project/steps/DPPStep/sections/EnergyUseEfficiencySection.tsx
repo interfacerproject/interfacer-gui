@@ -8,62 +8,62 @@ export const EnergyUseEfficiencySection = () => {
 
   return (
     <Stack vertical spacing="loose">
-      <ControlledTextField name="dpp.energyUseEfficiency.batteryType" label={t("Battery Type")} />
+      <ControlledTextField name="dpp.energyUseAndEfficiency.batteryType.value" label={t("Battery Type")} />
 
       <FieldWithUnit
         label={t("Battery Charging Time")}
-        valueName="dpp.energyUseEfficiency.batteryChargingTime"
-        unitName="dpp.energyUseEfficiency.batteryChargingTimeUnit"
+        valueName="dpp.energyUseAndEfficiency.batteryChargingTime.value"
+        unitName="dpp.energyUseAndEfficiency.batteryChargingTime.units"
         placeholder="e.g., 10000 min"
         defaultUnit="min"
       />
 
       <FieldWithUnit
         label={t("Battery Life")}
-        valueName="dpp.energyUseEfficiency.batteryLife"
-        unitName="dpp.energyUseEfficiency.batteryLifeUnit"
+        valueName="dpp.energyUseAndEfficiency.batteryLife.value"
+        unitName="dpp.energyUseAndEfficiency.batteryLife.units"
         placeholder="e.g., 10000 min"
         defaultUnit="min"
       />
 
-      <ControlledTextField name="dpp.energyUseEfficiency.chargerType" label={t("Charger Type")} />
+      <ControlledTextField name="dpp.energyUseAndEfficiency.chargerType.value" label={t("Charger Type")} />
 
       <FieldWithUnit
         label={t("Maximum Electrical Power")}
-        valueName="dpp.energyUseEfficiency.maximumElectricalPower"
-        unitName="dpp.energyUseEfficiency.maximumElectricalPowerUnit"
+        valueName="dpp.energyUseAndEfficiency.maximumElectricalPower.value"
+        unitName="dpp.energyUseAndEfficiency.maximumElectricalPower.units"
         placeholder="e.g., 100"
         defaultUnit="W"
       />
 
       <FieldWithUnit
         label={t("Maximum Voltage")}
-        valueName="dpp.energyUseEfficiency.maximumVoltage"
-        unitName="dpp.energyUseEfficiency.maximumVoltageUnit"
+        valueName="dpp.energyUseAndEfficiency.maximumVoltage.value"
+        unitName="dpp.energyUseAndEfficiency.maximumVoltage.units"
         placeholder="e.g., 100"
         defaultUnit="V"
       />
 
       <FieldWithUnit
         label={t("Maximum Current")}
-        valueName="dpp.energyUseEfficiency.maximumCurrent"
-        unitName="dpp.energyUseEfficiency.maximumCurrentUnit"
+        valueName="dpp.energyUseAndEfficiency.maximumCurrent.value"
+        unitName="dpp.energyUseAndEfficiency.maximumCurrent.units"
         placeholder="e.g., 100"
         defaultUnit="A"
       />
 
       <FieldWithUnit
         label={t("Power Rating")}
-        valueName="dpp.energyUseEfficiency.powerRating"
-        unitName="dpp.energyUseEfficiency.powerRatingUnit"
+        valueName="dpp.energyUseAndEfficiency.powerRating.value"
+        unitName="dpp.energyUseAndEfficiency.powerRating.units"
         placeholder="e.g., 100"
         defaultUnit="W"
       />
 
       <FieldWithUnit
         label={t("DC Voltage")}
-        valueName="dpp.energyUseEfficiency.dcVoltage"
-        unitName="dpp.energyUseEfficiency.dcVoltageUnit"
+        valueName="dpp.energyUseAndEfficiency.dcVoltage.value"
+        unitName="dpp.energyUseAndEfficiency.dcVoltage.units"
         placeholder="e.g., 100"
         defaultUnit="V"
       />

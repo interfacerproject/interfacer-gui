@@ -8,14 +8,17 @@ export const RecyclingInformationSection = () => {
   return (
     <Stack vertical spacing="loose">
       <ControlledTextField
-        name="dpp.recyclingInformation.performedAction"
+        name="dpp.recyclingInformation.performedAction.value"
         label={t("Performed Action")}
         placeholder="Write your description here"
         multiline={4}
         helpText={t("Lorem ipsum dolor sit amet.")}
       />
 
-      <ControlledTextField name="dpp.recyclingInformation.dateOfRecycling" label={t("Date and Time of Recycling")} />
+      <ControlledTextField
+        name="dpp.recyclingInformation.dateOfRecycling.value"
+        label={t("Date and Time of Recycling")}
+      />
     </Stack>
   );
 };

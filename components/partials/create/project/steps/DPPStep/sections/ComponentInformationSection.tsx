@@ -15,15 +15,12 @@ export const ComponentInformationSection = () => {
             <Icon source={ChevronUpMinor} />
           </div>
 
-          <ControlledTextField
-            name="dpp.componentInformation.0.componentDescription"
-            label={t("Component Description")}
-          />
+          <ControlledTextField name="dpp.components.0.componentDescription.value" label={t("Component Description")} />
 
-          <ControlledTextField name="dpp.componentInformation.0.componentGTIN" label={t("Component GTIN")} />
+          <ControlledTextField name="dpp.components.0.componentGTIN.value" label={t("Component GTIN")} />
 
           <ControlledTextField
-            name="dpp.componentInformation.0.linkToDPP"
+            name="dpp.components.0.linkToDPP.value"
             label={t("Link to DPP of Component")}
             placeholder="ex. mylink.com"
             helpText={t("Lorem ipsum dolor sit amet.")}

@@ -8,7 +8,7 @@ export const RefurbishmentInformationSection = () => {
   return (
     <Stack vertical spacing="loose">
       <ControlledTextField
-        name="dpp.refurbishmentInformation.performedAction"
+        name="dpp.refurbishmentInformation.performedAction.value"
         label={t("Performed Action")}
         placeholder="Write your description here"
         multiline={4}
@@ -16,7 +16,7 @@ export const RefurbishmentInformationSection = () => {
       />
 
       <ControlledTextField
-        name="dpp.refurbishmentInformation.materialsUsed"
+        name="dpp.refurbishmentInformation.materialsUsed.value"
         label={t("Materials Used")}
         placeholder="Write your description here"
         multiline={4}
@@ -24,7 +24,7 @@ export const RefurbishmentInformationSection = () => {
       />
 
       <ControlledTextField
-        name="dpp.refurbishmentInformation.dateOfRefurbishment"
+        name="dpp.refurbishmentInformation.dateOfRefurbishment.value"
         label={t("Date and Time of Refurbishment")}
       />
     </Stack>
