@@ -9,9 +9,10 @@ export const RepairabilitySection = () => {
   return (
     <Stack vertical spacing="loose">
       <FileUploadField
+        maxFiles={1}
+        maxSize={10000000}
         label={t("Service and Repair Instructions")}
         name="dpp.reparability.serviceAndRepairInstructions.value"
-        fileName="Service Instructions.PDF"
       />
 
       <YesNoRadioField

@@ -51,9 +51,9 @@ export type DPPStepValues = {
     nameOfCertificate?: TransformedValue;
   };
   recyclability?: {
-    recyclingInstructions?: TransformedValue;
-    materialComposition?: TransformedValue;
-    substancesOfConcern?: TransformedValue;
+    recyclingInstructions?: File;
+    materialComposition?: File;
+    substancesOfConcern?: File;
   };
   energyUseAndEfficiency?: {
     batteryType?: TransformedValue;

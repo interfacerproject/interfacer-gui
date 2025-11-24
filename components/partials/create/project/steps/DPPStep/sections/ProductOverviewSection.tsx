@@ -113,9 +113,10 @@ export const ProductOverviewSection = () => {
       />
 
       <FileUploadField
+        maxFiles={1}
+        maxSize={10000000}
         label={t("Safety Instructions")}
         name="dpp.productOverview.safetyInstructions.value"
-        fileName="Safety Instructions.PDF"
       />
 
       <ControlledTextField

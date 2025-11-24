@@ -8,21 +8,24 @@ export const RecyclabilitySection = () => {
   return (
     <Stack vertical spacing="loose">
       <FileUploadField
+        maxFiles={1}
+        maxSize={10000000}
         label={t("Recycling Instructions")}
         name="dpp.recyclability.recyclingInstructions.value"
-        fileName="Recycling Instructions.PDF"
       />
 
       <FileUploadField
+        maxFiles={1}
+        maxSize={10000000}
         label={t("Material Composition")}
         name="dpp.recyclability.materialComposition.value"
-        fileName="Material Composition.PDF"
       />
 
       <FileUploadField
+        maxFiles={1}
+        maxSize={10000000}
         label={t("Substances of Concern and their Concentration and Location")}
         name="dpp.recyclability.substancesOfConcern.value"
-        fileName="Substances of Concern.PDF"
       />
     </Stack>
   );
