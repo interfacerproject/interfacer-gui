@@ -196,7 +196,6 @@ export default function CreateProjectForm(props: Props) {
 
     let dppUlid: string | undefined = undefined;
 
-    const key = localStorage.getItem("eddsaKey");
 
     if (values.dpp) {
       const processedDpp = await processDppValues(values.dpp);
