@@ -41,6 +41,7 @@ import * as yup from "yup";
 //@ts-ignore
 import useSignedPost from "hooks/useSignedPost";
 import { dppStepDefaultValues, dppStepSchema, DPPStepValues } from "./steps/DPPStep";
+import { UploadFileOnDPP } from "lib/fileUpload";
 
 export interface Props {
   projectType: ProjectType;
@@ -103,7 +104,7 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
   const { handleProjectCreation } = useProjectCRUD();
-  const { signRequest, signedPost } = useSignedPost();
+  const { signedPost } = useSignedPost();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const yupLocaleObject = useYupLocaleObject();
@@ -166,6 +167,30 @@ export default function CreateProjectForm(props: Props) {
 
   const { handleSubmit } = formMethods;
 
+  async function processDppValues(obj: any): Promise<any> {
+    if (obj === null || obj === undefined) {
+      return obj;
+    }
+
+    if (obj instanceof File) {
+      const uploadResponse = await UploadFileOnDPP(obj);
+      return uploadResponse;
+    }
+    if (Array.isArray(obj)) {
+      return Promise.all(obj.map(item => processDppValues(item)));
+    }
+    if (typeof obj === 'object') {
+      const processedObj: any = {};
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          processedObj[key] = await processDppValues(obj[key]);
+        }
+      }
+      return processedObj;
+    }
+    return obj;
+  }
+
   async function onSubmit(values: CreateProjectValues) {
     setLoading(true);
 
@@ -174,10 +199,11 @@ export default function CreateProjectForm(props: Props) {
     const key = localStorage.getItem("eddsaKey");
 
     if (values.dpp) {
-      console.log("Submitting DPP:", JSON.stringify([values.dpp]));
+      const processedDpp = await processDppValues(values.dpp);
+
       const response = await signedPost(
         `${process.env.NEXT_PUBLIC_DPP_URL}/dpp`,
-        values.dpp,
+        processedDpp,
         true
       );
       if (!response.ok) {
@@ -194,7 +220,6 @@ export default function CreateProjectForm(props: Props) {
     setLoading(false);
   }
 
-  //Focus on first element
   useEffect(() => {
     if (projectType == ProjectType.DESIGN) return;
     const field = document.getElementById("main.title");

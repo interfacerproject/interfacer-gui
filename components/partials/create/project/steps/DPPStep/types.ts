@@ -7,7 +7,7 @@ export type TransformedValue = {
 export type DPPStepValues = {
   productOverview?: {
     brandName?: TransformedValue;
-    productImage?: TransformedValue;
+    productImage?: File;
     globalProductClassificationCode?: TransformedValue;
     countryOfSale?: TransformedValue;
     productDescription?: TransformedValue;
@@ -26,13 +26,13 @@ export type DPPStepValues = {
     numberOfGears?: TransformedValue;
     torque?: TransformedValue;
     warrantyDuration?: TransformedValue;
-    safetyInstructions?: TransformedValue;
+    safetyInstructions?: File;
     consumerUnit?: TransformedValue;
     netContentAndUnitOfMeasure?: TransformedValue;
     yearOfSale?: TransformedValue;
   };
   reparability?: {
-    serviceAndRepairInstructions?: TransformedValue;
+    serviceAndRepairInstructions?: File;
     availabilityOfSpareParts?: TransformedValue;
   };
   environmentalImpact?: {

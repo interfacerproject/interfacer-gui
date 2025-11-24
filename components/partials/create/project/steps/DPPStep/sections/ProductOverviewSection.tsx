@@ -1,14 +1,15 @@
 import { Stack } from "@bbtgnn/polaris-interfacer";
-import PLabel from "components/polaris/PLabel";
+import PFileUpload from "components/polaris/PFileUpload";
+import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useTranslation } from "next-i18next";
-import { Controller, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { ControlledTextField } from "../components/ControlledTextField";
 import { FieldWithUnit } from "../components/FieldWithUnit";
 import { FileUploadField } from "../components/FileUploadField";
 
 export const ProductOverviewSection = () => {
   const { t } = useTranslation("createProjectProps");
-  const { control } = useFormContext();
+  const { control, setValue, watch } = useFormContext();
 
   return (
     <Stack vertical spacing="loose">
@@ -25,18 +26,14 @@ export const ProductOverviewSection = () => {
         />
       </div>
 
-      <Controller
-        control={control}
-        name="dpp.productOverview.productImage.value"
-        render={({ field: { onChange, value } }) => (
-          <div>
-            <PLabel label={t("Product Image")} />
-            <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-              <p className="text-sm text-gray-600">{t("Upload a file or drag and drop")}</p>
-              <p className="text-xs text-gray-500 mt-1">{t("PNG, JPG, GIF up to 10MB")}</p>
-            </div>
-          </div>
-        )}
+      <PFileUpload
+        maxFiles={1}
+        files={watch("dpp.productOverview.productImage.value") || []}
+        onUpdate={(files: File[]) => setValue("dpp.productOverview.productImage.value", files, formSetValueOptions)}
+        accept="image"
+        maxSize={10000000}
+        label={t("Product Image")}
+        helpText={t("PNG, JPG, GIF up to 10MB")}
       />
 
       <ControlledTextField
