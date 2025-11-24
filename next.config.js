@@ -13,9 +13,12 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 /** @type {import('next').NextConfig} */
 const { i18n } = require("./next-i18next.config");
+// const withBundleAnalyzer = require("@next/bundle-analyzer")({
+//   enabled: false,
+// });
+// const withPlugin = require("next-compose-plugins");
 const nextConfig = {
   i18n,
   reactStrictMode: true,
@@ -30,7 +33,7 @@ const nextConfig = {
     };
 
     config.module.rules.push({
-      test: /\.zen$/,
+      test: /\.(zen|lua|json)$/,
       type: "asset/source",
     });
 

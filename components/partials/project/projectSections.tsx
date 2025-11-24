@@ -9,6 +9,7 @@ import LinkDesignStep from "../create/project/steps/LinkDesignStep";
 import LocationStep from "../create/project/steps/LocationStep";
 import MainStep from "../create/project/steps/MainStep";
 import RelationsStep from "../create/project/steps/RelationsStep";
+import DPPStep from "../create/project/steps/DPPStep";
 
 //
 
@@ -55,7 +56,7 @@ export const projectSections: Array<ProjectSection> = [
     id: "location",
     component: <LocationStep projectType={ProjectType.PRODUCT} />,
     for: [ProjectType.PRODUCT],
-    required: [ProjectType.PRODUCT],
+    // required: [ProjectType.PRODUCT],
     editPage: "edit/location",
   },
   {
@@ -91,6 +92,12 @@ export const projectSections: Array<ProjectSection> = [
     id: "included",
     component: <RelationsStep />,
     editPage: "edit/relations",
+  },
+  {
+    navLabel: "DPP",
+    id: "dpp",
+    component: <DPPStep />,
+    for: [ProjectType.PRODUCT]
   },
 ];
 

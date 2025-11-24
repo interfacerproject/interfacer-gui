@@ -12,6 +12,7 @@ const DynamicProjectDpp = dynamic(() => import("./ProjectDpp"), { ssr: false });
 const RelationshipTree = dynamic(() => import("components/RelationshipTree"), { ssr: false });
 const ContributorsTable = dynamic(() => import("components/ContributorsTable"), { ssr: false });
 const ContributionsTable = dynamic(() => import("components/ContributionsTable"), { ssr: false });
+const DynamicGC1DPP = dynamic(() => import("./GC1DPP"), { ssr: false });
 
 const ProjectTabs = () => {
   const { project } = useProject();
@@ -49,15 +50,15 @@ const ProjectTabs = () => {
             panelID: "relationships-content",
           },
           {
-            id: "dpp",
+            id: "graph",
             content: (
               <span className="flex items-center gap-2">
                 <Purchase />
-                {t("DPP")}
+                {t("Graph")}
               </span>
             ),
             accessibilityLabel: t("Digital Product Passport"),
-            panelID: "dpp-content",
+            panelID: "graph-content",
           },
           {
             id: "Contributors",
@@ -68,7 +69,7 @@ const ProjectTabs = () => {
               </span>
             ),
             accessibilityLabel: t("Contributors"),
-            panelID: "dpp-content",
+            panelID: "contributors-content",
           },
           {
             id: "Contributions",
@@ -81,6 +82,17 @@ const ProjectTabs = () => {
             accessibilityLabel: t("Contributions"),
             panelID: "contributions-content",
           },
+          {
+            id: "dpp",
+            content: (
+              <span className="flex items-center gap-2">
+                <Purchase />
+                {t("DPP")}
+              </span>
+            ),
+            accessibilityLabel: t("Digital Product Passport"),
+            panelID: "dpp-content",
+          }
         ]}
         selected={selected}
         onSelect={handleTabChange}
@@ -99,6 +111,7 @@ const ProjectTabs = () => {
         />
       )}
       {selected == 4 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
+      {selected == 5 && <DynamicGC1DPP ulid={project.metadata?.dpp} />}
     </Stack>
   );
 };

@@ -20,3 +20,6 @@
 [submodule ".reuse"]
 	path = .reuse
 	url = https://github.com/interfacerproject/reuse
+[submodule "components/interfacer-dpp"]
+	path = components/interfacer-dpp
+	url = https://github.com/interfacerproject/interfacer-dpp.git

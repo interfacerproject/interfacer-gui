@@ -17,12 +17,7 @@ import {
 import { imagesStepDefaultValues, imagesStepSchema, ImagesStepValues } from "./steps/ImagesStep";
 import { licenseStepDefaultValues, licenseStepSchema, LicenseStepValues } from "./steps/LicenseStep";
 import { linkDesignStepDefaultValues, linkDesignStepSchema, LinkDesignStepValues } from "./steps/LinkDesignStep";
-import {
-  locationStepDefaultValues,
-  locationStepSchema,
-  LocationStepSchemaContext,
-  LocationStepValues,
-} from "./steps/LocationStep";
+import { locationStepDefaultValues, LocationStepSchemaContext, LocationStepValues } from "./steps/LocationStep";
 import { mainStepDefaultValues, mainStepSchema, MainStepValues } from "./steps/MainStep";
 import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep";
 
@@ -39,11 +34,14 @@ import { Spinner } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "hooks/useAuth";
 import { useDrafts } from "hooks/useFormSaveDraft";
+import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
-import useYupLocaleObject from "hooks/useYupLocaleObject";
 
-//
+//@ts-ignore
+import useSignedPost from "hooks/useSignedPost";
+import { dppStepDefaultValues, dppStepSchema, DPPStepValues } from "./steps/DPPStep";
+import { UploadFileOnDPP } from "lib/fileUpload";
 
 export interface Props {
   projectType: ProjectType;
@@ -60,6 +58,7 @@ export interface CreateProjectValues {
   contributors: ContributorsStepValues;
   relations: RelationsStepValues;
   licenses: LicenseStepValues;
+  dpp: DPPStepValues;
 }
 
 export const createProjectDefaultValues: CreateProjectValues = {
@@ -71,17 +70,17 @@ export const createProjectDefaultValues: CreateProjectValues = {
   contributors: contributorsStepDefaultValues,
   relations: relationsStepDefaultValues,
   licenses: licenseStepDefaultValues,
+  dpp: dppStepDefaultValues,
 };
 
 export const createProjectSchema = () =>
   yup.object({
     main: mainStepSchema(),
     linkedDesign: linkDesignStepSchema(),
-    location: yup
-      .object()
-      .when("$projectType", (projectType: ProjectType, schema) =>
-        projectType == ProjectType.DESIGN ? schema : locationStepSchema
-      ),
+    location: yup.object(), //re add condition to make location required only for product
+    // .when("$projectType", (projectType: ProjectType, schema) =>
+    //   projectType == ProjectType.DESIGN ? schema : locationStepSchema
+    // ),
     images: imagesStepSchema(),
     declarations: yup
       .object()
@@ -91,6 +90,11 @@ export const createProjectSchema = () =>
     contributors: contributorsStepSchema(),
     relations: relationsStepSchema(),
     licenses: licenseStepSchema(),
+    dpp: dppStepSchema().when("$projectType", (projectType: ProjectType, schema) =>
+      projectType == ProjectType.PRODUCT
+        ? schema.required("A DPP is required for products")
+        : schema.notRequired().nullable()
+    ),
   });
 
 export type CreateProjectSchemaContext = LocationStepSchemaContext;
@@ -100,6 +104,7 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
   const { handleProjectCreation } = useProjectCRUD();
+  const { signedPost } = useSignedPost();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const yupLocaleObject = useYupLocaleObject();
@@ -131,6 +136,7 @@ export default function CreateProjectForm(props: Props) {
     contributors: contributorsStepDefaultValues,
     relations: relationsStepDefaultValues,
     licenses: licenseStepDefaultValues,
+    dpp: dppStepDefaultValues,
   };
 
   useEffect(() => {
@@ -161,14 +167,58 @@ export default function CreateProjectForm(props: Props) {
 
   const { handleSubmit } = formMethods;
 
+  async function processDppValues(obj: any): Promise<any> {
+    if (obj === null || obj === undefined) {
+      return obj;
+    }
+
+    if (obj instanceof File) {
+      const uploadResponse = await UploadFileOnDPP(obj);
+      return uploadResponse;
+    }
+    if (Array.isArray(obj)) {
+      return Promise.all(obj.map(item => processDppValues(item)));
+    }
+    if (typeof obj === 'object') {
+      const processedObj: any = {};
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          processedObj[key] = await processDppValues(obj[key]);
+        }
+      }
+      return processedObj;
+    }
+    return obj;
+  }
+
   async function onSubmit(values: CreateProjectValues) {
     setLoading(true);
-    const projectID = await handleProjectCreation(values, projectType);
+
+    let dppUlid: string | undefined = undefined;
+
+
+    if (values.dpp) {
+      const processedDpp = await processDppValues(values.dpp);
+
+      const response = await signedPost(
+        `${process.env.NEXT_PUBLIC_DPP_URL}/dpp`,
+        processedDpp,
+        true
+      );
+      if (!response.ok) {
+        console.error("Failed to submit DPP:", response.statusText);
+        setLoading(false);
+        return;
+      }
+      dppUlid = (await response.json()).insertedID;
+      console.log("DPP submitted with ULID:", dppUlid);
+    }
+
+    const projectID = await handleProjectCreation(values, projectType, dppUlid);
     if (projectID) await router.replace(`/project/${projectID}?created=true`);
     setLoading(false);
   }
 
-  //Focus on first element
   useEffect(() => {
     if (projectType == ProjectType.DESIGN) return;
     const field = document.getElementById("main.title");
@@ -180,7 +230,12 @@ export default function CreateProjectForm(props: Props) {
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-row justify-center space-x-8 md:space-x-16 lg:space-x-24 p-6">
+        <div
+          style={{
+            backgroundImage: 'url("/formBg.png")',
+          }}
+          className="flex flex-row justify-center space-x-8 md:space-x-16 lg:space-x-24 p-6 bg-background-subdued min-h-screen"
+        >
           <div className="max-w-xs">
             <div className="sticky top-24">
               <CreateProjectNav projectType={projectType} />

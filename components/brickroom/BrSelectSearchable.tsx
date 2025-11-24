@@ -22,10 +22,15 @@ import CreatableSelect from "react-select/creatable";
 
 //
 
-export interface BrSelectSearchableProps extends Props, PFieldInfoProps {
+export interface BrSelectSearchableProps extends Props<any>, PFieldInfoProps {
   creatable?: boolean;
   defaultValueRaw?: Array<any>;
   id?: string;
+  options?: SelectOptions<any>;
+  onChange?: any;
+  isMulti?: boolean;
+  value?: any;
+  onInputChange?: any;
 }
 
 //

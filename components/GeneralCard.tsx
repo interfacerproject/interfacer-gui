@@ -171,7 +171,7 @@ function StatsDisplay() {
   return (
     <div className="flex [&>*+*]:before:content-[',_']">
       {stats.map((s, i) => (
-        <StatDisplay stat={s.stat} label={s.label} key={s.stat} />
+        <StatDisplay stat={s.stat} label={s.label} key={i} />
       ))}
     </div>
   );

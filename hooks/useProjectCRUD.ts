@@ -44,13 +44,11 @@ import {
 import { LocationStepValues } from "./../components/partials/create/project/steps/LocationStep";
 import { RelocateProjectMutation, RelocateProjectMutationVariables } from "./../lib/types/index";
 import { useAuth } from "./useAuth";
-import useStorage from "./useStorage";
 
 export const useProjectCRUD = () => {
   const { user } = useAuth();
   const { sendMessage } = useInBox();
   const { addIdeaPoints, addStrengthsPoints } = useWallet({});
-  const { getItem } = useStorage();
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -201,7 +199,8 @@ export const useProjectCRUD = () => {
 
   const handleProjectCreation = async (
     formData: CreateProjectValues,
-    projectType: ProjectType
+    projectType: ProjectType,
+    dppUlid?: string
   ): Promise<string | undefined> => {
     setLoading(true);
     let projectId: string | undefined;
@@ -213,6 +212,8 @@ export const useProjectCRUD = () => {
       if (formData.location.locationData || formData.location.remote) {
         location = await handleCreateLocation(formData.location, projectType === ProjectType.DESIGN);
       }
+
+      //todo: This should be uncommented, seems broken with last zenroom version see lib/fileUpload.ts
       const images: IFile[] = await prepFilesForZenflows(formData.images);
       devLog("info: images prepared", images);
       const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
@@ -240,6 +241,7 @@ export const useProjectCRUD = () => {
           declarations: formData.declarations,
           remote: location?.remote,
           design: design,
+          dpp: dppUlid,
         }),
       };
       devLog("info: project variables created", variables);

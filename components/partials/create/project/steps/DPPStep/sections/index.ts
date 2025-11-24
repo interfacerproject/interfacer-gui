@@ -1,0 +1,12 @@
+export { CertificatesSection } from "./CertificatesSection";
+export { ComplianceSection } from "./ComplianceSection";
+export { ComponentInformationSection } from "./ComponentInformationSection";
+export { EconomicOperatorSection } from "./EconomicOperatorSection";
+export { EnergyUseEfficiencySection } from "./EnergyUseEfficiencySection";
+export { EnvironmentalSection } from "./EnvironmentalSection";
+export { ProductOverviewSection } from "./ProductOverviewSection";
+export { RecyclabilitySection } from "./RecyclabilitySection";
+export { RecyclingInformationSection } from "./RecyclingInformationSection";
+export { RefurbishmentInformationSection } from "./RefurbishmentInformationSection";
+export { RepairabilitySection } from "./RepairabilitySection";
+export { RepairInformationSection } from "./RepairInformationSection";
