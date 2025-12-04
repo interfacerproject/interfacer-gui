@@ -40,8 +40,8 @@ import * as yup from "yup";
 
 //@ts-ignore
 import useSignedPost from "hooks/useSignedPost";
-import { dppStepDefaultValues, dppStepSchema, DPPStepValues } from "./steps/DPPStep";
 import { UploadFileOnDPP } from "lib/fileUpload";
+import { dppStepDefaultValues, dppStepSchema, DPPStepValues } from "./steps/DPPStep";
 
 export interface Props {
   projectType: ProjectType;
@@ -179,11 +179,17 @@ export default function CreateProjectForm(props: Props) {
     if (Array.isArray(obj)) {
       return Promise.all(obj.map(item => processDppValues(item)));
     }
-    if (typeof obj === 'object') {
+    if (typeof obj === "object") {
       const processedObj: any = {};
       for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
-          processedObj[key] = await processDppValues(obj[key]);
+          const processedValue = await processDppValues(obj[key]);
+          if (processedValue && typeof processedValue === "object" && "value" in processedValue) {
+            if (processedValue.value === null || processedValue.value === undefined) {
+              continue;
+            }
+          }
+          processedObj[key] = processedValue;
         }
       }
       return processedObj;
@@ -196,15 +202,9 @@ export default function CreateProjectForm(props: Props) {
 
     let dppUlid: string | undefined = undefined;
 
-
     if (values.dpp) {
       const processedDpp = await processDppValues(values.dpp);
-
-      const response = await signedPost(
-        `${process.env.NEXT_PUBLIC_DPP_URL}/dpp`,
-        processedDpp,
-        true
-      );
+      const response = await signedPost(`${process.env.NEXT_PUBLIC_DPP_URL}/dpp`, processedDpp, true);
       if (!response.ok) {
         console.error("Failed to submit DPP:", response.statusText);
         setLoading(false);
