@@ -49,6 +49,7 @@ interface CategoryConfig {
   key: keyof DPPData;
   title: string;
   subtitle: string;
+  iconColor: string;
 }
 
 interface GC1DPPProps {
@@ -60,61 +61,73 @@ const categoryConfigs: CategoryConfig[] = [
     key: "productOverview",
     title: "DPP Overview",
     subtitle: "Basic product information and identification",
+    iconColor: "bg-[rgba(43,127,255,0.1)]",
   },
   {
     key: "complianceAndStandards",
     title: "Compliance and Standards",
     subtitle: "Regulatory compliance information",
+    iconColor: "bg-[rgba(241,189,77,0.1)]",
   },
   {
     key: "reparability",
     title: "Repairability",
     subtitle: "Information about product repair and spare parts",
+    iconColor: "bg-[rgba(173,70,255,0.1)]",
   },
   {
     key: "environmentalImpact",
     title: "Environmental Impact",
     subtitle: "Resource consumption and emissions data",
+    iconColor: "bg-[rgba(3,106,83,0.1)]",
   },
   {
     key: "certificates",
     title: "Certificates",
     subtitle: "Environmental and quality certifications",
+    iconColor: "bg-[rgba(241,189,77,0.1)]",
   },
   {
     key: "recyclability",
     title: "Recyclability",
     subtitle: "Material composition and recycling information",
+    iconColor: "bg-[rgba(3,106,83,0.1)]",
   },
   {
     key: "energyUseAndEfficiency",
     title: "Energy Use & Efficiency",
     subtitle: "Battery and power specifications",
+    iconColor: "bg-[rgba(240,177,0,0.1)]",
   },
   {
     key: "components",
     title: "Component Information",
     subtitle: "Component-level compliance data",
+    iconColor: "bg-[rgba(200,212,229,0.5)]",
   },
   {
     key: "economicOperator",
     title: "Economic Operator",
     subtitle: "Manufacturer and company information",
+    iconColor: "bg-[rgba(43,127,255,0.1)]",
   },
   {
     key: "repairInformation",
     title: "Information about the Repair",
     subtitle: "Repair history and documentation",
+    iconColor: "bg-[rgba(173,70,255,0.1)]",
   },
   {
     key: "refurbishmentInformation",
     title: "Information about the Refurbishment",
     subtitle: "Refurbishment history and processes",
+    iconColor: "bg-[rgba(43,127,255,0.1)]",
   },
   {
     key: "recyclingInformation",
     title: "Information on the Recycling",
     subtitle: "End-of-life recycling data",
+    iconColor: "bg-[rgba(3,106,83,0.1)]",
   },
 ];
 
@@ -183,6 +196,22 @@ const fieldNameMap: Record<string, string> = {
   dateOfRepair: "Date of Repair",
 };
 
+// Icon mapping for each category
+const categoryIconMap: Record<string, string> = {
+  productOverview: "overview",
+  complianceAndStandards: "compliance",
+  reparability: "repairability",
+  environmentalImpact: "environment",
+  certificates: "certificates",
+  recyclability: "recycle",
+  energyUseAndEfficiency: "energy",
+  components: "component",
+  economicOperator: "operator",
+  repairInformation: "repairability",
+  refurbishmentInformation: "refurbishment",
+  recyclingInformation: "recycle",
+};
+
 const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
   const { t } = useTranslation("common");
   const [data, setData] = useState<DPPData | null>(null);
@@ -242,7 +271,6 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
   };
 
   const isAttachment = (value: any): value is AttachmentResponse => {
-    console.log("Checking attachment:", value);
     return value && typeof value === "object" && "url" in value && "fileName" in value;
   };
 
@@ -358,9 +386,7 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
           const displayName =
             fieldNameMap[key] || key.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase());
 
-          // Check if the field value is an attachment
           if (isAttachment(field.value[0])) {
-            console.log("Attachment found:", field.value);
             return (
               <div key={key} className="md:col-span-2">
                 <FileDisplay label={displayName} file={field.value[0]} />
@@ -411,6 +437,7 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
 
   const CategorySection: React.FC<{ config: CategoryConfig; data: any }> = ({ config, data }) => {
     const isOpen = openSections[config.key];
+    const iconName = categoryIconMap[config.key];
 
     let hasData = false;
     if (config.key === "components") {
@@ -427,9 +454,18 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
           className="flex items-center justify-between px-6 py-5 cursor-pointer"
           onClick={() => handleToggle(config.key)}
         >
-          <div className="flex flex-col gap-0">
-            <h3 className="text-[#0b1324] text-xl font-bold font-display leading-[30px]">{t(config.title)}</h3>
-            <p className="text-[#6c707c] text-sm font-normal font-sans leading-[21px]">{t(config.subtitle)}</p>
+          <div className="flex items-center gap-3">
+            {iconName && (
+              <div
+                className={`w-10 h-10 ${config.iconColor} rounded-[6px] flex items-center justify-center p-2 shrink-0`}
+              >
+                <img src={`/${iconName}.svg`} alt="" className="w-6 h-6" />
+              </div>
+            )}
+            <div className="flex flex-col gap-0">
+              <h3 className="text-[#0b1324] text-xl font-bold font-display leading-[30px]">{t(config.title)}</h3>
+              <p className="text-[#6c707c] text-sm font-normal font-sans leading-[21px]">{t(config.subtitle)}</p>
+            </div>
           </div>
           <div className="w-6 h-6 flex items-center justify-center text-gray-500">
             {isOpen ? <ChevronUpMinor className="w-6 h-6" /> : <ChevronDownMinor className="w-6 h-6" />}
@@ -478,32 +514,6 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
       {/* Main Header */}
       <div className="bg-white border border-[#c9cccf] rounded-[8px] w-full p-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#036A53]/10 rounded-[6px] flex items-center justify-center p-2">
-            {/* Placeholder for the Passport Icon */}
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M12 2L2 7L12 12L22 7L12 2Z"
-                stroke="#036A53"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M2 17L12 22L22 17"
-                stroke="#036A53"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M2 12L12 17L22 12"
-                stroke="#036A53"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
           <div className="flex flex-col">
             <h2 className="text-[#0b1324] text-2xl font-bold font-display leading-[36px]">{t("Product Passport")}</h2>
             <p className="text-[#6c707c] text-sm font-normal font-sans leading-[21px]">
