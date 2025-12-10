@@ -745,6 +745,41 @@ export const QUERY_PROPOSAL = gql`
   }
 `;
 
+export const CREATE_DPP_RESOURCE = gql`
+  mutation createDppResource(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $process: ID! # Process.id
+    $resourceSpec: ID! # ResourceSpecification.id (DPP spec)
+    $unitOne: ID! # Unit.id
+    $dppUlid: String! # ULID from interfacer-dpp service
+    $name: String!
+  ) {
+    createEconomicEvent(
+      event: {
+        action: "produce"
+        outputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceConformsTo: $resourceSpec
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+        resourceMetadata: $dppUlid
+        note: $name
+      }
+    ) {
+      economicEvent {
+        id
+        resourceInventoriedAs {
+          id
+          name
+          metadata
+        }
+      }
+    }
+  }
+`;
+
 export const CITE_PROJECT = gql`
   mutation citeProject(
     $agent: ID! # Agent.id

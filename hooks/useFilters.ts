@@ -44,13 +44,13 @@ const useFilters = () => {
   // Map show filter to conformsTo IDs
   const getShowFilterConformsTo = (): string[] | undefined => {
     if (!showFilter || showFilter === "all" || !specs) return conformToList;
-    
+
     const filterMap: Record<string, string> = {
       designs: specs.specProjectDesign.id,
       products: specs.specProjectProduct.id,
       services: specs.specProjectService.id,
     };
-    
+
     const filterId = filterMap[showFilter];
     return filterId ? [...(conformToList || []), filterId] : conformToList;
   };

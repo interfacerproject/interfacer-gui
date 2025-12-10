@@ -9,6 +9,7 @@ import {
   ASK_RESOURCE_PRIMARY_ACCOUNTABLE,
   CITE_PROJECT,
   CONTRIBUTE_TO_PROJECT,
+  CREATE_DPP_RESOURCE,
   CREATE_LOCATION,
   CREATE_PROCESS,
   CREATE_PROJECT,
@@ -20,6 +21,7 @@ import {
 import { arrayEquals, getNewElements } from "lib/arrayOperations";
 import { errorFormatter } from "lib/errorFormatter";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
+import { RESOURCE_SPEC_DPP } from "lib/resourceSpecs";
 import {
   CreateLocationMutation,
   CreateLocationMutationVariables,
@@ -57,6 +59,7 @@ export const useProjectCRUD = () => {
   const [citeProject] = useMutation(CITE_PROJECT);
   const [contributeToProject] = useMutation(CONTRIBUTE_TO_PROJECT);
   const [createProject] = useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CREATE_PROJECT);
+  const [createDppResource] = useMutation(CREATE_DPP_RESOURCE);
   const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
   const [createProcessMutation] = useMutation(CREATE_PROCESS);
   const { refetch } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
@@ -221,6 +224,33 @@ export const useProjectCRUD = () => {
 
       const design = formData.linkedDesign.length > 0 && formData.linkedDesign;
 
+      // Create DPP as economic resource if dppUlid provided
+      let dppResourceId: string | undefined;
+      if (dppUlid) {
+        try {
+          const dppCreationTime = new Date().toISOString();
+          const { data: dppData, errors: dppErrors } = await createDppResource({
+            variables: {
+              agent: user?.ulid!,
+              creationTime: dppCreationTime,
+              process: processId,
+              resourceSpec: RESOURCE_SPEC_DPP, // TODO: Replace with actual spec ID from backend
+              unitOne: unitAndCurrency?.units.unitOne.id!,
+              dppUlid: JSON.stringify({ dppServiceUlid: dppUlid }),
+              name: `DPP for ${formData.main.title}`,
+            },
+          });
+          if (dppErrors) {
+            devLog("error: DPP resource not created", dppErrors);
+          } else {
+            dppResourceId = dppData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
+            devLog("success: DPP resource created", dppResourceId);
+          }
+        } catch (e) {
+          devLog("error: DPP resource creation failed", e);
+        }
+      }
+
       const variables: CreateProjectMutationVariables = {
         resourceSpec: projectTypes![projectType],
         process: processId,
@@ -241,7 +271,7 @@ export const useProjectCRUD = () => {
           declarations: formData.declarations,
           remote: location?.remote,
           design: design,
-          dpp: dppUlid,
+          // dpp: REMOVED - now cited as economic resource
         }),
       };
       devLog("info: project variables created", variables);
@@ -252,6 +282,24 @@ export const useProjectCRUD = () => {
 
       projectId = createProjectData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
       if (!projectId) throw new Error("ProjectNotCreated");
+
+      // Cite DPP resource from project
+      if (dppResourceId) {
+        try {
+          await citeProject({
+            variables: {
+              agent: user?.ulid!,
+              creationTime: new Date().toISOString(),
+              resource: dppResourceId,
+              process: processId,
+              unitOne: unitAndCurrency?.units.unitOne.id!,
+            },
+          });
+          devLog("success: DPP resource cited from project");
+        } catch (e) {
+          devLog("error: failed to cite DPP resource", e);
+        }
+      }
 
       //economic system: points assignments
       addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
