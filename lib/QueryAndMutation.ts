@@ -243,6 +243,25 @@ export const QUERY_RESOURCE = gql`
   }
 `;
 
+export const QUERY_MACHINES = gql`
+  query getMachines($resourceSpecId: ID!) {
+    economicResources(filter: { conformsTo: [$resourceSpecId] }) {
+      edges {
+        node {
+          id
+          name
+          note
+          metadata
+          conformsTo {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const QUERY_PROJECT_TYPES = gql`
   query GetProjectTypes {
     instanceVariables {
