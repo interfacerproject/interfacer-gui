@@ -318,7 +318,7 @@ export default function ProductsFilters() {
                   onClick={() => setFilters(prev => ({ ...prev, location: "" }))}
                   className="text-red-500 hover:text-red-700"
                 >
-                  ×
+                  {"×"}
                 </button>
               </div>
             )}

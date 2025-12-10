@@ -21,13 +21,15 @@ import { useRouter } from "next/router";
 import { EconomicResourceFilterParams, GetProjectTypesQuery } from "../lib/types";
 
 const useFilters = () => {
-  const { conformsTo, primaryAccountable, tags } = useRouter().query;
+  const { conformsTo, primaryAccountable, tags, q, location } = useRouter().query;
   const { t } = useTranslation("lastUpdatedProps");
 
   const tagsList = typeof tags === "string" ? tags.split(",") : tags;
   const primaryAccountableList =
     typeof primaryAccountable === "string" ? primaryAccountable.split(",") : primaryAccountable;
   const conformToList = typeof conformsTo === "string" ? conformsTo.split(",") : conformsTo;
+  const searchQuery = typeof q === "string" ? q : undefined;
+  const locationQuery = typeof location === "string" ? location : undefined;
 
   const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
   const specs = queryProjectTypes.data?.instanceVariables.specs;
@@ -49,6 +51,8 @@ const useFilters = () => {
     primaryAccountable: primaryAccountableList,
     classifiedAs: tagsList?.map(tag => encodeURI(tag)),
     notCustodian: [process.env.NEXT_PUBLIC_LOSH_ID!],
+    ...(searchQuery && { orName: searchQuery }),
+    ...(locationQuery && { orNote: locationQuery }), // Using note field as workaround for location search
   };
   const mapFilter: Partial<EconomicResourceFilterParams> = {
     conformsTo: conformsToNoDesign,

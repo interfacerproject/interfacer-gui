@@ -16,7 +16,7 @@
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 export interface ProductsSearchBarProps {
   onSearch?: (query: string) => void;
@@ -36,7 +36,7 @@ const ProductsSearchBar = ({ onSearch }: ProductsSearchBarProps) => {
 
   const handleSearch = () => {
     const query = { ...router.query };
-    
+
     if (searchString.trim()) {
       query.q = searchString.trim();
     } else {
