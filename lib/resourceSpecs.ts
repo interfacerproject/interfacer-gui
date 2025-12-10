@@ -19,71 +19,48 @@
  *
  * Or ask backend team for:
  * - DPP ResourceSpecification ID
- * - Machine type ResourceSpecification IDs
+ * - Machine ResourceSpecification ID (just ONE spec for all machines)
  */
 
 // DPP (Digital Product Passport) ResourceSpec
 export const RESOURCE_SPEC_DPP = process.env.NEXT_PUBLIC_SPEC_DPP || "SPEC_DPP_PLACEHOLDER";
 
-// Machine ResourceSpecs
-export const RESOURCE_SPEC_MACHINE_LASER_CUTTER =
-  process.env.NEXT_PUBLIC_SPEC_MACHINE_LASER_CUTTER || "SPEC_MACHINE_LASER_CUTTER_PLACEHOLDER";
-
-export const RESOURCE_SPEC_MACHINE_3D_PRINTER =
-  process.env.NEXT_PUBLIC_SPEC_MACHINE_3D_PRINTER || "SPEC_MACHINE_3D_PRINTER_PLACEHOLDER";
-
-export const RESOURCE_SPEC_MACHINE_CNC_MILL =
-  process.env.NEXT_PUBLIC_SPEC_MACHINE_CNC_MILL || "SPEC_MACHINE_CNC_MILL_PLACEHOLDER";
-
-export const RESOURCE_SPEC_MACHINE_SOLDER_STATION =
-  process.env.NEXT_PUBLIC_SPEC_MACHINE_SOLDER_STATION || "SPEC_MACHINE_SOLDER_STATION_PLACEHOLDER";
-
-export const RESOURCE_SPEC_MACHINE_PCB_MILL =
-  process.env.NEXT_PUBLIC_SPEC_MACHINE_PCB_MILL || "SPEC_MACHINE_PCB_MILL_PLACEHOLDER";
-
-export const RESOURCE_SPEC_MACHINE_VINYL_CUTTER =
-  process.env.NEXT_PUBLIC_SPEC_MACHINE_VINYL_CUTTER || "SPEC_MACHINE_VINYL_CUTTER_PLACEHOLDER";
-
-export const RESOURCE_SPEC_MACHINE_REFLOW_OVEN =
-  process.env.NEXT_PUBLIC_SPEC_MACHINE_REFLOW_OVEN || "SPEC_MACHINE_REFLOW_OVEN_PLACEHOLDER";
+// Machine ResourceSpec (ONE spec for all machine types)
+// Individual machines (Laser Cutter, 3D Printer, etc.) are EconomicResource instances
+// that conform to this spec, differentiated by their name and metadata
+export const RESOURCE_SPEC_MACHINE = process.env.NEXT_PUBLIC_SPEC_MACHINE || "SPEC_MACHINE_PLACEHOLDER";
 
 /**
  * Machine types configuration
- * Maps machine display names to their ResourceSpec IDs
+ * These are display names for UI - each represents an EconomicResource instance
+ * that conforms to RESOURCE_SPEC_MACHINE
  */
 export const MACHINE_TYPES = [
   {
-    id: RESOURCE_SPEC_MACHINE_LASER_CUTTER,
     name: "Laser Cutter",
     icon: "laser", // Icon identifier for UI
   },
   {
-    id: RESOURCE_SPEC_MACHINE_3D_PRINTER,
     name: "3D Printer",
     icon: "printer-3d",
   },
   {
-    id: RESOURCE_SPEC_MACHINE_CNC_MILL,
     name: "CNC Mill",
     icon: "cnc",
   },
   {
-    id: RESOURCE_SPEC_MACHINE_SOLDER_STATION,
     name: "Solder Station",
     icon: "solder",
   },
   {
-    id: RESOURCE_SPEC_MACHINE_PCB_MILL,
     name: "PCB Mill",
     icon: "pcb",
   },
   {
-    id: RESOURCE_SPEC_MACHINE_VINYL_CUTTER,
     name: "Vinyl Cutter",
     icon: "vinyl",
   },
   {
-    id: RESOURCE_SPEC_MACHINE_REFLOW_OVEN,
     name: "Reflow Oven",
     icon: "oven",
   },
