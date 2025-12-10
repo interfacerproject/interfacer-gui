@@ -42,11 +42,7 @@ import * as yup from "yup";
 import useSignedPost from "hooks/useSignedPost";
 import { UploadFileOnDPP } from "lib/fileUpload";
 import { dppStepDefaultValues, dppStepSchema, DPPStepValues } from "./steps/DPPStep";
-import {
-  machinesStepDefaultValues,
-  machinesStepSchema,
-  MachinesStepValues,
-} from "./steps/MachinesStep";
+import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep";
 
 export interface Props {
   projectType: ProjectType;

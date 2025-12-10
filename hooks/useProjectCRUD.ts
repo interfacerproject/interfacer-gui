@@ -301,6 +301,27 @@ export const useProjectCRUD = () => {
         }
       }
 
+      // Cite machines from project
+      if (formData.machines?.machines && formData.machines.machines.length > 0) {
+        devLog(`info: citing ${formData.machines.machines.length} machines from project`);
+        for (const machineId of formData.machines.machines) {
+          try {
+            await citeProject({
+              variables: {
+                agent: user?.ulid!,
+                creationTime: new Date().toISOString(),
+                resource: machineId,
+                process: processId,
+                unitOne: unitAndCurrency?.units.unitOne.id!,
+              },
+            });
+            devLog(`success: machine ${machineId} cited from project`);
+          } catch (e) {
+            devLog(`error: failed to cite machine ${machineId}`, e);
+          }
+        }
+      }
+
       //economic system: points assignments
       addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
       addStrengthsPoints(user!.ulid, StrengthsPoints.OnCreate);
