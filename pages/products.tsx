@@ -17,6 +17,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useRouter } from "next/router";
 
 // Components
 import ProductsFilters from "components/ProductsFilters";
@@ -51,6 +52,7 @@ export async function getStaticProps({ locale }: any) {
 
 export default function Products() {
   const { t } = useTranslation("productsProps");
+  const router = useRouter();
   const { proposalFilter } = useFilters();
 
   // Fetch stats
@@ -58,6 +60,25 @@ export default function Products() {
   const totalProjects = data?.economicResources?.pageInfo?.totalCount || 18429;
   const projectsAvailable = Math.floor(totalProjects * 0.15) || 2847; // Approximate calculation
   const manufacturers = 512; // This would need a separate query for unique primaryAccountable count
+
+  // Sort and show controls
+  const sortBy = (router.query.sort as string) || "latest";
+  const showFilter = (router.query.show as string) || "all";
+
+  const handleSortChange = (value: string) => {
+    const query = { ...router.query, sort: value };
+    router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
+  };
+
+  const handleShowChange = (value: string) => {
+    const query = { ...router.query };
+    if (value === "all") {
+      delete query.show;
+    } else {
+      query.show = value;
+    }
+    router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
+  };
 
   return (
     <div className="flex min-h-screen bg-[#f8f7f4]">
@@ -83,14 +104,25 @@ export default function Products() {
             </div>
             <div className="flex items-center gap-4 ml-4">
               <span className="text-sm text-gray-600">{t("Sort by")}</span>
-              <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent">
-                <option>{t("Latest")}</option>
-                <option>{t("Oldest")}</option>
-                <option>{t("Most Liked")}</option>
+              <select
+                value={sortBy}
+                onChange={e => handleSortChange(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent"
+              >
+                <option value="latest">{t("Latest")}</option>
+                <option value="oldest">{t("Oldest")}</option>
+                <option value="mostLiked">{t("Most Liked")}</option>
               </select>
               <span className="text-sm text-gray-600">{t("Show")}</span>
-              <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent">
-                <option>{t("All")}</option>
+              <select
+                value={showFilter}
+                onChange={e => handleShowChange(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent"
+              >
+                <option value="all">{t("All")}</option>
+                <option value="designs">{t("Designs")}</option>
+                <option value="products">{t("Products")}</option>
+                <option value="services">{t("Services")}</option>
               </select>
             </div>
           </div>
