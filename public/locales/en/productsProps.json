@@ -13,5 +13,22 @@
   "Most Liked": "Most Liked",
   "Show": "Show",
   "All": "All",
-  "Showing 8 results": "Showing 8 results"
+  "Showing 8 results": "Showing 8 results",
+  "Manufacturability": "Manufacturability",
+  "Can be Manufactured": "Can be Manufactured",
+  "In Progress": "In Progress",
+  "Machines Needed": "Machines Needed",
+  "Materials Needed": "Materials Needed",
+  "Location": "Location",
+  "Search by city, country...": "Search by city, country...",
+  "Categories & Tags": "Categories & Tags",
+  "Search or create tags...": "Search or create tags...",
+  "Power Compatibility": "Power Compatibility",
+  "Power Requirement": "Power Requirement",
+  "Replicability": "Replicability",
+  "High": "High",
+  "Medium": "Medium",
+  "Low": "Low",
+  "Apply Filters": "Apply Filters",
+  "Reset": "Reset"
 }

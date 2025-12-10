@@ -19,6 +19,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // Components
+import ProductsFilters from "components/ProductsFilters";
 import ProductsHeader from "components/ProductsHeader";
 import ProjectsCards from "components/ProjectsCards";
 import useFilters from "../hooks/useFilters";
@@ -60,11 +61,8 @@ export default function Products() {
   return (
     <div className="flex min-h-screen bg-[#f8f7f4]">
       {/* Left Sidebar - Filters */}
-      <aside className="w-80 bg-white p-6 border-r border-gray-200">
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">{t("Filter by")}</h3>
-          {/* Filters will be implemented in next task */}
-        </div>
+      <aside className="w-80 bg-white p-6 border-r border-[#C9CCCF]">
+        <ProductsFilters />
       </aside>
 
       {/* Main Content Area */}
