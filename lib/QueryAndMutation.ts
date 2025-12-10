@@ -771,8 +771,9 @@ export const CREATE_DPP_RESOURCE = gql`
     $process: ID! # Process.id
     $resourceSpec: ID! # ResourceSpecification.id (DPP spec)
     $unitOne: ID! # Unit.id
-    $dppUlid: String! # ULID from interfacer-dpp service
+    $dppUlid: String! # ULID from interfacer-dpp service (stored in metadata)
     $name: String!
+    $note: String
   ) {
     createEconomicEvent(
       event: {
@@ -784,8 +785,8 @@ export const CREATE_DPP_RESOURCE = gql`
         resourceConformsTo: $resourceSpec
         resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
         resourceMetadata: $dppUlid
-        note: $name
       }
+      newInventoriedResource: { name: $name, note: $note }
     ) {
       economicEvent {
         id

@@ -238,6 +238,7 @@ export const useProjectCRUD = () => {
               unitOne: unitAndCurrency?.units.unitOne.id!,
               dppUlid: JSON.stringify({ dppServiceUlid: dppUlid }),
               name: `DPP for ${formData.main.title}`,
+              note: `Digital Product Passport for ${formData.main.title}`,
             },
           });
           if (dppErrors) {

@@ -2,15 +2,15 @@ import { ProjectType } from "components/types";
 import { CreateProjectValues } from "../create/project/CreateProjectForm";
 import ContributorsStep from "../create/project/steps/ContributorsStep";
 import DeclarationsStep from "../create/project/steps/DeclarationsStep";
+import DPPStep from "../create/project/steps/DPPStep";
 import ImagesStep from "../create/project/steps/ImagesStep";
 import ImportDesignStep from "../create/project/steps/ImportDesignStep";
 import LicenseStep from "../create/project/steps/LicenseStep";
 import LinkDesignStep from "../create/project/steps/LinkDesignStep";
 import LocationStep from "../create/project/steps/LocationStep";
+import MachinesStep from "../create/project/steps/MachinesStep";
 import MainStep from "../create/project/steps/MainStep";
 import RelationsStep from "../create/project/steps/RelationsStep";
-import DPPStep from "../create/project/steps/DPPStep";
-import MachinesStep from "../create/project/steps/MachinesStep";
 
 //
 
@@ -98,7 +98,7 @@ export const projectSections: Array<ProjectSection> = [
     navLabel: "DPP",
     id: "dpp",
     component: <DPPStep />,
-    for: [ProjectType.PRODUCT]
+    for: [ProjectType.PRODUCT],
   },
   {
     navLabel: "Machines",
