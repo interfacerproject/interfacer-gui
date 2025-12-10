@@ -10,6 +10,7 @@ import LocationStep from "../create/project/steps/LocationStep";
 import MainStep from "../create/project/steps/MainStep";
 import RelationsStep from "../create/project/steps/RelationsStep";
 import DPPStep from "../create/project/steps/DPPStep";
+import MachinesStep from "../create/project/steps/MachinesStep";
 
 //
 
@@ -98,6 +99,12 @@ export const projectSections: Array<ProjectSection> = [
     id: "dpp",
     component: <DPPStep />,
     for: [ProjectType.PRODUCT]
+  },
+  {
+    navLabel: "Machines",
+    id: "machines",
+    component: <MachinesStep />,
+    editPage: "edit/machines",
   },
 ];
 
