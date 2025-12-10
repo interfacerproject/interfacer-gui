@@ -1,6 +1,7 @@
-import { Stack } from "@bbtgnn/polaris-interfacer";
+import { Stack, Tag } from "@bbtgnn/polaris-interfacer";
 import PHelp from "components/polaris/PHelp";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import SearchMachines from "components/SearchMachines";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -41,8 +42,9 @@ export default function MachinesStep() {
   const { watch, setValue } = form;
   const machinesData = watch(MACHINES_FORM_KEY);
 
-  // State for toggle
+  // State for toggle and selected machines with names
   const [machinesEnabled, setMachinesEnabled] = useState(Boolean(machinesData && machinesData.machines.length > 0));
+  const [selectedMachines, setSelectedMachines] = useState<Array<{ id: string; name: string }>>([]);
 
   // Handle machines toggle
   const handleMachinesToggle = () => {
@@ -50,10 +52,29 @@ export default function MachinesStep() {
     setMachinesEnabled(newState);
     if (!newState) {
       setValue(MACHINES_FORM_KEY, { machines: [] });
+      setSelectedMachines([]);
     } else {
       // Initialize with empty array when enabling
       setValue(MACHINES_FORM_KEY, { machines: [] });
     }
+  };
+
+  // Handle machine selection
+  const handleMachineSelect = (machine: { id: string; name: string }) => {
+    const currentMachines = machinesData?.machines || [];
+    if (!currentMachines.includes(machine.id)) {
+      const newMachines = [...currentMachines, machine.id];
+      setValue(MACHINES_FORM_KEY, { machines: newMachines });
+      setSelectedMachines([...selectedMachines, { id: machine.id, name: machine.name }]);
+    }
+  };
+
+  // Handle machine removal
+  const handleMachineRemove = (machineId: string) => {
+    const currentMachines = machinesData?.machines || [];
+    const newMachines = currentMachines.filter((id: string) => id !== machineId);
+    setValue(MACHINES_FORM_KEY, { machines: newMachines });
+    setSelectedMachines(selectedMachines.filter(m => m.id !== machineId));
   };
 
   return (
@@ -78,15 +99,30 @@ export default function MachinesStep() {
         />
       </button>
 
-      {/* TODO: Add machines selection UI here */}
+      {/* Machines selection interface */}
       {machinesEnabled && (
         <Stack vertical spacing="tight">
-          <p className="text-sm text-gray-500">
-            {t("Machines selection UI will be implemented in task interfacer-gui-9lv.4")}
-          </p>
-          <p className="text-sm text-gray-500">
-            {t("machines_selected_count", { count: machinesData?.machines?.length || 0 })}
-          </p>
+          {/* Search and select machines */}
+          <SearchMachines
+            onSelect={handleMachineSelect}
+            excludeIDs={machinesData?.machines || []}
+            label={t("Add machines")}
+            placeholder={t("Search for machines")}
+          />
+
+          {/* Display selected machines as chips */}
+          {selectedMachines.length > 0 && (
+            <div className="mt-2">
+              <p className="mb-2 text-sm font-medium">{t("Selected machines")}:</p>
+              <Stack spacing="tight" wrap>
+                {selectedMachines.map(machine => (
+                  <Tag key={machine.id} onRemove={() => handleMachineRemove(machine.id)}>
+                    {machine.name}
+                  </Tag>
+                ))}
+              </Stack>
+            </div>
+          )}
         </Stack>
       )}
     </Stack>
