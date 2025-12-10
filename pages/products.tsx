@@ -21,6 +21,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 // Components
 import ProductsFilters from "components/ProductsFilters";
 import ProductsHeader from "components/ProductsHeader";
+import ProductsSearchBar from "components/ProductsSearchBar";
 import ProjectsCards from "components/ProjectsCards";
 import useFilters from "../hooks/useFilters";
 
@@ -78,12 +79,7 @@ export default function Products() {
           {/* Search and Sort Controls */}
           <div className="mb-6 flex items-center justify-between">
             <div className="flex-1 max-w-2xl">
-              {/* Search bar will be implemented in next task */}
-              <input
-                type="text"
-                placeholder={t("Search designs, manufacturers, projects...")}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent"
-              />
+              <ProductsSearchBar />
             </div>
             <div className="flex items-center gap-4 ml-4">
               <span className="text-sm text-gray-600">{t("Sort by")}</span>
