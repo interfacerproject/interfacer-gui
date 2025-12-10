@@ -27,6 +27,7 @@ import ProjectCard from "./ProjectCard";
 import Link from "next/link";
 // import ProjectDisplay from "./ProjectDisplay";
 import dynamic from "next/dynamic";
+import ProjectCardFigma from "./ProjectCardFigma";
 
 const ProjectDisplay = dynamic(() => import("./ProjectDisplay"), { ssr: false });
 const CardsGroup = dynamic(() => import("./CardsGroup"), { ssr: false });
@@ -82,7 +83,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
   const distinguishProjects = (project: EconomicResource) => {
     const isLosh = project.primaryAccountable.id === process.env.NEXT_PUBLIC_LOSH_ID;
     return !isLosh ? (
-      <ProjectCard project={project} key={project.id} />
+      <ProjectCardFigma project={project} key={project.id} />
     ) : (
       <LoshCard project={project} key={project.id} />
     );

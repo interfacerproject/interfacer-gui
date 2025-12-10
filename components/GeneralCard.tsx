@@ -14,6 +14,8 @@ import ProjectTypeChip from "./ProjectTypeChip";
 import BrTags from "./brickroom/BrTags";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
 import { ProjectType } from "./types";
+import { StarOutlineMinor } from "@shopify/polaris-icons";
+import { Icon } from "@bbtgnn/polaris-interfacer";
 
 export interface GeneralCardProps {
   project: Partial<EconomicResource>;
@@ -45,17 +47,15 @@ const GeneralCard = (props: GeneralCardProps) => {
   const setHoverTrue = () => setHover(true);
   const setHoverFalse = () => setHover(false);
 
-  const classes = classNames("rounded-lg bg-white shadow flex flex-col justify-between", {
+  const classes = classNames("rounded-lg bg-white shadow border border-[#c9cccf] flex flex-col overflow-hidden", {
     "ring-2 ring-primary": hover,
   });
 
   return (
     <CardProjectContext.Provider value={{ project, setHoverTrue, setHoverFalse, baseUrl }}>
       <div className={classes}>
-        <div className="flex flex-grow flex-col space-y-3 p-3">
-          {header}
-          {body}
-        </div>
+        {header}
+        {body}
         {footer}
       </div>
     </CardProjectContext.Provider>
@@ -74,21 +74,49 @@ const Tags = () => {
   );
 };
 
+const ResourceRequirements = () => {
+  const { project } = useCardProject();
+  // Mock data - replace with actual resource requirements from project data
+  const requirements = project.metadata?.requirements || "Requires: CNC, 3D Printer, CO2 Cutter, Laser Beam and more";
+  
+  return (
+    <div className="px-4 py-3 border-t-1 border-t-gray-200 bg-[rgba(200,212,229,0.15)]">
+      <div className="flex items-start space-x-2">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="mt-0.5 flex-shrink-0">
+          <path d="M8 0L10.5 5.5L16 6.5L12 10.5L13 16L8 13.5L3 16L4 10.5L0 6.5L5.5 5.5L8 0Z" fill="#6c707c"/>
+        </svg>
+        <Text as="p" variant="bodySm" color="subdued">
+          {requirements}
+        </Text>
+      </div>
+    </div>
+  );
+};
+
+const LicenseFooter = () => {
+  const { t } = useTranslation("common");
+  const { project } = useCardProject();
+  const license = project.metadata?.license || "CERN-OHL-W";
+  const licenseText = `${t("LICENSE")}: ${license}`;
+  
+  return (
+    <div className="px-4 py-3 border-t-1 border-t-gray-200">
+      <Text as="p" variant="bodySm" fontWeight="medium">
+        {licenseText}
+      </Text>
+    </div>
+  );
+};
+
 const CardBody = (props: { children?: React.ReactNode; baseUrl?: string }) => {
   const { children } = props;
   const { project, setHoverTrue, setHoverFalse, baseUrl = "/project/" } = useCardProject();
-  const location = project.currentLocation?.mappableAddress;
-  const isDesign = isProjectType(project.conformsTo?.name!).Design;
   return (
     <div onMouseOver={setHoverTrue} onMouseLeave={setHoverFalse} className="flex flex-col flex-grow">
       <Link href={`${baseUrl}${project.id}`}>
-        <a className="space-y-3 flex-grow">
-          <div className="flex flex-col h-full justify-between">
-            <div>{children}</div>
-            <div className="space-y-1">
-              {location && !isDesign && <LocationText color="primary" name={location} />}
-              <ProjectTypeChip project={project} link={false} />
-            </div>
+        <a className="flex-grow">
+          <div className="flex flex-col h-full justify-between p-4 space-y-2">
+            {children}
           </div>
         </a>
       </Link>
@@ -99,17 +127,59 @@ const CardBody = (props: { children?: React.ReactNode; baseUrl?: string }) => {
 const RemoteImage = () => {
   const { project } = useCardProject();
   const images = findProjectImages(project);
-  return <ProjectCardImage projectType={project.conformsTo!.name as ProjectType} image={images?.[0]} />;
+  const user = project.primaryAccountable;
+  const isDesign = isProjectType(project.conformsTo?.name!).Design;
+  const projectType = project.conformsTo?.name as ProjectType;
+  
+  return (
+    <div className="relative h-44 bg-gradient-to-b from-[rgba(200,212,229,0.5)] to-[rgba(200,212,229,0.5)] rounded-t-lg overflow-hidden">
+      {/* Background Image */}
+      <ProjectCardImage projectType={projectType} image={images?.[0]} />
+      
+      {/* Project Type Badge - Top Right */}
+      {isDesign && (
+        <div className="absolute top-4 right-4">
+          <ProjectTypeChip project={project} link={false} />
+        </div>
+      )}
+      
+      {/* Bottom Overlay with gradient */}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[rgba(0,0,0,0.6)] to-transparent pt-12 pb-3 px-3">
+        <div className="flex items-center justify-between">
+          {/* User Avatar and Name */}
+          {user && (
+            <Link href={`/profile/${user.id}`}>
+              <a>
+                <div className="flex items-center space-x-2">
+                  <div className="border-2 border-white rounded-full">
+                    <BrUserAvatar user={user} size="28px" />
+                  </div>
+                  <Text as="span" variant="bodyMd" fontWeight="medium">
+                    <span className="text-white line-clamp-1">{user.name}</span>
+                  </Text>
+                </div>
+              </a>
+            </Link>
+          )}
+          
+          {/* Star Count */}
+          <StarCount />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const ProjectTitleAndStats = () => {
   const { project } = useCardProject();
   return (
-    <div className="line-clamp-2">
+    <div className="space-y-2">
       <Text variant="headingLg" as="h4" breakWord={true}>
-        {project.name}
+        <span className="line-clamp-1">{project.name}</span>
       </Text>
-      <StatsDisplay />
+      <Text as="p" variant="bodyMd" color="subdued">
+        <span className="line-clamp-2">{project.note}</span>
+      </Text>
     </div>
   );
 };
@@ -177,6 +247,20 @@ function StatsDisplay() {
   );
 }
 
+function StarCount() {
+  // Mock count for now - you can replace this with actual star count from project data
+  const starCount = "3.9k";
+  
+  return (
+    <div className="flex items-center space-x-1 text-white">
+      <Icon source={StarOutlineMinor} />
+      <Text as="span" variant="bodyMd">
+        <span className="text-white">{starCount}</span>
+      </Text>
+    </div>
+  );
+}
+
 const CardFooter = ({ children }: { children: JSX.Element }) => <>{children}</>;
 const CardHeader = ({ children }: { children: JSX.Element }) => <>{children}</>;
 
@@ -191,5 +275,7 @@ GeneralCard.CardBody = CardBody;
 GeneralCard.CardFooter = CardFooter;
 GeneralCard.CardHeader = CardHeader;
 GeneralCard.Tags = Tags;
+GeneralCard.ResourceRequirements = ResourceRequirements;
+GeneralCard.LicenseFooter = LicenseFooter;
 
 export default GeneralCard;
