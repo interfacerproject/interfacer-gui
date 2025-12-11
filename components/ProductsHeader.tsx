@@ -27,24 +27,24 @@ export default function ProductsHeader(props: ProductsHeaderProps) {
   const { t } = useTranslation("productsProps");
 
   return (
-    <div className="mb-8">
+    <div className="mb-6 md:mb-8">
       {/* Badge */}
-      <div className="mb-4">
+      <div className="mb-3 md:mb-4">
         <span className="inline-block px-3 py-1 text-sm font-medium text-[#036A53] bg-[#E1EFEC] rounded">
           {t("Interfacer")}
         </span>
       </div>
 
       {/* Title and Description */}
-      <h1 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
         {t("Browse OSH Designs")}
       </h1>
-      <p className="text-lg text-gray-600 mb-6" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+      <p className="text-base md:text-lg text-gray-600 mb-4 md:mb-6" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
         {t("Discover forks and contribute to open source projects from local and global makers")}
       </p>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
         {/* Total Projects */}
         <div
           className="bg-white p-4 rounded-lg"

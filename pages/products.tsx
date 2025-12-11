@@ -57,6 +57,7 @@ export default function Products() {
   const { proposalFilter } = useFilters();
   const [resultsCount, setResultsCount] = React.useState<number>(0);
   const [resultsLoading, setResultsLoading] = React.useState<boolean>(true);
+  const [showMobileFilters, setShowMobileFilters] = React.useState<boolean>(false);
 
   // Fetch stats
   const { data: statsData, loading: statsLoading } = useQuery(GET_PRODUCTS_STATS);
@@ -119,39 +120,78 @@ export default function Products() {
   );
 
   return (
-    <div className="flex min-h-screen bg-[#f8f7f4]">
-      {/* Left Sidebar - Filters */}
-      <aside className="w-80 bg-white p-6 border-r border-[#C9CCCF]">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-[#f8f7f4]">
+      {/* Mobile Filter Button */}
+      <button
+        onClick={() => setShowMobileFilters(true)}
+        className="lg:hidden fixed bottom-4 right-4 z-40 bg-[#036A53] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 hover:bg-[#025845]"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        </svg>
+        {t("Filters")}
+      </button>
+
+      {/* Desktop Sidebar - Filters */}
+      <aside className="hidden lg:block w-80 bg-white p-6 border-r border-[#C9CCCF]">
         <ProductsFilters />
       </aside>
 
+      {/* Mobile Drawer - Filters */}
+      {showMobileFilters && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setShowMobileFilters(false)}
+          />
+          {/* Drawer */}
+          <aside className="lg:hidden fixed inset-y-0 left-0 w-80 bg-white p-6 z-50 overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+                {t("Filters")}
+              </h2>
+              <button
+                onClick={() => setShowMobileFilters(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <ProductsFilters />
+          </aside>
+        </>
+      )}
+
       {/* Main Content Area */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-4 md:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header Section */}
           <ProductsHeader totalProjects={totalProjects} loading={statsLoading} filteredCount={resultsCount} />
 
           {/* Search and Sort Controls */}
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
             <div className="flex-1 max-w-2xl">
               <ProductsSearchBar />
             </div>
-            <div className="flex items-center gap-4 ml-4">
-              <span className="text-sm text-gray-600">{t("Sort by")}</span>
+            <div className="flex flex-wrap items-center gap-2 md:gap-4">
+              <span className="text-sm text-gray-600 hidden md:inline">{t("Sort by")}</span>
               <select
                 value={sortBy}
                 onChange={e => handleSortChange(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent"
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
               >
                 <option value="latest">{t("Latest")}</option>
                 <option value="oldest">{t("Oldest")}</option>
                 <option value="mostLiked">{t("Most Liked")}</option>
               </select>
-              <span className="text-sm text-gray-600">{t("Show")}</span>
+              <span className="text-sm text-gray-600 hidden md:inline">{t("Show")}</span>
               <select
                 value={showFilter}
                 onChange={e => handleShowChange(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent"
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
               >
                 <option value="all">{t("All")}</option>
                 <option value="designs">{t("Designs")}</option>
