@@ -14,17 +14,35 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { useQuery } from "@apollo/client";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { QUERY_MACHINES } from "lib/QueryAndMutation";
+import { RESOURCE_SPEC_MACHINE, MACHINE_TYPES } from "lib/resourceSpecs";
 import SearchLocation from "./SearchLocation";
 import SelectTags from "./SelectTags";
 
 //
 
+// Machine resource from backend
+interface MachineResource {
+  id: string;
+  name: string;
+  note?: string | null;
+}
+
+interface MachinesQueryData {
+  economicResources: {
+    edges: Array<{
+      node: MachineResource;
+    }>;
+  };
+}
+
 export interface ProductsFiltersState {
   manufacturability: string[];
-  machinesNeeded: string[];
+  machinesNeeded: string[]; // Now stores machine IDs instead of names
   materialsNeeded: string[];
   location: string;
   tags: string[];
@@ -33,7 +51,8 @@ export interface ProductsFiltersState {
   replicability: string[];
 }
 
-const MACHINES_OPTIONS = [
+// Fallback static options (shown when no machines in database)
+const FALLBACK_MACHINES_OPTIONS = [
   "3D Printer",
   "CNC Mill",
   "Laser Cutter",
@@ -62,6 +81,36 @@ const REPLICABILITY_OPTIONS = ["High", "Medium", "Low"];
 export default function ProductsFilters() {
   const { t } = useTranslation("productsProps");
   const router = useRouter();
+
+  // Query available machines from backend
+  const { data: machinesData, loading: machinesLoading } = useQuery<MachinesQueryData>(QUERY_MACHINES, {
+    variables: {
+      resourceSpecId: RESOURCE_SPEC_MACHINE,
+    },
+  });
+
+  // Get machines list from query or use fallback
+  const availableMachines = machinesData?.economicResources?.edges?.map(edge => edge.node) || [];
+
+  // Helper to get machine icon
+  const getMachineIcon = (machineName: string): string => {
+    const machineType = MACHINE_TYPES.find(m => m.name.toLowerCase() === machineName.toLowerCase());
+    return machineType?.icon || "wrench";
+  };
+
+  const getIconEmoji = (icon: string): string => {
+    const iconMap: Record<string, string> = {
+      laser: "⚡",
+      "printer-3d": "🖨️",
+      cnc: "⚙️",
+      solder: "🔥",
+      pcb: "📟",
+      vinyl: "✂️",
+      oven: "🔥",
+      wrench: "🔧",
+    };
+    return iconMap[icon] || "🔧";
+  };
 
   // Collapsible sections state
   const [openSections, setOpenSections] = useState({
@@ -228,20 +277,42 @@ export default function ProductsFilters() {
         </button>
         {openSections.machines && (
           <div className="mt-3 space-y-2 max-h-48 overflow-y-auto">
-            {MACHINES_OPTIONS.map(machine => (
-              <div key={machine} className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={`machine-${machine}`}
-                  checked={filters.machinesNeeded.includes(machine)}
-                  onChange={e => handleCheckboxChange("machinesNeeded", machine, e.target.checked)}
-                  className="w-4 h-4 text-[#036A53] focus:ring-[#036A53] rounded"
-                />
-                <label htmlFor={`machine-${machine}`} className="ml-2 text-sm text-gray-700">
-                  {machine}
-                </label>
-              </div>
-            ))}
+            {machinesLoading ? (
+              <div className="text-sm text-gray-500">{t("Loading machines...")}</div>
+            ) : availableMachines.length > 0 ? (
+              availableMachines.map(machine => (
+                <div key={machine.id} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`machine-${machine.id}`}
+                    checked={filters.machinesNeeded.includes(machine.id)}
+                    onChange={e => handleCheckboxChange("machinesNeeded", machine.id, e.target.checked)}
+                    className="w-4 h-4 text-[#036A53] focus:ring-[#036A53] rounded"
+                  />
+                  <span className="ml-2 mr-1 text-sm">{getIconEmoji(getMachineIcon(machine.name))}</span>
+                  <label htmlFor={`machine-${machine.id}`} className="text-sm text-gray-700">
+                    {machine.name}
+                  </label>
+                </div>
+              ))
+            ) : (
+              // Fallback to static options when no machines in database
+              FALLBACK_MACHINES_OPTIONS.map(machine => (
+                <div key={machine} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`machine-${machine}`}
+                    checked={filters.machinesNeeded.includes(machine)}
+                    onChange={e => handleCheckboxChange("machinesNeeded", machine, e.target.checked)}
+                    className="w-4 h-4 text-[#036A53] focus:ring-[#036A53] rounded"
+                  />
+                  <span className="ml-2 mr-1 text-sm">{getIconEmoji(getMachineIcon(machine))}</span>
+                  <label htmlFor={`machine-${machine}`} className="text-sm text-gray-700">
+                    {machine}
+                  </label>
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>
