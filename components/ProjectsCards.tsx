@@ -16,6 +16,7 @@
 
 import { useQuery } from "@apollo/client";
 import { DraftProject } from "lib/db";
+import React from "react";
 import useLoadMore from "../hooks/useLoadMore";
 import { useProjectSpecs } from "../hooks/useProjectSpecs";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
@@ -50,6 +51,7 @@ export interface ProjectsCardsProps {
   type?: CardType;
   drafts?: DraftProject[];
   emptyState?: React.ReactElement;
+  onDataLoaded?: (data: { totalCount: number; loading: boolean }) => void;
 }
 
 const ProjectsCards = (props: ProjectsCardsProps) => {
@@ -63,6 +65,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     header = "Latest projects",
     drafts,
     emptyState = <EmptyState heading="No projects found" />,
+    onDataLoaded,
   } = props;
   const dataQueryIdentifier = "economicResources";
   const { projectSpecIds } = useProjectSpecs();
@@ -85,6 +88,16 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     dataQueryIdentifier,
   });
   const projects = items;
+
+  // Notify parent of data changes
+  React.useEffect(() => {
+    if (onDataLoaded && data?.economicResources?.pageInfo) {
+      onDataLoaded({
+        totalCount: data.economicResources.pageInfo.totalCount || 0,
+        loading,
+      });
+    }
+  }, [data, loading, onDataLoaded]);
 
   if (showEmptyState || !projects || !projects.length) return emptyState;
 

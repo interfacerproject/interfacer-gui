@@ -52,7 +52,8 @@ const useFilters = () => {
     };
 
     const filterId = filterMap[showFilter];
-    return filterId ? [...(conformToList || []), filterId] : conformToList;
+    // Replace conformToList with the specific filter when show filter is active
+    return filterId ? [filterId] : conformToList;
   };
 
   const showFilterConformsTo = getShowFilterConformsTo();

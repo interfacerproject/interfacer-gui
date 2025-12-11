@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useQuery } from "@apollo/client";
+import { QUERY_MACHINES } from "lib/QueryAndMutation";
+import { MACHINE_TYPES, RESOURCE_SPEC_MACHINE } from "lib/resourceSpecs";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { QUERY_MACHINES } from "lib/QueryAndMutation";
-import { RESOURCE_SPEC_MACHINE, MACHINE_TYPES } from "lib/resourceSpecs";
 import SearchLocation from "./SearchLocation";
 import SelectTags from "./SelectTags";
 

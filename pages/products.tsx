@@ -18,6 +18,7 @@ import { gql, useQuery } from "@apollo/client";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
+import React from "react";
 
 // Components
 import ProductsFilters from "components/ProductsFilters";
@@ -54,12 +55,12 @@ export default function Products() {
   const { t } = useTranslation("productsProps");
   const router = useRouter();
   const { proposalFilter } = useFilters();
+  const [resultsCount, setResultsCount] = React.useState<number>(0);
+  const [resultsLoading, setResultsLoading] = React.useState<boolean>(true);
 
   // Fetch stats
-  const { data } = useQuery(GET_PRODUCTS_STATS);
-  const totalProjects = data?.economicResources?.pageInfo?.totalCount || 18429;
-  const projectsAvailable = Math.floor(totalProjects * 0.15) || 2847; // Approximate calculation
-  const manufacturers = 512; // This would need a separate query for unique primaryAccountable count
+  const { data: statsData, loading: statsLoading } = useQuery(GET_PRODUCTS_STATS);
+  const totalProjects = statsData?.economicResources?.pageInfo?.totalCount || 0;
 
   // Sort and show controls
   const sortBy = (router.query.sort as string) || "latest";
@@ -91,11 +92,7 @@ export default function Products() {
       <main className="flex-1 p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header Section */}
-          <ProductsHeader
-            totalProjects={totalProjects}
-            projectsAvailable={projectsAvailable}
-            manufacturers={manufacturers}
-          />
+          <ProductsHeader totalProjects={totalProjects} loading={statsLoading} filteredCount={resultsCount} />
 
           {/* Search and Sort Controls */}
           <div className="mb-6 flex items-center justify-between">
@@ -129,11 +126,23 @@ export default function Products() {
 
           {/* Results count */}
           <div className="mb-4">
-            <p className="text-sm text-gray-600">{t("Showing 8 results")}</p>
+            {resultsLoading ? (
+              <p className="text-sm text-gray-600">{t("Loading...")}</p>
+            ) : (
+              <p className="text-sm text-gray-600">{t("Showing {{count}} results", { count: resultsCount })}</p>
+            )}
           </div>
 
           {/* Products Grid */}
-          <ProjectsCards filter={proposalFilter} hideHeader hidePagination={false} />
+          <ProjectsCards
+            filter={proposalFilter}
+            hideHeader
+            hidePagination={false}
+            onDataLoaded={({ totalCount, loading }) => {
+              setResultsCount(totalCount);
+              setResultsLoading(loading);
+            }}
+          />
         </div>
       </main>
     </div>
