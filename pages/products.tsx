@@ -81,6 +81,43 @@ export default function Products() {
     router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
   };
 
+  const clearFilters = () => {
+    router.push({ pathname: router.pathname }, undefined, { shallow: true });
+  };
+
+  const hasActiveFilters = Object.keys(router.query).length > 0;
+
+  // Custom empty state for filtered results
+  const filteredEmptyState = (
+    <div className="bg-white rounded-lg p-12 text-center">
+      <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+        />
+      </svg>
+      <h3 className="text-xl font-semibold text-gray-900 mb-2" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+        {t("No projects match your filters")}
+      </h3>
+      <p className="text-gray-600 mb-6" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+        {hasActiveFilters
+          ? t("Try adjusting your search or removing some filters to see more results")
+          : t("No projects available at the moment")}
+      </p>
+      {hasActiveFilters && (
+        <button
+          onClick={clearFilters}
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#036A53] hover:bg-[#025845] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#036A53]"
+          style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}
+        >
+          {t("Clear all filters")}
+        </button>
+      )}
+    </div>
+  );
+
   return (
     <div className="flex min-h-screen bg-[#f8f7f4]">
       {/* Left Sidebar - Filters */}
@@ -138,6 +175,7 @@ export default function Products() {
             filter={proposalFilter}
             hideHeader
             hidePagination={false}
+            emptyState={filteredEmptyState}
             onDataLoaded={({ totalCount, loading }) => {
               setResultsCount(totalCount);
               setResultsLoading(loading);

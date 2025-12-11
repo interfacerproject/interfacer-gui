@@ -26,6 +26,7 @@ import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 import Link from "next/link";
 import EmptyState from "./EmptyState";
 import LoshCard from "./LoshCard";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 // import ProjectDisplay from "./ProjectDisplay";
 import dynamic from "next/dynamic";
 import ProjectCardFigma from "./ProjectCardFigma";
@@ -76,10 +77,13 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     conformsTo: filter.conformsTo || projectSpecIds,
   };
 
-  const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
-    variables: { last: 12, filter: filterWithProjectTypes },
-    skip: projectSpecIds.length === 0,
-  });
+  const { loading, data, fetchMore, refetch, variables, error } = useQuery<{ data: EconomicResource }>(
+    FETCH_RESOURCES,
+    {
+      variables: { last: 12, filter: filterWithProjectTypes },
+      skip: projectSpecIds.length === 0,
+    }
+  );
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
     refetch,
@@ -98,6 +102,41 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
       });
     }
   }, [data, loading, onDataLoaded]);
+
+  // Show skeleton loaders during initial load
+  if (loading && !data) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <ProductCardSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
+
+  // Show error state with retry
+  if (error) {
+    return (
+      <div className="bg-white rounded-lg p-8 text-center">
+        <svg className="mx-auto h-12 w-12 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Error loading projects</h3>
+        <p className="text-sm text-gray-600 mb-4">{error.message}</p>
+        <button
+          onClick={() => refetch()}
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#036A53] hover:bg-[#025845] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#036A53]"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   if (showEmptyState || !projects || !projects.length) return emptyState;
 
