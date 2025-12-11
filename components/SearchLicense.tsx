@@ -25,7 +25,7 @@ export default function SearchLicense(props: Props) {
   const { onSelect = () => {}, requiredIndicator = false, error = "", id } = props;
   const { t } = useTranslation("createProjectProps");
 
-  const licenses = licensesJSON.licenses as Array<License>;
+  const licenses = (licensesJSON.licenses || []) as Array<License>;
   const deselectedOptions: Array<Option> = useMemo(
     () =>
       licenses.map(license => ({
