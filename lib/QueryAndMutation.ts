@@ -278,6 +278,10 @@ export const QUERY_PROJECT_TYPES = gql`
           id
           name
         }
+        specProjectMachine {
+          id
+          name
+        }
       }
     }
   }

@@ -72,6 +72,7 @@ export const useProjectCRUD = () => {
     [ProjectType.DESIGN]: specs.specProjectDesign.id,
     [ProjectType.SERVICE]: specs.specProjectService.id,
     [ProjectType.PRODUCT]: specs.specProjectProduct.id,
+    [ProjectType.MACHINE]: specs.specProjectMachine.id,
   };
 
   const createProcess = async (name: string): Promise<string> => {

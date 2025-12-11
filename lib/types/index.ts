@@ -728,6 +728,7 @@ export type InstanceSpecs = {
   specProjectDesign: ResourceSpecification;
   specProjectProduct: ResourceSpecification;
   specProjectService: ResourceSpecification;
+  specProjectMachine: ResourceSpecification;
 };
 
 export type InstanceUnits = {
@@ -4052,6 +4053,7 @@ export type GetProjectTypesQuery = {
       specProjectDesign: { __typename?: "ResourceSpecification"; id: string; name: string };
       specProjectProduct: { __typename?: "ResourceSpecification"; id: string; name: string };
       specProjectService: { __typename?: "ResourceSpecification"; id: string; name: string };
+      specProjectMachine: { __typename?: "ResourceSpecification"; id: string; name: string };
     };
   };
 };
