@@ -3829,6 +3829,11 @@ export type GetProjectLayoutQuery = {
       extension: string;
       size: number;
     }> | null;
+    trace?: Array<
+      | { __typename: "Process"; id: string; name: string }
+      | { __typename: "EconomicEvent"; id: string; hasPointInTime?: any }
+      | { __typename: "EconomicResource" }
+    > | null;
   } | null;
 };
 
