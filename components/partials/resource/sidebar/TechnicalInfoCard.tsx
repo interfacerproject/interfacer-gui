@@ -7,7 +7,7 @@ import { useTranslation } from "next-i18next";
 const TechnicalInfoCard = () => {
   const { t } = useTranslation("common");
   const { project } = useProject();
-  const license = project?.metadata?.license;
+  const license = project?.license || project?.metadata?.license;
 
   if (!license) return null;
 

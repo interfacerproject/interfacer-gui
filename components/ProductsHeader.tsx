@@ -36,10 +36,16 @@ export default function ProductsHeader(props: ProductsHeaderProps) {
       </div>
 
       {/* Title and Description */}
-      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+      <h1
+        className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4"
+        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+      >
         {t("Browse OSH Designs")}
       </h1>
-      <p className="text-base md:text-lg text-gray-600 mb-4 md:mb-6" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+      <p
+        className="text-base md:text-lg text-gray-600 mb-4 md:mb-6"
+        style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}
+      >
         {t("Discover forks and contribute to open source projects from local and global makers")}
       </p>
 
