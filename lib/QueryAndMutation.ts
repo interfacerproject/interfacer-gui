@@ -830,6 +830,32 @@ export const CITE_PROJECT = gql`
   }
 `;
 
+export const QUERY_CITED_RESOURCES = gql`
+  query getCitedResources($processId: ID!) {
+    economicEvents(filter: { inputOf: [$processId], action: [cite] }) {
+      edges {
+        node {
+          id
+          action {
+            id
+            label
+          }
+          resourceInventoriedAs {
+            id
+            name
+            note
+            metadata
+            conformsTo {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const CONTRIBUTE_TO_PROJECT = gql`
   mutation contributeToProject(
     $agent: ID! # Agent.id
