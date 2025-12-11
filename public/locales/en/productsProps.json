@@ -41,5 +41,6 @@
   "Try adjusting your search or removing some filters to see more results": "Try adjusting your search or removing some filters to see more results",
   "No projects available at the moment": "No projects available at the moment",
   "Clear all filters": "Clear all filters",
-  "Filters": "Filters"
+  "Filters": "Filters",
+  "Error loading projects": "Error loading projects"
 }
