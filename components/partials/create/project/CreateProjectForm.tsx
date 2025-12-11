@@ -107,7 +107,7 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
-  const { handleProjectCreation } = useProjectCRUD();
+  const { handleProjectCreation, handleMachineCreation } = useProjectCRUD();
   const { signedPost } = useSignedPost();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -204,6 +204,14 @@ export default function CreateProjectForm(props: Props) {
 
   async function onSubmit(values: CreateProjectValues) {
     setLoading(true);
+
+    // For MACHINE type, create a machine resource instead of a project
+    if (projectType === ProjectType.MACHINE) {
+      const machineID = await handleMachineCreation(values);
+      if (machineID) await router.replace(`/project/${machineID}?created=true`);
+      setLoading(false);
+      return;
+    }
 
     let dppUlid: string | undefined = undefined;
 

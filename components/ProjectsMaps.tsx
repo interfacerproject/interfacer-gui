@@ -25,6 +25,7 @@ import Map, {
   ScaleControl,
   Source,
 } from "react-map-gl";
+import { useProjectSpecs } from "../hooks/useProjectSpecs";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import {
   EconomicResourceEdge,
@@ -70,9 +71,17 @@ const ProjectsMaps = (props: {
   const mapRef = useRef<MapRef>(null);
   const { mapFilter, designId } = useFilters();
   const filter = filters || mapFilter;
+  const { projectSpecIds } = useProjectSpecs();
+
+  // Only show actual projects (DESIGN, SERVICE, PRODUCT, MACHINE) - exclude DPP and machine resources
+  const filterWithProjectTypes: EconomicResourceFilterParams = {
+    ...filter,
+    conformsTo: filter.conformsTo || projectSpecIds,
+  };
+
   const { data } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(FETCH_RESOURCES, {
-    variables: { last: 200, filter: filter },
-    skip: Boolean(givenProjects),
+    variables: { last: 200, filter: filterWithProjectTypes },
+    skip: Boolean(givenProjects) || projectSpecIds.length === 0,
   });
 
   const PopUps = () => {

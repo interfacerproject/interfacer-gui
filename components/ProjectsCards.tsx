@@ -17,14 +17,14 @@
 import { useQuery } from "@apollo/client";
 import { DraftProject } from "lib/db";
 import useLoadMore from "../hooks/useLoadMore";
+import { useProjectSpecs } from "../hooks/useProjectSpecs";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
 // import CardsGroup from "./CardsGroup";
 // import DraftCard from "./DraftCard";
+import Link from "next/link";
 import EmptyState from "./EmptyState";
 import LoshCard from "./LoshCard";
-import ProjectCard from "./ProjectCard";
-import Link from "next/link";
 // import ProjectDisplay from "./ProjectDisplay";
 import dynamic from "next/dynamic";
 import ProjectCardFigma from "./ProjectCardFigma";
@@ -65,9 +65,17 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     emptyState = <EmptyState heading="No projects found" />,
   } = props;
   const dataQueryIdentifier = "economicResources";
+  const { projectSpecIds } = useProjectSpecs();
+
+  // Only show actual projects (DESIGN, SERVICE, PRODUCT, MACHINE) - exclude DPP and machine resources
+  const filterWithProjectTypes: EconomicResourceFilterParams = {
+    ...filter,
+    conformsTo: filter.conformsTo || projectSpecIds,
+  };
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
-    variables: { last: 12, filter: filter },
+    variables: { last: 12, filter: filterWithProjectTypes },
+    skip: projectSpecIds.length === 0,
   });
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,

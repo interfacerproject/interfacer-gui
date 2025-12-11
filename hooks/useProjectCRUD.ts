@@ -11,6 +11,7 @@ import {
   CONTRIBUTE_TO_PROJECT,
   CREATE_DPP_RESOURCE,
   CREATE_LOCATION,
+  CREATE_MACHINE_RESOURCE,
   CREATE_PROCESS,
   CREATE_PROJECT,
   QUERY_PROJECT_TYPES,
@@ -21,7 +22,7 @@ import {
 import { arrayEquals, getNewElements } from "lib/arrayOperations";
 import { errorFormatter } from "lib/errorFormatter";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
-import { RESOURCE_SPEC_DPP } from "lib/resourceSpecs";
+import { RESOURCE_SPEC_DPP, RESOURCE_SPEC_MACHINE } from "lib/resourceSpecs";
 import {
   CreateLocationMutation,
   CreateLocationMutationVariables,
@@ -60,6 +61,7 @@ export const useProjectCRUD = () => {
   const [contributeToProject] = useMutation(CONTRIBUTE_TO_PROJECT);
   const [createProject] = useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CREATE_PROJECT);
   const [createDppResource] = useMutation(CREATE_DPP_RESOURCE);
+  const [createMachineResource] = useMutation(CREATE_MACHINE_RESOURCE);
   const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
   const [createProcessMutation] = useMutation(CREATE_PROCESS);
   const { refetch } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
@@ -72,7 +74,8 @@ export const useProjectCRUD = () => {
     [ProjectType.DESIGN]: specs.specProjectDesign.id,
     [ProjectType.SERVICE]: specs.specProjectService.id,
     [ProjectType.PRODUCT]: specs.specProjectProduct.id,
-    [ProjectType.MACHINE]: specs.specProjectMachine.id,
+    // @ts-ignore - TODO: Remove when backend adds specProjectMachine
+    [ProjectType.MACHINE]: specs.specProjectMachine?.id || RESOURCE_SPEC_MACHINE,
   };
 
   const createProcess = async (name: string): Promise<string> => {
@@ -199,6 +202,88 @@ export const useProjectCRUD = () => {
       devLog("error: images not uploaded", e);
     }
     devLog("success: images uploaded");
+  };
+
+  const handleMachineCreation = async (formData: CreateProjectValues): Promise<string | undefined> => {
+    setLoading(true);
+    let machineId: string | undefined;
+    try {
+      const processName = `creation of machine ${formData.main.title} by ${user!.name}`;
+      const processId = await createProcess(processName);
+      devLog("success: process created for machine", processName, processId);
+
+      let location;
+      if (formData.location.locationData || formData.location.remote) {
+        location = await handleCreateLocation(formData.location, false);
+      }
+
+      const images: IFile[] = await prepFilesForZenflows(formData.images);
+      devLog("info: images prepared", images);
+      const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
+      devLog("info: tags prepared", tags);
+
+      const metadata = JSON.stringify({
+        contributors: formData.contributors,
+        relations: formData.relations,
+        remote: location?.remote,
+        repo: formData.main.link,
+        images,
+        tags,
+      });
+
+      const machineCreationTime = new Date().toISOString();
+      const { data: machineData, errors: machineErrors } = await createMachineResource({
+        variables: {
+          agent: user?.ulid!,
+          creationTime: machineCreationTime,
+          process: processId,
+          resourceSpec: RESOURCE_SPEC_MACHINE,
+          unitOne: unitAndCurrency?.units.unitOne.id!,
+          name: formData.main.title,
+          note: formData.main.description,
+          metadata,
+        },
+      });
+
+      if (machineErrors) {
+        devLog("error: Machine resource not created", machineErrors);
+        throw new Error("MachineNotCreated");
+      }
+
+      machineId = machineData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
+      if (!machineId) throw new Error("MachineNotCreated");
+
+      devLog("success: Machine resource created", machineId);
+
+      // Add contributors
+      await addContributors(machineId, formData.contributors, processId);
+
+      // Add relations
+      for (const resource of formData.relations) {
+        await addRelation(resource, processId, machineId);
+        const project = await getProjectForMetadataUpdate(resource);
+        if (project.metadata?.relations) {
+          const relations: string[] = [...project.metadata.relations, machineId];
+          await updateRelations(resource, relations, true);
+        } else {
+          await updateRelations(resource, [machineId], true);
+        }
+      }
+
+      await uploadImages(formData.images);
+
+      //economic system: points assignments
+      addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
+      addStrengthsPoints(user!.ulid, StrengthsPoints.OnCreate);
+    } catch (e) {
+      devLog(e);
+      let err = errorFormatter(e);
+      if (err.includes("has already been taken"))
+        err = `${t("One of the images you selected already exists on the server, please upload a different file")}.`;
+      setError(err);
+    }
+    setLoading(false);
+    return machineId;
   };
 
   const handleProjectCreation = async (
@@ -516,6 +601,7 @@ export const useProjectCRUD = () => {
 
   return {
     handleProjectCreation,
+    handleMachineCreation,
     error,
     loading,
     updateLicenses,

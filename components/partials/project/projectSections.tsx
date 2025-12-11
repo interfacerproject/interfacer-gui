@@ -36,7 +36,7 @@ export const projectSections: Array<ProjectSection> = [
     navLabel: "General info",
     id: "main",
     component: <MainStep />,
-    required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN],
+    required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN, ProjectType.MACHINE],
     editPage: "edit",
   },
   {
@@ -49,7 +49,7 @@ export const projectSections: Array<ProjectSection> = [
     navLabel: "Images",
     id: "images",
     component: <ImagesStep />,
-    required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN],
+    required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN, ProjectType.MACHINE],
     editPage: "edit/images",
   },
   {
@@ -65,6 +65,13 @@ export const projectSections: Array<ProjectSection> = [
     id: "location",
     component: <LocationStep projectType={ProjectType.SERVICE} />,
     for: [ProjectType.SERVICE],
+    editPage: "edit/location",
+  },
+  {
+    navLabel: "Location",
+    id: "location",
+    component: <LocationStep projectType={ProjectType.MACHINE} />,
+    for: [ProjectType.MACHINE],
     editPage: "edit/location",
   },
   {
@@ -86,12 +93,14 @@ export const projectSections: Array<ProjectSection> = [
     navLabel: "Contributors",
     id: "contributors",
     component: <ContributorsStep />,
+    for: [ProjectType.DESIGN, ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.MACHINE],
     editPage: "edit/contributors",
   },
   {
     navLabel: "Included",
     id: "included",
     component: <RelationsStep />,
+    for: [ProjectType.DESIGN, ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.MACHINE],
     editPage: "edit/relations",
   },
   {
@@ -104,6 +113,7 @@ export const projectSections: Array<ProjectSection> = [
     navLabel: "Machines",
     id: "machines",
     component: <MachinesStep />,
+    for: [ProjectType.PRODUCT],
     editPage: "edit/machines",
   },
 ];

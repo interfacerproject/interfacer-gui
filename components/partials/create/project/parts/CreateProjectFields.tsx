@@ -42,6 +42,12 @@ export default function CreateProjectFields(props: Props) {
         "Import your project repository. Share your open source hardware project documentation and collaborate on building it. Your contribution will help others learn and build upon your work."
       ),
     },
+    [ProjectType.MACHINE]: {
+      title: t("Add a machine"),
+      subtitle: t(
+        "Share details about fabrication equipment, 3D printers, laser cutters, CNC machines, and other tools available in your maker space or lab. Help others discover the machines they need for their projects."
+      ),
+    },
   };
 
   const sections = getSectionsByProjectType(projectType);

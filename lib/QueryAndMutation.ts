@@ -278,10 +278,7 @@ export const QUERY_PROJECT_TYPES = gql`
           id
           name
         }
-        specProjectMachine {
-          id
-          name
-        }
+        # TODO: Add specProjectMachine once backend supports it
       }
     }
   }
@@ -798,6 +795,47 @@ export const CREATE_DPP_RESOURCE = gql`
           id
           name
           metadata
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_MACHINE_RESOURCE = gql`
+  mutation createMachineResource(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $process: ID! # Process.id
+    $resourceSpec: ID! # ResourceSpecification.id (Machine spec)
+    $unitOne: ID! # Unit.id
+    $name: String!
+    $note: String
+    $metadata: String
+  ) {
+    createEconomicEvent(
+      event: {
+        action: "produce"
+        outputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceConformsTo: $resourceSpec
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+        resourceMetadata: $metadata
+      }
+      newInventoriedResource: { name: $name, note: $note }
+    ) {
+      economicEvent {
+        id
+        resourceInventoriedAs {
+          id
+          name
+          note
+          metadata
+          conformsTo {
+            id
+            name
+          }
         }
       }
     }
