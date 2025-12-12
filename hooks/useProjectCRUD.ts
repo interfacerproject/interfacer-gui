@@ -388,23 +388,23 @@ export const useProjectCRUD = () => {
         }
       }
 
-      // Cite machines from project
       if (formData.machines?.machines && formData.machines.machines.length > 0) {
-        devLog(`info: citing ${formData.machines.machines.length} machines from project`);
+        devLog(`info: using ${formData.machines.machines.length} machines in project`);
         for (const machineId of formData.machines.machines) {
           try {
-            await citeProject({
+            await contributeToProject({
               variables: {
                 agent: user?.ulid!,
                 creationTime: new Date().toISOString(),
                 resource: machineId,
                 process: processId,
                 unitOne: unitAndCurrency?.units.unitOne.id!,
+                conformsTo: projectTypes![ProjectType.MACHINE],
               },
             });
-            devLog(`success: machine ${machineId} cited from project`);
+            devLog(`success: machine ${machineId} used in project`);
           } catch (e) {
-            devLog(`error: failed to cite machine ${machineId}`, e);
+            devLog(`error: failed to use machine ${machineId}`, e);
           }
         }
       }
