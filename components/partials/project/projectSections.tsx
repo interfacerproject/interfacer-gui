@@ -10,6 +10,7 @@ import LinkDesignStep from "../create/project/steps/LinkDesignStep";
 import LocationStep from "../create/project/steps/LocationStep";
 import MachinesStep from "../create/project/steps/MachinesStep";
 import MainStep from "../create/project/steps/MainStep";
+import MaterialsStep from "../create/project/steps/MaterialsStep";
 import RelationsStep from "../create/project/steps/RelationsStep";
 
 //
@@ -115,6 +116,12 @@ export const projectSections: Array<ProjectSection> = [
     component: <MachinesStep />,
     for: [ProjectType.PRODUCT],
     editPage: "edit/machines",
+  },
+  {
+    navLabel: "Materials",
+    id: "materials",
+    component: <MaterialsStep />,
+    for: [ProjectType.PRODUCT],
   },
 ];
 

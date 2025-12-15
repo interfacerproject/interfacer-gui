@@ -30,6 +30,11 @@ export const RESOURCE_SPEC_DPP = process.env.NEXT_PUBLIC_SPEC_DPP || "SPEC_DPP_P
 // that conform to this spec, differentiated by their name and metadata
 export const RESOURCE_SPEC_MACHINE = process.env.NEXT_PUBLIC_SPEC_MACHINE || "SPEC_MACHINE_PLACEHOLDER";
 
+// Material ResourceSpec (ONE spec for all materials)
+// Individual materials (PLA, ABS, Aluminum, etc.) are EconomicResource instances
+// that conform to this spec, differentiated by their name and metadata
+export const RESOURCE_SPEC_MATERIAL = process.env.NEXT_PUBLIC_SPEC_MATERIAL || "";
+
 /**
  * Machine types configuration
  * These are display names for UI - each represents an EconomicResource instance

@@ -17,6 +17,7 @@
 import { useQuery } from "@apollo/client";
 import { QUERY_MACHINES } from "lib/QueryAndMutation";
 import { MACHINE_TYPES, RESOURCE_SPEC_MACHINE } from "lib/resourceSpecs";
+import { mergeTags, prefixedTag } from "lib/tagging";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -138,12 +139,17 @@ export default function ProductsFilters() {
   // Load filters from URL on mount
   useEffect(() => {
     const query = router.query;
+
+    const rawTags = query.tags ? (query.tags as string).split(",") : [];
+    // Keep machine-/material- tags out of the user tags selector.
+    const userTags = rawTags.filter(tag => !tag.startsWith("machine-") && !tag.startsWith("material-"));
+
     setFilters({
       manufacturability: query.manufacturability ? (query.manufacturability as string).split(",") : [],
       machinesNeeded: query.machines ? (query.machines as string).split(",") : [],
       materialsNeeded: query.materials ? (query.materials as string).split(",") : [],
       location: (query.location as string) || "",
-      tags: query.tags ? (query.tags as string).split(",") : [],
+      tags: userTags,
       powerCompatibility: query.power ? (query.power as string).split(",") : [],
       powerRequirement: (query.powerReq as string) || "",
       replicability: query.replicability ? (query.replicability as string).split(",") : [],
@@ -165,11 +171,24 @@ export default function ProductsFilters() {
   const applyFilters = () => {
     const query: any = {};
 
+    const machineTags = filters.machinesNeeded
+      .map(selected => {
+        const machineName = availableMachines.find(m => m.id === selected)?.name || selected;
+        return prefixedTag("machine", machineName);
+      })
+      .filter((t): t is string => Boolean(t));
+
+    const materialTags = filters.materialsNeeded
+      .map(material => prefixedTag("material", material))
+      .filter((t): t is string => Boolean(t));
+
+    const combinedTags = mergeTags(filters.tags, machineTags, materialTags);
+
     if (filters.manufacturability.length > 0) query.manufacturability = filters.manufacturability.join(",");
     if (filters.machinesNeeded.length > 0) query.machines = filters.machinesNeeded.join(",");
     if (filters.materialsNeeded.length > 0) query.materials = filters.materialsNeeded.join(",");
     if (filters.location) query.location = filters.location;
-    if (filters.tags.length > 0) query.tags = filters.tags.join(",");
+    if (combinedTags.length > 0) query.tags = combinedTags.join(",");
     if (filters.powerCompatibility.length > 0) query.power = filters.powerCompatibility.join(",");
     if (filters.powerRequirement) query.powerReq = filters.powerRequirement;
     if (filters.replicability.length > 0) query.replicability = filters.replicability.join(",");
@@ -378,7 +397,7 @@ export default function ProductsFilters() {
             <SearchLocation
               id="products-location-filter"
               onSelect={location => {
-                setFilters(prev => ({ ...prev, location: location?.address || "" }));
+                setFilters(prev => ({ ...prev, location: location?.address?.label || "" }));
               }}
               placeholder={t("Search by city, country...")}
             />

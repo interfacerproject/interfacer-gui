@@ -14,10 +14,12 @@ import { CreateProjectValues } from "../CreateProjectForm";
 
 export interface MachinesStepValues {
   machines: string[]; // Array of machine resource IDs
+  machineDetails: Array<{ id: string; name: string }>; // Used for save-time machine-* tags
 }
 
 export const machinesStepDefaultValues: MachinesStepValues = {
   machines: [],
+  machineDetails: [],
 };
 
 //
@@ -27,6 +29,17 @@ export const machinesStepDefaultValues: MachinesStepValues = {
 export const machinesStepSchema = () =>
   yup.object().shape({
     machines: yup.array().of(yup.string().required()).default([]),
+    machineDetails: yup
+      .array()
+      .of(
+        yup
+          .object({
+            id: yup.string().required(),
+            name: yup.string().required(),
+          })
+          .required()
+      )
+      .default([]),
   });
 
 //
@@ -42,20 +55,19 @@ export default function MachinesStep() {
   const { watch, setValue } = form;
   const machinesData = watch(MACHINES_FORM_KEY);
 
-  // State for toggle and selected machines with names
+  const selectedMachines = machinesData?.machineDetails || [];
+
   const [machinesEnabled, setMachinesEnabled] = useState(Boolean(machinesData && machinesData.machines.length > 0));
-  const [selectedMachines, setSelectedMachines] = useState<Array<{ id: string; name: string }>>([]);
 
   // Handle machines toggle
   const handleMachinesToggle = () => {
     const newState = !machinesEnabled;
     setMachinesEnabled(newState);
     if (!newState) {
-      setValue(MACHINES_FORM_KEY, { machines: [] });
-      setSelectedMachines([]);
+      setValue(MACHINES_FORM_KEY, { machines: [], machineDetails: [] });
     } else {
       // Initialize with empty array when enabling
-      setValue(MACHINES_FORM_KEY, { machines: [] });
+      setValue(MACHINES_FORM_KEY, { machines: [], machineDetails: [] });
     }
   };
 
@@ -64,8 +76,10 @@ export default function MachinesStep() {
     const currentMachines = machinesData?.machines || [];
     if (!currentMachines.includes(machine.id)) {
       const newMachines = [...currentMachines, machine.id];
-      setValue(MACHINES_FORM_KEY, { machines: newMachines });
-      setSelectedMachines([...selectedMachines, { id: machine.id, name: machine.name }]);
+      setValue(MACHINES_FORM_KEY, {
+        machines: newMachines,
+        machineDetails: [...selectedMachines, { id: machine.id, name: machine.name }],
+      });
     }
   };
 
@@ -73,8 +87,10 @@ export default function MachinesStep() {
   const handleMachineRemove = (machineId: string) => {
     const currentMachines = machinesData?.machines || [];
     const newMachines = currentMachines.filter((id: string) => id !== machineId);
-    setValue(MACHINES_FORM_KEY, { machines: newMachines });
-    setSelectedMachines(selectedMachines.filter(m => m.id !== machineId));
+    setValue(MACHINES_FORM_KEY, {
+      machines: newMachines,
+      machineDetails: selectedMachines.filter(m => m.id !== machineId),
+    });
   };
 
   return (

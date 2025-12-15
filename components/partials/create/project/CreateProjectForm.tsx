@@ -43,6 +43,7 @@ import useSignedPost from "hooks/useSignedPost";
 import { UploadFileOnDPP } from "lib/fileUpload";
 import { dppStepDefaultValues, dppStepSchema, DPPStepValues } from "./steps/DPPStep";
 import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep";
+import { materialsStepDefaultValues, materialsStepSchema, MaterialsStepValues } from "./steps/MaterialsStep";
 
 export interface Props {
   projectType: ProjectType;
@@ -61,6 +62,7 @@ export interface CreateProjectValues {
   licenses: LicenseStepValues;
   dpp: DPPStepValues;
   machines: MachinesStepValues;
+  materials: MaterialsStepValues;
 }
 
 export const createProjectDefaultValues: CreateProjectValues = {
@@ -74,6 +76,7 @@ export const createProjectDefaultValues: CreateProjectValues = {
   licenses: licenseStepDefaultValues,
   dpp: dppStepDefaultValues,
   machines: machinesStepDefaultValues,
+  materials: materialsStepDefaultValues,
 };
 
 export const createProjectSchema = () =>
@@ -99,6 +102,7 @@ export const createProjectSchema = () =>
         : schema.notRequired().nullable()
     ),
     machines: machinesStepSchema(),
+    materials: materialsStepSchema(),
   });
 
 export type CreateProjectSchemaContext = LocationStepSchemaContext;
@@ -142,6 +146,7 @@ export default function CreateProjectForm(props: Props) {
     licenses: licenseStepDefaultValues,
     dpp: dppStepDefaultValues,
     machines: machinesStepDefaultValues,
+    materials: materialsStepDefaultValues,
   };
 
   useEffect(() => {

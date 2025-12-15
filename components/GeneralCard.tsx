@@ -77,8 +77,44 @@ const Tags = () => {
 
 const ResourceRequirements = () => {
   const { project } = useCardProject();
-  // Mock data - replace with actual resource requirements from project data
-  const requirements = project.metadata?.requirements || "Requires: CNC, 3D Printer, CO2 Cutter, Laser Beam and more";
+
+  const fromMetadata = <T extends { name?: string }>(items: unknown): string[] => {
+    if (!Array.isArray(items)) return [];
+    return items
+      .map(item => {
+        if (typeof item === "string") return item;
+        if (item && typeof item === "object" && "name" in item) return (item as T).name;
+        return undefined;
+      })
+      .filter((name): name is string => Boolean(name && name.trim()))
+      .map(name => name.trim());
+  };
+
+  const humanizeSlug = (slug: string): string => {
+    return slug
+      .replace(/^[a-z]+-/, "")
+      .split("-")
+      .filter(Boolean)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+  };
+
+  const machineNames = fromMetadata(project.metadata?.machines);
+  const materialNames = fromMetadata(project.metadata?.materials);
+
+  const machineTags = (project.classifiedAs || []).filter(tag => tag.startsWith("machine-"));
+  const materialTags = (project.classifiedAs || []).filter(tag => tag.startsWith("material-"));
+
+  const machines = machineNames.length > 0 ? machineNames : machineTags.map(humanizeSlug);
+  const materials = materialNames.length > 0 ? materialNames : materialTags.map(humanizeSlug);
+
+  const parts: string[] = [];
+  if (machines.length > 0) parts.push(`Machines: ${machines.join(", ")}`);
+  if (materials.length > 0) parts.push(`Materials: ${materials.join(", ")}`);
+
+  if (parts.length === 0) return null;
+
+  const requirements = parts.join(" • ");
 
   return (
     <div className="px-4 py-3 border-t-1 border-t-gray-200 bg-[rgba(200,212,229,0.15)]">

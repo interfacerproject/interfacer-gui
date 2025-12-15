@@ -8,6 +8,7 @@ import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import {
   ASK_RESOURCE_PRIMARY_ACCOUNTABLE,
   CITE_PROJECT,
+  CONSUME_RESOURCE,
   CONTRIBUTE_TO_PROJECT,
   CREATE_DPP_RESOURCE,
   CREATE_LOCATION,
@@ -23,6 +24,7 @@ import { arrayEquals, getNewElements } from "lib/arrayOperations";
 import { errorFormatter } from "lib/errorFormatter";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
 import { RESOURCE_SPEC_DPP, RESOURCE_SPEC_MACHINE } from "lib/resourceSpecs";
+import { mergeTags, prefixedTag } from "lib/tagging";
 import {
   CreateLocationMutation,
   CreateLocationMutationVariables,
@@ -59,6 +61,7 @@ export const useProjectCRUD = () => {
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [citeProject] = useMutation(CITE_PROJECT);
   const [contributeToProject] = useMutation(CONTRIBUTE_TO_PROJECT);
+  const [consumeResource] = useMutation(CONSUME_RESOURCE);
   const [createProject] = useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CREATE_PROJECT);
   const [createDppResource] = useMutation(CREATE_DPP_RESOURCE);
   const [createMachineResource] = useMutation(CREATE_MACHINE_RESOURCE);
@@ -305,7 +308,17 @@ export const useProjectCRUD = () => {
       //todo: This should be uncommented, seems broken with last zenroom version see lib/fileUpload.ts
       const images: IFile[] = await prepFilesForZenflows(formData.images);
       devLog("info: images prepared", images);
-      const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
+
+      const machineTags = (formData.machines?.machineDetails || [])
+        .map(m => prefixedTag("machine", m.name))
+        .filter((t): t is string => Boolean(t));
+
+      const materialTags = (formData.materials?.materialDetails || [])
+        .map(m => prefixedTag("material", m.name))
+        .filter((t): t is string => Boolean(t));
+
+      const merged = mergeTags(formData.main.tags, machineTags, materialTags);
+      const tags = merged.length > 0 ? merged : undefined;
       devLog("info: tags prepared", tags);
 
       const design = formData.linkedDesign.length > 0 && formData.linkedDesign;
@@ -358,6 +371,8 @@ export const useProjectCRUD = () => {
           declarations: formData.declarations,
           remote: location?.remote,
           design: design,
+          machines: formData.machines?.machineDetails || [],
+          materials: formData.materials?.materialDetails || [],
           // dpp: REMOVED - now cited as economic resource
         }),
       };
@@ -405,6 +420,26 @@ export const useProjectCRUD = () => {
             devLog(`success: machine ${machineId} used in project`);
           } catch (e) {
             devLog(`error: failed to use machine ${machineId}`, e);
+          }
+        }
+      }
+
+      if (formData.materials?.materials && formData.materials.materials.length > 0) {
+        devLog(`info: consuming ${formData.materials.materials.length} materials in project`);
+        for (const materialId of formData.materials.materials) {
+          try {
+            await consumeResource({
+              variables: {
+                agent: user?.ulid!,
+                creationTime: new Date().toISOString(),
+                resource: materialId,
+                process: processId,
+                unitOne: unitAndCurrency?.units.unitOne.id!,
+              },
+            });
+            devLog(`success: material ${materialId} consumed in project`);
+          } catch (e) {
+            devLog(`error: failed to consume material ${materialId}`, e);
           }
         }
       }

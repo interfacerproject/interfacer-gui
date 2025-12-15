@@ -894,6 +894,32 @@ export const QUERY_CITED_RESOURCES = gql`
   }
 `;
 
+export const CONSUME_RESOURCE = gql`
+  mutation consumeResource(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $resource: ID! # EconomicResource.id
+    $process: ID! # Process.id
+    $unitOne: ID! # Unit.id
+  ) {
+    createEconomicEvent(
+      event: {
+        action: "consume"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceInventoriedAs: $resource
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+  }
+`;
+
 export const CONTRIBUTE_TO_PROJECT = gql`
   mutation contributeToProject(
     $agent: ID! # Agent.id
