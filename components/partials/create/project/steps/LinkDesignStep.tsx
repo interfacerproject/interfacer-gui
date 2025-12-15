@@ -22,7 +22,11 @@ export const linkDesignStepDefaultValues: LinkDesignStepValues = "";
 export default function LinkDesign() {
   const { t } = useTranslation("createProjectProps");
 
-  const { setValue, watch } = useFormContext<CreateProjectValues>();
+  const {
+    setValue,
+    watch,
+    formState: { errors },
+  } = useFormContext<CreateProjectValues>();
   const selected = watch("linkedDesign");
 
   function handleSelect(value: Partial<EconomicResource>) {
@@ -49,6 +53,8 @@ export default function LinkDesign() {
         onSelect={handleSelect}
         id="link-design-search"
       />
+
+      {errors.linkedDesign?.message && <p className="text-sm text-red-600">{String(errors.linkedDesign.message)}</p>}
 
       {selected && (
         <Stack vertical spacing="extraTight">

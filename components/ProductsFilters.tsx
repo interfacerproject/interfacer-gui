@@ -144,8 +144,17 @@ export default function ProductsFilters() {
     // Keep machine-/material- tags out of the user tags selector.
     const userTags = rawTags.filter(tag => !tag.startsWith("machine-") && !tag.startsWith("material-"));
 
+    const manufacturability = query.manufacturability
+      ? (query.manufacturability as string).split(",")
+      : (() => {
+          const show = (query.show as string) || "";
+          if (show === "designs") return ["in-progress"];
+          if (show === "products") return ["can-manufacture"];
+          return [];
+        })();
+
     setFilters({
-      manufacturability: query.manufacturability ? (query.manufacturability as string).split(",") : [],
+      manufacturability,
       machinesNeeded: query.machines ? (query.machines as string).split(",") : [],
       materialsNeeded: query.materials ? (query.materials as string).split(",") : [],
       location: (query.location as string) || "",
@@ -171,6 +180,12 @@ export default function ProductsFilters() {
   const applyFilters = () => {
     const query: any = {};
 
+    // Preserve non-sidebar query params.
+    for (const key of ["q", "sort", "show"]) {
+      const value = router.query[key];
+      if (typeof value === "string" && value.length > 0) query[key] = value;
+    }
+
     const machineTags = filters.machinesNeeded
       .map(selected => {
         const machineName = availableMachines.find(m => m.id === selected)?.name || selected;
@@ -185,6 +200,13 @@ export default function ProductsFilters() {
     const combinedTags = mergeTags(filters.tags, machineTags, materialTags);
 
     if (filters.manufacturability.length > 0) query.manufacturability = filters.manufacturability.join(",");
+
+    // Manufacturability is implemented as a spec/type filter (conformsTo) via the existing `show` param.
+    const manufacturabilityValue = filters.manufacturability[0];
+    if (manufacturabilityValue === "in-progress") query.show = "designs";
+    if (manufacturabilityValue === "can-manufacture") query.show = "products";
+    if (manufacturabilityValue === "all") delete query.show;
+
     if (filters.machinesNeeded.length > 0) query.machines = filters.machinesNeeded.join(",");
     if (filters.materialsNeeded.length > 0) query.materials = filters.materialsNeeded.join(",");
     if (filters.location) query.location = filters.location;

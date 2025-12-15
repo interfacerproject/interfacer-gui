@@ -82,7 +82,9 @@ export const createProjectDefaultValues: CreateProjectValues = {
 export const createProjectSchema = () =>
   yup.object({
     main: mainStepSchema(),
-    linkedDesign: linkDesignStepSchema(),
+    linkedDesign: linkDesignStepSchema().when("$projectType", (projectType: ProjectType, schema) =>
+      projectType == ProjectType.PRODUCT ? schema.required("A design source is required for products") : schema
+    ),
     location: yup.object(), //re add condition to make location required only for product
     // .when("$projectType", (projectType: ProjectType, schema) =>
     //   projectType == ProjectType.DESIGN ? schema : locationStepSchema
