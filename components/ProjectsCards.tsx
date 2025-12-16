@@ -30,6 +30,7 @@ import ProductCardSkeleton from "./ProductCardSkeleton";
 // import ProjectDisplay from "./ProjectDisplay";
 import dynamic from "next/dynamic";
 import ProjectCardFigma from "./ProjectCardFigma";
+import { useTranslation } from "next-i18next";
 
 const ProjectDisplay = dynamic(() => import("./ProjectDisplay"), { ssr: false });
 const CardsGroup = dynamic(() => import("./CardsGroup"), { ssr: false });
@@ -56,6 +57,7 @@ export interface ProjectsCardsProps {
 }
 
 const ProjectsCards = (props: ProjectsCardsProps) => {
+  const { t } = useTranslation("components");
   const {
     filter = {},
     hideHeader = false,
@@ -132,7 +134,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
           onClick={() => refetch()}
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#036A53] hover:bg-[#025845] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#036A53]"
         >
-          Try Again
+          {t("Try Again")}
         </button>
       </div>
     );

@@ -24,7 +24,7 @@ import { arrayEquals, getNewElements } from "lib/arrayOperations";
 import { errorFormatter } from "lib/errorFormatter";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
 import { RESOURCE_SPEC_DPP, RESOURCE_SPEC_MACHINE } from "lib/resourceSpecs";
-import { mergeTags, prefixedTag } from "lib/tagging";
+import { derivedProductFilterTags, mergeTags, prefixedTag, removeTagsWithPrefixes, TAG_PREFIX } from "lib/tagging";
 import {
   CreateLocationMutation,
   CreateLocationMutationVariables,
@@ -310,14 +310,43 @@ export const useProjectCRUD = () => {
       devLog("info: images prepared", images);
 
       const machineTags = (formData.machines?.machineDetails || [])
-        .map(m => prefixedTag("machine", m.name))
+        .map(m => prefixedTag(TAG_PREFIX.MACHINE, m.name))
         .filter((t): t is string => Boolean(t));
 
       const materialTags = (formData.materials?.materialDetails || [])
-        .map(m => prefixedTag("material", m.name))
+        .map(m => prefixedTag(TAG_PREFIX.MATERIAL, m.name))
         .filter((t): t is string => Boolean(t));
 
-      const merged = mergeTags(formData.main.tags, machineTags, materialTags);
+      const normalizedProductFilters = (() => {
+        const pf = formData.productFilters;
+        if (!pf) return {};
+
+        const powerRequirementW = pf.powerRequirementW ? Number(pf.powerRequirementW) : undefined;
+        const energyKwh = pf.energyKwh ? Number(pf.energyKwh) : undefined;
+        const co2Kg = pf.co2Kg ? Number(pf.co2Kg) : undefined;
+
+        return {
+          categories: pf.categories || [],
+          powerCompatibility: pf.powerCompatibility || [],
+          replicability: pf.replicability || [],
+          powerRequirementW: Number.isFinite(powerRequirementW as number) ? (powerRequirementW as number) : undefined,
+          energyKwh: Number.isFinite(energyKwh as number) ? (energyKwh as number) : undefined,
+          co2Kg: Number.isFinite(co2Kg as number) ? (co2Kg as number) : undefined,
+        };
+      })();
+
+      const productFilterTags = derivedProductFilterTags(normalizedProductFilters);
+
+      const baseTags = removeTagsWithPrefixes(formData.main.tags, [
+        TAG_PREFIX.CATEGORY,
+        TAG_PREFIX.POWER_COMPAT,
+        TAG_PREFIX.POWER_REQ,
+        TAG_PREFIX.REPLICABILITY,
+        TAG_PREFIX.ENV_ENERGY,
+        TAG_PREFIX.ENV_CO2,
+      ]);
+
+      const merged = mergeTags(baseTags, machineTags, materialTags, productFilterTags);
       const tags = merged.length > 0 ? merged : undefined;
       devLog("info: tags prepared", tags);
 
@@ -373,6 +402,7 @@ export const useProjectCRUD = () => {
           design: design,
           machines: formData.machines?.machineDetails || [],
           materials: formData.materials?.materialDetails || [],
+          productFilters: normalizedProductFilters,
           // dpp: REMOVED - now cited as economic resource
         }),
       };

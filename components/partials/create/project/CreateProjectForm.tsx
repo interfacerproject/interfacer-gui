@@ -44,6 +44,11 @@ import { UploadFileOnDPP } from "lib/fileUpload";
 import { dppStepDefaultValues, dppStepSchema, DPPStepValues } from "./steps/DPPStep";
 import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep";
 import { materialsStepDefaultValues, materialsStepSchema, MaterialsStepValues } from "./steps/MaterialsStep";
+import {
+  productFiltersStepDefaultValues,
+  productFiltersStepSchema,
+  ProductFiltersStepValues,
+} from "./steps/ProductFiltersStep";
 
 export interface Props {
   projectType: ProjectType;
@@ -53,6 +58,7 @@ export interface Props {
 
 export interface CreateProjectValues {
   main: MainStepValues;
+  productFilters: ProductFiltersStepValues;
   linkedDesign: LinkDesignStepValues;
   location: LocationStepValues;
   images: ImagesStepValues;
@@ -67,6 +73,7 @@ export interface CreateProjectValues {
 
 export const createProjectDefaultValues: CreateProjectValues = {
   main: mainStepDefaultValues,
+  productFilters: productFiltersStepDefaultValues,
   linkedDesign: linkDesignStepDefaultValues,
   location: locationStepDefaultValues,
   images: imagesStepDefaultValues,
@@ -82,6 +89,7 @@ export const createProjectDefaultValues: CreateProjectValues = {
 export const createProjectSchema = () =>
   yup.object({
     main: mainStepSchema(),
+    productFilters: productFiltersStepSchema(),
     linkedDesign: linkDesignStepSchema().when("$projectType", (projectType: ProjectType, schema) =>
       projectType == ProjectType.PRODUCT ? schema.required("A design source is required for products") : schema
     ),
@@ -139,6 +147,7 @@ export default function CreateProjectForm(props: Props) {
 
   const createProjectDefaultValues: CreateProjectValues = {
     main: mainStepDefaultValues,
+    productFilters: productFiltersStepDefaultValues,
     linkedDesign: linkDesignStepDefaultValues,
     location: locationStepDefaultUserValues,
     images: imagesStepDefaultValues,

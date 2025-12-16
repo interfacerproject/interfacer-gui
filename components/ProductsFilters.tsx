@@ -17,7 +17,18 @@
 import { useQuery } from "@apollo/client";
 import { QUERY_MACHINES } from "lib/QueryAndMutation";
 import { MACHINE_TYPES, RESOURCE_SPEC_MACHINE } from "lib/resourceSpecs";
-import { mergeTags, prefixedTag } from "lib/tagging";
+import {
+  CO2_THRESHOLDS_KG,
+  ENERGY_THRESHOLDS_KWH,
+  isPrefixedTag,
+  mergeTags,
+  POWER_COMPATIBILITY_OPTIONS,
+  POWER_REQUIREMENT_THRESHOLDS_W,
+  prefixedTag,
+  rangeFilterTags,
+  REPLICABILITY_OPTIONS,
+  TAG_PREFIX,
+} from "lib/tagging";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -48,8 +59,13 @@ export interface ProductsFiltersState {
   location: string;
   tags: string[];
   powerCompatibility: string[];
-  powerRequirement: string;
+  powerRequirementMin: string;
+  powerRequirementMax: string;
   replicability: string[];
+  energyMin: string;
+  energyMax: string;
+  co2Min: string;
+  co2Max: string;
 }
 
 // Fallback static options (shown when no machines in database)
@@ -73,9 +89,7 @@ const MANUFACTURABILITY_OPTIONS = [
   { value: "in-progress", label: "In Progress" },
 ];
 
-const POWER_COMPATIBILITY_OPTIONS = ["AC", "DC", "Battery", "Solar", "USB"];
-
-const REPLICABILITY_OPTIONS = ["High", "Medium", "Low"];
+// Option lists are exported from lib/tagging to keep create flow + filters consistent.
 
 //
 
@@ -120,8 +134,10 @@ export default function ProductsFilters() {
     materials: false,
     location: false,
     tags: true,
-    power: false,
+    powerCompatibility: false,
+    powerRequirement: false,
     replicability: false,
+    environmentalImpact: false,
   });
 
   // Filter state
@@ -132,8 +148,13 @@ export default function ProductsFilters() {
     location: "",
     tags: [],
     powerCompatibility: [],
-    powerRequirement: "",
+    powerRequirementMin: "",
+    powerRequirementMax: "",
     replicability: [],
+    energyMin: "",
+    energyMax: "",
+    co2Min: "",
+    co2Max: "",
   });
 
   // Load filters from URL on mount
@@ -141,8 +162,20 @@ export default function ProductsFilters() {
     const query = router.query;
 
     const rawTags = query.tags ? (query.tags as string).split(",") : [];
-    // Keep machine-/material- tags out of the user tags selector.
-    const userTags = rawTags.filter(tag => !tag.startsWith("machine-") && !tag.startsWith("material-"));
+    // Keep derived tags out of the user tags selector.
+    const userTags = rawTags.filter(
+      tag =>
+        !isPrefixedTag(tag, [
+          TAG_PREFIX.MACHINE,
+          TAG_PREFIX.MATERIAL,
+          TAG_PREFIX.CATEGORY,
+          TAG_PREFIX.POWER_COMPAT,
+          TAG_PREFIX.POWER_REQ,
+          TAG_PREFIX.REPLICABILITY,
+          TAG_PREFIX.ENV_ENERGY,
+          TAG_PREFIX.ENV_CO2,
+        ])
+    );
 
     const manufacturability = query.manufacturability
       ? (query.manufacturability as string).split(",")
@@ -160,8 +193,13 @@ export default function ProductsFilters() {
       location: (query.location as string) || "",
       tags: userTags,
       powerCompatibility: query.power ? (query.power as string).split(",") : [],
-      powerRequirement: (query.powerReq as string) || "",
+      powerRequirementMin: (query.powerMin as string) || "",
+      powerRequirementMax: (query.powerMax as string) || "",
       replicability: query.replicability ? (query.replicability as string).split(",") : [],
+      energyMin: (query.energyMin as string) || "",
+      energyMax: (query.energyMax as string) || "",
+      co2Min: (query.co2Min as string) || "",
+      co2Max: (query.co2Max as string) || "",
     });
   }, [router.query]);
 
@@ -180,6 +218,13 @@ export default function ProductsFilters() {
   const applyFilters = () => {
     const query: any = {};
 
+    const rawTags = (() => {
+      const value = router.query.tags;
+      if (!value) return [] as string[];
+      if (Array.isArray(value)) return value.flatMap(v => v.split(",").filter(Boolean));
+      return value.split(",").filter(Boolean);
+    })();
+
     // Preserve non-sidebar query params.
     for (const key of ["q", "sort", "show"]) {
       const value = router.query[key];
@@ -189,15 +234,47 @@ export default function ProductsFilters() {
     const machineTags = filters.machinesNeeded
       .map(selected => {
         const machineName = availableMachines.find(m => m.id === selected)?.name || selected;
-        return prefixedTag("machine", machineName);
+        return prefixedTag(TAG_PREFIX.MACHINE, machineName);
       })
       .filter((t): t is string => Boolean(t));
 
     const materialTags = filters.materialsNeeded
-      .map(material => prefixedTag("material", material))
+      .map(material => prefixedTag(TAG_PREFIX.MATERIAL, material))
       .filter((t): t is string => Boolean(t));
 
-    const combinedTags = mergeTags(filters.tags, machineTags, materialTags);
+    const powerCompatTags = filters.powerCompatibility
+      .map(value => prefixedTag(TAG_PREFIX.POWER_COMPAT, value))
+      .filter((t): t is string => Boolean(t));
+
+    const replicabilityTags = filters.replicability
+      .map(value => prefixedTag(TAG_PREFIX.REPLICABILITY, value))
+      .filter((t): t is string => Boolean(t));
+
+    const powerMin = filters.powerRequirementMin ? Number(filters.powerRequirementMin) : undefined;
+    const powerMax = filters.powerRequirementMax ? Number(filters.powerRequirementMax) : undefined;
+    const powerReqTags = rangeFilterTags(TAG_PREFIX.POWER_REQ, powerMin, powerMax, POWER_REQUIREMENT_THRESHOLDS_W);
+
+    const energyMin = filters.energyMin ? Number(filters.energyMin) : undefined;
+    const energyMax = filters.energyMax ? Number(filters.energyMax) : undefined;
+    const energyTags = rangeFilterTags(TAG_PREFIX.ENV_ENERGY, energyMin, energyMax, ENERGY_THRESHOLDS_KWH);
+
+    const co2Min = filters.co2Min ? Number(filters.co2Min) : undefined;
+    const co2Max = filters.co2Max ? Number(filters.co2Max) : undefined;
+    const co2Tags = rangeFilterTags(TAG_PREFIX.ENV_CO2, co2Min, co2Max, CO2_THRESHOLDS_KG);
+
+    const existingCategoryTags = rawTags.filter(tag => tag.startsWith(`${TAG_PREFIX.CATEGORY}-`));
+
+    const combinedTags = mergeTags(
+      filters.tags,
+      existingCategoryTags,
+      machineTags,
+      materialTags,
+      powerCompatTags,
+      replicabilityTags,
+      powerReqTags,
+      energyTags,
+      co2Tags
+    );
 
     if (filters.manufacturability.length > 0) query.manufacturability = filters.manufacturability.join(",");
 
@@ -212,8 +289,13 @@ export default function ProductsFilters() {
     if (filters.location) query.location = filters.location;
     if (combinedTags.length > 0) query.tags = combinedTags.join(",");
     if (filters.powerCompatibility.length > 0) query.power = filters.powerCompatibility.join(",");
-    if (filters.powerRequirement) query.powerReq = filters.powerRequirement;
+    if (filters.powerRequirementMin) query.powerMin = filters.powerRequirementMin;
+    if (filters.powerRequirementMax) query.powerMax = filters.powerRequirementMax;
     if (filters.replicability.length > 0) query.replicability = filters.replicability.join(",");
+    if (filters.energyMin) query.energyMin = filters.energyMin;
+    if (filters.energyMax) query.energyMax = filters.energyMax;
+    if (filters.co2Min) query.co2Min = filters.co2Min;
+    if (filters.co2Max) query.co2Max = filters.co2Max;
 
     router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
   };
@@ -226,8 +308,13 @@ export default function ProductsFilters() {
       location: "",
       tags: [],
       powerCompatibility: [],
-      powerRequirement: "",
+      powerRequirementMin: "",
+      powerRequirementMax: "",
       replicability: [],
+      energyMin: "",
+      energyMax: "",
+      co2Min: "",
+      co2Max: "",
     });
     router.push({ pathname: router.pathname }, undefined, { shallow: true });
   };
@@ -466,12 +553,17 @@ export default function ProductsFilters() {
 
       {/* Power Compatibility */}
       <div className="border-b border-[#C9CCCF] pb-4">
-        <button onClick={() => toggleSection("power")} className="flex items-center justify-between w-full text-left">
+        <button
+          onClick={() => toggleSection("powerCompatibility")}
+          className="flex items-center justify-between w-full text-left"
+        >
           <span className="font-medium text-gray-900" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
             {t("Power Compatibility")}
           </span>
           <svg
-            className={`w-5 h-5 text-gray-500 transition-transform ${openSections.power ? "rotate-180" : ""}`}
+            className={`w-5 h-5 text-gray-500 transition-transform ${
+              openSections.powerCompatibility ? "rotate-180" : ""
+            }`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -479,7 +571,7 @@ export default function ProductsFilters() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
-        {openSections.power && (
+        {openSections.powerCompatibility && (
           <div className="mt-3 space-y-2">
             {POWER_COMPATIBILITY_OPTIONS.map(option => (
               <div key={option} className="flex items-center">
@@ -495,6 +587,58 @@ export default function ProductsFilters() {
                 </label>
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* Power Requirement */}
+      <div className="border-b border-[#C9CCCF] pb-4">
+        <button
+          onClick={() => toggleSection("powerRequirement")}
+          className="flex items-center justify-between w-full text-left"
+        >
+          <span className="font-medium text-gray-900" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+            {t("Power Requirement")}
+          </span>
+          <svg
+            className={`w-5 h-5 text-gray-500 transition-transform ${
+              openSections.powerRequirement ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        {openSections.powerRequirement && (
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">{t("Min")}</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  value={filters.powerRequirementMin}
+                  onChange={e => setFilters(prev => ({ ...prev, powerRequirementMin: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
+                  placeholder="0"
+                />
+                <span className="text-xs text-gray-600">W</span>
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">{t("Max")}</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  value={filters.powerRequirementMax}
+                  onChange={e => setFilters(prev => ({ ...prev, powerRequirementMax: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
+                  placeholder="2000"
+                />
+                <span className="text-xs text-gray-600">W</span>
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -533,6 +677,97 @@ export default function ProductsFilters() {
                 </label>
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* Environmental Impact */}
+      <div className="border-b border-[#C9CCCF] pb-4">
+        <button
+          onClick={() => toggleSection("environmentalImpact")}
+          className="flex items-center justify-between w-full text-left"
+        >
+          <span className="font-medium text-gray-900" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+            {t("Environmental Impact")}
+          </span>
+          <svg
+            className={`w-5 h-5 text-gray-500 transition-transform ${
+              openSections.environmentalImpact ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        {openSections.environmentalImpact && (
+          <div className="mt-3 space-y-4">
+            <div>
+              <p className="text-sm text-gray-700 mb-2">{t("Energy consumption")}</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">{t("Min")}</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={filters.energyMin}
+                      onChange={e => setFilters(prev => ({ ...prev, energyMin: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
+                      placeholder="0"
+                    />
+                    <span className="text-xs text-gray-600">kWh</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">{t("Max")}</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={filters.energyMax}
+                      onChange={e => setFilters(prev => ({ ...prev, energyMax: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
+                      placeholder="2000"
+                    />
+                    <span className="text-xs text-gray-600">kWh</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-700 mb-2">{t("CO2 emissions")}</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">{t("Min")}</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={filters.co2Min}
+                      onChange={e => setFilters(prev => ({ ...prev, co2Min: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
+                      placeholder="0"
+                      step="0.1"
+                    />
+                    <span className="text-xs text-gray-600">kg</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">{t("Max")}</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={filters.co2Max}
+                      onChange={e => setFilters(prev => ({ ...prev, co2Max: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
+                      placeholder="20"
+                      step="0.1"
+                    />
+                    <span className="text-xs text-gray-600">kg</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

@@ -11,6 +11,7 @@ import LocationStep from "../create/project/steps/LocationStep";
 import MachinesStep from "../create/project/steps/MachinesStep";
 import MainStep from "../create/project/steps/MainStep";
 import MaterialsStep from "../create/project/steps/MaterialsStep";
+import ProductFiltersStep from "../create/project/steps/ProductFiltersStep";
 import RelationsStep from "../create/project/steps/RelationsStep";
 
 //
@@ -45,6 +46,13 @@ export const projectSections: Array<ProjectSection> = [
     id: "linkedDesign",
     component: <LinkDesignStep />,
     for: [ProjectType.PRODUCT],
+  },
+  {
+    navLabel: "Specifications",
+    id: "productFilters",
+    component: <ProductFiltersStep />,
+    for: [ProjectType.PRODUCT],
+    editPage: "edit/specs",
   },
   {
     navLabel: "Images",

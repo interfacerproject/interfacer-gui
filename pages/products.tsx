@@ -21,6 +21,8 @@ import { useRouter } from "next/router";
 import React from "react";
 
 // Components
+import ProductsActiveFiltersBar from "components/ProductsActiveFiltersBar";
+import ProductsCategoriesBar from "components/ProductsCategoriesBar";
 import ProductsFilters from "components/ProductsFilters";
 import ProductsHeader from "components/ProductsHeader";
 import ProductsSearchBar from "components/ProductsSearchBar";
@@ -172,6 +174,12 @@ export default function Products() {
         <div className="max-w-7xl mx-auto">
           {/* Header Section */}
           <ProductsHeader totalProjects={totalProjects} loading={statsLoading} filteredCount={resultsCount} />
+
+          {/* Categories */}
+          <ProductsCategoriesBar />
+
+          {/* Active Filters */}
+          <ProductsActiveFiltersBar />
 
           {/* Search and Sort Controls */}
           <div className="mb-6 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
