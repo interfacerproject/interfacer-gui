@@ -120,6 +120,7 @@ export default function ProductFiltersStep() {
         value={values.powerRequirementW}
         onChange={value => setValue("productFilters.powerRequirementW", value, formSetValueOptions)}
         helpText={t("Optional. Used for filtering by power requirement.")}
+        autoComplete="off"
       />
 
       <Stack vertical spacing="tight">
@@ -152,12 +153,14 @@ export default function ProductFiltersStep() {
             label={t("Energy consumption (kWh)")}
             value={values.energyKwh}
             onChange={value => setValue("productFilters.energyKwh", value, formSetValueOptions)}
+            autoComplete="off"
           />
           <TextField
             type="number"
             label={t("CO2 emissions (kg)")}
             value={values.co2Kg}
             onChange={value => setValue("productFilters.co2Kg", value, formSetValueOptions)}
+            autoComplete="off"
           />
         </div>
       </Stack>

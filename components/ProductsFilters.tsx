@@ -716,7 +716,7 @@ export default function ProductsFilters() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
                       placeholder="0"
                     />
-                    <span className="text-xs text-gray-600">kWh</span>
+                    <span className="text-xs text-gray-600">{"kWh"}</span>
                   </div>
                 </div>
                 <div>
@@ -729,7 +729,7 @@ export default function ProductsFilters() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
                       placeholder="2000"
                     />
-                    <span className="text-xs text-gray-600">kWh</span>
+                    <span className="text-xs text-gray-600">{"kWh"}</span>
                   </div>
                 </div>
               </div>
@@ -749,7 +749,7 @@ export default function ProductsFilters() {
                       placeholder="0"
                       step="0.1"
                     />
-                    <span className="text-xs text-gray-600">kg</span>
+                    <span className="text-xs text-gray-600">{"kg"}</span>
                   </div>
                 </div>
                 <div>
@@ -763,7 +763,7 @@ export default function ProductsFilters() {
                       placeholder="20"
                       step="0.1"
                     />
-                    <span className="text-xs text-gray-600">kg</span>
+                    <span className="text-xs text-gray-600">{"kg"}</span>
                   </div>
                 </div>
               </div>
