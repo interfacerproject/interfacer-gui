@@ -35,9 +35,9 @@ export const mainStepSchema = () =>
       .string()
       .test(
         "size-check",
-        "Description length must be less than 2048 characters. If it's longer, please use the 'project data' field to reference it.",
+        "Description length must be less than 6000 characters. If it's longer, please use the 'project data' field to reference it.",
         value => {
-          if (value) return new Blob([value]).size < 2048;
+          if (value) return new Blob([value]).size < 6000;
           else return true;
         }
       ),
