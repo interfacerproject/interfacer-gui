@@ -34,6 +34,7 @@ const useFilters = () => {
 
   const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
   const specs = queryProjectTypes.data?.instanceVariables.specs;
+  const specsLoading = queryProjectTypes.loading;
   const coformsToIds = {
     service: specs?.specProjectService.id,
     product: specs?.specProjectProduct.id,
@@ -42,8 +43,10 @@ const useFilters = () => {
   const conformsToNoDesign = specs ? [specs.specProjectService.id, specs.specProjectProduct.id] : undefined;
 
   // Map show filter to conformsTo IDs
+  // Returns undefined if specs not loaded to prevent empty array being sent
   const getShowFilterConformsTo = (): string[] | undefined => {
-    if (!showFilter || showFilter === "all" || !specs) return conformToList;
+    if (!specs) return undefined; // Don't return empty array - backend requires at least 1 item
+    if (!showFilter || showFilter === "all") return conformToList;
 
     const filterMap: Record<string, string> = {
       designs: specs.specProjectDesign.id,
@@ -85,6 +88,7 @@ const useFilters = () => {
     serviceId: coformsToIds.service,
     productId: coformsToIds.product,
     designId: coformsToIds.design,
+    specsLoading,
   };
 };
 

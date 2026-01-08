@@ -14,29 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
-import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
-import { GetProjectTypesQuery } from "lib/types";
+import { useResourceSpecs } from "./useResourceSpecs";
 
 /**
  * Hook to get project type ResourceSpecification IDs
- * Returns an array of spec IDs for DESIGN, SERVICE, PRODUCT projects
- * Useful for filtering queries to show only projects (exclude DPP, machines as resources, etc.)
- *
- * TODO: Add specProjectMachine once backend supports it
+ * Returns an array of spec IDs for DESIGN, SERVICE, PRODUCT, MACHINE projects
+ * Useful for filtering queries to show only projects (exclude DPP, materials as resources, etc.)
  */
 export const useProjectSpecs = () => {
-  const { data, loading } = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
-  const specs = data?.instanceVariables.specs;
-
-  const projectSpecIds = specs
-    ? [
-        specs.specProjectDesign.id,
-        specs.specProjectService.id,
-        specs.specProjectProduct.id,
-        // TODO: Add specs.specProjectMachine.id once backend adds it
-      ]
-    : [];
-
+  const { projectSpecIds, loading } = useResourceSpecs();
   return { projectSpecIds, loading };
 };

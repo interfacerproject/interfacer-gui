@@ -2,8 +2,9 @@ import { useQuery } from "@apollo/client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
 import { SelectOption } from "components/types";
+import { useResourceSpecs } from "hooks/useResourceSpecs";
 import { QUERY_MACHINES } from "lib/QueryAndMutation";
-import { MACHINE_TYPES, RESOURCE_SPEC_MACHINE } from "lib/resourceSpecs";
+import { MACHINE_TYPES } from "lib/resourceSpecs";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
 
@@ -50,10 +51,12 @@ export default function SearchMachines(props: Props) {
 
   /* Loading machines */
 
+  const { specMachine } = useResourceSpecs();
   const { data, loading } = useQuery<QueryData>(QUERY_MACHINES, {
     variables: {
-      resourceSpecId: RESOURCE_SPEC_MACHINE,
+      resourceSpecId: specMachine?.id,
     },
+    skip: !specMachine?.id,
   });
 
   function getMachineIcon(machineName: string): string {

@@ -59,9 +59,11 @@ export default function ProjectsTable(props: ProjectsTableProps) {
   const { projectSpecIds } = useProjectSpecs();
 
   // Only show actual projects (DESIGN, SERVICE, PRODUCT, MACHINE) - exclude DPP and machine resources
+  // Use projectSpecIds as fallback, but ensure conformsTo is never an empty array (backend requires at least 1 item)
+  const effectiveConformsTo = (filter.conformsTo?.length ? filter.conformsTo : undefined) || projectSpecIds;
   const filterWithProjectTypes: EconomicResourceFilterParams = {
     ...filter,
-    conformsTo: filter.conformsTo || projectSpecIds,
+    conformsTo: effectiveConformsTo.length > 0 ? effectiveConformsTo : undefined,
   };
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(

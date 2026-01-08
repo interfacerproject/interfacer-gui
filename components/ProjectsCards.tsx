@@ -20,7 +20,7 @@ import React from "react";
 import useLoadMore from "../hooks/useLoadMore";
 import { useProjectSpecs } from "../hooks/useProjectSpecs";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
-import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
+import { EconomicResource, EconomicResourceFilterParams, FetchInventoryQuery } from "../lib/types";
 // import CardsGroup from "./CardsGroup";
 // import DraftCard from "./DraftCard";
 import Link from "next/link";
@@ -28,9 +28,9 @@ import EmptyState from "./EmptyState";
 import LoshCard from "./LoshCard";
 import ProductCardSkeleton from "./ProductCardSkeleton";
 // import ProjectDisplay from "./ProjectDisplay";
+import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import ProjectCardFigma from "./ProjectCardFigma";
-import { useTranslation } from "next-i18next";
 
 const ProjectDisplay = dynamic(() => import("./ProjectDisplay"), { ssr: false });
 const CardsGroup = dynamic(() => import("./CardsGroup"), { ssr: false });
@@ -74,18 +74,17 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
   const { projectSpecIds } = useProjectSpecs();
 
   // Only show actual projects (DESIGN, SERVICE, PRODUCT, MACHINE) - exclude DPP and machine resources
+  // Use projectSpecIds as fallback, but ensure conformsTo is never an empty array (backend requires at least 1 item)
+  const effectiveConformsTo = (filter.conformsTo?.length ? filter.conformsTo : undefined) || projectSpecIds;
   const filterWithProjectTypes: EconomicResourceFilterParams = {
     ...filter,
-    conformsTo: filter.conformsTo || projectSpecIds,
+    conformsTo: effectiveConformsTo.length > 0 ? effectiveConformsTo : undefined,
   };
 
-  const { loading, data, fetchMore, refetch, variables, error } = useQuery<{ data: EconomicResource }>(
-    FETCH_RESOURCES,
-    {
-      variables: { last: 12, filter: filterWithProjectTypes },
-      skip: projectSpecIds.length === 0,
-    }
-  );
+  const { loading, data, fetchMore, refetch, variables, error } = useQuery<FetchInventoryQuery>(FETCH_RESOURCES, {
+    variables: { last: 12, filter: filterWithProjectTypes },
+    skip: projectSpecIds.length === 0,
+  });
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
     refetch,

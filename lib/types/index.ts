@@ -728,8 +728,9 @@ export type InstanceSpecs = {
   specProjectDesign: ResourceSpecification;
   specProjectProduct: ResourceSpecification;
   specProjectService: ResourceSpecification;
-  // TODO: Add specProjectMachine once backend supports it
-  specProjectMachine?: ResourceSpecification;
+  specDpp: ResourceSpecification;
+  specMachine: ResourceSpecification;
+  specMaterial: ResourceSpecification;
 };
 
 export type InstanceUnits = {
@@ -3907,6 +3908,9 @@ export type GetVariablesQuery = {
       specProjectDesign: { __typename?: "ResourceSpecification"; id: string; name: string };
       specProjectProduct: { __typename?: "ResourceSpecification"; id: string; name: string };
       specProjectService: { __typename?: "ResourceSpecification"; id: string; name: string };
+      specDpp: { __typename?: "ResourceSpecification"; id: string; name: string };
+      specMachine: { __typename?: "ResourceSpecification"; id: string; name: string };
+      specMaterial: { __typename?: "ResourceSpecification"; id: string; name: string };
     };
     units: { __typename?: "InstanceUnits"; unitOne: { __typename?: "Unit"; id: string } };
   };
@@ -4059,7 +4063,9 @@ export type GetProjectTypesQuery = {
       specProjectDesign: { __typename?: "ResourceSpecification"; id: string; name: string };
       specProjectProduct: { __typename?: "ResourceSpecification"; id: string; name: string };
       specProjectService: { __typename?: "ResourceSpecification"; id: string; name: string };
-      // TODO: Add specProjectMachine once backend supports it
+      specDpp: { __typename?: "ResourceSpecification"; id: string; name: string };
+      specMachine: { __typename?: "ResourceSpecification"; id: string; name: string };
+      specMaterial: { __typename?: "ResourceSpecification"; id: string; name: string };
     };
   };
 };

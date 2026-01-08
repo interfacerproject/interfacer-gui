@@ -1,4 +1,4 @@
-import { Collaborate, DataDefinition, GroupObjectsNew } from "@carbon/icons-react";
+import { Collaborate, DataDefinition, GroupObjectsNew, ToolKit } from "@carbon/icons-react";
 import classNames from "classnames";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -13,6 +13,7 @@ const icons: Record<ProjectType, ReactNode> = {
   Design: <GroupObjectsNew />,
   Product: <DataDefinition />,
   Service: <Collaborate />,
+  Machine: <ToolKit />,
 };
 
 interface Props {

@@ -1,4 +1,4 @@
-import { CarbonIconType, Collaborate, DataDefinition, GroupObjectsNew } from "@carbon/icons-react";
+import { CarbonIconType, Collaborate, DataDefinition, GroupObjectsNew, ToolKit } from "@carbon/icons-react";
 import { ProjectType } from "./types";
 
 export type RenderProps = {
@@ -37,6 +37,15 @@ export const ProjectTypeRenderProps: Record<ProjectType, RenderProps> = {
       bg: "bg-[#CDE0E4]",
       content: "text-[#024960] fill-[#024960]",
       border: "border-[#5D8CA0] ring-[#5D8CA0]",
+    },
+  },
+  [ProjectType.MACHINE]: {
+    label: ProjectType.MACHINE,
+    icon: ToolKit,
+    classes: {
+      bg: "bg-[#D4E5D7]",
+      content: "text-[#2D5035] fill-[#2D5035]",
+      border: "border-[#6BA876] ring-[#6BA876]",
     },
   },
 };

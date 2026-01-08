@@ -15,7 +15,6 @@ import {
   CREATE_MACHINE_RESOURCE,
   CREATE_PROCESS,
   CREATE_PROJECT,
-  QUERY_PROJECT_TYPES,
   QUERY_UNIT_AND_CURRENCY,
   RELOCATE_PROJECT,
   UPDATE_METADATA,
@@ -23,7 +22,6 @@ import {
 import { arrayEquals, getNewElements } from "lib/arrayOperations";
 import { errorFormatter } from "lib/errorFormatter";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
-import { RESOURCE_SPEC_DPP, RESOURCE_SPEC_MACHINE } from "lib/resourceSpecs";
 import { derivedProductFilterTags, mergeTags, prefixedTag, removeTagsWithPrefixes, TAG_PREFIX } from "lib/tagging";
 import {
   CreateLocationMutation,
@@ -31,7 +29,6 @@ import {
   CreateProjectMutation,
   CreateProjectMutationVariables,
   EconomicResource,
-  GetProjectTypesQuery,
   GetUnitAndCurrencyQuery,
   IFile,
 } from "lib/types";
@@ -49,6 +46,7 @@ import {
 import { LocationStepValues } from "./../components/partials/create/project/steps/LocationStep";
 import { RelocateProjectMutation, RelocateProjectMutationVariables } from "./../lib/types/index";
 import { useAuth } from "./useAuth";
+import { useResourceSpecs } from "./useResourceSpecs";
 
 export const useProjectCRUD = () => {
   const { user } = useAuth();
@@ -71,15 +69,18 @@ export const useProjectCRUD = () => {
 
   type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
 
-  const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
-  const specs = queryProjectTypes.data?.instanceVariables.specs;
-  const projectTypes: { [key in ProjectType]: string } | undefined = specs && {
-    [ProjectType.DESIGN]: specs.specProjectDesign.id,
-    [ProjectType.SERVICE]: specs.specProjectService.id,
-    [ProjectType.PRODUCT]: specs.specProjectProduct.id,
-    // @ts-ignore - TODO: Remove when backend adds specProjectMachine
-    [ProjectType.MACHINE]: specs.specProjectMachine?.id || RESOURCE_SPEC_MACHINE,
-  };
+  // Get resource specs using the workaround hook (handles instanceVariables not exposing all specs)
+  const { specProjectDesign, specProjectProduct, specProjectService, specMachine, specDpp, hasAllSpecs } =
+    useResourceSpecs();
+
+  const projectTypes: { [key in ProjectType]: string } | undefined = hasAllSpecs
+    ? {
+        [ProjectType.DESIGN]: specProjectDesign!.id,
+        [ProjectType.SERVICE]: specProjectService!.id,
+        [ProjectType.PRODUCT]: specProjectProduct!.id,
+        [ProjectType.MACHINE]: specMachine!.id,
+      }
+    : undefined;
 
   const createProcess = async (name: string): Promise<string> => {
     const { data } = await createProcessMutation({ variables: { name } });
@@ -240,7 +241,7 @@ export const useProjectCRUD = () => {
           agent: user?.ulid!,
           creationTime: machineCreationTime,
           process: processId,
-          resourceSpec: RESOURCE_SPEC_MACHINE,
+          resourceSpec: specMachine!.id,
           unitOne: unitAndCurrency?.units.unitOne.id!,
           name: formData.main.title,
           note: formData.main.description,
@@ -362,7 +363,7 @@ export const useProjectCRUD = () => {
               agent: user?.ulid!,
               creationTime: dppCreationTime,
               process: processId,
-              resourceSpec: RESOURCE_SPEC_DPP, // TODO: Replace with actual spec ID from backend
+              resourceSpec: specDpp!.id,
               unitOne: unitAndCurrency?.units.unitOne.id!,
               dppUlid: JSON.stringify({ dppServiceUlid: dppUlid }),
               name: `DPP for ${formData.main.title}`,

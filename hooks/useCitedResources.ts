@@ -16,8 +16,8 @@
 
 import { useQuery } from "@apollo/client";
 import { QUERY_CITED_RESOURCES } from "lib/QueryAndMutation";
-import { RESOURCE_SPEC_DPP, RESOURCE_SPEC_MACHINE } from "lib/resourceSpecs";
 import { EconomicResource } from "lib/types";
+import { useResourceSpecs } from "./useResourceSpecs";
 
 interface CitedResourcesData {
   economicEvents: {
@@ -41,13 +41,16 @@ export const useCitedResources = (processId?: string) => {
     skip: !processId,
   });
 
+  // Get spec IDs (uses fallback query if instanceVariables doesn't have them)
+  const { specDpp, specMachine } = useResourceSpecs();
+
   const citedResources = data?.economicEvents?.edges?.map(edge => edge.node.resourceInventoriedAs) || [];
 
-  // Find DPP resource
-  const dppResource = citedResources.find(resource => resource.conformsTo?.id === RESOURCE_SPEC_DPP);
+  // Find DPP resource (using spec ID)
+  const dppResource = specDpp ? citedResources.find(resource => resource.conformsTo?.id === specDpp.id) : undefined;
 
-  // Find machine resources
-  const machines = citedResources.filter(resource => resource.conformsTo?.id === RESOURCE_SPEC_MACHINE);
+  // Find machine resources (using spec ID)
+  const machines = specMachine ? citedResources.filter(resource => resource.conformsTo?.id === specMachine.id) : [];
 
   // Extract DPP service ULID from metadata
   let dppServiceUlid: string | undefined;

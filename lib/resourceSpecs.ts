@@ -1,44 +1,43 @@
 /**
  * ResourceSpecification IDs for economic resources
  *
- * IMPORTANT: These are placeholder values. Replace with actual ULIDs from backend.
+ * @deprecated These constants are deprecated. Use instanceVariables.specs from backend instead.
  *
- * To get actual IDs, query the backend:
+ * Backend now provides specs via GraphQL query:
  * ```graphql
  * query {
- *   resourceSpecifications {
- *     edges {
- *       node {
- *         id
- *         name
- *       }
+ *   instanceVariables {
+ *     specs {
+ *       specDpp { id name }
+ *       specMachine { id name }
+ *       specMaterial { id name }
  *     }
  *   }
  * }
  * ```
  *
- * Or ask backend team for:
- * - DPP ResourceSpecification ID
- * - Machine ResourceSpecification ID (just ONE spec for all machines)
+ * Use the QUERY_PROJECT_TYPES or QUERY_VARIABLES query to fetch these IDs.
  */
 
-// DPP (Digital Product Passport) ResourceSpec
-export const RESOURCE_SPEC_DPP = process.env.NEXT_PUBLIC_SPEC_DPP || "SPEC_DPP_PLACEHOLDER";
+/**
+ * @deprecated Use instanceVariables.specs.specDpp.id instead
+ */
+export const RESOURCE_SPEC_DPP = process.env.NEXT_PUBLIC_SPEC_DPP || "";
 
-// Machine ResourceSpec (ONE spec for all machine types)
-// Individual machines (Laser Cutter, 3D Printer, etc.) are EconomicResource instances
-// that conform to this spec, differentiated by their name and metadata
-export const RESOURCE_SPEC_MACHINE = process.env.NEXT_PUBLIC_SPEC_MACHINE || "SPEC_MACHINE_PLACEHOLDER";
+/**
+ * @deprecated Use instanceVariables.specs.specMachine.id instead
+ */
+export const RESOURCE_SPEC_MACHINE = process.env.NEXT_PUBLIC_SPEC_MACHINE || "";
 
-// Material ResourceSpec (ONE spec for all materials)
-// Individual materials (PLA, ABS, Aluminum, etc.) are EconomicResource instances
-// that conform to this spec, differentiated by their name and metadata
+/**
+ * @deprecated Use instanceVariables.specs.specMaterial.id instead
+ */
 export const RESOURCE_SPEC_MATERIAL = process.env.NEXT_PUBLIC_SPEC_MATERIAL || "";
 
 /**
  * Machine types configuration
  * These are display names for UI - each represents an EconomicResource instance
- * that conforms to RESOURCE_SPEC_MACHINE
+ * that conforms to specMachine ResourceSpecification
  */
 export const MACHINE_TYPES = [
   {

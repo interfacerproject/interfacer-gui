@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Stack } from "@bbtgnn/polaris-interfacer";
+import { Icon, Stack } from "@bbtgnn/polaris-interfacer";
 import { useTranslation } from "next-i18next";
 import MdParser from "../lib/MdParser";
 import { MACHINE_TYPES } from "../lib/resourceSpecs";
@@ -43,15 +43,15 @@ const ProjectDetailOverview = ({ project, machines = [] }: ProjectDetailOverview
           <div className="flex flex-wrap gap-3">
             {machines.map(machine => {
               const machineType = MACHINE_TYPES.find(mt =>
-                machine.name?.toLowerCase().includes(mt.label.toLowerCase())
+                machine.name?.toLowerCase().includes(mt.name.toLowerCase())
               );
-              const Icon = machineType?.icon;
+              const IconName = machineType?.icon;
               return (
                 <div
                   key={machine.id}
                   className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm"
                 >
-                  {Icon && <Icon className="w-5 h-5" />}
+                  {IconName && <Icon source={IconName} />}
                   <span className="font-medium">{machine.name}</span>
                 </div>
               );

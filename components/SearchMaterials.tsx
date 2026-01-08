@@ -2,8 +2,8 @@ import { useQuery } from "@apollo/client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
 import { SelectOption } from "components/types";
+import { useResourceSpecs } from "hooks/useResourceSpecs";
 import { QUERY_MACHINES } from "lib/QueryAndMutation";
-import { RESOURCE_SPEC_MATERIAL } from "lib/resourceSpecs";
 import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
 
@@ -44,11 +44,12 @@ export default function SearchMaterials(props: Props) {
     setInputValue(value);
   }, []);
 
+  const { specMaterial } = useResourceSpecs();
   const { data, loading } = useQuery<QueryData>(QUERY_MACHINES, {
     variables: {
-      resourceSpecId: RESOURCE_SPEC_MATERIAL,
+      resourceSpecId: specMaterial?.id,
     },
-    skip: !RESOURCE_SPEC_MATERIAL,
+    skip: !specMaterial?.id,
   });
 
   function createOptionsFromData(data: QueryData | undefined): Array<SelectOption> {
