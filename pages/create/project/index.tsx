@@ -4,19 +4,19 @@ import { NextPageWithLayout } from "pages/_app";
 import { ReactElement, useState } from "react";
 
 // Components
-import { Banner, Card, Icon, OptionList, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Banner, Card, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { ChevronRightMinor } from "@shopify/polaris-icons";
+import FullWidthBanner from "components/FullWidthBanner";
 import Layout from "components/layout/Layout";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import ProjectTypeRoundIcon from "components/ProjectTypeRoundIcon";
-import FullWidthBanner from "components/FullWidthBanner";
 
 // Icons
 import { ProjectType } from "components/types";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { useAuth } from "hooks/useAuth";
 import { useDrafts } from "hooks/useFormSaveDraft";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 //
 
@@ -64,6 +64,14 @@ const CreateProject: NextPageWithLayout = () => {
       ),
       url: "/create/project/service",
       projectType: ProjectType.SERVICE,
+    },
+    {
+      title: "Machine",
+      description: t(
+        "Add a machine or equipment to the platform. Share details about fabrication tools, 3D printers, laser cutters, and other machines available in your maker space or lab."
+      ),
+      url: "/create/project/machine",
+      projectType: ProjectType.MACHINE,
     },
   ];
 

@@ -5,5 +5,6 @@ export function isProjectType(name: string | ProjectType): Record<ProjectType, b
     [ProjectType.DESIGN]: name === ProjectType.DESIGN,
     [ProjectType.PRODUCT]: name === ProjectType.PRODUCT,
     [ProjectType.SERVICE]: name === ProjectType.SERVICE,
+    [ProjectType.MACHINE]: name === ProjectType.MACHINE,
   };
 }

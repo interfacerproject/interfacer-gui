@@ -15,15 +15,16 @@ const TechnicalInfoCard = () => {
   const declarations = project.metadata?.declarations;
   const haveDeclarations = declarations?.recyclable === "yes" || declarations?.repairable === "yes";
   const licenses = project.metadata?.licenses?.length && project?.metadata?.licenses;
+  const singleLicense = project?.license;
   const design = project.metadata?.design;
   const certifications: Array<ILink> | undefined = project.metadata?.declarations?.certifications;
 
-  if (!(licenses || design || haveDeclarations || certifications?.length)) return null;
+  if (!(licenses || singleLicense || design || haveDeclarations || certifications?.length)) return null;
 
   return (
     <Card sectioned>
       <Stack vertical spacing="loose">
-        {licenses && <ProjectLicenses project={project} />}
+        {(licenses || singleLicense) && <ProjectLicenses project={project} />}
 
         {design && (
           <div className="border rounded bg-surface-subdued p-1" id="linked-design">

@@ -8,11 +8,13 @@ import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import {
   ASK_RESOURCE_PRIMARY_ACCOUNTABLE,
   CITE_PROJECT,
+  CONSUME_RESOURCE,
   CONTRIBUTE_TO_PROJECT,
+  CREATE_DPP_RESOURCE,
   CREATE_LOCATION,
+  CREATE_MACHINE_RESOURCE,
   CREATE_PROCESS,
   CREATE_PROJECT,
-  QUERY_PROJECT_TYPES,
   QUERY_UNIT_AND_CURRENCY,
   RELOCATE_PROJECT,
   UPDATE_METADATA,
@@ -20,13 +22,13 @@ import {
 import { arrayEquals, getNewElements } from "lib/arrayOperations";
 import { errorFormatter } from "lib/errorFormatter";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
+import { derivedProductFilterTags, mergeTags, prefixedTag, removeTagsWithPrefixes, TAG_PREFIX } from "lib/tagging";
 import {
   CreateLocationMutation,
   CreateLocationMutationVariables,
   CreateProjectMutation,
   CreateProjectMutationVariables,
   EconomicResource,
-  GetProjectTypesQuery,
   GetUnitAndCurrencyQuery,
   IFile,
 } from "lib/types";
@@ -44,6 +46,7 @@ import {
 import { LocationStepValues } from "./../components/partials/create/project/steps/LocationStep";
 import { RelocateProjectMutation, RelocateProjectMutationVariables } from "./../lib/types/index";
 import { useAuth } from "./useAuth";
+import { useResourceSpecs } from "./useResourceSpecs";
 
 export const useProjectCRUD = () => {
   const { user } = useAuth();
@@ -56,20 +59,28 @@ export const useProjectCRUD = () => {
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [citeProject] = useMutation(CITE_PROJECT);
   const [contributeToProject] = useMutation(CONTRIBUTE_TO_PROJECT);
+  const [consumeResource] = useMutation(CONSUME_RESOURCE);
   const [createProject] = useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CREATE_PROJECT);
+  const [createDppResource] = useMutation(CREATE_DPP_RESOURCE);
+  const [createMachineResource] = useMutation(CREATE_MACHINE_RESOURCE);
   const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
   const [createProcessMutation] = useMutation(CREATE_PROCESS);
   const { refetch } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
 
   type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
 
-  const queryProjectTypes = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
-  const specs = queryProjectTypes.data?.instanceVariables.specs;
-  const projectTypes: { [key in ProjectType]: string } | undefined = specs && {
-    [ProjectType.DESIGN]: specs.specProjectDesign.id,
-    [ProjectType.SERVICE]: specs.specProjectService.id,
-    [ProjectType.PRODUCT]: specs.specProjectProduct.id,
-  };
+  // Get resource specs using the workaround hook (handles instanceVariables not exposing all specs)
+  const { specProjectDesign, specProjectProduct, specProjectService, specMachine, specDpp, hasAllSpecs } =
+    useResourceSpecs();
+
+  const projectTypes: { [key in ProjectType]: string } | undefined = hasAllSpecs
+    ? {
+        [ProjectType.DESIGN]: specProjectDesign!.id,
+        [ProjectType.SERVICE]: specProjectService!.id,
+        [ProjectType.PRODUCT]: specProjectProduct!.id,
+        [ProjectType.MACHINE]: specMachine!.id,
+      }
+    : undefined;
 
   const createProcess = async (name: string): Promise<string> => {
     const { data } = await createProcessMutation({ variables: { name } });
@@ -197,6 +208,88 @@ export const useProjectCRUD = () => {
     devLog("success: images uploaded");
   };
 
+  const handleMachineCreation = async (formData: CreateProjectValues): Promise<string | undefined> => {
+    setLoading(true);
+    let machineId: string | undefined;
+    try {
+      const processName = `creation of machine ${formData.main.title} by ${user!.name}`;
+      const processId = await createProcess(processName);
+      devLog("success: process created for machine", processName, processId);
+
+      let location;
+      if (formData.location.locationData || formData.location.remote) {
+        location = await handleCreateLocation(formData.location, false);
+      }
+
+      const images: IFile[] = await prepFilesForZenflows(formData.images);
+      devLog("info: images prepared", images);
+      const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
+      devLog("info: tags prepared", tags);
+
+      const metadata = JSON.stringify({
+        contributors: formData.contributors,
+        relations: formData.relations,
+        remote: location?.remote,
+        repo: formData.main.link,
+        images,
+        tags,
+      });
+
+      const machineCreationTime = new Date().toISOString();
+      const { data: machineData, errors: machineErrors } = await createMachineResource({
+        variables: {
+          agent: user?.ulid!,
+          creationTime: machineCreationTime,
+          process: processId,
+          resourceSpec: specMachine!.id,
+          unitOne: unitAndCurrency?.units.unitOne.id!,
+          name: formData.main.title,
+          note: formData.main.description,
+          metadata,
+        },
+      });
+
+      if (machineErrors) {
+        devLog("error: Machine resource not created", machineErrors);
+        throw new Error("MachineNotCreated");
+      }
+
+      machineId = machineData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
+      if (!machineId) throw new Error("MachineNotCreated");
+
+      devLog("success: Machine resource created", machineId);
+
+      // Add contributors
+      await addContributors(machineId, formData.contributors, processId);
+
+      // Add relations
+      for (const resource of formData.relations) {
+        await addRelation(resource, processId, machineId);
+        const project = await getProjectForMetadataUpdate(resource);
+        if (project.metadata?.relations) {
+          const relations: string[] = [...project.metadata.relations, machineId];
+          await updateRelations(resource, relations, true);
+        } else {
+          await updateRelations(resource, [machineId], true);
+        }
+      }
+
+      await uploadImages(formData.images);
+
+      //economic system: points assignments
+      addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
+      addStrengthsPoints(user!.ulid, StrengthsPoints.OnCreate);
+    } catch (e) {
+      devLog(e);
+      let err = errorFormatter(e);
+      if (err.includes("has already been taken"))
+        err = `${t("One of the images you selected already exists on the server, please upload a different file")}.`;
+      setError(err);
+    }
+    setLoading(false);
+    return machineId;
+  };
+
   const handleProjectCreation = async (
     formData: CreateProjectValues,
     projectType: ProjectType,
@@ -216,10 +309,77 @@ export const useProjectCRUD = () => {
       //todo: This should be uncommented, seems broken with last zenroom version see lib/fileUpload.ts
       const images: IFile[] = await prepFilesForZenflows(formData.images);
       devLog("info: images prepared", images);
-      const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
+
+      const machineTags = (formData.machines?.machineDetails || [])
+        .map(m => prefixedTag(TAG_PREFIX.MACHINE, m.name))
+        .filter((t): t is string => Boolean(t));
+
+      const materialTags = (formData.materials?.materialDetails || [])
+        .map(m => prefixedTag(TAG_PREFIX.MATERIAL, m.name))
+        .filter((t): t is string => Boolean(t));
+
+      const normalizedProductFilters = (() => {
+        const pf = formData.productFilters;
+        if (!pf) return {};
+
+        const powerRequirementW = pf.powerRequirementW ? Number(pf.powerRequirementW) : undefined;
+        const energyKwh = pf.energyKwh ? Number(pf.energyKwh) : undefined;
+        const co2Kg = pf.co2Kg ? Number(pf.co2Kg) : undefined;
+
+        return {
+          categories: pf.categories || [],
+          powerCompatibility: pf.powerCompatibility || [],
+          replicability: pf.replicability || [],
+          powerRequirementW: Number.isFinite(powerRequirementW as number) ? (powerRequirementW as number) : undefined,
+          energyKwh: Number.isFinite(energyKwh as number) ? (energyKwh as number) : undefined,
+          co2Kg: Number.isFinite(co2Kg as number) ? (co2Kg as number) : undefined,
+        };
+      })();
+
+      const productFilterTags = derivedProductFilterTags(normalizedProductFilters);
+
+      const baseTags = removeTagsWithPrefixes(formData.main.tags, [
+        TAG_PREFIX.CATEGORY,
+        TAG_PREFIX.POWER_COMPAT,
+        TAG_PREFIX.POWER_REQ,
+        TAG_PREFIX.REPLICABILITY,
+        TAG_PREFIX.ENV_ENERGY,
+        TAG_PREFIX.ENV_CO2,
+      ]);
+
+      const merged = mergeTags(baseTags, machineTags, materialTags, productFilterTags);
+      const tags = merged.length > 0 ? merged : undefined;
       devLog("info: tags prepared", tags);
 
       const design = formData.linkedDesign.length > 0 && formData.linkedDesign;
+
+      // Create DPP as economic resource if dppUlid provided
+      let dppResourceId: string | undefined;
+      if (dppUlid) {
+        try {
+          const dppCreationTime = new Date().toISOString();
+          const { data: dppData, errors: dppErrors } = await createDppResource({
+            variables: {
+              agent: user?.ulid!,
+              creationTime: dppCreationTime,
+              process: processId,
+              resourceSpec: specDpp!.id,
+              unitOne: unitAndCurrency?.units.unitOne.id!,
+              dppUlid: JSON.stringify({ dppServiceUlid: dppUlid }),
+              name: `DPP for ${formData.main.title}`,
+              note: `Digital Product Passport for ${formData.main.title}`,
+            },
+          });
+          if (dppErrors) {
+            devLog("error: DPP resource not created", dppErrors);
+          } else {
+            dppResourceId = dppData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
+            devLog("success: DPP resource created", dppResourceId);
+          }
+        } catch (e) {
+          devLog("error: DPP resource creation failed", e);
+        }
+      }
 
       const variables: CreateProjectMutationVariables = {
         resourceSpec: projectTypes![projectType],
@@ -241,7 +401,10 @@ export const useProjectCRUD = () => {
           declarations: formData.declarations,
           remote: location?.remote,
           design: design,
-          dpp: dppUlid,
+          machines: formData.machines?.machineDetails || [],
+          materials: formData.materials?.materialDetails || [],
+          productFilters: normalizedProductFilters,
+          // dpp: REMOVED - now cited as economic resource
         }),
       };
       devLog("info: project variables created", variables);
@@ -252,6 +415,65 @@ export const useProjectCRUD = () => {
 
       projectId = createProjectData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
       if (!projectId) throw new Error("ProjectNotCreated");
+
+      // Cite DPP resource from project
+      if (dppResourceId) {
+        try {
+          await citeProject({
+            variables: {
+              agent: user?.ulid!,
+              creationTime: new Date().toISOString(),
+              resource: dppResourceId,
+              process: processId,
+              unitOne: unitAndCurrency?.units.unitOne.id!,
+            },
+          });
+          devLog("success: DPP resource cited from project");
+        } catch (e) {
+          devLog("error: failed to cite DPP resource", e);
+        }
+      }
+
+      if (formData.machines?.machines && formData.machines.machines.length > 0) {
+        devLog(`info: using ${formData.machines.machines.length} machines in project`);
+        for (const machineId of formData.machines.machines) {
+          try {
+            await contributeToProject({
+              variables: {
+                agent: user?.ulid!,
+                creationTime: new Date().toISOString(),
+                resource: machineId,
+                process: processId,
+                unitOne: unitAndCurrency?.units.unitOne.id!,
+                conformsTo: projectTypes![ProjectType.MACHINE],
+              },
+            });
+            devLog(`success: machine ${machineId} used in project`);
+          } catch (e) {
+            devLog(`error: failed to use machine ${machineId}`, e);
+          }
+        }
+      }
+
+      if (formData.materials?.materials && formData.materials.materials.length > 0) {
+        devLog(`info: consuming ${formData.materials.materials.length} materials in project`);
+        for (const materialId of formData.materials.materials) {
+          try {
+            await consumeResource({
+              variables: {
+                agent: user?.ulid!,
+                creationTime: new Date().toISOString(),
+                resource: materialId,
+                process: processId,
+                unitOne: unitAndCurrency?.units.unitOne.id!,
+              },
+            });
+            devLog(`success: material ${materialId} consumed in project`);
+          } catch (e) {
+            devLog(`error: failed to consume material ${materialId}`, e);
+          }
+        }
+      }
 
       //economic system: points assignments
       addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
@@ -445,6 +667,7 @@ export const useProjectCRUD = () => {
 
   return {
     handleProjectCreation,
+    handleMachineCreation,
     error,
     loading,
     updateLicenses,

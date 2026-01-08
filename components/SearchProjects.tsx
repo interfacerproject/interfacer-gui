@@ -39,6 +39,7 @@ export default function SearchProjects(props: Props) {
     [ProjectType.DESIGN]: queryProjectTypes.instanceVariables.specs.specProjectDesign.id,
     [ProjectType.SERVICE]: queryProjectTypes.instanceVariables.specs.specProjectService.id,
     [ProjectType.PRODUCT]: queryProjectTypes.instanceVariables.specs.specProjectProduct.id,
+    [ProjectType.MACHINE]: queryProjectTypes.instanceVariables.specs.specMachine.id,
   };
 
   /* Formatting GraphQL query variables based on input */

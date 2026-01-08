@@ -36,7 +36,7 @@ export interface ProjectsFiltersProps {
 }
 
 export const ProjectFilters = ["conformsTo", "tags", "primaryAccountable"] as const;
-export type ProjectFilter = typeof ProjectFilters[number];
+export type ProjectFilter = (typeof ProjectFilters)[number];
 
 export type QueryFilters<T> = Record<ProjectFilter, T>;
 

@@ -1,5 +1,4 @@
 import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
-import SelectTags from "components/SelectTags";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
@@ -48,7 +47,7 @@ export const mainStepSchema = () =>
 export default function MainStep() {
   const { t } = useTranslation(["createProjectProps", "common"]);
 
-  const { formState, control, setValue, watch, trigger } = useFormContext<CreateProjectValues>();
+  const { formState, control, setValue, watch } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
 
   //
@@ -121,20 +120,6 @@ export default function MainStep() {
         requiredIndicator={isRequired(mainStepSchema(), "description")}
         error={errors.main?.description?.message}
       />
-
-      <div id="main-tags">
-        <SelectTags
-          tags={watch("main.tags")}
-          setTags={tags => {
-            setValue("main.tags", tags, formSetValueOptions);
-            trigger("main.tags");
-          }}
-          error={errors.main?.tags?.message}
-          label={t("Tags")}
-          helpText={t("Add relevant keywords that describe your project.")}
-          requiredIndicator={isRequired(mainStepSchema(), "tags")}
-        />
-      </div>
     </Stack>
   );
 }

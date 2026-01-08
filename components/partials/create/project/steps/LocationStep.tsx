@@ -57,7 +57,7 @@ export interface LocationStepSchemaContext {
 //
 
 export interface Props extends Partial<LocationStepSchemaContext> {
-  projectType: ProjectType.PRODUCT | ProjectType.SERVICE;
+  projectType: ProjectType.PRODUCT | ProjectType.SERVICE | ProjectType.MACHINE;
 }
 
 //

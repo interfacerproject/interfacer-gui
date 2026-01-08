@@ -42,6 +42,13 @@ import * as yup from "yup";
 import useSignedPost from "hooks/useSignedPost";
 import { UploadFileOnDPP } from "lib/fileUpload";
 import { dppStepDefaultValues, dppStepSchema, DPPStepValues } from "./steps/DPPStep";
+import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep";
+import { materialsStepDefaultValues, materialsStepSchema, MaterialsStepValues } from "./steps/MaterialsStep";
+import {
+  productFiltersStepDefaultValues,
+  productFiltersStepSchema,
+  ProductFiltersStepValues,
+} from "./steps/ProductFiltersStep";
 
 export interface Props {
   projectType: ProjectType;
@@ -51,6 +58,7 @@ export interface Props {
 
 export interface CreateProjectValues {
   main: MainStepValues;
+  productFilters: ProductFiltersStepValues;
   linkedDesign: LinkDesignStepValues;
   location: LocationStepValues;
   images: ImagesStepValues;
@@ -59,10 +67,13 @@ export interface CreateProjectValues {
   relations: RelationsStepValues;
   licenses: LicenseStepValues;
   dpp: DPPStepValues;
+  machines: MachinesStepValues;
+  materials: MaterialsStepValues;
 }
 
 export const createProjectDefaultValues: CreateProjectValues = {
   main: mainStepDefaultValues,
+  productFilters: productFiltersStepDefaultValues,
   linkedDesign: linkDesignStepDefaultValues,
   location: locationStepDefaultValues,
   images: imagesStepDefaultValues,
@@ -71,12 +82,17 @@ export const createProjectDefaultValues: CreateProjectValues = {
   relations: relationsStepDefaultValues,
   licenses: licenseStepDefaultValues,
   dpp: dppStepDefaultValues,
+  machines: machinesStepDefaultValues,
+  materials: materialsStepDefaultValues,
 };
 
 export const createProjectSchema = () =>
   yup.object({
     main: mainStepSchema(),
-    linkedDesign: linkDesignStepSchema(),
+    productFilters: productFiltersStepSchema(),
+    linkedDesign: linkDesignStepSchema().when("$projectType", (projectType: ProjectType, schema) =>
+      projectType == ProjectType.PRODUCT ? schema.required("A design source is required for products") : schema
+    ),
     location: yup.object(), //re add condition to make location required only for product
     // .when("$projectType", (projectType: ProjectType, schema) =>
     //   projectType == ProjectType.DESIGN ? schema : locationStepSchema
@@ -95,6 +111,8 @@ export const createProjectSchema = () =>
         ? schema.required("A DPP is required for products")
         : schema.notRequired().nullable()
     ),
+    machines: machinesStepSchema(),
+    materials: materialsStepSchema(),
   });
 
 export type CreateProjectSchemaContext = LocationStepSchemaContext;
@@ -103,7 +121,7 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
-  const { handleProjectCreation } = useProjectCRUD();
+  const { handleProjectCreation, handleMachineCreation } = useProjectCRUD();
   const { signedPost } = useSignedPost();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -129,6 +147,7 @@ export default function CreateProjectForm(props: Props) {
 
   const createProjectDefaultValues: CreateProjectValues = {
     main: mainStepDefaultValues,
+    productFilters: productFiltersStepDefaultValues,
     linkedDesign: linkDesignStepDefaultValues,
     location: locationStepDefaultUserValues,
     images: imagesStepDefaultValues,
@@ -137,6 +156,8 @@ export default function CreateProjectForm(props: Props) {
     relations: relationsStepDefaultValues,
     licenses: licenseStepDefaultValues,
     dpp: dppStepDefaultValues,
+    machines: machinesStepDefaultValues,
+    materials: materialsStepDefaultValues,
   };
 
   useEffect(() => {
@@ -199,6 +220,14 @@ export default function CreateProjectForm(props: Props) {
 
   async function onSubmit(values: CreateProjectValues) {
     setLoading(true);
+
+    // For MACHINE type, create a machine resource instead of a project
+    if (projectType === ProjectType.MACHINE) {
+      const machineID = await handleMachineCreation(values);
+      if (machineID) await router.replace(`/project/${machineID}?created=true`);
+      setLoading(false);
+      return;
+    }
 
     let dppUlid: string | undefined = undefined;
 
