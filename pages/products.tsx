@@ -53,7 +53,7 @@ export async function getStaticProps({ locale }: any) {
 
 //
 
-export default function Products() {
+const Products = () => {
   const { t } = useTranslation("productsProps");
   const router = useRouter();
   const { proposalFilter } = useFilters();
@@ -235,4 +235,8 @@ export default function Products() {
       </main>
     </div>
   );
-}
+};
+
+Products.publicPage = true;
+
+export default Products;
