@@ -24,7 +24,8 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   output: "standalone",
-  webpack: config => {
+  transpilePackages: ["react-markdown-editor-lite"],
+  webpack: (config, { isServer }) => {
     config.resolve.fallback = {
       fs: false,
       process: false,
@@ -36,6 +37,17 @@ const nextConfig = {
       test: /\.(zen|lua|json)$/,
       type: "asset/source",
     });
+
+    // Skip nanoid and other ESM-only modules during server build
+    if (isServer) {
+      config.externals = [
+        ...config.externals,
+        {
+          nanoid: "nanoid",
+          "react-markdown-editor-lite": "react-markdown-editor-lite",
+        },
+      ];
+    }
 
     return config;
   },
