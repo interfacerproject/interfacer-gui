@@ -25,7 +25,7 @@ const nextConfig = {
   swcMinify: true,
   output: "standalone",
   transpilePackages: ["react-markdown-editor-lite"],
-  webpack: config => {
+  webpack: (config, { isServer }) => {
     config.resolve.fallback = {
       fs: false,
       process: false,
@@ -38,11 +38,16 @@ const nextConfig = {
       type: "asset/source",
     });
 
-    // Handle ESM modules that need to be used in CommonJS context
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      nanoid: require.resolve("nanoid"),
-    };
+    // Skip nanoid and other ESM-only modules during server build
+    if (isServer) {
+      config.externals = [
+        ...config.externals,
+        {
+          nanoid: "nanoid",
+          "react-markdown-editor-lite": "react-markdown-editor-lite",
+        },
+      ];
+    }
 
     return config;
   },
