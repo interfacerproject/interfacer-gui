@@ -16,8 +16,8 @@
 
 import { useQuery } from "@apollo/client";
 import { Tag } from "@bbtgnn/polaris-interfacer";
+import { useResourceSpecs } from "hooks/useResourceSpecs";
 import { QUERY_MACHINES } from "lib/QueryAndMutation";
-import { RESOURCE_SPEC_MACHINE } from "lib/resourceSpecs";
 import { isPrefixedTag, prefixedTag, TAG_PREFIX } from "lib/tagging";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -73,8 +73,12 @@ export default function ProductsActiveFiltersBar() {
   const { t } = useTranslation("productsProps");
   const router = useRouter();
 
+  // Get spec IDs from backend via hook
+  const { specMachine } = useResourceSpecs();
+
   const { data: machinesData } = useQuery<MachinesQueryData>(QUERY_MACHINES, {
-    variables: { resourceSpecId: RESOURCE_SPEC_MACHINE },
+    variables: { resourceSpecId: specMachine?.id || "" },
+    skip: !specMachine?.id,
   });
 
   const availableMachines = machinesData?.economicResources?.edges?.map(e => e.node) || [];

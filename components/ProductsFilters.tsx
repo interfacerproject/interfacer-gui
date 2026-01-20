@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useQuery } from "@apollo/client";
+import { useResourceSpecs } from "hooks/useResourceSpecs";
 import { QUERY_MACHINES } from "lib/QueryAndMutation";
-import { MACHINE_TYPES, RESOURCE_SPEC_MACHINE } from "lib/resourceSpecs";
+import { MACHINE_TYPES } from "lib/resourceSpecs";
 import {
   CO2_THRESHOLDS_KG,
   ENERGY_THRESHOLDS_KWH,
@@ -97,11 +98,15 @@ export default function ProductsFilters() {
   const { t } = useTranslation("productsProps");
   const router = useRouter();
 
+  // Get spec IDs from backend via hook
+  const { specMachine } = useResourceSpecs();
+
   // Query available machines from backend
   const { data: machinesData, loading: machinesLoading } = useQuery<MachinesQueryData>(QUERY_MACHINES, {
     variables: {
-      resourceSpecId: RESOURCE_SPEC_MACHINE,
+      resourceSpecId: specMachine?.id || "",
     },
+    skip: !specMachine?.id,
   });
 
   // Get machines list from query or use fallback
