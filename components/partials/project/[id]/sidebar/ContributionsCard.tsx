@@ -23,7 +23,7 @@ const ContributionsCard = () => {
       variables: { id: id as string },
     }
   );
-  const url = window.location.protocol + "//" + window.location.host + router.asPath;
+  const url = window.location.protocol + "//" + window.location.host + `/project/${project.id}?tab=gc1dpp`;
 
   return (
     <Card sectioned>

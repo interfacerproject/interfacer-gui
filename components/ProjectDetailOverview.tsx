@@ -19,7 +19,6 @@ import { useTranslation } from "next-i18next";
 import MdParser from "../lib/MdParser";
 import { MACHINE_TYPES } from "../lib/resourceSpecs";
 import { EconomicResource } from "../lib/types";
-import BrTags from "./brickroom/BrTags";
 
 interface ProjectDetailOverviewProps {
   project: Partial<EconomicResource>;
@@ -27,7 +26,6 @@ interface ProjectDetailOverviewProps {
 }
 
 const ProjectDetailOverview = ({ project, machines = [] }: ProjectDetailOverviewProps) => {
-  const tags = project?.classifiedAs;
   const text = project?.note;
   const { t } = useTranslation("common");
 
@@ -36,15 +34,12 @@ const ProjectDetailOverview = ({ project, machines = [] }: ProjectDetailOverview
       {text && (
         <div id="project-overview" className="prose" dangerouslySetInnerHTML={{ __html: MdParser.render(text) }} />
       )}
-      {tags && <BrTags tags={tags} />}
       {machines.length > 0 && (
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-3">{t("Machines Used")}</h3>
           <div className="flex flex-wrap gap-3">
             {machines.map(machine => {
-              const machineType = MACHINE_TYPES.find(mt =>
-                machine.name?.toLowerCase().includes(mt.name.toLowerCase())
-              );
+              const machineType = MACHINE_TYPES.find(mt => machine.name?.toLowerCase().includes(mt.name.toLowerCase()));
               const IconName = machineType?.icon;
               return (
                 <div
