@@ -45,6 +45,7 @@ export const projectSections: Array<ProjectSection> = [
     navLabel: "Design source",
     id: "linkedDesign",
     component: <LinkDesignStep />,
+    required: [ProjectType.PRODUCT],
     for: [ProjectType.PRODUCT],
   },
   {
@@ -116,6 +117,7 @@ export const projectSections: Array<ProjectSection> = [
     navLabel: "DPP",
     id: "dpp",
     component: <DPPStep />,
+    required: [ProjectType.PRODUCT],
     for: [ProjectType.PRODUCT],
   },
   {
