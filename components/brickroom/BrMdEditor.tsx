@@ -15,8 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import MdParser from "lib/MdParser";
-import MdEditor from "react-markdown-editor-lite";
+import dynamic from "next/dynamic";
 import "react-markdown-editor-lite/lib/index.css";
+
+// Dynamically import MdEditor to avoid SSR issues with nanoid ESM module
+const MdEditor = dynamic(() => import("react-markdown-editor-lite"), { ssr: false });
 
 // Components
 import PFieldInfo, { PFieldInfoProps } from "components/polaris/PFieldInfo";
