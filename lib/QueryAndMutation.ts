@@ -20,19 +20,6 @@ import { gql } from "@apollo/client";
  * Query to fetch all resource specifications
  * Used as fallback when instanceVariables doesn't expose specDpp, specMachine, specMaterial
  */
-export const QUERY_ALL_RESOURCE_SPECS = gql`
-  query GetAllResourceSpecs {
-    resourceSpecifications(first: 50) {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
-
 export const QUERY_VARIABLES = gql`
   query GetVariables {
     instanceVariables {
