@@ -24,6 +24,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   output: "standalone",
+  transpilePackages: ["react-markdown-editor-lite"],
   webpack: config => {
     config.resolve.fallback = {
       fs: false,
@@ -36,6 +37,12 @@ const nextConfig = {
       test: /\.(zen|lua|json)$/,
       type: "asset/source",
     });
+
+    // Handle ESM modules that need to be used in CommonJS context
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      nanoid: require.resolve("nanoid"),
+    };
 
     return config;
   },
