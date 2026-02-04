@@ -16,6 +16,10 @@
 
 import { gql } from "@apollo/client";
 
+/**
+ * Query to fetch all resource specifications
+ * Used as fallback when instanceVariables doesn't expose specDpp, specMachine, specMaterial
+ */
 export const QUERY_VARIABLES = gql`
   query GetVariables {
     instanceVariables {
@@ -33,6 +37,18 @@ export const QUERY_VARIABLES = gql`
           name
         }
         specProjectService {
+          id
+          name
+        }
+        specDpp {
+          id
+          name
+        }
+        specMachine {
+          id
+          name
+        }
+        specMaterial {
           id
           name
         }
@@ -243,6 +259,25 @@ export const QUERY_RESOURCE = gql`
   }
 `;
 
+export const QUERY_MACHINES = gql`
+  query getMachines($resourceSpecId: ID!) {
+    economicResources(filter: { conformsTo: [$resourceSpecId] }) {
+      edges {
+        node {
+          id
+          name
+          note
+          metadata
+          conformsTo {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const QUERY_PROJECT_TYPES = gql`
   query GetProjectTypes {
     instanceVariables {
@@ -256,6 +291,18 @@ export const QUERY_PROJECT_TYPES = gql`
           name
         }
         specProjectService {
+          id
+          name
+        }
+        specDpp {
+          id
+          name
+        }
+        specMachine {
+          id
+          name
+        }
+        specMaterial {
           id
           name
         }
@@ -745,6 +792,83 @@ export const QUERY_PROPOSAL = gql`
   }
 `;
 
+export const CREATE_DPP_RESOURCE = gql`
+  mutation createDppResource(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $process: ID! # Process.id
+    $resourceSpec: ID! # ResourceSpecification.id (DPP spec)
+    $unitOne: ID! # Unit.id
+    $dppUlid: String! # ULID from interfacer-dpp service (stored in metadata)
+    $name: String!
+    $note: String
+  ) {
+    createEconomicEvent(
+      event: {
+        action: "produce"
+        outputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceConformsTo: $resourceSpec
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+        resourceMetadata: $dppUlid
+      }
+      newInventoriedResource: { name: $name, note: $note }
+    ) {
+      economicEvent {
+        id
+        resourceInventoriedAs {
+          id
+          name
+          metadata
+        }
+      }
+    }
+  }
+`;
+
+export const CREATE_MACHINE_RESOURCE = gql`
+  mutation createMachineResource(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $process: ID! # Process.id
+    $resourceSpec: ID! # ResourceSpecification.id (Machine spec)
+    $unitOne: ID! # Unit.id
+    $name: String!
+    $note: String
+    $metadata: String
+  ) {
+    createEconomicEvent(
+      event: {
+        action: "produce"
+        outputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceConformsTo: $resourceSpec
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+        resourceMetadata: $metadata
+      }
+      newInventoriedResource: { name: $name, note: $note }
+    ) {
+      economicEvent {
+        id
+        resourceInventoriedAs {
+          id
+          name
+          note
+          metadata
+          conformsTo {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const CITE_PROJECT = gql`
   mutation citeProject(
     $agent: ID! # Agent.id
@@ -756,6 +880,58 @@ export const CITE_PROJECT = gql`
     createEconomicEvent(
       event: {
         action: "cite"
+        inputOf: $process
+        provider: $agent
+        receiver: $agent
+        hasPointInTime: $creationTime
+        resourceInventoriedAs: $resource
+        resourceQuantity: { hasNumericalValue: 1, hasUnit: $unitOne }
+      }
+    ) {
+      economicEvent {
+        id
+      }
+    }
+  }
+`;
+
+export const QUERY_CITED_RESOURCES = gql`
+  query getCitedResources($processId: ID!) {
+    economicEvents(filter: { inputOf: [$processId], action: [cite] }) {
+      edges {
+        node {
+          id
+          action {
+            id
+            label
+          }
+          resourceInventoriedAs {
+            id
+            name
+            note
+            metadata
+            conformsTo {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const CONSUME_RESOURCE = gql`
+  mutation consumeResource(
+    $agent: ID! # Agent.id
+    $creationTime: DateTime!
+    $resource: ID! # EconomicResource.id
+    $process: ID! # Process.id
+    $unitOne: ID! # Unit.id
+  ) {
+    createEconomicEvent(
+      event: {
+        action: "consume"
         inputOf: $process
         provider: $agent
         receiver: $agent

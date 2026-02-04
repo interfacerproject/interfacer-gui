@@ -16,17 +16,21 @@
 
 import { useQuery } from "@apollo/client";
 import { DraftProject } from "lib/db";
+import React from "react";
 import useLoadMore from "../hooks/useLoadMore";
+import { useProjectSpecs } from "../hooks/useProjectSpecs";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
-import { EconomicResource, EconomicResourceFilterParams } from "../lib/types";
+import { EconomicResource, EconomicResourceFilterParams, FetchInventoryQuery } from "../lib/types";
 // import CardsGroup from "./CardsGroup";
 // import DraftCard from "./DraftCard";
+import Link from "next/link";
 import EmptyState from "./EmptyState";
 import LoshCard from "./LoshCard";
-import ProjectCard from "./ProjectCard";
-import Link from "next/link";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 // import ProjectDisplay from "./ProjectDisplay";
+import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
+import ProjectCardFigma from "./ProjectCardFigma";
 
 const ProjectDisplay = dynamic(() => import("./ProjectDisplay"), { ssr: false });
 const CardsGroup = dynamic(() => import("./CardsGroup"), { ssr: false });
@@ -49,9 +53,11 @@ export interface ProjectsCardsProps {
   type?: CardType;
   drafts?: DraftProject[];
   emptyState?: React.ReactElement;
+  onDataLoaded?: (data: { totalCount: number; loading: boolean }) => void;
 }
 
 const ProjectsCards = (props: ProjectsCardsProps) => {
+  const { t } = useTranslation("components");
   const {
     filter = {},
     hideHeader = false,
@@ -62,11 +68,22 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     header = "Latest projects",
     drafts,
     emptyState = <EmptyState heading="No projects found" />,
+    onDataLoaded,
   } = props;
   const dataQueryIdentifier = "economicResources";
+  const { projectSpecIds } = useProjectSpecs();
 
-  const { loading, data, fetchMore, refetch, variables } = useQuery<{ data: EconomicResource }>(FETCH_RESOURCES, {
-    variables: { last: 12, filter: filter },
+  // Only show actual projects (DESIGN, SERVICE, PRODUCT, MACHINE) - exclude DPP and machine resources
+  // Use projectSpecIds as fallback, but ensure conformsTo is never an empty array (backend requires at least 1 item)
+  const effectiveConformsTo = (filter.conformsTo?.length ? filter.conformsTo : undefined) || projectSpecIds;
+  const filterWithProjectTypes: EconomicResourceFilterParams = {
+    ...filter,
+    conformsTo: effectiveConformsTo.length > 0 ? effectiveConformsTo : undefined,
+  };
+
+  const { loading, data, fetchMore, refetch, variables, error } = useQuery<FetchInventoryQuery>(FETCH_RESOURCES, {
+    variables: { last: 12, filter: filterWithProjectTypes },
+    skip: projectSpecIds.length === 0,
   });
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
     fetchMore,
@@ -77,12 +94,57 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
   });
   const projects = items;
 
+  // Notify parent of data changes
+  React.useEffect(() => {
+    if (onDataLoaded && data?.economicResources?.pageInfo) {
+      onDataLoaded({
+        totalCount: data.economicResources.pageInfo.totalCount || 0,
+        loading,
+      });
+    }
+  }, [data, loading, onDataLoaded]);
+
+  // Show skeleton loaders during initial load
+  if (loading && !data) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <ProductCardSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
+
+  // Show error state with retry
+  if (error) {
+    return (
+      <div className="bg-white rounded-lg p-8 text-center">
+        <svg className="mx-auto h-12 w-12 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">{t("Error loading projects")}</h3>
+        <p className="text-sm text-gray-600 mb-4">{error.message}</p>
+        <button
+          onClick={() => refetch()}
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#036A53] hover:bg-[#025845] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#036A53]"
+        >
+          {t("Try Again")}
+        </button>
+      </div>
+    );
+  }
+
   if (showEmptyState || !projects || !projects.length) return emptyState;
 
   const distinguishProjects = (project: EconomicResource) => {
     const isLosh = project.primaryAccountable.id === process.env.NEXT_PUBLIC_LOSH_ID;
     return !isLosh ? (
-      <ProjectCard project={project} key={project.id} />
+      <ProjectCardFigma project={project} key={project.id} />
     ) : (
       <LoshCard project={project} key={project.id} />
     );

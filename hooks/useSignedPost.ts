@@ -28,8 +28,9 @@ const useSignedPost = (idInHeader?: boolean) => {
     const data = `{"gql": "${Buffer.from(json, "utf8").toString("base64")}"}`;
     const keys = `{"keyring": {"eddsa": "${getItem("eddsaPrivateKey")}"}}`;
     const { result } = await zencode_exec(sign, { data, keys });
-    const headers: { "zenflows-sign": string; "zenflows-id"?: string } = {
+    const headers: { "zenflows-sign": string; "zenflows-id"?: string, "Content-Type": string } = {
       "zenflows-sign": JSON.parse(result).eddsa_signature,
+      "Content-Type": "application/json",
     };
     if (idInHeader) {
       headers["zenflows-id"] = String(user?.ulid);
@@ -42,9 +43,10 @@ const useSignedPost = (idInHeader?: boolean) => {
     const data = `{"gql": "${Buffer.from(json, "utf8").toString("base64")}"}`;
     const keys = `{"keyring": {"eddsa": "${getItem("eddsaPrivateKey")}"}}`;
     const { result } = await zencode_exec(sign, { data, keys });
-    const headers: { "did-sign": string; "did-pk": string } = {
+    const headers: { "did-sign": string; "did-pk": string, "Content-Type": string } = {
       "did-sign": JSON.parse(result).eddsa_signature,
       "did-pk": String(user?.publicKey),
+      "Content-Type": "application/json",
     };
     return headers;
   };

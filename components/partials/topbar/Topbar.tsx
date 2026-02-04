@@ -43,7 +43,11 @@ function Topbar({ search = true, children, userMenu = true, cta, burger = true }
       <div className="navbar-start">
         {children}
         {burger && (
-          <label htmlFor="my-drawer" className="btn btn-square btn-ghost drawer-button mr-2" id="sidebarOpener">
+          <label
+            htmlFor="my-drawer"
+            className="drawer-button hover:bg-amber-200 rounded-lg p-2 mr-3"
+            id="sidebarOpener"
+          >
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 fillRule="evenodd"

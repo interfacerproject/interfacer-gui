@@ -13,15 +13,19 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 /** @type {import('next').NextConfig} */
 const { i18n } = require("./next-i18next.config");
+// const withBundleAnalyzer = require("@next/bundle-analyzer")({
+//   enabled: false,
+// });
+// const withPlugin = require("next-compose-plugins");
 const nextConfig = {
   i18n,
   reactStrictMode: true,
   swcMinify: true,
   output: "standalone",
-  webpack: config => {
+  transpilePackages: ["react-markdown-editor-lite"],
+  webpack: (config, { isServer }) => {
     config.resolve.fallback = {
       fs: false,
       process: false,
@@ -30,9 +34,20 @@ const nextConfig = {
     };
 
     config.module.rules.push({
-      test: /\.zen$/,
+      test: /\.(zen|lua|json)$/,
       type: "asset/source",
     });
+
+    // Skip nanoid and other ESM-only modules during server build
+    if (isServer) {
+      config.externals = [
+        ...config.externals,
+        {
+          nanoid: "nanoid",
+          "react-markdown-editor-lite": "react-markdown-editor-lite",
+        },
+      ];
+    }
 
     return config;
   },

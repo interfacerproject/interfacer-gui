@@ -113,6 +113,17 @@ export const GET_PROJECT_LAYOUT = gql`
         extension
         size
       }
+      trace {
+        __typename
+        ... on Process {
+          id
+          name
+        }
+        ... on EconomicEvent {
+          id
+          hasPointInTime
+        }
+      }
     }
   }
 `;

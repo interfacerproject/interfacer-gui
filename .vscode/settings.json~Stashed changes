@@ -1,0 +1,40 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.formatOnPaste": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  "eslint.enable": true,
+  "eslint.alwaysShowStatus": true,
+  "eslint.validate": ["javascript", "typescript", "typescriptreact", "javascriptreact"],
+  "cSpell.words": [
+    "brickroom",
+    "eddsa",
+    "heroicons",
+    "interfacer",
+    "keypairoom",
+    "losh",
+    "okhv",
+    "onhand",
+    "schnorr",
+    "topbar",
+    "zenflows"
+  ],
+  "i18n-ally.localesPaths": ["public/locales"],
+  "i18n-ally.keystyle": "nested"
+}

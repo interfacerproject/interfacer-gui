@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { FETCH_RESOURCES } from "lib/QueryAndMutation";
 import { EconomicResourceFilterParams, FetchInventoryQuery, FetchInventoryQueryVariables } from "lib/types";
+import { useProjectSpecs } from "../hooks/useProjectSpecs";
 
 // Components
 import { AdjustmentsIcon } from "@heroicons/react/outline";
@@ -55,11 +56,21 @@ export default function ProjectsTable(props: ProjectsTableProps) {
     searchFilter,
     hideFilters = false,
   } = props;
+  const { projectSpecIds } = useProjectSpecs();
+
+  // Only show actual projects (DESIGN, SERVICE, PRODUCT, MACHINE) - exclude DPP and machine resources
+  // Use projectSpecIds as fallback, but ensure conformsTo is never an empty array (backend requires at least 1 item)
+  const effectiveConformsTo = (filter.conformsTo?.length ? filter.conformsTo : undefined) || projectSpecIds;
+  const filterWithProjectTypes: EconomicResourceFilterParams = {
+    ...filter,
+    conformsTo: effectiveConformsTo.length > 0 ? effectiveConformsTo : undefined,
+  };
 
   const { loading, data, fetchMore, refetch, variables } = useQuery<FetchInventoryQuery, FetchInventoryQueryVariables>(
     FETCH_RESOURCES,
     {
-      variables: { last: 10, filter: filter },
+      variables: { last: 10, filter: filterWithProjectTypes },
+      skip: projectSpecIds.length === 0,
     }
   );
 

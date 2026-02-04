@@ -57,7 +57,7 @@ export interface LocationStepSchemaContext {
 //
 
 export interface Props extends Partial<LocationStepSchemaContext> {
-  projectType: ProjectType.PRODUCT | ProjectType.SERVICE;
+  projectType: ProjectType.PRODUCT | ProjectType.SERVICE | ProjectType.MACHINE;
 }
 
 //
@@ -69,7 +69,7 @@ export default function LocationStepProduct(props: Props) {
   const { setValue, control, formState, watch, trigger } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
 
-  const isLocationRequired = projectType == ProjectType.PRODUCT || Boolean(watch("location.locationName")) || isEdit;
+  // const isLocationRequired = projectType == ProjectType.PRODUCT || Boolean(watch("location.locationName")) || isEdit;
 
   //
 
@@ -96,7 +96,7 @@ export default function LocationStepProduct(props: Props) {
             label={t("Location name")}
             helpText={t("For example: My Workshop")}
             error={errors.location?.locationName?.message}
-            requiredIndicator={projectType == ProjectType.PRODUCT}
+            // requiredIndicator={projectType == ProjectType.PRODUCT}
           />
         )}
       />
@@ -108,7 +108,7 @@ export default function LocationStepProduct(props: Props) {
         location={watch("location.locationData")}
         setLocation={value => setValue("location.locationData", value, formSetValueOptions)}
         error={errors.location?.locationData?.message}
-        requiredIndicator={isLocationRequired}
+        // requiredIndicator={isLocationRequired}
       />
 
       {projectType == ProjectType.SERVICE && (

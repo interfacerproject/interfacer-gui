@@ -7,7 +7,7 @@ import { getSectionsByProjectType } from "components/partials/project/projectSec
 
 // Components
 import { Stack } from "@bbtgnn/polaris-interfacer";
-import PDivider from "components/polaris/PDivider";
+import Card from "components/Card";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 
 //
@@ -42,6 +42,12 @@ export default function CreateProjectFields(props: Props) {
         "Import your project repository. Share your open source hardware project documentation and collaborate on building it. Your contribution will help others learn and build upon your work."
       ),
     },
+    [ProjectType.MACHINE]: {
+      title: t("Add a machine"),
+      subtitle: t(
+        "Share details about fabrication equipment, 3D printers, laser cutters, CNC machines, and other tools available in your maker space or lab. Help others discover the machines they need for their projects."
+      ),
+    },
   };
 
   const sections = getSectionsByProjectType(projectType);
@@ -50,13 +56,23 @@ export default function CreateProjectFields(props: Props) {
 
   return (
     <Stack vertical spacing="extraLoose">
-      <PTitleSubtitle title={titles[projectType].title} subtitle={titles[projectType].subtitle} />
+      <Card>
+        <div className="p-6">
+          <PTitleSubtitle title={titles[projectType].title} subtitle={titles[projectType].subtitle} />
+        </div>
+      </Card>
 
       {sections.map((section, index) => (
-        <Stack vertical key={index} spacing="extraLoose">
-          <PDivider id={section.id} />
-          {section.component}
-        </Stack>
+        <div key={index}>
+          <div id={section.id} className="pb-16" />
+          <Card>
+            <div className="p-6">
+              <Stack vertical spacing="extraLoose">
+                {section.component}
+              </Stack>
+            </div>
+          </Card>
+        </div>
       ))}
     </Stack>
   );

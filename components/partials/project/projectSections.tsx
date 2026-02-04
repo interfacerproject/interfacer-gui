@@ -2,12 +2,16 @@ import { ProjectType } from "components/types";
 import { CreateProjectValues } from "../create/project/CreateProjectForm";
 import ContributorsStep from "../create/project/steps/ContributorsStep";
 import DeclarationsStep from "../create/project/steps/DeclarationsStep";
+import DPPStep from "../create/project/steps/DPPStep";
 import ImagesStep from "../create/project/steps/ImagesStep";
 import ImportDesignStep from "../create/project/steps/ImportDesignStep";
 import LicenseStep from "../create/project/steps/LicenseStep";
 import LinkDesignStep from "../create/project/steps/LinkDesignStep";
 import LocationStep from "../create/project/steps/LocationStep";
+import MachinesStep from "../create/project/steps/MachinesStep";
 import MainStep from "../create/project/steps/MainStep";
+import MaterialsStep from "../create/project/steps/MaterialsStep";
+import ProductFiltersStep from "../create/project/steps/ProductFiltersStep";
 import RelationsStep from "../create/project/steps/RelationsStep";
 
 //
@@ -34,20 +38,28 @@ export const projectSections: Array<ProjectSection> = [
     navLabel: "General info",
     id: "main",
     component: <MainStep />,
-    required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN],
+    required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN, ProjectType.MACHINE],
     editPage: "edit",
   },
   {
     navLabel: "Design source",
     id: "linkedDesign",
     component: <LinkDesignStep />,
+    required: [ProjectType.PRODUCT],
     for: [ProjectType.PRODUCT],
+  },
+  {
+    navLabel: "Specifications",
+    id: "productFilters",
+    component: <ProductFiltersStep />,
+    for: [ProjectType.PRODUCT],
+    editPage: "edit/specs",
   },
   {
     navLabel: "Images",
     id: "images",
     component: <ImagesStep />,
-    required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN],
+    required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN, ProjectType.MACHINE],
     editPage: "edit/images",
   },
   {
@@ -55,7 +67,7 @@ export const projectSections: Array<ProjectSection> = [
     id: "location",
     component: <LocationStep projectType={ProjectType.PRODUCT} />,
     for: [ProjectType.PRODUCT],
-    required: [ProjectType.PRODUCT],
+    // required: [ProjectType.PRODUCT],
     editPage: "edit/location",
   },
   {
@@ -63,6 +75,13 @@ export const projectSections: Array<ProjectSection> = [
     id: "location",
     component: <LocationStep projectType={ProjectType.SERVICE} />,
     for: [ProjectType.SERVICE],
+    editPage: "edit/location",
+  },
+  {
+    navLabel: "Location",
+    id: "location",
+    component: <LocationStep projectType={ProjectType.MACHINE} />,
+    for: [ProjectType.MACHINE],
     editPage: "edit/location",
   },
   {
@@ -84,13 +103,35 @@ export const projectSections: Array<ProjectSection> = [
     navLabel: "Contributors",
     id: "contributors",
     component: <ContributorsStep />,
+    for: [ProjectType.DESIGN, ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.MACHINE],
     editPage: "edit/contributors",
   },
   {
     navLabel: "Included",
     id: "included",
     component: <RelationsStep />,
+    for: [ProjectType.DESIGN, ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.MACHINE],
     editPage: "edit/relations",
+  },
+  {
+    navLabel: "DPP",
+    id: "dpp",
+    component: <DPPStep />,
+    required: [ProjectType.PRODUCT],
+    for: [ProjectType.PRODUCT],
+  },
+  {
+    navLabel: "Machines",
+    id: "machines",
+    component: <MachinesStep />,
+    for: [ProjectType.PRODUCT],
+    editPage: "edit/machines",
+  },
+  {
+    navLabel: "Materials",
+    id: "materials",
+    component: <MaterialsStep />,
+    for: [ProjectType.PRODUCT],
   },
 ];
 
