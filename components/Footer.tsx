@@ -23,7 +23,7 @@ const Footer = () => {
               <Text as="h3" variant="headingLg">
                 {t("Projects")}
               </Text>
-              <NextLink href="/projects">
+              <NextLink href="/products">
                 <a>
                   <Text as="p" color="subdued" variant="headingMd">
                     {t("All projects")}

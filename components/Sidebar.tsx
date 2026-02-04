@@ -66,7 +66,7 @@ function Sidebar() {
     // Dropdown -> Projects
     latestProjects: {
       text: t("Projects"),
-      link: "/projects",
+      link: "/products",
     },
     resources: {
       text: t("Import from LOSH"),
