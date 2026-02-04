@@ -7,7 +7,7 @@ export default function BrTag(props: { tag: string }) {
   const classes = classNames("py-1 px-2", "bg-primary/5 hover:bg-primary/20", "border-1 border-primary/20 rounded-md");
 
   return (
-    <Link href={`/projects?tags=${tag}`}>
+    <Link href={`/products?tags=${tag}`}>
       <a key={tag} className={classes}>
         <Text as="span" variant="bodyMd">
           <span className="text-primary whitespace-nowrap">{decodeURI(tag)}</span>

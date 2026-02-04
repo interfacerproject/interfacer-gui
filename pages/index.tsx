@@ -82,7 +82,7 @@ const Home: NextPageWithLayout = () => {
                       {t("Create a new project")}
                     </Button>
                   </Link>
-                  <Link href="/projects">
+                  <Link href="/products">
                     <Button size="large">{t("Explore")}</Button>
                   </Link>
                 </ButtonGroup>
@@ -131,7 +131,7 @@ const Home: NextPageWithLayout = () => {
                       {t("Log In")}
                     </Button>
                   </Link>
-                  <Link href="/projects">
+                  <Link href="/products">
                     <Button size="large">{t("Explore")}</Button>
                   </Link>
                 </ButtonGroup>
@@ -143,7 +143,7 @@ const Home: NextPageWithLayout = () => {
                       {t("Create a new project")}
                     </Button>
                   </Link>
-                  <Link href="/projects">
+                  <Link href="/products">
                     <Button size="large">{t("Explore")}</Button>
                   </Link>
                 </ButtonGroup>
