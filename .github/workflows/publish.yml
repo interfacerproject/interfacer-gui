@@ -26,7 +26,7 @@
 name: 🐳 Docker image
 on:
   push:
-    branches: ["main", "dtec"]
+    branches: ["main", "dtec", "tchibo"]
 
 env:
   REGISTRY: ghcr.io
@@ -37,4 +37,4 @@ jobs:
     uses: interfacerproject/workflows/.github/workflows/publish-ghcr.yml@main
     secrets: inherit
     with:
-      image_name: ${{ github.ref == 'refs/heads/dtec' && format('{0}-dtec', github.repository) || github.repository }}
+      image_name: ${{ github.ref == 'refs/heads/dtec' && format('{0}-dtec', github.repository) || github.ref == 'refs/heads/tchibo' && format('{0}-tchibo', github.repository)  || github.repository }}
