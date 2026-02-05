@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import Avatar from "boring-avatars";
+import { useAuth } from "hooks/useAuth";
 import { getUserImage } from "lib/resourceImages";
 import { GetUserImagesQuery, GetUserImagesQueryVariables } from "lib/types";
 import { PersonWithFileEssential } from "lib/types/extensions";
@@ -12,10 +13,11 @@ export interface Props {
 
 export default function BrUserAvatar(props: Props) {
   const { user, userId, size = "100%" } = props;
+  const { authenticated } = useAuth();
 
   const { data, loading } = useQuery<GetUserImagesQuery, GetUserImagesQueryVariables>(GET_USER_IMAGES, {
     variables: { userId: userId! },
-    skip: !userId,
+    skip: !userId || !authenticated,
   });
 
   let u: Partial<PersonWithFileEssential> | null = null;

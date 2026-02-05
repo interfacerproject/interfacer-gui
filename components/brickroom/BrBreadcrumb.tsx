@@ -24,12 +24,14 @@ type Crumb = {
 const BrBreadcrumb = ({ crumbs }: { crumbs: Crumb[] }) => {
   return (
     <div className="text-primary breadcrumbs">
-      <ul>
+      <ul className="flex flex-wrap gap-1">
         {crumbs.map((crumb, i) => {
           return (
             <li key={i}>
               <Link href={crumb.href}>
-                <a>{crumb.name}</a>
+                <a>
+                  {crumb.name} {i < crumbs.length - 1 ? "/" : ""}
+                </a>
               </Link>
             </li>
           );
