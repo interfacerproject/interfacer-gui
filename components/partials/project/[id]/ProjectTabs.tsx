@@ -1,8 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
 import { Stack, Tabs } from "@bbtgnn/polaris-interfacer";
-import { Cube, Events, ListBoxes, ParentChild, Purchase } from "@carbon/icons-react";
+import { Cube, Events, ListBoxes, Purchase } from "@carbon/icons-react";
 import { useProject } from "components/layout/FetchProjectLayout";
 import ProjectDetailOverview from "components/ProjectDetailOverview";
+import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -60,6 +61,7 @@ const ProjectTabs = () => {
   const { t } = useTranslation("common");
   const { id } = router.query;
   const [pageLoaded, setPageLoaded] = useState(false);
+  const { authenticated } = useAuth();
 
   // Query traceDpp to extract DPP service ULID
   const { data: traceDppData } = useQuery(QUERY_TRACE_DPP, {
@@ -108,11 +110,11 @@ const ProjectTabs = () => {
       overview: !!project?.note,
       relationships: !!project?.metadata?.relations?.length,
       graph: true,
-      contributors: !!project.metadata?.contributors?.length,
-      contributions: !!project.metadata?.contributors?.length,
+      contributors: authenticated && !!project.metadata?.contributors?.length,
+      contributions: false, // Always hide contributions tab for now
       dpp: !!dppUlid, // Has DPP ULID
     }),
-    [project, dppUlid]
+    [project, dppUlid, authenticated]
   );
 
   const allTabs = [
@@ -127,17 +129,18 @@ const ProjectTabs = () => {
       accessibilityLabel: t("Project overview"),
       panelID: "overview-content",
     },
-    {
-      id: "relationships",
-      content: (
-        <span className="flex items-center gap-2">
-          <ParentChild />
-          {t("Included")}
-        </span>
-      ),
-      accessibilityLabel: t("Relationship tree"),
-      panelID: "relationships-content",
-    },
+    // Commented out until backend relations query is fixed
+    // {
+    //   id: "relationships",
+    //   content: (
+    //     <span className="flex items-center gap-2">
+    //       <ParentChild />
+    //       {t("Included")}
+    //     </span>
+    //   ),
+    //   accessibilityLabel: t("Relationship tree"),
+    //   panelID: "relationships-content",
+    // },
     {
       id: "graph",
       content: (
@@ -219,10 +222,10 @@ const ProjectTabs = () => {
       <Tabs tabs={visibleTabs} selected={validSelectedIndex} onSelect={handleTabChange} />
 
       {selected == 0 && <ProjectDetailOverview project={project} machines={machines} />}
-      {selected == 1 && <RelationshipTree project={project} />}
-      {selected == 2 && <DynamicProjectDpp id={project.id!} />}
+      {/* {selected == 1 && <RelationshipTree project={project} />} */}
+      {selected == 1 && <DynamicProjectDpp id={project.id!} />}
 
-      {selected == 3 && (
+      {selected == 2 && (
         <ContributorsTable
           contributors={project.metadata?.contributors}
           title={t("Contributors")}
@@ -230,8 +233,8 @@ const ProjectTabs = () => {
           data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
         />
       )}
-      {selected == 4 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
-      {selected == 5 && dppUlid && <DynamicGC1DPP ulid={dppUlid} />}
+      {selected == 3 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
+      {selected == 4 && dppUlid && <DynamicGC1DPP ulid={dppUlid} />}
     </Stack>
   );
 };

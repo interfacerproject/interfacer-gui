@@ -40,7 +40,7 @@ const FourOhFour: NextPageWithLayout = () => {
               ) + "."}
             </p>
             <Stack spacing="loose">
-              <Button primary size="large" onClick={() => router.push("/projects")}>
+              <Button primary size="large" onClick={() => router.push("/products")}>
                 {t("See all projects")}
               </Button>
               <Button size="large" onClick={() => router.push("/")}>
@@ -79,5 +79,7 @@ export async function getStaticProps({ locale }: any) {
     },
   };
 }
+
+export const publicPage = true;
 
 export default FourOhFour;
