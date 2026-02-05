@@ -80,4 +80,6 @@ export async function getStaticProps({ locale }: any) {
   };
 }
 
+export const publicPage = true;
+
 export default FourOhFour;
