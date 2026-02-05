@@ -28,7 +28,7 @@ export default function ProjectTypeChip(props: Props) {
   const { project, projectType, introduction = false, link = true } = props;
 
   const name = (project?.conformsTo?.name as ProjectType) || projectType || ProjectType.DESIGN;
-  const href = `/projects?conformsTo=${project?.conformsTo?.id}`;
+  const href = `/products?conformsTo=${project?.conformsTo?.id}`;
 
   const renderProps = ProjectTypeRenderProps[name];
 
