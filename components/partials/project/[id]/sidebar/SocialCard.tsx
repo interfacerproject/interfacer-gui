@@ -10,7 +10,7 @@ import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
 const SocialCard = () => {
-  const { user } = useAuth();
+  const { user, authenticated } = useAuth();
   const { project } = useProject();
   const { t } = useTranslation("common");
   const { getItem, setItem } = useStorage();
@@ -51,12 +51,14 @@ const SocialCard = () => {
               </div>
             </div>
           )}
-          <div>
-            <Text as="p" variant="bodyMd">
-              {t("Project by:")}
-            </Text>
-            <BrUserDisplay userId={project.primaryAccountable!.id} />
-          </div>
+          {authenticated && (
+            <div>
+              <Text as="p" variant="bodyMd">
+                {t("Project by:")}
+              </Text>
+              <BrUserDisplay userId={project.primaryAccountable!.id} />
+            </div>
+          )}
         </div>
       </Stack>
     </Card>
