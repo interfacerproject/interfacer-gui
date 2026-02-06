@@ -13,8 +13,8 @@ const ProjectHeader = ({ isResource }: { isResource?: boolean }) => {
         { name: project.conformsTo!.name, href: `/resources?conformTo=${project.conformsTo!.id}` },
       ]
     : [
-        { name: t("Projects"), href: "/projects" },
-        { name: project.conformsTo!.name, href: `/projects?conformTo=${project.conformsTo!.id}` },
+        { name: t("Projects"), href: "/products" },
+        { name: project.conformsTo!.name, href: `/products?conformTo=${project.conformsTo!.id}` },
       ];
   return (
     <Stack vertical spacing="tight">

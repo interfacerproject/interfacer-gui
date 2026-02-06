@@ -135,13 +135,18 @@ const LicenseFooter = () => {
   const { project } = useCardProject();
 
   // Check multiple possible license locations
-  const license = project.license || project.metadata?.license;
+  const license = project.license;
+  const metadataLicenses = project.metadata?.licenses;
 
   // Don't render if no license available
-  if (!license) return null;
+  if (!license && !metadataLicenses) return null;
 
-  const licenseText = `${t("LICENSE")}: ${license}`;
-
+  const licenseText =
+    license == undefined
+      ? `${t("LICENSE")}: ${license}`
+      : metadataLicenses
+          ?.map((l: { scope: string; licenseId: string }) => `${t("LICENSE")} (${l.scope}): ${l.licenseId}`)
+          .join(", ");
   return (
     <div className="px-4 py-3 border-t-1 border-t-gray-200">
       <Text as="p" variant="bodySm" fontWeight="medium">

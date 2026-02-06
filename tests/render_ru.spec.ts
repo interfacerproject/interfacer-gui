@@ -37,8 +37,8 @@ test.describe("when user is logged in", () => {
     await expect(page.getByText(process.env.RESOURCE_ID!)).toBeVisible();
   });
 
-  test.skip("Should see /projects", async ({ page }) => {
-    await page.goto("/projects");
+  test.skip("Should see /products", async ({ page }) => {
+    await page.goto("/products");
     await expect(page.getByText("Latest projects")).toBeVisible();
     await expect(page.getByRole("link", { name: "Create a new project" })).toBeVisible();
     // await expect(page.getByRole("link", { name: "Report a bug" })).toBeVisible();
