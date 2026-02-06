@@ -46,7 +46,7 @@ const EditImages: NextPageWithLayout = () => {
 
   const schema = yup.object({
     // @ts-ignore
-    images: imagesStepSchema,
+    images: imagesStepSchema(),
   });
 
   const formMethods = useForm<EditImagesValues>({
