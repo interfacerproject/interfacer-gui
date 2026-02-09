@@ -83,13 +83,13 @@ const ProjectTabs = () => {
   // Map tab IDs to their indices for URL parameter handling
   const allTabsMap: Record<string, number> = {
     overview: 0,
-    relationships: 1,
-    included: 1,
-    graph: 2,
-    contributors: 3,
-    contributions: 4,
-    dpp: 5,
-    gc1dpp: 5,
+    relationships: 0,
+    included: 0,
+    graph: 1,
+    contributors: 2,
+    contributions: 3,
+    dpp: 4,
+    gc1dpp: 4,
   };
 
   // Mark page as loaded after client-side mount and check for tab parameter
