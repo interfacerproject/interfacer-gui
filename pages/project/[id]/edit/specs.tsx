@@ -17,6 +17,7 @@ import {
   POWER_COMPATIBILITY_OPTIONS,
   prefixedTag,
   PRODUCT_CATEGORY_OPTIONS,
+  REPAIRABILITY_AVAILABLE_TAG,
   removeTagsWithPrefixes,
   REPLICABILITY_OPTIONS,
   TAG_PREFIX,
@@ -75,6 +76,14 @@ const EditSpecs: NextPageWithLayout = () => {
       replicability:
         (existing.replicability as string[] | undefined) ||
         inferFromTags(TAG_PREFIX.REPLICABILITY, REPLICABILITY_OPTIONS),
+      recyclabilityPct:
+        typeof existing.recyclabilityPct === "number"
+          ? String(existing.recyclabilityPct)
+          : productFiltersStepDefaultValues.recyclabilityPct,
+      repairability:
+        typeof existing.repairability === "boolean"
+          ? existing.repairability
+          : (project.classifiedAs || []).includes(REPAIRABILITY_AVAILABLE_TAG),
       energyKwh:
         typeof existing.energyKwh === "number" ? String(existing.energyKwh) : productFiltersStepDefaultValues.energyKwh,
       co2Kg: typeof existing.co2Kg === "number" ? String(existing.co2Kg) : productFiltersStepDefaultValues.co2Kg,
@@ -100,11 +109,14 @@ const EditSpecs: NextPageWithLayout = () => {
     const powerRequirementW = values.powerRequirementW ? Number(values.powerRequirementW) : undefined;
     const energyKwh = values.energyKwh ? Number(values.energyKwh) : undefined;
     const co2Kg = values.co2Kg ? Number(values.co2Kg) : undefined;
+    const recyclabilityPct = values.recyclabilityPct ? Number(values.recyclabilityPct) : undefined;
 
     return {
       categories: values.categories || [],
       powerCompatibility: values.powerCompatibility || [],
       replicability: values.replicability || [],
+      recyclabilityPct: Number.isFinite(recyclabilityPct as number) ? (recyclabilityPct as number) : undefined,
+      repairability: Boolean(values.repairability),
       powerRequirementW: Number.isFinite(powerRequirementW as number) ? (powerRequirementW as number) : undefined,
       energyKwh: Number.isFinite(energyKwh as number) ? (energyKwh as number) : undefined,
       co2Kg: Number.isFinite(co2Kg as number) ? (co2Kg as number) : undefined,
@@ -121,6 +133,8 @@ const EditSpecs: NextPageWithLayout = () => {
       TAG_PREFIX.POWER_COMPAT,
       TAG_PREFIX.POWER_REQ,
       TAG_PREFIX.REPLICABILITY,
+      TAG_PREFIX.RECYCLABILITY,
+      TAG_PREFIX.REPAIRABILITY,
       TAG_PREFIX.ENV_ENERGY,
       TAG_PREFIX.ENV_CO2,
     ]);
