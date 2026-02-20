@@ -17,6 +17,8 @@ export const TAG_PREFIX = {
   POWER_COMPAT: "powercompat",
   POWER_REQ: "powerreq",
   REPLICABILITY: "replicability",
+  RECYCLABILITY: "recyclability",
+  REPAIRABILITY: "repairability",
   ENV_ENERGY: "env-energy",
   ENV_CO2: "env-co2",
 } as const;
@@ -47,6 +49,13 @@ export const POWER_COMPATIBILITY_OPTIONS = [
 
 export const REPLICABILITY_OPTIONS = ["High", "Medium", "Low"] as const;
 
+// Recyclability uses a numeric percentage (0–100) stored with monotonic range tags,
+// following the same pattern as energy consumption and CO2 emissions.
+export const RECYCLABILITY_THRESHOLDS_PCT = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100] as const;
+
+// Repairability is a simple binary tag: either the product is repairable or not.
+export const REPAIRABILITY_AVAILABLE_TAG = "repairability-available";
+
 // Numeric thresholds used for monotonic range tags.
 // Keep these lists stable: changing them will change the derived tags.
 export const POWER_REQUIREMENT_THRESHOLDS_W = [
@@ -61,6 +70,8 @@ export interface ProductFilterMetadata {
   categories?: string[];
   powerCompatibility?: string[];
   replicability?: string[];
+  recyclabilityPct?: number;
+  repairability?: boolean;
   powerRequirementW?: number;
   energyKwh?: number;
   co2Kg?: number;
@@ -126,6 +137,13 @@ export function derivedProductFilterTags(filters: ProductFilterMetadata): string
     .map(value => prefixedTag(TAG_PREFIX.REPLICABILITY, value))
     .filter((t): t is string => Boolean(t));
 
+  const recyclability =
+    typeof filters.recyclabilityPct === "number"
+      ? monotonicRangeTags(TAG_PREFIX.RECYCLABILITY, filters.recyclabilityPct, RECYCLABILITY_THRESHOLDS_PCT)
+      : [];
+
+  const repairability = filters.repairability ? [REPAIRABILITY_AVAILABLE_TAG] : [];
+
   const powerReq =
     typeof filters.powerRequirementW === "number"
       ? monotonicRangeTags(TAG_PREFIX.POWER_REQ, filters.powerRequirementW, POWER_REQUIREMENT_THRESHOLDS_W)
@@ -139,7 +157,7 @@ export function derivedProductFilterTags(filters: ProductFilterMetadata): string
   const co2 =
     typeof filters.co2Kg === "number" ? monotonicRangeTags(TAG_PREFIX.ENV_CO2, filters.co2Kg, CO2_THRESHOLDS_KG) : [];
 
-  return mergeTags(categories, powerCompatibility, replicability, powerReq, energy, co2);
+  return mergeTags(categories, powerCompatibility, replicability, recyclability, repairability, powerReq, energy, co2);
 }
 
 export function removeTagsWithPrefixes(tags: ReadonlyArray<string>, prefixes: ReadonlyArray<string>): string[] {

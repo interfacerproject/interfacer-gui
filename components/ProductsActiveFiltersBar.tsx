@@ -18,7 +18,7 @@ import { useQuery } from "@apollo/client";
 import { Tag } from "@bbtgnn/polaris-interfacer";
 import { useResourceSpecs } from "hooks/useResourceSpecs";
 import { QUERY_MACHINES } from "lib/QueryAndMutation";
-import { isPrefixedTag, prefixedTag, TAG_PREFIX } from "lib/tagging";
+import { isPrefixedTag, prefixedTag, REPAIRABILITY_AVAILABLE_TAG, TAG_PREFIX } from "lib/tagging";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
@@ -99,6 +99,8 @@ export default function ProductsActiveFiltersBar() {
         TAG_PREFIX.POWER_COMPAT,
         TAG_PREFIX.POWER_REQ,
         TAG_PREFIX.REPLICABILITY,
+        TAG_PREFIX.RECYCLABILITY,
+        TAG_PREFIX.REPAIRABILITY,
         TAG_PREFIX.ENV_ENERGY,
         TAG_PREFIX.ENV_CO2,
       ])
@@ -139,7 +141,10 @@ export default function ProductsActiveFiltersBar() {
     Boolean(energyMax) ||
     Boolean(co2Min) ||
     Boolean(co2Max) ||
-    asCsvArray(router.query.replicability).length > 0;
+    asCsvArray(router.query.replicability).length > 0 ||
+    Boolean(asString(router.query.recyclabilityMin)) ||
+    Boolean(asString(router.query.recyclabilityMax)) ||
+    asString(router.query.repairability) === "true";
 
   if (!hasAnyActive) return null;
 
@@ -406,6 +411,47 @@ export default function ProductsActiveFiltersBar() {
           next.tags = nextTags.length > 0 ? nextTags.join(",") : undefined;
         }
 
+        pushQuery(next);
+      },
+    });
+  }
+
+  const recyclabilityMin = asString(router.query.recyclabilityMin);
+  const recyclabilityMax = asString(router.query.recyclabilityMax);
+
+  const recyclabilityLabel = (() => {
+    const min = recyclabilityMin ? `${recyclabilityMin}%` : "";
+    const max = recyclabilityMax ? `${recyclabilityMax}%` : "";
+    if (min && max) return `${min}–${max}`;
+    if (min) return `≥${min}`;
+    if (max) return `≤${max}`;
+    return "";
+  })();
+
+  if (recyclabilityLabel) {
+    chips.push({
+      key: `recyclability:${recyclabilityMin}:${recyclabilityMax}`,
+      label: `${t("Recyclability")}: ${recyclabilityLabel}`,
+      onRemove: () => {
+        const next = { ...router.query };
+        delete next.recyclabilityMin;
+        delete next.recyclabilityMax;
+        const nextTags = removeTagsByPrefix(rawTags, TAG_PREFIX.RECYCLABILITY);
+        next.tags = nextTags.length > 0 ? nextTags.join(",") : undefined;
+        pushQuery(next);
+      },
+    });
+  }
+
+  if (asString(router.query.repairability) === "true") {
+    chips.push({
+      key: "repairability:true",
+      label: t("Available for repair"),
+      onRemove: () => {
+        const next = { ...router.query };
+        delete next.repairability;
+        const nextTags = rawTags.filter(tg => tg !== REPAIRABILITY_AVAILABLE_TAG);
+        next.tags = nextTags.length > 0 ? nextTags.join(",") : undefined;
         pushQuery(next);
       },
     });
