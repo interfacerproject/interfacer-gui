@@ -26,7 +26,9 @@ import {
   POWER_COMPATIBILITY_OPTIONS,
   POWER_REQUIREMENT_THRESHOLDS_W,
   prefixedTag,
+  RECYCLABILITY_THRESHOLDS_PCT,
   rangeFilterTags,
+  REPAIRABILITY_AVAILABLE_TAG,
   REPLICABILITY_OPTIONS,
   TAG_PREFIX,
 } from "lib/tagging";
@@ -63,6 +65,9 @@ export interface ProductsFiltersState {
   powerRequirementMin: string;
   powerRequirementMax: string;
   replicability: string[];
+  recyclabilityMin: string;
+  recyclabilityMax: string;
+  repairability: boolean;
   energyMin: string;
   energyMax: string;
   co2Min: string;
@@ -142,6 +147,8 @@ export default function ProductsFilters() {
     powerCompatibility: false,
     powerRequirement: false,
     replicability: false,
+    recyclability: false,
+    repairability: false,
     environmentalImpact: false,
   });
 
@@ -156,6 +163,9 @@ export default function ProductsFilters() {
     powerRequirementMin: "",
     powerRequirementMax: "",
     replicability: [],
+    recyclabilityMin: "",
+    recyclabilityMax: "",
+    repairability: false,
     energyMin: "",
     energyMax: "",
     co2Min: "",
@@ -177,6 +187,8 @@ export default function ProductsFilters() {
           TAG_PREFIX.POWER_COMPAT,
           TAG_PREFIX.POWER_REQ,
           TAG_PREFIX.REPLICABILITY,
+          TAG_PREFIX.RECYCLABILITY,
+          TAG_PREFIX.REPAIRABILITY,
           TAG_PREFIX.ENV_ENERGY,
           TAG_PREFIX.ENV_CO2,
         ])
@@ -201,6 +213,9 @@ export default function ProductsFilters() {
       powerRequirementMin: (query.powerMin as string) || "",
       powerRequirementMax: (query.powerMax as string) || "",
       replicability: query.replicability ? (query.replicability as string).split(",") : [],
+      recyclabilityMin: (query.recyclabilityMin as string) || "",
+      recyclabilityMax: (query.recyclabilityMax as string) || "",
+      repairability: query.repairability === "true",
       energyMin: (query.energyMin as string) || "",
       energyMax: (query.energyMax as string) || "",
       co2Min: (query.co2Min as string) || "",
@@ -255,6 +270,17 @@ export default function ProductsFilters() {
       .map(value => prefixedTag(TAG_PREFIX.REPLICABILITY, value))
       .filter((t): t is string => Boolean(t));
 
+    const recyclabilityMin = filters.recyclabilityMin ? Number(filters.recyclabilityMin) : undefined;
+    const recyclabilityMax = filters.recyclabilityMax ? Number(filters.recyclabilityMax) : undefined;
+    const recyclabilityTags = rangeFilterTags(
+      TAG_PREFIX.RECYCLABILITY,
+      recyclabilityMin,
+      recyclabilityMax,
+      RECYCLABILITY_THRESHOLDS_PCT
+    );
+
+    const repairabilityTags = filters.repairability ? [REPAIRABILITY_AVAILABLE_TAG] : [];
+
     const powerMin = filters.powerRequirementMin ? Number(filters.powerRequirementMin) : undefined;
     const powerMax = filters.powerRequirementMax ? Number(filters.powerRequirementMax) : undefined;
     const powerReqTags = rangeFilterTags(TAG_PREFIX.POWER_REQ, powerMin, powerMax, POWER_REQUIREMENT_THRESHOLDS_W);
@@ -276,6 +302,8 @@ export default function ProductsFilters() {
       materialTags,
       powerCompatTags,
       replicabilityTags,
+      recyclabilityTags,
+      repairabilityTags,
       powerReqTags,
       energyTags,
       co2Tags
@@ -297,6 +325,9 @@ export default function ProductsFilters() {
     if (filters.powerRequirementMin) query.powerMin = filters.powerRequirementMin;
     if (filters.powerRequirementMax) query.powerMax = filters.powerRequirementMax;
     if (filters.replicability.length > 0) query.replicability = filters.replicability.join(",");
+    if (filters.recyclabilityMin) query.recyclabilityMin = filters.recyclabilityMin;
+    if (filters.recyclabilityMax) query.recyclabilityMax = filters.recyclabilityMax;
+    if (filters.repairability) query.repairability = "true";
     if (filters.energyMin) query.energyMin = filters.energyMin;
     if (filters.energyMax) query.energyMax = filters.energyMax;
     if (filters.co2Min) query.co2Min = filters.co2Min;
@@ -316,6 +347,9 @@ export default function ProductsFilters() {
       powerRequirementMin: "",
       powerRequirementMax: "",
       replicability: [],
+      recyclabilityMin: "",
+      recyclabilityMax: "",
+      repairability: false,
       energyMin: "",
       energyMax: "",
       co2Min: "",
@@ -682,6 +716,104 @@ export default function ProductsFilters() {
                 </label>
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* Recyclability (%) */}
+      <div className="border-b border-[#C9CCCF] pb-4">
+        <button
+          onClick={() => toggleSection("recyclability")}
+          className="flex items-center justify-between w-full text-left"
+        >
+          <span className="font-medium text-gray-900" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+            {t("Recyclability (%)")}
+          </span>
+          <svg
+            className={`w-5 h-5 text-gray-500 transition-transform ${openSections.recyclability ? "rotate-180" : ""}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        {openSections.recyclability && (
+          <div className="mt-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">{t("Min")}</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    value={filters.recyclabilityMin}
+                    onChange={e => setFilters(prev => ({ ...prev, recyclabilityMin: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
+                    placeholder="0"
+                    min={0}
+                    max={100}
+                  />
+                  <span className="text-xs text-gray-600">{"%"}</span>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">{t("Max")}</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    value={filters.recyclabilityMax}
+                    onChange={e => setFilters(prev => ({ ...prev, recyclabilityMax: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#036A53] focus:border-transparent text-sm"
+                    placeholder="100"
+                    min={0}
+                    max={100}
+                  />
+                  <span className="text-xs text-gray-600">{"%"}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Repairability */}
+      <div className="border-b border-[#C9CCCF] pb-4">
+        <button
+          onClick={() => toggleSection("repairability")}
+          className="flex items-center justify-between w-full text-left"
+        >
+          <span className="font-medium text-gray-900" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+            {t("Repairability")}
+          </span>
+          <svg
+            className={`w-5 h-5 text-gray-500 transition-transform ${openSections.repairability ? "rotate-180" : ""}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        {openSections.repairability && (
+          <div className="mt-3">
+            <label className="flex items-center gap-3 text-sm cursor-pointer">
+              <button
+                type="button"
+                role="switch"
+                aria-checked={filters.repairability}
+                onClick={() => setFilters(prev => ({ ...prev, repairability: !prev.repairability }))}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#036A53] focus:ring-offset-2 ${
+                  filters.repairability ? "bg-[#036A53]" : "bg-gray-300"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    filters.repairability ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+              <span className="text-sm text-gray-700">{t("Available for repair")}</span>
+            </label>
           </div>
         )}
       </div>
