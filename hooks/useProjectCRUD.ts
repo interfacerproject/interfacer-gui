@@ -325,11 +325,14 @@ export const useProjectCRUD = () => {
         const powerRequirementW = pf.powerRequirementW ? Number(pf.powerRequirementW) : undefined;
         const energyKwh = pf.energyKwh ? Number(pf.energyKwh) : undefined;
         const co2Kg = pf.co2Kg ? Number(pf.co2Kg) : undefined;
+        const recyclabilityPct = pf.recyclabilityPct ? Number(pf.recyclabilityPct) : undefined;
 
         return {
           categories: pf.categories || [],
           powerCompatibility: pf.powerCompatibility || [],
           replicability: pf.replicability || [],
+          recyclabilityPct: Number.isFinite(recyclabilityPct as number) ? (recyclabilityPct as number) : undefined,
+          repairability: Boolean(pf.repairability),
           powerRequirementW: Number.isFinite(powerRequirementW as number) ? (powerRequirementW as number) : undefined,
           energyKwh: Number.isFinite(energyKwh as number) ? (energyKwh as number) : undefined,
           co2Kg: Number.isFinite(co2Kg as number) ? (co2Kg as number) : undefined,
@@ -343,6 +346,8 @@ export const useProjectCRUD = () => {
         TAG_PREFIX.POWER_COMPAT,
         TAG_PREFIX.POWER_REQ,
         TAG_PREFIX.REPLICABILITY,
+        TAG_PREFIX.RECYCLABILITY,
+        TAG_PREFIX.REPAIRABILITY,
         TAG_PREFIX.ENV_ENERGY,
         TAG_PREFIX.ENV_CO2,
       ]);
