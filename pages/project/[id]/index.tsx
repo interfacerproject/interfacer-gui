@@ -17,19 +17,12 @@
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { createContext, Dispatch, ReactElement, SetStateAction, useContext, useEffect, useState } from "react";
+import { createContext, Dispatch, ReactElement, SetStateAction, useContext, useEffect, useMemo, useState } from "react";
 
-// Components
-import { Stack } from "@bbtgnn/polaris-interfacer";
-
-// Icons
-import BrThumbinailsGallery from "components/brickroom/BrThumbinailsGallery";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditBanner from "components/partials/project/[id]/EditBanner";
-import ProjectHeader from "components/partials/project/[id]/ProjectHeader";
-import ProjectSidebar from "components/partials/project/[id]/ProjectSidebar";
-import ProjectTabs from "components/partials/project/[id]/ProjectTabs";
+import ProjectDetailNew from "components/ProjectDetailNew";
 import SuccessBanner from "components/partials/project/[id]/SuccessBanner";
 import { useTranslation } from "next-i18next";
 import { NextPageWithLayout } from "pages/_app";
@@ -50,20 +43,15 @@ const Project: NextPageWithLayout = () => {
   const router = useRouter();
   const { t } = useTranslation("common");
   const { id } = router.query;
-  const [images, setImages] = useState<string[]>([]);
   const [selected, setSelected] = useState(0);
 
   const { project } = useProject();
+  const images = useMemo(() => findProjectImages(project), [project]);
 
   // (Temp) Redirect if project is LOSH owned
   if (process.env.NEXT_PUBLIC_LOSH_ID == project?.primaryAccountable?.id) {
     router.push(`/resource/${id}`);
   }
-
-  useEffect(() => {
-    const _images = findProjectImages(project);
-    setImages(_images);
-  }, [project]);
 
   if (!project) return null;
 
@@ -95,21 +83,7 @@ const Project: NextPageWithLayout = () => {
       <ProjectTabsContext.Provider value={{ selected, setSelected }}>
         <SuccessBanner param="created">{t("Project succesfully created!")}</SuccessBanner>
         <EditBanner />
-        <div className="p-4 container mx-auto flex max-w-6xl bg-[#f8f7f4] space-x-4">
-          <div className="grow max-w-screen-md">
-            <Stack vertical spacing="extraLoose">
-              <ProjectHeader />
-              <BrThumbinailsGallery images={images} />
-              <div className="block lg:hidden">
-                <ProjectSidebar />
-              </div>
-              <ProjectTabs />
-            </Stack>
-          </div>
-          <div className="hidden lg:block w-80">
-            <ProjectSidebar />
-          </div>
-        </div>
+        <ProjectDetailNew />
       </ProjectTabsContext.Provider>
     </>
   );
