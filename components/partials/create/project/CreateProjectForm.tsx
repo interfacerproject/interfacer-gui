@@ -259,22 +259,19 @@ export default function CreateProjectForm(props: Props) {
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div
-          style={{
-            backgroundImage: 'url("/formBg.png")',
-          }}
-          className="flex flex-row justify-center space-x-8 md:space-x-16 lg:space-x-24 p-6 bg-background-subdued min-h-screen"
-        >
-          <div className="max-w-xs">
-            <div className="sticky top-24">
-              <CreateProjectNav projectType={projectType} />
+        <div className="flex flex-col min-h-screen bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
+          <div className="flex-1 flex flex-row justify-center gap-8 lg:gap-12 p-6 max-w-[1280px] mx-auto w-full">
+            <div className="hidden lg:block w-[260px] shrink-0">
+              <div className="sticky top-24">
+                <CreateProjectNav projectType={projectType} />
+              </div>
+            </div>
+            <div className="flex-1 max-w-2xl pb-24">
+              <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
             </div>
           </div>
-          <div className="max-w-xl pb-24">
-            <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
-          </div>
+          <CreateProjectSubmit />
         </div>
-        <CreateProjectSubmit />
       </form>
 
       {loading && <LoadingOverlay />}
