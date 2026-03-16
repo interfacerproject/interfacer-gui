@@ -79,6 +79,7 @@ export const useProjectCRUD = () => {
         [ProjectType.SERVICE]: specProjectService!.id,
         [ProjectType.PRODUCT]: specProjectProduct!.id,
         [ProjectType.MACHINE]: specMachine!.id,
+        [ProjectType.DPP]: specDpp!.id,
       }
     : undefined;
 

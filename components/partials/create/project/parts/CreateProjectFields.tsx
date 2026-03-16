@@ -48,6 +48,12 @@ export default function CreateProjectFields(props: Props) {
         "Share details about fabrication equipment, 3D printers, laser cutters, CNC machines, and other tools available in your maker space or lab. Help others discover the machines they need for their projects."
       ),
     },
+    [ProjectType.DPP]: {
+      title: t("Add a DPP"),
+      subtitle: t(
+        "Create a Digital Product Passport to document the lifecycle, materials, and sustainability information of your product. Help consumers and regulators access transparent product data."
+      ),
+    },
   };
 
   const sections = getSectionsByProjectType(projectType);

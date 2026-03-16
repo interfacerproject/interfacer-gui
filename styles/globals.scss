@@ -16,6 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+@import "./theme.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -138,7 +140,6 @@ table {
   scrollbar-width: none; /* Firefox */
 }
 
-
 // layout
 .drawer {
   @apply grid overflow-hidden w-full;
@@ -245,7 +246,6 @@ table {
   }
 }
 
-
 .drawer.drawer-end > .drawer-toggle:checked ~ .drawer-content {
   @apply -translate-x-2;
 }
@@ -344,5 +344,3 @@ table {
   width: 50%;
   justify-content: flex-end;
 }
-
-

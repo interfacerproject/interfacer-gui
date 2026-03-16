@@ -1,20 +1,12 @@
-import { Collaborate, DataDefinition, GroupObjectsNew, ToolKit } from "@carbon/icons-react";
 import classNames from "classnames";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
-import { ReactNode } from "react";
+import EntityTypeIcon from "./EntityTypeIcon";
 import LinkWrapper from "./LinkWrapper";
 import { ProjectTypeRenderProps } from "./ProjectTypeRenderProps";
 import { ProjectType } from "./types";
 
 //
-
-const icons: Record<ProjectType, ReactNode> = {
-  Design: <GroupObjectsNew />,
-  Product: <DataDefinition />,
-  Service: <Collaborate />,
-  Machine: <ToolKit />,
-};
 
 interface Props {
   project?: Partial<EconomicResource>;
@@ -44,7 +36,7 @@ export default function ProjectTypeChip(props: Props) {
   const baseChip = (
     <span className={classes}>
       <strong>{renderProps?.label}</strong>
-      {renderProps && <renderProps.icon size={16} />}
+      <EntityTypeIcon type={name} size="default" fill="currentColor" />
     </span>
   );
 
