@@ -16,11 +16,9 @@
 
 import classNames from "classnames";
 import Topbar from "components/partials/topbar/Topbar";
-import { useRouter } from "next/router";
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import Footer from "../Footer";
-import Sidebar from "../Sidebar";
 
 type layoutProps = {
   children: ReactNode;
@@ -30,17 +28,6 @@ type layoutProps = {
 const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
   const { bottomPadding = "lg" } = layoutProps;
   const { authenticated, loading } = useAuth();
-  const router = useRouter();
-
-  // Closes sidebar automatically when route changes
-  useEffect(() => {
-    router.events.on("routeChangeComplete", () => {
-      let drawer = document.getElementById("my-drawer");
-      if (drawer) {
-        (drawer as HTMLInputElement).checked = false;
-      }
-    });
-  }, [router.events]);
 
   const calcBottomPadding = classNames({
     "pb-0": bottomPadding === "none",
@@ -58,17 +45,10 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
   return (
     <>
       {!loading && (
-        <div className="drawer">
-          <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-          <div className="drawer-content flex flex-col">
-            <Topbar />
-            <div className={`max-w-full flex-grow ${calcBottomPadding}`}>{layoutProps?.children}</div>
-            <Footer />
-          </div>
-          <div className="drawer-side">
-            <label htmlFor="my-drawer" className="drawer-overlay" />
-            <Sidebar />
-          </div>
+        <div className="flex flex-col min-h-screen">
+          <Topbar />
+          <div className={`max-w-full flex-grow ${calcBottomPadding}`}>{layoutProps?.children}</div>
+          <Footer />
         </div>
       )}
     </>
