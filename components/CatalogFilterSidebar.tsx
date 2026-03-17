@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { Chemistry, Cube, Flash, LocationStar, Recycle, Settings, Tag } from "@carbon/icons-react";
+import { Chemistry, Cube, Flash, LocationStar, Recycle, Settings, Tag, Tools, Time } from "@carbon/icons-react";
 import { ScaleIcon } from "@heroicons/react/outline";
 import CheckboxFilter from "components/CheckboxFilter";
 import FilterSection from "components/FilterSection";
+import ToggleSwitch from "components/ToggleSwitch";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 export type CatalogVariant = "designs" | "products" | "services";
 
@@ -97,6 +98,8 @@ const CATEGORIES = [
 export default function CatalogFilterSidebar({ variant, collapsed = false, onToggle }: CatalogFilterSidebarProps) {
   const { t } = useTranslation("common");
   const router = useRouter();
+  const [manufacturingFilter, setManufacturingFilter] = useState("all");
+  const [repairInfo, setRepairInfo] = useState(false);
 
   // Parse current tags from URL
   const currentTags = useMemo(() => {
@@ -219,6 +222,44 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
             <FilterSection icon={<ScaleIcon className="w-4 h-4" />} label="License">
               <CheckboxFilter items={LICENSES} searchPlaceholder="Search licenses..." />
             </FilterSection>
+
+            <FilterSection
+              icon={<Tools size={16} />}
+              label="Manufacturability"
+              defaultOpen
+              badge={manufacturingFilter !== "all" ? 1 : undefined}
+            >
+              <div className="flex flex-col gap-2.5">
+                {[
+                  { value: "all", label: "All" },
+                  { value: "can_be_manufactured", label: "Can be manufactured" },
+                  { value: "in_progress", label: "In progress" },
+                ].map(option => (
+                  <label key={option.value} className="flex items-center gap-2 cursor-pointer">
+                    <div
+                      className="w-4 h-4 border shrink-0 flex items-center justify-center transition-colors"
+                      style={{
+                        borderRadius: "50%",
+                        backgroundColor:
+                          manufacturingFilter === option.value ? "var(--ifr-green)" : "var(--ifr-bg-surface)",
+                        borderColor: manufacturingFilter === option.value ? "var(--ifr-green)" : "var(--ifr-border)",
+                      }}
+                      onClick={() => setManufacturingFilter(option.value)}
+                    >
+                      {manufacturingFilter === option.value && (
+                        <div className="w-1.5 h-1.5 bg-white" style={{ borderRadius: "50%" }} />
+                      )}
+                    </div>
+                    <span
+                      className="text-ifr-text-primary"
+                      style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
+                    >
+                      {t(option.label)}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </FilterSection>
           </>
         )}
 
@@ -236,6 +277,39 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                 searchPlaceholder="Search materials..."
                 selectedItems={selectedMaterials}
                 onToggle={toggleTag("material-")}
+              />
+            </FilterSection>
+
+            <FilterSection icon={<Flash size={16} />} label="Power Requirement">
+              <div className="flex flex-col gap-2">
+                <div className="relative h-4">
+                  <div className="absolute inset-0 bg-ifr-green rounded-full" />
+                  <div className="absolute left-0 top-0 w-4 h-4 bg-white border border-ifr-green rounded-full shadow-sm" />
+                  <div className="absolute right-0 top-0 w-4 h-4 bg-white border border-ifr-green rounded-full shadow-sm" />
+                </div>
+                <div className="flex justify-between">
+                  <span
+                    className="text-ifr-text-secondary"
+                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                  >
+                    {"0W"}
+                  </span>
+                  <span
+                    className="text-ifr-text-secondary"
+                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                  >
+                    {"2000W"}
+                  </span>
+                </div>
+              </div>
+            </FilterSection>
+
+            <FilterSection icon={<Tools size={16} />} label="Repairability">
+              <ToggleSwitch
+                label={t("Repair Info Available")}
+                description={t("Projects with repair and maintenance info")}
+                checked={repairInfo}
+                onChange={setRepairInfo}
               />
             </FilterSection>
           </>
@@ -271,6 +345,10 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
 
             <FilterSection icon={<Chemistry size={16} />} label="Service Type" defaultOpen>
               <CheckboxFilter items={SERVICE_TYPES} />
+            </FilterSection>
+
+            <FilterSection icon={<Time size={16} />} label="Availability">
+              <CheckboxFilter items={["Available Now", "Booking Required", "Weekdays Only", "Weekends Available"]} />
             </FilterSection>
 
             <FilterSection
