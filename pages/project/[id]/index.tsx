@@ -17,16 +17,16 @@
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { createContext, Dispatch, ReactElement, SetStateAction, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, Dispatch, ReactElement, SetStateAction, useContext, useMemo, useState } from "react";
 
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditBanner from "components/partials/project/[id]/EditBanner";
-import ProjectDetailNew from "components/ProjectDetailNew";
 import SuccessBanner from "components/partials/project/[id]/SuccessBanner";
+import ProjectDetailNew from "components/ProjectDetailNew";
+import findProjectImages from "lib/findProjectImages";
 import { useTranslation } from "next-i18next";
 import { NextPageWithLayout } from "pages/_app";
-import findProjectImages from "lib/findProjectImages";
 
 //opengraph
 import { NextSeo } from "next-seo";

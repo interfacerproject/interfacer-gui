@@ -9,7 +9,6 @@ import DetailSection from "components/DetailSection";
 import EntityTypeIcon from "components/EntityTypeIcon";
 import { useProject } from "components/layout/FetchProjectLayout";
 import ProjectCardImage from "components/ProjectCardImage";
-import ShareButton from "components/ShareButton";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
 import useSocial from "hooks/useSocial";
@@ -22,7 +21,7 @@ import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 function getProjectType(project: Partial<EconomicResource>): ProjectType {
   const name = project.conformsTo?.name;

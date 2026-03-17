@@ -2,7 +2,7 @@
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
 import { useQuery } from "@apollo/client";
-import { Search } from "@carbon/icons-react";
+import { Add, ArrowRight, Search, SortAscending } from "@carbon/icons-react";
 import { ExternalLinkIcon, LocationMarkerIcon } from "@heroicons/react/outline";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import EntityTypeIcon from "components/EntityTypeIcon";
@@ -17,7 +17,7 @@ import { FetchInventoryQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 // ─── Tab definitions ────────────────────────────────────────────────────────
 
@@ -35,11 +35,62 @@ const tabs: TabDef[] = [
   { id: "services", labelKey: "Services", type: ProjectType.SERVICE },
 ];
 
+// ─── Per-tab CTA & toolbar config ───────────────────────────────────────────
+
+interface TabCtaConfig {
+  ctaTitle: string;
+  ctaDescription: string;
+  createLabel: string;
+  createUrl: string;
+  searchPlaceholder: string;
+}
+
+const tabCtaConfig: Record<Exclude<ProfileTabId, "community">, TabCtaConfig> = {
+  designs: {
+    ctaTitle: "Publish your design documentation",
+    ctaDescription:
+      "Allow the world to see, build and replicate your design. Add all the relevant info to help other users discover your work.",
+    createLabel: "Create a new Design",
+    createUrl: "/create/project/design",
+    searchPlaceholder: "Search designs by name, tags...",
+  },
+  products: {
+    ctaTitle: "Turn designs into manufacturable products",
+    ctaDescription:
+      "Create a product listing on Interfacer. Products are displayed inside the design page and in the Products Catalog.",
+    createLabel: "Create a new Product",
+    createUrl: "/create/project/product",
+    searchPlaceholder: "Search products by name, tags...",
+  },
+  services: {
+    ctaTitle: "Offer your skills and services",
+    ctaDescription:
+      "List your workshop, lab, or service. Help makers find the equipment and expertise they need to build their projects.",
+    createLabel: "Create a new Service",
+    createUrl: "/create/project/service",
+    searchPlaceholder: "Search services by name, tags...",
+  },
+};
+
 // ─── Profile Tab Content ────────────────────────────────────────────────────
 
-function ProfileTabContent({ userId, specId, tabType }: { userId: string; specId?: string; tabType: ProjectType }) {
+function ProfileTabContent({
+  userId,
+  specId,
+  tabType,
+  isOwner,
+  ctaConfig,
+}: {
+  userId: string;
+  specId?: string;
+  tabType: ProjectType;
+  isOwner: boolean;
+  ctaConfig: TabCtaConfig;
+}) {
   const { t } = useTranslation("common");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("latest");
+  const [showSortMenu, setShowSortMenu] = useState(false);
 
   const filter = useMemo(
     () => ({
@@ -68,23 +119,145 @@ function ProfileTabContent({ userId, specId, tabType }: { userId: string; specId
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Search & Sort */}
+      {/* CTA + Stats row (owner only) */}
+      {isOwner && (
+        <div className="flex flex-col md:flex-row gap-6 py-6">
+          {/* Left: CTA */}
+          <div className="flex-1 flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <h3
+                className="text-ifr-text-primary m-0"
+                style={{
+                  fontFamily: "var(--ifr-font-heading)",
+                  fontSize: "var(--ifr-fs-lg)",
+                  fontWeight: "var(--ifr-fw-bold)",
+                  lineHeight: "1.3",
+                }}
+              >
+                {t(ctaConfig.ctaTitle)}
+              </h3>
+              <p
+                className="text-ifr-text-secondary m-0"
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-md)",
+                  lineHeight: "1.5",
+                }}
+              >
+                {t(ctaConfig.ctaDescription)}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link href={ctaConfig.createUrl}>
+                <a
+                  className="flex items-center gap-2 px-4 no-underline transition-colors hover:opacity-90"
+                  style={{
+                    height: "var(--ifr-control-height)",
+                    borderRadius: "var(--ifr-radius-sm)",
+                    backgroundColor: "var(--ifr-yellow)",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-base)",
+                    fontWeight: "var(--ifr-fw-medium)",
+                    color: "var(--ifr-text-primary)",
+                  }}
+                >
+                  {t(ctaConfig.createLabel)}
+                  <ArrowRight size={16} />
+                </a>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Search & Sort toolbar */}
       <div
         className="bg-ifr-surface border border-ifr rounded-ifr-md flex items-center gap-3 px-4"
-        style={{ height: "var(--ifr-control-height)" }}
+        style={{ minHeight: "var(--ifr-control-height)", padding: "12px 16px" }}
       >
-        <Search size={18} className="text-ifr-text-secondary shrink-0" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          placeholder={t("Search...")}
-          className="flex-1 bg-transparent border-none outline-none text-ifr-text-primary"
-          style={{
-            fontFamily: "var(--ifr-font-body)",
-            fontSize: "var(--ifr-fs-base)",
-          }}
-        />
+        {/* Search input */}
+        <div className="flex-1 flex items-center gap-3">
+          <Search size={18} className="text-ifr-text-secondary shrink-0" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder={t(ctaConfig.searchPlaceholder)}
+            className="flex-1 bg-transparent border-none outline-none text-ifr-text-primary"
+            style={{
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-base)",
+            }}
+          />
+        </div>
+
+        {/* Sort dropdown */}
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setShowSortMenu(!showSortMenu)}
+            className="flex items-center gap-2 px-3 bg-transparent border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors"
+            style={{
+              height: "36px",
+              borderRadius: "var(--ifr-radius-sm)",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-sm)",
+              fontWeight: "var(--ifr-fw-medium)",
+              color: "var(--ifr-text-secondary)",
+            }}
+          >
+            <SortAscending size={14} />
+            {t("Sort by")} {sortBy === "latest" ? t("Latest") : t("Oldest")}
+          </button>
+          {showSortMenu && (
+            <div
+              className="absolute right-0 top-full mt-1 bg-ifr-surface border border-ifr shadow-lg z-20"
+              style={{ borderRadius: "var(--ifr-radius-sm)", minWidth: "160px" }}
+            >
+              {["latest", "oldest"].map(opt => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => {
+                    setSortBy(opt);
+                    setShowSortMenu(false);
+                  }}
+                  className={`w-full text-left px-4 py-2 border-none cursor-pointer transition-colors ${
+                    sortBy === opt ? "bg-ifr-hover" : "bg-transparent hover:bg-ifr-hover/50"
+                  }`}
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-sm)",
+                    color: "var(--ifr-text-primary)",
+                  }}
+                >
+                  {opt === "latest" ? t("Latest") : t("Oldest")}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Create button (owner only) */}
+        {isOwner && (
+          <Link href={ctaConfig.createUrl}>
+            <a
+              className="flex items-center gap-2 px-3 no-underline shrink-0 transition-colors hover:opacity-90"
+              style={{
+                height: "36px",
+                borderRadius: "var(--ifr-radius-sm)",
+                backgroundColor: "var(--ifr-yellow)",
+                fontFamily: "var(--ifr-font-body)",
+                fontSize: "var(--ifr-fs-sm)",
+                fontWeight: "var(--ifr-fw-medium)",
+                color: "var(--ifr-text-primary)",
+              }}
+            >
+              <Add size={16} />
+              {t(ctaConfig.createLabel)}
+            </a>
+          </Link>
+        )}
       </div>
 
       {/* Results grid */}
@@ -244,6 +417,20 @@ export default function ProfilePageNew() {
                   )}
                 </div>
 
+                {/* Subtitle (owner) */}
+                {isOwner && (
+                  <p
+                    className="text-ifr-text-secondary m-0"
+                    style={{
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "var(--ifr-fs-md)",
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    {t("Manage and track all your project documentation")}
+                  </p>
+                )}
+
                 {/* Bio */}
                 {person?.note && (
                   <p
@@ -393,6 +580,8 @@ export default function ProfilePageNew() {
             userId={id}
             specId={specIdMap[activeTab]}
             tabType={tabs.find(t => t.id === activeTab)?.type || ProjectType.DESIGN}
+            isOwner={isOwner}
+            ctaConfig={tabCtaConfig[activeTab as Exclude<ProfileTabId, "community">]}
           />
         )}
       </div>
