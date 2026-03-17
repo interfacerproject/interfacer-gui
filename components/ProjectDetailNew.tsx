@@ -2,7 +2,7 @@
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
 import { ChevronLeft, ChevronRight } from "@carbon/icons-react";
-import { BookmarkIcon, ExternalLinkIcon, ShareIcon, StarIcon } from "@heroicons/react/outline";
+import { BookmarkIcon, ExternalLinkIcon, StarIcon } from "@heroicons/react/outline";
 import { StarIcon as StarIconSolid } from "@heroicons/react/solid";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import DetailSection from "components/DetailSection";
@@ -69,11 +69,72 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
     .filter((c: string) => c.startsWith("machine-"))
     .map((c: string) => decodeURIComponent(c.replace("machine-", "")).replace(/-/g, " "));
 
+  // Extract metadata fields (product-specific)
+  const meta = (project.metadata || {}) as Record<string, any>;
+  const price = meta.price as string | undefined;
+  const availability = meta.availability as string | undefined;
+  const websiteLink = meta.websiteLink as string | undefined;
+  const basedOnDesign = meta.basedOnDesign as { id?: string; name?: string } | string | undefined;
+
   return (
     <div className="w-[300px] shrink-0">
       <div className="sticky flex flex-col gap-4" style={{ top: "calc(var(--ifr-topbar-height) + 80px)" }}>
         {/* CTA */}
         <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-5 flex flex-col gap-4">
+          {/* Product: Price & Availability */}
+          {projectType === ProjectType.PRODUCT && price && (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-baseline gap-1.5">
+                <p
+                  className="text-ifr-text-primary m-0"
+                  style={{
+                    fontFamily: "var(--ifr-font-heading)",
+                    fontSize: "var(--ifr-fs-2xl)",
+                    fontWeight: "var(--ifr-fw-bold)",
+                    lineHeight: "1.2",
+                  }}
+                >
+                  {price}
+                </p>
+                <span
+                  className="text-ifr-text-secondary"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                >
+                  {t("estimated")}
+                </span>
+              </div>
+              {availability && (
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className="shrink-0"
+                    style={{
+                      width: "8px",
+                      height: "8px",
+                      borderRadius: "var(--ifr-radius-full)",
+                      backgroundColor: "var(--ifr-type-product)",
+                    }}
+                  />
+                  <span
+                    className="text-ifr-text-primary"
+                    style={{
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "var(--ifr-fs-base)",
+                      fontWeight: "var(--ifr-fw-medium)",
+                    }}
+                  >
+                    {availability}
+                  </span>
+                </div>
+              )}
+              <span
+                className="text-ifr-text-secondary"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {t("Contact the manufacturer for accurate pricing and availability details.")}
+              </span>
+            </div>
+          )}
+
           {projectType === ProjectType.DESIGN && (
             <button
               type="button"
@@ -97,7 +158,7 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
               style={{
                 height: "var(--ifr-control-height)",
                 borderRadius: "var(--ifr-radius-md)",
-                backgroundColor: "var(--ifr-type-product)",
+                backgroundColor: "var(--ifr-yellow)",
                 fontFamily: "var(--ifr-font-body)",
                 fontSize: "var(--ifr-fs-md)",
                 fontWeight: "var(--ifr-fw-semibold)",
@@ -105,6 +166,25 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
             >
               {t("Contact Manufacturer")}
             </button>
+          )}
+          {projectType === ProjectType.PRODUCT && websiteLink && (
+            <a
+              href={websiteLink.startsWith("http") ? websiteLink : `https://${websiteLink}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center gap-2 no-underline bg-ifr-surface border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors"
+              style={{
+                height: "var(--ifr-control-height)",
+                borderRadius: "var(--ifr-radius-sm)",
+                fontFamily: "var(--ifr-font-body)",
+                fontSize: "var(--ifr-fs-md)",
+                fontWeight: "var(--ifr-fw-medium)",
+                color: "var(--ifr-text-primary)",
+              }}
+            >
+              <ExternalLinkIcon className="w-4 h-4" />
+              {t("Visit Store")}
+            </a>
           )}
           {projectType === ProjectType.SERVICE && (
             <button
@@ -123,49 +203,54 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
             </button>
           )}
 
-          {/* Actions row */}
-          <div className="flex gap-2">
+          {/* Divider */}
+          <div className="w-full" style={{ height: "1px", backgroundColor: "var(--ifr-border)" }} />
+
+          {/* Save + Watch links */}
+          <div className="flex flex-col gap-1">
             <button
               type="button"
-              className="flex-1 flex items-center justify-center gap-2 bg-ifr-surface border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors"
-              style={{
-                height: "var(--ifr-control-height)",
-                borderRadius: "var(--ifr-radius-sm)",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "var(--ifr-fs-base)",
-              }}
+              className="w-full flex items-center gap-2 px-1 py-1.5 bg-transparent border-none cursor-pointer hover:bg-ifr-hover transition-colors"
+              style={{ borderRadius: "var(--ifr-radius-sm)" }}
             >
               <BookmarkIcon className="w-4 h-4 text-ifr-text-secondary" />
-              <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-medium)" }}>
-                {t("Save")}
+              <span
+                className="text-ifr-text-secondary"
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-base)",
+                }}
+              >
+                {t("Save to My Projects")}
               </span>
             </button>
             <button
               type="button"
-              className="flex-1 flex items-center justify-center gap-2 bg-ifr-surface border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors"
-              style={{
-                height: "var(--ifr-control-height)",
-                borderRadius: "var(--ifr-radius-sm)",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "var(--ifr-fs-base)",
-              }}
+              className="w-full flex items-center gap-2 px-1 py-1.5 bg-transparent border-none cursor-pointer hover:bg-ifr-hover transition-colors"
+              style={{ borderRadius: "var(--ifr-radius-sm)" }}
             >
-              <ShareIcon className="w-4 h-4 text-ifr-text-secondary" />
-              <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-medium)" }}>
-                {t("Share")}
+              <StarIcon className="w-4 h-4 text-ifr-text-secondary" />
+              <span
+                className="text-ifr-text-secondary"
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-base)",
+                }}
+              >
+                {t("Watch Project")}
               </span>
             </button>
           </div>
         </div>
 
-        {/* Created by */}
+        {/* Created by / Manufactured by */}
         {project.primaryAccountable && (
           <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-5">
             <p
               className="text-ifr-text-secondary mb-3"
               style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
             >
-              {t("Created by")}
+              {projectType === ProjectType.PRODUCT ? t("Manufactured by") : t("Created by")}
             </p>
             <Link href={`/profile/${project.primaryAccountable.id}`}>
               <a className="flex items-center gap-3 no-underline group">
@@ -192,6 +277,42 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
                 </div>
               </a>
             </Link>
+          </div>
+        )}
+
+        {/* Based on design — products only */}
+        {projectType === ProjectType.PRODUCT && basedOnDesign && (
+          <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-5 flex flex-col gap-2">
+            <p
+              className="text-ifr-text-secondary m-0"
+              style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
+            >
+              {t("Based on open source design")}
+            </p>
+            <div className="flex items-center gap-2.5 p-2.5 border border-ifr rounded-ifr-sm hover:bg-ifr-hover transition-colors">
+              <div
+                className="shrink-0 flex items-center justify-center"
+                style={{
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "var(--ifr-radius-sm)",
+                  backgroundColor: "var(--ifr-green)",
+                }}
+              >
+                <EntityTypeIcon type={ProjectType.DESIGN} size="small" fill="#ffffff" />
+              </div>
+              <span
+                className="text-ifr-text-primary truncate flex-1"
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-base)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                }}
+              >
+                {typeof basedOnDesign === "string" ? basedOnDesign : basedOnDesign.name || t("Design")}
+              </span>
+              <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
+            </div>
           </div>
         )}
 
@@ -385,6 +506,73 @@ function TagBadgeDetail({ text }: { text: string }) {
     >
       {text}
     </span>
+  );
+}
+
+/** DPP field row */
+function DppFieldRow({ label, value }: { label: string; value?: string }) {
+  if (!value) return null;
+  return (
+    <div className="flex items-start gap-3 w-full">
+      <span
+        className="text-ifr-text-secondary shrink-0"
+        style={{
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: "var(--ifr-fs-base)",
+          lineHeight: "24px",
+          width: "180px",
+        }}
+      >
+        {label}
+      </span>
+      <span
+        className="text-ifr-text-primary"
+        style={{
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: "var(--ifr-fs-md)",
+          fontWeight: "var(--ifr-fw-medium)",
+          lineHeight: "24px",
+        }}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}
+
+/** Compact DPP display for the Product Passport section */
+function DppDisplay({ dpp }: { dpp: Record<string, string> }) {
+  const { t } = useTranslation("common");
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
+        <DppFieldRow label={t("Brand Name")} value={dpp.brandName} />
+        <DppFieldRow label={t("Product Name")} value={dpp.productName} />
+        <DppFieldRow label={t("Country of Sale")} value={dpp.countrySale} />
+        <DppFieldRow label={t("Country of Origin")} value={dpp.countryOrigin} />
+        <DppFieldRow label={t("Dimensions")} value={dpp.dimensions} />
+        <DppFieldRow label={t("Model Name")} value={dpp.modelName} />
+        <DppFieldRow label={t("Net Weight")} value={dpp.netWeight ? `${dpp.netWeight} kg` : undefined} />
+        <DppFieldRow label={t("Condition")} value={dpp.conditionProduct} />
+        <DppFieldRow
+          label={t("Warranty Duration")}
+          value={dpp.warrantyDuration ? `${dpp.warrantyDuration} years` : undefined}
+        />
+        <DppFieldRow
+          label={t("CE Marking")}
+          value={dpp.ceMarking === "yes" ? t("Yes") : dpp.ceMarking === "no" ? t("No") : undefined}
+        />
+        <DppFieldRow
+          label={t("ROHS Compliance")}
+          value={dpp.rohsCompliance === "yes" ? t("Yes") : dpp.rohsCompliance === "no" ? t("No") : undefined}
+        />
+        <DppFieldRow
+          label={t("Energy Consumption")}
+          value={dpp.energyConsumption ? `${dpp.energyConsumption} kWh` : undefined}
+        />
+        <DppFieldRow label={t("CO₂ Emissions")} value={dpp.co2eEmissions ? `${dpp.co2eEmissions} kg` : undefined} />
+      </div>
+    </div>
   );
 }
 
@@ -684,6 +872,32 @@ export default function ProjectDetailNew() {
                     {project.currentLocation.mappableAddress || project.currentLocation.name}
                   </p>
                 </div>
+              </DetailSection>
+            )}
+
+            {/* Product Passport — products only */}
+            {projectType === ProjectType.PRODUCT && (project.metadata as Record<string, any>)?.dpp && (
+              <DetailSection
+                icon={
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+                      stroke={color}
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <rect x="9" y="3" width="6" height="4" rx="1" stroke={color} strokeWidth="2" />
+                    <line x1="9" y1="12" x2="15" y2="12" stroke={color} strokeWidth="2" strokeLinecap="round" />
+                    <line x1="9" y1="16" x2="13" y2="16" stroke={color} strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                }
+                iconBg="bg-ifr-hover"
+                title={t("Product Passport")}
+                subtitle={t("Digital product passport data")}
+                sectionId="product-passport"
+              >
+                <DppDisplay dpp={(project.metadata as Record<string, any>).dpp as Record<string, string>} />
               </DetailSection>
             )}
           </div>
