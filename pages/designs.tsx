@@ -33,7 +33,7 @@ const Designs: NextPageWithLayout = () => {
       hero={{
         title: t("Open Source Hardware Designs"),
         description: t(
-          "Browse and discover open source hardware designs shared by creators around the world. Find blueprints, schematics, and documentation for your next project."
+          "Free, community-driven hardware projects you can build, learn from, and improve. Every design is fully documented and open — created by makers around the world."
         ),
         stats: (
           <>
@@ -67,7 +67,7 @@ const Designs: NextPageWithLayout = () => {
           </>
         ),
       }}
-      searchPlaceholder={t("Search designs...")}
+      searchPlaceholder={t("Search designs, makers, machines, materials...")}
       filter={filter}
     />
   );

@@ -34,7 +34,7 @@ const Services: NextPageWithLayout = () => {
       hero={{
         title: t("Workshops, Labs & Services"),
         description: t(
-          "Find local workshops, fabrication labs, and manufacturing services near you. Connect with providers who can bring open source designs to life."
+          "Makerspaces and FabLabs near you that open their doors — use professional equipment, learn new skills, and get expert advice from your local maker community."
         ),
         stats: (
           <>
@@ -45,7 +45,7 @@ const Services: NextPageWithLayout = () => {
                 </StatIcon>
               }
               value="—"
-              label={t("Active Services")}
+              label={t("Total Services")}
             />
             <HeroStatCard
               icon={
@@ -54,7 +54,7 @@ const Services: NextPageWithLayout = () => {
                 </StatIcon>
               }
               value="—"
-              label={t("Locations")}
+              label={t("Service Providers")}
             />
             <HeroStatCard
               icon={
@@ -68,7 +68,7 @@ const Services: NextPageWithLayout = () => {
           </>
         ),
       }}
-      searchPlaceholder={t("Search services...")}
+      searchPlaceholder={t("Search services, providers, locations...")}
       filter={filter}
     />
   );

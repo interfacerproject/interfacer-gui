@@ -31,9 +31,9 @@ const Products: NextPageWithLayout = () => {
     <CatalogLayout
       variant="products"
       hero={{
-        title: t("Products & Manufactured Goods"),
+        title: t("Open Hardware Products"),
         description: t(
-          "Discover manufactured products based on open source hardware designs. Find ready-made goods, kits, and custom manufacturing options."
+          "Ready-made products built on open source designs by local FabLabs and manufacturers. Transparent, traceable, and community-rooted."
         ),
         stats: (
           <>
@@ -44,7 +44,7 @@ const Products: NextPageWithLayout = () => {
                 </StatIcon>
               }
               value="—"
-              label={t("Products")}
+              label={t("Total Products")}
             />
             <HeroStatCard
               icon={
@@ -53,7 +53,7 @@ const Products: NextPageWithLayout = () => {
                 </StatIcon>
               }
               value="—"
-              label={t("Based on Designs")}
+              label={t("Available Now")}
             />
             <HeroStatCard
               icon={
@@ -67,7 +67,7 @@ const Products: NextPageWithLayout = () => {
           </>
         ),
       }}
-      searchPlaceholder={t("Search products...")}
+      searchPlaceholder={t("Search products, manufacturers, materials...")}
       filter={filter}
     />
   );
