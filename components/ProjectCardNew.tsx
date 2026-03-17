@@ -272,10 +272,20 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
                       />
                     </svg>
                     <span
-                      className="text-ifr-text-secondary text-sm truncate"
+                      className="text-ifr-text-secondary text-sm truncate flex-1"
                       style={{ fontFamily: "var(--ifr-font-body)" }}
                     >
-                      {requirements}
+                      {t("Requires:")} {requirements}
+                    </span>
+                    <span
+                      className="text-ifr-green text-sm shrink-0"
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontWeight: "var(--ifr-fw-medium)",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {t("nearby")}
                     </span>
                   </div>
                 )}
@@ -299,6 +309,23 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
             {/* PRODUCT footer */}
             {projectType === ProjectType.PRODUCT && (
               <>
+                {project.metadata?.basedOnDesign && (
+                  <div className="border-t border-ifr pt-2 flex items-center gap-1.5">
+                    <EntityTypeIcon type={ProjectType.DESIGN} size="small" fill="var(--ifr-green)" />
+                    <span
+                      className="text-ifr-text-secondary truncate"
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-base)",
+                      }}
+                    >
+                      {t("Based on:")}{" "}
+                      <span className="text-ifr-green" style={{ fontWeight: "var(--ifr-fw-medium)" }}>
+                        {String(project.metadata.basedOnDesign.name || project.metadata.basedOnDesign)}
+                      </span>
+                    </span>
+                  </div>
+                )}
                 {materialTags.length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
                     {materialTags.slice(0, 4).map(mat => (
