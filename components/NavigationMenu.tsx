@@ -424,8 +424,15 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
               />
               <NavItem
                 icon={<BookmarkIcon className="w-[18px] h-[18px]" style={{ color: "var(--ifr-text-secondary)" }} />}
-                label={t("My list")}
+                label={t("Saved Lists")}
                 onClick={() => handleNavigate(`${user.profileUrl}?tab=1`)}
+                activeBg="var(--ifr-bg-hover)"
+                activeTextColor="var(--ifr-text-primary)"
+              />
+              <NavItem
+                icon={<DocumentTextIcon className="w-[18px] h-[18px]" style={{ color: "var(--ifr-text-secondary)" }} />}
+                label={t("Track Record")}
+                onClick={() => handleNavigate(`${user.profileUrl}?tab=track-record`)}
                 activeBg="var(--ifr-bg-hover)"
                 activeTextColor="var(--ifr-text-primary)"
               />
