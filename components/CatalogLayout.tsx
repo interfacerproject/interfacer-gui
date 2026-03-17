@@ -46,9 +46,15 @@ export default function CatalogLayout({
   const [searchQuery, setSearchQuery] = useState((router.query.q as string) || "");
 
   const sortBy = (router.query.sort as string) || "Latest";
+  const showFilter = (router.query.show as string) || "All";
 
   const handleSortChange = (value: string) => {
     const query = { ...router.query, sort: value };
+    router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
+  };
+
+  const handleShowChange = (value: string) => {
+    const query = { ...router.query, show: value };
     router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
   };
 
@@ -175,8 +181,14 @@ export default function CatalogLayout({
               </div>
             </form>
 
-            {/* Sort */}
+            {/* Sort & Show */}
             <div className="flex items-center gap-3 shrink-0">
+              <ToolbarDropdown
+                label={t("Show")}
+                value={showFilter}
+                options={["All", "Published", "Drafts", "Archived"]}
+                onChange={handleShowChange}
+              />
               <ToolbarDropdown label={t("Sort by")} value={sortBy} options={sortOptions} onChange={handleSortChange} />
             </div>
           </div>
