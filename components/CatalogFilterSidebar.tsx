@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { Chemistry, Cube, Flash, LocationStar, Recycle, Settings, Tag, Tools, Time } from "@carbon/icons-react";
+import { Chemistry, Cube, Flash, LocationStar, Recycle, Settings, Tag, Time, Tools } from "@carbon/icons-react";
 import { ScaleIcon } from "@heroicons/react/outline";
 import CheckboxFilter from "components/CheckboxFilter";
 import FilterSection from "components/FilterSection";

@@ -6,7 +6,6 @@ import { LocationMarkerIcon } from "@heroicons/react/outline";
 import CatalogLayout, { HeroStatCard, StatIcon } from "components/CatalogLayout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import React from "react";
 import useFilters from "../hooks/useFilters";
 import { NextPageWithLayout } from "./_app";
 
