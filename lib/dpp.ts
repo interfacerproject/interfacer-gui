@@ -18,6 +18,7 @@ import type {
   DeleteDppResponse,
   DppApiError,
   DppDocument,
+  DppStatus,
   ListDppsFilters,
   ListDppsResponse,
   UpdateDppResponse,
@@ -102,7 +103,7 @@ const useDppApi = () => {
 
   // --- List / Query ---
 
-  async function listDpps(filters?: ListDppsFilters): Promise<DppDocument[]> {
+  async function listDpps(filters?: ListDppsFilters): Promise<ListDppsResponse> {
     const params = new URLSearchParams();
     if (filters?.productId) params.set("productId", filters.productId);
     if (filters?.createdBy) params.set("createdBy", filters.createdBy);
@@ -113,9 +114,7 @@ const useDppApi = () => {
     const qs = params.toString();
     const path = qs ? `/dpps?${qs}` : "/dpps";
 
-    // Current backend returns DppDocument[] directly.
-    // When ie5.2 adds { dpps, total } wrapper, update this.
-    return request<DppDocument[]>("GET", path);
+    return request<ListDppsResponse>("GET", path);
   }
 
   // --- File operations ---
@@ -159,6 +158,52 @@ const useDppApi = () => {
     return `${DPP_BASE_URL}/file/${encodeURIComponent(id)}`;
   }
 
+  async function updateDppStatus(id: string, status: DppStatus): Promise<UpdateDppResponse> {
+    return request<UpdateDppResponse>("PUT", `/dpp/${encodeURIComponent(id)}/status`, { status });
+  }
+
+  async function addAttachment(dppId: string, section: string, file: File): Promise<Attachment> {
+    const arrayBuffer = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const checksum = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+
+    const zencode_exec = (await import("zenroom")).zencode_exec;
+    const data = `{"gql": "${checksum}"}`;
+    const keys = `{"keyring": {"eddsa": "${getItem("eddsaPrivateKey")}"}}`;
+    const { result } = await zencode_exec(sign, { data, keys });
+    const signature = JSON.parse(result).eddsa_signature;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(
+      `${DPP_BASE_URL}/dpp/${encodeURIComponent(dppId)}/attachments?section=${encodeURIComponent(section)}`,
+      {
+        method: "POST",
+        headers: {
+          "did-pk": String(user?.publicKey),
+          "did-sign": signature,
+        },
+        body: formData,
+      }
+    );
+
+    if (!res.ok) {
+      let apiError: DppApiError = { error: res.statusText };
+      try {
+        apiError = await res.json();
+      } catch {}
+      throw new DppRequestError(apiError.error, res.status, apiError.details);
+    }
+
+    return res.json();
+  }
+
+  async function deleteAttachment(dppId: string, attachmentId: string): Promise<void> {
+    return request<void>("DELETE", `/dpp/${encodeURIComponent(dppId)}/attachments/${encodeURIComponent(attachmentId)}`);
+  }
+
   return {
     createDpp,
     getDpp,
@@ -167,6 +212,9 @@ const useDppApi = () => {
     listDpps,
     uploadFile,
     getFileUrl,
+    updateDppStatus,
+    addAttachment,
+    deleteAttachment,
   };
 };
 
