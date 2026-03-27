@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { ChevronDown, ChevronLeft, ChevronRight } from "@carbon/icons-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Location } from "@carbon/icons-react";
 import { BookmarkIcon, ExternalLinkIcon, StarIcon } from "@heroicons/react/outline";
 import { StarIcon as StarIconSolid } from "@heroicons/react/solid";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
@@ -594,6 +594,166 @@ function hasAnyField(dpp: Record<string, any>, fields: string[]): boolean {
   return fields.some(f => dpp[f] !== undefined && dpp[f] !== null && dpp[f] !== "");
 }
 
+/** Sustainability metric card */
+function MetricCard({
+  icon,
+  iconBg,
+  label,
+  value,
+  unit,
+}: {
+  icon: ReactNode;
+  iconBg: string;
+  label: string;
+  value: string | undefined;
+  unit: string;
+}) {
+  if (!value) return null;
+  return (
+    <div className="bg-[rgba(200,212,229,0.1)] border border-[#c9cccf] rounded-md p-4 flex items-start gap-3">
+      <div
+        className="flex items-center justify-center w-10 h-10 rounded-md shrink-0"
+        style={{ backgroundColor: iconBg }}
+      >
+        {icon}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-[#6c707c] m-0" style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}>
+          {label}
+        </p>
+        <p
+          className="text-[#0b1324] m-0"
+          style={{
+            fontFamily: "var(--ifr-font-body)",
+            fontSize: "var(--ifr-fs-md)",
+            fontWeight: "var(--ifr-fw-bold)",
+          }}
+        >
+          {value} {unit}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/** Sustainability metric cards grid */
+function SustainabilityMetrics({ dpp }: { dpp: Record<string, string> }) {
+  const { t } = useTranslation("common");
+
+  const leafIcon = (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66L12 14l4 4 6-6-2-2-4 4-3-3c2.74-5.07 5.91-7.5 9-7.5V2c-4.26 0-8.17 3.59-10 6"
+        stroke="white"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+
+  const boltIcon = (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+
+  const metrics = [
+    { label: t("Energy Consumption"), value: dpp.energyConsumption, unit: "kWh", icon: boltIcon, iconBg: "#A65F00" },
+    { label: t("CO\u2082 Emissions"), value: dpp.co2eEmissions, unit: "kg", icon: leafIcon, iconBg: "#036A53" },
+    { label: t("Water Consumption"), value: dpp.waterConsumption, unit: "L", icon: leafIcon, iconBg: "#036A53" },
+    { label: t("Chemical Consumption"), value: dpp.chemicalConsumption, unit: "kg", icon: leafIcon, iconBg: "#036A53" },
+  ].filter(m => m.value);
+
+  if (metrics.length === 0) return null;
+
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      {metrics.map(m => (
+        <MetricCard key={m.label} icon={m.icon} iconBg={m.iconBg} label={m.label} value={m.value} unit={m.unit} />
+      ))}
+    </div>
+  );
+}
+
+/** Location card for Get It Made / Repair / Recycling */
+function LocationCard({
+  name,
+  description,
+  distance,
+  type,
+  verified,
+}: {
+  name: string;
+  description?: string;
+  distance?: string;
+  type?: string;
+  verified?: boolean;
+}) {
+  const { t } = useTranslation("common");
+  return (
+    <div className="border border-[#c9cccf] rounded-md p-4 flex flex-col gap-2">
+      <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-1">
+          <p
+            className="text-[#0b1324] m-0"
+            style={{
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-md)",
+              fontWeight: "var(--ifr-fw-medium)",
+            }}
+          >
+            {name}
+          </p>
+          <div className="flex items-center gap-3">
+            {distance && (
+              <span className="flex items-center gap-1 text-[#036a53]" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                <Location size={14} />
+                {distance}
+              </span>
+            )}
+            {type && (
+              <span
+                className="border border-[#c9cccf] rounded px-2 py-0.5 text-[#0b1324]"
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-sm)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                }}
+              >
+                {type}
+              </span>
+            )}
+          </div>
+        </div>
+        {verified && (
+          <span
+            className="bg-[rgba(3,106,83,0.1)] text-[#036a53] rounded px-2 py-0.5 shrink-0"
+            style={{
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "12px",
+              fontWeight: "var(--ifr-fw-medium)",
+            }}
+          >
+            {t("Verified")}
+          </span>
+        )}
+      </div>
+      {description && (
+        <p className="text-[#6c707c] m-0" style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}>
+          {description}
+        </p>
+      )}
+    </div>
+  );
+}
+
 /** Categorized DPP display with collapsible subsections */
 function DppDisplay({ dpp }: { dpp: Record<string, string> }) {
   const { t } = useTranslation("common");
@@ -1082,6 +1242,167 @@ export default function ProjectDetailNew() {
                 </div>
               </DetailSection>
             )}
+
+            {/* Sustainability Overview — products with DPP data */}
+            {projectType === ProjectType.PRODUCT && (project.metadata as Record<string, any>)?.dpp && (
+              <DetailSection
+                icon={
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66L12 14l4 4 6-6-2-2-4 4-3-3c2.74-5.07 5.91-7.5 9-7.5V2c-4.26 0-8.17 3.59-10 6"
+                      stroke="#036A53"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                }
+                iconBg="bg-[rgba(3,106,83,0.1)]"
+                title={t("Sustainability Overview")}
+                subtitle={t("Environmental impact and resource consumption metrics")}
+                sectionId="sustainability"
+              >
+                <SustainabilityMetrics dpp={(project.metadata as Record<string, any>).dpp as Record<string, string>} />
+              </DetailSection>
+            )}
+
+            {/* Get It Made — designs, shows manufacturers */}
+            {projectType === ProjectType.DESIGN && (
+              <DetailSection
+                icon={
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <rect x="3" y="3" width="7" height="7" rx="1" stroke="#0B1324" strokeWidth="2" />
+                    <rect x="14" y="3" width="7" height="7" rx="1" stroke="#0B1324" strokeWidth="2" />
+                    <rect x="3" y="14" width="7" height="7" rx="1" stroke="#0B1324" strokeWidth="2" />
+                    <rect x="14" y="14" width="7" height="7" rx="1" stroke="#0B1324" strokeWidth="2" />
+                  </svg>
+                }
+                iconBg="bg-[#f1bd4d]"
+                title={t("Get It Made")}
+                subtitle={t("Local manufacturers and makerspaces that can produce this")}
+                sectionId="get-it-made"
+              >
+                <div className="flex flex-col gap-3">
+                  <p
+                    className="text-[#6c707c] m-0"
+                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                  >
+                    {t("These verified manufacturers have the equipment and expertise to make this project for you:")}
+                  </p>
+                  <LocationCard
+                    name="FabLab Hamburg"
+                    distance="2.3 km"
+                    type="Makerspace"
+                    verified
+                    description="Full equipment: Laser cutters, 3D printers, electronics lab."
+                  />
+                  <LocationCard
+                    name="Precision 3D Shop"
+                    distance="5.1 km"
+                    type="Commercial"
+                    verified
+                    description="Full equipment: Laser cutters, 3D printers, electronics lab."
+                  />
+                  <LocationCard
+                    name="Community Workshop"
+                    distance="7.8 km"
+                    type="Makerspace"
+                    verified
+                    description="Full equipment: Laser cutters, 3D printers, electronics lab."
+                  />
+                </div>
+              </DetailSection>
+            )}
+
+            {/* Community Contributions */}
+            <DetailSection
+              icon={
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"
+                    stroke="#0B1324"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="9" cy="7" r="4" stroke="#0B1324" strokeWidth="2" />
+                  <path
+                    d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
+                    stroke="#0B1324"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              }
+              iconBg="bg-[rgba(200,212,229,0.5)]"
+              title={t("Community Contributions")}
+              subtitle={t("Improvements and modifications from contributors")}
+              badge={
+                (project.metadata as Record<string, any>)?.contributors?.length > 0 ? (
+                  <span className="border border-[#c9cccf] rounded px-2 py-0.5 text-xs font-medium text-[#0b1324]">
+                    {(project.metadata as Record<string, any>).contributors.length}
+                  </span>
+                ) : undefined
+              }
+              sectionId="contributions"
+            >
+              {(project.metadata as Record<string, any>)?.contributors?.length > 0 ? (
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-wrap gap-4">
+                    {((project.metadata as Record<string, any>).contributors as string[]).map((userId: string) => (
+                      <Link key={userId} href={`/profile/${userId}`}>
+                        <a className="flex flex-col items-center gap-2 no-underline group">
+                          <BrUserAvatar userId={userId} size="48px" />
+                          <span
+                            className="text-[#0b1324] group-hover:underline"
+                            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                          >
+                            {userId.slice(0, 8)}
+                          </span>
+                        </a>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p
+                  className="text-[#6c707c] m-0"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                >
+                  {t("Community contributions would be displayed here...")}
+                </p>
+              )}
+            </DetailSection>
+
+            {/* Related Projects */}
+            <DetailSection
+              icon={
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <line x1="6" y1="3" x2="6" y2="15" stroke="#0B1324" strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="18" cy="6" r="3" stroke="#0B1324" strokeWidth="2" />
+                  <circle cx="6" cy="18" r="3" stroke="#0B1324" strokeWidth="2" />
+                  <path
+                    d="M18 9a9 9 0 01-9 9"
+                    stroke="#0B1324"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              }
+              iconBg="bg-[rgba(200,212,229,0.5)]"
+              title={t("Related Projects")}
+              subtitle={t("Projects inspired by or building upon this design")}
+              sectionId="related-projects"
+            >
+              <p
+                className="text-[#6c707c] m-0"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {t("Related projects would be displayed here...")}
+              </p>
+            </DetailSection>
 
             {/* Product Passport — products only */}
             {projectType === ProjectType.PRODUCT && (project.metadata as Record<string, any>)?.dpp && (
