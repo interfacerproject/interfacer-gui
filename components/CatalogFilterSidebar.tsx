@@ -286,11 +286,20 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
         {variant === "products" && (
           <>
             <FilterSection
-              icon={<Cube size={16} />}
-              label="Materials"
+              icon={<Settings size={16} />}
+              label="Machines Needed"
               defaultOpen
-              badge={selectedMaterials.length || undefined}
+              badge={selectedMachines.length || undefined}
             >
+              <CheckboxFilter
+                items={MACHINES}
+                searchPlaceholder="Search machines..."
+                selectedItems={selectedMachines}
+                onToggle={toggleTag(TAG_PREFIX.MACHINE)}
+              />
+            </FilterSection>
+
+            <FilterSection icon={<Cube size={16} />} label="Materials" badge={selectedMaterials.length || undefined}>
               <CheckboxFilter
                 items={MATERIALS}
                 searchPlaceholder="Search materials..."
@@ -329,6 +338,42 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                   router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
                 }}
               />
+            </FilterSection>
+
+            <FilterSection icon={<Tools size={16} />} label="Manufacturability">
+              <div className="flex flex-col gap-2.5">
+                {[
+                  { value: "all", label: "All" },
+                  { value: "can_be_manufactured", label: "Can be manufactured" },
+                  { value: "in_progress", label: "In progress" },
+                ].map(option => (
+                  <div
+                    key={option.value}
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => setManufacturingFilter(option.value)}
+                  >
+                    <div
+                      className="w-4 h-4 border shrink-0 flex items-center justify-center transition-colors"
+                      style={{
+                        borderRadius: "50%",
+                        backgroundColor:
+                          manufacturingFilter === option.value ? "var(--ifr-green)" : "var(--ifr-bg-surface)",
+                        borderColor: manufacturingFilter === option.value ? "var(--ifr-green)" : "var(--ifr-border)",
+                      }}
+                    >
+                      {manufacturingFilter === option.value && (
+                        <div className="w-1.5 h-1.5 bg-white" style={{ borderRadius: "50%" }} />
+                      )}
+                    </div>
+                    <span
+                      className="text-ifr-text-primary"
+                      style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
+                    >
+                      {t(option.label)}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </FilterSection>
           </>
         )}

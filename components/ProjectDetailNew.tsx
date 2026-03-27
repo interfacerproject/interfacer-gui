@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { ChevronLeft, ChevronRight } from "@carbon/icons-react";
+import { ChevronDown, ChevronLeft, ChevronRight } from "@carbon/icons-react";
 import { BookmarkIcon, ExternalLinkIcon, StarIcon } from "@heroicons/react/outline";
 import { StarIcon as StarIconSolid } from "@heroicons/react/solid";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
@@ -21,7 +21,7 @@ import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 
 function getProjectType(project: Partial<EconomicResource>): ProjectType {
   const name = project.conformsTo?.name;
@@ -540,38 +540,246 @@ function DppFieldRow({ label, value }: { label: string; value?: string }) {
   );
 }
 
-/** Compact DPP display for the Product Passport section */
+/** Collapsible DPP subsection with colored icon */
+function DppSubsection({
+  icon,
+  iconBg,
+  title,
+  subtitle,
+  children,
+}: {
+  icon: ReactNode;
+  iconBg: string;
+  title: string;
+  subtitle: string;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div className="border border-ifr rounded-lg overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex items-center w-full gap-3 px-6 py-4 text-left hover:bg-gray-50 transition-colors"
+      >
+        <div
+          className="flex items-center justify-center w-10 h-10 rounded-md shrink-0"
+          style={{ backgroundColor: iconBg }}
+        >
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="text-xl font-bold" style={{ fontFamily: "var(--ifr-font-heading)" }}>
+            {title}
+          </h4>
+          <p className="text-sm text-ifr-text-secondary">{subtitle}</p>
+        </div>
+        <ChevronDown
+          size={20}
+          className={`shrink-0 text-ifr-text-secondary transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      {open && (
+        <>
+          <div className="border-t border-ifr mx-6" />
+          <div className="px-6 py-4 flex flex-col gap-2">{children}</div>
+        </>
+      )}
+    </div>
+  );
+}
+
+/** Check if any of the given fields have values in the dpp object */
+function hasAnyField(dpp: Record<string, any>, fields: string[]): boolean {
+  return fields.some(f => dpp[f] !== undefined && dpp[f] !== null && dpp[f] !== "");
+}
+
+/** Categorized DPP display with collapsible subsections */
 function DppDisplay({ dpp }: { dpp: Record<string, string> }) {
   const { t } = useTranslation("common");
+
+  const overviewFields = [
+    "brandName",
+    "productName",
+    "countrySale",
+    "countryOrigin",
+    "dimensions",
+    "modelName",
+    "netWeight",
+    "conditionProduct",
+    "warrantyDuration",
+  ];
+  const complianceFields = ["ceMarking", "rohsCompliance"];
+  const envFields = ["energyConsumption", "co2eEmissions", "waterConsumption", "chemicalConsumption"];
+  const energyFields = [
+    "maxPower",
+    "maxVoltage",
+    "maxCurrent",
+    "batteryType",
+    "batteryChargingTime",
+    "batteryLife",
+    "chargerType",
+    "powerRating",
+    "dcVoltage",
+  ];
+  const repairFields = ["sparePartsAvailability", "reasonForRepair", "performedAction", "materialsUsed"];
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <DppFieldRow label={t("Brand Name")} value={dpp.brandName} />
-        <DppFieldRow label={t("Product Name")} value={dpp.productName} />
-        <DppFieldRow label={t("Country of Sale")} value={dpp.countrySale} />
-        <DppFieldRow label={t("Country of Origin")} value={dpp.countryOrigin} />
-        <DppFieldRow label={t("Dimensions")} value={dpp.dimensions} />
-        <DppFieldRow label={t("Model Name")} value={dpp.modelName} />
-        <DppFieldRow label={t("Net Weight")} value={dpp.netWeight ? `${dpp.netWeight} kg` : undefined} />
-        <DppFieldRow label={t("Condition")} value={dpp.conditionProduct} />
-        <DppFieldRow
-          label={t("Warranty Duration")}
-          value={dpp.warrantyDuration ? `${dpp.warrantyDuration} years` : undefined}
-        />
-        <DppFieldRow
-          label={t("CE Marking")}
-          value={dpp.ceMarking === "yes" ? t("Yes") : dpp.ceMarking === "no" ? t("No") : undefined}
-        />
-        <DppFieldRow
-          label={t("ROHS Compliance")}
-          value={dpp.rohsCompliance === "yes" ? t("Yes") : dpp.rohsCompliance === "no" ? t("No") : undefined}
-        />
-        <DppFieldRow
-          label={t("Energy Consumption")}
-          value={dpp.energyConsumption ? `${dpp.energyConsumption} kWh` : undefined}
-        />
-        <DppFieldRow label={t("CO₂ Emissions")} value={dpp.co2eEmissions ? `${dpp.co2eEmissions} kg` : undefined} />
-      </div>
+    <div className="flex flex-col gap-6">
+      {/* Overview */}
+      {hasAnyField(dpp, overviewFields) && (
+        <DppSubsection
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <rect x="9" y="3" width="6" height="4" rx="1" stroke="white" strokeWidth="2" />
+            </svg>
+          }
+          iconBg="#1447E6"
+          title={t("DPP Overview")}
+          subtitle={t("Basic product information and identification")}
+        >
+          <DppFieldRow label={t("Brand Name")} value={dpp.brandName} />
+          <DppFieldRow label={t("Product Name")} value={dpp.productName} />
+          <DppFieldRow label={t("Country of Sale")} value={dpp.countrySale} />
+          <DppFieldRow label={t("Country of Origin")} value={dpp.countryOrigin} />
+          <DppFieldRow label={t("Dimensions")} value={dpp.dimensions} />
+          <DppFieldRow label={t("Model Name")} value={dpp.modelName} />
+          <DppFieldRow label={t("Net Weight")} value={dpp.netWeight ? `${dpp.netWeight} kg` : undefined} />
+          <DppFieldRow label={t("Condition")} value={dpp.conditionProduct} />
+          <DppFieldRow
+            label={t("Warranty Duration")}
+            value={dpp.warrantyDuration ? `${dpp.warrantyDuration} years` : undefined}
+          />
+        </DppSubsection>
+      )}
+
+      {/* Compliance & Certifications */}
+      {hasAnyField(dpp, complianceFields) && (
+        <DppSubsection
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          }
+          iconBg="#0B1324"
+          title={t("Compliance & Certifications")}
+          subtitle={t("Regulatory compliance and standards")}
+        >
+          <DppFieldRow
+            label={t("CE Marking")}
+            value={dpp.ceMarking === "yes" ? t("Yes") : dpp.ceMarking === "no" ? t("No") : undefined}
+          />
+          <DppFieldRow
+            label={t("ROHS Compliance")}
+            value={dpp.rohsCompliance === "yes" ? t("Yes") : dpp.rohsCompliance === "no" ? t("No") : undefined}
+          />
+        </DppSubsection>
+      )}
+
+      {/* Environmental Impact */}
+      {hasAnyField(dpp, envFields) && (
+        <DppSubsection
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66L12 14l4 4 6-6-2-2-4 4-3-3c2.74-5.07 5.91-7.5 9-7.5V2c-4.26 0-8.17 3.59-10 6"
+                stroke="white"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          }
+          iconBg="#036A53"
+          title={t("Environmental Impact")}
+          subtitle={t("Energy, emissions, and resource consumption")}
+        >
+          <DppFieldRow
+            label={t("Energy Consumption")}
+            value={dpp.energyConsumption ? `${dpp.energyConsumption} kWh` : undefined}
+          />
+          <DppFieldRow label={t("CO₂ Emissions")} value={dpp.co2eEmissions ? `${dpp.co2eEmissions} kg` : undefined} />
+          <DppFieldRow
+            label={t("Water Consumption")}
+            value={dpp.waterConsumption ? `${dpp.waterConsumption} L` : undefined}
+          />
+          <DppFieldRow
+            label={t("Chemical Consumption")}
+            value={dpp.chemicalConsumption ? `${dpp.chemicalConsumption} kg` : undefined}
+          />
+        </DppSubsection>
+      )}
+
+      {/* Energy & Power */}
+      {hasAnyField(dpp, energyFields) && (
+        <DppSubsection
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          }
+          iconBg="#A65F00"
+          title={t("Energy & Power")}
+          subtitle={t("Power consumption and electrical specifications")}
+        >
+          <DppFieldRow label={t("Max Power")} value={dpp.maxPower ? `${dpp.maxPower} W` : undefined} />
+          <DppFieldRow label={t("Max Voltage")} value={dpp.maxVoltage ? `${dpp.maxVoltage} V` : undefined} />
+          <DppFieldRow label={t("Max Current")} value={dpp.maxCurrent ? `${dpp.maxCurrent} A` : undefined} />
+          <DppFieldRow label={t("Battery Type")} value={dpp.batteryType} />
+          <DppFieldRow
+            label={t("Charging Time")}
+            value={dpp.batteryChargingTime ? `${dpp.batteryChargingTime} min` : undefined}
+          />
+          <DppFieldRow label={t("Battery Life")} value={dpp.batteryLife ? `${dpp.batteryLife} min` : undefined} />
+          <DppFieldRow label={t("Charger Type")} value={dpp.chargerType} />
+          <DppFieldRow label={t("Power Rating")} value={dpp.powerRating ? `${dpp.powerRating} W` : undefined} />
+          <DppFieldRow label={t("DC Voltage")} value={dpp.dcVoltage ? `${dpp.dcVoltage} V` : undefined} />
+        </DppSubsection>
+      )}
+
+      {/* Repairability */}
+      {hasAnyField(dpp, repairFields) && (
+        <DppSubsection
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          }
+          iconBg="#8200DB"
+          title={t("Repairability")}
+          subtitle={t("Repair availability and spare parts")}
+        >
+          <DppFieldRow label={t("Spare Parts")} value={dpp.sparePartsAvailability} />
+          <DppFieldRow label={t("Reason for Repair")} value={dpp.reasonForRepair} />
+          <DppFieldRow label={t("Action Performed")} value={dpp.performedAction} />
+          <DppFieldRow label={t("Materials Used")} value={dpp.materialsUsed} />
+        </DppSubsection>
+      )}
     </div>
   );
 }
