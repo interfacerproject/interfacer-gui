@@ -16,6 +16,8 @@ export default function CheckboxFilter({
 }: CheckboxFilterProps) {
   const [search, setSearch] = useState("");
 
+  const selectedSet = useMemo(() => new Set(selectedItems.map(s => s.toLowerCase())), [selectedItems]);
+
   const filteredItems = useMemo(
     () => (search ? items.filter(item => item.toLowerCase().includes(search.toLowerCase())) : items),
     [items, search]
@@ -35,20 +37,23 @@ export default function CheckboxFilter({
       </div>
       <div className="overflow-y-auto max-h-[280px] space-y-3">
         {filteredItems.map(item => {
-          const checked = selectedItems.includes(item);
+          const checked = selectedSet.has(item.toLowerCase());
           return (
-            <label key={item} className="flex items-center gap-2 cursor-pointer">
+            <div
+              key={item}
+              role="checkbox"
+              aria-checked={checked}
+              tabIndex={0}
+              onClick={() => onToggle?.(item)}
+              onKeyDown={e => {
+                if (e.key === " " || e.key === "Enter") {
+                  e.preventDefault();
+                  onToggle?.(item);
+                }
+              }}
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <span
-                role="checkbox"
-                aria-checked={checked}
-                tabIndex={0}
-                onClick={() => onToggle?.(item)}
-                onKeyDown={e => {
-                  if (e.key === " " || e.key === "Enter") {
-                    e.preventDefault();
-                    onToggle?.(item);
-                  }
-                }}
                 className={`flex items-center justify-center w-4 h-4 rounded-ifr-sm border shrink-0 transition-colors ${
                   checked ? "bg-ifr-green border-ifr-green" : "bg-white border-ifr"
                 }`}
@@ -66,7 +71,7 @@ export default function CheckboxFilter({
                 )}
               </span>
               <span className="text-sm font-medium">{item}</span>
-            </label>
+            </div>
           );
         })}
       </div>

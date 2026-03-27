@@ -49,6 +49,11 @@ import {
   productFiltersStepSchema,
   ProductFiltersStepValues,
 } from "./steps/ProductFiltersStep";
+import {
+  serviceFiltersStepDefaultValues,
+  serviceFiltersStepSchema,
+  ServiceFiltersStepValues,
+} from "./steps/ServiceFiltersStep";
 
 export interface Props {
   projectType: ProjectType;
@@ -59,6 +64,7 @@ export interface Props {
 export interface CreateProjectValues {
   main: MainStepValues;
   productFilters: ProductFiltersStepValues;
+  serviceFilters: ServiceFiltersStepValues;
   linkedDesign: LinkDesignStepValues;
   location: LocationStepValues;
   images: ImagesStepValues;
@@ -74,6 +80,7 @@ export interface CreateProjectValues {
 export const createProjectDefaultValues: CreateProjectValues = {
   main: mainStepDefaultValues,
   productFilters: productFiltersStepDefaultValues,
+  serviceFilters: serviceFiltersStepDefaultValues,
   linkedDesign: linkDesignStepDefaultValues,
   location: locationStepDefaultValues,
   images: imagesStepDefaultValues,
@@ -90,6 +97,7 @@ export const createProjectSchema = () =>
   yup.object({
     main: mainStepSchema(),
     productFilters: productFiltersStepSchema(),
+    serviceFilters: serviceFiltersStepSchema(),
     linkedDesign: linkDesignStepSchema().when("$projectType", (projectType: ProjectType, schema) =>
       projectType == ProjectType.PRODUCT ? schema.required("A design source is required for products") : schema
     ),
@@ -148,6 +156,7 @@ export default function CreateProjectForm(props: Props) {
   const createProjectDefaultValues: CreateProjectValues = {
     main: mainStepDefaultValues,
     productFilters: productFiltersStepDefaultValues,
+    serviceFilters: serviceFiltersStepDefaultValues,
     linkedDesign: linkDesignStepDefaultValues,
     location: locationStepDefaultUserValues,
     images: imagesStepDefaultValues,

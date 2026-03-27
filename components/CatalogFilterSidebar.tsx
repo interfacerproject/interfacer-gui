@@ -6,6 +6,15 @@ import { ScaleIcon } from "@heroicons/react/outline";
 import CheckboxFilter from "components/CheckboxFilter";
 import FilterSection from "components/FilterSection";
 import ToggleSwitch from "components/ToggleSwitch";
+import {
+  AVAILABILITY_OPTIONS,
+  POWER_COMPATIBILITY_OPTIONS,
+  PRODUCT_CATEGORY_OPTIONS,
+  REPAIRABILITY_AVAILABLE_TAG,
+  SERVICE_TYPE_OPTIONS,
+  TAG_PREFIX,
+  slugifyTagValue,
+} from "lib/tagging";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
@@ -18,22 +27,13 @@ interface CatalogFilterSidebarProps {
   onToggle?: () => void;
 }
 
-/** Decode machine/material/license slugs from URL tags */
-function decodeSlugs(tags: string[], prefix: string): string[] {
-  return tags
-    .filter(t => t.startsWith(prefix))
-    .map(t =>
-      t
-        .slice(prefix.length)
-        .split("-")
-        .filter(Boolean)
-        .map(p => p.charAt(0).toUpperCase() + p.slice(1))
-        .join(" ")
-    );
-}
-
-function encodeSlugs(items: string[], prefix: string): string[] {
-  return items.map(i => prefix + i.toLowerCase().replace(/\s+/g, "-"));
+/** Given current URL tags, a tag prefix, and the items list, return which items are currently selected */
+function getSelectedItems(tags: string[], prefix: string, items: readonly string[]): string[] {
+  const tagSet = new Set(tags);
+  return items.filter(item => {
+    const tag = `${prefix}-${slugifyTagValue(item)}`;
+    return tagSet.has(tag);
+  });
 }
 
 const MACHINES = [
@@ -80,26 +80,10 @@ const LICENSES = [
   "Apache 2.0",
 ];
 
-const SERVICE_TYPES = ["Fabrication", "Learning & Education", "Space Access"];
-
-const CATEGORIES = [
-  "3D printing",
-  "Electronics",
-  "Robotics",
-  "Tools",
-  "Furniture",
-  "Home Automation",
-  "Wearables",
-  "Medical",
-  "Education",
-  "Sustainability",
-];
-
 export default function CatalogFilterSidebar({ variant, collapsed = false, onToggle }: CatalogFilterSidebarProps) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const [manufacturingFilter, setManufacturingFilter] = useState("all");
-  const [repairInfo, setRepairInfo] = useState(false);
 
   // Parse current tags from URL
   const currentTags = useMemo(() => {
@@ -108,13 +92,27 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
     return typeof t === "string" ? t.split(",") : (t as string[]);
   }, [router.query.tags]);
 
-  const selectedMachines = useMemo(() => decodeSlugs(currentTags, "machine-"), [currentTags]);
-  const selectedMaterials = useMemo(() => decodeSlugs(currentTags, "material-"), [currentTags]);
+  const selectedMachines = useMemo(() => getSelectedItems(currentTags, TAG_PREFIX.MACHINE, MACHINES), [currentTags]);
+  const selectedMaterials = useMemo(() => getSelectedItems(currentTags, TAG_PREFIX.MATERIAL, MATERIALS), [currentTags]);
+  const selectedLicenses = useMemo(() => getSelectedItems(currentTags, TAG_PREFIX.LICENSE, LICENSES), [currentTags]);
+  const selectedServiceTypes = useMemo(
+    () => getSelectedItems(currentTags, TAG_PREFIX.SERVICE_TYPE, SERVICE_TYPE_OPTIONS),
+    [currentTags]
+  );
+  const selectedAvailability = useMemo(
+    () => getSelectedItems(currentTags, TAG_PREFIX.AVAILABILITY, AVAILABILITY_OPTIONS),
+    [currentTags]
+  );
+  const selectedPower = useMemo(
+    () => getSelectedItems(currentTags, TAG_PREFIX.POWER_COMPAT, POWER_COMPATIBILITY_OPTIONS),
+    [currentTags]
+  );
+  const repairInfo = useMemo(() => currentTags.includes(REPAIRABILITY_AVAILABLE_TAG), [currentTags]);
 
   // Toggle a tag in the URL
   const toggleTag = useCallback(
     (prefix: string) => (item: string) => {
-      const encoded = prefix + item.toLowerCase().replace(/\s+/g, "-");
+      const encoded = `${prefix}-${slugifyTagValue(item)}`;
       const newTags = currentTags.includes(encoded)
         ? currentTags.filter(t => t !== encoded)
         : [...currentTags, encoded];
@@ -132,7 +130,7 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
 
   const toggleCategory = useCallback(
     (cat: string) => {
-      const encoded = "category-" + cat.toLowerCase().replace(/\s+/g, "-");
+      const encoded = `${TAG_PREFIX.CATEGORY}-${slugifyTagValue(cat)}`;
       const newTags = currentTags.includes(encoded)
         ? currentTags.filter(t => t !== encoded)
         : [...currentTags, encoded];
@@ -148,7 +146,10 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
     [currentTags, router]
   );
 
-  const selectedCategories = useMemo(() => decodeSlugs(currentTags, "category-"), [currentTags]);
+  const selectedCategories = useMemo(
+    () => getSelectedItems(currentTags, TAG_PREFIX.CATEGORY, PRODUCT_CATEGORY_OPTIONS),
+    [currentTags]
+  );
 
   const clearAllFilters = () => {
     router.push({ pathname: router.pathname }, undefined, { shallow: true });
@@ -202,7 +203,7 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                 items={MACHINES}
                 searchPlaceholder="Search machines..."
                 selectedItems={selectedMachines}
-                onToggle={toggleTag("machine-")}
+                onToggle={toggleTag(TAG_PREFIX.MACHINE)}
               />
             </FilterSection>
 
@@ -215,12 +216,21 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                 items={MATERIALS}
                 searchPlaceholder="Search materials..."
                 selectedItems={selectedMaterials}
-                onToggle={toggleTag("material-")}
+                onToggle={toggleTag(TAG_PREFIX.MATERIAL)}
               />
             </FilterSection>
 
-            <FilterSection icon={<ScaleIcon className="w-4 h-4" />} label="License">
-              <CheckboxFilter items={LICENSES} searchPlaceholder="Search licenses..." />
+            <FilterSection
+              icon={<ScaleIcon className="w-4 h-4" />}
+              label="License"
+              badge={selectedLicenses.length || undefined}
+            >
+              <CheckboxFilter
+                items={LICENSES}
+                searchPlaceholder="Search licenses..."
+                selectedItems={selectedLicenses}
+                onToggle={toggleTag(TAG_PREFIX.LICENSE)}
+              />
             </FilterSection>
 
             <FilterSection
@@ -235,7 +245,11 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                   { value: "can_be_manufactured", label: "Can be manufactured" },
                   { value: "in_progress", label: "In progress" },
                 ].map(option => (
-                  <label key={option.value} className="flex items-center gap-2 cursor-pointer">
+                  <div
+                    key={option.value}
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => setManufacturingFilter(option.value)}
+                  >
                     <div
                       className="w-4 h-4 border shrink-0 flex items-center justify-center transition-colors"
                       style={{
@@ -244,7 +258,6 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                           manufacturingFilter === option.value ? "var(--ifr-green)" : "var(--ifr-bg-surface)",
                         borderColor: manufacturingFilter === option.value ? "var(--ifr-green)" : "var(--ifr-border)",
                       }}
-                      onClick={() => setManufacturingFilter(option.value)}
                     >
                       {manufacturingFilter === option.value && (
                         <div className="w-1.5 h-1.5 bg-white" style={{ borderRadius: "50%" }} />
@@ -256,7 +269,7 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                     >
                       {t(option.label)}
                     </span>
-                  </label>
+                  </div>
                 ))}
               </div>
             </FilterSection>
@@ -276,7 +289,7 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                 items={MATERIALS}
                 searchPlaceholder="Search materials..."
                 selectedItems={selectedMaterials}
-                onToggle={toggleTag("material-")}
+                onToggle={toggleTag(TAG_PREFIX.MATERIAL)}
               />
             </FilterSection>
 
@@ -309,7 +322,18 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                 label={t("Repair Info Available")}
                 description={t("Projects with repair and maintenance info")}
                 checked={repairInfo}
-                onChange={setRepairInfo}
+                onChange={checked => {
+                  const newTags = checked
+                    ? [...currentTags, REPAIRABILITY_AVAILABLE_TAG]
+                    : currentTags.filter(t => t !== REPAIRABILITY_AVAILABLE_TAG);
+                  const query = { ...router.query };
+                  if (newTags.length > 0) {
+                    query.tags = newTags.join(",");
+                  } else {
+                    delete query.tags;
+                  }
+                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
+                }}
               />
             </FilterSection>
           </>
@@ -343,12 +367,29 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
               </div>
             </FilterSection>
 
-            <FilterSection icon={<Chemistry size={16} />} label="Service Type" defaultOpen>
-              <CheckboxFilter items={SERVICE_TYPES} />
+            <FilterSection
+              icon={<Chemistry size={16} />}
+              label="Service Type"
+              defaultOpen
+              badge={selectedServiceTypes.length || undefined}
+            >
+              <CheckboxFilter
+                items={[...SERVICE_TYPE_OPTIONS]}
+                selectedItems={selectedServiceTypes}
+                onToggle={toggleTag(TAG_PREFIX.SERVICE_TYPE)}
+              />
             </FilterSection>
 
-            <FilterSection icon={<Time size={16} />} label="Availability">
-              <CheckboxFilter items={["Available Now", "Booking Required", "Weekdays Only", "Weekends Available"]} />
+            <FilterSection
+              icon={<Time size={16} />}
+              label="Availability"
+              badge={selectedAvailability.length || undefined}
+            >
+              <CheckboxFilter
+                items={[...AVAILABILITY_OPTIONS]}
+                selectedItems={selectedAvailability}
+                onToggle={toggleTag(TAG_PREFIX.AVAILABILITY)}
+              />
             </FilterSection>
 
             <FilterSection
@@ -360,7 +401,7 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                 items={MACHINES}
                 searchPlaceholder="Search machines..."
                 selectedItems={selectedMachines}
-                onToggle={toggleTag("machine-")}
+                onToggle={toggleTag(TAG_PREFIX.MACHINE)}
               />
             </FilterSection>
           </>
@@ -398,8 +439,8 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
 
         <FilterSection icon={<Tag size={16} />} label="Categories & Tags">
           <div className="flex flex-col gap-2 max-h-[216px] overflow-y-auto pr-3">
-            {CATEGORIES.map(cat => {
-              const active = selectedCategories.map(c => c.toLowerCase()).includes(cat.toLowerCase());
+            {PRODUCT_CATEGORY_OPTIONS.map(cat => {
+              const active = selectedCategories.includes(cat);
               return (
                 <button
                   key={cat}
@@ -425,9 +466,15 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
         {/* Power/Environmental — designs and products */}
         {variant !== "services" && (
           <>
-            <FilterSection icon={<Flash size={16} />} label="Power Compatibility">
+            <FilterSection
+              icon={<Flash size={16} />}
+              label="Power Compatibility"
+              badge={selectedPower.length || undefined}
+            >
               <CheckboxFilter
-                items={["110V AC", "220V AC", "12V DC", "24V DC", "Battery Powered", "USB-C PD", "Solar Compatible"]}
+                items={[...POWER_COMPATIBILITY_OPTIONS]}
+                selectedItems={selectedPower}
+                onToggle={toggleTag(TAG_PREFIX.POWER_COMPAT)}
               />
             </FilterSection>
 
