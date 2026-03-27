@@ -12,7 +12,7 @@ import { IdeaPoints } from "lib/PointsDistribution";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
 import EntityTypeIcon from "./EntityTypeIcon";
 import ProjectCardImage from "./ProjectCardImage";
@@ -85,7 +85,7 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
   const { user: authUser } = useAuth();
   const { likeER, isLiked, erFollowerLength } = useSocial(project.id);
   const { addIdeaPoints } = useWallet({});
-  const [bookmarked, setBookmarked] = useState(false);
+  const [bookmarked, setBookmarked] = React.useState(false);
 
   const projectType = getProjectType(project);
   const images = findProjectImages(project);
@@ -132,7 +132,7 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
     <Link href={`/project/${project.id}`}>
       <a className="block">
         <div
-          className="bg-ifr-surface border border-ifr overflow-hidden flex flex-col hover:shadow-md transition-shadow cursor-pointer"
+          className="group bg-ifr-surface border border-ifr overflow-hidden flex flex-col hover:shadow-lg transition-all duration-200 cursor-pointer"
           style={{ borderRadius: "var(--ifr-radius-sm)" }}
         >
           {/* Image Section */}
@@ -145,10 +145,10 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
               style={{ background: "linear-gradient(to top, var(--ifr-gradient-dark), transparent)" }}
             />
 
-            {/* Type label */}
+            {/* Type label — collapses to icon-only, expands on hover */}
             <div className="absolute top-3 left-3.5 z-10">
               <div
-                className="inline-flex items-center gap-2 px-2 py-1"
+                className="inline-flex items-center gap-0 group-hover:gap-2 px-1.5 group-hover:px-2 py-1 transition-all duration-200 overflow-hidden"
                 style={{
                   backgroundColor: entityTypeBg[projectType],
                   borderRadius: "var(--ifr-radius-sm)",
@@ -156,7 +156,7 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
               >
                 <EntityTypeIcon type={projectType} size="default" fill="#ffffff" />
                 <span
-                  className="text-white whitespace-nowrap"
+                  className="text-white whitespace-nowrap max-w-0 group-hover:max-w-[120px] overflow-hidden transition-all duration-200 opacity-0 group-hover:opacity-100"
                   style={{
                     fontFamily: "var(--ifr-font-body)",
                     fontSize: "var(--ifr-fs-base)",
@@ -419,6 +419,21 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
                 </div>
               </>
             )}
+
+            {/* Hover action links */}
+            <div className="border-t border-ifr pt-2 flex items-center gap-4 opacity-0 group-hover:opacity-100 max-h-0 group-hover:max-h-10 overflow-hidden transition-all duration-200">
+              <span
+                className="text-ifr-green hover:underline"
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-sm)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                }}
+              >
+                {t("Show {{type}}", { type: projectType.toLowerCase() })}
+              </span>
+              <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green" />
+            </div>
           </div>
         </div>
       </a>

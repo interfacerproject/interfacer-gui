@@ -4,6 +4,7 @@
 import { Chemistry, Cube, Flash, LocationStar, Recycle, Settings, Tag, Time, Tools } from "@carbon/icons-react";
 import { ScaleIcon } from "@heroicons/react/outline";
 import CheckboxFilter from "components/CheckboxFilter";
+import DualRangeSlider from "components/DualRangeSlider";
 import FilterSection from "components/FilterSection";
 import ToggleSwitch from "components/ToggleSwitch";
 import {
@@ -84,6 +85,11 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
   const { t } = useTranslation("common");
   const router = useRouter();
   const [manufacturingFilter, setManufacturingFilter] = useState("all");
+
+  // Range slider states for products
+  const [powerRange, setPowerRange] = useState<[number, number]>([0, 2000]);
+  const [co2Range, setCo2Range] = useState<[number, number]>([0, 500]);
+  const [energyRange, setEnergyRange] = useState<[number, number]>([0, 1000]);
 
   // Parse current tags from URL
   const currentTags = useMemo(() => {
@@ -294,27 +300,15 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
             </FilterSection>
 
             <FilterSection icon={<Flash size={16} />} label="Power Requirement">
-              <div className="flex flex-col gap-2">
-                <div className="relative h-4">
-                  <div className="absolute inset-0 bg-ifr-green rounded-full" />
-                  <div className="absolute left-0 top-0 w-4 h-4 bg-white border border-ifr-green rounded-full shadow-sm" />
-                  <div className="absolute right-0 top-0 w-4 h-4 bg-white border border-ifr-green rounded-full shadow-sm" />
-                </div>
-                <div className="flex justify-between">
-                  <span
-                    className="text-ifr-text-secondary"
-                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-                  >
-                    {"0W"}
-                  </span>
-                  <span
-                    className="text-ifr-text-secondary"
-                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-                  >
-                    {"2000W"}
-                  </span>
-                </div>
-              </div>
+              <DualRangeSlider
+                min={0}
+                max={2000}
+                step={50}
+                unit="W"
+                valueLow={powerRange[0]}
+                valueHigh={powerRange[1]}
+                onChange={(low, high) => setPowerRange([low, high])}
+              />
             </FilterSection>
 
             <FilterSection icon={<Tools size={16} />} label="Repairability">
@@ -479,20 +473,75 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
             </FilterSection>
 
             <FilterSection icon={<Recycle size={16} />} label="Environmental Impact">
-              <div className="text-ifr-text-secondary text-sm">
-                <p style={{ fontFamily: "var(--ifr-font-body)" }}>
-                  {t(
-                    "Environmental filters coming soon. Track energy consumption and CO2 emissions of hardware projects."
-                  )}
-                </p>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1">
+                  <span
+                    className="text-ifr-text-primary"
+                    style={{
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "var(--ifr-fs-sm)",
+                      fontWeight: "var(--ifr-fw-medium)",
+                    }}
+                  >
+                    {t("CO\u2082 Emissions")}
+                  </span>
+                  <DualRangeSlider
+                    min={0}
+                    max={500}
+                    step={10}
+                    unit="kg"
+                    valueLow={co2Range[0]}
+                    valueHigh={co2Range[1]}
+                    onChange={(low, high) => setCo2Range([low, high])}
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span
+                    className="text-ifr-text-primary"
+                    style={{
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "var(--ifr-fs-sm)",
+                      fontWeight: "var(--ifr-fw-medium)",
+                    }}
+                  >
+                    {t("Energy Consumption")}
+                  </span>
+                  <DualRangeSlider
+                    min={0}
+                    max={1000}
+                    step={10}
+                    unit="kWh"
+                    valueLow={energyRange[0]}
+                    valueHigh={energyRange[1]}
+                    onChange={(low, high) => setEnergyRange([low, high])}
+                  />
+                </div>
               </div>
             </FilterSection>
           </>
         )}
 
         {/* Sticky bottom action bar */}
-        {hasActiveFilters && (
-          <div className="sticky bottom-0 bg-ifr-surface border-t border-ifr px-6 py-4 flex flex-col gap-2">
+        <div className="sticky bottom-0 bg-ifr-surface border-t border-ifr px-6 py-4 flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              /* Filters are already applied instantly via URL params — this button serves as a visual confirmation + scroll-to-top */
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="w-full text-[#0b1324] flex items-center justify-center transition-colors hover:brightness-95"
+            style={{
+              height: "var(--ifr-control-height)",
+              borderRadius: "var(--ifr-radius-md)",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-base)",
+              fontWeight: "var(--ifr-fw-semibold)",
+              backgroundColor: "#f1bd4d",
+            }}
+          >
+            {t("Apply Filters")}
+          </button>
+          {hasActiveFilters && (
             <button
               type="button"
               onClick={clearAllFilters}
@@ -507,8 +556,8 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
             >
               {t("Reset filters")}
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
