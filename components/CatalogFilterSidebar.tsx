@@ -85,6 +85,7 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
   const { t } = useTranslation("common");
   const router = useRouter();
   const [manufacturingFilter, setManufacturingFilter] = useState("all");
+  const [searchRadius, setSearchRadius] = useState(50);
 
   // Range slider states for products
   const [powerRange, setPowerRange] = useState<[number, number]>([0, 2000]);
@@ -403,6 +404,33 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                     fontSize: "var(--ifr-fs-base)",
                   }}
                 />
+                <label
+                  className="text-ifr-text-primary mt-2"
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-sm)",
+                    fontWeight: "var(--ifr-fw-medium)",
+                  }}
+                >
+                  {t("Search Radius")}
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[10, 25, 50, 100, 250].map(km => (
+                    <button
+                      key={km}
+                      type="button"
+                      onClick={() => setSearchRadius(km)}
+                      className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                        searchRadius === km
+                          ? "bg-[#036a53] text-white"
+                          : "border border-[#c9cccf] text-[#0b1324] hover:bg-ifr-hover"
+                      }`}
+                    >
+                      {km}
+                      {t("km")}
+                    </button>
+                  ))}
+                </div>
               </div>
             </FilterSection>
 

@@ -282,37 +282,66 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
 
         {/* Based on design — products only */}
         {projectType === ProjectType.PRODUCT && basedOnDesign && (
-          <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-5 flex flex-col gap-2">
+          <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-5 flex flex-col gap-3">
             <p
               className="text-ifr-text-secondary m-0"
-              style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
+              style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
             >
               {t("Based on open source design")}
             </p>
-            <div className="flex items-center gap-2.5 p-2.5 border border-ifr rounded-ifr-sm hover:bg-ifr-hover transition-colors">
-              <div
-                className="shrink-0 flex items-center justify-center"
-                style={{
-                  width: "28px",
-                  height: "28px",
-                  borderRadius: "var(--ifr-radius-sm)",
-                  backgroundColor: "var(--ifr-green)",
-                }}
-              >
-                <EntityTypeIcon type={ProjectType.DESIGN} size="small" fill="#ffffff" />
+            {typeof basedOnDesign === "object" && basedOnDesign.id ? (
+              <Link href={`/project/${basedOnDesign.id}`}>
+                <a className="flex items-center gap-2.5 p-3 border border-ifr rounded-ifr-sm hover:bg-ifr-hover transition-colors no-underline shadow-sm">
+                  <div
+                    className="shrink-0 flex items-center justify-center"
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "var(--ifr-radius-sm)",
+                      backgroundColor: "var(--ifr-green)",
+                    }}
+                  >
+                    <EntityTypeIcon type={ProjectType.DESIGN} size="small" fill="#ffffff" />
+                  </div>
+                  <span
+                    className="text-ifr-text-primary truncate flex-1"
+                    style={{
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "var(--ifr-fs-base)",
+                      fontWeight: "var(--ifr-fw-medium)",
+                    }}
+                  >
+                    {basedOnDesign.name || t("Design")}
+                  </span>
+                  <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
+                </a>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-2.5 p-3 border border-ifr rounded-ifr-sm shadow-sm">
+                <div
+                  className="shrink-0 flex items-center justify-center"
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "var(--ifr-radius-sm)",
+                    backgroundColor: "var(--ifr-green)",
+                  }}
+                >
+                  <EntityTypeIcon type={ProjectType.DESIGN} size="small" fill="#ffffff" />
+                </div>
+                <span
+                  className="text-ifr-text-primary truncate flex-1"
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-base)",
+                    fontWeight: "var(--ifr-fw-medium)",
+                  }}
+                >
+                  {typeof basedOnDesign === "string" ? basedOnDesign : basedOnDesign.name || t("Design")}
+                </span>
+                <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
               </div>
-              <span
-                className="text-ifr-text-primary truncate flex-1"
-                style={{
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-base)",
-                  fontWeight: "var(--ifr-fw-medium)",
-                }}
-              >
-                {typeof basedOnDesign === "string" ? basedOnDesign : basedOnDesign.name || t("Design")}
-              </span>
-              <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
-            </div>
+            )}
           </div>
         )}
 
