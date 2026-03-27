@@ -69,17 +69,22 @@ export default function CatalogLayout({
     router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
   };
 
-  // Apply search filter from URL
+  // Apply search + tag filters from URL
+  const tagsParam = router.query.tags as string | undefined;
+  const tagsList = tagsParam ? tagsParam.split(",").map(t => encodeURI(t)) : undefined;
+
   const effectiveFilter: EconomicResourceFilterParams = {
     ...filter,
     ...(router.query.q && { orName: router.query.q as string }),
+    ...(tagsList && tagsList.length > 0 && { classifiedAs: tagsList }),
   };
 
   const dataQueryIdentifier = "economicResources";
+  const isFilterReady = !!effectiveFilter.conformsTo?.length;
 
   const { loading, data, fetchMore, refetch, variables, error } = useQuery<FetchInventoryQuery>(FETCH_RESOURCES, {
     variables: { last: 12, filter: effectiveFilter },
-    skip: !effectiveFilter.conformsTo?.length,
+    skip: !isFilterReady,
   });
 
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
@@ -90,6 +95,8 @@ export default function CatalogLayout({
     dataQueryIdentifier,
   });
 
+  // Treat "waiting for filter" as loading to avoid premature empty state
+  const isLoading = loading || !isFilterReady;
   const projects = items;
   const totalCount = data?.economicResources?.pageInfo?.totalCount || 0;
   const hasNext = !!getHasNextPage;
@@ -97,9 +104,15 @@ export default function CatalogLayout({
   // Notify parent of data changes
   React.useEffect(() => {
     if (onDataLoaded && data?.economicResources?.pageInfo) {
-      onDataLoaded({ totalCount, loading });
+      onDataLoaded({ totalCount, loading: isLoading });
     }
-  }, [data, loading, onDataLoaded, totalCount]);
+  }, [data, isLoading, onDataLoaded, totalCount]);
+
+  const heroGradients: Record<CatalogVariant, string> = {
+    designs: "linear-gradient(83deg, rgb(3, 106, 83) 0%, rgb(57, 170, 145) 100%)",
+    products: "linear-gradient(83deg, rgb(20, 59, 181) 0%, rgb(106, 140, 246) 100%)",
+    services: "linear-gradient(83deg, rgb(130, 0, 219) 0%, rgb(193, 125, 240) 100%)",
+  };
 
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden">
@@ -113,28 +126,32 @@ export default function CatalogLayout({
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-y-auto">
         {/* Hero Section */}
-        <div className="bg-ifr-page relative border-b border-ifr">
+        <div className="relative border-b border-ifr" style={{ background: heroGradients[variant] }}>
           <div className="relative px-6 py-10">
-            <div className="relative z-10">
-              <h1
-                className="text-ifr-text-primary leading-9 mb-2"
-                style={{
-                  fontFamily: "var(--ifr-font-heading)",
-                  fontSize: "var(--ifr-fs-2xl)",
-                  fontWeight: "var(--ifr-fw-bold)",
-                }}
-              >
-                {hero.title}
-              </h1>
-              <p
-                className="text-ifr-text-secondary leading-6 mb-10 max-w-[640px]"
-                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-md)" }}
-              >
-                {hero.description}
-              </p>
+            <div className="relative z-10 flex items-center gap-6">
+              {/* Left: Title + Description */}
+              <div className="flex-1 flex flex-col">
+                <h1
+                  className="leading-9 mb-2"
+                  style={{
+                    fontFamily: "var(--ifr-font-heading)",
+                    fontSize: "30px",
+                    fontWeight: 700,
+                    color: "#ffffff",
+                  }}
+                >
+                  {hero.title}
+                </h1>
+                <p
+                  className="leading-6 max-w-[640px]"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "16px", color: "#fafafa" }}
+                >
+                  {hero.description}
+                </p>
+              </div>
 
-              {/* Stats */}
-              <div className="flex gap-6">{hero.stats}</div>
+              {/* Right: Stats */}
+              <div className="flex gap-[15px] shrink-0">{hero.stats}</div>
             </div>
           </div>
         </div>
@@ -203,13 +220,13 @@ export default function CatalogLayout({
           >
             {t("Showing") + " "}
             <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-medium)" }}>
-              {loading ? "..." : totalCount}
+              {isLoading ? "..." : totalCount}
             </span>
             {" " + t("results")}
           </p>
 
           {/* Loading skeleton */}
-          {loading && !data && (
+          {isLoading && !data && (
             <div
               className="grid justify-center"
               style={{
@@ -245,7 +262,7 @@ export default function CatalogLayout({
           )}
 
           {/* Empty state */}
-          {!loading && !error && (showEmptyState || !projects?.length) && (
+          {!isLoading && !error && (showEmptyState || !projects?.length) && (
             <EmptyState heading="No projects match your filters" />
           )}
 
@@ -271,7 +288,7 @@ export default function CatalogLayout({
                   <button
                     type="button"
                     onClick={loadMore}
-                    disabled={loading}
+                    disabled={isLoading}
                     className="px-6 py-2.5 border border-ifr rounded-ifr-md text-ifr-text-primary hover:bg-ifr-hover transition-colors"
                     style={{
                       fontFamily: "var(--ifr-font-body)",
@@ -279,7 +296,7 @@ export default function CatalogLayout({
                       fontWeight: "var(--ifr-fw-medium)",
                     }}
                   >
-                    {loading ? t("Loading...") : t("Load more")}
+                    {isLoading ? t("Loading...") : t("Load more")}
                   </button>
                 </div>
               )}
@@ -291,32 +308,42 @@ export default function CatalogLayout({
   );
 }
 
-/** Reusable stat card for hero sections */
-export function HeroStatCard({ icon, value, label }: { icon: ReactNode; value: string | number; label: string }) {
+/** Reusable stat card for hero sections — compact prototype style */
+export function HeroStatCard({ value, label }: { icon?: ReactNode; value: string | number; label: string }) {
   return (
     <div
-      className="flex-1 bg-ifr-surface border border-ifr p-5 flex items-center gap-4"
-      style={{ borderRadius: "var(--ifr-radius-md)" }}
+      className="flex flex-col justify-center"
+      style={{
+        width: 140,
+        height: 56,
+        padding: "10px 14px",
+        borderRadius: "6px",
+        background: "#ffffff",
+        border: "1px solid #c9cccf",
+      }}
     >
-      {icon}
-      <div className="flex flex-col">
-        <span
-          className="text-ifr-text-primary leading-9"
-          style={{
-            fontFamily: "var(--ifr-font-body)",
-            fontSize: "var(--ifr-fs-xl)",
-            fontWeight: "var(--ifr-fw-bold)",
-          }}
-        >
-          {value}
-        </span>
-        <span
-          className="text-ifr-text-secondary leading-5"
-          style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
-        >
-          {label}
-        </span>
-      </div>
+      <span
+        style={{
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: 16,
+          fontWeight: 700,
+          color: "#0b1324",
+          lineHeight: "1.2",
+        }}
+      >
+        {value}
+      </span>
+      <span
+        style={{
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: 12,
+          fontWeight: 400,
+          color: "#6c707c",
+          lineHeight: "1.2",
+        }}
+      >
+        {label}
+      </span>
     </div>
   );
 }

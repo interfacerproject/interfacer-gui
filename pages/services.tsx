@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { Assembly } from "@carbon/icons-react";
-import { LocationMarkerIcon } from "@heroicons/react/outline";
-import CatalogLayout, { HeroStatCard, StatIcon } from "components/CatalogLayout";
+import CatalogLayout, { HeroStatCard } from "components/CatalogLayout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useFilters from "../hooks/useFilters";
@@ -37,33 +35,9 @@ const Services: NextPageWithLayout = () => {
         ),
         stats: (
           <>
-            <HeroStatCard
-              icon={
-                <StatIcon bgColor="var(--ifr-type-service)">
-                  <Assembly size={20} className="text-white" />
-                </StatIcon>
-              }
-              value="—"
-              label={t("Total Services")}
-            />
-            <HeroStatCard
-              icon={
-                <StatIcon bgColor="var(--ifr-green)">
-                  <LocationMarkerIcon className="w-5 h-5 text-white" />
-                </StatIcon>
-              }
-              value="—"
-              label={t("Service Providers")}
-            />
-            <HeroStatCard
-              icon={
-                <StatIcon bgColor="var(--ifr-type-product)">
-                  <Assembly size={20} className="text-white" />
-                </StatIcon>
-              }
-              value="—"
-              label={t("Machines Available")}
-            />
+            <HeroStatCard value="—" label={t("Total Services")} />
+            <HeroStatCard value="—" label={t("Service Providers")} />
+            <HeroStatCard value="—" label={t("Machines Available")} />
           </>
         ),
       }}

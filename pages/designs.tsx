@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { Pen } from "@carbon/icons-react";
-import CatalogLayout, { HeroStatCard, StatIcon } from "components/CatalogLayout";
+import CatalogLayout, { HeroStatCard } from "components/CatalogLayout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useFilters from "../hooks/useFilters";
@@ -36,33 +35,9 @@ const Designs: NextPageWithLayout = () => {
         ),
         stats: (
           <>
-            <HeroStatCard
-              icon={
-                <StatIcon bgColor="var(--ifr-green)">
-                  <Pen size={20} className="text-white" />
-                </StatIcon>
-              }
-              value="—"
-              label={t("Open Designs")}
-            />
-            <HeroStatCard
-              icon={
-                <StatIcon bgColor="var(--ifr-type-product)">
-                  <Pen size={20} className="text-white" />
-                </StatIcon>
-              }
-              value="—"
-              label={t("Available as Product")}
-            />
-            <HeroStatCard
-              icon={
-                <StatIcon bgColor="var(--ifr-type-service)">
-                  <Pen size={20} className="text-white" />
-                </StatIcon>
-              }
-              value="—"
-              label={t("Manufacturers")}
-            />
+            <HeroStatCard value="—" label={t("Open Designs")} />
+            <HeroStatCard value="—" label={t("Available as Product")} />
+            <HeroStatCard value="—" label={t("Manufacturers")} />
           </>
         ),
       }}

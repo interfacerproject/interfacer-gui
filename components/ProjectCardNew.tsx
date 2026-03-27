@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { BookmarkIcon, LocationMarkerIcon, StarIcon } from "@heroicons/react/outline";
+import { BookmarkIcon, ClockIcon, ExternalLinkIcon, LocationMarkerIcon, StarIcon } from "@heroicons/react/outline";
 import { StarIcon as StarIconSolid } from "@heroicons/react/solid";
 import { useAuth } from "hooks/useAuth";
 import useSocial from "hooks/useSocial";
@@ -62,6 +62,22 @@ function formatCount(count: number): string {
   if (count < 10000) return `${(count / 1000).toFixed(1)}k`;
   if (count < 1000000) return `${Math.floor(count / 1000)}k`;
   return `${(count / 1000000).toFixed(1)}M`;
+}
+
+const SERVICE_TYPE_MAP: Record<string, string> = {
+  fabrication: "Fabrication",
+  "learning-&-education": "Learning & Education",
+  "space-access": "Space Access",
+};
+
+function detectServiceType(classifiedAs: string[]): string | undefined {
+  for (const tag of classifiedAs) {
+    if (tag.startsWith("category-")) {
+      const slug = tag.replace("category-", "");
+      if (SERVICE_TYPE_MAP[slug]) return SERVICE_TYPE_MAP[slug];
+    }
+  }
+  return undefined;
 }
 
 export default function ProjectCardNew({ project }: ProjectCardNewProps) {
@@ -277,16 +293,19 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
                     >
                       {t("Requires:")} {requirements}
                     </span>
-                    <span
-                      className="text-ifr-green text-sm shrink-0"
+                    <a
+                      className="flex items-center gap-[10px] text-ifr-text-primary hover:underline shrink-0"
                       style={{
                         fontFamily: "var(--ifr-font-body)",
                         fontWeight: "var(--ifr-fw-medium)",
-                        cursor: "pointer",
+                        fontSize: "var(--ifr-fs-base)",
                       }}
+                      onClick={e => e.stopPropagation()}
                     >
-                      {t("nearby")}
-                    </span>
+                      <LocationMarkerIcon className="w-4 h-4" />
+                      <span>{t("nearby")}</span>
+                      <ExternalLinkIcon className="w-4 h-4" />
+                    </a>
                   </div>
                 )}
                 {license && (
@@ -350,20 +369,55 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
             )}
 
             {/* SERVICE footer */}
-            {projectType === ProjectType.SERVICE && project.currentLocation && (
-              <div className="border-t border-ifr pt-2 flex items-center gap-1.5">
-                <LocationMarkerIcon className="w-3.5 h-3.5 text-ifr-text-secondary shrink-0" />
-                <span
-                  className="text-ifr-text-secondary"
-                  style={{
-                    fontFamily: "var(--ifr-font-body)",
-                    fontSize: "var(--ifr-fs-base)",
-                    fontWeight: "var(--ifr-fw-medium)",
-                  }}
-                >
-                  {project.currentLocation.name}
-                </span>
-              </div>
+            {projectType === ProjectType.SERVICE && (
+              <>
+                {(() => {
+                  const serviceType = detectServiceType(project.classifiedAs || []);
+                  return serviceType ? (
+                    <div className="border-t border-ifr pt-[9px] flex items-center gap-2">
+                      <span
+                        className="text-ifr-text-primary"
+                        style={{
+                          fontFamily: "var(--ifr-font-body)",
+                          fontSize: "var(--ifr-fs-base)",
+                          fontWeight: "var(--ifr-fw-medium)",
+                        }}
+                      >
+                        {serviceType}
+                      </span>
+                    </div>
+                  ) : null;
+                })()}
+                <div className="flex items-center justify-between gap-2">
+                  {project.currentLocation && (
+                    <div className="flex items-center gap-1.5">
+                      <LocationMarkerIcon className="w-3.5 h-3.5 text-ifr-text-secondary shrink-0" />
+                      <span
+                        className="text-ifr-text-secondary"
+                        style={{
+                          fontFamily: "var(--ifr-font-body)",
+                          fontSize: "var(--ifr-fs-base)",
+                          fontWeight: "var(--ifr-fw-medium)",
+                        }}
+                      >
+                        {project.currentLocation.name}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1.5 text-ifr-text-primary shrink-0">
+                    <ClockIcon className="w-3.5 h-3.5" />
+                    <span
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-base)",
+                        fontWeight: "var(--ifr-fw-medium)",
+                      }}
+                    >
+                      {t("Available")}
+                    </span>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>

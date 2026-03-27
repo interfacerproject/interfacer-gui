@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { Cube } from "@carbon/icons-react";
-import CatalogLayout, { HeroStatCard, StatIcon } from "components/CatalogLayout";
+import CatalogLayout, { HeroStatCard } from "components/CatalogLayout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useFilters from "../hooks/useFilters";
@@ -36,33 +35,9 @@ const Products: NextPageWithLayout = () => {
         ),
         stats: (
           <>
-            <HeroStatCard
-              icon={
-                <StatIcon bgColor="var(--ifr-type-product)">
-                  <Cube size={20} className="text-white" />
-                </StatIcon>
-              }
-              value="—"
-              label={t("Total Products")}
-            />
-            <HeroStatCard
-              icon={
-                <StatIcon bgColor="var(--ifr-green)">
-                  <Cube size={20} className="text-white" />
-                </StatIcon>
-              }
-              value="—"
-              label={t("Available Now")}
-            />
-            <HeroStatCard
-              icon={
-                <StatIcon bgColor="var(--ifr-type-service)">
-                  <Cube size={20} className="text-white" />
-                </StatIcon>
-              }
-              value="—"
-              label={t("Manufacturers")}
-            />
+            <HeroStatCard value="—" label={t("Total Products")} />
+            <HeroStatCard value="—" label={t("Available Now")} />
+            <HeroStatCard value="—" label={t("Manufacturers")} />
           </>
         ),
       }}
