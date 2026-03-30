@@ -2,7 +2,6 @@ import { ProjectType } from "components/types";
 import { CreateProjectValues } from "../create/project/CreateProjectForm";
 import ContributorsStep from "../create/project/steps/ContributorsStep";
 import DeclarationsStep from "../create/project/steps/DeclarationsStep";
-import DPPStep from "../create/project/steps/DPPStep";
 import ImagesStep from "../create/project/steps/ImagesStep";
 import ImportDesignStep from "../create/project/steps/ImportDesignStep";
 import LicenseStep from "../create/project/steps/LicenseStep";
@@ -119,13 +118,6 @@ export const projectSections: Array<ProjectSection> = [
     component: <RelationsStep />,
     for: [ProjectType.DESIGN, ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.MACHINE],
     editPage: "edit/relations",
-  },
-  {
-    navLabel: "DPP",
-    id: "dpp",
-    component: <DPPStep />,
-    required: [ProjectType.PRODUCT],
-    for: [ProjectType.PRODUCT],
   },
   {
     navLabel: "Machines",

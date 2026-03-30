@@ -38,10 +38,6 @@ import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
-//@ts-ignore
-import useSignedPost from "hooks/useSignedPost";
-import { UploadFileOnDPP } from "lib/fileUpload";
-import { dppStepDefaultValues, dppStepSchema, DPPStepValues } from "./steps/DPPStep";
 import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep";
 import { materialsStepDefaultValues, materialsStepSchema, MaterialsStepValues } from "./steps/MaterialsStep";
 import {
@@ -72,7 +68,6 @@ export interface CreateProjectValues {
   contributors: ContributorsStepValues;
   relations: RelationsStepValues;
   licenses: LicenseStepValues;
-  dpp: DPPStepValues;
   machines: MachinesStepValues;
   materials: MaterialsStepValues;
 }
@@ -88,7 +83,6 @@ export const createProjectDefaultValues: CreateProjectValues = {
   contributors: contributorsStepDefaultValues,
   relations: relationsStepDefaultValues,
   licenses: licenseStepDefaultValues,
-  dpp: dppStepDefaultValues,
   machines: machinesStepDefaultValues,
   materials: materialsStepDefaultValues,
 };
@@ -114,11 +108,6 @@ export const createProjectSchema = () =>
     contributors: contributorsStepSchema(),
     relations: relationsStepSchema(),
     licenses: licenseStepSchema(),
-    dpp: dppStepSchema().when("$projectType", (projectType: ProjectType, schema) =>
-      projectType == ProjectType.PRODUCT
-        ? schema.required("A DPP is required for products")
-        : schema.notRequired().nullable()
-    ),
     machines: machinesStepSchema(),
     materials: materialsStepSchema(),
   });
@@ -130,7 +119,6 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
   const { handleProjectCreation, handleMachineCreation } = useProjectCRUD();
-  const { signedPost } = useSignedPost();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const yupLocaleObject = useYupLocaleObject();
@@ -164,7 +152,6 @@ export default function CreateProjectForm(props: Props) {
     contributors: contributorsStepDefaultValues,
     relations: relationsStepDefaultValues,
     licenses: licenseStepDefaultValues,
-    dpp: dppStepDefaultValues,
     machines: machinesStepDefaultValues,
     materials: materialsStepDefaultValues,
   };
@@ -197,36 +184,6 @@ export default function CreateProjectForm(props: Props) {
 
   const { handleSubmit } = formMethods;
 
-  async function processDppValues(obj: any): Promise<any> {
-    if (obj === null || obj === undefined) {
-      return obj;
-    }
-
-    if (obj instanceof File) {
-      const uploadResponse = await UploadFileOnDPP(obj);
-      return uploadResponse;
-    }
-    if (Array.isArray(obj)) {
-      return Promise.all(obj.map(item => processDppValues(item)));
-    }
-    if (typeof obj === "object") {
-      const processedObj: any = {};
-      for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          const processedValue = await processDppValues(obj[key]);
-          if (processedValue && typeof processedValue === "object" && "value" in processedValue) {
-            if (processedValue.value === null || processedValue.value === undefined) {
-              continue;
-            }
-          }
-          processedObj[key] = processedValue;
-        }
-      }
-      return processedObj;
-    }
-    return obj;
-  }
-
   async function onSubmit(values: CreateProjectValues) {
     setLoading(true);
 
@@ -238,21 +195,7 @@ export default function CreateProjectForm(props: Props) {
       return;
     }
 
-    let dppUlid: string | undefined = undefined;
-
-    if (values.dpp) {
-      const processedDpp = await processDppValues(values.dpp);
-      const response = await signedPost(`${process.env.NEXT_PUBLIC_DPP_URL}/dpp`, processedDpp, true);
-      if (!response.ok) {
-        console.error("Failed to submit DPP:", response.statusText);
-        setLoading(false);
-        return;
-      }
-      dppUlid = (await response.json()).insertedID;
-      console.log("DPP submitted with ULID:", dppUlid);
-    }
-
-    const projectID = await handleProjectCreation(values, projectType, dppUlid);
+    const projectID = await handleProjectCreation(values, projectType);
     if (projectID) await router.replace(`/project/${projectID}?created=true`);
     setLoading(false);
   }

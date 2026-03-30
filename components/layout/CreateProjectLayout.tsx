@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { Link as PLink, Text } from "@bbtgnn/polaris-interfacer";
+import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 
@@ -25,15 +26,16 @@ type LayoutProps = {
 const CreateProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: LayoutProps) => {
   const { t } = useTranslation();
   const { children } = layoutProps;
+  const { user } = useAuth();
 
   return (
     <div className="h-full">
       <div className="p-4">
-        <Link href="/create/project">
+        <Link href={user?.ulid ? `/profile/${user.ulid}` : "/"}>
           <PLink>
             <span className="text-text-primary">
               {"← "}
-              {t("Back to Project Creation")}
+              {t("Back to Profile")}
             </span>
           </PLink>
         </Link>
