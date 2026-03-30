@@ -62,6 +62,11 @@ const useDppApi = () => {
 
     const headers: Record<string, string> = {};
 
+    // Always send user ULID so backend can store/filter by it
+    if (user?.ulid) {
+      headers["x-user-id"] = user.ulid;
+    }
+
     if (jsonBody) {
       const authHeaders = await signBody(jsonBody);
       Object.assign(headers, authHeaders);

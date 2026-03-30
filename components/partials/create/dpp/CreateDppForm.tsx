@@ -1,10 +1,14 @@
+import { useQuery } from "@apollo/client";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "hooks/useAuth";
+import { useResourceSpecs } from "hooks/useResourceSpecs";
 import useDppApi from "lib/dpp";
 import { UploadFileOnDPP } from "lib/fileUpload";
+import { FETCH_RESOURCES } from "lib/QueryAndMutation";
+import type { FetchInventoryQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -59,6 +63,7 @@ interface DppNavSection {
 }
 
 const navSections: DppNavSection[] = [
+  { id: "select-product", label: "Select product" },
   { id: "identification", label: "Identification" },
   { id: "product-overview", label: "Product Overview" },
   { id: "repairability", label: "Repairability" },
@@ -154,6 +159,48 @@ export default function CreateDppForm() {
   const dppApi = useDppApi();
   const [loading, setLoading] = useState(false);
 
+  // Product selection
+  const { specProjectProduct } = useResourceSpecs();
+  const [selectedProduct, setSelectedProduct] = useState<{ id: string; name: string } | null>(null);
+  const [productSearch, setProductSearch] = useState("");
+  const [productDropdownOpen, setProductDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const productFilter = useMemo(
+    () => ({
+      primaryAccountable: user?.ulid ? [user.ulid] : undefined,
+      conformsTo: specProjectProduct?.id ? [specProjectProduct.id] : undefined,
+    }),
+    [user?.ulid, specProjectProduct?.id]
+  );
+
+  const { data: productsData } = useQuery<FetchInventoryQuery>(FETCH_RESOURCES, {
+    variables: { last: 50, filter: productFilter },
+    skip: !user?.ulid || !specProjectProduct?.id,
+  });
+
+  const userProducts = useMemo(() => {
+    const edges = productsData?.economicResources?.edges ?? [];
+    return edges
+      .map(e => e.node)
+      .filter(n => {
+        if (!productSearch) return true;
+        const q = productSearch.toLowerCase();
+        return n.name.toLowerCase().includes(q) || n.id.toLowerCase().includes(q);
+      });
+  }, [productsData, productSearch]);
+
+  // Close product dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setProductDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   // Accordion states
   const [overviewOpen, setOverviewOpen] = useState(true);
   const [repairabilityOpen, setRepairabilityOpen] = useState(false);
@@ -207,6 +254,7 @@ export default function CreateDppForm() {
         ...processedDpp,
         batchType: values.batchType,
         batchId: values.batchId,
+        productId: selectedProduct?.id ?? "",
       });
       await router.push(`/profile/${user?.ulid}?tab=dpps`);
     } catch (err) {
@@ -256,6 +304,217 @@ export default function CreateDppForm() {
                       "Document the lifecycle, materials, and sustainability information of your product. Help consumers and regulators access transparent product data."
                     )}
                   </p>
+                </div>
+
+                {/* Select Product Section */}
+                <div>
+                  <div id="select-product" className="scroll-mt-24" />
+                  <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-8 px-8">
+                    <div className="flex flex-col gap-6">
+                      <div>
+                        <h2
+                          className="text-ifr-text-primary m-0"
+                          style={{
+                            fontFamily: "var(--ifr-font-heading)",
+                            fontSize: "var(--ifr-fs-lg)",
+                            fontWeight: "var(--ifr-fw-semibold)",
+                          }}
+                        >
+                          {t("Select product")} <span style={{ color: "var(--ifr-green)" }}>*</span>
+                        </h2>
+                        <p
+                          className="text-ifr-text-secondary m-0 mt-1"
+                          style={{
+                            fontFamily: "var(--ifr-font-body)",
+                            fontSize: "var(--ifr-fs-base)",
+                            lineHeight: "1.5",
+                          }}
+                        >
+                          {t(
+                            "A DPP must be linked to one of your published products. Select the product before filling in the passport data."
+                          )}
+                        </p>
+                      </div>
+
+                      {/* Selected product badge */}
+                      {selectedProduct && (
+                        <div
+                          className="flex items-center gap-3 px-3 py-2.5 w-full"
+                          style={{
+                            borderRadius: "var(--ifr-radius-sm)",
+                            border: "1px solid var(--ifr-green)",
+                            backgroundColor: "var(--ifr-green-bg, rgba(16,185,129,0.08))",
+                          }}
+                        >
+                          <div className="flex flex-col flex-1 min-w-0">
+                            <span
+                              className="text-ifr-text-primary"
+                              style={{
+                                fontFamily: "var(--ifr-font-body)",
+                                fontSize: "var(--ifr-fs-base)",
+                                fontWeight: "var(--ifr-fw-medium)",
+                              }}
+                            >
+                              {selectedProduct.name}
+                            </span>
+                            <span
+                              className="text-ifr-text-secondary"
+                              style={{
+                                fontFamily: "var(--ifr-font-body)",
+                                fontSize: "var(--ifr-fs-sm)",
+                              }}
+                            >
+                              {selectedProduct.id}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedProduct(null)}
+                            className="flex items-center justify-center bg-transparent border-none cursor-pointer p-1 hover:opacity-70 transition-opacity shrink-0"
+                            aria-label={t("Deselect product")}
+                          >
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Product search dropdown */}
+                      <div className="flex flex-col gap-1.5">
+                        <label
+                          className="text-ifr-text-primary"
+                          style={{
+                            fontFamily: "var(--ifr-font-body)",
+                            fontSize: "var(--ifr-fs-base)",
+                            fontWeight: "var(--ifr-fw-medium)",
+                          }}
+                        >
+                          {t("Product")} <span style={{ color: "var(--ifr-green)" }}>*</span>
+                        </label>
+                        <div className="relative" ref={dropdownRef}>
+                          <div
+                            className="flex items-center gap-2 w-full bg-transparent border border-ifr cursor-text"
+                            style={{
+                              height: "var(--ifr-control-height)",
+                              borderRadius: "var(--ifr-radius-sm)",
+                              padding: "0 12px",
+                            }}
+                            onClick={() => setProductDropdownOpen(true)}
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              className="text-ifr-text-secondary shrink-0"
+                            >
+                              <circle cx="11" cy="11" r="8" />
+                              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input
+                              type="text"
+                              value={productSearch}
+                              onChange={e => {
+                                setProductSearch(e.target.value);
+                                setProductDropdownOpen(true);
+                              }}
+                              placeholder={t("Search by product name or ID…")}
+                              className="flex-1 bg-transparent border-none outline-none text-ifr-text-primary placeholder:text-ifr-text-secondary h-full"
+                              style={{
+                                fontFamily: "var(--ifr-font-body)",
+                                fontSize: "var(--ifr-fs-base)",
+                              }}
+                              onFocus={() => setProductDropdownOpen(true)}
+                            />
+                          </div>
+                          {productDropdownOpen && userProducts.length > 0 && (
+                            <div
+                              className="absolute z-50 w-full bg-ifr-surface mt-1 overflow-hidden max-h-[280px] overflow-y-auto border border-ifr"
+                              style={{
+                                borderRadius: "var(--ifr-radius-sm)",
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                              }}
+                            >
+                              {userProducts.map(product => {
+                                const isSelected = selectedProduct?.id === product.id;
+                                return (
+                                  <button
+                                    key={product.id}
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedProduct({ id: product.id, name: product.name });
+                                      setProductSearch("");
+                                      setProductDropdownOpen(false);
+                                    }}
+                                    className={`flex items-center justify-between w-full px-3 py-2.5 border-none cursor-pointer text-left ${
+                                      isSelected ? "bg-ifr-hover" : "bg-transparent hover:bg-ifr-hover/50"
+                                    }`}
+                                  >
+                                    <div className="flex flex-col gap-0.5">
+                                      <span
+                                        className="text-ifr-text-primary"
+                                        style={{
+                                          fontFamily: "var(--ifr-font-body)",
+                                          fontSize: "var(--ifr-fs-base)",
+                                          fontWeight: "var(--ifr-fw-medium)",
+                                        }}
+                                      >
+                                        {product.name}
+                                      </span>
+                                      <span
+                                        className="text-ifr-text-secondary"
+                                        style={{
+                                          fontFamily: "var(--ifr-font-body)",
+                                          fontSize: "var(--ifr-fs-sm)",
+                                        }}
+                                      >
+                                        {product.id}
+                                      </span>
+                                    </div>
+                                    {isSelected && (
+                                      <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="var(--ifr-green)"
+                                        strokeWidth="2"
+                                        className="shrink-0"
+                                      >
+                                        <polyline points="20 6 9 17 4 12" />
+                                      </svg>
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                        <p
+                          className="text-ifr-text-secondary m-0"
+                          style={{
+                            fontFamily: "var(--ifr-font-body)",
+                            fontSize: "var(--ifr-fs-sm)",
+                          }}
+                        >
+                          {t(
+                            "Only your published products are listed. A DPP cannot be created without a parent product."
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Identification Section */}
@@ -515,7 +774,7 @@ export default function CreateDppForm() {
               </button>
               <button
                 type="submit"
-                disabled={!isValid}
+                disabled={!isValid || !selectedProduct}
                 className="border-none cursor-pointer text-white transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   height: "var(--ifr-control-height)",
