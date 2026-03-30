@@ -10,6 +10,7 @@ import * as yup from "yup";
 
 import LoadingOverlay from "components/LoadingOverlay";
 import { CollapsibleSection } from "components/partials/create/project/steps/DPPStep/components";
+import { dppStepSchema } from "components/partials/create/project/steps/DPPStep/schema";
 import {
   CertificatesSection,
   ComplianceSection,
@@ -24,7 +25,6 @@ import {
   RepairabilitySection,
   RepairInformationSection,
 } from "components/partials/create/project/steps/DPPStep/sections";
-import { dppStepSchema } from "components/partials/create/project/steps/DPPStep/schema";
 import type { DPPStepValues } from "components/partials/create/project/steps/DPPStep/types";
 import type { BatchType } from "lib/dpp-types";
 

@@ -9,9 +9,10 @@
  */
 
 // @ts-ignore
-import sign from "zenflows-crypto/src/sign_graphql.zen";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
+// @ts-ignore
+import sign from "zenflows-crypto/src/sign_graphql.zen";
 import type {
   Attachment,
   CreateDppResponse,
