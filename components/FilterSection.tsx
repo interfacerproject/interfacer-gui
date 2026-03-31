@@ -20,7 +20,7 @@ export default function FilterSection({ icon, label, children, defaultOpen = fal
         className="flex items-center w-full gap-3 px-6 py-4 text-left hover:bg-ifr-hover-light transition-colors"
       >
         <span className="text-ifr-text-secondary">{icon}</span>
-        <span className="flex-1" style={{ fontSize: "var(--ifr-fs-md)", fontWeight: 500, lineHeight: "24px" }}>
+        <span className="flex-1" style={{ fontSize: "var(--ifr-fs-base)", fontWeight: 500, lineHeight: "21px" }}>
           {label}
         </span>
         {badge != null && badge > 0 && (

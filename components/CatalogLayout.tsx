@@ -181,9 +181,9 @@ export default function CatalogLayout({
               <span
                 style={{
                   fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-md)",
+                  fontSize: "var(--ifr-fs-base)",
                   fontWeight: "var(--ifr-fw-medium)",
-                  lineHeight: "24px",
+                  lineHeight: "21px",
                 }}
               >
                 {t("Filters")}
@@ -200,7 +200,7 @@ export default function CatalogLayout({
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   className="flex-1 bg-transparent text-ifr-text-primary placeholder:text-ifr-text-muted outline-none"
-                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-md)", lineHeight: "24px" }}
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)", lineHeight: "21px" }}
                 />
               </div>
             </form>

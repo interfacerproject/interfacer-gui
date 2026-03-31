@@ -37,9 +37,9 @@ export default function ToolbarDropdown({ label, value, options, onChange }: Too
         className="flex items-center gap-1 h-9 px-3 rounded-ifr-sm border border-transparent hover:border-ifr transition-colors"
         style={{
           fontFamily: "var(--ifr-font-body)",
-          fontSize: "var(--ifr-fs-base)",
-          fontWeight: 500,
-          lineHeight: "21px",
+          fontSize: "var(--ifr-fs-md)",
+          fontWeight: 400,
+          lineHeight: "24px",
         }}
       >
         {value}
@@ -58,7 +58,12 @@ export default function ToolbarDropdown({ label, value, options, onChange }: Too
               className={`w-full text-left px-3 py-2 hover:bg-ifr-hover-light transition-colors ${
                 option === value ? "font-medium" : ""
               }`}
-              style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)", lineHeight: "21px" }}
+              style={{
+                fontFamily: "var(--ifr-font-body)",
+                fontSize: "var(--ifr-fs-md)",
+                fontWeight: 400,
+                lineHeight: "24px",
+              }}
             >
               {option}
             </button>

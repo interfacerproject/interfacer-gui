@@ -33,7 +33,7 @@ export default function CheckboxFilter({
           onChange={e => setSearch(e.target.value)}
           placeholder={searchPlaceholder}
           className="w-full h-9 pl-9 pr-3 bg-ifr-form-input border border-ifr-form-input rounded-ifr-sm focus:outline-none focus:border-ifr-green"
-          style={{ fontSize: "var(--ifr-fs-base)", lineHeight: "20px" }}
+          style={{ fontSize: "var(--ifr-fs-base)", lineHeight: "21px" }}
         />
       </div>
       <div className="overflow-y-auto max-h-[280px] space-y-3">
@@ -71,7 +71,7 @@ export default function CheckboxFilter({
                   </svg>
                 )}
               </span>
-              <span style={{ fontSize: "var(--ifr-fs-base)", fontWeight: 400, lineHeight: "20px" }}>{item}</span>
+              <span style={{ fontSize: "var(--ifr-fs-base)", fontWeight: 400, lineHeight: "21px" }}>{item}</span>
             </div>
           );
         })}
