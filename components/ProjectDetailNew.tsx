@@ -1,27 +1,31 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { ChevronDown, ChevronLeft, ChevronRight, Location } from "@carbon/icons-react";
+import { useQuery } from "@apollo/client";
+import { ChevronDown, ChevronLeft, ChevronRight } from "@carbon/icons-react";
 import { BookmarkIcon, ExternalLinkIcon, StarIcon } from "@heroicons/react/outline";
-import { StarIcon as StarIconSolid } from "@heroicons/react/solid";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
+import DetailMap from "components/DetailMap";
 import DetailSection from "components/DetailSection";
 import EntityTypeIcon from "components/EntityTypeIcon";
 import { useProject } from "components/layout/FetchProjectLayout";
 import ProjectCardImage from "components/ProjectCardImage";
+import ProjectsCards from "components/ProjectsCards";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
-import useSocial from "hooks/useSocial";
-import useWallet from "hooks/useWallet";
+
+import { SEARCH_PROJECT } from "components/ProjectDisplay";
+import useDppApi from "lib/dpp";
+import type { DppDocument } from "lib/dpp-types";
 import findProjectImages from "lib/findProjectImages";
 import { isProjectType } from "lib/isProjectType";
 import MdParser from "lib/MdParser";
-import { IdeaPoints } from "lib/PointsDistribution";
+
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 
 function getProjectType(project: Partial<EconomicResource>): ProjectType {
   const name = project.conformsTo?.name;
@@ -50,16 +54,7 @@ interface ProjectSidebarNewProps {
 function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
   const { t } = useTranslation("common");
   const { user } = useAuth();
-  const { likeER, isLiked, erFollowerLength } = useSocial(project.id);
-  const hasStarred = project.id ? isLiked(project.id) : false;
-  const { addIdeaPoints } = useWallet({});
   const color = typeColors[projectType] || "var(--ifr-green)";
-
-  const handleStar = async () => {
-    if (!project.id || !project.primaryAccountable?.id) return;
-    await likeER();
-    addIdeaPoints(project.primaryAccountable.id, IdeaPoints.OnStar);
-  };
 
   // Decode tags
   const tags = (project.classifiedAs || []).filter(
@@ -74,7 +69,24 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
   const price = meta.price as string | undefined;
   const availability = meta.availability as string | undefined;
   const websiteLink = meta.websiteLink as string | undefined;
-  const basedOnDesign = meta.basedOnDesign as { id?: string; name?: string } | string | undefined;
+  const basedOnDesignMeta = meta.basedOnDesign as { id?: string; name?: string } | string | undefined;
+  const designId = basedOnDesignMeta
+    ? typeof basedOnDesignMeta === "object"
+      ? basedOnDesignMeta.id
+      : undefined
+    : (meta.design as string | undefined);
+
+  // Resolve design name when we only have an ID from metadata.design
+  const { data: designData } = useQuery(SEARCH_PROJECT, {
+    variables: { id: designId! },
+    skip: !designId || (typeof basedOnDesignMeta === "object" && !!basedOnDesignMeta.name),
+  });
+
+  const basedOnDesign = basedOnDesignMeta
+    ? basedOnDesignMeta
+    : designId
+    ? { id: designId, name: designData?.economicResource?.name || undefined }
+    : undefined;
 
   return (
     <div className="w-[300px] shrink-0">
@@ -205,57 +217,21 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
 
           {/* Divider */}
           <div className="w-full" style={{ height: "1px", backgroundColor: "var(--ifr-border)" }} />
-
-          {/* Save + Watch links */}
-          <div className="flex flex-col gap-1">
-            <button
-              type="button"
-              className="w-full flex items-center gap-2 px-1 py-1.5 bg-transparent border-none cursor-pointer hover:bg-ifr-hover transition-colors"
-              style={{ borderRadius: "var(--ifr-radius-sm)" }}
-            >
-              <BookmarkIcon className="w-4 h-4 text-ifr-text-secondary" />
-              <span
-                className="text-ifr-text-secondary"
-                style={{
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-base)",
-                }}
-              >
-                {t("Save to My Projects")}
-              </span>
-            </button>
-            <button
-              type="button"
-              className="w-full flex items-center gap-2 px-1 py-1.5 bg-transparent border-none cursor-pointer hover:bg-ifr-hover transition-colors"
-              style={{ borderRadius: "var(--ifr-radius-sm)" }}
-            >
-              <StarIcon className="w-4 h-4 text-ifr-text-secondary" />
-              <span
-                className="text-ifr-text-secondary"
-                style={{
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-base)",
-                }}
-              >
-                {t("Watch Project")}
-              </span>
-            </button>
-          </div>
         </div>
 
         {/* Created by / Manufactured by */}
         {project.primaryAccountable && (
-          <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-5">
+          <div>
             <p
-              className="text-ifr-text-secondary mb-3"
+              className="text-ifr-text-secondary mb-2"
               style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
             >
               {projectType === ProjectType.PRODUCT ? t("Manufactured by") : t("Created by")}
             </p>
             <Link href={`/profile/${project.primaryAccountable.id}`}>
-              <a className="flex items-center gap-3 no-underline group">
-                <BrUserAvatar userId={project.primaryAccountable.id} size="36px" />
-                <div>
+              <a className="flex items-center gap-3 p-3 border border-ifr rounded-ifr-sm no-underline group hover:bg-ifr-hover transition-colors">
+                <BrUserAvatar userId={project.primaryAccountable.id} size="40px" />
+                <div className="flex-1 min-w-0">
                   <p
                     className="text-ifr-text-primary group-hover:underline"
                     style={{
@@ -267,31 +243,49 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
                     {project.primaryAccountable.name}
                   </p>
                   {project.primaryAccountable.primaryLocation?.name && (
-                    <p
-                      className="text-ifr-text-secondary"
-                      style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-                    >
-                      {project.primaryAccountable.primaryLocation.name}
+                    <p className="flex items-center gap-1 mt-0.5" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        className="shrink-0"
+                        style={{ color: "var(--ifr-green)" }}
+                      >
+                        <path
+                          d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                      <span style={{ color: "var(--ifr-green)", fontFamily: "var(--ifr-font-body)" }}>
+                        {project.primaryAccountable.primaryLocation.name}
+                      </span>
                     </p>
                   )}
                 </div>
+                <ChevronRight className="w-5 h-5 text-ifr-text-secondary shrink-0" />
               </a>
             </Link>
           </div>
         )}
 
+        {/* Divider */}
+        {project.primaryAccountable && (
+          <div className="w-full" style={{ height: "1px", backgroundColor: "var(--ifr-border)" }} />
+        )}
+
         {/* Based on design — products only */}
         {projectType === ProjectType.PRODUCT && basedOnDesign && (
-          <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-5 flex flex-col gap-3">
+          <div>
             <p
-              className="text-ifr-text-secondary m-0"
+              className="text-ifr-text-secondary mb-2"
               style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
             >
               {t("Based on open source design")}
             </p>
             {typeof basedOnDesign === "object" && basedOnDesign.id ? (
               <Link href={`/project/${basedOnDesign.id}`}>
-                <a className="flex items-center gap-2.5 p-3 border border-ifr rounded-ifr-sm hover:bg-ifr-hover transition-colors no-underline shadow-sm">
+                <a className="flex items-center gap-2.5 p-3 border border-ifr rounded-ifr-sm hover:bg-ifr-hover transition-colors no-underline">
                   <div
                     className="shrink-0 flex items-center justify-center"
                     style={{
@@ -317,7 +311,7 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
                 </a>
               </Link>
             ) : (
-              <div className="flex items-center gap-2.5 p-3 border border-ifr rounded-ifr-sm shadow-sm">
+              <div className="flex items-center gap-2.5 p-3 border border-ifr rounded-ifr-sm">
                 <div
                   className="shrink-0 flex items-center justify-center"
                   style={{
@@ -345,99 +339,37 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
           </div>
         )}
 
-        {/* Stats */}
-        <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-5 flex flex-col gap-3">
-          {/* Stars */}
-          <div className="flex items-center justify-between">
+        {/* Divider */}
+        <div className="w-full" style={{ height: "1px", backgroundColor: "var(--ifr-border)" }} />
+
+        {/* Save + Watch */}
+        <div className="flex flex-col gap-1">
+          <button
+            type="button"
+            className="w-full flex items-center gap-2 px-1 py-1.5 bg-transparent border-none cursor-pointer hover:bg-ifr-hover transition-colors"
+            style={{ borderRadius: "var(--ifr-radius-sm)" }}
+          >
+            <BookmarkIcon className="w-4 h-4 text-ifr-text-secondary" />
             <span
               className="text-ifr-text-secondary"
               style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
             >
-              {t("Stars")}
+              {t("Save to My Projects")}
             </span>
-            <button
-              type="button"
-              onClick={user ? handleStar : undefined}
-              className="flex items-center gap-1.5 bg-transparent border-none cursor-pointer hover:opacity-80"
-            >
-              {hasStarred ? (
-                <StarIconSolid className="w-4 h-4" style={{ color: "var(--ifr-yellow)" }} />
-              ) : (
-                <StarIcon className="w-4 h-4 text-ifr-text-secondary" />
-              )}
-              <span
-                className="text-ifr-text-primary"
-                style={{
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-base)",
-                  fontWeight: "var(--ifr-fw-medium)",
-                }}
-              >
-                {erFollowerLength || 0}
-              </span>
-            </button>
-          </div>
-
-          {/* License */}
-          {project.license && (
-            <div className="flex items-center justify-between">
-              <span
-                className="text-ifr-text-secondary"
-                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
-              >
-                {t("License")}
-              </span>
-              <span
-                className="text-ifr-text-primary"
-                style={{
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-base)",
-                  fontWeight: "var(--ifr-fw-medium)",
-                }}
-              >
-                {project.license}
-              </span>
-            </div>
-          )}
-
-          {/* Repository */}
-          {project.repo && (
-            <div className="flex items-center justify-between">
-              <span
-                className="text-ifr-text-secondary"
-                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
-              >
-                {t("Repository")}
-              </span>
-              <a
-                href={project.repo.startsWith("http") ? project.repo : `https://${project.repo}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-ifr-green hover:underline"
-                style={{
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-base)",
-                  fontWeight: "var(--ifr-fw-medium)",
-                }}
-              >
-                {t("View")}
-                <ExternalLinkIcon className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          )}
-
-          {/* ID */}
-          <div className="flex items-center justify-between">
+          </button>
+          <button
+            type="button"
+            className="w-full flex items-center gap-2 px-1 py-1.5 bg-transparent border-none cursor-pointer hover:bg-ifr-hover transition-colors"
+            style={{ borderRadius: "var(--ifr-radius-sm)" }}
+          >
+            <StarIcon className="w-4 h-4 text-ifr-text-secondary" />
             <span
               className="text-ifr-text-secondary"
               style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
             >
-              {t("ID")}
+              {t("Watch Project")}
             </span>
-            <span className="text-ifr-text-primary font-mono text-xs truncate max-w-[150px]" title={project.id}>
-              {project.id}
-            </span>
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -711,78 +643,6 @@ function SustainabilityMetrics({ dpp }: { dpp: Record<string, string> }) {
   );
 }
 
-/** Location card for Get It Made / Repair / Recycling */
-function LocationCard({
-  name,
-  description,
-  distance,
-  type,
-  verified,
-}: {
-  name: string;
-  description?: string;
-  distance?: string;
-  type?: string;
-  verified?: boolean;
-}) {
-  const { t } = useTranslation("common");
-  return (
-    <div className="border border-[#c9cccf] rounded-md p-4 flex flex-col gap-2">
-      <div className="flex items-start justify-between">
-        <div className="flex flex-col gap-1">
-          <p
-            className="text-[#0b1324] m-0"
-            style={{
-              fontFamily: "var(--ifr-font-body)",
-              fontSize: "var(--ifr-fs-md)",
-              fontWeight: "var(--ifr-fw-medium)",
-            }}
-          >
-            {name}
-          </p>
-          <div className="flex items-center gap-3">
-            {distance && (
-              <span className="flex items-center gap-1 text-[#036a53]" style={{ fontSize: "var(--ifr-fs-sm)" }}>
-                <Location size={14} />
-                {distance}
-              </span>
-            )}
-            {type && (
-              <span
-                className="border border-[#c9cccf] rounded px-2 py-0.5 text-[#0b1324]"
-                style={{
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-sm)",
-                  fontWeight: "var(--ifr-fw-medium)",
-                }}
-              >
-                {type}
-              </span>
-            )}
-          </div>
-        </div>
-        {verified && (
-          <span
-            className="bg-[rgba(3,106,83,0.1)] text-[#036a53] rounded px-2 py-0.5 shrink-0"
-            style={{
-              fontFamily: "var(--ifr-font-body)",
-              fontSize: "12px",
-              fontWeight: "var(--ifr-fw-medium)",
-            }}
-          >
-            {t("Verified")}
-          </span>
-        )}
-      </div>
-      {description && (
-        <p className="text-[#6c707c] m-0" style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}>
-          {description}
-        </p>
-      )}
-    </div>
-  );
-}
-
 /** Categorized DPP display with collapsible subsections */
 function DppDisplay({ dpp }: { dpp: Record<string, string> }) {
   const { t } = useTranslation("common");
@@ -973,6 +833,311 @@ function DppDisplay({ dpp }: { dpp: Record<string, string> }) {
   );
 }
 
+/** Card for a single DPP in the Digital Product Passports list. */
+function DppListCard({ dpp, index, color }: { dpp: DppDocument; index: number; color: string }) {
+  const { t } = useTranslation("common");
+  const [expanded, setExpanded] = useState(false);
+
+  const label = dpp.productOverview?.productName?.value || `DPP-${String(index + 1).padStart(3, "0")}`;
+  const batchLabel = dpp.batchType === "unit" ? t("Unit") : t("Batch");
+  const dateStr = dpp.createdAt
+    ? new Date(dpp.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+    : "";
+
+  return (
+    <div className="border border-ifr rounded-ifr-md overflow-hidden bg-ifr-surface">
+      <div className="flex items-center gap-3 p-4">
+        {/* DPP icon */}
+        <div
+          className="flex items-center justify-center shrink-0"
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "var(--ifr-radius-sm)",
+            backgroundColor: "rgba(200,212,229,0.3)",
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+              stroke={color}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <rect x="9" y="3" width="6" height="4" rx="1" stroke={color} strokeWidth="2" />
+          </svg>
+        </div>
+
+        {/* Name + batch + serial + date */}
+        <div className="flex-1 min-w-0">
+          <p
+            className="m-0 text-ifr-text-primary truncate"
+            style={{
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-md)",
+              fontWeight: "var(--ifr-fw-semibold)",
+            }}
+          >
+            {label}
+          </p>
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            <span
+              className="px-1.5 py-0.5 rounded text-xs"
+              style={{
+                backgroundColor: dpp.batchType === "unit" ? "rgba(3,106,83,0.1)" : "rgba(130,0,219,0.1)",
+                color: dpp.batchType === "unit" ? "#036A53" : "#8200DB",
+                fontWeight: "var(--ifr-fw-medium)",
+              }}
+            >
+              {batchLabel}
+            </span>
+            {dpp.batchId && (
+              <span className="text-ifr-text-secondary font-mono" style={{ fontSize: "var(--ifr-fs-xs)" }}>
+                {dpp.batchId}
+              </span>
+            )}
+            {dateStr && (
+              <span className="text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-xs)" }}>
+                {t("Published")} {dateStr}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* View DPP button */}
+        <button
+          type="button"
+          onClick={() => setExpanded(v => !v)}
+          className="shrink-0 px-3 py-1.5 bg-transparent border border-ifr hover:bg-ifr-hover transition-colors cursor-pointer"
+          style={{
+            borderRadius: "var(--ifr-radius-sm)",
+            fontFamily: "var(--ifr-font-body)",
+            fontSize: "var(--ifr-fs-xs)",
+            fontWeight: "var(--ifr-fw-medium)",
+            color: "var(--ifr-text-primary)",
+          }}
+        >
+          {expanded ? t("Hide DPP") : t("View DPP")}
+        </button>
+      </div>
+
+      {/* Expanded detail */}
+      {expanded && (
+        <div className="border-t border-ifr p-4 bg-white">
+          <DppDocumentDetail dpp={dpp} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Renders DPP document fields in a readable format. */
+function DppDocumentDetail({ dpp }: { dpp: DppDocument }) {
+  const { t } = useTranslation("common");
+
+  const sections: { title: string; fields: { label: string; value: any }[] }[] = [];
+
+  // Product Overview
+  if (dpp.productOverview) {
+    const po = dpp.productOverview;
+    const fields = [
+      { label: t("Brand"), value: po.brandName?.value },
+      { label: t("Product Name"), value: po.productName?.value },
+      { label: t("Description"), value: po.productDescription?.value },
+      { label: t("Model"), value: po.modelName?.value },
+      { label: t("GTIN"), value: po.gtin?.value },
+      { label: t("Country of Origin"), value: po.countryOfOrigin?.value },
+      { label: t("Country of Sale"), value: po.countryOfSale?.value },
+      { label: t("Color"), value: po.color?.value },
+      { label: t("Dimensions"), value: po.dimensions?.value },
+      { label: t("Net Weight"), value: po.netWeight?.value },
+      { label: t("Condition"), value: po.conditionOfTheProduct?.value },
+      { label: t("Warranty"), value: po.warrantyDuration?.value },
+    ].filter(f => f.value != null && f.value !== "");
+    if (fields.length > 0) sections.push({ title: t("Product Overview"), fields });
+  }
+
+  // Compliance
+  if (dpp.complianceAndStandards) {
+    const cs = dpp.complianceAndStandards;
+    const fields = [
+      { label: t("CE Marking"), value: cs.ceMarking?.value },
+      { label: t("RoHS Compliance"), value: cs.rohsCompliance?.value },
+    ].filter(f => f.value != null && f.value !== "");
+    if (fields.length > 0) sections.push({ title: t("Compliance & Standards"), fields });
+  }
+
+  // Environmental Impact
+  if (dpp.environmentalImpact) {
+    const ei = dpp.environmentalImpact;
+    const fields = [
+      {
+        label: t("Energy Consumption"),
+        value: ei.energyConsumptionPerUnit?.value,
+        units: ei.energyConsumptionPerUnit?.units,
+      },
+      { label: t("CO₂ Emissions"), value: ei.co2eEmissionsPerUnit?.value, units: ei.co2eEmissionsPerUnit?.units },
+      {
+        label: t("Water Consumption"),
+        value: ei.waterConsumptionPerUnit?.value,
+        units: ei.waterConsumptionPerUnit?.units,
+      },
+      {
+        label: t("Chemical Consumption"),
+        value: ei.chemicalConsumptionPerUnit?.value,
+        units: ei.chemicalConsumptionPerUnit?.units,
+      },
+    ].filter(f => f.value != null && String(f.value) !== "");
+    if (fields.length > 0) sections.push({ title: t("Environmental Impact"), fields });
+  }
+
+  // Energy Use
+  if (dpp.energyUseAndEfficiency) {
+    const eu = dpp.energyUseAndEfficiency;
+    const fields = [
+      { label: t("Battery Type"), value: eu.batteryType?.value },
+      { label: t("Power Rating"), value: eu.powerRating?.value, units: eu.powerRating?.units },
+      { label: t("Max Voltage"), value: eu.maximumVoltage?.value, units: eu.maximumVoltage?.units },
+      { label: t("Battery Life"), value: eu.batteryLife?.value, units: eu.batteryLife?.units },
+    ].filter(f => f.value != null && f.value !== "");
+    if (fields.length > 0) sections.push({ title: t("Energy Use & Efficiency"), fields });
+  }
+
+  // Reparability
+  if (dpp.reparability) {
+    const r = dpp.reparability;
+    const fields = [
+      { label: t("Service & Repair Instructions"), value: r.serviceAndRepairInstructions?.value },
+      { label: t("Spare Parts Availability"), value: r.availabilityOfSpareParts?.value },
+    ].filter(f => f.value != null && f.value !== "");
+    if (fields.length > 0) sections.push({ title: t("Reparability"), fields });
+  }
+
+  // Recyclability
+  if (dpp.recyclability) {
+    const rc = dpp.recyclability;
+    const fields = [
+      { label: t("Recycling Instructions"), value: rc.recyclingInstructions?.value },
+      { label: t("Material Composition"), value: rc.materialComposition?.value },
+      { label: t("Substances of Concern"), value: rc.substancesOfConcern?.value },
+    ].filter(f => f.value != null && f.value !== "");
+    if (fields.length > 0) sections.push({ title: t("Recyclability"), fields });
+  }
+
+  if (sections.length === 0) {
+    return (
+      <p className="text-[#6c707c] m-0" style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}>
+        {t("No detailed data available for this passport.")}
+      </p>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {sections.map(s => (
+        <div key={s.title}>
+          <h4
+            className="m-0 mb-2 text-ifr-text-primary"
+            style={{
+              fontFamily: "var(--ifr-font-heading)",
+              fontSize: "var(--ifr-fs-sm)",
+              fontWeight: "var(--ifr-fw-semibold)",
+            }}
+          >
+            {s.title}
+          </h4>
+          <div className="flex flex-col gap-1">
+            {s.fields.map(f => (
+              <div key={f.label} className="flex justify-between py-1 border-b border-[#f0f0f0] last:border-0">
+                <span className="text-[#6c707c]" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                  {f.label}
+                </span>
+                <span
+                  className="text-ifr-text-primary text-right"
+                  style={{ fontSize: "var(--ifr-fs-sm)", fontWeight: "var(--ifr-fw-medium)" }}
+                >
+                  {String(f.value)}
+                  {(f as any).units ? ` ${(f as any).units}` : ""}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Banner showing this product was manufactured from an open source design */
+function DesignBanner({ designId, designName }: { designId?: string; designName?: string }) {
+  const { t } = useTranslation("common");
+  const { data } = useQuery(SEARCH_PROJECT, {
+    variables: { id: designId! },
+    skip: !designId || !!designName,
+  });
+  const name = designName || data?.economicResource?.name || t("Design");
+  const author = data?.economicResource?.primaryAccountable?.name;
+
+  return (
+    <div
+      className="flex items-center gap-3 p-4 rounded-ifr-md mt-4"
+      style={{ backgroundColor: "rgba(3,106,83,0.08)", border: "1px solid rgba(3,106,83,0.2)" }}
+    >
+      <div
+        className="shrink-0 flex items-center justify-center"
+        style={{
+          width: "36px",
+          height: "36px",
+          borderRadius: "var(--ifr-radius-sm)",
+          backgroundColor: "var(--ifr-green)",
+        }}
+      >
+        <EntityTypeIcon type={ProjectType.DESIGN} size="small" fill="#ffffff" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p
+          className="m-0 text-[#036A53]"
+          style={{
+            fontFamily: "var(--ifr-font-body)",
+            fontSize: "var(--ifr-fs-sm)",
+            fontWeight: "var(--ifr-fw-semibold)",
+          }}
+        >
+          {t("Manufactured from open source design")}
+        </p>
+        <p className="m-0 text-[#036A53]" style={{ fontSize: "var(--ifr-fs-xs)", opacity: 0.8 }}>
+          {t("Based on")} <span style={{ fontWeight: "var(--ifr-fw-semibold)" }}>{name}</span>
+          {author && (
+            <>
+              {" "}
+              {/* eslint-disable-next-line i18next/no-literal-string */}
+              {t("by")}: {author}
+            </>
+          )}
+        </p>
+      </div>
+      {designId && (
+        <Link href={`/project/${designId}`}>
+          <a
+            className="flex items-center gap-1 px-3 py-1.5 rounded-ifr-sm no-underline shrink-0"
+            style={{
+              backgroundColor: "#036A53",
+              color: "#fff",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-sm)",
+              fontWeight: "var(--ifr-fw-medium)",
+            }}
+          >
+            {t("View Design")}
+            <ExternalLinkIcon className="w-4 h-4" />
+          </a>
+        </Link>
+      )}
+    </div>
+  );
+}
+
 /** Main detail page content. Requires FetchProjectLayout wrapper. */
 export default function ProjectDetailNew() {
   const { t } = useTranslation("common");
@@ -1025,6 +1190,32 @@ export default function ProjectDetailNew() {
     [project.classifiedAs]
   );
 
+  // Fetch DPPs from interfacer-dpp API
+  const dppApi = useDppApi();
+  const [productDpps, setProductDpps] = useState<DppDocument[]>([]);
+  const [dppsLoading, setDppsLoading] = useState(false);
+
+  useEffect(() => {
+    if (projectType !== ProjectType.PRODUCT || !project.id) return;
+    let cancelled = false;
+    setDppsLoading(true);
+    dppApi
+      .listDpps({ productId: project.id })
+      .then(res => {
+        if (!cancelled) setProductDpps(res.dpps || []);
+      })
+      .catch(() => {
+        if (!cancelled) setProductDpps([]);
+      })
+      .finally(() => {
+        if (!cancelled) setDppsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project.id, projectType]);
+
   // Breadcrumb
   const typeLabel =
     projectType === ProjectType.DESIGN ? "Designs" : projectType === ProjectType.PRODUCT ? "Products" : "Services";
@@ -1075,6 +1266,23 @@ export default function ProjectDetailNew() {
                 <span className="text-ifr-text-secondary font-mono truncate" style={{ fontSize: "var(--ifr-fs-sm)" }}>
                   {project.id}
                 </span>
+                {projectType === ProjectType.PRODUCT && (
+                  <span
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-white shrink-0"
+                    style={{ backgroundColor: "#036A53", fontSize: "var(--ifr-fs-xs)", fontWeight: 600 }}
+                  >
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M20 6L9 17l-5-5"
+                        stroke="white"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    {t("Available")}
+                  </span>
+                )}
               </div>
 
               {/* Title */}
@@ -1115,6 +1323,26 @@ export default function ProjectDetailNew() {
 
           {/* Image gallery */}
           <ImageGallery images={images} />
+
+          {/* Manufactured from open source design banner */}
+          {projectType === ProjectType.PRODUCT &&
+            (() => {
+              const meta = (project.metadata || {}) as Record<string, any>;
+              const basedOn = meta.basedOnDesign as { id?: string; name?: string } | string | undefined;
+              const fallbackDesignId = meta.design as string | undefined;
+              const resolvedDesignId = basedOn
+                ? typeof basedOn === "object"
+                  ? basedOn.id
+                  : undefined
+                : fallbackDesignId;
+              const resolvedDesignName = basedOn
+                ? typeof basedOn === "object"
+                  ? basedOn.name || t("Design")
+                  : String(basedOn)
+                : undefined;
+              if (!basedOn && !fallbackDesignId) return null;
+              return <DesignBanner designId={resolvedDesignId} designName={resolvedDesignName} />;
+            })()}
 
           {/* Collapsible sections */}
           <div className="flex flex-col gap-4 mt-4">
@@ -1241,6 +1469,28 @@ export default function ProjectDetailNew() {
                     <TagBadgeDetail key={m} text={m} />
                   ))}
                 </div>
+                {projectType === ProjectType.PRODUCT &&
+                  (() => {
+                    const meta = (project.metadata || {}) as Record<string, any>;
+                    const basedOnDesign = meta.basedOnDesign as { id?: string; name?: string } | string | undefined;
+                    return (
+                      basedOnDesign &&
+                      typeof basedOnDesign === "object" &&
+                      basedOnDesign.id && (
+                        <p
+                          className="text-[#6c707c] m-0 mt-3"
+                          style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-xs)" }}
+                        >
+                          {t("Materials are inherited from the parent Design.")}{" "}
+                          <Link href={`/project/${basedOnDesign.id}#bom`}>
+                            <a className="text-[#036A53] underline hover:no-underline">
+                              {t("See the full bill of materials")}
+                            </a>
+                          </Link>
+                        </p>
+                      )
+                    );
+                  })()}
               </DetailSection>
             )}
 
@@ -1268,6 +1518,11 @@ export default function ProjectDetailNew() {
                   <p className="text-ifr-text-primary" style={{ fontSize: "var(--ifr-fs-md)" }}>
                     {project.currentLocation.mappableAddress || project.currentLocation.name}
                   </p>
+                  {project.currentLocation.lat != null && project.currentLocation.long != null && (
+                    <div className="mt-2 rounded-lg overflow-hidden">
+                      <DetailMap location={project.currentLocation} height={250} />
+                    </div>
+                  )}
                 </div>
               </DetailSection>
             )}
@@ -1292,8 +1547,235 @@ export default function ProjectDetailNew() {
                 sectionId="sustainability"
               >
                 <SustainabilityMetrics dpp={(project.metadata as Record<string, any>).dpp as Record<string, string>} />
+                {/* Recyclable / Repairable badges */}
+                {productDpps.length > 0 &&
+                  (() => {
+                    const dpp = productDpps[0];
+                    const hasRecyclability =
+                      dpp.recyclability &&
+                      (dpp.recyclability.recyclingInstructions?.value || dpp.recyclability.materialComposition?.value);
+                    const hasReparability =
+                      dpp.reparability &&
+                      (dpp.reparability.serviceAndRepairInstructions?.value ||
+                        dpp.reparability.availabilityOfSpareParts?.value);
+                    if (!hasRecyclability && !hasReparability) return null;
+                    return (
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        {hasRecyclability && (
+                          <span
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white"
+                            style={{ backgroundColor: "#036A53", fontSize: "var(--ifr-fs-xs)", fontWeight: 600 }}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                              <path
+                                d="M7 19H4.815a1.83 1.83 0 01-1.57-.881 1.785 1.785 0 01-.004-1.784L7.196 9.5"
+                                stroke="white"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M11 19h8.203a1.83 1.83 0 001.556-.89 1.784 1.784 0 00-.005-1.78L16.8 9.5"
+                                stroke="white"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M12 5l3.962 6.343M8.038 11.343L12 5"
+                                stroke="white"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            {t("Recyclable")}
+                          </span>
+                        )}
+                        {hasReparability && (
+                          <span
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white"
+                            style={{ backgroundColor: "#036A53", fontSize: "var(--ifr-fs-xs)", fontWeight: 600 }}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                              <path
+                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"
+                                stroke="white"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            {t("Repairable")}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })()}
               </DetailSection>
             )}
+
+            {/* Recycling Information — from DPP data */}
+            {projectType === ProjectType.PRODUCT &&
+              productDpps.length > 0 &&
+              (() => {
+                const dpp = productDpps[0];
+                const rc = dpp.recyclability;
+                if (!rc) return null;
+                const hasContent =
+                  rc.recyclingInstructions?.value || rc.materialComposition?.value || rc.substancesOfConcern?.value;
+                if (!hasContent) return null;
+                return (
+                  <DetailSection
+                    icon={
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M7 19H4.815a1.83 1.83 0 01-1.57-.881 1.785 1.785 0 01-.004-1.784L7.196 9.5"
+                          stroke="#036A53"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M11 19h8.203a1.83 1.83 0 001.556-.89 1.784 1.784 0 00-.005-1.78L16.8 9.5"
+                          stroke="#036A53"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M12 5l3.962 6.343M8.038 11.343L12 5"
+                          stroke="#036A53"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    }
+                    iconBg="bg-[rgba(3,106,83,0.1)]"
+                    title={t("Recycling Information")}
+                    subtitle={t("How to recycle this product")}
+                    sectionId="recycling"
+                  >
+                    <div className="flex flex-col gap-3">
+                      {rc.recyclingInstructions?.value && (
+                        <p
+                          className="text-ifr-text-primary m-0"
+                          style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                        >
+                          {String(rc.recyclingInstructions.value)}
+                        </p>
+                      )}
+                      {rc.materialComposition?.value && (
+                        <div>
+                          <p
+                            className="text-[#6c707c] m-0 mb-1"
+                            style={{ fontSize: "var(--ifr-fs-xs)", fontWeight: "var(--ifr-fw-semibold)" }}
+                          >
+                            {t("Material Composition")}
+                          </p>
+                          <p
+                            className="text-ifr-text-primary m-0"
+                            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                          >
+                            {String(rc.materialComposition.value)}
+                          </p>
+                        </div>
+                      )}
+                      {rc.substancesOfConcern?.value && (
+                        <div>
+                          <p
+                            className="text-[#6c707c] m-0 mb-1"
+                            style={{ fontSize: "var(--ifr-fs-xs)", fontWeight: "var(--ifr-fw-semibold)" }}
+                          >
+                            {t("Substances of Concern")}
+                          </p>
+                          <p
+                            className="text-ifr-text-primary m-0"
+                            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                          >
+                            {String(rc.substancesOfConcern.value)}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </DetailSection>
+                );
+              })()}
+
+            {/* Repair Information — from DPP data */}
+            {projectType === ProjectType.PRODUCT &&
+              productDpps.length > 0 &&
+              (() => {
+                const dpp = productDpps[0];
+                const rep = dpp.reparability;
+                const ri = dpp.repairInformation;
+                const hasRep = rep?.serviceAndRepairInstructions?.value || rep?.availabilityOfSpareParts?.value;
+                const hasRi = ri?.reasonForRepair?.value || ri?.performedAction?.value || ri?.materialsUsed?.value;
+                if (!hasRep && !hasRi) return null;
+                return (
+                  <DetailSection
+                    icon={
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"
+                          stroke="#8200DB"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    }
+                    iconBg="bg-[rgba(130,0,219,0.1)]"
+                    title={t("Repair Information")}
+                    subtitle={t("How to repair this product")}
+                    sectionId="repair"
+                  >
+                    <div className="flex flex-col gap-3">
+                      {rep?.serviceAndRepairInstructions?.value && (
+                        <p
+                          className="text-ifr-text-primary m-0"
+                          style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                        >
+                          {String(rep.serviceAndRepairInstructions.value)}
+                        </p>
+                      )}
+                      {rep?.availabilityOfSpareParts?.value && (
+                        <div>
+                          <p
+                            className="text-[#6c707c] m-0 mb-1"
+                            style={{ fontSize: "var(--ifr-fs-xs)", fontWeight: "var(--ifr-fw-semibold)" }}
+                          >
+                            {t("Spare Parts Availability")}
+                          </p>
+                          <p
+                            className="text-ifr-text-primary m-0"
+                            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                          >
+                            {String(rep.availabilityOfSpareParts.value)}
+                          </p>
+                        </div>
+                      )}
+                      {ri?.performedAction?.value && (
+                        <div>
+                          <p
+                            className="text-[#6c707c] m-0 mb-1"
+                            style={{ fontSize: "var(--ifr-fs-xs)", fontWeight: "var(--ifr-fw-semibold)" }}
+                          >
+                            {t("Repair Actions")}
+                          </p>
+                          <p
+                            className="text-ifr-text-primary m-0"
+                            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                          >
+                            {String(ri.performedAction.value)}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </DetailSection>
+                );
+              })()}
 
             {/* Get It Made — designs, shows manufacturers */}
             {projectType === ProjectType.DESIGN && (
@@ -1311,35 +1793,12 @@ export default function ProjectDetailNew() {
                 subtitle={t("Local manufacturers and makerspaces that can produce this")}
                 sectionId="get-it-made"
               >
-                <div className="flex flex-col gap-3">
-                  <p
-                    className="text-[#6c707c] m-0"
-                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-                  >
-                    {t("These verified manufacturers have the equipment and expertise to make this project for you:")}
-                  </p>
-                  <LocationCard
-                    name="FabLab Hamburg"
-                    distance="2.3 km"
-                    type="Makerspace"
-                    verified
-                    description="Full equipment: Laser cutters, 3D printers, electronics lab."
-                  />
-                  <LocationCard
-                    name="Precision 3D Shop"
-                    distance="5.1 km"
-                    type="Commercial"
-                    verified
-                    description="Full equipment: Laser cutters, 3D printers, electronics lab."
-                  />
-                  <LocationCard
-                    name="Community Workshop"
-                    distance="7.8 km"
-                    type="Makerspace"
-                    verified
-                    description="Full equipment: Laser cutters, 3D printers, electronics lab."
-                  />
-                </div>
+                <p
+                  className="text-[#6c707c] m-0"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                >
+                  {t("Manufacturer listings will be available soon. Contact the designer for production enquiries.")}
+                </p>
               </DetailSection>
             )}
 
@@ -1404,37 +1863,80 @@ export default function ProjectDetailNew() {
               )}
             </DetailSection>
 
-            {/* Related Projects */}
-            <DetailSection
-              icon={
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <line x1="6" y1="3" x2="6" y2="15" stroke="#0B1324" strokeWidth="2" strokeLinecap="round" />
-                  <circle cx="18" cy="6" r="3" stroke="#0B1324" strokeWidth="2" />
-                  <circle cx="6" cy="18" r="3" stroke="#0B1324" strokeWidth="2" />
-                  <path
-                    d="M18 9a9 9 0 01-9 9"
-                    stroke="#0B1324"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+            {/* Included Projects — sub-assemblies from metadata.relations */}
+            {(() => {
+              const relations = (project.metadata as Record<string, any>)?.relations;
+              if (!relations || !Array.isArray(relations) || relations.length === 0) return null;
+              return (
+                <DetailSection
+                  icon={
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <line x1="6" y1="3" x2="6" y2="15" stroke="#0B1324" strokeWidth="2" strokeLinecap="round" />
+                      <circle cx="18" cy="6" r="3" stroke="#0B1324" strokeWidth="2" />
+                      <circle cx="6" cy="18" r="3" stroke="#0B1324" strokeWidth="2" />
+                      <path
+                        d="M18 9a9 9 0 01-9 9"
+                        stroke="#0B1324"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  }
+                  iconBg="bg-[rgba(200,212,229,0.5)]"
+                  title={`${t("Included Projects")} (${relations.length})`}
+                  subtitle={t("Sub-assemblies and components used in this project")}
+                  sectionId="included-projects"
+                >
+                  <ProjectsCards
+                    filter={{ id: relations }}
+                    tiny
+                    hideHeader
+                    hidePagination
+                    hideFilters
+                    emptyState={
+                      <p
+                        className="text-[#6c707c] m-0"
+                        style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                      >
+                        {t("No related projects found.")}
+                      </p>
+                    }
                   />
-                </svg>
-              }
-              iconBg="bg-[rgba(200,212,229,0.5)]"
-              title={t("Related Projects")}
-              subtitle={t("Projects inspired by or building upon this design")}
-              sectionId="related-projects"
-            >
-              <p
-                className="text-[#6c707c] m-0"
-                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-              >
-                {t("Related projects would be displayed here...")}
-              </p>
-            </DetailSection>
+                </DetailSection>
+              );
+            })()}
 
-            {/* Product Passport — products only */}
-            {projectType === ProjectType.PRODUCT && (project.metadata as Record<string, any>)?.dpp && (
+            {/* Product Passport — embedded metadata (legacy) */}
+            {projectType === ProjectType.PRODUCT &&
+              (project.metadata as Record<string, any>)?.dpp &&
+              productDpps.length === 0 && (
+                <DetailSection
+                  icon={
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+                        stroke={color}
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <rect x="9" y="3" width="6" height="4" rx="1" stroke={color} strokeWidth="2" />
+                      <line x1="9" y1="12" x2="15" y2="12" stroke={color} strokeWidth="2" strokeLinecap="round" />
+                      <line x1="9" y1="16" x2="13" y2="16" stroke={color} strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  }
+                  iconBg="bg-ifr-hover"
+                  title={t("Product Passport")}
+                  subtitle={t("Digital product passport data")}
+                  sectionId="product-passport"
+                >
+                  <DppDisplay dpp={(project.metadata as Record<string, any>).dpp as Record<string, string>} />
+                </DetailSection>
+              )}
+
+            {/* Digital Product Passports — fetched from interfacer-dpp API */}
+            {projectType === ProjectType.PRODUCT && (productDpps.length > 0 || dppsLoading) && (
               <DetailSection
                 icon={
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -1451,11 +1953,32 @@ export default function ProjectDetailNew() {
                   </svg>
                 }
                 iconBg="bg-ifr-hover"
-                title={t("Product Passport")}
-                subtitle={t("Digital product passport data")}
-                sectionId="product-passport"
+                title={t("Digital Product Passports")}
+                subtitle={t("Traceability records for individual batches and units of this product")}
+                badge={
+                  productDpps.length > 0 ? (
+                    <span className="border border-[#c9cccf] rounded px-2 py-0.5 text-xs font-medium text-[#0b1324]">
+                      {productDpps.length}
+                    </span>
+                  ) : undefined
+                }
+                sectionId="digital-product-passports"
+                defaultOpen
               >
-                <DppDisplay dpp={(project.metadata as Record<string, any>).dpp as Record<string, string>} />
+                {dppsLoading ? (
+                  <p
+                    className="text-[#6c707c] m-0"
+                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                  >
+                    {t("Loading product passports...")}
+                  </p>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {productDpps.map((dpp, idx) => (
+                      <DppListCard key={dpp.id} dpp={dpp} index={idx} color={color} />
+                    ))}
+                  </div>
+                )}
               </DetailSection>
             )}
           </div>

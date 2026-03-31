@@ -22,9 +22,13 @@ import { formatSelectOption, SelectOption } from "components/brickroom/utils/BrS
 export async function fetchLocation(text: string): Promise<Array<FetchLocation.Location>> {
   if (!text) return [];
 
-  const result = await fetch(`${process.env.NEXT_PUBLIC_LOCATION_AUTOCOMPLETE}?q=${encodeURI(text)}`);
-  const data = (await result.json()) as FetchLocation.Response;
-  return [...data.items];
+  try {
+    const result = await fetch(`${process.env.NEXT_PUBLIC_LOCATION_AUTOCOMPLETE}?q=${encodeURI(text)}`);
+    const data = (await result.json()) as FetchLocation.Response;
+    return data?.items ? [...data.items] : [];
+  } catch {
+    return [];
+  }
 }
 
 // Loads the options for the async multiselect

@@ -69,14 +69,19 @@ export default function CatalogLayout({
     router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
   };
 
-  // Apply search + tag filters from URL
+  // Apply search + tag + geo filters from URL
   const tagsParam = router.query.tags as string | undefined;
   const tagsList = tagsParam ? tagsParam.split(",").map(t => encodeURI(t)) : undefined;
+
+  const nearLat = router.query.nearLat as string | undefined;
+  const nearLong = router.query.nearLong as string | undefined;
+  const nearDistanceKm = router.query.nearDistanceKm as string | undefined;
 
   const effectiveFilter: EconomicResourceFilterParams = {
     ...filter,
     ...(router.query.q && { orName: router.query.q as string }),
     ...(tagsList && tagsList.length > 0 && { classifiedAs: tagsList }),
+    ...(nearLat && nearLong && nearDistanceKm && { nearLat, nearLong, nearDistanceKm }),
   };
 
   const dataQueryIdentifier = "economicResources";
