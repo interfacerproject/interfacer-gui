@@ -25,11 +25,22 @@ export default function ToolbarDropdown({ label, value, options, onChange }: Too
 
   return (
     <div ref={ref} className="relative inline-flex items-center gap-2">
-      <span className="text-sm text-ifr-text-secondary">{label}</span>
+      <span
+        className="text-ifr-text-secondary"
+        style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)", lineHeight: "21px" }}
+      >
+        {label}
+      </span>
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 h-9 px-3 text-sm font-medium rounded-ifr-sm border border-transparent hover:border-ifr transition-colors"
+        className="flex items-center gap-1 h-9 px-3 rounded-ifr-sm border border-transparent hover:border-ifr transition-colors"
+        style={{
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: "var(--ifr-fs-base)",
+          fontWeight: 500,
+          lineHeight: "21px",
+        }}
       >
         {value}
         <ChevronDown size={16} className={`transition-transform ${open ? "rotate-180" : ""}`} />
@@ -44,9 +55,10 @@ export default function ToolbarDropdown({ label, value, options, onChange }: Too
                 onChange(option);
                 setOpen(false);
               }}
-              className={`w-full text-left px-3 py-2 text-sm hover:bg-ifr-hover-light transition-colors ${
+              className={`w-full text-left px-3 py-2 hover:bg-ifr-hover-light transition-colors ${
                 option === value ? "font-medium" : ""
               }`}
+              style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)", lineHeight: "21px" }}
             >
               {option}
             </button>

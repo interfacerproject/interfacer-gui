@@ -285,7 +285,7 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
             style={{
               fontFamily: "var(--ifr-font-body)",
               fontSize: "var(--ifr-fs-md)",
-              fontWeight: "var(--ifr-fw-medium)",
+              fontWeight: "var(--ifr-fw-regular)",
             }}
           >
             {t("Filter by")}

@@ -135,21 +135,22 @@ export default function CatalogLayout({
           <div className="relative px-6 py-10">
             <div className="relative z-10 flex items-center gap-6">
               {/* Left: Title + Description */}
-              <div className="flex-1 flex flex-col">
+              <div className="flex-1 flex flex-col gap-2">
                 <h1
-                  className="leading-9 mb-2"
+                  className="m-0"
                   style={{
                     fontFamily: "var(--ifr-font-heading)",
                     fontSize: "30px",
                     fontWeight: 700,
+                    lineHeight: "36px",
                     color: "#ffffff",
                   }}
                 >
                   {hero.title}
                 </h1>
                 <p
-                  className="leading-6 max-w-[640px]"
-                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "16px", color: "#fafafa" }}
+                  className="m-0 max-w-[640px]"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "16px", lineHeight: "24px", color: "#fafafa" }}
                 >
                   {hero.description}
                 </p>
@@ -162,13 +163,13 @@ export default function CatalogLayout({
         </div>
 
         {/* Search & Sort Bar */}
-        <div className="bg-ifr-surface border-b border-ifr px-6 py-4">
+        <div className="bg-ifr-surface border-b border-ifr px-6 py-5">
           <div className="flex items-center justify-between gap-6">
             {/* Filters toggle */}
             <button
               type="button"
               onClick={() => setSidebarCollapsed(v => !v)}
-              className={`flex items-center gap-2 px-3 shrink-0 border transition-colors cursor-pointer ${
+              className={`flex items-center gap-[8px] px-3 shrink-0 border transition-colors cursor-pointer ${
                 !sidebarCollapsed
                   ? "bg-ifr-hover border-ifr text-ifr-text-primary"
                   : "bg-ifr-surface border-transparent text-ifr-text-secondary hover:border-ifr hover:text-ifr-text-primary"
@@ -180,8 +181,9 @@ export default function CatalogLayout({
               <span
                 style={{
                   fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-base)",
+                  fontSize: "var(--ifr-fs-md)",
                   fontWeight: "var(--ifr-fw-medium)",
+                  lineHeight: "24px",
                 }}
               >
                 {t("Filters")}
@@ -198,7 +200,7 @@ export default function CatalogLayout({
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   className="flex-1 bg-transparent text-ifr-text-primary placeholder:text-ifr-text-muted outline-none"
-                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-md)", lineHeight: "24px" }}
                 />
               </div>
             </form>
@@ -220,8 +222,13 @@ export default function CatalogLayout({
         <div className="bg-ifr-results flex-1 p-6">
           {/* Results count */}
           <p
-            className="text-ifr-text-secondary mb-6"
-            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
+            className="text-ifr-text-secondary"
+            style={{
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-base)",
+              lineHeight: "21px",
+              marginBottom: "24px",
+            }}
           >
             {t("Showing") + " "}
             <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-medium)" }}>

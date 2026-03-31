@@ -28,6 +28,17 @@ html,
 body {
   padding: 0;
   margin: 0;
+  font-family: var(--ifr-font-body);
+  font-size: var(--ifr-fs-base);
+  line-height: 1.5;
+  color: var(--ifr-text-primary);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 
 a {
@@ -61,7 +72,8 @@ h4,
 
 p,
 .paragraph {
-  @apply text-sm;
+  font-size: var(--ifr-fs-base);
+  line-height: 1.5;
 }
 
 .logo {
