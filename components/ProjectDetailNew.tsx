@@ -54,15 +54,6 @@ interface ProjectSidebarNewProps {
 function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
   const { t } = useTranslation("common");
   const { user } = useAuth();
-  const color = typeColors[projectType] || "var(--ifr-green)";
-
-  // Decode tags
-  const tags = (project.classifiedAs || []).filter(
-    (c: string) => !c.startsWith("machine-") && !c.startsWith("material-") && !c.startsWith("category-")
-  );
-  const machines = (project.classifiedAs || [])
-    .filter((c: string) => c.startsWith("machine-"))
-    .map((c: string) => decodeURIComponent(c.replace("machine-", "")).replace(/-/g, " "));
 
   // Extract metadata fields (product-specific)
   const meta = (project.metadata || {}) as Record<string, any>;
@@ -89,10 +80,18 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
     : undefined;
 
   return (
-    <div className="w-[300px] shrink-0">
-      <div className="sticky flex flex-col gap-4" style={{ top: "calc(var(--ifr-topbar-height) + 80px)" }}>
-        {/* CTA */}
-        <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-5 flex flex-col gap-4">
+    <div className="w-full lg:w-[300px] shrink-0">
+      <div
+        className="sticky flex flex-col"
+        style={{
+          top: "calc(var(--ifr-topbar-height) + 80px)",
+          border: "1px solid #c9cccf",
+          borderRadius: "4px",
+          backgroundColor: "#fff",
+        }}
+      >
+        {/* Price & CTA section */}
+        <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
           {/* Product: Price & Availability */}
           {projectType === ProjectType.PRODUCT && price && (
             <div className="flex flex-col gap-2">
@@ -147,57 +146,127 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
             </div>
           )}
 
-          {projectType === ProjectType.DESIGN && (
+          {projectType === ProjectType.DESIGN &&
+          basedOnDesign &&
+          typeof basedOnDesign === "object" &&
+          basedOnDesign.id ? (
+            <Link href={`/project/${basedOnDesign.id}`}>
+              <a
+                className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline"
+                style={{
+                  height: "48px",
+                  borderRadius: "8px",
+                  backgroundColor: "#f1bd4d",
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "16px",
+                  fontWeight: "500",
+                  color: "#1a1a1a",
+                }}
+              >
+                {t("Build It Yourself")}
+              </a>
+            </Link>
+          ) : projectType === ProjectType.DESIGN ? (
             <button
               type="button"
-              className="w-full text-white border-none cursor-pointer flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
+              disabled
+              className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
               style={{
-                height: "var(--ifr-control-height)",
-                borderRadius: "var(--ifr-radius-md)",
-                backgroundColor: "var(--ifr-yellow)",
+                height: "48px",
+                borderRadius: "8px",
+                backgroundColor: "#f1bd4d",
                 fontFamily: "var(--ifr-font-body)",
-                fontSize: "var(--ifr-fs-md)",
-                fontWeight: "var(--ifr-fw-semibold)",
+                fontSize: "16px",
+                fontWeight: "500",
+                color: "#1a1a1a",
               }}
             >
               {t("Build It Yourself")}
             </button>
-          )}
-          {projectType === ProjectType.PRODUCT && (
+          ) : null}
+          {projectType === ProjectType.PRODUCT && project.primaryAccountable?.name ? (
+            <a
+              href={`mailto:?subject=${encodeURIComponent(project.name || "")} - ${encodeURIComponent(
+                t("Inquiry")
+              )}&body=${encodeURIComponent(
+                t("I am interested in") +
+                  " " +
+                  (project.name || "") +
+                  ".\n\n" +
+                  (typeof window !== "undefined" ? window.location.href : "")
+              )}`}
+              className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline cursor-pointer"
+              style={{
+                height: "48px",
+                borderRadius: "8px",
+                backgroundColor: "#f1bd4d",
+                fontFamily: "var(--ifr-font-body)",
+                fontSize: "16px",
+                fontWeight: "500",
+                color: "#1a1a1a",
+              }}
+            >
+              {t("Contact Manufacturer")}
+            </a>
+          ) : projectType === ProjectType.PRODUCT ? (
             <button
               type="button"
-              className="w-full text-white border-none cursor-pointer flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
+              disabled
+              className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
               style={{
-                height: "var(--ifr-control-height)",
-                borderRadius: "var(--ifr-radius-md)",
-                backgroundColor: "var(--ifr-yellow)",
+                height: "48px",
+                borderRadius: "8px",
+                backgroundColor: "#f1bd4d",
                 fontFamily: "var(--ifr-font-body)",
-                fontSize: "var(--ifr-fs-md)",
-                fontWeight: "var(--ifr-fw-semibold)",
+                fontSize: "16px",
+                fontWeight: "500",
+                color: "#1a1a1a",
               }}
             >
               {t("Contact Manufacturer")}
             </button>
-          )}
-          {projectType === ProjectType.PRODUCT && websiteLink && (
-            <a
-              href={websiteLink.startsWith("http") ? websiteLink : `https://${websiteLink}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 no-underline bg-ifr-surface border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors"
-              style={{
-                height: "var(--ifr-control-height)",
-                borderRadius: "var(--ifr-radius-sm)",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "var(--ifr-fs-md)",
-                fontWeight: "var(--ifr-fw-medium)",
-                color: "var(--ifr-text-primary)",
-              }}
-            >
-              <ExternalLinkIcon className="w-4 h-4" />
-              {t("Visit Store")}
-            </a>
-          )}
+          ) : null}
+          {projectType === ProjectType.PRODUCT &&
+            (websiteLink ? (
+              <a
+                href={websiteLink.startsWith("http") ? websiteLink : `https://${websiteLink}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 no-underline cursor-pointer hover:bg-ifr-hover transition-colors"
+                style={{
+                  height: "48px",
+                  borderRadius: "8px",
+                  border: "1px solid #c9cccf",
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  color: "#1a1a1a",
+                  backgroundColor: "#fff",
+                }}
+              >
+                <ExternalLinkIcon className="w-4 h-4" />
+                {t("Visit Store")}
+              </a>
+            ) : (
+              <button
+                type="button"
+                disabled
+                className="w-full flex items-center justify-center gap-2 opacity-40 cursor-not-allowed"
+                style={{
+                  height: "48px",
+                  borderRadius: "8px",
+                  border: "1px solid #c9cccf",
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  color: "#1a1a1a",
+                  backgroundColor: "#fff",
+                }}
+              >
+                <ExternalLinkIcon className="w-4 h-4" />
+                {t("Visit Store")}
+              </button>
+            ))}
           {projectType === ProjectType.SERVICE && (
             <button
               type="button"
@@ -214,78 +283,101 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
               {t("Request a Quote")}
             </button>
           )}
-
-          {/* Divider */}
-          <div className="w-full" style={{ height: "1px", backgroundColor: "var(--ifr-border)" }} />
         </div>
 
         {/* Created by / Manufactured by */}
         {project.primaryAccountable && (
-          <div>
-            <p
-              className="text-ifr-text-secondary mb-2"
-              style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-            >
-              {projectType === ProjectType.PRODUCT ? t("Manufactured by") : t("Created by")}
-            </p>
-            <Link href={`/profile/${project.primaryAccountable.id}`}>
-              <a className="flex items-center gap-3 p-3 border border-ifr rounded-ifr-sm no-underline group hover:bg-ifr-hover transition-colors">
-                <BrUserAvatar userId={project.primaryAccountable.id} size="40px" />
-                <div className="flex-1 min-w-0">
-                  <p
-                    className="text-ifr-text-primary group-hover:underline"
-                    style={{
-                      fontFamily: "var(--ifr-font-body)",
-                      fontSize: "var(--ifr-fs-md)",
-                      fontWeight: "var(--ifr-fw-medium)",
-                    }}
-                  >
-                    {project.primaryAccountable.name}
-                  </p>
-                  {project.primaryAccountable.primaryLocation?.name && (
-                    <p className="flex items-center gap-1 mt-0.5" style={{ fontSize: "var(--ifr-fs-sm)" }}>
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        className="shrink-0"
-                        style={{ color: "var(--ifr-green)" }}
-                      >
-                        <path
-                          d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"
-                          fill="currentColor"
-                        />
-                      </svg>
-                      <span style={{ color: "var(--ifr-green)", fontFamily: "var(--ifr-font-body)" }}>
-                        {project.primaryAccountable.primaryLocation.name}
-                      </span>
+          <>
+            <hr className="border-t border-[#c9cccf] m-0 mx-4" />
+            <div className="px-4 py-4">
+              <p
+                className="text-ifr-text-secondary mb-2"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {projectType === ProjectType.PRODUCT ? t("Manufactured by") : t("Created by")}
+              </p>
+              <Link href={`/profile/${project.primaryAccountable.id}`}>
+                <a className="flex items-center gap-3 p-3 border border-ifr rounded-ifr-sm no-underline group hover:bg-ifr-hover transition-colors">
+                  <BrUserAvatar userId={project.primaryAccountable.id} size="40px" />
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className="text-ifr-text-primary group-hover:underline"
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-md)",
+                        fontWeight: "var(--ifr-fw-medium)",
+                      }}
+                    >
+                      {project.primaryAccountable.name}
                     </p>
-                  )}
-                </div>
-                <ChevronRight className="w-5 h-5 text-ifr-text-secondary shrink-0" />
-              </a>
-            </Link>
-          </div>
-        )}
-
-        {/* Divider */}
-        {project.primaryAccountable && (
-          <div className="w-full" style={{ height: "1px", backgroundColor: "var(--ifr-border)" }} />
+                    {project.primaryAccountable.primaryLocation?.name && (
+                      <p className="flex items-center gap-1 mt-0.5" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          className="shrink-0"
+                          style={{ color: "var(--ifr-green)" }}
+                        >
+                          <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                        <span style={{ color: "var(--ifr-green)", fontFamily: "var(--ifr-font-body)" }}>
+                          {project.primaryAccountable.primaryLocation.name}
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-ifr-text-secondary shrink-0" />
+                </a>
+              </Link>
+            </div>
+          </>
         )}
 
         {/* Based on design — products only */}
         {projectType === ProjectType.PRODUCT && basedOnDesign && (
-          <div>
-            <p
-              className="text-ifr-text-secondary mb-2"
-              style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-            >
-              {t("Based on open source design")}
-            </p>
-            {typeof basedOnDesign === "object" && basedOnDesign.id ? (
-              <Link href={`/project/${basedOnDesign.id}`}>
-                <a className="flex items-center gap-2.5 p-3 border border-ifr rounded-ifr-sm hover:bg-ifr-hover transition-colors no-underline">
+          <>
+            <hr className="border-t border-[#c9cccf] m-0 mx-4" />
+            <div className="px-4 py-4">
+              <p
+                className="text-ifr-text-secondary mb-2"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {t("Based on open source design")}
+              </p>
+              {typeof basedOnDesign === "object" && basedOnDesign.id ? (
+                <Link href={`/project/${basedOnDesign.id}`}>
+                  <a className="flex items-center gap-2.5 p-3 border border-ifr rounded-ifr-sm hover:bg-ifr-hover transition-colors no-underline">
+                    <div
+                      className="shrink-0 flex items-center justify-center"
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "var(--ifr-radius-sm)",
+                        backgroundColor: "var(--ifr-green)",
+                      }}
+                    >
+                      <EntityTypeIcon type={ProjectType.DESIGN} size="small" fill="#ffffff" />
+                    </div>
+                    <span
+                      className="text-ifr-text-primary truncate flex-1"
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-base)",
+                        fontWeight: "var(--ifr-fw-medium)",
+                      }}
+                    >
+                      {basedOnDesign.name || t("Design")}
+                    </span>
+                    <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
+                  </a>
+                </Link>
+              ) : (
+                <div className="flex items-center gap-2.5 p-3 border border-ifr rounded-ifr-sm">
                   <div
                     className="shrink-0 flex items-center justify-center"
                     style={{
@@ -305,48 +397,25 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
                       fontWeight: "var(--ifr-fw-medium)",
                     }}
                   >
-                    {basedOnDesign.name || t("Design")}
+                    {typeof basedOnDesign === "string" ? basedOnDesign : basedOnDesign.name || t("Design")}
                   </span>
                   <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
-                </a>
-              </Link>
-            ) : (
-              <div className="flex items-center gap-2.5 p-3 border border-ifr rounded-ifr-sm">
-                <div
-                  className="shrink-0 flex items-center justify-center"
-                  style={{
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "var(--ifr-radius-sm)",
-                    backgroundColor: "var(--ifr-green)",
-                  }}
-                >
-                  <EntityTypeIcon type={ProjectType.DESIGN} size="small" fill="#ffffff" />
                 </div>
-                <span
-                  className="text-ifr-text-primary truncate flex-1"
-                  style={{
-                    fontFamily: "var(--ifr-font-body)",
-                    fontSize: "var(--ifr-fs-base)",
-                    fontWeight: "var(--ifr-fw-medium)",
-                  }}
-                >
-                  {typeof basedOnDesign === "string" ? basedOnDesign : basedOnDesign.name || t("Design")}
-                </span>
-                <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          </>
         )}
 
-        {/* Divider */}
-        <div className="w-full" style={{ height: "1px", backgroundColor: "var(--ifr-border)" }} />
-
         {/* Save + Watch */}
-        <div className="flex flex-col gap-1">
+        <hr className="border-t border-[#c9cccf] m-0 mx-4" />
+        <div className="flex flex-col gap-1 px-4 py-4">
           <button
             type="button"
-            className="w-full flex items-center gap-2 px-1 py-1.5 bg-transparent border-none cursor-pointer hover:bg-ifr-hover transition-colors"
+            disabled={!user}
+            title={!user ? t("Login required") : undefined}
+            className={`w-full flex items-center gap-2 px-1 py-1.5 bg-transparent border-none transition-colors ${
+              user ? "cursor-pointer hover:bg-ifr-hover" : "cursor-not-allowed opacity-50"
+            }`}
             style={{ borderRadius: "var(--ifr-radius-sm)" }}
           >
             <BookmarkIcon className="w-4 h-4 text-ifr-text-secondary" />
@@ -359,7 +428,11 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
           </button>
           <button
             type="button"
-            className="w-full flex items-center gap-2 px-1 py-1.5 bg-transparent border-none cursor-pointer hover:bg-ifr-hover transition-colors"
+            disabled={!user}
+            title={!user ? t("Login required") : undefined}
+            className={`w-full flex items-center gap-2 px-1 py-1.5 bg-transparent border-none transition-colors ${
+              user ? "cursor-pointer hover:bg-ifr-hover" : "cursor-not-allowed opacity-50"
+            }`}
             style={{ borderRadius: "var(--ifr-radius-sm)" }}
           >
             <StarIcon className="w-4 h-4 text-ifr-text-secondary" />
@@ -1147,17 +1220,26 @@ export default function ProjectDetailNew() {
   const color = typeColors[projectType] || "var(--ifr-green)";
   const images = useMemo(() => findProjectImages(project), [project]);
 
+  // Internal tag prefixes to filter out
+  const internalPrefixes = [
+    "machine-",
+    "material-",
+    "category-",
+    "power_compat-",
+    "mat:",
+    "c:",
+    "pc:",
+    "env:",
+    "pwr:",
+    "rep:",
+    "m:",
+  ];
+
   // Decode tags
   const tags = useMemo(
     () =>
       (project.classifiedAs || [])
-        .filter(
-          (c: string) =>
-            !c.startsWith("machine-") &&
-            !c.startsWith("material-") &&
-            !c.startsWith("category-") &&
-            !c.startsWith("power_compat-")
-        )
+        .filter((c: string) => !internalPrefixes.some(p => c.startsWith(p)))
         .map((c: string) => decodeURIComponent(c)),
     [project.classifiedAs]
   );
@@ -1263,9 +1345,6 @@ export default function ProjectDetailNew() {
                     {projectType}
                   </span>
                 </div>
-                <span className="text-ifr-text-secondary font-mono truncate" style={{ fontSize: "var(--ifr-fs-sm)" }}>
-                  {project.id}
-                </span>
                 {projectType === ProjectType.PRODUCT && (
                   <span
                     className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-white shrink-0"
