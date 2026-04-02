@@ -505,7 +505,6 @@ export const FETCH_RESOURCES = gql`
             hash
             name
             mimeType
-            bin
           }
           version
           licensor

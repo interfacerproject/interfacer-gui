@@ -21,6 +21,9 @@ export const TAG_PREFIX = {
   REPAIRABILITY: "repairability",
   ENV_ENERGY: "env-energy",
   ENV_CO2: "env-co2",
+  SERVICE_TYPE: "servicetype",
+  AVAILABILITY: "availability",
+  LICENSE: "license",
 } as const;
 
 export type TagPrefix = (typeof TAG_PREFIX)[keyof typeof TAG_PREFIX];
@@ -48,6 +51,15 @@ export const POWER_COMPATIBILITY_OPTIONS = [
 ] as const;
 
 export const REPLICABILITY_OPTIONS = ["High", "Medium", "Low"] as const;
+
+export const SERVICE_TYPE_OPTIONS = ["Fabrication", "Learning & Education", "Space Access"] as const;
+
+export const AVAILABILITY_OPTIONS = [
+  "Available Now",
+  "Booking Required",
+  "Weekdays Only",
+  "Weekends Available",
+] as const;
 
 // Recyclability uses a numeric percentage (0–100) stored with monotonic range tags,
 // following the same pattern as energy consumption and CO2 emissions.

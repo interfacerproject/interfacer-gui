@@ -16,6 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+@import "./theme.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -26,6 +28,17 @@ html,
 body {
   padding: 0;
   margin: 0;
+  font-family: var(--ifr-font-body);
+  font-size: var(--ifr-fs-base);
+  line-height: 1.5;
+  color: var(--ifr-text-primary);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 
 a {
@@ -59,7 +72,8 @@ h4,
 
 p,
 .paragraph {
-  @apply text-sm;
+  font-size: var(--ifr-fs-base);
+  line-height: 1.5;
 }
 
 .logo {
@@ -137,7 +151,6 @@ table {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
-
 
 // layout
 .drawer {
@@ -245,7 +258,6 @@ table {
   }
 }
 
-
 .drawer.drawer-end > .drawer-toggle:checked ~ .drawer-content {
   @apply -translate-x-2;
 }
@@ -344,5 +356,3 @@ table {
   width: 50%;
   justify-content: flex-end;
 }
-
-

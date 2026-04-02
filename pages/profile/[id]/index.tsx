@@ -17,8 +17,7 @@
 import FetchUserLayout from "components/layout/FetchUserLayout";
 import Layout from "components/layout/Layout";
 import EditProfileBanner from "components/partials/profile/[id]/EditProfileBanner";
-import ProfileHeading from "components/partials/profile/[id]/ProfileHeading";
-import ProfileTabs from "components/partials/profile/[id]/ProfileTabs";
+import ProfilePageNew from "components/ProfilePageNew";
 import type { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
@@ -29,10 +28,7 @@ const Profile: NextPageWithLayout = () => {
   return (
     <>
       <EditProfileBanner />
-      <div className="p-4 container mx-auto space-y-8 pb-12">
-        <ProfileHeading />
-        <ProfileTabs />
-      </div>
+      <ProfilePageNew />
     </>
   );
 };

@@ -631,6 +631,9 @@ export type EconomicResourceFilterParams = {
   gtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Decimal"]>;
   id?: InputMaybe<Array<Scalars["ID"]>>;
   name?: InputMaybe<Scalars["String"]>;
+  nearDistanceKm?: InputMaybe<Scalars["Decimal"]>;
+  nearLat?: InputMaybe<Scalars["Decimal"]>;
+  nearLong?: InputMaybe<Scalars["Decimal"]>;
   notCustodian?: InputMaybe<Array<Scalars["ID"]>>;
   notPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
   note?: InputMaybe<Scalars["String"]>;
