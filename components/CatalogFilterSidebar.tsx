@@ -141,7 +141,13 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
     async (loc: FetchLocation.Location) => {
       setShowLocationDropdown(false);
       setLocationInput("");
-      const detail = await lookupLocation(loc.id);
+      const detail =
+        loc.position && Number.isFinite(loc.position.lat) && Number.isFinite(loc.position.lng)
+          ? {
+              title: loc.title,
+              position: loc.position,
+            }
+          : await lookupLocation(loc.id);
       if (!detail) return;
       setLocationLabel(detail.title);
       const radius = router.query.nearDistanceKm ? String(router.query.nearDistanceKm) : "50";
