@@ -10,11 +10,12 @@ import {
 } from "@carbon/icons-react";
 import Layout from "components/layout/Layout";
 import useDppApi, { DppRequestError } from "lib/dpp";
+import { generateDppPdf } from "lib/dpp-pdf";
 import type { DppDocument } from "lib/dpp-types";
 import type { GetStaticPaths } from "next";
-import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement, useEffect, useMemo, useRef, useState } from "react";
@@ -212,6 +213,18 @@ const DppDetailPage: NextPageWithLayout = () => {
     URL.revokeObjectURL(href);
   };
 
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+
+  const onDownloadPdf = async () => {
+    if (!dpp || typeof window === "undefined" || pdfGenerating) return;
+    setPdfGenerating(true);
+    try {
+      generateDppPdf(dpp);
+    } finally {
+      setPdfGenerating(false);
+    }
+  };
+
   const sections = useMemo(() => {
     if (!dpp) return [];
     return sectionConfig
@@ -388,18 +401,20 @@ const DppDetailPage: NextPageWithLayout = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={onDownloadJson}
+                    onClick={onDownloadPdf}
+                    disabled={pdfGenerating}
                     className="inline-flex items-center gap-2 px-4 py-2 border-none cursor-pointer transition-colors"
                     style={{
                       borderRadius: "var(--ifr-radius-sm)",
                       fontSize: "var(--ifr-fs-sm)",
-                      backgroundColor: "#E5B94E",
+                      backgroundColor: pdfGenerating ? "#c9a042" : "#E5B94E",
                       color: "#1a1a1a",
                       fontWeight: "var(--ifr-fw-medium)",
+                      opacity: pdfGenerating ? 0.7 : 1,
                     }}
                   >
                     <Download size={16} />
-                    {t("Download PDF")}
+                    {pdfGenerating ? t("Generating…") : t("Download PDF")}
                   </button>
                   <button
                     type="button"
