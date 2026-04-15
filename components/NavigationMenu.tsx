@@ -229,11 +229,15 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
 
           <NavItem
             icon={
-              <EntityTypeIcon type={ProjectType.DESIGN} size="small" fill={entityIconColor("/", "var(--ifr-green)")} />
+              <EntityTypeIcon
+                type={ProjectType.DESIGN}
+                size="small"
+                fill={entityIconColor("/designs", "var(--ifr-green)")}
+              />
             }
             label={t("Designs", "Designs")}
-            active={isActive("/")}
-            onClick={() => handleNavigate("/")}
+            active={isActive("/designs")}
+            onClick={() => handleNavigate("/designs")}
             activeBg="var(--ifr-stat-green-bg)"
             activeTextColor="var(--ifr-green)"
           />

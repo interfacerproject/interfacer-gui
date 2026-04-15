@@ -65,10 +65,10 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
     [searchString, router]
   );
 
-  // Active nav link detection
-  const isDesigns = path === "/" || (path.startsWith("/products") === false && path.startsWith("/services") === false);
-  const isProducts = path.startsWith("/products");
-  const isServices = path.startsWith("/services");
+  // Active nav link detection — exact catalog matching, no fallback
+  const isDesigns = path === "/designs" || path.startsWith("/designs/");
+  const isProducts = path === "/products" || path.startsWith("/products/");
+  const isServices = path === "/services" || path.startsWith("/services/");
 
   return (
     <>
@@ -115,7 +115,7 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
 
           {/* Navigation links */}
           <nav className="hidden md:flex items-center gap-6 ml-2">
-            <Link href="/">
+            <Link href="/designs">
               <a
                 className={`no-underline whitespace-nowrap px-3 py-1.5 transition-colors ${
                   isDesigns
