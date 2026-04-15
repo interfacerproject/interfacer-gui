@@ -86,7 +86,7 @@ export default function CatalogLayout({
 
   const effectiveFilter: EconomicResourceFilterParams = {
     ...filter,
-    ...(router.query.q && { orName: router.query.q as string }),
+    ...(router.query.q && { name: router.query.q as string }),
     ...(tagsList && tagsList.length > 0 && { classifiedAs: tagsList }),
     ...(nearLat && nearLong && nearDistanceKm && { nearLat, nearLong, nearDistanceKm }),
   };
