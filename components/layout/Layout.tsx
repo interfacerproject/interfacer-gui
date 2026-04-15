@@ -34,24 +34,16 @@ const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) 
     "pb-20": bottomPadding === "lg",
   });
 
-  if (!authenticated)
-    return (
-      <div>
-        <div>{layoutProps?.children}</div>
-        <Footer />
-      </div>
-    );
+  // Show layout shell immediately for unauthenticated users;
+  // for authenticated users, wait until loading finishes.
+  if (authenticated && loading) return null;
 
   return (
-    <>
-      {!loading && (
-        <div className="flex flex-col min-h-screen">
-          <Topbar />
-          <div className={`max-w-full flex-grow ${calcBottomPadding}`}>{layoutProps?.children}</div>
-          <Footer />
-        </div>
-      )}
-    </>
+    <div className="flex flex-col min-h-screen">
+      <Topbar />
+      <div className={`max-w-full flex-grow ${calcBottomPadding}`}>{layoutProps?.children}</div>
+      <Footer />
+    </div>
   );
 };
 

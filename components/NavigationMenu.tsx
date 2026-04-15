@@ -490,6 +490,42 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
             activeTextColor="var(--ifr-text-primary)"
           />
 
+          {/* Sign-in CTA for unauthenticated users */}
+          {!user && (
+            <>
+              <Divider />
+              <div className="px-4 py-3 flex flex-col gap-2">
+                <button
+                  onClick={() => handleNavigate("/sign_in")}
+                  className="w-full py-2.5 border border-[var(--ifr-border)] bg-transparent cursor-pointer transition-colors hover:bg-[var(--ifr-bg-hover-light)]"
+                  style={{
+                    borderRadius: "var(--ifr-radius-lg)",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-base)",
+                    fontWeight: "var(--ifr-fw-medium)",
+                    color: "var(--ifr-text-primary)",
+                  }}
+                >
+                  {t("Sign in", "Sign in")}
+                </button>
+                <button
+                  onClick={() => handleNavigate("/sign_up")}
+                  className="w-full py-2.5 border-none cursor-pointer transition-colors"
+                  style={{
+                    borderRadius: "var(--ifr-radius-lg)",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-base)",
+                    fontWeight: "var(--ifr-fw-medium)",
+                    backgroundColor: "var(--ifr-green)",
+                    color: "#fff",
+                  }}
+                >
+                  {t("Sign up", "Sign up")}
+                </button>
+              </div>
+            </>
+          )}
+
           <div className="h-4 shrink-0" />
         </nav>
       </aside>

@@ -114,61 +114,59 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
           </Link>
 
           {/* Navigation links */}
-          {user && (
-            <nav className="flex items-center gap-6 ml-2">
-              <Link href="/">
-                <a
-                  className={`no-underline whitespace-nowrap px-3 py-1.5 transition-colors ${
-                    isDesigns
-                      ? "bg-[var(--ifr-stat-green-bg)] text-[var(--ifr-green)]"
-                      : "text-[var(--ifr-text-primary)] hover:bg-[var(--ifr-bg-hover)]"
-                  }`}
-                  style={{
-                    fontFamily: "var(--ifr-font-body)",
-                    fontSize: "var(--ifr-fs-base)",
-                    fontWeight: "var(--ifr-fw-medium)",
-                    borderRadius: "var(--ifr-radius-lg)",
-                  }}
-                >
-                  {t("Designs")}
-                </a>
-              </Link>
-              <Link href="/products">
-                <a
-                  className={`no-underline whitespace-nowrap px-3 py-1.5 transition-colors ${
-                    isProducts
-                      ? "bg-[var(--ifr-type-product-bg)] text-[var(--ifr-type-product)]"
-                      : "text-[var(--ifr-text-primary)] hover:bg-[var(--ifr-bg-hover)]"
-                  }`}
-                  style={{
-                    fontFamily: "var(--ifr-font-body)",
-                    fontSize: "var(--ifr-fs-base)",
-                    fontWeight: "var(--ifr-fw-medium)",
-                    borderRadius: "var(--ifr-radius-lg)",
-                  }}
-                >
-                  {t("Products")}
-                </a>
-              </Link>
-              <Link href="/services">
-                <a
-                  className={`no-underline whitespace-nowrap px-3 py-1.5 transition-colors ${
-                    isServices
-                      ? "bg-[var(--ifr-type-service-bg)] text-[var(--ifr-type-service)]"
-                      : "text-[var(--ifr-text-primary)] hover:bg-[var(--ifr-bg-hover)]"
-                  }`}
-                  style={{
-                    fontFamily: "var(--ifr-font-body)",
-                    fontSize: "var(--ifr-fs-base)",
-                    fontWeight: "var(--ifr-fw-medium)",
-                    borderRadius: "var(--ifr-radius-lg)",
-                  }}
-                >
-                  {t("Services")}
-                </a>
-              </Link>
-            </nav>
-          )}
+          <nav className="hidden md:flex items-center gap-6 ml-2">
+            <Link href="/">
+              <a
+                className={`no-underline whitespace-nowrap px-3 py-1.5 transition-colors ${
+                  isDesigns
+                    ? "bg-[var(--ifr-stat-green-bg)] text-[var(--ifr-green)]"
+                    : "text-[var(--ifr-text-primary)] hover:bg-[var(--ifr-bg-hover)]"
+                }`}
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-base)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                  borderRadius: "var(--ifr-radius-lg)",
+                }}
+              >
+                {t("Designs")}
+              </a>
+            </Link>
+            <Link href="/products">
+              <a
+                className={`no-underline whitespace-nowrap px-3 py-1.5 transition-colors ${
+                  isProducts
+                    ? "bg-[var(--ifr-type-product-bg)] text-[var(--ifr-type-product)]"
+                    : "text-[var(--ifr-text-primary)] hover:bg-[var(--ifr-bg-hover)]"
+                }`}
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-base)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                  borderRadius: "var(--ifr-radius-lg)",
+                }}
+              >
+                {t("Products")}
+              </a>
+            </Link>
+            <Link href="/services">
+              <a
+                className={`no-underline whitespace-nowrap px-3 py-1.5 transition-colors ${
+                  isServices
+                    ? "bg-[var(--ifr-type-service-bg)] text-[var(--ifr-type-service)]"
+                    : "text-[var(--ifr-text-primary)] hover:bg-[var(--ifr-bg-hover)]"
+                }`}
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-base)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                  borderRadius: "var(--ifr-radius-lg)",
+                }}
+              >
+                {t("Services")}
+              </a>
+            </Link>
+          </nav>
         </div>
 
         {/* Center: Search bar */}
@@ -197,6 +195,38 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
         {/* Right section */}
         <div className="flex items-center gap-4">
           {cta}
+          {/* Sign-in / Sign-up buttons for unauthenticated users */}
+          {!user && !isSignin && !isSignup && (
+            <div className="flex items-center gap-2">
+              <button
+                className="px-4 py-1.5 bg-transparent border border-[var(--ifr-border)] cursor-pointer transition-colors hover:bg-[var(--ifr-bg-hover)]"
+                style={{
+                  borderRadius: "var(--ifr-radius-sm)",
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-sm)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                  color: "var(--ifr-text-primary)",
+                }}
+                onClick={() => router.push("/sign_in")}
+              >
+                {t("Sign in")}
+              </button>
+              <button
+                className="px-4 py-1.5 border-none cursor-pointer transition-colors"
+                style={{
+                  borderRadius: "var(--ifr-radius-sm)",
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-sm)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                  backgroundColor: "var(--ifr-green)",
+                  color: "#fff",
+                }}
+                onClick={() => router.push("/sign_up")}
+              >
+                {t("Sign up")}
+              </button>
+            </div>
+          )}
           {(isSignup || isSignin) && (
             <div className="flex space-x-2">
               <button className="btn btn-primary" onClick={() => router.push("/sign_in")}>
