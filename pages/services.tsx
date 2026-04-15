@@ -4,6 +4,7 @@
 import CatalogLayout, { HeroStatCard } from "components/CatalogLayout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useCallback, useState } from "react";
 import useFilters from "../hooks/useFilters";
 import { NextPageWithLayout } from "./_app";
 
@@ -19,6 +20,11 @@ export async function getStaticProps({ locale }: any) {
 const Services: NextPageWithLayout = () => {
   const { t } = useTranslation("common");
   const { serviceId, specsLoading } = useFilters();
+  const [totalCount, setTotalCount] = useState<number | null>(null);
+
+  const handleDataLoaded = useCallback(({ totalCount }: { totalCount: number; loading: boolean }) => {
+    setTotalCount(totalCount);
+  }, []);
 
   const filter = {
     conformsTo: serviceId ? [serviceId] : undefined,
@@ -35,7 +41,7 @@ const Services: NextPageWithLayout = () => {
         ),
         stats: (
           <>
-            <HeroStatCard value="—" label={t("Total Services")} />
+            <HeroStatCard value={totalCount ?? "—"} label={t("Total Services")} />
             <HeroStatCard value="—" label={t("Service Providers")} />
             <HeroStatCard value="—" label={t("Machines Available")} />
           </>
@@ -43,6 +49,7 @@ const Services: NextPageWithLayout = () => {
       }}
       searchPlaceholder={t("Search services, providers, locations...")}
       filter={filter}
+      onDataLoaded={handleDataLoaded}
     />
   );
 };

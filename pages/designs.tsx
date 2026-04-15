@@ -4,6 +4,7 @@
 import CatalogLayout, { HeroStatCard } from "components/CatalogLayout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useCallback, useState } from "react";
 import useFilters from "../hooks/useFilters";
 import { NextPageWithLayout } from "./_app";
 
@@ -19,6 +20,11 @@ export async function getStaticProps({ locale }: any) {
 const Designs: NextPageWithLayout = () => {
   const { t } = useTranslation("common");
   const { designId, specsLoading } = useFilters();
+  const [totalCount, setTotalCount] = useState<number | null>(null);
+
+  const handleDataLoaded = useCallback(({ totalCount }: { totalCount: number; loading: boolean }) => {
+    setTotalCount(totalCount);
+  }, []);
 
   const filter = {
     conformsTo: designId ? [designId] : undefined,
@@ -35,7 +41,7 @@ const Designs: NextPageWithLayout = () => {
         ),
         stats: (
           <>
-            <HeroStatCard value="—" label={t("Open Designs")} />
+            <HeroStatCard value={totalCount ?? "—"} label={t("Open Designs")} />
             <HeroStatCard value="—" label={t("Available as Product")} />
             <HeroStatCard value="—" label={t("Manufacturers")} />
           </>
@@ -43,6 +49,7 @@ const Designs: NextPageWithLayout = () => {
       }}
       searchPlaceholder={t("Search designs, makers, machines, materials...")}
       filter={filter}
+      onDataLoaded={handleDataLoaded}
     />
   );
 };
