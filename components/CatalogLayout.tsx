@@ -222,14 +222,8 @@ export default function CatalogLayout({
               </div>
             </form>
 
-            {/* Sort & Show */}
+            {/* Sort */}
             <div className="flex items-center gap-3 shrink-0">
-              <ToolbarDropdown
-                label={t("Show")}
-                value={showFilter}
-                options={["All", "Published", "Drafts", "Archived"]}
-                onChange={handleShowChange}
-              />
               <ToolbarDropdown label={t("Sort by")} value={sortBy} options={sortOptions} onChange={handleSortChange} />
             </div>
           </div>

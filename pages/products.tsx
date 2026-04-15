@@ -54,7 +54,6 @@ const Products: NextPageWithLayout = () => {
         stats: (
           <>
             <HeroStatCard value={totalCount ?? "—"} label={t("Total Products")} />
-            <HeroStatCard value="—" label={t("Available Now")} />
             <HeroStatCard value={manufacturerCount ?? "—"} label={t("Manufacturers")} />
           </>
         ),

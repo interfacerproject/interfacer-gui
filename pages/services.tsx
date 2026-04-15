@@ -55,7 +55,6 @@ const Services: NextPageWithLayout = () => {
           <>
             <HeroStatCard value={totalCount ?? "—"} label={t("Total Services")} />
             <HeroStatCard value={providerCount ?? "—"} label={t("Service Providers")} />
-            <HeroStatCard value="—" label={t("Machines Available")} />
           </>
         ),
       }}
