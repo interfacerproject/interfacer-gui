@@ -21,10 +21,22 @@ const Services: NextPageWithLayout = () => {
   const { t } = useTranslation("common");
   const { serviceId, specsLoading } = useFilters();
   const [totalCount, setTotalCount] = useState<number | null>(null);
+  const [providerCount, setProviderCount] = useState<number | null>(null);
 
-  const handleDataLoaded = useCallback(({ totalCount }: { totalCount: number; loading: boolean }) => {
-    setTotalCount(totalCount);
-  }, []);
+  const handleDataLoaded = useCallback(
+    ({
+      totalCount,
+      distinctPrimaryAccountableCount,
+    }: {
+      totalCount: number;
+      distinctPrimaryAccountableCount: number;
+      loading: boolean;
+    }) => {
+      setTotalCount(totalCount);
+      setProviderCount(distinctPrimaryAccountableCount);
+    },
+    []
+  );
 
   const filter = {
     conformsTo: serviceId ? [serviceId] : undefined,
@@ -42,7 +54,7 @@ const Services: NextPageWithLayout = () => {
         stats: (
           <>
             <HeroStatCard value={totalCount ?? "—"} label={t("Total Services")} />
-            <HeroStatCard value="—" label={t("Service Providers")} />
+            <HeroStatCard value={providerCount ?? "—"} label={t("Service Providers")} />
             <HeroStatCard value="—" label={t("Machines Available")} />
           </>
         ),

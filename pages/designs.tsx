@@ -21,10 +21,22 @@ const Designs: NextPageWithLayout = () => {
   const { t } = useTranslation("common");
   const { designId, specsLoading } = useFilters();
   const [totalCount, setTotalCount] = useState<number | null>(null);
+  const [manufacturerCount, setManufacturerCount] = useState<number | null>(null);
 
-  const handleDataLoaded = useCallback(({ totalCount }: { totalCount: number; loading: boolean }) => {
-    setTotalCount(totalCount);
-  }, []);
+  const handleDataLoaded = useCallback(
+    ({
+      totalCount,
+      distinctPrimaryAccountableCount,
+    }: {
+      totalCount: number;
+      distinctPrimaryAccountableCount: number;
+      loading: boolean;
+    }) => {
+      setTotalCount(totalCount);
+      setManufacturerCount(distinctPrimaryAccountableCount);
+    },
+    []
+  );
 
   const filter = {
     conformsTo: designId ? [designId] : undefined,
@@ -43,7 +55,7 @@ const Designs: NextPageWithLayout = () => {
           <>
             <HeroStatCard value={totalCount ?? "—"} label={t("Open Designs")} />
             <HeroStatCard value="—" label={t("Available as Product")} />
-            <HeroStatCard value="—" label={t("Manufacturers")} />
+            <HeroStatCard value={manufacturerCount ?? "—"} label={t("Manufacturers")} />
           </>
         ),
       }}
