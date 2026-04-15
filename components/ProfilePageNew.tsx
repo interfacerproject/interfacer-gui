@@ -335,6 +335,7 @@ function ProfileTabContent({
 
 function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwner: boolean; ctaConfig: TabCtaConfig }) {
   const { t } = useTranslation("common");
+  const router = useRouter();
   const dppApi = useDppApi();
   const [dpps, setDpps] = useState<DppDocument[]>([]);
   const [total, setTotal] = useState(0);
@@ -551,7 +552,7 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
           <div
             className="grid gap-4 px-5 py-3 border-b border-ifr text-ifr-text-secondary"
             style={{
-              gridTemplateColumns: "2fr 1fr 100px 100px 140px",
+              gridTemplateColumns: "2fr 1fr 100px 100px 140px 90px",
               fontFamily: "var(--ifr-font-body)",
               fontSize: "var(--ifr-fs-sm)",
               fontWeight: "var(--ifr-fw-semibold)",
@@ -562,6 +563,7 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
             <span>{t("Type")}</span>
             <span>{t("Status")}</span>
             <span>{t("Created")}</span>
+            <span>{t("Action")}</span>
           </div>
 
           {/* Table rows */}
@@ -570,20 +572,35 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
               dpp.productOverview?.productName?.value || dpp.productOverview?.brandName?.value || t("Untitled DPP");
             const status = dpp.status || "draft";
             const colors = statusColors[status] || statusColors.draft;
+            const dppUrl = `/dpps/${encodeURIComponent(dpp.id)}`;
 
             return (
               <div
                 key={dpp.id}
                 className="grid gap-4 px-5 py-4 border-b border-ifr last:border-b-0 hover:bg-ifr-hover/50 transition-colors items-center"
+                role="link"
+                tabIndex={0}
+                onClick={() => router.push(dppUrl)}
+                onKeyDown={event => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    router.push(dppUrl);
+                  }
+                }}
                 style={{
-                  gridTemplateColumns: "2fr 1fr 100px 100px 140px",
+                  gridTemplateColumns: "2fr 1fr 100px 100px 140px 90px",
                   fontFamily: "var(--ifr-font-body)",
                   fontSize: "var(--ifr-fs-base)",
                 }}
               >
-                <span className="text-ifr-text-primary truncate" style={{ fontWeight: "var(--ifr-fw-medium)" }}>
-                  {productName}
-                </span>
+                <Link href={dppUrl}>
+                  <a
+                    className="text-ifr-text-primary truncate no-underline hover:underline"
+                    style={{ fontWeight: "var(--ifr-fw-medium)" }}
+                  >
+                    {productName}
+                  </a>
+                </Link>
                 <span className="text-ifr-text-secondary truncate">{dpp.batchId || "—"}</span>
                 <span>
                   <span
@@ -614,6 +631,19 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
                 <span className="text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
                   {dpp.createdAt ? new Date(dpp.createdAt).toLocaleDateString() : "—"}
                 </span>
+                <Link href={dppUrl}>
+                  <a
+                    className="inline-flex items-center justify-center px-2 py-1 border border-ifr no-underline hover:bg-ifr-hover/70"
+                    style={{
+                      borderRadius: "var(--ifr-radius-sm)",
+                      color: "var(--ifr-text-primary)",
+                      fontSize: "var(--ifr-fs-sm)",
+                      fontWeight: "var(--ifr-fw-medium)",
+                    }}
+                  >
+                    {t("View")}
+                  </a>
+                </Link>
               </div>
             );
           })}

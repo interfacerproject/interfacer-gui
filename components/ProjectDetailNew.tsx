@@ -909,7 +909,6 @@ function DppDisplay({ dpp }: { dpp: Record<string, string> }) {
 /** Card for a single DPP in the Digital Product Passports list. */
 function DppListCard({ dpp, index, color }: { dpp: DppDocument; index: number; color: string }) {
   const { t } = useTranslation("common");
-  const [expanded, setExpanded] = useState(false);
 
   const label = dpp.productOverview?.productName?.value || `DPP-${String(index + 1).padStart(3, "0")}`;
   const batchLabel = dpp.batchType === "unit" ? t("Unit") : t("Batch");
@@ -979,28 +978,21 @@ function DppListCard({ dpp, index, color }: { dpp: DppDocument; index: number; c
         </div>
 
         {/* View DPP button */}
-        <button
-          type="button"
-          onClick={() => setExpanded(v => !v)}
-          className="shrink-0 px-3 py-1.5 bg-transparent border border-ifr hover:bg-ifr-hover transition-colors cursor-pointer"
-          style={{
-            borderRadius: "var(--ifr-radius-sm)",
-            fontFamily: "var(--ifr-font-body)",
-            fontSize: "var(--ifr-fs-xs)",
-            fontWeight: "var(--ifr-fw-medium)",
-            color: "var(--ifr-text-primary)",
-          }}
-        >
-          {expanded ? t("Hide DPP") : t("View DPP")}
-        </button>
+        <Link href={`/dpps/${encodeURIComponent(dpp.id)}`}>
+          <a
+            className="shrink-0 px-3 py-1.5 bg-transparent border border-ifr hover:bg-ifr-hover transition-colors cursor-pointer no-underline"
+            style={{
+              borderRadius: "var(--ifr-radius-sm)",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-xs)",
+              fontWeight: "var(--ifr-fw-medium)",
+              color: "var(--ifr-text-primary)",
+            }}
+          >
+            {t("View DPP")}
+          </a>
+        </Link>
       </div>
-
-      {/* Expanded detail */}
-      {expanded && (
-        <div className="border-t border-ifr p-4 bg-white">
-          <DppDocumentDetail dpp={dpp} />
-        </div>
-      )}
     </div>
   );
 }
