@@ -10,7 +10,14 @@ import ProjectCardNew from "components/ProjectCardNew";
 import ToolbarDropdown from "components/ToolbarDropdown";
 import useLoadMore from "hooks/useLoadMore";
 import { FETCH_RESOURCES } from "lib/QueryAndMutation";
-import { EconomicResource, EconomicResourceFilterParams, FetchInventoryQuery } from "lib/types";
+import {
+  EconomicResource,
+  EconomicResourceFilterParams,
+  EconomicResourceSortField,
+  EconomicResourceSortInput,
+  FetchInventoryQuery,
+  SortDirection,
+} from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React, { ReactNode, useState } from "react";
@@ -27,10 +34,10 @@ interface CatalogLayoutProps {
   searchPlaceholder: string;
   filter: EconomicResourceFilterParams;
   sortOptions?: string[];
-  onDataLoaded?: (data: { totalCount: number; loading: boolean }) => void;
+  onDataLoaded?: (data: { totalCount: number; distinctPrimaryAccountableCount: number; loading: boolean }) => void;
 }
 
-const SORT_OPTIONS_DEFAULT = ["Latest", "Most Popular", "A\u2013Z", "Z\u2013A"];
+const SORT_OPTIONS_DEFAULT = ["Latest", "A\u2013Z", "Z\u2013A"];
 
 export default function CatalogLayout({
   variant,
@@ -79,7 +86,7 @@ export default function CatalogLayout({
 
   const effectiveFilter: EconomicResourceFilterParams = {
     ...filter,
-    ...(router.query.q && { orName: router.query.q as string }),
+    ...(router.query.q && { name: router.query.q as string }),
     ...(tagsList && tagsList.length > 0 && { classifiedAs: tagsList }),
     ...(nearLat && nearLong && nearDistanceKm && { nearLat, nearLong, nearDistanceKm }),
   };
@@ -87,8 +94,17 @@ export default function CatalogLayout({
   const dataQueryIdentifier = "economicResources";
   const isFilterReady = !!effectiveFilter.conformsTo?.length;
 
+  // Map UI sort label to GraphQL orderBy input
+  const SORT_MAP: Record<string, EconomicResourceSortInput> = {
+    Latest: { field: EconomicResourceSortField.CreatedAt, direction: SortDirection.Desc },
+    Oldest: { field: EconomicResourceSortField.CreatedAt, direction: SortDirection.Asc },
+    "A\u2013Z": { field: EconomicResourceSortField.Name, direction: SortDirection.Asc },
+    "Z\u2013A": { field: EconomicResourceSortField.Name, direction: SortDirection.Desc },
+  };
+  const orderBy = SORT_MAP[sortBy] || undefined;
+
   const { loading, data, fetchMore, refetch, variables, error } = useQuery<FetchInventoryQuery>(FETCH_RESOURCES, {
-    variables: { last: 12, filter: effectiveFilter },
+    variables: { last: 12, filter: effectiveFilter, orderBy },
     skip: !isFilterReady,
   });
 
@@ -104,14 +120,15 @@ export default function CatalogLayout({
   const isLoading = loading || !isFilterReady;
   const projects = items;
   const totalCount = data?.economicResources?.pageInfo?.totalCount || 0;
+  const distinctPrimaryAccountableCount = data?.economicResources?.pageInfo?.distinctPrimaryAccountableCount || 0;
   const hasNext = !!getHasNextPage;
 
   // Notify parent of data changes
   React.useEffect(() => {
     if (onDataLoaded && data?.economicResources?.pageInfo) {
-      onDataLoaded({ totalCount, loading: isLoading });
+      onDataLoaded({ totalCount, distinctPrimaryAccountableCount, loading: isLoading });
     }
-  }, [data, isLoading, onDataLoaded, totalCount]);
+  }, [data, isLoading, onDataLoaded, totalCount, distinctPrimaryAccountableCount]);
 
   const heroGradients: Record<CatalogVariant, string> = {
     designs: "linear-gradient(83deg, rgb(3, 106, 83) 0%, rgb(57, 170, 145) 100%)",
@@ -205,14 +222,8 @@ export default function CatalogLayout({
               </div>
             </form>
 
-            {/* Sort & Show */}
+            {/* Sort */}
             <div className="flex items-center gap-3 shrink-0">
-              <ToolbarDropdown
-                label={t("Show")}
-                value={showFilter}
-                options={["All", "Published", "Drafts", "Archived"]}
-                onChange={handleShowChange}
-              />
               <ToolbarDropdown label={t("Sort by")} value={sortBy} options={sortOptions} onChange={handleSortChange} />
             </div>
           </div>

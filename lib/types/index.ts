@@ -650,6 +650,21 @@ export type EconomicResourceFilterParams = {
   repo?: InputMaybe<Scalars["String"]>;
 };
 
+export enum EconomicResourceSortField {
+  CreatedAt = "CREATED_AT",
+  Name = "NAME",
+}
+
+export enum SortDirection {
+  Asc = "ASC",
+  Desc = "DESC",
+}
+
+export type EconomicResourceSortInput = {
+  field: EconomicResourceSortField;
+  direction: SortDirection;
+};
+
 export type EconomicResourceResponse = {
   __typename?: "EconomicResourceResponse";
   economicResource: EconomicResource;
@@ -4236,6 +4251,7 @@ export type FetchInventoryQueryVariables = Exact<{
   last?: InputMaybe<Scalars["Int"]>;
   before?: InputMaybe<Scalars["ID"]>;
   filter?: InputMaybe<EconomicResourceFilterParams>;
+  orderBy?: InputMaybe<EconomicResourceSortInput>;
 }>;
 
 export type FetchInventoryQuery = {
@@ -4250,6 +4266,7 @@ export type FetchInventoryQuery = {
       hasNextPage: boolean;
       totalCount?: number | null;
       pageLimit?: number | null;
+      distinctPrimaryAccountableCount?: number | null;
     };
     edges: Array<{
       __typename?: "EconomicResourceEdge";

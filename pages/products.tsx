@@ -4,6 +4,7 @@
 import CatalogLayout, { HeroStatCard } from "components/CatalogLayout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useCallback, useState } from "react";
 import useFilters from "../hooks/useFilters";
 import { NextPageWithLayout } from "./_app";
 
@@ -19,6 +20,23 @@ export async function getStaticProps({ locale }: any) {
 const Products: NextPageWithLayout = () => {
   const { t } = useTranslation("common");
   const { productId, specsLoading } = useFilters();
+  const [totalCount, setTotalCount] = useState<number | null>(null);
+  const [manufacturerCount, setManufacturerCount] = useState<number | null>(null);
+
+  const handleDataLoaded = useCallback(
+    ({
+      totalCount,
+      distinctPrimaryAccountableCount,
+    }: {
+      totalCount: number;
+      distinctPrimaryAccountableCount: number;
+      loading: boolean;
+    }) => {
+      setTotalCount(totalCount);
+      setManufacturerCount(distinctPrimaryAccountableCount);
+    },
+    []
+  );
 
   const filter = {
     conformsTo: productId ? [productId] : undefined,
@@ -35,14 +53,14 @@ const Products: NextPageWithLayout = () => {
         ),
         stats: (
           <>
-            <HeroStatCard value="—" label={t("Total Products")} />
-            <HeroStatCard value="—" label={t("Available Now")} />
-            <HeroStatCard value="—" label={t("Manufacturers")} />
+            <HeroStatCard value={totalCount ?? "—"} label={t("Total Products")} />
+            <HeroStatCard value={manufacturerCount ?? "—"} label={t("Manufacturers")} />
           </>
         ),
       }}
       searchPlaceholder={t("Search products, manufacturers, materials...")}
       filter={filter}
+      onDataLoaded={handleDataLoaded}
     />
   );
 };

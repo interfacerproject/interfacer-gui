@@ -4,6 +4,7 @@
 import CatalogLayout, { HeroStatCard } from "components/CatalogLayout";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useCallback, useState } from "react";
 import useFilters from "../hooks/useFilters";
 import { NextPageWithLayout } from "./_app";
 
@@ -19,6 +20,23 @@ export async function getStaticProps({ locale }: any) {
 const Services: NextPageWithLayout = () => {
   const { t } = useTranslation("common");
   const { serviceId, specsLoading } = useFilters();
+  const [totalCount, setTotalCount] = useState<number | null>(null);
+  const [providerCount, setProviderCount] = useState<number | null>(null);
+
+  const handleDataLoaded = useCallback(
+    ({
+      totalCount,
+      distinctPrimaryAccountableCount,
+    }: {
+      totalCount: number;
+      distinctPrimaryAccountableCount: number;
+      loading: boolean;
+    }) => {
+      setTotalCount(totalCount);
+      setProviderCount(distinctPrimaryAccountableCount);
+    },
+    []
+  );
 
   const filter = {
     conformsTo: serviceId ? [serviceId] : undefined,
@@ -35,14 +53,14 @@ const Services: NextPageWithLayout = () => {
         ),
         stats: (
           <>
-            <HeroStatCard value="—" label={t("Total Services")} />
-            <HeroStatCard value="—" label={t("Service Providers")} />
-            <HeroStatCard value="—" label={t("Machines Available")} />
+            <HeroStatCard value={totalCount ?? "—"} label={t("Total Services")} />
+            <HeroStatCard value={providerCount ?? "—"} label={t("Service Providers")} />
           </>
         ),
       }}
       searchPlaceholder={t("Search services, providers, locations...")}
       filter={filter}
+      onDataLoaded={handleDataLoaded}
     />
   );
 };
