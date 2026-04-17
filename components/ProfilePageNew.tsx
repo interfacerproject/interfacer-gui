@@ -2,7 +2,19 @@
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
 import { useQuery } from "@apollo/client";
-import { Add, ArrowRight, Search, SortAscending } from "@carbon/icons-react";
+import {
+  Add,
+  ArrowRight,
+  Calendar,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Information,
+  OverflowMenuVertical,
+  Search,
+  SortAscending,
+} from "@carbon/icons-react";
 import { ExternalLinkIcon, LocationMarkerIcon } from "@heroicons/react/outline";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import EntityTypeIcon from "components/EntityTypeIcon";
@@ -13,7 +25,7 @@ import { useAuth } from "hooks/useAuth";
 import useFilters from "hooks/useFilters";
 import useLoadMore from "hooks/useLoadMore";
 import useDppApi from "lib/dpp";
-import type { DppDocument, ListDppsResponse } from "lib/dpp-types";
+import type { DppDocument, DppStatus, ListDppsResponse, StatusFacets } from "lib/dpp-types";
 import { FETCH_RESOURCES } from "lib/QueryAndMutation";
 import { FetchInventoryQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -74,10 +86,10 @@ const tabCtaConfig: Record<Exclude<ProfileTabId, "community">, TabCtaConfig> = {
     searchPlaceholder: "Search services by name, tags...",
   },
   dpps: {
-    ctaTitle: "Create Digital Product Passports",
+    ctaTitle: "Publish DPPs for your products",
     ctaDescription:
-      "Document the lifecycle, materials, and sustainability information of your products. Help consumers and regulators access transparent product data.",
-    createLabel: "Create a new DPP",
+      "With a Digital Product Passport (DPP) each product gets a unique QR code for easy tracking and verification.",
+    createLabel: "Publish a New DPP",
     createUrl: "/dpps/new",
     searchPlaceholder: "Search DPPs by batch ID, status...",
   },
@@ -335,14 +347,17 @@ function ProfileTabContent({
 
 function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwner: boolean; ctaConfig: TabCtaConfig }) {
   const { t } = useTranslation("common");
-  const router = useRouter();
   const dppApi = useDppApi();
   const [dpps, setDpps] = useState<DppDocument[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("latest");
+  const [sortBy, setSortBy] = useState<"latest" | "oldest" | "az" | "za">("latest");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "draft" | "archived">("all");
   const [showSortMenu, setShowSortMenu] = useState(false);
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [showActionsMenu, setShowActionsMenu] = useState<string | null>(null);
+  const [facets, setFacets] = useState<StatusFacets>({ active: 0, draft: 0, archived: 0 });
 
   useEffect(() => {
     let cancelled = false;
@@ -353,6 +368,7 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
         if (!cancelled) {
           setDpps(res.dpps || []);
           setTotal(res.total || 0);
+          if (res.facets) setFacets(res.facets);
         }
       })
       .catch((err: Error) => {
@@ -370,12 +386,49 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
     };
   }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Close menus on outside click
+  useEffect(() => {
+    const handler = () => {
+      setShowSortMenu(false);
+      setShowFilterMenu(false);
+      setShowActionsMenu(null);
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, []);
+
+  // KPI counters: use backend facets when available, client-side fallback
+  const statusCounts = useMemo(() => {
+    if (facets.active + facets.draft + facets.archived > 0) {
+      return {
+        total: facets.active + facets.draft + facets.archived,
+        ...facets,
+      };
+    }
+    const counts = { total: dpps.length, active: 0, draft: 0, archived: 0 };
+    for (const d of dpps) {
+      if (d.status === "active") counts.active++;
+      else if (d.status === "draft") counts.draft++;
+      else if (d.status === "archived") counts.archived++;
+    }
+    return counts;
+  }, [dpps, facets]);
+
   const filteredDpps = useMemo(() => {
     let items = dpps;
+
+    // Status filter
+    if (statusFilter !== "all") {
+      items = items.filter(d => d.status === statusFilter);
+    }
+
+    // Text search
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       items = items.filter(
         d =>
+          d.id?.toLowerCase().includes(q) ||
+          d.productId?.toLowerCase().includes(q) ||
           d.batchId?.toLowerCase().includes(q) ||
           d.status?.toLowerCase().includes(q) ||
           d.batchType?.toLowerCase().includes(q) ||
@@ -383,9 +436,30 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
           d.productOverview?.brandName?.value?.toLowerCase().includes(q)
       );
     }
-    if (sortBy === "oldest") items = [...items].reverse();
+
+    // Sort
+    items = [...items];
+    switch (sortBy) {
+      case "oldest":
+        items.reverse();
+        break;
+      case "az":
+        items.sort((a, b) => {
+          const na = a.productOverview?.productName?.value || "";
+          const nb = b.productOverview?.productName?.value || "";
+          return na.localeCompare(nb);
+        });
+        break;
+      case "za":
+        items.sort((a, b) => {
+          const na = a.productOverview?.productName?.value || "";
+          const nb = b.productOverview?.productName?.value || "";
+          return nb.localeCompare(na);
+        });
+        break;
+    }
     return items;
-  }, [dpps, searchQuery, sortBy]);
+  }, [dpps, searchQuery, sortBy, statusFilter]);
 
   const statusColors: Record<string, { bg: string; text: string }> = {
     active: { bg: "var(--ifr-green)", text: "#fff" },
@@ -393,11 +467,36 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
     archived: { bg: "var(--ifr-yellow)", text: "var(--ifr-text-primary)" },
   };
 
+  const sortLabels: Record<string, string> = {
+    latest: "Latest",
+    oldest: "Oldest",
+    az: "A–Z",
+    za: "Z–A",
+  };
+
+  const filterLabels: Record<string, string> = {
+    all: "All",
+    active: "Active",
+    draft: "Drafts",
+    archived: "Archived",
+  };
+
+  const handleStatusChange = async (dppId: string, newStatus: DppStatus) => {
+    try {
+      await dppApi.updateDppStatus(dppId, newStatus);
+      setDpps(prev => prev.map(d => (d.id === dppId ? { ...d, status: newStatus } : d)));
+    } catch (err) {
+      console.error("Failed to update DPP status:", err);
+    }
+    setShowActionsMenu(null);
+  };
+
   return (
     <div className="flex flex-col gap-5">
-      {/* CTA + Stats row (owner only) */}
+      {/* CTA + KPI Stats row (owner only) */}
       {isOwner && (
         <div className="flex flex-col md:flex-row gap-6 py-6">
+          {/* CTA left */}
           <div className="flex-1 flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <h3
@@ -436,16 +535,68 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
                     color: "var(--ifr-text-primary)",
                   }}
                 >
+                  <Add size={16} />
                   {t(ctaConfig.createLabel)}
-                  <ArrowRight size={16} />
                 </a>
               </Link>
+              <button
+                type="button"
+                className="flex items-center gap-2 px-4 bg-transparent border-none cursor-pointer hover:underline"
+                style={{
+                  height: "var(--ifr-control-height)",
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-base)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                  color: "var(--ifr-text-secondary)",
+                }}
+              >
+                <Information size={16} />
+                {t("Learn more about DPPs")}
+              </button>
             </div>
+          </div>
+
+          {/* KPI Stats right */}
+          <div
+            className="grid grid-cols-2 gap-px border border-ifr rounded-ifr-md overflow-hidden shrink-0"
+            style={{ width: "320px" }}
+          >
+            {(
+              [
+                { label: "Total DPPs", value: statusCounts.total },
+                { label: "Active", value: statusCounts.active },
+                { label: "Drafts", value: statusCounts.draft },
+                { label: "Archived", value: statusCounts.archived },
+              ] as const
+            ).map(kpi => (
+              <div key={kpi.label} className="bg-ifr-surface p-4 flex flex-col gap-1">
+                <span
+                  className="text-ifr-text-secondary"
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-sm)",
+                  }}
+                >
+                  {t(kpi.label)}
+                </span>
+                <span
+                  className="text-ifr-text-primary"
+                  style={{
+                    fontFamily: "var(--ifr-font-heading)",
+                    fontSize: "var(--ifr-fs-2xl)",
+                    fontWeight: "var(--ifr-fw-bold)",
+                    lineHeight: "1.2",
+                  }}
+                >
+                  {kpi.value}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* Search & Sort toolbar */}
+      {/* Search & Sort & Filter toolbar */}
       <div
         className="bg-ifr-surface border border-ifr rounded-ifr-md flex items-center gap-3 px-4"
         style={{ minHeight: "var(--ifr-control-height)", padding: "12px 16px" }}
@@ -456,16 +607,21 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder={t(ctaConfig.searchPlaceholder)}
+            placeholder={t("Search by product name, DPP ID, or project ID...")}
             className="flex-1 bg-transparent border-none outline-none text-ifr-text-primary"
             style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
           />
         </div>
 
+        {/* Sort dropdown */}
         <div className="relative shrink-0">
           <button
             type="button"
-            onClick={() => setShowSortMenu(!showSortMenu)}
+            onClick={e => {
+              e.stopPropagation();
+              setShowSortMenu(!showSortMenu);
+              setShowFilterMenu(false);
+            }}
             className="flex items-center gap-2 px-3 bg-transparent border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors"
             style={{
               height: "36px",
@@ -476,19 +632,23 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
               color: "var(--ifr-text-secondary)",
             }}
           >
-            <SortAscending size={14} />
-            {t("Sort by")} {sortBy === "latest" ? t("Latest") : t("Oldest")}
+            <span>{t("Sort by")}</span>
+            <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-semibold)" }}>
+              {t(sortLabels[sortBy])}
+            </span>
+            <ChevronDown size={14} />
           </button>
           {showSortMenu && (
             <div
               className="absolute right-0 top-full mt-1 bg-ifr-surface border border-ifr shadow-lg z-20"
               style={{ borderRadius: "var(--ifr-radius-sm)", minWidth: "160px" }}
             >
-              {["latest", "oldest"].map(opt => (
+              {(["latest", "oldest", "az", "za"] as const).map(opt => (
                 <button
                   key={opt}
                   type="button"
-                  onClick={() => {
+                  onClick={e => {
+                    e.stopPropagation();
                     setSortBy(opt);
                     setShowSortMenu(false);
                   }}
@@ -501,7 +661,62 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
                     color: "var(--ifr-text-primary)",
                   }}
                 >
-                  {opt === "latest" ? t("Latest") : t("Oldest")}
+                  {t(sortLabels[opt])}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Status filter dropdown */}
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            onClick={e => {
+              e.stopPropagation();
+              setShowFilterMenu(!showFilterMenu);
+              setShowSortMenu(false);
+            }}
+            className="flex items-center gap-2 px-3 bg-transparent border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors"
+            style={{
+              height: "36px",
+              borderRadius: "var(--ifr-radius-sm)",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-sm)",
+              fontWeight: "var(--ifr-fw-medium)",
+              color: "var(--ifr-text-secondary)",
+            }}
+          >
+            <span>{t("Show")}</span>
+            <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-semibold)" }}>
+              {t(filterLabels[statusFilter])}
+            </span>
+            <ChevronDown size={14} />
+          </button>
+          {showFilterMenu && (
+            <div
+              className="absolute right-0 top-full mt-1 bg-ifr-surface border border-ifr shadow-lg z-20"
+              style={{ borderRadius: "var(--ifr-radius-sm)", minWidth: "160px" }}
+            >
+              {(["all", "active", "draft", "archived"] as const).map(opt => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={e => {
+                    e.stopPropagation();
+                    setStatusFilter(opt);
+                    setShowFilterMenu(false);
+                  }}
+                  className={`w-full text-left px-4 py-2 border-none cursor-pointer transition-colors ${
+                    statusFilter === opt ? "bg-ifr-hover" : "bg-transparent hover:bg-ifr-hover/50"
+                  }`}
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-sm)",
+                    color: "var(--ifr-text-primary)",
+                  }}
+                >
+                  {t(filterLabels[opt])}
                 </button>
               ))}
             </div>
@@ -523,7 +738,7 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
               }}
             >
               <Add size={16} />
-              {t(ctaConfig.createLabel)}
+              {t("Create New DPP")}
             </a>
           </Link>
         )}
@@ -552,68 +767,65 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
           <div
             className="grid gap-4 px-5 py-3 border-b border-ifr text-ifr-text-secondary"
             style={{
-              gridTemplateColumns: "2fr 1fr 100px 100px 140px 90px",
+              gridTemplateColumns: "2fr 110px 1fr 90px 140px 70px 50px",
               fontFamily: "var(--ifr-font-body)",
               fontSize: "var(--ifr-fs-sm)",
               fontWeight: "var(--ifr-fw-semibold)",
             }}
           >
-            <span>{t("Product")}</span>
-            <span>{t("Batch / Serial")}</span>
-            <span>{t("Type")}</span>
+            <span>{t("Product ID")}</span>
+            <span>{t("DPP ID")}</span>
+            <span>{t("Batch / Unit")}</span>
             <span>{t("Status")}</span>
             <span>{t("Created")}</span>
-            <span>{t("Action")}</span>
+            <span>{t("QR code")}</span>
+            <span />
           </div>
 
           {/* Table rows */}
           {filteredDpps.map(dpp => {
             const productName =
               dpp.productOverview?.productName?.value || dpp.productOverview?.brandName?.value || t("Untitled DPP");
+            const productId = dpp.productId || "—";
             const status = dpp.status || "draft";
             const colors = statusColors[status] || statusColors.draft;
             const dppUrl = `/dpps/${encodeURIComponent(dpp.id)}`;
+            const dppDisplayId = dpp.id.length > 12 ? `${dpp.id.slice(0, 12)}…` : dpp.id;
 
             return (
               <div
                 key={dpp.id}
                 className="grid gap-4 px-5 py-4 border-b border-ifr last:border-b-0 hover:bg-ifr-hover/50 transition-colors items-center"
-                role="link"
-                tabIndex={0}
-                onClick={() => router.push(dppUrl)}
-                onKeyDown={event => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    router.push(dppUrl);
-                  }
-                }}
                 style={{
-                  gridTemplateColumns: "2fr 1fr 100px 100px 140px 90px",
+                  gridTemplateColumns: "2fr 110px 1fr 90px 140px 70px 50px",
                   fontFamily: "var(--ifr-font-body)",
                   fontSize: "var(--ifr-fs-base)",
                 }}
               >
-                <Link href={dppUrl}>
-                  <a
-                    className="text-ifr-text-primary truncate no-underline hover:underline"
-                    style={{ fontWeight: "var(--ifr-fw-medium)" }}
-                  >
-                    {productName}
-                  </a>
-                </Link>
-                <span className="text-ifr-text-secondary truncate">{dpp.batchId || "—"}</span>
-                <span>
-                  <span
-                    className="inline-block px-2 py-0.5 text-ifr-text-secondary"
-                    style={{
-                      borderRadius: "var(--ifr-radius-sm)",
-                      border: "1px solid var(--ifr-border)",
-                      fontSize: "var(--ifr-fs-sm)",
-                    }}
-                  >
-                    {dpp.batchType === "unit" ? t("Unit") : t("Batch")}
+                {/* Product ID + name */}
+                <div className="flex flex-col min-w-0">
+                  <span className="text-ifr-text-secondary truncate" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                    {productId}
                   </span>
+                  <Link href={dppUrl}>
+                    <a
+                      className="text-ifr-text-primary truncate no-underline hover:underline"
+                      style={{ fontWeight: "var(--ifr-fw-medium)" }}
+                    >
+                      {productName}
+                    </a>
+                  </Link>
+                </div>
+
+                {/* DPP ID */}
+                <span className="text-ifr-text-secondary truncate" title={dpp.id}>
+                  {dppDisplayId}
                 </span>
+
+                {/* Batch / Unit */}
+                <span className="text-ifr-text-secondary truncate">{dpp.batchId || "—"}</span>
+
+                {/* Status */}
                 <span>
                   <span
                     className="inline-block px-2 py-0.5"
@@ -628,25 +840,157 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
                     {t(status.charAt(0).toUpperCase() + status.slice(1))}
                   </span>
                 </span>
-                <span className="text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
-                  {dpp.createdAt ? new Date(dpp.createdAt).toLocaleDateString() : "—"}
+
+                {/* Created */}
+                <span
+                  className="flex items-center gap-1 text-ifr-text-secondary"
+                  style={{ fontSize: "var(--ifr-fs-sm)" }}
+                >
+                  <Calendar size={14} className="shrink-0" />
+                  {dpp.createdAt
+                    ? new Date(dpp.createdAt).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : "—"}
                 </span>
-                <Link href={dppUrl}>
-                  <a
-                    className="inline-flex items-center justify-center px-2 py-1 border border-ifr no-underline hover:bg-ifr-hover/70"
-                    style={{
-                      borderRadius: "var(--ifr-radius-sm)",
-                      color: "var(--ifr-text-primary)",
-                      fontSize: "var(--ifr-fs-sm)",
-                      fontWeight: "var(--ifr-fw-medium)",
+
+                {/* QR code download */}
+                <a
+                  href={dppApi.getQrCodeUrl(dpp.id, 256)}
+                  download={`dpp-${dpp.id}-qr.png`}
+                  title={t("Download QR code")}
+                  onClick={e => e.stopPropagation()}
+                  className="inline-flex items-center justify-center bg-transparent border-none cursor-pointer hover:opacity-70 transition-opacity no-underline"
+                  style={{ width: 32, height: 32, color: "var(--ifr-text-secondary)" }}
+                >
+                  <Download size={18} />
+                </a>
+
+                {/* More actions */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    title={t("More actions")}
+                    onClick={e => {
+                      e.stopPropagation();
+                      setShowActionsMenu(showActionsMenu === dpp.id ? null : dpp.id);
                     }}
+                    className="inline-flex items-center justify-center bg-transparent border-none cursor-pointer hover:opacity-70 transition-opacity"
+                    style={{ width: 32, height: 32, color: "var(--ifr-text-secondary)" }}
                   >
-                    {t("View")}
-                  </a>
-                </Link>
+                    <OverflowMenuVertical size={18} />
+                  </button>
+                  {showActionsMenu === dpp.id && (
+                    <div
+                      className="absolute right-0 top-full mt-1 bg-ifr-surface border border-ifr shadow-lg z-30"
+                      style={{ borderRadius: "var(--ifr-radius-sm)", minWidth: "160px" }}
+                    >
+                      <Link href={dppUrl}>
+                        <a
+                          className="block w-full text-left px-4 py-2 no-underline hover:bg-ifr-hover/50 transition-colors"
+                          style={{
+                            fontFamily: "var(--ifr-font-body)",
+                            fontSize: "var(--ifr-fs-sm)",
+                            color: "var(--ifr-text-primary)",
+                          }}
+                        >
+                          {t("View")}
+                        </a>
+                      </Link>
+                      {isOwner && status === "draft" && (
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleStatusChange(dpp.id, "active");
+                          }}
+                          className="w-full text-left px-4 py-2 border-none cursor-pointer bg-transparent hover:bg-ifr-hover/50 transition-colors"
+                          style={{
+                            fontFamily: "var(--ifr-font-body)",
+                            fontSize: "var(--ifr-fs-sm)",
+                            color: "var(--ifr-text-primary)",
+                          }}
+                        >
+                          {t("Publish")}
+                        </button>
+                      )}
+                      {isOwner && (status === "draft" || status === "active") && (
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleStatusChange(dpp.id, "archived");
+                          }}
+                          className="w-full text-left px-4 py-2 border-none cursor-pointer bg-transparent hover:bg-ifr-hover/50 transition-colors"
+                          style={{
+                            fontFamily: "var(--ifr-font-body)",
+                            fontSize: "var(--ifr-fs-sm)",
+                            color: "var(--ifr-text-primary)",
+                          }}
+                        >
+                          {t("Archive")}
+                        </button>
+                      )}
+                      {isOwner && status === "archived" && (
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleStatusChange(dpp.id, "draft");
+                          }}
+                          className="w-full text-left px-4 py-2 border-none cursor-pointer bg-transparent hover:bg-ifr-hover/50 transition-colors"
+                          style={{
+                            fontFamily: "var(--ifr-font-body)",
+                            fontSize: "var(--ifr-fs-sm)",
+                            color: "var(--ifr-text-primary)",
+                          }}
+                        >
+                          {t("Restore to Draft")}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })}
+
+          {/* Pagination footer */}
+          <div
+            className="flex items-center justify-between px-5 py-3 border-t border-ifr"
+            style={{
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-sm)",
+              color: "var(--ifr-text-secondary)",
+            }}
+          >
+            <span>
+              {t("Showing {{count}} of {{total}} DPPs", {
+                count: filteredDpps.length,
+                total: total,
+              })}
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                disabled
+                className="inline-flex items-center justify-center bg-transparent border border-ifr cursor-not-allowed opacity-50"
+                style={{ width: 32, height: 32, borderRadius: "var(--ifr-radius-sm)" }}
+              >
+                <ChevronLeft size={16} className="text-ifr-text-secondary" />
+              </button>
+              <button
+                type="button"
+                disabled
+                className="inline-flex items-center justify-center bg-transparent border border-ifr cursor-not-allowed opacity-50"
+                style={{ width: 32, height: 32, borderRadius: "var(--ifr-radius-sm)" }}
+              >
+                <ChevronRight size={16} className="text-ifr-text-secondary" />
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

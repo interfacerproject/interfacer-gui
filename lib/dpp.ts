@@ -133,6 +133,9 @@ const useDppApi = () => {
       if (filters?.productId) params.set("productId", filters.productId);
       if (filters?.createdBy) params.set("createdBy", filters.createdBy);
       if (filters?.status) params.set("status", filters.status);
+      if (filters?.q) params.set("q", filters.q);
+      if (filters?.sortBy) params.set("sortBy", filters.sortBy);
+      if (filters?.sortOrder) params.set("sortOrder", filters.sortOrder);
       if (filters?.limit != null) params.set("limit", String(filters.limit));
       if (filters?.offset != null) params.set("offset", String(filters.offset));
 
@@ -187,6 +190,11 @@ const useDppApi = () => {
 
   const getFileUrl = useCallback((id: string): string => {
     return `${DPP_BASE_URL}/file/${encodeURIComponent(id)}`;
+  }, []);
+
+  const getQrCodeUrl = useCallback((dppId: string, size?: number): string => {
+    const params = size ? `?size=${size}` : "";
+    return `${DPP_BASE_URL}/dpp/${encodeURIComponent(dppId)}/qr${params}`;
   }, []);
 
   const updateDppStatus = useCallback(
@@ -257,6 +265,7 @@ const useDppApi = () => {
       listDpps,
       uploadFile,
       getFileUrl,
+      getQrCodeUrl,
       updateDppStatus,
       addAttachment,
       deleteAttachment,
@@ -269,6 +278,7 @@ const useDppApi = () => {
       listDpps,
       uploadFile,
       getFileUrl,
+      getQrCodeUrl,
       updateDppStatus,
       addAttachment,
       deleteAttachment,

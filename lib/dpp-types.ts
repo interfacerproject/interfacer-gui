@@ -207,13 +207,23 @@ export type ListDppsFilters = {
   productId?: string;
   createdBy?: string;
   status?: DppStatus;
+  q?: string;
+  sortBy?: "createdAt" | "name";
+  sortOrder?: "asc" | "desc";
   limit?: number;
   offset?: number;
+};
+
+export type StatusFacets = {
+  active: number;
+  draft: number;
+  archived: number;
 };
 
 export type ListDppsResponse = {
   dpps: DppDocument[];
   total: number;
+  facets?: StatusFacets;
 };
 
 export type DppApiError = {
