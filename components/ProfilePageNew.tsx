@@ -112,15 +112,23 @@ function ProfileTabContent({
 }) {
   const { t } = useTranslation("common");
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [sortBy, setSortBy] = useState("latest");
   const [showSortMenu, setShowSortMenu] = useState(false);
+
+  // Debounce search input to avoid firing a query on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const filter = useMemo(
     () => ({
       primaryAccountable: [userId],
       conformsTo: specId ? [specId] : undefined,
+      ...(debouncedSearch && { name: debouncedSearch }),
     }),
-    [userId, specId]
+    [userId, specId, debouncedSearch]
   );
 
   const dataQueryIdentifier = "economicResources";
