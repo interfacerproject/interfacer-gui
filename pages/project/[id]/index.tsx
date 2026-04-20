@@ -21,7 +21,6 @@ import { createContext, Dispatch, ReactElement, SetStateAction, useContext, useM
 
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
-import EditBanner from "components/partials/project/[id]/EditBanner";
 import SuccessBanner from "components/partials/project/[id]/SuccessBanner";
 import ProjectDetailNew from "components/ProjectDetailNew";
 import findProjectImages from "lib/findProjectImages";
@@ -82,7 +81,6 @@ const Project: NextPageWithLayout = () => {
       />
       <ProjectTabsContext.Provider value={{ selected, setSelected }}>
         <SuccessBanner param="created">{t("Project succesfully created!")}</SuccessBanner>
-        <EditBanner />
         <ProjectDetailNew />
       </ProjectTabsContext.Provider>
     </>

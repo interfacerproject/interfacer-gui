@@ -16,7 +16,6 @@
 
 import FetchUserLayout from "components/layout/FetchUserLayout";
 import Layout from "components/layout/Layout";
-import EditProfileBanner from "components/partials/profile/[id]/EditProfileBanner";
 import ProfilePageNew from "components/ProfilePageNew";
 import type { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -25,12 +24,7 @@ import { NextPageWithLayout } from "pages/_app";
 //
 
 const Profile: NextPageWithLayout = () => {
-  return (
-    <>
-      <EditProfileBanner />
-      <ProfilePageNew />
-    </>
-  );
+  return <ProfilePageNew />;
 };
 
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
