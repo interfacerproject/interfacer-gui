@@ -2,7 +2,6 @@ import { ProjectType } from "components/types";
 import { CreateProjectValues } from "../create/project/CreateProjectForm";
 import ContributorsStep from "../create/project/steps/ContributorsStep";
 import DeclarationsStep from "../create/project/steps/DeclarationsStep";
-import DPPStep from "../create/project/steps/DPPStep";
 import ImagesStep from "../create/project/steps/ImagesStep";
 import ImportDesignStep from "../create/project/steps/ImportDesignStep";
 import LicenseStep from "../create/project/steps/LicenseStep";
@@ -13,6 +12,7 @@ import MainStep from "../create/project/steps/MainStep";
 import MaterialsStep from "../create/project/steps/MaterialsStep";
 import ProductFiltersStep from "../create/project/steps/ProductFiltersStep";
 import RelationsStep from "../create/project/steps/RelationsStep";
+import ServiceFiltersStep from "../create/project/steps/ServiceFiltersStep";
 
 //
 
@@ -61,6 +61,12 @@ export const projectSections: Array<ProjectSection> = [
     component: <ImagesStep />,
     required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN, ProjectType.MACHINE],
     editPage: "edit/images",
+  },
+  {
+    navLabel: "Service details",
+    id: "serviceFilters",
+    component: <ServiceFiltersStep />,
+    for: [ProjectType.SERVICE],
   },
   {
     navLabel: "Location",
@@ -112,13 +118,6 @@ export const projectSections: Array<ProjectSection> = [
     component: <RelationsStep />,
     for: [ProjectType.DESIGN, ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.MACHINE],
     editPage: "edit/relations",
-  },
-  {
-    navLabel: "DPP",
-    id: "dpp",
-    component: <DPPStep />,
-    required: [ProjectType.PRODUCT],
-    for: [ProjectType.PRODUCT],
   },
   {
     navLabel: "Machines",

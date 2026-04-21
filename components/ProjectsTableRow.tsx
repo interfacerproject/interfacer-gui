@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { extractUserTagValues } from "lib/tagging";
 import { EconomicResource } from "lib/types";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -74,7 +75,7 @@ const ProjectsTableRow = (props: { project: { node: EconomicResource } }) => {
       </td>
 
       <td className="max-w-[12rem]">
-        <BrTags tags={e.classifiedAs!} />
+        <BrTags tags={extractUserTagValues(e.classifiedAs)} />
       </td>
 
       <td>

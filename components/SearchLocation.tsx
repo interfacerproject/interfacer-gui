@@ -34,30 +34,70 @@ export default function SearchLocation(props: Props) {
   }, []);
 
   const [options, setOptions] = useState<Array<SelectOption>>([]);
+  const [searchResults, setSearchResults] = useState<Array<FetchLocation.Location>>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const toCoordValue = useCallback((location: FetchLocation.Location): string => {
+    return location.position
+      ? `COORD:${location.position.lat},${location.position.lng}|${encodeURIComponent(location.title)}`
+      : location.id;
+  }, []);
 
   useEffect(() => {
     const searchLocation = async () => {
       setLoading(true);
-      setOptions(createOptionsFromResult(await fetchLocation(inputValue)));
+      const results = await fetchLocation(inputValue);
+      setSearchResults(results);
+      setOptions(
+        results.map(location => ({
+          value: toCoordValue(location),
+          label: location.title,
+        }))
+      );
       setLoading(false);
     };
     searchLocation();
-  }, [inputValue]);
-
-  function createOptionsFromResult(result: Array<FetchLocation.Location>): Array<SelectOption> {
-    return result.map(location => {
-      return {
-        value: location.id,
-        label: location.title,
-      };
-    });
-  }
+  }, [inputValue, toCoordValue]);
 
   /* Handling selection */
 
   async function handleSelect(selected: string[]) {
-    const location = await lookupLocation(selected[0]);
+    const selectedValue = selected[0]?.trim();
+    if (!selectedValue) {
+      onSelect(null);
+      return;
+    }
+
+    const matchedResult = searchResults.find(location => toCoordValue(location) === selectedValue);
+    if (matchedResult?.position) {
+      onSelect({
+        title: matchedResult.title,
+        id: matchedResult.id,
+        language: matchedResult.language,
+        resultType: matchedResult.resultType,
+        administrativeAreaType: matchedResult.administrativeAreaType,
+        address: {
+          label: matchedResult.address.label,
+          countryCode: matchedResult.address.countryCode,
+          countryName: matchedResult.address.countryName,
+          state: "",
+        },
+        position: {
+          lat: matchedResult.position.lat,
+          lng: matchedResult.position.lng,
+        },
+        mapView: {
+          west: matchedResult.position.lng,
+          south: matchedResult.position.lat,
+          east: matchedResult.position.lng,
+          north: matchedResult.position.lat,
+        },
+      });
+      setInputValue("");
+      return;
+    }
+
+    const location = await lookupLocation(selectedValue);
     if (!location) onSelect(null);
     else onSelect(location);
     setInputValue("");

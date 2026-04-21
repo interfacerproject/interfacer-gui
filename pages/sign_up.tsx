@@ -26,7 +26,7 @@ import { ReactElement, useState } from "react";
 import type { NextPageWithLayout } from "./_app";
 
 // Layout
-import NRULayout from "../components/layout/NRULayout";
+import Layout from "../components/layout/Layout";
 
 // Partials
 import Passphrase from "components/partials/auth/Passphrase";
@@ -169,7 +169,7 @@ const SignUp: NextPageWithLayout = () => {
 //
 
 SignUp.getLayout = function getLayout(page: ReactElement) {
-  return <NRULayout>{page}</NRULayout>;
+  return <Layout bottomPadding="none">{page}</Layout>;
 };
 SignUp.publicPage = true;
 export default SignUp;

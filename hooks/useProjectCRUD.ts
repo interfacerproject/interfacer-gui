@@ -22,7 +22,7 @@ import {
 import { arrayEquals, getNewElements } from "lib/arrayOperations";
 import { errorFormatter } from "lib/errorFormatter";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
-import { derivedProductFilterTags, mergeTags, prefixedTag, removeTagsWithPrefixes, TAG_PREFIX } from "lib/tagging";
+import { derivedProductFilterTags, mergeTags, normalizeUserTagsForSave, prefixedTag, TAG_PREFIX } from "lib/tagging";
 import {
   CreateLocationMutation,
   CreateLocationMutationVariables,
@@ -79,6 +79,7 @@ export const useProjectCRUD = () => {
         [ProjectType.SERVICE]: specProjectService!.id,
         [ProjectType.PRODUCT]: specProjectProduct!.id,
         [ProjectType.MACHINE]: specMachine!.id,
+        [ProjectType.DPP]: specDpp!.id,
       }
     : undefined;
 
@@ -223,7 +224,8 @@ export const useProjectCRUD = () => {
 
       const images: IFile[] = await prepFilesForZenflows(formData.images);
       devLog("info: images prepared", images);
-      const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
+      const normalizedTags = normalizeUserTagsForSave(formData.main.tags);
+      const tags = normalizedTags.length > 0 ? normalizedTags : undefined;
       devLog("info: tags prepared", tags);
 
       const metadata = JSON.stringify({
@@ -341,18 +343,32 @@ export const useProjectCRUD = () => {
 
       const productFilterTags = derivedProductFilterTags(normalizedProductFilters);
 
-      const baseTags = removeTagsWithPrefixes(formData.main.tags, [
-        TAG_PREFIX.CATEGORY,
-        TAG_PREFIX.POWER_COMPAT,
-        TAG_PREFIX.POWER_REQ,
-        TAG_PREFIX.REPLICABILITY,
-        TAG_PREFIX.RECYCLABILITY,
-        TAG_PREFIX.REPAIRABILITY,
-        TAG_PREFIX.ENV_ENERGY,
-        TAG_PREFIX.ENV_CO2,
-      ]);
+      const serviceTypeTags = (formData.serviceFilters?.serviceType || [])
+        .map(s => prefixedTag(TAG_PREFIX.SERVICE_TYPE, s))
+        .filter((t): t is string => Boolean(t));
 
-      const merged = mergeTags(baseTags, machineTags, materialTags, productFilterTags);
+      const availabilityTags = (formData.serviceFilters?.availability || [])
+        .map(a => prefixedTag(TAG_PREFIX.AVAILABILITY, a))
+        .filter((t): t is string => Boolean(t));
+
+      const licenseTags = (formData.licenses || [])
+        .map(l => prefixedTag(TAG_PREFIX.LICENSE, l.licenseId))
+        .filter((t): t is string => Boolean(t));
+
+      // User-entered free-form tags from the form are normalized into the
+      // canonical `tag-<slug>` shape. System-derived tags (machines, materials,
+      // categories, ...) are appended separately below.
+      const baseTags = normalizeUserTagsForSave(formData.main.tags);
+
+      const merged = mergeTags(
+        baseTags,
+        machineTags,
+        materialTags,
+        productFilterTags,
+        serviceTypeTags,
+        availabilityTags,
+        licenseTags
+      );
       const tags = merged.length > 0 ? merged : undefined;
       devLog("info: tags prepared", tags);
 

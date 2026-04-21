@@ -7,6 +7,7 @@ import useWallet from "hooks/useWallet";
 import { IdeaPoints } from "lib/PointsDistribution";
 import findProjectImages from "lib/findProjectImages";
 import { isProjectType } from "lib/isProjectType";
+import { extractUserTagValues } from "lib/tagging";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
@@ -67,10 +68,11 @@ const GeneralCard = (props: GeneralCardProps) => {
 
 const Tags = () => {
   const { project } = useCardProject();
-  if (!project.classifiedAs?.length) return null;
+  const tags = extractUserTagValues(project.classifiedAs);
+  if (!tags.length) return null;
   return (
     <div className="p-3 border-t-1 border-t-gray-200">
-      <BrTags wrap={false} tags={project.classifiedAs || []} />
+      <BrTags wrap={false} tags={tags} />
     </div>
   );
 };
