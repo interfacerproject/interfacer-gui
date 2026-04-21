@@ -11,6 +11,9 @@ export function slugifyTagValue(value: string): string {
 }
 
 export const TAG_PREFIX = {
+  // Dedicated prefix for free-form, user-entered tags. All other prefixes are
+  // system-derived metadata that happens to share the classifiedAs field.
+  USER: "tag",
   CATEGORY: "category",
   MACHINE: "machine",
   MATERIAL: "material",
@@ -27,6 +30,38 @@ export const TAG_PREFIX = {
 } as const;
 
 export type TagPrefix = (typeof TAG_PREFIX)[keyof typeof TAG_PREFIX];
+
+// All known system prefixes (everything except USER).
+export const SYSTEM_TAG_PREFIXES: ReadonlyArray<string> = [
+  TAG_PREFIX.CATEGORY,
+  TAG_PREFIX.MACHINE,
+  TAG_PREFIX.MATERIAL,
+  TAG_PREFIX.POWER_COMPAT,
+  TAG_PREFIX.POWER_REQ,
+  TAG_PREFIX.REPLICABILITY,
+  TAG_PREFIX.RECYCLABILITY,
+  TAG_PREFIX.REPAIRABILITY,
+  TAG_PREFIX.ENV_ENERGY,
+  TAG_PREFIX.ENV_CO2,
+  TAG_PREFIX.SERVICE_TYPE,
+  TAG_PREFIX.AVAILABILITY,
+  TAG_PREFIX.LICENSE,
+];
+
+// Legacy/stale system prefixes that still appear in historical classifiedAs data.
+// These must not leak into user-facing tag displays.
+export const LEGACY_SYSTEM_TAG_PATTERNS: ReadonlyArray<string> = [
+  "power_compat-",
+  "power_",
+  "env_",
+  "mat:",
+  "c:",
+  "pc:",
+  "env:",
+  "pwr:",
+  "rep:",
+  "m:",
+];
 
 // Shared option lists used across create flow + products filters.
 export const PRODUCT_CATEGORY_OPTIONS = [
@@ -198,4 +233,78 @@ export function mergeTags(...tagLists: Array<ReadonlyArray<string> | undefined>)
   }
 
   return merged;
+}
+
+// ---------- User tag helpers ----------
+//
+// User-entered free-form tags are stored in classifiedAs alongside system-derived
+// tags (machine-*, category-*, etc.). To disambiguate them we prefix every new
+// user tag with `tag-`. Display and filter code should go through these helpers
+// so there is a single source of truth and no drifting per-component blocklists.
+
+// Build a canonical user tag from raw input. Returns undefined for empty values.
+export function userTag(raw: string): string | undefined {
+  const slug = slugifyTagValue(raw);
+  if (!slug) return undefined;
+  return `${TAG_PREFIX.USER}-${slug}`;
+}
+
+export function isUserTag(tag: string): boolean {
+  return tag.startsWith(`${TAG_PREFIX.USER}-`);
+}
+
+export function stripUserTagPrefix(tag: string): string {
+  return isUserTag(tag) ? tag.substring(TAG_PREFIX.USER.length + 1) : tag;
+}
+
+// A tag is "system" if it uses one of the known system prefixes (current or
+// legacy). USER tags and legacy un-prefixed free-form tags are NOT system.
+export function isSystemTag(tag: string): boolean {
+  if (isUserTag(tag)) return false;
+  if (SYSTEM_TAG_PREFIXES.some(p => tag.startsWith(`${p}-`))) return true;
+  if (LEGACY_SYSTEM_TAG_PATTERNS.some(p => tag.startsWith(p))) return true;
+  return false;
+}
+
+// Extract the values a user should see as "tags" from a classifiedAs list:
+// - entries that match TAG_PREFIX.USER (stripped of the prefix)
+// - legacy un-prefixed free-form entries (kept visible for backwards compat)
+// System-prefixed entries are filtered out.
+export function extractUserTagValues(tags: ReadonlyArray<string> | null | undefined): string[] {
+  if (!tags || tags.length === 0) return [];
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const tag of tags) {
+    if (!tag) continue;
+    let value: string | undefined;
+    if (isUserTag(tag)) {
+      value = decodeURIComponent(stripUserTagPrefix(tag));
+    } else if (!isSystemTag(tag)) {
+      value = decodeURIComponent(tag);
+    }
+    if (!value) continue;
+    if (seen.has(value)) continue;
+    seen.add(value);
+    out.push(value);
+  }
+  return out;
+}
+
+// Normalize raw user tag inputs (free-form strings, optionally already prefixed)
+// into canonical `tag-<slug>` form. System-prefixed entries are dropped so they
+// cannot accidentally ride in via the user-tag pipeline.
+export function normalizeUserTagsForSave(tags: ReadonlyArray<string>): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const raw of tags) {
+    const trimmed = raw?.trim();
+    if (!trimmed) continue;
+    if (isSystemTag(trimmed)) continue;
+    const canonical = isUserTag(trimmed) ? trimmed : userTag(trimmed);
+    if (!canonical) continue;
+    if (seen.has(canonical)) continue;
+    seen.add(canonical);
+    out.push(canonical);
+  }
+  return out;
 }

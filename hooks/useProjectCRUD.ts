@@ -22,7 +22,7 @@ import {
 import { arrayEquals, getNewElements } from "lib/arrayOperations";
 import { errorFormatter } from "lib/errorFormatter";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
-import { derivedProductFilterTags, mergeTags, prefixedTag, removeTagsWithPrefixes, TAG_PREFIX } from "lib/tagging";
+import { derivedProductFilterTags, mergeTags, normalizeUserTagsForSave, prefixedTag, TAG_PREFIX } from "lib/tagging";
 import {
   CreateLocationMutation,
   CreateLocationMutationVariables,
@@ -224,7 +224,8 @@ export const useProjectCRUD = () => {
 
       const images: IFile[] = await prepFilesForZenflows(formData.images);
       devLog("info: images prepared", images);
-      const tags = formData.main.tags.length > 0 ? formData.main.tags : undefined;
+      const normalizedTags = normalizeUserTagsForSave(formData.main.tags);
+      const tags = normalizedTags.length > 0 ? normalizedTags : undefined;
       devLog("info: tags prepared", tags);
 
       const metadata = JSON.stringify({
@@ -354,19 +355,10 @@ export const useProjectCRUD = () => {
         .map(l => prefixedTag(TAG_PREFIX.LICENSE, l.licenseId))
         .filter((t): t is string => Boolean(t));
 
-      const baseTags = removeTagsWithPrefixes(formData.main.tags, [
-        TAG_PREFIX.CATEGORY,
-        TAG_PREFIX.POWER_COMPAT,
-        TAG_PREFIX.POWER_REQ,
-        TAG_PREFIX.REPLICABILITY,
-        TAG_PREFIX.RECYCLABILITY,
-        TAG_PREFIX.REPAIRABILITY,
-        TAG_PREFIX.ENV_ENERGY,
-        TAG_PREFIX.ENV_CO2,
-        TAG_PREFIX.SERVICE_TYPE,
-        TAG_PREFIX.AVAILABILITY,
-        TAG_PREFIX.LICENSE,
-      ]);
+      // User-entered free-form tags from the form are normalized into the
+      // canonical `tag-<slug>` shape. System-derived tags (machines, materials,
+      // categories, ...) are appended separately below.
+      const baseTags = normalizeUserTagsForSave(formData.main.tags);
 
       const merged = mergeTags(
         baseTags,

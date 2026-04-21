@@ -9,6 +9,7 @@ import useWallet from "hooks/useWallet";
 import findProjectImages from "lib/findProjectImages";
 import { isProjectType } from "lib/isProjectType";
 import { IdeaPoints } from "lib/PointsDistribution";
+import { extractUserTagValues } from "lib/tagging";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
@@ -93,20 +94,8 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
   const hasStarred = project.id ? isLiked(project.id) : false;
   const displayCount = formatCount(erFollowerLength);
 
-  // Extract tags (filter out encoded machine/material tags)
-  const tags = (project.classifiedAs || [])
-    .filter(
-      tag =>
-        !tag.startsWith("machine-") &&
-        !tag.startsWith("material-") &&
-        !tag.startsWith("power_") &&
-        !tag.startsWith("replicability-") &&
-        !tag.startsWith("recyclability-") &&
-        !tag.startsWith("repairability") &&
-        !tag.startsWith("env_")
-    )
-    .map(tag => (tag.startsWith("category-") ? humanizeSlug(tag) : decodeURIComponent(tag)))
-    .slice(0, 4);
+  // Extract user-facing tags (strips `tag-` prefix and filters out system tags).
+  const tags = extractUserTagValues(project.classifiedAs).slice(0, 4);
 
   // Design-specific: requirements
   const machineTags = (project.classifiedAs || []).filter(tag => tag.startsWith("machine-")).map(humanizeSlug);

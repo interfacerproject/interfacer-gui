@@ -20,6 +20,7 @@ import type { DppDocument } from "lib/dpp-types";
 import findProjectImages from "lib/findProjectImages";
 import { isProjectType } from "lib/isProjectType";
 import MdParser from "lib/MdParser";
+import { extractUserTagValues } from "lib/tagging";
 
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -1212,29 +1213,9 @@ export default function ProjectDetailNew() {
   const color = typeColors[projectType] || "var(--ifr-green)";
   const images = useMemo(() => findProjectImages(project), [project]);
 
-  // Internal tag prefixes to filter out
-  const internalPrefixes = [
-    "machine-",
-    "material-",
-    "category-",
-    "power_compat-",
-    "mat:",
-    "c:",
-    "pc:",
-    "env:",
-    "pwr:",
-    "rep:",
-    "m:",
-  ];
-
-  // Decode tags
-  const tags = useMemo(
-    () =>
-      (project.classifiedAs || [])
-        .filter((c: string) => !internalPrefixes.some(p => c.startsWith(p)))
-        .map((c: string) => decodeURIComponent(c)),
-    [project.classifiedAs]
-  );
+  // User-facing tags: filtered to `tag-*` entries (prefix stripped) with legacy
+  // un-prefixed values kept visible for backwards compatibility.
+  const tags = useMemo(() => extractUserTagValues(project.classifiedAs), [project.classifiedAs]);
 
   const machines = useMemo(
     () =>
