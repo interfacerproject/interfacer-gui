@@ -18,6 +18,7 @@ import { SEARCH_PROJECT } from "components/ProjectDisplay";
 import useDppApi from "lib/dpp";
 import type { DppDocument } from "lib/dpp-types";
 import findProjectImages from "lib/findProjectImages";
+import findProjectModels from "lib/findProjectModels";
 import { isProjectType } from "lib/isProjectType";
 import MdParser from "lib/MdParser";
 import { extractUserTagValues } from "lib/tagging";
@@ -27,6 +28,7 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
+import StepModelViewer from "./StepModelViewer";
 
 function getProjectType(project: Partial<EconomicResource>): ProjectType {
   const name = project.conformsTo?.name;
@@ -1212,6 +1214,12 @@ export default function ProjectDetailNew() {
   const projectType = getProjectType(project);
   const color = typeColors[projectType] || "var(--ifr-green)";
   const images = useMemo(() => findProjectImages(project), [project]);
+  const models = useMemo(() => findProjectModels(project), [project]);
+  const primaryModel = useMemo(() => models.find(model => model.isViewable) || models[0], [models]);
+  const additionalModels = useMemo(
+    () => models.filter(model => model.url !== primaryModel?.url),
+    [models, primaryModel]
+  );
 
   // User-facing tags: filtered to `tag-*` entries (prefix stripped) with legacy
   // un-prefixed values kept visible for backwards compatibility.
@@ -1375,6 +1383,94 @@ export default function ProjectDetailNew() {
 
           {/* Image gallery */}
           <ImageGallery images={images} />
+
+          {/* 3D model viewer for designs */}
+          {projectType === ProjectType.DESIGN && primaryModel && (
+            <DetailSection
+              icon={
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 2l8 4.5v11L12 22l-8-4.5v-11L12 2z"
+                    stroke={color}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M12 22V11.5M20 6.5l-8 5-8-5"
+                    stroke={color}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              }
+              iconBg="bg-ifr-hover"
+              title={t("3D Model")}
+              subtitle={
+                primaryModel.isViewable
+                  ? t("Inspect the fabrication model directly in the browser")
+                  : t("3D source file attached for download")
+              }
+              sectionId="3d-model"
+            >
+              <div className="flex flex-col gap-4">
+                <p className="m-0 text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-base)" }}>
+                  {primaryModel.isViewable
+                    ? t(
+                        "Use the mouse or trackpad to rotate, pan, and zoom the model. If loading fails, open the source file directly."
+                      )
+                    : t(
+                        "This design includes a 3D source file, but browser preview is only available for STEP and STL right now."
+                      )}
+                </p>
+
+                {primaryModel.isViewable ? (
+                  <StepModelViewer
+                    modelUrl={primaryModel.url}
+                    downloadUrl={primaryModel.downloadUrl}
+                    fileName={primaryModel.name}
+                    height="min(60vh, 640px)"
+                  />
+                ) : (
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="text-ifr-text-primary" style={{ fontWeight: 600 }}>
+                      {primaryModel.name}
+                    </span>
+                    <a
+                      href={primaryModel.downloadUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#036A53] underline hover:no-underline"
+                    >
+                      {t("Open source file")}
+                    </a>
+                  </div>
+                )}
+
+                {additionalModels.length > 0 && (
+                  <div className="flex flex-col gap-2">
+                    <p className="m-0 text-ifr-text-primary" style={{ fontWeight: 600 }}>
+                      {t("Additional model files")}
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      {additionalModels.map(model => (
+                        <a
+                          key={model.url}
+                          href={model.downloadUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#036A53] underline hover:no-underline"
+                        >
+                          {model.name}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </DetailSection>
+          )}
 
           {/* Manufactured from open source design banner */}
           {projectType === ProjectType.PRODUCT &&
