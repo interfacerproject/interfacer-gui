@@ -20,8 +20,10 @@ import {
   UPDATE_METADATA,
 } from "lib/QueryAndMutation";
 import { arrayEquals, getNewElements } from "lib/arrayOperations";
+import useDppApi from "lib/dpp";
 import { errorFormatter } from "lib/errorFormatter";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
+import { uploadModelFilesToDpp } from "lib/projectModelFiles";
 import { derivedProductFilterTags, mergeTags, normalizeUserTagsForSave, prefixedTag, TAG_PREFIX } from "lib/tagging";
 import {
   CreateLocationMutation,
@@ -50,6 +52,7 @@ import { useResourceSpecs } from "./useResourceSpecs";
 
 export const useProjectCRUD = () => {
   const { user } = useAuth();
+  const { uploadFile: uploadDppFile } = useDppApi();
   const { sendMessage } = useInBox();
   const { addIdeaPoints, addStrengthsPoints } = useWallet({});
   const { t } = useTranslation();
@@ -311,6 +314,8 @@ export const useProjectCRUD = () => {
       //todo: This should be uncommented, seems broken with last zenroom version see lib/fileUpload.ts
       const images: IFile[] = await prepFilesForZenflows(formData.images);
       devLog("info: images prepared", images);
+      const models = await uploadModelFilesToDpp(formData.modelFiles || [], uploadDppFile);
+      devLog("info: models prepared", models);
 
       const machineTags = (formData.machines?.machineDetails || [])
         .map(m => prefixedTag(TAG_PREFIX.MACHINE, m.name))
@@ -422,6 +427,7 @@ export const useProjectCRUD = () => {
           declarations: formData.declarations,
           remote: location?.remote,
           design: design,
+          models,
           machines: formData.machines?.machineDetails || [],
           materials: formData.materials?.materialDetails || [],
           productFilters: normalizedProductFilters,
@@ -536,7 +542,7 @@ export const useProjectCRUD = () => {
         processId
       );
 
-      await uploadImages(formData.images);
+      await uploadFiles(formData.images);
     } catch (e) {
       devLog(e);
       let err = errorFormatter(e);
