@@ -44,7 +44,11 @@ jobs:
         run: cp .env.example .env.local
       - run: npm run build
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        timeout-minutes: 10
+        run: |
+          sudo sed -i 's/azure\.archive\.ubuntu\.com/archive.ubuntu.com/g' /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null || true
+          sudo apt-get update -qq
+          npx playwright install --with-deps
       - name: Run Playwright tests
         run: npx playwright test
       - uses: actions/upload-artifact@v4.6.0
