@@ -47,6 +47,13 @@ const Project: NextPageWithLayout = () => {
   const { project } = useProject();
   const images = useMemo(() => findProjectImages(project), [project]);
 
+  // OG/Twitter crawlers require absolute HTTP URLs — base64 data URIs don't work,
+  // and the /api/image proxy path needs an origin prefix.
+  const ogImages = useMemo(() => {
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    return images.filter(url => !url.startsWith("data:")).map(url => (url.startsWith("/") ? `${origin}${url}` : url));
+  }, [images]);
+
   // (Temp) Redirect if project is LOSH owned
   if (process.env.NEXT_PUBLIC_LOSH_ID == project?.primaryAccountable?.id) {
     router.push(`/resource/${id}`);
@@ -64,12 +71,11 @@ const Project: NextPageWithLayout = () => {
           url: window.location.origin + router.asPath,
           title: project?.name,
           description: project?.note || undefined,
-          images: images?.map((image, i) => ({
+          images: ogImages.map((image, i) => ({
             url: image,
             width: 800,
             height: 600,
             alt: `${project?.name}${i > 0 ? " " + i : ""}`,
-            type: project?.images?.[i]?.mimeType || "image/jpeg",
           })),
           siteName: "Interfacer-gui",
         }}
