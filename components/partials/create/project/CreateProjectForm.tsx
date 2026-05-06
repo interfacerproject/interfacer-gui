@@ -19,6 +19,7 @@ import { licenseStepDefaultValues, licenseStepSchema, LicenseStepValues } from "
 import { linkDesignStepDefaultValues, linkDesignStepSchema, LinkDesignStepValues } from "./steps/LinkDesignStep";
 import { locationStepDefaultValues, LocationStepSchemaContext, LocationStepValues } from "./steps/LocationStep";
 import { mainStepDefaultValues, mainStepSchema, MainStepValues } from "./steps/MainStep";
+import { modelFilesStepDefaultValues, modelFilesStepSchema, ModelFilesStepValues } from "./steps/ModelFilesStep";
 import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep";
 
 // Partials
@@ -64,6 +65,7 @@ export interface CreateProjectValues {
   linkedDesign: LinkDesignStepValues;
   location: LocationStepValues;
   images: ImagesStepValues;
+  modelFiles: ModelFilesStepValues;
   declarations: DeclarationsStepValues;
   contributors: ContributorsStepValues;
   relations: RelationsStepValues;
@@ -79,6 +81,7 @@ export const createProjectDefaultValues: CreateProjectValues = {
   linkedDesign: linkDesignStepDefaultValues,
   location: locationStepDefaultValues,
   images: imagesStepDefaultValues,
+  modelFiles: modelFilesStepDefaultValues,
   declarations: declarationsStepDefaultValues,
   contributors: contributorsStepDefaultValues,
   relations: relationsStepDefaultValues,
@@ -100,6 +103,7 @@ export const createProjectSchema = () =>
     //   projectType == ProjectType.DESIGN ? schema : locationStepSchema
     // ),
     images: imagesStepSchema(),
+    modelFiles: modelFilesStepSchema(),
     declarations: yup
       .object()
       .when("$projectType", (projectType: ProjectType, schema) =>
@@ -148,6 +152,7 @@ export default function CreateProjectForm(props: Props) {
     linkedDesign: linkDesignStepDefaultValues,
     location: locationStepDefaultUserValues,
     images: imagesStepDefaultValues,
+    modelFiles: modelFilesStepDefaultValues,
     declarations: declarationsStepDefaultValues,
     contributors: contributorsStepDefaultValues,
     relations: relationsStepDefaultValues,
