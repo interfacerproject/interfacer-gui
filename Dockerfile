@@ -27,8 +27,7 @@ ARG NODE_ENV=production
 ENV NODE_ENV=$NODE_ENV
 
 RUN apk add --no-cache libc6-compat
-RUN wget "https://github.com/pnpm/pnpm/releases/latest/download/pnpm-linuxstatic-x64" -O /bin/pnpm && \
-    chmod +x /bin/pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /build
 
