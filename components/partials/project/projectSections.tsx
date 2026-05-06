@@ -10,6 +10,7 @@ import LocationStep from "../create/project/steps/LocationStep";
 import MachinesStep from "../create/project/steps/MachinesStep";
 import MainStep from "../create/project/steps/MainStep";
 import MaterialsStep from "../create/project/steps/MaterialsStep";
+import ModelFilesStep from "../create/project/steps/ModelFilesStep";
 import ProductFiltersStep from "../create/project/steps/ProductFiltersStep";
 import RelationsStep from "../create/project/steps/RelationsStep";
 import ServiceFiltersStep from "../create/project/steps/ServiceFiltersStep";
@@ -61,6 +62,13 @@ export const projectSections: Array<ProjectSection> = [
     component: <ImagesStep />,
     required: [ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.DESIGN, ProjectType.MACHINE],
     editPage: "edit/images",
+  },
+  {
+    navLabel: "3D files",
+    id: "modelFiles",
+    component: <ModelFilesStep />,
+    for: [ProjectType.DESIGN],
+    editPage: "edit/model",
   },
   {
     navLabel: "Service details",
