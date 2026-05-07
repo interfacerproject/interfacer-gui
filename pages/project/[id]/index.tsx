@@ -51,7 +51,12 @@ const Project: NextPageWithLayout = () => {
   // and the /api/image proxy path needs an origin prefix.
   const ogImages = useMemo(() => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    return images.filter(url => !url.startsWith("data:")).map(url => (url.startsWith("/") ? `${origin}${url}` : url));
+    return images.map((url, i) => ({
+      url: url.startsWith("/") ? `${origin}${url}` : url,
+      width: 800,
+      height: 600,
+      alt: `${project?.name}${i > 0 ? " " + i : ""}`,
+    }));
   }, [images]);
 
   // (Temp) Redirect if project is LOSH owned
@@ -71,12 +76,7 @@ const Project: NextPageWithLayout = () => {
           url: window.location.origin + router.asPath,
           title: project?.name,
           description: project?.note || undefined,
-          images: ogImages.map((image, i) => ({
-            url: image,
-            width: 800,
-            height: 600,
-            alt: `${project?.name}${i > 0 ? " " + i : ""}`,
-          })),
+          images: ogImages,
           siteName: "Interfacer-gui",
         }}
         twitter={{
