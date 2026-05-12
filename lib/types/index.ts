@@ -631,6 +631,9 @@ export type EconomicResourceFilterParams = {
   gtOnhandQuantityHasNumericalValue?: InputMaybe<Scalars["Decimal"]>;
   id?: InputMaybe<Array<Scalars["ID"]>>;
   name?: InputMaybe<Scalars["String"]>;
+  nearDistanceKm?: InputMaybe<Scalars["Decimal"]>;
+  nearLat?: InputMaybe<Scalars["Decimal"]>;
+  nearLong?: InputMaybe<Scalars["Decimal"]>;
   notCustodian?: InputMaybe<Array<Scalars["ID"]>>;
   notPrimaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
   note?: InputMaybe<Scalars["String"]>;
@@ -645,6 +648,21 @@ export type EconomicResourceFilterParams = {
   orRepo?: InputMaybe<Scalars["String"]>;
   primaryAccountable?: InputMaybe<Array<Scalars["ID"]>>;
   repo?: InputMaybe<Scalars["String"]>;
+};
+
+export enum EconomicResourceSortField {
+  CreatedAt = "CREATED_AT",
+  Name = "NAME",
+}
+
+export enum SortDirection {
+  Asc = "ASC",
+  Desc = "DESC",
+}
+
+export type EconomicResourceSortInput = {
+  field: EconomicResourceSortField;
+  direction: SortDirection;
 };
 
 export type EconomicResourceResponse = {
@@ -4233,6 +4251,7 @@ export type FetchInventoryQueryVariables = Exact<{
   last?: InputMaybe<Scalars["Int"]>;
   before?: InputMaybe<Scalars["ID"]>;
   filter?: InputMaybe<EconomicResourceFilterParams>;
+  orderBy?: InputMaybe<EconomicResourceSortInput>;
 }>;
 
 export type FetchInventoryQuery = {
@@ -4247,6 +4266,7 @@ export type FetchInventoryQuery = {
       hasNextPage: boolean;
       totalCount?: number | null;
       pageLimit?: number | null;
+      distinctPrimaryAccountableCount?: number | null;
     };
     edges: Array<{
       __typename?: "EconomicResourceEdge";

@@ -29,7 +29,7 @@ import type { NextPageWithLayout } from "./_app";
 import keypairoomClientRecreateKeys from "zenflows-crypto/src/keypairoomClientRecreateKeys.zen";
 
 // Layout
-import NRULayout from "../components/layout/NRULayout";
+import Layout from "../components/layout/Layout";
 
 // Components
 import { Button } from "@bbtgnn/polaris-interfacer";
@@ -250,7 +250,7 @@ const Sign_in: NextPageWithLayout = () => {
 //
 
 Sign_in.getLayout = function getLayout(page: ReactElement) {
-  return <NRULayout>{page}</NRULayout>;
+  return <Layout bottomPadding="none">{page}</Layout>;
 };
 Sign_in.publicPage = true;
 export default Sign_in;

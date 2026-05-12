@@ -35,6 +35,7 @@ import devLog from "lib/devLog";
 import { errorFormatter } from "lib/errorFormatter";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
+import { normalizeUserTagsForSave } from "lib/tagging";
 import { TransferProjectMutationVariables } from "lib/types";
 import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
@@ -77,7 +78,7 @@ const ClaimProject: NextPageWithLayout = () => {
 
   async function handleClaim(formData: ClaimProjectNS.FormValues) {
     try {
-      const tags = formData.tags;
+      const tags = normalizeUserTagsForSave(formData.tags);
       devLog("info: tags prepared", tags);
       const contributors = formData.contributors;
       devLog("info: contributors prepared", contributors);

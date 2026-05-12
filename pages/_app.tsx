@@ -14,8 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import "@fontsource/ibm-plex-sans";
-import "@fontsource/space-grotesk";
+import "@fontsource/ibm-plex-sans/400";
+import "@fontsource/ibm-plex-sans/500";
+import "@fontsource/ibm-plex-sans/600";
+import "@fontsource/ibm-plex-sans/700";
+import "@fontsource/space-grotesk/400";
+import "@fontsource/space-grotesk/500";
+import "@fontsource/space-grotesk/700";
 
 import Layout from "components/layout/Layout";
 import { AuthProvider } from "contexts/AuthContext";
@@ -51,7 +56,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <AuthProvider publicPage={publicPage}>{getLayout(<Component {...pageProps} />)}</AuthProvider>
-     </AppProvider>
+    </AppProvider>
   );
 }
 

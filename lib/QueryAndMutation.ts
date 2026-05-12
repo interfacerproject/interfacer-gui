@@ -470,8 +470,15 @@ export const FETCH_USER = gql`
 `;
 
 export const FETCH_RESOURCES = gql`
-  query FetchInventory($first: Int, $after: ID, $last: Int, $before: ID, $filter: EconomicResourceFilterParams) {
-    economicResources(first: $first, after: $after, before: $before, last: $last, filter: $filter) {
+  query FetchInventory(
+    $first: Int
+    $after: ID
+    $last: Int
+    $before: ID
+    $filter: EconomicResourceFilterParams
+    $orderBy: EconomicResourceSortInput
+  ) {
+    economicResources(first: $first, after: $after, before: $before, last: $last, filter: $filter, orderBy: $orderBy) {
       pageInfo {
         startCursor
         endCursor
@@ -479,6 +486,7 @@ export const FETCH_RESOURCES = gql`
         hasNextPage
         totalCount
         pageLimit
+        distinctPrimaryAccountableCount
       }
       edges {
         cursor
@@ -505,7 +513,6 @@ export const FETCH_RESOURCES = gql`
             hash
             name
             mimeType
-            bin
           }
           version
           licensor

@@ -15,10 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import Topbar from "components/partials/topbar/Topbar";
-import { useRouter } from "next/router";
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import Sidebar from "../Sidebar";
 
 type layoutProps = {
   children: ReactNode;
@@ -26,33 +24,15 @@ type layoutProps = {
 
 const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
   const { authenticated, loading } = useAuth();
-  const router = useRouter();
 
-  // Closes sidebar automatically when route changes
-  useEffect(() => {
-    router.events.on("routeChangeComplete", () => {
-      let drawer = document.getElementById("my-drawer");
-      if (drawer) {
-        (drawer as HTMLInputElement).checked = false;
-      }
-    });
-  }, [router.events]);
-
-  if (!authenticated) return <div className="bg-[#F3F3F1]">{layoutProps?.children}</div>;
+  if (!authenticated) return <div className="bg-[var(--ifr-bg-surface)]">{layoutProps?.children}</div>;
 
   return (
     <>
       {!loading && (
-        <div className="drawer">
-          <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-          <div className="drawer-content">
-            <Topbar search={false} />
-            <div className="bg-[#F3F3F1] max-w-full">{layoutProps?.children}</div>
-          </div>
-          <div className="drawer-side">
-            <label htmlFor="my-drawer" className="drawer-overlay" />
-            <Sidebar />
-          </div>
+        <div className="flex flex-col min-h-screen">
+          <Topbar search={false} />
+          <div className="bg-[var(--ifr-bg-surface)] max-w-full flex-grow">{layoutProps?.children}</div>
         </div>
       )}
     </>

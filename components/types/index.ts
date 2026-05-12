@@ -15,6 +15,7 @@ export enum ProjectType {
   PRODUCT = "Product",
   SERVICE = "Service",
   MACHINE = "Machine",
+  DPP = "DPP",
 }
 
 export const projectTypes = Object.values(ProjectType);

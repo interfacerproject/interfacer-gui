@@ -15,7 +15,13 @@ const findProjectImages = (project: Partial<EconomicResource>): string[] => {
   });
 
   const projectImages = project?.images?.length
-    ? project.images.filter(image => Boolean(image.bin)).map(image => `data:${image.mimeType};base64,${image.bin}`)
+    ? project.images
+        .filter(image => Boolean(image.bin) || Boolean(image.hash))
+        .map(image =>
+          image.bin
+            ? `data:${image.mimeType};base64,${image.bin}`
+            : `/api/image/${image.hash}?type=${encodeURIComponent(image.mimeType || "image/png")}`
+        )
     : [];
 
   return projectImages.length > 0 ? projectImages : filteredMetadataImages;

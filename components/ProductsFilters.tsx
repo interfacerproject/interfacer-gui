@@ -21,13 +21,14 @@ import { MACHINE_TYPES } from "lib/resourceSpecs";
 import {
   CO2_THRESHOLDS_KG,
   ENERGY_THRESHOLDS_KWH,
-  isPrefixedTag,
+  extractUserTagValues,
   mergeTags,
+  normalizeUserTagsForSave,
   POWER_COMPATIBILITY_OPTIONS,
   POWER_REQUIREMENT_THRESHOLDS_W,
   prefixedTag,
-  RECYCLABILITY_THRESHOLDS_PCT,
   rangeFilterTags,
+  RECYCLABILITY_THRESHOLDS_PCT,
   REPAIRABILITY_AVAILABLE_TAG,
   REPLICABILITY_OPTIONS,
   TAG_PREFIX,
@@ -177,22 +178,9 @@ export default function ProductsFilters() {
     const query = router.query;
 
     const rawTags = query.tags ? (query.tags as string).split(",") : [];
-    // Keep derived tags out of the user tags selector.
-    const userTags = rawTags.filter(
-      tag =>
-        !isPrefixedTag(tag, [
-          TAG_PREFIX.MACHINE,
-          TAG_PREFIX.MATERIAL,
-          TAG_PREFIX.CATEGORY,
-          TAG_PREFIX.POWER_COMPAT,
-          TAG_PREFIX.POWER_REQ,
-          TAG_PREFIX.REPLICABILITY,
-          TAG_PREFIX.RECYCLABILITY,
-          TAG_PREFIX.REPAIRABILITY,
-          TAG_PREFIX.ENV_ENERGY,
-          TAG_PREFIX.ENV_CO2,
-        ])
-    );
+    // Show user-facing tag values (prefix stripped) in the tags selector so
+    // the chips read e.g. "laser cut" instead of "tag-laser-cut".
+    const userTags = extractUserTagValues(rawTags);
 
     const manufacturability = query.manufacturability
       ? (query.manufacturability as string).split(",")
@@ -295,8 +283,12 @@ export default function ProductsFilters() {
 
     const existingCategoryTags = rawTags.filter(tag => tag.startsWith(`${TAG_PREFIX.CATEGORY}-`));
 
+    // User-entered free-form tags get the canonical `tag-<slug>` prefix so they
+    // match how they are persisted on save.
+    const userTags = normalizeUserTagsForSave(filters.tags);
+
     const combinedTags = mergeTags(
-      filters.tags,
+      userTags,
       existingCategoryTags,
       machineTags,
       materialTags,

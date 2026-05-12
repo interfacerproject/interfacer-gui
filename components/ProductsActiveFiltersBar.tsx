@@ -18,7 +18,7 @@ import { useQuery } from "@apollo/client";
 import { Tag } from "@bbtgnn/polaris-interfacer";
 import { useResourceSpecs } from "hooks/useResourceSpecs";
 import { QUERY_MACHINES } from "lib/QueryAndMutation";
-import { isPrefixedTag, prefixedTag, REPAIRABILITY_AVAILABLE_TAG, TAG_PREFIX } from "lib/tagging";
+import { isSystemTag, prefixedTag, REPAIRABILITY_AVAILABLE_TAG, stripUserTagPrefix, TAG_PREFIX } from "lib/tagging";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
@@ -90,21 +90,10 @@ export default function ProductsActiveFiltersBar() {
 
   const categoryTags = rawTags.filter(tag => tag.startsWith(`${TAG_PREFIX.CATEGORY}-`));
 
-  const userTags = rawTags.filter(
-    tag =>
-      !isPrefixedTag(tag, [
-        TAG_PREFIX.MACHINE,
-        TAG_PREFIX.MATERIAL,
-        TAG_PREFIX.CATEGORY,
-        TAG_PREFIX.POWER_COMPAT,
-        TAG_PREFIX.POWER_REQ,
-        TAG_PREFIX.REPLICABILITY,
-        TAG_PREFIX.RECYCLABILITY,
-        TAG_PREFIX.REPAIRABILITY,
-        TAG_PREFIX.ENV_ENERGY,
-        TAG_PREFIX.ENV_CO2,
-      ])
-  );
+  // User-facing tags in the active filter bar: anything that isn't a known
+  // system-prefixed tag (includes both canonical `tag-*` entries and legacy
+  // un-prefixed values still present in older URLs).
+  const userTags = rawTags.filter(tag => !isSystemTag(tag));
 
   const derivedManufacturability = (() => {
     const fromParam = asCsvArray(router.query.manufacturability);
@@ -247,9 +236,9 @@ export default function ProductsActiveFiltersBar() {
   for (const tag of userTags) {
     const decoded = (() => {
       try {
-        return decodeURIComponent(tag);
+        return decodeURIComponent(stripUserTagPrefix(tag));
       } catch {
-        return tag;
+        return stripUserTagPrefix(tag);
       }
     })();
 

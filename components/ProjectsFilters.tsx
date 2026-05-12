@@ -21,6 +21,7 @@ import { useState } from "react";
 // Select components
 import { Button, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { getOptionValue } from "components/brickroom/utils/BrSelectUtils";
+import { extractUserTagValues, normalizeUserTagsForSave } from "lib/tagging";
 import SearchUsers from "./SearchUsers";
 import SelectProjectType from "./SelectProjectType";
 import SelectTags from "./SelectTags";
@@ -56,7 +57,10 @@ export default function ProjectsFilters(props: ProjectsFiltersProps) {
   // Converts query value in string array
   function getFilterValues(filter: ProjectFilter): Array<string> {
     if (!query[filter]) return [];
-    else return query[filter].split(",");
+    const values = query[filter].split(",");
+    // Present user tags to the user without the `tag-` prefix.
+    if (filter === "tags") return extractUserTagValues(values);
+    return values;
   }
 
   // Creating state and loading it them with existing values
@@ -72,7 +76,10 @@ export default function ProjectsFilters(props: ProjectsFiltersProps) {
 
   function applyFilters() {
     for (let f of ProjectFilters) {
-      if (queryFilters[f].length > 0) query[f] = queryFilters[f].join(",");
+      // User tags are prefixed when placed in the URL so they match the stored
+      // canonical `tag-<slug>` form.
+      const values = f === "tags" ? normalizeUserTagsForSave(queryFilters[f]) : queryFilters[f];
+      if (values.length > 0) query[f] = values.join(",");
       else delete query[f];
     }
 

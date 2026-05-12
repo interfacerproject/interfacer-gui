@@ -19,6 +19,7 @@ import { licenseStepDefaultValues, licenseStepSchema, LicenseStepValues } from "
 import { linkDesignStepDefaultValues, linkDesignStepSchema, LinkDesignStepValues } from "./steps/LinkDesignStep";
 import { locationStepDefaultValues, LocationStepSchemaContext, LocationStepValues } from "./steps/LocationStep";
 import { mainStepDefaultValues, mainStepSchema, MainStepValues } from "./steps/MainStep";
+import { modelFilesStepDefaultValues, modelFilesStepSchema, ModelFilesStepValues } from "./steps/ModelFilesStep";
 import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep";
 
 // Partials
@@ -38,10 +39,6 @@ import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
-//@ts-ignore
-import useSignedPost from "hooks/useSignedPost";
-import { UploadFileOnDPP } from "lib/fileUpload";
-import { dppStepDefaultValues, dppStepSchema, DPPStepValues } from "./steps/DPPStep";
 import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep";
 import { materialsStepDefaultValues, materialsStepSchema, MaterialsStepValues } from "./steps/MaterialsStep";
 import {
@@ -49,6 +46,11 @@ import {
   productFiltersStepSchema,
   ProductFiltersStepValues,
 } from "./steps/ProductFiltersStep";
+import {
+  serviceFiltersStepDefaultValues,
+  serviceFiltersStepSchema,
+  ServiceFiltersStepValues,
+} from "./steps/ServiceFiltersStep";
 
 export interface Props {
   projectType: ProjectType;
@@ -59,14 +61,15 @@ export interface Props {
 export interface CreateProjectValues {
   main: MainStepValues;
   productFilters: ProductFiltersStepValues;
+  serviceFilters: ServiceFiltersStepValues;
   linkedDesign: LinkDesignStepValues;
   location: LocationStepValues;
   images: ImagesStepValues;
+  modelFiles: ModelFilesStepValues;
   declarations: DeclarationsStepValues;
   contributors: ContributorsStepValues;
   relations: RelationsStepValues;
   licenses: LicenseStepValues;
-  dpp: DPPStepValues;
   machines: MachinesStepValues;
   materials: MaterialsStepValues;
 }
@@ -74,14 +77,15 @@ export interface CreateProjectValues {
 export const createProjectDefaultValues: CreateProjectValues = {
   main: mainStepDefaultValues,
   productFilters: productFiltersStepDefaultValues,
+  serviceFilters: serviceFiltersStepDefaultValues,
   linkedDesign: linkDesignStepDefaultValues,
   location: locationStepDefaultValues,
   images: imagesStepDefaultValues,
+  modelFiles: modelFilesStepDefaultValues,
   declarations: declarationsStepDefaultValues,
   contributors: contributorsStepDefaultValues,
   relations: relationsStepDefaultValues,
   licenses: licenseStepDefaultValues,
-  dpp: dppStepDefaultValues,
   machines: machinesStepDefaultValues,
   materials: materialsStepDefaultValues,
 };
@@ -90,6 +94,7 @@ export const createProjectSchema = () =>
   yup.object({
     main: mainStepSchema(),
     productFilters: productFiltersStepSchema(),
+    serviceFilters: serviceFiltersStepSchema(),
     linkedDesign: linkDesignStepSchema().when("$projectType", (projectType: ProjectType, schema) =>
       projectType == ProjectType.PRODUCT ? schema.required("A design source is required for products") : schema
     ),
@@ -98,6 +103,7 @@ export const createProjectSchema = () =>
     //   projectType == ProjectType.DESIGN ? schema : locationStepSchema
     // ),
     images: imagesStepSchema(),
+    modelFiles: modelFilesStepSchema(),
     declarations: yup
       .object()
       .when("$projectType", (projectType: ProjectType, schema) =>
@@ -106,11 +112,6 @@ export const createProjectSchema = () =>
     contributors: contributorsStepSchema(),
     relations: relationsStepSchema(),
     licenses: licenseStepSchema(),
-    dpp: dppStepSchema().when("$projectType", (projectType: ProjectType, schema) =>
-      projectType == ProjectType.PRODUCT
-        ? schema.required("A DPP is required for products")
-        : schema.notRequired().nullable()
-    ),
     machines: machinesStepSchema(),
     materials: materialsStepSchema(),
   });
@@ -122,7 +123,6 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
   const { handleProjectCreation, handleMachineCreation } = useProjectCRUD();
-  const { signedPost } = useSignedPost();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const yupLocaleObject = useYupLocaleObject();
@@ -148,14 +148,15 @@ export default function CreateProjectForm(props: Props) {
   const createProjectDefaultValues: CreateProjectValues = {
     main: mainStepDefaultValues,
     productFilters: productFiltersStepDefaultValues,
+    serviceFilters: serviceFiltersStepDefaultValues,
     linkedDesign: linkDesignStepDefaultValues,
     location: locationStepDefaultUserValues,
     images: imagesStepDefaultValues,
+    modelFiles: modelFilesStepDefaultValues,
     declarations: declarationsStepDefaultValues,
     contributors: contributorsStepDefaultValues,
     relations: relationsStepDefaultValues,
     licenses: licenseStepDefaultValues,
-    dpp: dppStepDefaultValues,
     machines: machinesStepDefaultValues,
     materials: materialsStepDefaultValues,
   };
@@ -188,36 +189,6 @@ export default function CreateProjectForm(props: Props) {
 
   const { handleSubmit } = formMethods;
 
-  async function processDppValues(obj: any): Promise<any> {
-    if (obj === null || obj === undefined) {
-      return obj;
-    }
-
-    if (obj instanceof File) {
-      const uploadResponse = await UploadFileOnDPP(obj);
-      return uploadResponse;
-    }
-    if (Array.isArray(obj)) {
-      return Promise.all(obj.map(item => processDppValues(item)));
-    }
-    if (typeof obj === "object") {
-      const processedObj: any = {};
-      for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          const processedValue = await processDppValues(obj[key]);
-          if (processedValue && typeof processedValue === "object" && "value" in processedValue) {
-            if (processedValue.value === null || processedValue.value === undefined) {
-              continue;
-            }
-          }
-          processedObj[key] = processedValue;
-        }
-      }
-      return processedObj;
-    }
-    return obj;
-  }
-
   async function onSubmit(values: CreateProjectValues) {
     setLoading(true);
 
@@ -229,21 +200,7 @@ export default function CreateProjectForm(props: Props) {
       return;
     }
 
-    let dppUlid: string | undefined = undefined;
-
-    if (values.dpp) {
-      const processedDpp = await processDppValues(values.dpp);
-      const response = await signedPost(`${process.env.NEXT_PUBLIC_DPP_URL}/dpp`, processedDpp, true);
-      if (!response.ok) {
-        console.error("Failed to submit DPP:", response.statusText);
-        setLoading(false);
-        return;
-      }
-      dppUlid = (await response.json()).insertedID;
-      console.log("DPP submitted with ULID:", dppUlid);
-    }
-
-    const projectID = await handleProjectCreation(values, projectType, dppUlid);
+    const projectID = await handleProjectCreation(values, projectType);
     if (projectID) await router.replace(`/project/${projectID}?created=true`);
     setLoading(false);
   }
@@ -259,22 +216,19 @@ export default function CreateProjectForm(props: Props) {
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div
-          style={{
-            backgroundImage: 'url("/formBg.png")',
-          }}
-          className="flex flex-row justify-center space-x-8 md:space-x-16 lg:space-x-24 p-6 bg-background-subdued min-h-screen"
-        >
-          <div className="max-w-xs">
-            <div className="sticky top-24">
-              <CreateProjectNav projectType={projectType} />
+        <div className="flex flex-col min-h-screen bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
+          <div className="flex-1 flex flex-row justify-center gap-8 lg:gap-12 p-6 max-w-[1280px] mx-auto w-full">
+            <div className="hidden lg:block w-[260px] shrink-0">
+              <div className="sticky top-24">
+                <CreateProjectNav projectType={projectType} />
+              </div>
+            </div>
+            <div className="flex-1 max-w-2xl pb-24">
+              <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
             </div>
           </div>
-          <div className="max-w-xl pb-24">
-            <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
-          </div>
+          <CreateProjectSubmit />
         </div>
-        <CreateProjectSubmit />
       </form>
 
       {loading && <LoadingOverlay />}

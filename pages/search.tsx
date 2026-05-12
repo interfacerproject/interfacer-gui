@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Checkbox, Stack, Tabs, Button } from "@bbtgnn/polaris-interfacer";
+import { Button, Checkbox, Stack, Tabs } from "@bbtgnn/polaris-interfacer";
 import { Cube, Events } from "@carbon/icons-react";
 import ProjectsCards from "components/ProjectsCards";
 // import ProjectsMaps from "components/ProjectsMaps";
@@ -22,10 +22,10 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
 // import AgentsTable from "../components/AgentsTable";
+import dynamic from "next/dynamic";
 import SearchBar from "../components/SearchBar";
 import Layout from "../components/layout/SearchLayout";
 import useFilters from "../hooks/useFilters";
-import dynamic from "next/dynamic";
 import { NextPageWithLayout } from "./_app";
 
 const ProjectsMaps = dynamic(() => import("../components/ProjectsMaps"), { ssr: false });
@@ -46,11 +46,9 @@ const Search: NextPageWithLayout = () => {
     orName: q?.toString(),
     ...(!checkedNotDescription && { orNote: q?.toString() }),
   };
-  const projectsFilter = {
-    name: q?.toString(),
-    ...(!checkedNotDescription && { orNote: q?.toString() }),
-  };
-  const filters = isNotEmptyObj(proposalFilter) ? { ...proposalFilter, ...projectsFilter } : projectsOrFilter;
+  const filters = isNotEmptyObj(proposalFilter)
+    ? { ...proposalFilter, ...(!checkedNotDescription && { orNote: q?.toString() }) }
+    : projectsOrFilter;
 
   //
 

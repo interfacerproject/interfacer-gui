@@ -1,4 +1,4 @@
-import { Stack, Tag } from "@bbtgnn/polaris-interfacer";
+import { Stack } from "@bbtgnn/polaris-interfacer";
 import PHelp from "components/polaris/PHelp";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SearchMachines from "components/SearchMachines";
@@ -126,17 +126,28 @@ export default function MachinesStep() {
             placeholder={t("Search for machines")}
           />
 
-          {/* Display selected machines as chips */}
+          {/* Display selected machines as yellow pills */}
           {selectedMachines.length > 0 && (
             <div className="mt-2">
               <p className="mb-2 text-sm font-medium">{t("Selected machines")}:</p>
-              <Stack spacing="tight" wrap>
+              <div className="flex flex-wrap gap-2">
                 {selectedMachines.map(machine => (
-                  <Tag key={machine.id} onRemove={() => handleMachineRemove(machine.id)}>
+                  <span
+                    key={machine.id}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f1bd4d] text-[#0b1324] text-sm font-medium transition-colors"
+                  >
                     {machine.name}
-                  </Tag>
+                    <button
+                      type="button"
+                      onClick={() => handleMachineRemove(machine.id)}
+                      className="inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-[#d4a43e] transition-colors"
+                      aria-label={t("Remove") + " " + machine.name}
+                    >
+                      {"\u00d7"}
+                    </button>
+                  </span>
                 ))}
-              </Stack>
+              </div>
             </div>
           )}
         </Stack>
