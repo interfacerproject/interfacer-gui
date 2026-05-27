@@ -57,7 +57,6 @@ interface MachinesQueryData {
 }
 
 export interface ProductsFiltersState {
-  manufacturability: string[];
   machinesNeeded: string[]; // Now stores machine IDs instead of names
   materialsNeeded: string[];
   location: string;
@@ -89,12 +88,6 @@ const FALLBACK_MACHINES_OPTIONS = [
 ];
 
 const MATERIALS_OPTIONS = ["PLA", "ABS", "PETG", "Aluminum", "Steel", "Wood", "Acrylic", "Carbon Fiber", "Plywood"];
-
-const MANUFACTURABILITY_OPTIONS = [
-  { value: "all", label: "All" },
-  { value: "can-manufacture", label: "Can be Manufactured" },
-  { value: "in-progress", label: "In Progress" },
-];
 
 // Option lists are exported from lib/tagging to keep create flow + filters consistent.
 
@@ -140,7 +133,6 @@ export default function ProductsFilters() {
 
   // Collapsible sections state
   const [openSections, setOpenSections] = useState({
-    manufacturability: true,
     machines: false,
     materials: false,
     location: false,
@@ -155,7 +147,6 @@ export default function ProductsFilters() {
 
   // Filter state
   const [filters, setFilters] = useState<ProductsFiltersState>({
-    manufacturability: [],
     machinesNeeded: [],
     materialsNeeded: [],
     location: "",
@@ -182,17 +173,7 @@ export default function ProductsFilters() {
     // the chips read e.g. "laser cut" instead of "tag-laser-cut".
     const userTags = extractUserTagValues(rawTags);
 
-    const manufacturability = query.manufacturability
-      ? (query.manufacturability as string).split(",")
-      : (() => {
-          const show = (query.show as string) || "";
-          if (show === "designs") return ["in-progress"];
-          if (show === "products") return ["can-manufacture"];
-          return [];
-        })();
-
     setFilters({
-      manufacturability,
       machinesNeeded: query.machines ? (query.machines as string).split(",") : [],
       materialsNeeded: query.materials ? (query.materials as string).split(",") : [],
       location: (query.location as string) || "",
@@ -301,14 +282,6 @@ export default function ProductsFilters() {
       co2Tags
     );
 
-    if (filters.manufacturability.length > 0) query.manufacturability = filters.manufacturability.join(",");
-
-    // Manufacturability is implemented as a spec/type filter (conformsTo) via the existing `show` param.
-    const manufacturabilityValue = filters.manufacturability[0];
-    if (manufacturabilityValue === "in-progress") query.show = "designs";
-    if (manufacturabilityValue === "can-manufacture") query.show = "products";
-    if (manufacturabilityValue === "all") delete query.show;
-
     if (filters.machinesNeeded.length > 0) query.machines = filters.machinesNeeded.join(",");
     if (filters.materialsNeeded.length > 0) query.materials = filters.materialsNeeded.join(",");
     if (filters.location) query.location = filters.location;
@@ -330,7 +303,6 @@ export default function ProductsFilters() {
 
   const resetFilters = () => {
     setFilters({
-      manufacturability: [],
       machinesNeeded: [],
       materialsNeeded: [],
       location: "",
@@ -366,53 +338,6 @@ export default function ProductsFilters() {
           <span className="text-xs font-medium text-white bg-[#036A53] px-2 py-1 rounded-full">
             {activeFilterCount}
           </span>
-        )}
-      </div>
-
-      {/* Manufacturability */}
-      <div className="border-b border-[#C9CCCF] pb-4">
-        <button
-          onClick={() => toggleSection("manufacturability")}
-          className="flex items-center justify-between w-full text-left"
-        >
-          <span className="font-medium text-gray-900" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
-            {t("Manufacturability")}
-          </span>
-          <svg
-            className={`w-5 h-5 text-gray-500 transition-transform ${
-              openSections.manufacturability ? "rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-        {openSections.manufacturability && (
-          <div className="mt-3 space-y-2">
-            {MANUFACTURABILITY_OPTIONS.map(option => (
-              <div key={option.value} className="flex items-center">
-                <input
-                  type="radio"
-                  id={`manuf-${option.value}`}
-                  name="manufacturability"
-                  value={option.value}
-                  checked={filters.manufacturability.includes(option.value)}
-                  onChange={e => {
-                    setFilters(prev => ({
-                      ...prev,
-                      manufacturability: e.target.checked ? [option.value] : [],
-                    }));
-                  }}
-                  className="w-4 h-4 text-[#036A53] focus:ring-[#036A53]"
-                />
-                <label htmlFor={`manuf-${option.value}`} className="ml-2 text-sm text-gray-700">
-                  {t(option.label)}
-                </label>
-              </div>
-            ))}
-          </div>
         )}
       </div>
 

@@ -18,19 +18,29 @@ import {
   QUERY_UNIT_AND_CURRENCY,
   RELOCATE_PROJECT,
   UPDATE_METADATA,
+  UPDATE_RESOURCE_CLASSIFIED_AS,
 } from "lib/QueryAndMutation";
 import { arrayEquals, getNewElements } from "lib/arrayOperations";
 import useDppApi from "lib/dpp";
 import { errorFormatter } from "lib/errorFormatter";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
 import { uploadModelFilesToDpp } from "lib/projectModelFiles";
-import { derivedProductFilterTags, mergeTags, normalizeUserTagsForSave, prefixedTag, TAG_PREFIX } from "lib/tagging";
+import {
+  derivedProductFilterTags,
+  MANUFACTURABLE_TRUE_TAG,
+  mergeTags,
+  normalizeUserTagsForSave,
+  prefixedTag,
+  TAG_PREFIX,
+} from "lib/tagging";
 import {
   CreateLocationMutation,
   CreateLocationMutationVariables,
   CreateProjectMutation,
   CreateProjectMutationVariables,
   EconomicResource,
+  EditMainMutation,
+  EditMainMutationVariables,
   GetUnitAndCurrencyQuery,
   IFile,
 } from "lib/types";
@@ -68,6 +78,9 @@ export const useProjectCRUD = () => {
   const [createMachineResource] = useMutation(CREATE_MACHINE_RESOURCE);
   const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
   const [createProcessMutation] = useMutation(CREATE_PROCESS);
+  const [updateResourceClassifiedAs] = useMutation<EditMainMutation, EditMainMutationVariables>(
+    UPDATE_RESOURCE_CLASSIFIED_AS
+  );
   const { refetch } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
 
   type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
@@ -514,15 +527,19 @@ export const useProjectCRUD = () => {
           process: processId,
           originalProjectId: projectId,
         });
-        /*
-        const project = await getProjectForMetadataUpdate(linkedDesign);
-        if (project.metadata?.relations) {
-          const relations: string[] = [...project.metadata.relations, projectId];
-          await updateRelations(linkedDesign, relations, true);
-        } else {
-          await updateRelations(linkedDesign, [projectId], true);
+
+        // Mark the parent design as manufacturable by adding the tag.
+        try {
+          const design = await getProjectForMetadataUpdate(linkedDesign);
+          const currentTags = (design.classifiedAs || []).filter((t: string) => t !== MANUFACTURABLE_TRUE_TAG);
+          const updatedTags = [...currentTags, MANUFACTURABLE_TRUE_TAG];
+          await updateResourceClassifiedAs({
+            variables: { id: linkedDesign, classifiedAs: updatedTags },
+          });
+          devLog("success: design marked as manufacturable", linkedDesign);
+        } catch (e) {
+          devLog("error: failed to mark design as manufacturable", e);
         }
-        */
       }
 
       for (const resource of formData.relations) {
