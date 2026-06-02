@@ -233,29 +233,30 @@ export default function ReviewSection({ projectUlid, projectName, onPostReview }
         <>
           {visibleReviews.length > 0 ? (
             <div className="flex flex-col gap-3">
-              {visibleReviews.map(review => (
-                <div key={review.id} className="flex flex-col gap-3">
-                  <ReviewCard
-                    review={review}
-                    onReply={() => setActiveReplyId(activeReplyId === review.id ? null : review.id)}
-                  />
+              {visibleReviews.map(review => {
+                const isReplying = activeReplyId === review.id;
+                return (
+                  <div key={review.id} className="flex flex-col gap-3">
+                    <ReviewCard review={review} onReply={() => setActiveReplyId(isReplying ? null : review.id)} />
 
-                  {/* Inline replies */}
-                  {activeReplyId === review.id && (
-                    <div className="ml-4 pl-4 border-l-2 border-[#f0f0f0] flex flex-col gap-3">
-                      <CommentThread key={replyKey} projectUlid={projectUlid} parentId={review.id} />
-                      <CommentForm
-                        projectUlid={projectUlid}
-                        parentId={review.id}
-                        onSuccess={() => {
-                          setReplyKey(k => k + 1);
-                        }}
-                        onCancel={() => setActiveReplyId(null)}
-                      />
+                    {/* Always show existing replies, only show form on Reply click */}
+                    <div className="ml-11 flex flex-col gap-3">
+                      <CommentThread key={`thread-${replyKey}`} projectUlid={projectUlid} parentId={review.id} />
+                      {isReplying && (
+                        <CommentForm
+                          projectUlid={projectUlid}
+                          parentId={review.id}
+                          onSuccess={() => {
+                            setActiveReplyId(null);
+                            setReplyKey(k => k + 1);
+                          }}
+                          onCancel={() => setActiveReplyId(null)}
+                        />
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </div>
           ) : !loading ? (
             /* Empty state when no reviews exist */

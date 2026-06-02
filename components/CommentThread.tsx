@@ -235,7 +235,7 @@ export default function CommentThread({ projectUlid, parentId, onReply }: Commen
     setError(null);
     try {
       const res = await api.getComments(projectUlid, parentId ? { parent_id: parentId } : undefined);
-      setComments(res.comments);
+      setComments(res?.comments || []);
     } catch (err: any) {
       setError(err.message || "Failed to load comments");
     } finally {

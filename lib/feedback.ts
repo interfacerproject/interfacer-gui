@@ -76,7 +76,7 @@ export { FeedbackRequestError };
 // ---------------------------------------------------------------------------
 
 export interface GetReviewsParams {
-  limit?: number;  // max 100, default 20
+  limit?: number; // max 100, default 20
   cursor?: number; // Unix timestamp of last item from previous page
 }
 
@@ -124,10 +124,14 @@ const useFeedbackApi = () => {
         headers["x-user-id"] = user.ulid;
       }
 
-      if (jsonBody) {
-        const authHeaders = await signBody(jsonBody);
+      // Sign all mutating requests (POST, PUT, DELETE, PATCH)
+      // even when body is empty (e.g. DELETE has no payload)
+      if (method !== "GET" && method !== "OPTIONS") {
+        const authHeaders = await signBody(jsonBody || "");
         Object.assign(headers, authHeaders);
-        headers["Content-Type"] = "application/json";
+        if (jsonBody) {
+          headers["Content-Type"] = "application/json";
+        }
       }
 
       const res = await fetch(url, { method, headers, body: jsonBody });
@@ -180,10 +184,7 @@ const useFeedbackApi = () => {
   /** Fetch aggregated review stats for a project. Public. */
   const getReviewSummary = useCallback(
     async (projectUlid: string): Promise<ReviewSummary> => {
-      return request<ReviewSummary>(
-        "GET",
-        `/api/v1/projects/${encodeURIComponent(projectUlid)}/reviews/summary`
-      );
+      return request<ReviewSummary>("GET", `/api/v1/projects/${encodeURIComponent(projectUlid)}/reviews/summary`);
     },
     [request]
   );
@@ -194,12 +195,7 @@ const useFeedbackApi = () => {
 
   /** Post a comment (optionally as a reply to parent_id). Auth required. */
   const createComment = useCallback(
-    async (
-      projectUlid: string,
-      content: string,
-      parentId?: string,
-      attachments?: string
-    ): Promise<Comment> => {
+    async (projectUlid: string, content: string, parentId?: string, attachments?: string): Promise<Comment> => {
       return request<Comment>("POST", `/api/v1/projects/${encodeURIComponent(projectUlid)}/comments`, {
         content,
         parent_id: parentId || null,
