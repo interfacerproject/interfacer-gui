@@ -1,3 +1,7 @@
+#!/bin/sh
+# Injected by beads (GH#3132): husky helper layout not mirrored into this dir.
+export PATH="$PWD/node_modules/.bin:$PATH"
+
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 #
@@ -14,59 +18,5 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# local env files
-.env*.local
-.env
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# Cypress
-/cypress/videos/**
-cypress.env.json
-
-# IDE
-# .vscode
-
-# translate
-.json-autotranslate-cache/
-/test-results/
-/playwright-report/
-/playwright/.cache/
-
-# Beads / Dolt files (added by bd init)
-.dolt/
-*.db
-.beads-credential-key
-.beads/proxieddb/
+pnpm devmoji -e --lint $1
