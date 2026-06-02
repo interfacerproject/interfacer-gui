@@ -99,6 +99,9 @@
   --ifr-border-avatar: #aaa69d;
   --ifr-border-env: rgba(200, 212, 229, 0.5);
 
+  /* --- Skeleton loading --- */
+  --ifr-skeleton-bg: rgba(200, 212, 229, 0.3);
+
   /* --- Overlay / gradient --- */
   --ifr-overlay-dark: rgba(0, 0, 0, 0.3);
   --ifr-gradient-dark: rgba(0, 0, 0, 0.6);
