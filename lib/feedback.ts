@@ -223,7 +223,9 @@ const useFeedbackApi = () => {
   /** Soft-delete a comment. Only the author can delete (enforced by backend). Auth required. */
   const deleteComment = useCallback(
     async (commentId: string): Promise<{ status: string }> => {
-      return request<{ status: string }>("DELETE", `/api/v1/comments/${encodeURIComponent(commentId)}`);
+      // Send {} as body so signing has real data to work with (empty-body
+      // signatures can fail Zenroom verification on the backend).
+      return request<{ status: string }>("DELETE", `/api/v1/comments/${encodeURIComponent(commentId)}`, {});
     },
     [request]
   );
