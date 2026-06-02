@@ -149,9 +149,13 @@ export default function ReviewSummary({ summary, loading, error }: ReviewSummary
                   color: "var(--ifr-text-secondary)",
                 }}
               >
-                {stars}★
+                {stars}
+                {"★"}
               </span>
-              <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ backgroundColor: "rgba(200,212,229,0.3)" }}>
+              <div
+                className="flex-1 h-2 rounded-full overflow-hidden"
+                style={{ backgroundColor: "rgba(200,212,229,0.3)" }}
+              >
                 <div
                   className="h-full rounded-full transition-all duration-300"
                   style={{

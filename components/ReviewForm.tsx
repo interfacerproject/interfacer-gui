@@ -17,6 +17,7 @@ import { StarIcon as StarIconSolid } from "@heroicons/react/solid";
 import { useAuth } from "hooks/useAuth";
 import useFeedbackApi from "lib/feedback";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import { useState } from "react";
 
 // ---------------------------------------------------------------------------
@@ -86,19 +87,20 @@ export default function ReviewForm({ projectUlid, projectName, onSuccess, onCanc
         >
           {t("Login required")}
         </p>
-        <a
-          href="/sign_in"
-          className="inline-flex items-center px-4 py-2 rounded-md no-underline"
-          style={{
-            backgroundColor: "var(--ifr-green)",
-            color: "#fff",
-            fontFamily: "var(--ifr-font-body)",
-            fontSize: "var(--ifr-fs-sm)",
-            fontWeight: "var(--ifr-fw-semibold)",
-          }}
-        >
-          {t("Login")}
-        </a>
+        <Link href="/sign_in">
+          <a
+            className="inline-flex items-center px-4 py-2 rounded-md no-underline"
+            style={{
+              backgroundColor: "var(--ifr-green)",
+              color: "#fff",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-sm)",
+              fontWeight: "var(--ifr-fw-semibold)",
+            }}
+          >
+            {t("Login")}
+          </a>
+        </Link>
       </div>
     );
   }
@@ -149,7 +151,10 @@ export default function ReviewForm({ projectUlid, projectName, onSuccess, onCanc
   };
 
   return (
-    <div className="border border-[#c9cccf] rounded-lg overflow-hidden" style={{ backgroundColor: "var(--ifr-bg-surface)" }}>
+    <div
+      className="border border-[#c9cccf] rounded-lg overflow-hidden"
+      style={{ backgroundColor: "var(--ifr-bg-surface)" }}
+    >
       {/* Project label */}
       <div className="px-6 pt-5 pb-2">
         <span
@@ -209,7 +214,10 @@ export default function ReviewForm({ projectUlid, projectName, onSuccess, onCanc
           }}
         />
         {content.length > 0 && content.length < 10 && (
-          <p className="m-0 mt-1 text-[#c5281d]" style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-xs)" }}>
+          <p
+            className="m-0 mt-1 text-[#c5281d]"
+            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-xs)" }}
+          >
             {t("Minimum 10 characters")}
           </p>
         )}
@@ -218,7 +226,10 @@ export default function ReviewForm({ projectUlid, projectName, onSuccess, onCanc
       {/* Error */}
       {error && (
         <div className="px-6 pb-3">
-          <p className="m-0 text-[#c5281d]" style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}>
+          <p
+            className="m-0 text-[#c5281d]"
+            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+          >
             {error}
           </p>
         </div>
@@ -272,9 +283,7 @@ export default function ReviewForm({ projectUlid, projectName, onSuccess, onCanc
           >
             {submitting ? (
               <>
-                <span
-                  className="inline-block w-3.5 h-3.5 border-2 border-[#1a1a1a] border-t-transparent rounded-full animate-spin"
-                />
+                <span className="inline-block w-3.5 h-3.5 border-2 border-[#1a1a1a] border-t-transparent rounded-full animate-spin" />
                 {t("Posting...")}
               </>
             ) : (

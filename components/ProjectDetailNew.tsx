@@ -442,7 +442,8 @@ function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSideb
                   className="text-ifr-text-secondary"
                   style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
                 >
-                  · {sidebarRating.total_reviews} {sidebarRating.total_reviews === 1 ? t("review") : t("reviews")}
+                  {" · "}
+                  {sidebarRating.total_reviews} {sidebarRating.total_reviews === 1 ? t("review") : t("reviews")}
                 </span>
               </div>
             </div>
@@ -1328,7 +1329,10 @@ export default function ProjectDetailNew() {
   // Fetch sidebar rating summary
   useEffect(() => {
     if (!project.id) return;
-    feedbackApi.getReviewSummary(project.id).then(setSidebarRating).catch(() => setSidebarRating(null));
+    feedbackApi
+      .getReviewSummary(project.id)
+      .then(setSidebarRating)
+      .catch(() => setSidebarRating(null));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project.id]);
 

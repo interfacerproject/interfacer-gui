@@ -86,7 +86,8 @@ export default function ReviewCard({ review, onReply }: ReviewCardProps) {
             className="block text-ifr-text-secondary mt-0.5"
             style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
           >
-            @{review.user_ulid.slice(0, 6)}
+            {"@"}
+            {review.user_ulid.slice(0, 6)}
           </span>
         </div>
       </div>
@@ -132,7 +133,8 @@ export default function ReviewCard({ review, onReply }: ReviewCardProps) {
               className="text-ifr-text-secondary"
               style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-xs)" }}
             >
-              {t("Last edit")}: {formatDate(review.updated_at)}
+              {t("Last edit")}
+              {":"} {formatDate(review.updated_at)}
             </span>
           )}
         </div>

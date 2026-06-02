@@ -59,7 +59,9 @@ function CommentRow({
           className="shrink-0 rounded-full flex items-center justify-center"
           style={{ width: 32, height: 32, backgroundColor: "var(--ifr-skeleton-bg)" }}
         >
-          <span className="text-ifr-text-secondary" style={{ fontSize: "10px" }}>—</span>
+          <span className="text-ifr-text-secondary" style={{ fontSize: "10px" }}>
+            {"—"}
+          </span>
         </div>
       )}
       <div className="flex-1 min-w-0">
@@ -68,7 +70,9 @@ function CommentRow({
             className="m-0 text-ifr-text-secondary italic"
             style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
           >
-            [{t("Deleted")}]
+            {"["}
+            {t("Deleted")}
+            {"]"}
           </p>
         ) : (
           <>
@@ -140,7 +144,10 @@ function CommentRow({
 function SkeletonRow({ indent }: { indent: number }) {
   return (
     <div className="flex gap-3 animate-pulse" style={{ paddingLeft: `${indent}px` }}>
-      <div className="rounded-full shrink-0" style={{ width: 32, height: 32, backgroundColor: "var(--ifr-skeleton-bg)" }} />
+      <div
+        className="rounded-full shrink-0"
+        style={{ width: 32, height: 32, backgroundColor: "var(--ifr-skeleton-bg)" }}
+      />
       <div className="flex-1 flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <div className="h-3 rounded w-20" style={{ backgroundColor: "var(--ifr-skeleton-bg)" }} />
@@ -167,10 +174,7 @@ function ConfirmDialog({
   const { t } = useTranslation("common");
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: "rgba(0,0,0,0.4)" }}>
-      <div
-        className="rounded-lg p-6 max-w-sm mx-4"
-        style={{ backgroundColor: "var(--ifr-bg-surface)" }}
-      >
+      <div className="rounded-lg p-6 max-w-sm mx-4" style={{ backgroundColor: "var(--ifr-bg-surface)" }}>
         <p
           className="m-0 mb-4 text-ifr-text-primary"
           style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
@@ -190,7 +194,11 @@ function ConfirmDialog({
             type="button"
             onClick={onConfirm}
             className="px-4 py-2 rounded-md border-none cursor-pointer text-white"
-            style={{ backgroundColor: "var(--ifr-red)", fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+            style={{
+              backgroundColor: "var(--ifr-red)",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-sm)",
+            }}
           >
             {t("Delete")}
           </button>
@@ -269,11 +277,11 @@ export default function CommentThread({ projectUlid, parentId, onReply }: Commen
 
       {/* Error */}
       {error && !loading && (
-        <div
-          className="p-3 border border-[#c5281d] rounded-lg"
-          style={{ backgroundColor: "var(--ifr-red-hover-bg)" }}
-        >
-          <p className="m-0 text-[#c5281d]" style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}>
+        <div className="p-3 border border-[#c5281d] rounded-lg" style={{ backgroundColor: "var(--ifr-red-hover-bg)" }}>
+          <p
+            className="m-0 text-[#c5281d]"
+            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+          >
             {error}
           </p>
           <button
