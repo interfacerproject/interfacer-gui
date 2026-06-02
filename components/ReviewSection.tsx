@@ -10,6 +10,8 @@
  */
 
 import { ChevronDownIcon, PencilAltIcon } from "@heroicons/react/outline";
+import CommentForm from "components/CommentForm";
+import CommentThread from "components/CommentThread";
 import ReviewCard from "components/ReviewCard";
 import ReviewSummary from "components/ReviewSummary";
 import { useAuth } from "hooks/useAuth";
@@ -27,7 +29,10 @@ function SkeletonCard() {
       style={{ backgroundColor: "var(--ifr-bg-surface)" }}
     >
       <div className="flex items-start gap-3 p-4">
-        <div className="rounded-full shrink-0" style={{ width: 40, height: 40, backgroundColor: "var(--ifr-skeleton-bg)" }} />
+        <div
+          className="rounded-full shrink-0"
+          style={{ width: 40, height: 40, backgroundColor: "var(--ifr-skeleton-bg)" }}
+        />
         <div className="flex-1 flex flex-col gap-2">
           <div className="h-4 rounded w-32" style={{ backgroundColor: "var(--ifr-skeleton-bg)" }} />
           <div className="h-3 rounded w-24" style={{ backgroundColor: "var(--ifr-skeleton-bg)" }} />
@@ -49,14 +54,12 @@ interface ReviewSectionProps {
   projectName?: string;
   /** Called when user clicks "Post a review" – parent opens the form */
   onPostReview?: () => void;
-  /** Called when user clicks "Reply" on a review */
-  onReply?: (reviewId: string) => void;
 }
 
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
-export default function ReviewSection({ projectUlid, projectName, onPostReview, onReply }: ReviewSectionProps) {
+export default function ReviewSection({ projectUlid, projectName, onPostReview }: ReviewSectionProps) {
   const { t } = useTranslation("common");
   const { user } = useAuth();
   const api = useFeedbackApi();
@@ -67,6 +70,8 @@ export default function ReviewSection({ projectUlid, projectName, onPostReview, 
   const [summary, setSummary] = useState<any | null>(null);
   const [sortNewest, setSortNewest] = useState(true);
   const [expanded, setExpanded] = useState(false);
+  const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
+  const [replyKey, setReplyKey] = useState(0); // increment to refresh thread
 
   const INITIAL_VISIBLE = 3;
 
@@ -194,11 +199,11 @@ export default function ReviewSection({ projectUlid, projectName, onPostReview, 
 
       {/* Error (non-summary) */}
       {error && !loading && (
-        <div
-          className="p-4 border border-[#c5281d] rounded-lg"
-          style={{ backgroundColor: "var(--ifr-red-hover-bg)" }}
-        >
-          <p className="m-0 text-[#c5281d]" style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}>
+        <div className="p-4 border border-[#c5281d] rounded-lg" style={{ backgroundColor: "var(--ifr-red-hover-bg)" }}>
+          <p
+            className="m-0 text-[#c5281d]"
+            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+          >
             {error}
           </p>
           <button
@@ -229,11 +234,27 @@ export default function ReviewSection({ projectUlid, projectName, onPostReview, 
           {visibleReviews.length > 0 ? (
             <div className="flex flex-col gap-3">
               {visibleReviews.map(review => (
-                <ReviewCard
-                  key={review.id}
-                  review={review}
-                  onReply={onReply ? () => onReply(review.id) : undefined}
-                />
+                <div key={review.id} className="flex flex-col gap-3">
+                  <ReviewCard
+                    review={review}
+                    onReply={() => setActiveReplyId(activeReplyId === review.id ? null : review.id)}
+                  />
+
+                  {/* Inline replies */}
+                  {activeReplyId === review.id && (
+                    <div className="ml-4 pl-4 border-l-2 border-[#f0f0f0] flex flex-col gap-3">
+                      <CommentThread key={replyKey} projectUlid={projectUlid} parentId={review.id} />
+                      <CommentForm
+                        projectUlid={projectUlid}
+                        parentId={review.id}
+                        onSuccess={() => {
+                          setReplyKey(k => k + 1);
+                        }}
+                        onCancel={() => setActiveReplyId(null)}
+                      />
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           ) : !loading ? (
@@ -263,9 +284,7 @@ export default function ReviewSection({ projectUlid, projectName, onPostReview, 
             fontWeight: "var(--ifr-fw-semibold)",
           }}
         >
-          {expanded
-            ? t("Show less")
-            : `${t("See all reviews")} (${sortedReviews.length})`}
+          {expanded ? t("Show less") : `${t("See all reviews")} (${sortedReviews.length})`}
         </button>
       )}
     </div>
