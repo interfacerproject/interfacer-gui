@@ -27,7 +27,7 @@ ARG NODE_ENV=production
 ENV NODE_ENV=$NODE_ENV
 
 RUN apk add --no-cache libc6-compat
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable
 
 WORKDIR /build
 
