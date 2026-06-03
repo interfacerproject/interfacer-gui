@@ -228,11 +228,15 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
             {/* Title + Description */}
             <div className="flex flex-col gap-1">
               <h3
-                className="text-ifr-text-primary leading-[30px] truncate"
+                className="text-ifr-text-primary leading-[30px]"
                 style={{
                   fontFamily: "var(--ifr-font-heading)",
                   fontSize: "var(--ifr-fs-lg)",
                   fontWeight: "var(--ifr-fw-bold)",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
                 }}
               >
                 {project.name}
