@@ -28,7 +28,6 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import ReviewForm from "./ReviewForm";
 import ReviewSection from "./ReviewSection";
 import useFeedbackApi, { type ReviewSummary } from "lib/feedback";
 import StepModelViewer from "./StepModelViewer";
@@ -1301,7 +1300,6 @@ export default function ProjectDetailNew() {
 
   // Feedback / reviews state
   const feedbackApi = useFeedbackApi();
-  const [showReviewForm, setShowReviewForm] = useState(false);
   const [sidebarRating, setSidebarRating] = useState<ReviewSummary | null>(null);
   const [reviewKey, setReviewKey] = useState(0); // increment to force refresh
 
@@ -2087,24 +2085,7 @@ export default function ProjectDetailNew() {
               sectionId="reviews"
               defaultOpen
             >
-              {showReviewForm ? (
-                <ReviewForm
-                  projectUlid={project.id!}
-                  projectName={project.name!}
-                  onSuccess={() => {
-                    setShowReviewForm(false);
-                    setReviewKey(k => k + 1);
-                  }}
-                  onCancel={() => setShowReviewForm(false)}
-                />
-              ) : (
-                <ReviewSection
-                  key={reviewKey}
-                  projectUlid={project.id!}
-                  projectName={project.name}
-                  onPostReview={() => setShowReviewForm(true)}
-                />
-              )}
+              <ReviewSection key={reviewKey} projectUlid={project.id!} projectName={project.name} />
             </DetailSection>
 
             {/* Included Projects — sub-assemblies from metadata.relations */}

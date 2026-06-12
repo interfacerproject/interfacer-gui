@@ -189,6 +189,25 @@ const useFeedbackApi = () => {
     [request]
   );
 
+  /** Fetch the current user's review for a project, or null if none exists. */
+  const getUserReview = useCallback(
+    async (projectUlid: string): Promise<{ review: Review | null }> => {
+      return request<{ review: Review | null }>(
+        "GET",
+        `/api/v1/projects/${encodeURIComponent(projectUlid)}/reviews/mine`
+      );
+    },
+    [request]
+  );
+
+  /** Delete a review by ID. Only the author can delete (enforced by backend). Auth required. */
+  const deleteReview = useCallback(
+    async (reviewId: string): Promise<{ status: string }> => {
+      return request<{ status: string }>("DELETE", `/api/v1/reviews/${encodeURIComponent(reviewId)}`, {});
+    },
+    [request]
+  );
+
   // -----------------------------------------------------------------------
   // Comments
   // -----------------------------------------------------------------------
@@ -239,11 +258,13 @@ const useFeedbackApi = () => {
       createReview,
       getReviews,
       getReviewSummary,
+      getUserReview,
+      deleteReview,
       createComment,
       getComments,
       deleteComment,
     }),
-    [createReview, getReviews, getReviewSummary, createComment, getComments, deleteComment]
+    [createReview, getReviews, getReviewSummary, getUserReview, deleteReview, createComment, getComments, deleteComment]
   );
 };
 

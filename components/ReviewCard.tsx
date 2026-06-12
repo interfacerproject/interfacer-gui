@@ -5,11 +5,12 @@
  * star rating, review title/content, edit date, Reply and helpful buttons.
  */
 
-import { ChatAlt2Icon } from "@heroicons/react/outline";
+import { ChatAlt2Icon, PencilIcon, TrashIcon } from "@heroicons/react/outline";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import dayjs from "lib/dayjs";
 import type { Review } from "lib/feedback";
 import { useTranslation } from "next-i18next";
+import { useState } from "react";
 
 // ---------------------------------------------------------------------------
 // Star display (1-5 filled, rest empty)
@@ -38,16 +39,20 @@ function formatDate(iso: string): string {
 // ---------------------------------------------------------------------------
 interface ReviewCardProps {
   review: Review;
-  /** True when the review was edited (updated_at != created_at) */
   onReply?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  currentUserUlid?: string;
 }
 
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
-export default function ReviewCard({ review, onReply }: ReviewCardProps) {
+export default function ReviewCard({ review, onReply, onEdit, onDelete, currentUserUlid }: ReviewCardProps) {
   const { t } = useTranslation("common");
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
+  const isOwnReview = currentUserUlid && review.user_ulid === currentUserUlid;
   const isEdited = review.updated_at !== review.created_at;
 
   // Parse title from content: first line before \n\n is the title
@@ -140,6 +145,65 @@ export default function ReviewCard({ review, onReply }: ReviewCardProps) {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Edit button (own review) */}
+          {isOwnReview && onEdit && (
+            <button
+              type="button"
+              onClick={onEdit}
+              className="inline-flex items-center gap-1 bg-transparent border-none cursor-pointer hover:opacity-70 transition-opacity text-ifr-text-secondary"
+              style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-xs)" }}
+            >
+              <PencilIcon className="w-3.5 h-3.5" />
+              {t("Edit")}
+            </button>
+          )}
+
+          {/* Delete button (own review) */}
+          {isOwnReview && onDelete && !confirmingDelete && (
+            <button
+              type="button"
+              onClick={() => setConfirmingDelete(true)}
+              className="inline-flex items-center gap-1 bg-transparent border-none cursor-pointer hover:opacity-70 transition-opacity"
+              style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-xs)", color: "#c5281d" }}
+            >
+              <TrashIcon className="w-3.5 h-3.5" />
+              {t("Delete")}
+            </button>
+          )}
+
+          {/* Confirm delete */}
+          {isOwnReview && onDelete && confirmingDelete && (
+            <>
+              <span style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-xs)", color: "#c5281d" }}>
+                {t("Delete review?")}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmingDelete(false);
+                  onDelete();
+                }}
+                className="bg-transparent border-none cursor-pointer hover:opacity-70"
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-xs)",
+                  fontWeight: "var(--ifr-fw-semibold)",
+                  color: "#c5281d",
+                }}
+              >
+                {t("Yes")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmingDelete(false)}
+                className="bg-transparent border-none cursor-pointer hover:opacity-70 text-ifr-text-secondary"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-xs)" }}
+              >
+                {t("No")}
+              </button>
+            </>
+          )}
+
           {/* Reply button */}
           {onReply && (
             <button

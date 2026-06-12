@@ -9,10 +9,11 @@
  * - "Post a review" trigger
  */
 
-import { ChevronDownIcon, PencilAltIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon, PencilAltIcon, ExclamationIcon } from "@heroicons/react/outline";
 import CommentForm from "components/CommentForm";
 import CommentThread from "components/CommentThread";
 import ReviewCard from "components/ReviewCard";
+import ReviewForm from "components/ReviewForm";
 import ReviewSummary from "components/ReviewSummary";
 import { useAuth } from "hooks/useAuth";
 import useFeedbackApi, { type Review } from "lib/feedback";
@@ -52,14 +53,12 @@ function SkeletonCard() {
 interface ReviewSectionProps {
   projectUlid: string;
   projectName?: string;
-  /** Called when user clicks "Post a review" – parent opens the form */
-  onPostReview?: () => void;
 }
 
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
-export default function ReviewSection({ projectUlid, projectName, onPostReview }: ReviewSectionProps) {
+export default function ReviewSection({ projectUlid, projectName }: ReviewSectionProps) {
   const { t } = useTranslation("common");
   const { user } = useAuth();
   const api = useFeedbackApi();
@@ -72,6 +71,15 @@ export default function ReviewSection({ projectUlid, projectName, onPostReview }
   const [expanded, setExpanded] = useState(false);
   const [activeReplyId, setActiveReplyId] = useState<string | null>(null);
   const [replyKey, setReplyKey] = useState(0); // increment to refresh thread
+
+  // Edit / Create states
+  const [editingReview, setEditingReview] = useState<Review | null>(null); // non-null = show edit form
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [duplicateAlert, setDuplicateAlert] = useState<Review | null>(null); // non-null = user already has a review, show confirm
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const userUlid = user?.ulid;
+  const currentUserReview = userUlid ? reviews.find(r => r.user_ulid === userUlid) : null;
 
   const INITIAL_VISIBLE = 3;
 
@@ -96,6 +104,57 @@ export default function ReviewSection({ projectUlid, projectName, onPostReview }
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Handle Post a review click
+  const handlePostClick = () => {
+    if (!userUlid) {
+      return;
+    }
+    // Check if user already has a review (loaded in current set)
+    if (currentUserReview) {
+      setDuplicateAlert(currentUserReview);
+    } else {
+      setShowCreateForm(true);
+    }
+  };
+
+  // Handle Edit click on own review
+  const handleEdit = (review: Review) => {
+    setEditingReview(review);
+  };
+
+  // Handle Delete
+  const handleDelete = async (review: Review) => {
+    setDeletingId(review.id);
+    try {
+      await api.deleteReview(review.id);
+      // Optimistically remove from local state
+      setReviews(prev => prev.filter(r => r.id !== review.id));
+      // Refresh summary
+      const summaryRes = await api.getReviewSummary(projectUlid);
+      setSummary(summaryRes || null);
+    } catch (err: any) {
+      // Re-fetch on error
+      fetchData();
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  // Handle form success (create or edit)
+  const handleFormSuccess = () => {
+    setShowCreateForm(false);
+    setEditingReview(null);
+    setDuplicateAlert(null);
+    fetchData();
+  };
+
+  // Handle form cancel
+  const handleFormCancel = () => {
+    setShowCreateForm(false);
+    setEditingReview(null);
+    setDuplicateAlert(null);
+  };
 
   // Sort reviews
   const sortedReviews = [...(reviews || [])].sort((a, b) => {
@@ -164,25 +223,23 @@ export default function ReviewSection({ projectUlid, projectName, onPostReview }
           )}
 
           {/* Post review */}
-          {onPostReview && (
-            <button
-              type="button"
-              onClick={onPostReview}
-              disabled={!user}
-              title={!user ? t("Login required") : undefined}
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-md border-none cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{
-                backgroundColor: "#f1bd4d",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "var(--ifr-fs-sm)",
-                fontWeight: "var(--ifr-fw-semibold)",
-                color: "#1a1a1a",
-              }}
-            >
-              <PencilAltIcon className="w-4 h-4" />
-              {t("Post a review")}
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handlePostClick}
+            disabled={!user}
+            title={!user ? t("Login required") : undefined}
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-md border-none cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{
+              backgroundColor: "#f1bd4d",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-sm)",
+              fontWeight: "var(--ifr-fw-semibold)",
+              color: "#1a1a1a",
+            }}
+          >
+            <PencilAltIcon className="w-4 h-4" />
+            {t("Post a review")}
+          </button>
         </div>
       </div>
 
@@ -222,6 +279,87 @@ export default function ReviewSection({ projectUlid, projectName, onPostReview }
         </div>
       )}
 
+      {/* Duplicate review alert */}
+      {duplicateAlert && (
+        <div className="p-5 border border-[#f1bd4d] rounded-lg" style={{ backgroundColor: "rgba(241,189,77,0.08)" }}>
+          <div className="flex items-start gap-3">
+            <ExclamationIcon className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "#b8860b" }} />
+            <div className="flex-1">
+              <p
+                className="m-0 mb-2 text-ifr-text-primary"
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-base)",
+                  fontWeight: "var(--ifr-fw-semibold)",
+                }}
+              >
+                {t("You already reviewed this project")}
+              </p>
+              <p
+                className="m-0 mb-3 text-ifr-text-secondary"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {t(
+                  "Each user can publish one review per project. Would you like to edit your existing review instead?"
+                )}
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingReview(duplicateAlert);
+                    setDuplicateAlert(null);
+                  }}
+                  className="px-4 py-1.5 rounded-md border-none cursor-pointer hover:opacity-90"
+                  style={{
+                    backgroundColor: "#f1bd4d",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-sm)",
+                    fontWeight: "var(--ifr-fw-semibold)",
+                    color: "#1a1a1a",
+                  }}
+                >
+                  {t("Edit my review")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDuplicateAlert(null)}
+                  className="px-4 py-1.5 bg-transparent border border-[#c9cccf] rounded-md cursor-pointer hover:bg-[#f5f5f5]"
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-sm)",
+                    color: "var(--ifr-text-secondary)",
+                  }}
+                >
+                  {t("Cancel")}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Inline create form */}
+      {showCreateForm && (
+        <ReviewForm
+          projectUlid={projectUlid}
+          projectName={projectName || ""}
+          onSuccess={handleFormSuccess}
+          onCancel={handleFormCancel}
+        />
+      )}
+
+      {/* Inline edit form (replaces the review being edited) */}
+      {editingReview && (
+        <ReviewForm
+          projectUlid={projectUlid}
+          projectName={projectName || ""}
+          onSuccess={handleFormSuccess}
+          onCancel={handleFormCancel}
+          initialReview={editingReview}
+        />
+      )}
+
       {/* Review list */}
       {loading && reviews.length === 0 ? (
         <div className="flex flex-col gap-3">
@@ -235,9 +373,24 @@ export default function ReviewSection({ projectUlid, projectName, onPostReview }
             <div className="flex flex-col gap-3">
               {visibleReviews.map(review => {
                 const isReplying = activeReplyId === review.id;
+                const isBeingEdited = editingReview?.id === review.id;
+                const isBeingDeleted = deletingId === review.id;
+
+                // Hide the card if it's being edited (form shown above)
+                if (isBeingEdited) return null;
+
                 return (
-                  <div key={review.id} className="flex flex-col gap-3">
-                    <ReviewCard review={review} onReply={() => setActiveReplyId(isReplying ? null : review.id)} />
+                  <div
+                    key={review.id}
+                    className={`flex flex-col gap-3 ${isBeingDeleted ? "opacity-40 pointer-events-none" : ""}`}
+                  >
+                    <ReviewCard
+                      review={review}
+                      onReply={() => setActiveReplyId(isReplying ? null : review.id)}
+                      onEdit={() => handleEdit(review)}
+                      onDelete={() => handleDelete(review)}
+                      currentUserUlid={userUlid}
+                    />
 
                     {/* Always show existing replies, only show form on Reply click */}
                     <div className="ml-11 flex flex-col gap-3">

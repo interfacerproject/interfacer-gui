@@ -15,10 +15,10 @@
 import { PaperClipIcon, StarIcon as StarIconOutline } from "@heroicons/react/outline";
 import { StarIcon as StarIconSolid } from "@heroicons/react/solid";
 import { useAuth } from "hooks/useAuth";
-import useFeedbackApi from "lib/feedback";
+import useFeedbackApi, { type Review } from "lib/feedback";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // ---------------------------------------------------------------------------
 // Inline star rating input
@@ -58,22 +58,43 @@ interface ReviewFormProps {
   projectName: string;
   onSuccess: () => void;
   onCancel: () => void;
+  /** Pre-fill form with an existing review for editing */
+  initialReview?: Review | null;
 }
 
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
-export default function ReviewForm({ projectUlid, projectName, onSuccess, onCancel }: ReviewFormProps) {
+export default function ReviewForm({ projectUlid, projectName, onSuccess, onCancel, initialReview }: ReviewFormProps) {
   const { t } = useTranslation("common");
   const { user } = useAuth();
   const api = useFeedbackApi();
 
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [rating, setRating] = useState(0);
+  const isEditing = !!initialReview;
+
+  // Parse initial content into title + body
+  const parseInitial = (raw: string | null | undefined) => {
+    if (!raw) return { title: "", body: "" };
+    const idx = raw.indexOf("\n\n");
+    if (idx > 0) return { title: raw.slice(0, idx), body: raw.slice(idx + 2) };
+    return { title: "", body: raw };
+  };
+
+  const initial = parseInitial(initialReview?.content);
+  const [title, setTitle] = useState(initial.title);
+  const [content, setContent] = useState(initial.body);
+  const [rating, setRating] = useState(initialReview?.rating || 0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // Re-initialize state when initialReview changes
+  useEffect(() => {
+    const parsed = parseInitial(initialReview?.content);
+    setTitle(parsed.title);
+    setContent(parsed.body);
+    setRating(initialReview?.rating || 0);
+  }, [initialReview]);
 
   const canSubmit = rating >= 1 && rating <= 5 && content.trim().length >= 10 && !submitting;
 
@@ -121,13 +142,13 @@ export default function ReviewForm({ projectUlid, projectName, onSuccess, onCanc
             color: "var(--ifr-green)",
           }}
         >
-          {t("Review published")}
+          {isEditing ? t("Review updated") : t("Review published")}
         </p>
         <p
           className="m-0 mt-1 text-ifr-text-secondary"
           style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
         >
-          {t("Review visible")}
+          {isEditing ? t("Your changes are now visible") : t("Review visible")}
         </p>
       </div>
     );
@@ -155,6 +176,22 @@ export default function ReviewForm({ projectUlid, projectName, onSuccess, onCanc
       className="border border-[#c9cccf] rounded-lg overflow-hidden"
       style={{ backgroundColor: "var(--ifr-bg-surface)" }}
     >
+      {/* Edit banner */}
+      {isEditing && (
+        <div className="px-6 py-2 border-b border-[#f0f0f0]" style={{ backgroundColor: "rgba(241,189,77,0.1)" }}>
+          <p
+            className="m-0"
+            style={{
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-sm)",
+              color: "var(--ifr-text-secondary)",
+            }}
+          >
+            {t("You are editing your existing review")}
+          </p>
+        </div>
+      )}
+
       {/* Project label */}
       <div className="px-6 pt-5 pb-2">
         <span
@@ -284,8 +321,10 @@ export default function ReviewForm({ projectUlid, projectName, onSuccess, onCanc
             {submitting ? (
               <>
                 <span className="inline-block w-3.5 h-3.5 border-2 border-[#1a1a1a] border-t-transparent rounded-full animate-spin" />
-                {t("Posting...")}
+                {isEditing ? t("Updating...") : t("Posting...")}
               </>
+            ) : isEditing ? (
+              t("Update")
             ) : (
               t("Post")
             )}
