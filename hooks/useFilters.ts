@@ -39,6 +39,7 @@ const useFilters = () => {
     service: specs?.specProjectService.id,
     product: specs?.specProjectProduct.id,
     design: specs?.specProjectDesign.id,
+    machine: specs?.specMachine.id,
   };
   const conformsToNoDesign = specs ? [specs.specProjectService.id, specs.specProjectProduct.id] : undefined;
 
@@ -88,6 +89,7 @@ const useFilters = () => {
     serviceId: coformsToIds.service,
     productId: coformsToIds.product,
     designId: coformsToIds.design,
+    machineId: coformsToIds.machine,
     specsLoading,
   };
 };
