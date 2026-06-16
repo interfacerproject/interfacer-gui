@@ -35,7 +35,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 // ─── Tab definitions ────────────────────────────────────────────────────────
 
-type ProfileTabId = "designs" | "products" | "services" | "dpps" | "community";
+type ProfileTabId = "designs" | "products" | "services" | "dpps" | "machines" | "community";
 
 interface TabDef {
   id: ProfileTabId;
@@ -48,6 +48,7 @@ const tabs: TabDef[] = [
   { id: "products", labelKey: "Products", type: ProjectType.PRODUCT },
   { id: "services", labelKey: "Services", type: ProjectType.SERVICE },
   { id: "dpps", labelKey: "DPPs", type: ProjectType.DPP },
+  { id: "machines", labelKey: "Machines", type: ProjectType.MACHINE },
 ];
 
 // ─── Per-tab CTA & toolbar config ───────────────────────────────────────────
@@ -92,6 +93,13 @@ const tabCtaConfig: Record<Exclude<ProfileTabId, "community">, TabCtaConfig> = {
     createLabel: "Publish a New DPP",
     createUrl: "/dpps/new",
     searchPlaceholder: "Search DPPs by batch ID, status...",
+  },
+  machines: {
+    ctaTitle: "Share your machines and equipment",
+    ctaDescription: "List the machines you own or operate so makers can find the right equipment for their projects.",
+    createLabel: "Create a new Machine",
+    createUrl: "/create/project/machine",
+    searchPlaceholder: "Search machines by name, tags...",
   },
 };
 
@@ -1032,14 +1040,14 @@ export default function ProfilePageNew() {
   const router = useRouter();
   const { person, id } = useUser();
   const { user } = useAuth();
-  const { designId, productId, serviceId } = useFilters();
+  const { designId, productId, serviceId, machineId } = useFilters();
 
   const isOwner = user?.ulid === id;
 
   // Tab state from URL
   const tabParam = (router.query.tab as string) || "designs";
   const activeTab: ProfileTabId = (
-    ["designs", "products", "services", "dpps", "community"].includes(tabParam) ? tabParam : "designs"
+    ["designs", "products", "services", "dpps", "machines", "community"].includes(tabParam) ? tabParam : "designs"
   ) as ProfileTabId;
 
   const setActiveTab = useCallback(
@@ -1054,6 +1062,7 @@ export default function ProfilePageNew() {
     designs: designId,
     products: productId,
     services: serviceId,
+    machines: machineId,
   };
 
   return (
