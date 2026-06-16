@@ -285,7 +285,7 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
         }}
       >
         {/* Header */}
-        <div className="border-b border-ifr px-6 py-4">
+        <div className="border-b border-ifr px-6 py-4 flex items-center justify-between">
           <p
             className="text-ifr-text-primary"
             style={{
@@ -296,6 +296,20 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
           >
             {t("Filter by")}
           </p>
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={clearAllFilters}
+              className="text-ifr-text-secondary hover:text-ifr-text-primary text-ifr-sm underline transition-colors cursor-pointer"
+              style={{
+                fontFamily: "var(--ifr-font-body)",
+                fontSize: "var(--ifr-fs-sm)",
+                fontWeight: "var(--ifr-fw-medium)",
+              }}
+            >
+              {t("Reset")}
+            </button>
+          )}
         </div>
 
         {/* DESIGNS variant */}
@@ -784,44 +798,6 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
             </FilterSection>
           </>
         )}
-
-        {/* Sticky bottom action bar */}
-        <div className="sticky bottom-0 bg-ifr-surface border-t border-ifr px-6 py-4 flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              /* Filters are already applied instantly via URL params — this button serves as a visual confirmation + scroll-to-top */
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            className="w-full text-[#0b1324] flex items-center justify-center transition-colors hover:brightness-95"
-            style={{
-              height: "var(--ifr-control-height)",
-              borderRadius: "var(--ifr-radius-md)",
-              fontFamily: "var(--ifr-font-body)",
-              fontSize: "var(--ifr-fs-base)",
-              fontWeight: "var(--ifr-fw-semibold)",
-              backgroundColor: "#f1bd4d",
-            }}
-          >
-            {t("Apply Filters")}
-          </button>
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={clearAllFilters}
-              className="w-full bg-transparent border border-ifr text-ifr-text-secondary hover:text-ifr-text-primary hover:border-ifr-text-secondary flex items-center justify-center transition-colors"
-              style={{
-                height: "var(--ifr-control-height)",
-                borderRadius: "var(--ifr-radius-md)",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "var(--ifr-fs-base)",
-                fontWeight: "var(--ifr-fw-medium)",
-              }}
-            >
-              {t("Reset filters")}
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );
