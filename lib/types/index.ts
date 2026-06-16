@@ -4671,6 +4671,7 @@ export type QueryProjectForMetadataUpdateQuery = {
     __typename?: "EconomicResource";
     id: string;
     name: string;
+    classifiedAs?: Array<string> | null;
     metadata?: any | null;
     onhandQuantity: {
       __typename?: "Measure";

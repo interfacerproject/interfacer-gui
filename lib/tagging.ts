@@ -27,6 +27,7 @@ export const TAG_PREFIX = {
   SERVICE_TYPE: "servicetype",
   AVAILABILITY: "availability",
   LICENSE: "license",
+  MANUFACTURABLE: "manufacturable",
 } as const;
 
 export type TagPrefix = (typeof TAG_PREFIX)[keyof typeof TAG_PREFIX];
@@ -46,6 +47,7 @@ export const SYSTEM_TAG_PREFIXES: ReadonlyArray<string> = [
   TAG_PREFIX.SERVICE_TYPE,
   TAG_PREFIX.AVAILABILITY,
   TAG_PREFIX.LICENSE,
+  TAG_PREFIX.MANUFACTURABLE,
 ];
 
 // Legacy/stale system prefixes that still appear in historical classifiedAs data.
@@ -102,6 +104,9 @@ export const RECYCLABILITY_THRESHOLDS_PCT = [0, 10, 20, 30, 40, 50, 60, 70, 80, 
 
 // Repairability is a simple binary tag: either the product is repairable or not.
 export const REPAIRABILITY_AVAILABLE_TAG = "repairability-available";
+
+// Manufacturability tags – added to designs when a product is derived from them.
+export const MANUFACTURABLE_TRUE_TAG = "manufacturable-true";
 
 // Numeric thresholds used for monotonic range tags.
 // Keep these lists stable: changing them will change the derived tags.
