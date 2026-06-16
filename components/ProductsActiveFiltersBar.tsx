@@ -95,16 +95,6 @@ export default function ProductsActiveFiltersBar() {
   // un-prefixed values still present in older URLs).
   const userTags = rawTags.filter(tag => !isSystemTag(tag));
 
-  const derivedManufacturability = (() => {
-    const fromParam = asCsvArray(router.query.manufacturability);
-    if (fromParam.length > 0) return fromParam[0];
-
-    const show = asString(router.query.show);
-    if (show === "designs") return "in-progress";
-    if (show === "products") return "can-manufacture";
-    return "";
-  })();
-
   const show = asString(router.query.show);
 
   const powerMin = asString(router.query.powerMin);
@@ -121,7 +111,6 @@ export default function ProductsActiveFiltersBar() {
     categoryTags.length > 0 ||
     machines.length > 0 ||
     materials.length > 0 ||
-    Boolean(derivedManufacturability) ||
     (show.length > 0 && show !== "all") ||
     asCsvArray(router.query.power).length > 0 ||
     Boolean(powerMin) ||
@@ -179,26 +168,7 @@ export default function ProductsActiveFiltersBar() {
     });
   }
 
-  if (derivedManufacturability) {
-    const label =
-      derivedManufacturability === "in-progress"
-        ? t("In Progress")
-        : derivedManufacturability === "can-manufacture"
-        ? t("Can be Manufactured")
-        : derivedManufacturability;
-
-    chips.push({
-      key: `manufacturability:${derivedManufacturability}`,
-      label: `${t("Manufacturability")}: ${label}`,
-      onRemove: () => {
-        const next = { ...router.query };
-        delete next.manufacturability;
-        // Manufacturability is represented by `show` (designs/products).
-        delete next.show;
-        pushQuery(next);
-      },
-    });
-  } else if (show && show !== "all") {
+  if (show && show !== "all") {
     const showLabel = show === "services" ? t("Services") : show;
     chips.push({
       key: `show:${show}`,
