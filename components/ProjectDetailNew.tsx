@@ -1215,11 +1215,6 @@ export default function ProjectDetailNew() {
   const color = typeColors[projectType] || "var(--ifr-green)";
   const images = useMemo(() => findProjectImages(project), [project]);
   const models = useMemo(() => findProjectModels(project), [project]);
-  const primaryModel = useMemo(() => models.find(model => model.isViewable) || models[0], [models]);
-  const additionalModels = useMemo(
-    () => models.filter(model => model.url !== primaryModel?.url),
-    [models, primaryModel]
-  );
 
   // User-facing tags: filtered to `tag-*` entries (prefix stripped) with legacy
   // un-prefixed values kept visible for backwards compatibility.
@@ -1384,8 +1379,7 @@ export default function ProjectDetailNew() {
           {/* Image gallery */}
           <ImageGallery images={images} />
 
-          {/* 3D model viewer for designs */}
-          {projectType === ProjectType.DESIGN && primaryModel && (
+          {projectType === ProjectType.DESIGN && models.length > 0 && (
             <DetailSection
               icon={
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -1406,68 +1400,90 @@ export default function ProjectDetailNew() {
                 </svg>
               }
               iconBg="bg-ifr-hover"
-              title={t("3D Model")}
-              subtitle={
-                primaryModel.isViewable
-                  ? t("Inspect the fabrication model directly in the browser")
-                  : t("3D source file attached for download")
-              }
+              title={t("3D and CAD Files")}
+              subtitle={t("{{count}} file(s) attached", { count: models.length })}
               sectionId="3d-model"
+              defaultOpen
             >
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-6">
                 <p className="m-0 text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-base)" }}>
-                  {primaryModel.isViewable
-                    ? t(
-                        "Use the mouse or trackpad to rotate, pan, and zoom the model. If loading fails, open the source file directly."
-                      )
-                    : t(
-                        "This design includes a 3D source file, but browser preview is only available for STEP and STL right now."
-                      )}
+                  {t(
+                    "Interactive 3D previews are available for STEP and STL files. Use your mouse, trackpad, or the control buttons below to rotate, pan, and zoom. Non-viewable files are available for download."
+                  )}
                 </p>
 
-                {primaryModel.isViewable ? (
-                  <StepModelViewer
-                    modelUrl={primaryModel.url}
-                    downloadUrl={primaryModel.downloadUrl}
-                    fileName={primaryModel.name}
-                    height="min(60vh, 640px)"
-                  />
-                ) : (
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <span className="text-ifr-text-primary" style={{ fontWeight: 600 }}>
-                      {primaryModel.name}
-                    </span>
-                    <a
-                      href={primaryModel.downloadUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#036A53] underline hover:no-underline"
-                    >
-                      {t("Open source file")}
-                    </a>
-                  </div>
-                )}
+                <div className="flex flex-col gap-6">
+                  {models.map((model, index) => (
+                    <div key={model.url} className="border border-ifr rounded-ifr-md overflow-hidden">
+                      <div className="flex items-center justify-between px-5 py-3 bg-ifr-hover border-b border-ifr">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span
+                            className="shrink-0 flex items-center justify-center text-ifr-text-primary font-semibold"
+                            style={{
+                              width: "28px",
+                              height: "28px",
+                              borderRadius: "var(--ifr-radius-sm)",
+                              backgroundColor: "rgba(200,212,229,0.4)",
+                              fontSize: "var(--ifr-fs-xs)",
+                            }}
+                          >
+                            {index + 1}
+                          </span>
 
-                {additionalModels.length > 0 && (
-                  <div className="flex flex-col gap-2">
-                    <p className="m-0 text-ifr-text-primary" style={{ fontWeight: 600 }}>
-                      {t("Additional model files")}
-                    </p>
-                    <div className="flex flex-wrap gap-3">
-                      {additionalModels.map(model => (
+                          <span
+                            className="text-ifr-text-primary font-semibold truncate"
+                            style={{
+                              fontFamily: "var(--ifr-font-body)",
+                              fontSize: "var(--ifr-fs-md)",
+                            }}
+                          >
+                            {model.name}
+                          </span>
+
+                          <span
+                            className="shrink-0 px-2 py-0.5 rounded uppercase font-medium"
+                            style={{
+                              fontSize: "var(--ifr-fs-xs)",
+                              backgroundColor: model.isViewable ? "rgba(3,106,83,0.1)" : "rgba(108,112,124,0.1)",
+                              color: model.isViewable ? "#036A53" : "#6c707c",
+                            }}
+                          >
+                            {model.extension}
+                          </span>
+                        </div>
+
                         <a
-                          key={model.url}
                           href={model.downloadUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[#036A53] underline hover:no-underline"
+                          className="shrink-0 text-[#036A53] font-semibold no-underline hover:underline ml-4"
+                          style={{ fontSize: "var(--ifr-fs-sm)" }}
                         >
-                          {model.name}
+                          {t("Download")}
                         </a>
-                      ))}
+                      </div>
+
+                      {model.isViewable ? (
+                        <div className="p-4">
+                          <StepModelViewer
+                            modelUrl={model.url}
+                            downloadUrl={model.downloadUrl}
+                            fileName={model.name}
+                            height="min(55vh, 560px)"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3 px-5 py-4">
+                          <span className="text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                            {t(
+                              "Browser preview is only available for STEP and STL files. You can still download this file."
+                            )}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                )}
+                  ))}
+                </div>
               </div>
             </DetailSection>
           )}

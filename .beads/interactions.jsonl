@@ -1,0 +1,2 @@
+{"id":"int-281c94acfbf57ca6015e59bbcf449673","kind":"field_change","created_at":"2026-06-18T16:41:31.157133Z","actor":"phoebus-84","issue_id":"interfacer-gui-494","extra":{"field":"status","new_value":"in_progress","old_value":"open"}}
+{"id":"int-a495134af9832c0b8703514259d1b728","kind":"field_change","created_at":"2026-06-18T16:43:21.847055Z","actor":"phoebus-84","issue_id":"interfacer-gui-494","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Done"}}
