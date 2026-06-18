@@ -19,22 +19,51 @@
 
 FROM node:lts-alpine AS builder
 
-ARG HOST=0.0.0.0
-ENV HOST=$HOST
-ARG PORT=3000
-ENV PORT=$PORT
-ARG NODE_ENV=production
-ENV NODE_ENV=$NODE_ENV
-
 RUN apk add --no-cache libc6-compat
 RUN corepack enable
 
 WORKDIR /build
 
-COPY . .
-
+# Install ALL dependencies first (NODE_ENV is not set yet, so devDeps are included)
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
-EXPOSE $NODE_PORT
+# Copy source
+COPY . .
 
-CMD pnpm build && pnpm start
+# Set NODE_ENV only for the build step (Next.js reads it for optimizations)
+ARG HOST=0.0.0.0
+ENV HOST=$HOST
+ARG PORT=3000
+ENV PORT=$PORT
+ENV NODE_ENV=production
+
+RUN pnpm build
+
+# ----
+FROM node:lts-alpine AS runner
+
+RUN apk add --no-cache libc6-compat
+RUN corepack enable
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ARG HOST=0.0.0.0
+ENV HOST=$HOST
+ARG PORT=3000
+ENV PORT=$PORT
+
+# Fresh install of production-only dependencies
+COPY --from=builder /build/package.json /build/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod
+
+# Copy build output and runtime configs
+COPY --from=builder /build/.next ./.next
+COPY --from=builder /build/public ./public
+COPY --from=builder /build/next.config.js ./
+COPY --from=builder /build/next-i18next.config.js ./
+
+EXPOSE $PORT
+
+CMD ["pnpm", "start"]
