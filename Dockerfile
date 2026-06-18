@@ -17,53 +17,27 @@
 
 # TODO: move config to runtime https://github.com/vercel/next.js/discussions/17641
 
-FROM node:lts-alpine AS builder
+FROM node:lts-alpine
 
 RUN apk add --no-cache libc6-compat
 RUN corepack enable
 
 WORKDIR /build
 
-# Install ALL dependencies first (NODE_ENV is not set yet, so devDeps are included)
+# Install dependencies first (NODE_ENV is not set yet, so devDeps are included)
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # Copy source
 COPY . .
 
-# Set NODE_ENV only for the build step (Next.js reads it for optimizations)
+# Set NODE_ENV only after deps install (Next.js reads it at build time for optimizations)
 ARG HOST=0.0.0.0
 ENV HOST=$HOST
 ARG PORT=3000
 ENV PORT=$PORT
 ENV NODE_ENV=production
-
-RUN pnpm build
-
-# ----
-FROM node:lts-alpine AS runner
-
-RUN apk add --no-cache libc6-compat
-RUN corepack enable
-
-WORKDIR /app
-
-ENV NODE_ENV=production
-ARG HOST=0.0.0.0
-ENV HOST=$HOST
-ARG PORT=3000
-ENV PORT=$PORT
-
-# Fresh install of production-only dependencies
-COPY --from=builder /build/package.json /build/pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --prod
-
-# Copy build output and runtime configs
-COPY --from=builder /build/.next ./.next
-COPY --from=builder /build/public ./public
-COPY --from=builder /build/next.config.js ./
-COPY --from=builder /build/next-i18next.config.js ./
 
 EXPOSE $PORT
 
-CMD ["pnpm", "start"]
+CMD pnpm build && pnpm start
