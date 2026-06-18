@@ -19,6 +19,7 @@ import useStorage from "../hooks/useStorage";
 import sign from "zenflows-crypto/src/sign_graphql.zen";
 
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { getRuntimeConfig } from "./runtimeConfig";
 
 interface FetchHttpOptions {
   uri?: string;
@@ -45,8 +46,9 @@ const useAuthAndFetch = async (uri: RequestInfo, options: RequestInit) => {
 };
 
 const createApolloClient = (withSignedCalls = false) => {
+  const { zenflowsUrl } = getRuntimeConfig();
   var opts: FetchHttpOptions = {
-    uri: process.env.NEXT_PUBLIC_ZENFLOWS_URL,
+    uri: zenflowsUrl,
   };
   if (withSignedCalls) {
     opts.fetch = useAuthAndFetch;

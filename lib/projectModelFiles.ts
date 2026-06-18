@@ -1,4 +1,5 @@
 import type { Attachment } from "./dpp-types";
+import { getRuntimeConfig } from "./runtimeConfig";
 
 export type ProjectModelMetadata = {
   contentType?: string;
@@ -16,7 +17,7 @@ export type ProjectModelMetadata = {
 };
 
 type UploadModelFile = (file: File) => Promise<Attachment>;
-const DPP_BASE_URL = process.env.NEXT_PUBLIC_DPP_URL;
+const { dppUrl: DPP_BASE_URL } = getRuntimeConfig();
 
 function getExtension(fileName: string): string {
   return fileName.split(".").pop()?.toLowerCase() || "";

@@ -13,6 +13,7 @@ import { useAuth } from "hooks/useAuth";
 import { useCallback, useMemo } from "react";
 // @ts-ignore
 import sign from "zenflows-crypto/src/sign_graphql.zen";
+import { getRuntimeConfig } from "./runtimeConfig";
 import type {
   Attachment,
   CreateDppResponse,
@@ -25,7 +26,7 @@ import type {
   UpdateDppResponse,
 } from "./dpp-types";
 
-const DPP_BASE_URL = process.env.NEXT_PUBLIC_DPP_URL;
+const { dppUrl: DPP_BASE_URL } = getRuntimeConfig();
 
 class DppRequestError extends Error {
   status: number;

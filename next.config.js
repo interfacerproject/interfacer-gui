@@ -24,6 +24,11 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   output: "standalone",
+  publicRuntimeConfig: {
+    zenflowsUrl: process.env.NEXT_PUBLIC_ZENFLOWS_URL || "",
+    zenflowsFileUrl: process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL || "",
+    dppUrl: process.env.NEXT_PUBLIC_DPP_URL || "",
+  },
   experimental: {
     transpilePackages: ["react-markdown-editor-lite"],
   },

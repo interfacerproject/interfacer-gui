@@ -2,6 +2,7 @@ import { Collapsible, Spinner, Text } from "@bbtgnn/polaris-interfacer";
 import { ChevronDownMinor, ChevronUpMinor } from "@shopify/polaris-icons";
 import { useTranslation } from "next-i18next";
 import React, { useCallback, useEffect, useState } from "react";
+import { getRuntimeConfig } from "../../../../lib/runtimeConfig";
 
 interface DPPValue {
   type: string;
@@ -223,7 +224,8 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_DPP_URL}/dpp/${ulid}`);
+        const { dppUrl } = getRuntimeConfig();
+        const response = await fetch(`${dppUrl}/dpp/${ulid}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

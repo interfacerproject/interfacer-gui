@@ -1,3 +1,4 @@
+import { getRuntimeConfig } from "./runtimeConfig";
 import { EconomicResource } from "./types";
 
 type RawModelEntry =
@@ -32,7 +33,7 @@ export type ProjectModelDescriptor = {
 };
 
 const supportedExtensions = new Set(["step", "stp", "stl"]);
-const DPP_BASE_URL = process.env.NEXT_PUBLIC_DPP_URL;
+const { dppUrl: DPP_BASE_URL } = getRuntimeConfig();
 
 function isResolvableUrl(value: string): boolean {
   if (!value) {

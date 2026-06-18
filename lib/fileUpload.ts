@@ -21,6 +21,7 @@ import { IFile } from "lib/types";
 import sign from "zenflows-crypto/src/sign_graphql.zen";
 import { zencode_exec, zenroom_hash_final, zenroom_hash_init, zenroom_hash_update } from "zenroom";
 import devLog from "./devLog";
+import { getRuntimeConfig } from "./runtimeConfig";
 //
 
 export function formatZenObjects(o: Record<string, unknown>): string {
@@ -105,7 +106,8 @@ export async function uploadFile(file: File) {
     const filesArray = new FormData();
     filesArray.append(hash, file);
 
-    await fetch(process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL!, {
+    const { zenflowsFileUrl } = getRuntimeConfig();
+    await fetch(zenflowsFileUrl, {
       method: "POST",
       body: filesArray,
     });
@@ -162,7 +164,8 @@ export async function UploadFileOnDPP(file: File): Promise<AttachmentResponse> {
   const signature = await SignMessage(checksum);
   const formData = new FormData();
   formData.append("file", file);
-  const response = await fetch(`${process.env.NEXT_PUBLIC_DPP_URL}/upload`, {
+  const { dppUrl } = getRuntimeConfig();
+  const response = await fetch(`${dppUrl}/upload`, {
     method: "POST",
     headers: {
       "did-pk": eddsaPublicKey!,
