@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import {
+  CenterToFit,
+  Maximize,
+  Minimize,
+  RotateClockwise,
+  RotateCounterclockwise,
+  ZoomIn,
+  ZoomOut,
+} from "@carbon/icons-react";
 import { useEffect, useRef, useState } from "react";
 
 type StepModelViewerProps = {
@@ -21,14 +30,24 @@ type StepModelViewerProps = {
   fileName?: string;
   modelUrl: string;
   height?: string;
+  showControls?: boolean;
 };
 
-const StepModelViewer = ({ downloadUrl, fileName, modelUrl, height = "min(72vh, 760px)" }: StepModelViewerProps) => {
+const StepModelViewer = ({
+  downloadUrl,
+  fileName,
+  modelUrl,
+  height = "min(72vh, 760px)",
+  showControls = true,
+}: StepModelViewerProps) => {
   const viewerContainerRef = useRef<HTMLDivElement | null>(null);
   const viewerRef = useRef<{ Destroy: () => void; Resize: () => void } | null>(null);
+  const viewerInternalRef = useRef<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
+  const viewerRootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let isCancelled = false;
@@ -58,7 +77,6 @@ const StepModelViewer = ({ downloadUrl, fileName, modelUrl, height = "min(72vh, 
         const viewer = new OV.EmbeddedViewer(viewerContainerRef.current, {
           backgroundColor: new OV.RGBAColor(247, 247, 245, 255),
           defaultColor: new OV.RGBColor(186, 186, 186),
-          // Edge extraction can add a noticeable CPU cost on large STEP files.
           edgeSettings: new OV.EdgeSettings(false, new OV.RGBColor(44, 44, 44), 15),
           onModelLoaded: () => {
             if (!isCancelled) {
@@ -76,6 +94,7 @@ const StepModelViewer = ({ downloadUrl, fileName, modelUrl, height = "min(72vh, 
         });
 
         viewerRef.current = viewer;
+        viewerInternalRef.current = viewer.GetViewer();
         viewer.LoadModelFromUrlList([modelUrl]);
 
         const handleResize = () => {
@@ -95,6 +114,13 @@ const StepModelViewer = ({ downloadUrl, fileName, modelUrl, height = "min(72vh, 
       }
     };
 
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+      // Resize viewer after fullscreen change
+      setTimeout(() => viewerRef.current?.Resize(), 100);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
     let cleanupResizeListener: (() => void) | undefined;
     setupViewer().then(cleanup => {
       cleanupResizeListener = cleanup;
@@ -103,16 +129,97 @@ const StepModelViewer = ({ downloadUrl, fileName, modelUrl, height = "min(72vh, 
     return () => {
       isCancelled = true;
       window.clearInterval(loadingTimer);
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
       cleanupResizeListener?.();
       viewerRef.current?.Destroy();
       viewerRef.current = null;
+      viewerInternalRef.current = null;
     };
   }, [modelUrl]);
 
+  function getNav() {
+    return viewerInternalRef.current?.navigation;
+  }
+
+  function handleZoomIn() {
+    getNav()?.Zoom(0.15);
+    viewerInternalRef.current?.Render();
+  }
+
+  function handleZoomOut() {
+    getNav()?.Zoom(-0.15);
+    viewerInternalRef.current?.Render();
+  }
+
+  function handleRotateLeft() {
+    getNav()?.Orbit(20, 0);
+    viewerInternalRef.current?.Render();
+  }
+
+  function handleRotateRight() {
+    getNav()?.Orbit(-20, 0);
+    viewerInternalRef.current?.Render();
+  }
+
+  function handleRotateUp() {
+    getNav()?.Orbit(0, -20);
+    viewerInternalRef.current?.Render();
+  }
+
+  function handleRotateDown() {
+    getNav()?.Orbit(0, 20);
+    viewerInternalRef.current?.Render();
+  }
+
+  function handleResetView() {
+    const viewer = viewerInternalRef.current;
+    if (!viewer) return;
+    const boundingSphere = viewer.GetBoundingSphere(() => true);
+    if (boundingSphere) {
+      viewer.FitSphereToWindow(boundingSphere, true);
+    }
+  }
+
+  function handleFullscreen() {
+    if (!viewerRootRef.current) return;
+    if (isFullscreen) {
+      document.exitFullscreen();
+    } else {
+      viewerRootRef.current.requestFullscreen();
+    }
+  }
+
+  const controlBtnStyle: React.CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "36px",
+    height: "36px",
+    borderRadius: "8px",
+    border: "1px solid #d0ccc3",
+    backgroundColor: "#fff",
+    cursor: "pointer",
+    color: "#4a4740",
+    transition: "background-color 0.15s, border-color 0.15s",
+  };
+
+  const controlBtnHoverStyle: React.CSSProperties = {
+    backgroundColor: "#f0ede7",
+    borderColor: "#b0ac9e",
+  };
+
   return (
-    <>
+    <div ref={viewerRootRef} style={{ position: "relative" }}>
       {(fileName || downloadUrl) && (
-        <div style={{ display: "flex", justifyContent: "space-between", gap: "0.75rem", flexWrap: "wrap" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "0.75rem",
+            flexWrap: "wrap",
+            marginBottom: "0.5rem",
+          }}
+        >
           {fileName ? <p style={{ margin: 0, color: "#2c2c2c", fontWeight: 600 }}>{fileName}</p> : <span />}
           {downloadUrl && (
             <a
@@ -128,7 +235,9 @@ const StepModelViewer = ({ downloadUrl, fileName, modelUrl, height = "min(72vh, 
       )}
 
       {error ? (
-        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
+        <div
+          style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap", marginBottom: "0.5rem" }}
+        >
           <p style={{ margin: 0, color: "#a32e2e", fontWeight: 600 }}>{error}</p>
           {downloadUrl && (
             <a
@@ -142,13 +251,13 @@ const StepModelViewer = ({ downloadUrl, fileName, modelUrl, height = "min(72vh, 
           )}
         </div>
       ) : (
-        <p style={{ margin: 0, color: "#4a4740" }}>
+        <p style={{ margin: "0 0 0.5rem 0", color: "#4a4740" }}>
           {isLoading ? `Importing model... ${elapsedSeconds}s` : "Model loaded."}
         </p>
       )}
 
       {isLoading && elapsedSeconds > 8 && (
-        <p style={{ margin: 0, color: "#6a665d", fontSize: "0.95rem" }}>
+        <p style={{ margin: "0 0 0.5rem 0", color: "#6a665d", fontSize: "0.95rem" }}>
           {"Large STEP files can take 20-90 seconds to parse in the browser, especially on first load."}
         </p>
       )}
@@ -165,7 +274,105 @@ const StepModelViewer = ({ downloadUrl, fileName, modelUrl, height = "min(72vh, 
           overflow: "hidden",
         }}
       />
-    </>
+
+      {showControls && !isLoading && !error && (
+        <div
+          style={{
+            display: "flex",
+            gap: "6px",
+            marginTop: "10px",
+            flexWrap: "wrap",
+            alignItems: "center",
+          }}
+        >
+          <button
+            type="button"
+            title="Zoom in"
+            style={controlBtnStyle}
+            onMouseEnter={e => Object.assign(e.currentTarget.style, controlBtnHoverStyle)}
+            onMouseLeave={e => Object.assign(e.currentTarget.style, controlBtnStyle)}
+            onClick={handleZoomIn}
+          >
+            <ZoomIn size={20} />
+          </button>
+          <button
+            type="button"
+            title="Zoom out"
+            style={controlBtnStyle}
+            onMouseEnter={e => Object.assign(e.currentTarget.style, controlBtnHoverStyle)}
+            onMouseLeave={e => Object.assign(e.currentTarget.style, controlBtnStyle)}
+            onClick={handleZoomOut}
+          >
+            <ZoomOut size={20} />
+          </button>
+
+          <span style={{ width: "1px", height: "24px", backgroundColor: "#d0ccc3", margin: "0 4px" }} />
+          <button
+            type="button"
+            title="Rotate left"
+            style={controlBtnStyle}
+            onMouseEnter={e => Object.assign(e.currentTarget.style, controlBtnHoverStyle)}
+            onMouseLeave={e => Object.assign(e.currentTarget.style, controlBtnStyle)}
+            onClick={handleRotateLeft}
+          >
+            <RotateCounterclockwise size={20} />
+          </button>
+          <button
+            type="button"
+            title="Rotate right"
+            style={controlBtnStyle}
+            onMouseEnter={e => Object.assign(e.currentTarget.style, controlBtnHoverStyle)}
+            onMouseLeave={e => Object.assign(e.currentTarget.style, controlBtnStyle)}
+            onClick={handleRotateRight}
+          >
+            <RotateClockwise size={20} />
+          </button>
+          <button
+            type="button"
+            title="Rotate up"
+            style={controlBtnStyle}
+            onMouseEnter={e => Object.assign(e.currentTarget.style, controlBtnHoverStyle)}
+            onMouseLeave={e => Object.assign(e.currentTarget.style, controlBtnStyle)}
+            onClick={handleRotateUp}
+          >
+            <RotateClockwise size={20} style={{ transform: "rotate(-90deg)" }} />
+          </button>
+          <button
+            type="button"
+            title="Rotate down"
+            style={controlBtnStyle}
+            onMouseEnter={e => Object.assign(e.currentTarget.style, controlBtnHoverStyle)}
+            onMouseLeave={e => Object.assign(e.currentTarget.style, controlBtnStyle)}
+            onClick={handleRotateDown}
+          >
+            <RotateClockwise size={20} style={{ transform: "rotate(90deg)" }} />
+          </button>
+
+          <span style={{ width: "1px", height: "24px", backgroundColor: "#d0ccc3", margin: "0 4px" }} />
+          <button
+            type="button"
+            title="Reset view"
+            style={controlBtnStyle}
+            onMouseEnter={e => Object.assign(e.currentTarget.style, controlBtnHoverStyle)}
+            onMouseLeave={e => Object.assign(e.currentTarget.style, controlBtnStyle)}
+            onClick={handleResetView}
+          >
+            <CenterToFit size={20} />
+          </button>
+
+          <button
+            type="button"
+            title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+            style={{ ...controlBtnStyle, marginLeft: "auto" }}
+            onMouseEnter={e => Object.assign(e.currentTarget.style, controlBtnHoverStyle)}
+            onMouseLeave={e => Object.assign(e.currentTarget.style, controlBtnStyle)}
+            onClick={handleFullscreen}
+          >
+            {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 
