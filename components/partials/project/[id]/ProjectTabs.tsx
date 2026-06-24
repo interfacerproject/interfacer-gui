@@ -234,7 +234,7 @@ const ProjectTabs = () => {
         />
       )}
       {selected == 3 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
-      {selected == 4 && dppUlid && <DynamicGC1DPP ulid={dppUlid} />}
+      {selected == 4 && dppUlid && <DynamicGC1DPP ulid={dppUlid} productId={project.id} />}
     </Stack>
   );
 };
