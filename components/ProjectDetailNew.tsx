@@ -28,6 +28,8 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
+import ReviewSection from "./ReviewSection";
+import useFeedbackApi, { type ReviewSummary } from "lib/feedback";
 import StepModelViewer from "./StepModelViewer";
 
 function getProjectType(project: Partial<EconomicResource>): ProjectType {
@@ -51,10 +53,11 @@ const typeColors: Record<string, string> = {
 interface ProjectSidebarNewProps {
   project: Partial<EconomicResource>;
   projectType: ProjectType;
+  sidebarRating?: ReviewSummary | null;
 }
 
 /** Redesigned sidebar following DTEC prototype */
-function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
+function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSidebarNewProps) {
   const { t } = useTranslation("common");
   const { user } = useAuth();
 
@@ -405,6 +408,43 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
                   <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
                 </div>
               )}
+            </div>
+          </>
+        )}
+
+        {/* Rating summary — if reviews exist */}
+        {sidebarRating && sidebarRating.total_reviews > 0 && (
+          <>
+            <hr className="border-t border-[#c9cccf] m-0 mx-4" />
+            <div className="px-4 py-4">
+              <p
+                className="text-ifr-text-secondary mb-2"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {t("Rating")}
+              </p>
+              <div className="flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="#f1bd4d">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.284-3.957z" />
+                </svg>
+                <span
+                  className="text-ifr-text-primary"
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-md)",
+                    fontWeight: "var(--ifr-fw-semibold)",
+                  }}
+                >
+                  {sidebarRating.average_rating.toFixed(1)}
+                </span>
+                <span
+                  className="text-ifr-text-secondary"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                >
+                  {" · "}
+                  {sidebarRating.total_reviews} {sidebarRating.total_reviews === 1 ? t("review") : t("reviews")}
+                </span>
+              </div>
             </div>
           </>
         )}
@@ -1253,6 +1293,11 @@ export default function ProjectDetailNew() {
   const [productDpps, setProductDpps] = useState<DppDocument[]>([]);
   const [dppsLoading, setDppsLoading] = useState(false);
 
+  // Feedback / reviews state
+  const feedbackApi = useFeedbackApi();
+  const [sidebarRating, setSidebarRating] = useState<ReviewSummary | null>(null);
+  const [reviewKey, setReviewKey] = useState(0); // increment to force refresh
+
   useEffect(() => {
     if (projectType !== ProjectType.PRODUCT || !project.id) return;
     let cancelled = false;
@@ -1273,6 +1318,16 @@ export default function ProjectDetailNew() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project.id, projectType]);
+
+  // Fetch sidebar rating summary
+  useEffect(() => {
+    if (!project.id) return;
+    feedbackApi
+      .getReviewSummary(project.id)
+      .then(setSidebarRating)
+      .catch(() => setSidebarRating(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project.id]);
 
   // Breadcrumb
   const typeLabel =
@@ -2027,6 +2082,28 @@ export default function ProjectDetailNew() {
               )}
             </DetailSection>
 
+            {/* Reviews */}
+            <DetailSection
+              icon={
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"
+                    stroke="#0B1324"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              }
+              iconBg="bg-[rgba(241,189,77,0.15)]"
+              title={t("Reviews")}
+              subtitle={t("Community feedback and ratings")}
+              sectionId="reviews"
+              defaultOpen
+            >
+              <ReviewSection key={reviewKey} projectUlid={project.id!} projectName={project.name} />
+            </DetailSection>
+
             {/* Included Projects — sub-assemblies from metadata.relations */}
             {(() => {
               const relations = (project.metadata as Record<string, any>)?.relations;
@@ -2150,13 +2227,13 @@ export default function ProjectDetailNew() {
 
         {/* Sidebar */}
         <div className="hidden lg:block">
-          <ProjectSidebarNew project={project} projectType={projectType} />
+          <ProjectSidebarNew project={project} projectType={projectType} sidebarRating={sidebarRating} />
         </div>
       </div>
 
       {/* Mobile sidebar */}
       <div className="lg:hidden px-6 pb-8">
-        <ProjectSidebarNew project={project} projectType={projectType} />
+        <ProjectSidebarNew project={project} projectType={projectType} sidebarRating={sidebarRating} />
       </div>
     </div>
   );
