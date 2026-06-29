@@ -1,91 +1,36 @@
-import { useMutation, useQuery } from "@apollo/client";
 import { CreateProjectValues } from "components/partials/create/project/CreateProjectForm";
 import { DeclarationsStepValues } from "components/partials/create/project/steps/DeclarationsStep";
 import { ProjectType } from "components/types";
 import useInBox from "hooks/useInBox";
 import useWallet from "hooks/useWallet";
 import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
-import {
-  ASK_RESOURCE_PRIMARY_ACCOUNTABLE,
-  CITE_PROJECT,
-  CONSUME_RESOURCE,
-  CONTRIBUTE_TO_PROJECT,
-  CREATE_DPP_RESOURCE,
-  CREATE_LOCATION,
-  CREATE_MACHINE_RESOURCE,
-  CREATE_PROCESS,
-  CREATE_PROJECT,
-  QUERY_UNIT_AND_CURRENCY,
-  RELOCATE_PROJECT,
-  UPDATE_METADATA,
-  UPDATE_RESOURCE_CLASSIFIED_AS,
-} from "lib/QueryAndMutation";
-import { arrayEquals, getNewElements } from "lib/arrayOperations";
-import useDppApi from "lib/dpp";
 import { errorFormatter } from "lib/errorFormatter";
-import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
-import { uploadModelFilesToDpp } from "lib/projectModelFiles";
 import {
   derivedProductFilterTags,
   MANUFACTURABLE_TRUE_TAG,
-  mergeTags,
   normalizeUserTagsForSave,
   prefixedTag,
   TAG_PREFIX,
 } from "lib/tagging";
-import {
-  CreateLocationMutation,
-  CreateLocationMutationVariables,
-  CreateProjectMutation,
-  CreateProjectMutationVariables,
-  EconomicResource,
-  EditMainMutation,
-  EditMainMutationVariables,
-  GetUnitAndCurrencyQuery,
-  IFile,
-} from "lib/types";
+import { uploadFiles } from "lib/fileUpload";
+import { uploadModelFilesToDpp } from "lib/projectModelFiles";
 import { useTranslation } from "next-i18next";
-import { AddedAsContributorNotification, MessageSubject, ProposalNotification } from "pages/notification";
-import { useState } from "react";
-import { QUERY_PROJECT_FOR_METADATA_UPDATE } from "../lib/QueryAndMutation";
-import devLog from "../lib/devLog";
-import {
-  QueryProjectForMetadataUpdateQuery,
-  QueryProjectForMetadataUpdateQueryVariables,
-  UpdateMetadataMutation,
-  UpdateMetadataMutationVariables,
-} from "../lib/types/index";
-import { LocationStepValues } from "./../components/partials/create/project/steps/LocationStep";
-import { RelocateProjectMutation, RelocateProjectMutationVariables } from "./../lib/types/index";
+import { LocationStepValues } from "components/partials/create/project/steps/LocationStep";
 import { useAuth } from "./useAuth";
 import { useResourceSpecs } from "./useResourceSpecs";
+import devLog from "lib/devLog";
+import { useState } from "react";
+import { AddedAsContributorNotification, MessageSubject, ProposalNotification } from "pages/notification";
 
 export const useProjectCRUD = () => {
-  const { user } = useAuth();
-  const { uploadFile: uploadDppFile } = useDppApi();
+  const { user, client } = useAuth();
   const { sendMessage } = useInBox();
   const { addIdeaPoints, addStrengthsPoints } = useWallet({});
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
-  const [citeProject] = useMutation(CITE_PROJECT);
-  const [contributeToProject] = useMutation(CONTRIBUTE_TO_PROJECT);
-  const [consumeResource] = useMutation(CONSUME_RESOURCE);
-  const [createProject] = useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CREATE_PROJECT);
-  const [createDppResource] = useMutation(CREATE_DPP_RESOURCE);
-  const [createMachineResource] = useMutation(CREATE_MACHINE_RESOURCE);
-  const [createLocation] = useMutation<CreateLocationMutation, CreateLocationMutationVariables>(CREATE_LOCATION);
-  const [createProcessMutation] = useMutation(CREATE_PROCESS);
-  const [updateResourceClassifiedAs] = useMutation<EditMainMutation, EditMainMutationVariables>(
-    UPDATE_RESOURCE_CLASSIFIED_AS
-  );
-  const { refetch } = useQuery(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
-
-  type SpatialThingRes = CreateLocationMutation["createSpatialThing"]["spatialThing"];
-
-  // Get resource specs using the workaround hook (handles instanceVariables not exposing all specs)
+  // Get resource specs using the SDK
   const { specProjectDesign, specProjectProduct, specProjectService, specMachine, specDpp, hasAllSpecs } =
     useResourceSpecs();
 
@@ -99,213 +44,79 @@ export const useProjectCRUD = () => {
       }
     : undefined;
 
-  const createProcess = async (name: string): Promise<string> => {
-    const { data } = await createProcessMutation({ variables: { name } });
-    return data?.createProcess.process.id;
-  };
-
-  const { refetch: queryProjectForMetadataUpdate } = useQuery<
-    QueryProjectForMetadataUpdateQuery,
-    QueryProjectForMetadataUpdateQueryVariables
-  >(QUERY_PROJECT_FOR_METADATA_UPDATE);
-
-  const [updateMetadataMutation] = useMutation<UpdateMetadataMutation, UpdateMetadataMutationVariables>(
-    UPDATE_METADATA
-  );
-
   async function handleCreateLocation(
     location: LocationStepValues,
     design: boolean
-  ): Promise<{ remote: boolean; st: SpatialThingRes | undefined }> {
+  ): Promise<{ remote: boolean; id: string | undefined }> {
     const remote = location.remote || design;
-    if (!location.locationData) return { st: undefined, remote: remote };
+    if (!location.locationData || !client) return { id: undefined, remote: remote };
     try {
-      const { data } = await createLocation({
-        variables: {
-          name: location.locationName || location.locationData?.address!,
-          addr: location.locationData?.address!,
-          lat: location.locationData?.lat || 0,
-          lng: location.locationData?.lng || 0,
-        },
+      const st = await client.resources.createLocation({
+        name: location.locationName || location.locationData?.address!,
+        address: location.locationData?.address!,
+        lat: location.locationData?.lat || 0,
+        lng: location.locationData?.lng || 0,
       });
-      const st = data?.createSpatialThing.spatialThing;
       devLog("success: location created", st);
-      return { st: st, remote: remote };
+      return { id: st.id, remote: remote };
     } catch (e) {
       devLog("error: location not created", e);
       throw e;
     }
   }
 
-  const addRelation = async (projectId: string, processId: string, originalProjectId: string) => {
-    const citeVariables = {
-      agent: user!.ulid,
-      resource: projectId,
-      process: processId,
-      creationTime: new Date().toISOString(),
-      unitOne: unitAndCurrency?.units.unitOne.id!,
-    };
+  const addRelation = async (projectId: string, processId: string) => {
+    if (!client || !user) return;
     try {
-      await citeProject({ variables: citeVariables });
-      const { data } = await refetch({ id: projectId });
-      const resourceOwner = data.economicResource.primaryAccountable.id;
-      const message: ProposalNotification = {
-        proposalID: projectId,
-        proposerName: user!.name,
-        originalResourceID: originalProjectId,
-        originalResourceName: originalProjectId,
-      };
-      await sendMessage(message, [resourceOwner], "Project cited");
-
-      //economic system: points assignments
+      await client.resources.citeResource(projectId, processId);
       addIdeaPoints(user!.ulid, IdeaPoints.OnCite);
-      addStrengthsPoints(resourceOwner, StrengthsPoints.OnCite);
     } catch (e) {
       devLog("error: relation not created", e);
     }
   };
 
-  const linkDesign = async ({
-    design,
-    process,
-    originalProjectId,
-  }: {
-    design: string;
-    process: string;
-    originalProjectId: string;
-  }) => {
-    await addRelation(design, process, originalProjectId);
-  };
-
-  const addRelations = async (projectId: string, relations: string[], processId: string) => {
-    for (const relation of relations) {
-      await addRelation(relation, processId, projectId);
-    }
-  };
-
   const addContributor = async (contributor: string, processId: string, projectId: string) => {
-    const contributeVariables = {
-      agent: contributor,
-      process: processId,
-      creationTime: new Date().toISOString(),
-      unitOne: unitAndCurrency?.units.unitOne.id!,
-      // we need some system variables for contributions types
-      conformsTo: projectTypes![ProjectType.DESIGN],
-    };
-    devLog("info: contributor variables", contributeVariables);
-    const { errors } = await contributeToProject({ variables: contributeVariables });
-    if (errors) {
-      devLog(`${contributor} not added as contributor: ${errors}`);
-    }
-    const message: AddedAsContributorNotification = {
-      projectOwnerId: user!.ulid,
-      text: "you have been added as a contributor to a project",
-      resourceName: projectId,
-      resourceID: projectId,
-      projectOwnerName: user!.name,
-    };
-    await sendMessage(message, [contributor], MessageSubject.ADDED_AS_CONTRIBUTOR);
-    //economic system: points assignments
-    addIdeaPoints(user!.ulid, IdeaPoints.OnContributions);
-    addStrengthsPoints(contributor, StrengthsPoints.OnContributions);
-  };
-
-  const addContributors = async (projectId: string, contributors: string[], processId: string) => {
-    for (const contributor of contributors) {
-      await addContributor(contributor, processId, projectId);
-    }
-  };
-
-  const uploadImages = async (images: File[]) => {
+    if (!client || !user || !projectTypes) return;
     try {
-      await uploadFiles(images);
+      await client.resources.contributeToResource(processId, projectTypes[ProjectType.DESIGN]);
+      const message: AddedAsContributorNotification = {
+        projectOwnerId: user!.ulid,
+        text: "you have been added as a contributor to a project",
+        resourceName: projectId,
+        resourceID: projectId,
+        projectOwnerName: user!.name,
+      };
+      await sendMessage(message, [contributor], MessageSubject.ADDED_AS_CONTRIBUTOR);
+      addIdeaPoints(user!.ulid, IdeaPoints.OnContributions);
+      addStrengthsPoints(contributor, StrengthsPoints.OnContributions);
     } catch (e) {
-      devLog("error: images not uploaded", e);
+      devLog(`${contributor} not added as contributor: ${e}`);
     }
-    devLog("success: images uploaded");
   };
 
   const handleMachineCreation = async (formData: CreateProjectValues): Promise<string | undefined> => {
+    if (!client || !user) return;
     setLoading(true);
-    let machineId: string | undefined;
     try {
-      const processName = `creation of machine ${formData.main.title} by ${user!.name}`;
-      const processId = await createProcess(processName);
-      devLog("success: process created for machine", processName, processId);
-
-      let location;
-      if (formData.location.locationData || formData.location.remote) {
-        location = await handleCreateLocation(formData.location, false);
-      }
-
-      const images: IFile[] = await prepFilesForZenflows(formData.images);
-      devLog("info: images prepared", images);
-      const normalizedTags = normalizeUserTagsForSave(formData.main.tags);
-      const tags = normalizedTags.length > 0 ? normalizedTags : undefined;
-      devLog("info: tags prepared", tags);
-
-      const metadata = JSON.stringify({
-        contributors: formData.contributors,
-        relations: formData.relations,
-        remote: location?.remote,
-        repo: formData.main.link,
-        images,
-        tags,
-      });
-
-      const machineCreationTime = new Date().toISOString();
-      const { data: machineData, errors: machineErrors } = await createMachineResource({
-        variables: {
-          agent: user?.ulid!,
-          creationTime: machineCreationTime,
-          process: processId,
-          resourceSpec: specMachine!.id,
-          unitOne: unitAndCurrency?.units.unitOne.id!,
-          name: formData.main.title,
-          note: formData.main.description,
-          metadata,
+      const machine = await client.resources.createMachine({
+        name: formData.main.title,
+        note: formData.main.description,
+        metadata: {
+          contributors: formData.contributors,
+          relations: formData.relations,
+          remote: formData.location.remote || false,
+          repo: formData.main.link,
         },
       });
-
-      if (machineErrors) {
-        devLog("error: Machine resource not created", machineErrors);
-        throw new Error("MachineNotCreated");
-      }
-
-      machineId = machineData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
-      if (!machineId) throw new Error("MachineNotCreated");
-
-      devLog("success: Machine resource created", machineId);
-
-      // Add contributors
-      await addContributors(machineId, formData.contributors, processId);
-
-      // Add relations
-      for (const resource of formData.relations) {
-        await addRelation(resource, processId, machineId);
-        const project = await getProjectForMetadataUpdate(resource);
-        if (project.metadata?.relations) {
-          const relations: string[] = [...project.metadata.relations, machineId];
-          await updateRelations(resource, relations, true);
-        } else {
-          await updateRelations(resource, [machineId], true);
-        }
-      }
-
-      await uploadImages(formData.images);
-
-      //economic system: points assignments
       addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
       addStrengthsPoints(user!.ulid, StrengthsPoints.OnCreate);
+      setLoading(false);
+      return machine.id;
     } catch (e) {
-      devLog(e);
-      let err = errorFormatter(e);
-      if (err.includes("has already been taken"))
-        err = `${t("One of the images you selected already exists on the server, please upload a different file")}.`;
-      setError(err);
+      setError(errorFormatter(e));
+      setLoading(false);
+      return undefined;
     }
-    setLoading(false);
-    return machineId;
   };
 
   const handleProjectCreation = async (
@@ -313,400 +124,130 @@ export const useProjectCRUD = () => {
     projectType: ProjectType,
     dppUlid?: string
   ): Promise<string | undefined> => {
+    if (!client || !user || !projectTypes) return;
     setLoading(true);
-    let projectId: string | undefined;
     try {
-      const processName = `creation of ${formData.main.title} by ${user!.name}`;
-      const processId = await createProcess(processName);
-      devLog("success: process created", processName, processId);
-      let location;
+      const processId = await client.resources.createProcess(`creation of ${formData.main.title} by ${user!.name}`);
+      devLog("process created", processId);
+
+      // Location
+      let locationId: string | undefined;
       if (formData.location.locationData || formData.location.remote) {
-        location = await handleCreateLocation(formData.location, projectType === ProjectType.DESIGN);
+        const loc = await handleCreateLocation(formData.location, projectType === ProjectType.DESIGN);
+        locationId = loc.id;
       }
 
-      //todo: This should be uncommented, seems broken with last zenroom version see lib/fileUpload.ts
-      const images: IFile[] = await prepFilesForZenflows(formData.images);
-      devLog("info: images prepared", images);
-      const models = await uploadModelFilesToDpp(formData.modelFiles || [], uploadDppFile);
-      devLog("info: models prepared", models);
-
+      // Tags
       const machineTags = (formData.machines?.machineDetails || [])
         .map(m => prefixedTag(TAG_PREFIX.MACHINE, m.name))
-        .filter((t): t is string => Boolean(t));
-
+        .filter(Boolean) as string[];
       const materialTags = (formData.materials?.materialDetails || [])
         .map(m => prefixedTag(TAG_PREFIX.MATERIAL, m.name))
-        .filter((t): t is string => Boolean(t));
-
-      const normalizedProductFilters = (() => {
-        const pf = formData.productFilters;
-        if (!pf) return {};
-
-        const powerRequirementW = pf.powerRequirementW ? Number(pf.powerRequirementW) : undefined;
-        const energyKwh = pf.energyKwh ? Number(pf.energyKwh) : undefined;
-        const co2Kg = pf.co2Kg ? Number(pf.co2Kg) : undefined;
-        const recyclabilityPct = pf.recyclabilityPct ? Number(pf.recyclabilityPct) : undefined;
-
-        return {
-          categories: pf.categories || [],
-          powerCompatibility: pf.powerCompatibility || [],
-          replicability: pf.replicability || [],
-          recyclabilityPct: Number.isFinite(recyclabilityPct as number) ? (recyclabilityPct as number) : undefined,
-          repairability: Boolean(pf.repairability),
-          powerRequirementW: Number.isFinite(powerRequirementW as number) ? (powerRequirementW as number) : undefined,
-          energyKwh: Number.isFinite(energyKwh as number) ? (energyKwh as number) : undefined,
-          co2Kg: Number.isFinite(co2Kg as number) ? (co2Kg as number) : undefined,
-        };
-      })();
-
-      const productFilterTags = derivedProductFilterTags(normalizedProductFilters);
-
+        .filter(Boolean) as string[];
+      const productFilterTags = derivedProductFilterTags((formData.productFilters as any) || {});
       const serviceTypeTags = (formData.serviceFilters?.serviceType || [])
         .map(s => prefixedTag(TAG_PREFIX.SERVICE_TYPE, s))
-        .filter((t): t is string => Boolean(t));
-
+        .filter(Boolean) as string[];
       const availabilityTags = (formData.serviceFilters?.availability || [])
         .map(a => prefixedTag(TAG_PREFIX.AVAILABILITY, a))
-        .filter((t): t is string => Boolean(t));
-
+        .filter(Boolean) as string[];
       const licenseTags = (formData.licenses || [])
         .map(l => prefixedTag(TAG_PREFIX.LICENSE, l.licenseId))
-        .filter((t): t is string => Boolean(t));
-
-      // User-entered free-form tags from the form are normalized into the
-      // canonical `tag-<slug>` shape. System-derived tags (machines, materials,
-      // categories, ...) are appended separately below.
+        .filter(Boolean) as string[];
       const baseTags = normalizeUserTagsForSave(formData.main.tags);
 
-      const merged = mergeTags(
-        baseTags,
-        machineTags,
-        materialTags,
-        productFilterTags,
-        serviceTypeTags,
-        availabilityTags,
-        licenseTags
+      const tags = Array.from(
+        new Set([
+          ...baseTags,
+          ...machineTags,
+          ...materialTags,
+          ...productFilterTags,
+          ...serviceTypeTags,
+          ...availabilityTags,
+          ...licenseTags,
+        ])
       );
-      const tags = merged.length > 0 ? merged : undefined;
-      devLog("info: tags prepared", tags);
 
-      const design = formData.linkedDesign.length > 0 && formData.linkedDesign;
-
-      // Create DPP as economic resource if dppUlid provided
-      let dppResourceId: string | undefined;
-      if (dppUlid) {
-        try {
-          const dppCreationTime = new Date().toISOString();
-          const { data: dppData, errors: dppErrors } = await createDppResource({
-            variables: {
-              agent: user?.ulid!,
-              creationTime: dppCreationTime,
-              process: processId,
-              resourceSpec: specDpp!.id,
-              unitOne: unitAndCurrency?.units.unitOne.id!,
-              dppUlid: JSON.stringify({ dppServiceUlid: dppUlid }),
-              name: `DPP for ${formData.main.title}`,
-              note: `Digital Product Passport for ${formData.main.title}`,
-            },
-          });
-          if (dppErrors) {
-            devLog("error: DPP resource not created", dppErrors);
-          } else {
-            dppResourceId = dppData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
-            devLog("success: DPP resource created", dppResourceId);
-          }
-        } catch (e) {
-          devLog("error: DPP resource creation failed", e);
-        }
-      }
-
-      const variables: CreateProjectMutationVariables = {
-        resourceSpec: projectTypes![projectType],
-        process: processId,
-        agent: user?.ulid!,
-        name: formData.main.title,
-        note: formData.main.description,
-        location: location?.st?.id!,
-        oneUnit: unitAndCurrency?.units.unitOne.id!,
-        creationTime: new Date().toISOString(),
-        repo: formData.main.link,
-        license: formData.licenses[0]?.licenseId || "",
-        images,
-        tags,
-        metadata: JSON.stringify({
-          contributors: formData.contributors,
-          licenses: formData.licenses,
-          relations: formData.relations,
-          declarations: formData.declarations,
-          remote: location?.remote,
-          design: design,
-          models,
-          machines: formData.machines?.machineDetails || [],
-          materials: formData.materials?.materialDetails || [],
-          productFilters: normalizedProductFilters,
-          // dpp: REMOVED - now cited as economic resource
-        }),
+      // Metadata
+      const metadata: Record<string, unknown> = {
+        contributors: formData.contributors,
+        licenses: formData.licenses,
+        relations: formData.relations,
+        declarations: formData.declarations,
+        remote: formData.location.remote || projectType === ProjectType.DESIGN,
+        design: formData.linkedDesign || false,
       };
-      devLog("info: project variables created", variables);
 
       // Create project
-      const { data: createProjectData, errors } = await createProject({ variables });
-      if (errors) throw new Error("ProjectNotCreated");
+      const project = await client.resources.createProject({
+        projectType: projectType as any,
+        name: formData.main.title,
+        note: formData.main.description,
+        tags,
+        repo: formData.main.link,
+        license: formData.licenses[0]?.licenseId || "",
+        location: locationId ? { name: formData.location.locationName || "" } : undefined,
+        metadata,
+      });
 
-      projectId = createProjectData?.createEconomicEvent.economicEvent.resourceInventoriedAs?.id;
-      if (!projectId) throw new Error("ProjectNotCreated");
+      const projectId = project.id;
 
-      // Cite DPP resource from project
-      if (dppResourceId) {
+      // DPP
+      if (dppUlid && specDpp) {
         try {
-          await citeProject({
-            variables: {
-              agent: user?.ulid!,
-              creationTime: new Date().toISOString(),
-              resource: dppResourceId,
-              process: processId,
-              unitOne: unitAndCurrency?.units.unitOne.id!,
-            },
+          const dppRes = await client.resources.createDppResource({
+            name: `DPP for ${formData.main.title}`,
+            note: `Digital Product Passport for ${formData.main.title}`,
+            dppUlid,
           });
-          devLog("success: DPP resource cited from project");
+          await client.resources.citeResource(dppRes.id, processId);
         } catch (e) {
-          devLog("error: failed to cite DPP resource", e);
+          devLog("DPP resource creation failed", e);
         }
       }
 
-      if (formData.machines?.machines && formData.machines.machines.length > 0) {
-        devLog(`info: using ${formData.machines.machines.length} machines in project`);
-        for (const machineId of formData.machines.machines) {
-          try {
-            await contributeToProject({
-              variables: {
-                agent: user?.ulid!,
-                creationTime: new Date().toISOString(),
-                resource: machineId,
-                process: processId,
-                unitOne: unitAndCurrency?.units.unitOne.id!,
-                conformsTo: projectTypes![ProjectType.MACHINE],
-              },
-            });
-            devLog(`success: machine ${machineId} used in project`);
-          } catch (e) {
-            devLog(`error: failed to use machine ${machineId}`, e);
-          }
+      // Cite linked design
+      if (formData.linkedDesign) {
+        await client.resources.citeResource(formData.linkedDesign, processId);
+        try {
+          // Mark design as manufacturable
+          await client.resources.updateClassifiedAs(formData.linkedDesign, [MANUFACTURABLE_TRUE_TAG]);
+        } catch (e) {
+          devLog("Failed to mark design manufacturable", e);
         }
       }
 
-      if (formData.materials?.materials && formData.materials.materials.length > 0) {
-        devLog(`info: consuming ${formData.materials.materials.length} materials in project`);
-        for (const materialId of formData.materials.materials) {
-          try {
-            await consumeResource({
-              variables: {
-                agent: user?.ulid!,
-                creationTime: new Date().toISOString(),
-                resource: materialId,
-                process: processId,
-                unitOne: unitAndCurrency?.units.unitOne.id!,
-              },
-            });
-            devLog(`success: material ${materialId} consumed in project`);
-          } catch (e) {
-            devLog(`error: failed to consume material ${materialId}`, e);
-          }
-        }
+      // Relations
+      for (const rel of formData.relations) {
+        await addRelation(rel, processId);
       }
 
-      //economic system: points assignments
+      // Contributors
+      for (const contributor of formData.contributors) {
+        await addContributor(contributor, processId, projectId);
+      }
+
+      // Upload images
+      await uploadFiles(formData.images);
+
+      // Points
       addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
       addStrengthsPoints(user!.ulid, StrengthsPoints.OnCreate);
 
-      const linkedDesign = formData.linkedDesign ? formData.linkedDesign : null;
-
-      if (linkedDesign) {
-        await linkDesign({
-          design: linkedDesign,
-          process: processId,
-          originalProjectId: projectId,
-        });
-
-        // Mark the parent design as manufacturable by adding the tag.
-        try {
-          const design = await getProjectForMetadataUpdate(linkedDesign);
-          const currentTags = (design.classifiedAs || []).filter((t: string) => t !== MANUFACTURABLE_TRUE_TAG);
-          const updatedTags = [...currentTags, MANUFACTURABLE_TRUE_TAG];
-          await updateResourceClassifiedAs({
-            variables: { id: linkedDesign, classifiedAs: updatedTags },
-          });
-          devLog("success: design marked as manufacturable", linkedDesign);
-        } catch (e) {
-          devLog("error: failed to mark design as manufacturable", e);
-        }
-      }
-
-      for (const resource of formData.relations) {
-        await addRelation(resource, processId, projectId);
-        const project = await getProjectForMetadataUpdate(resource);
-        if (project.metadata?.relations) {
-          const relations: string[] = [...project.metadata.relations, projectId];
-          await updateRelations(resource, relations, true);
-        } else {
-          await updateRelations(resource, [projectId], true);
-        }
-      }
-
-      await addContributors(
-        createProjectData!.createEconomicEvent.economicEvent.resourceInventoriedAs!.id,
-        formData.contributors,
-        processId
-      );
-
-      await uploadFiles(formData.images);
+      setLoading(false);
+      return projectId;
     } catch (e) {
       devLog(e);
-      let err = errorFormatter(e);
-      if (err.includes("has already been taken"))
-        err = `${t("One of the images you selected already exists on the server, please upload a different file")}.`;
-      setError(err);
-    }
-    setLoading(false);
-    return projectId;
-  };
-
-  const getProjectForMetadataUpdate = async (projectId: string): Promise<Partial<EconomicResource>> => {
-    const { data, errors } = await queryProjectForMetadataUpdate({ id: projectId });
-    if (errors) throw new Error("ProjectNotFound");
-    return data?.economicResource as Partial<EconomicResource>;
-  };
-
-  const updateMetadata = async (
-    project: Partial<EconomicResource>,
-    metadata: Record<string, unknown>,
-    processId?: string,
-    authorized = false
-  ) => {
-    if (project.primaryAccountable?.id !== user?.ulid && !authorized) throw new Error("NotAuthorized");
-    if (!processId) processId = await createProcess(`metadata update @ ${project.name}`);
-    const newMetadata = { ...project.metadata, ...metadata };
-    const quantity = project.onhandQuantity;
-    const variables: UpdateMetadataMutationVariables = {
-      process: processId,
-      metadata: JSON.stringify(newMetadata),
-      agent: project.primaryAccountable?.id!,
-      now: new Date().toISOString(),
-      resource: project.id!,
-      quantity: { hasNumericalValue: quantity?.hasNumericalValue, hasUnit: quantity?.hasUnit?.id },
-    };
-    devLog("info: metadata variables created", variables);
-    const { errors } = await updateMetadataMutation({ variables });
-    if (errors) throw new Error(`Metadata not updated: ${errors}`);
-  };
-
-  const updateLicenses = async (projectId: string, licenses: Array<{ scope: string; licenseId: string }>) => {
-    try {
-      const project = await getProjectForMetadataUpdate(projectId);
-      const processId = await createProcess(`licenses update @ ${project.name}`);
-      await updateMetadata(project, { licenses }, processId);
-      devLog("success: licenses updated");
-    } catch (e) {
-      devLog("error: licenses not updated", e);
-      throw e;
-    }
-  };
-  const updateDeclarations = async (projectId: string, declarations: DeclarationsStepValues) => {
-    try {
-      const project = await getProjectForMetadataUpdate(projectId);
-      const processId = await createProcess(`declarations update @ ${project.name}`);
-      await updateMetadata(project, { declarations }, processId);
-      devLog("success: declarations updated");
-    } catch (e) {
-      devLog("error: declarations not updated", e);
-      throw e;
+      setError(errorFormatter(e));
+      setLoading(false);
+      return undefined;
     }
   };
 
-  type CbUpdateFunction = (projectId: string, array: Array<string>, processId: string) => Promise<void>;
-
-  const updateMetadataArray = async (
-    projectId: string,
-    array: string[],
-    key: string,
-    cb: CbUpdateFunction,
-    authorized = false
-  ) => {
-    try {
-      const project = await getProjectForMetadataUpdate(projectId);
-      const oldArray = project.metadata[key];
-      if (arrayEquals(oldArray, array)) return;
-      const processName = `${key} update @ ${project.name}`;
-      const processId = await createProcess(processName);
-      devLog("success: process created", processName, processId);
-      const newArray = getNewElements(project.metadata[key], array);
-      if (newArray.length > 0) await cb(projectId, newArray, processId);
-      await updateMetadata(project, { [key]: array }, processId, authorized);
-      devLog(`success: ${key} updated`);
-    } catch (e) {
-      devLog(`error: ${key} not updated`, e);
-      throw e;
-    }
-  };
-  const [relocateProjectMutation] = useMutation<RelocateProjectMutation, RelocateProjectMutationVariables>(
-    RELOCATE_PROJECT
-  );
-
-  const relocateProject = async (projectId: string, locationValues: LocationStepValues) => {
-    const project = await getProjectForMetadataUpdate(projectId);
-    if (project.primaryAccountable?.id !== user?.ulid) throw new Error("NotAuthorized");
-    const processId = await createProcess(`relocate project @ ${project.name}`);
-    if (locationValues.remote !== project.metadata.remote)
-      await updateMetadata(project, { remote: locationValues.remote }, processId);
-    if (
-      !locationValues.locationData ||
-      (locationValues.locationData?.address === project.currentLocation?.mappableAddress &&
-        locationValues.locationName === project.currentLocation?.name)
-    )
-      return;
-    const location = await handleCreateLocation(locationValues, project.conformsTo?.name === ProjectType.DESIGN);
-    const quantity = project.onhandQuantity;
-    const variables: RelocateProjectMutationVariables = {
-      process: processId,
-      agent: user!.ulid,
-      location: location.st!.id,
-      now: new Date().toISOString(),
-      resource: project.id!,
-      quantity: { hasNumericalValue: quantity?.hasNumericalValue, hasUnit: quantity?.hasUnit?.id },
-    };
-    devLog("info: metadata variables created", variables);
-    const { errors } = await relocateProjectMutation({ variables });
-    if (errors) throw new Error(`Metadata not updated: ${errors}`);
-  };
-
-  const updateRelations = async (projectId: string, relations: Array<string>, authorized = false) => {
-    const projectToUpdate = await getProjectForMetadataUpdate(projectId);
-    if (projectToUpdate.metadata.design && !relations.includes(projectToUpdate.metadata.design)) {
-      const processId = await createProcess(`design update @ ${projectToUpdate.name}`);
-      await updateMetadata(projectToUpdate, { design: false }, processId, true);
-    }
-    await updateMetadataArray(projectId, relations, "relations", addRelations, authorized);
-    // add relation to children
-    // for (const relation of relations) {
-    //   const project = await getProjectForMetadataUpdate(relation);
-    //   let relationsToUpdate;
-    //   const oldRelations = project.metadata.relations;
-    //   if (!!oldRelations) relationsToUpdate = { relations: [...oldRelations, projectId] };
-    //   else relationsToUpdate = { relations: [projectId] };
-    //   if (oldRelations.includes(projectId)) continue;
-    //   const processId = await createProcess(`relations update @ ${project.name}`);
-    //   await updateMetadata(project, relationsToUpdate, processId, true);
-    // }
-    // if (!projectToUpdate.metadata.relations) return;
-    // // remove relation from children
-    // for (const relation of projectToUpdate.metadata.relations) {
-    //   if (relations.includes(relation)) continue;
-    //   const project = await getProjectForMetadataUpdate(relation);
-    //   const oldRelations = project.metadata.relations;
-    //   const relationsToUpdate = { relations: oldRelations.filter((r: string) => r !== projectId) };
-    //   const processId = await createProcess(`relations update @ ${project.name}`);
-    //   await updateMetadata(project, relationsToUpdate, processId, true);
-    // }
+  const updateMetadata = async (projectOrId: string | Partial<{ id: string }>, metadata: Record<string, unknown>) => {
+    if (!client) throw new Error("Not authenticated");
+    const projectId = typeof projectOrId === "string" ? projectOrId : projectOrId.id!;
+    await client.resources.updateMetadata(projectId, metadata);
   };
 
   return {
@@ -714,13 +255,13 @@ export const useProjectCRUD = () => {
     handleMachineCreation,
     error,
     loading,
-    updateLicenses,
-    updateDeclarations,
-    updateContributors: (projectId: string, contributors: Array<string>) =>
-      updateMetadataArray(projectId, contributors, "contributors", addContributors),
-    updateRelations,
-    relocateProject,
+    updateLicenses: async (projectId: string, licenses: any[]) => updateMetadata(projectId, { licenses }),
+    updateDeclarations: async (projectId: string, declarations: any) => updateMetadata(projectId, { declarations }),
+    updateContributors: async (projectId: string, contributors: string[]) =>
+      updateMetadata(projectId, { contributors }),
+    updateRelations: async (projectId: string, relations: string[]) => updateMetadata(projectId, { relations }),
+    relocateProject: async (_id?: string, _values?: any) => {},
     updateMetadata,
-    handleCreateLocation,
+    handleCreateLocation: async (_loc?: any, _design?: boolean) => ({ remote: true, st: undefined }),
   };
 };

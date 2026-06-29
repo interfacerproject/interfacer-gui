@@ -86,7 +86,7 @@ export default function ProductFiltersStep() {
       <Stack vertical spacing="tight">
         <PHelp helpText={t("Select one or more categories for your product")} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {PRODUCT_CATEGORY_OPTIONS.map(option => (
+          {PRODUCT_CATEGORY_OPTIONS.map((option: string) => (
             <label key={option} className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -108,7 +108,7 @@ export default function ProductFiltersStep() {
       <Stack vertical spacing="tight">
         <PHelp helpText={t("Select compatible power sources (if applicable)")} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {POWER_COMPATIBILITY_OPTIONS.map(option => (
+          {POWER_COMPATIBILITY_OPTIONS.map((option: string) => (
             <label key={option} className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -139,7 +139,7 @@ export default function ProductFiltersStep() {
       <Stack vertical spacing="tight">
         <PHelp helpText={t("Select replicability level(s)")} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {REPLICABILITY_OPTIONS.map(option => (
+          {REPLICABILITY_OPTIONS.map((option: string) => (
             <label key={option} className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"

@@ -24,7 +24,6 @@
     "types:generate": "graphql-codegen"
   },
   "dependencies": {
-    "@apollo/client": "^3.14.0",
     "@babel/core": "^7.28.4",
     "@bbtgnn/polaris-interfacer": "^0.1.0",
     "@bbtgnn/polaris-interfacer-tokens": "^6.3.0",
@@ -36,6 +35,7 @@
     "@graphql-codegen/typescript-operations": "^2.5.13",
     "@heroicons/react": "^1.0.6",
     "@hookform/resolvers": "^2.9.11",
+    "@interfacer/client": "link:../interfacer-client",
     "@shopify/polaris-icons": "^6.16.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/typography": "^0.5.19",
@@ -59,7 +59,6 @@
     "dexie-react-hooks": "^1.1.7",
     "eslint-plugin-i18next": "6.0.0-6",
     "focus-trap-react": "^10.3.1",
-    "graphql": "^15.10.1",
     "husky": "^8.0.3",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",

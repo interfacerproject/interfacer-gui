@@ -22,11 +22,8 @@ import { useRouter } from "next/router";
 import { ReactElement, useEffect, useState } from "react";
 import * as yup from "yup";
 import { useAuth } from "../hooks/useAuth";
+import { clearInstanceVariablesCache } from "@interfacer/client";
 import type { NextPageWithLayout } from "./_app";
-
-// Login functions
-//@ts-ignore
-import keypairoomClientRecreateKeys from "zenflows-crypto/src/keypairoomClientRecreateKeys.zen";
 
 // Layout
 import Layout from "../components/layout/Layout";
@@ -74,7 +71,7 @@ export async function getStaticProps({ locale }: any) {
 
 const Sign_in: NextPageWithLayout = () => {
   const { t } = useTranslation("signInProps");
-  const { register, login } = useAuth();
+  const { register, login, client } = useAuth();
   const { getItem, setItem } = useStorage();
   const router = useRouter();
 
@@ -171,28 +168,24 @@ const Sign_in: NextPageWithLayout = () => {
   //
 
   async function doLogin() {
-    const zencode_exec = (await import("zenroom")).zencode_exec;
-    // Requesting data
-    const zenData = `
-    {
-        "seed": "${signInData.seed}",
-        "seedServerSideShard.HMAC": "${signInData.pdfk}"
-    }`;
-    const { result } = await zencode_exec(keypairoomClientRecreateKeys, { data: zenData });
-    const res = JSON.parse(result);
+    if (!client) return;
+    clearInstanceVariablesCache();
 
-    // Setting localstorage
-    setItem("eddsaPrivateKey", res.keyring.eddsa);
-    setItem("ethereumPrivateKey", res.keyring.ethereum);
-    setItem("reflowPrivateKey", res.keyring.reflow);
-    setItem("bitcoinPrivateKey", res.keyring.bitcoin);
-    setItem("ecdhPrivateKey", res.keyring.ecdh);
-    setItem("seed", res.seed);
-    setItem("ecdhPublicKey", res.ecdh_public_key);
-    setItem("bitcoinPublicKey", res.bitcoin_public_key);
-    setItem("eddsaPublicKey", res.eddsa_public_key);
-    setItem("reflowPublicKey", res.reflow_public_key);
-    setItem("ethereumAddress", res.ethereum_address);
+    // Recreate keys from seed + HMAC via SDK
+    await client.auth.recreateKeys(signInData.seed, signInData.pdfk);
+
+    // Sync SDK store to localStorage
+    setItem("eddsaPrivateKey", client.store.getItem("eddsaPrivateKey") || "");
+    setItem("ethereumPrivateKey", client.store.getItem("ethereumPrivateKey") || "");
+    setItem("reflowPrivateKey", client.store.getItem("reflowPrivateKey") || "");
+    setItem("bitcoinPrivateKey", client.store.getItem("bitcoinPrivateKey") || "");
+    setItem("ecdhPrivateKey", client.store.getItem("ecdhPrivateKey") || "");
+    setItem("seed", client.store.getItem("seed") || "");
+    setItem("ecdhPublicKey", client.store.getItem("ecdhPublicKey") || "");
+    setItem("bitcoinPublicKey", client.store.getItem("bitcoinPublicKey") || "");
+    setItem("eddsaPublicKey", client.store.getItem("eddsaPublicKey") || "");
+    setItem("reflowPublicKey", client.store.getItem("reflowPublicKey") || "");
+    setItem("ethereumAddress", client.store.getItem("ethereumAddress") || "");
 
     // Logging in
     await login({ email: signInData.email });

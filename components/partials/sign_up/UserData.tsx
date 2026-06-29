@@ -84,7 +84,7 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
         query: PERSON_EXISTS,
         variables,
       });
-      return !data.personExists;
+      return !data!.personExists;
     } catch (e) {
       console.warn("userExistsTest validation GQL error: ↓");
       console.warn(e);

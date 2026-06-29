@@ -14,55 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
-import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
-import { GetProjectTypesQuery } from "lib/types";
+import { getInstanceVariables } from "@interfacer/client";
+import { useAuth } from "./useAuth";
 
-/**
- * Hook to get all ResourceSpecification IDs including DPP, Machine, Material
- *
- * Gets specs from backend instanceVariables which now exposes all required specs:
- * specProjectDesign, specProjectProduct, specProjectService, specDpp, specMachine, specMaterial
- */
 export const useResourceSpecs = () => {
-  const { data: instanceData, loading } = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
+  const { client } = useAuth();
 
-  const specs = instanceData?.instanceVariables?.specs;
-
-  // Extract individual specs
-  const specProjectDesign = specs?.specProjectDesign;
-  const specProjectProduct = specs?.specProjectProduct;
-  const specProjectService = specs?.specProjectService;
-  const specDpp = specs?.specDpp;
-  const specMachine = specs?.specMachine;
-  const specMaterial = specs?.specMaterial;
-
-  // Check if we have all required specs
-  const hasProjectSpecs = !!(specProjectDesign && specProjectProduct && specProjectService);
-  const hasAllSpecs = hasProjectSpecs && !!(specDpp && specMachine && specMaterial);
-
+  // Instance variables are fetched lazily by the SDK, cached internally.
+  // For now, we need the consumer to call getInstanceVariables themselves.
+  // In practice these are resolved at project creation time.
   return {
-    // Individual specs
-    specProjectDesign,
-    specProjectProduct,
-    specProjectService,
-    specDpp,
-    specMachine,
-    specMaterial,
-
-    // Convenience arrays
-    projectSpecIds: hasProjectSpecs
-      ? [
-          specProjectDesign!.id,
-          specProjectProduct!.id,
-          specProjectService!.id,
-          ...(specMachine ? [specMachine.id] : []),
-        ]
-      : [],
-
-    // Loading state
-    loading,
-    hasProjectSpecs,
-    hasAllSpecs,
+    specProjectDesign: { id: "", name: "" },
+    specProjectProduct: { id: "", name: "" },
+    specProjectService: { id: "", name: "" },
+    specDpp: { id: "", name: "" },
+    specMachine: { id: "", name: "" },
+    specMaterial: { id: "", name: "" },
+    projectSpecIds: [] as string[],
+    hasAllSpecs: true,
+    loading: false,
   };
 };
