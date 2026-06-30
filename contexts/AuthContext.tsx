@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { clearInstanceVariablesCache, InterfacerClient, createConfig } from "@interfacer/client";
+import { clearInstanceVariablesCache, InterfacerClient, createConfig } from "@dyne/interfacer-client";
 import useStorage from "hooks/useStorage";
 import { PersonWithFileEssential } from "lib/types/extensions";
 import { useRouter } from "next/router";

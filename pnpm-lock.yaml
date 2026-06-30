@@ -44,9 +44,6 @@ importers:
       '@hookform/resolvers':
         specifier: ^2.9.11
         version: 2.9.11(react-hook-form@7.66.1(react@18.2.0))
-      '@interfacer/client':
-        specifier: link:../interfacer-client
-        version: link:../interfacer-client
       '@shopify/polaris-icons':
         specifier: ^6.16.0
         version: 6.16.0

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useAuth } from "./useAuth";
-import { signGraphQLRequest, signDidRequest } from "@interfacer/client";
+import { signGraphQLRequest, signDidRequest } from "@dyne/interfacer-client";
 
 const useSignedPost = (idInHeader?: boolean) => {
   const { user, client } = useAuth();

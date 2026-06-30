@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * File upload utilities — delegates to @interfacer/client SDK.
+ * File upload utilities — delegates to @dyne/interfacer-client SDK.
  */
-export { prepFilesForZenflows, prepFileForZenflows, formatImageSrc } from "@interfacer/client";
+export { prepFilesForZenflows, prepFileForZenflows, formatImageSrc } from "@dyne/interfacer-client";
 
 export interface IFile {
   name: string;

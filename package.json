@@ -36,7 +36,6 @@
     "@graphql-codegen/typescript-operations": "^2.5.13",
     "@heroicons/react": "^1.0.6",
     "@hookform/resolvers": "^2.9.11",
-    "@interfacer/client": "link:../interfacer-client",
     "@shopify/polaris-icons": "^6.16.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/typography": "^0.5.19",

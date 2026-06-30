@@ -1,5 +1,5 @@
 /**
- * DPP API client — delegates to @interfacer/client SDK.
+ * DPP API client — delegates to @dyne/interfacer-client SDK.
  */
 import { useAuth } from "hooks/useAuth";
 

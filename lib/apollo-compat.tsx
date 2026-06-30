@@ -2,7 +2,7 @@
  * Apollo Client compatibility shim.
  *
  * Provides drop-in replacements for Apollo's useQuery, useMutation, gql
- * using the @interfacer/client SDK.
+ * using the @dyne/interfacer-client SDK.
  *
  * Aliased via next.config.js webpack config so existing imports
  * from "@apollo/client" are redirected here.

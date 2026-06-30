@@ -1,5 +1,5 @@
 /**
- * Tagging utilities — re-exports from @interfacer/client SDK.
+ * Tagging utilities — re-exports from @dyne/interfacer-client SDK.
  * Kept for backward compatibility with existing imports.
  */
 export {
@@ -29,7 +29,7 @@ export {
   POWER_REQUIREMENT_THRESHOLDS_W,
   ENERGY_THRESHOLDS_KWH,
   CO2_THRESHOLDS_KG,
-} from "@interfacer/client";
+} from "@dyne/interfacer-client";
 
 export interface ProductFilterMetadata {
   categories?: string[];

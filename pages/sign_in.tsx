@@ -22,7 +22,7 @@ import { useRouter } from "next/router";
 import { ReactElement, useEffect, useState } from "react";
 import * as yup from "yup";
 import { useAuth } from "../hooks/useAuth";
-import { clearInstanceVariablesCache } from "@interfacer/client";
+import { clearInstanceVariablesCache } from "@dyne/interfacer-client";
 import type { NextPageWithLayout } from "./_app";
 
 // Layout

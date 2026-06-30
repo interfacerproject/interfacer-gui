@@ -1,7 +1,7 @@
 /**
- * Apollo Client replacement — delegates to @interfacer/client SDK.
+ * Apollo Client replacement — delegates to @dyne/interfacer-client SDK.
  */
-import { GraphQLClient, createMemoryStorage } from "@interfacer/client";
+import { GraphQLClient, createMemoryStorage } from "@dyne/interfacer-client";
 
 let _client: GraphQLClient | null = null;
 
