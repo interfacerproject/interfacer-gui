@@ -20,6 +20,9 @@ importers:
       '@carbon/icons-react':
         specifier: ^11.68.0
         version: 11.69.0(react@18.2.0)
+      '@dyne/interfacer-client':
+        specifier: ^0.1.0
+        version: 0.1.0(zenroom@5.26.1)
       '@fontsource/ibm-plex-sans':
         specifier: ^5.2.8
         version: 5.2.8
@@ -693,6 +696,11 @@ packages:
     engines: {node: ^14 || ^16 || >=18}
     peerDependencies:
       postcss-selector-parser: ^6.0.10
+
+  '@dyne/interfacer-client@0.1.0':
+    resolution: {integrity: sha512-B2mIPdbDYIXzJbzjK41XviM2XDNefdYiEBGtPtMo4FDvIeg9yU4uxeKOuIODCraxJmTFn99MERLJg/MXRahvXA==}
+    peerDependencies:
+      zenroom: ^4.0.0
 
   '@emotion/babel-plugin@11.13.5':
     resolution: {integrity: sha512-pxHCpT2ex+0q+HH91/zsdHkw/lXd468DIN2zvfvLtPKLLMo6gQj7oLObq8PhkrxOZb/gGCq03S3Z7PDhS8pduQ==}
@@ -5827,6 +5835,11 @@ snapshots:
   '@csstools/selector-specificity@2.2.0(postcss-selector-parser@6.1.2)':
     dependencies:
       postcss-selector-parser: 6.1.2
+
+  '@dyne/interfacer-client@0.1.0(zenroom@5.26.1)':
+    dependencies:
+      base64url: 3.0.1
+      zenroom: 5.26.1
 
   '@emotion/babel-plugin@11.13.5':
     dependencies:
