@@ -15,23 +15,74 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { getInstanceVariables } from "@dyne/interfacer-client";
+import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
 
+// Instance variables spec info shape (matches SDK's getInstanceVariables return type)
+interface SpecInfo {
+  id: string;
+  name: string;
+}
+interface InstanceVariables {
+  projectDesign: SpecInfo;
+  projectProduct: SpecInfo;
+  projectService: SpecInfo;
+  dpp?: SpecInfo;
+  machine?: SpecInfo;
+  material?: SpecInfo;
+  currency: SpecInfo;
+  unitOne: string;
+}
+
+/**
+ * Fetch resource specification IDs from the Zenflows instance.
+ *
+ * Before SDK migration, this used Apollo's useQuery directly.
+ * Now it calls the SDK's getInstanceVariables() which queries
+ * the Zenflows GraphQL endpoint and caches the result.
+ *
+ * Returns stable empty values initially, then populates once
+ * the data arrives from the server.
+ */
 export const useResourceSpecs = () => {
   const { client } = useAuth();
+  const [vars, setVars] = useState<InstanceVariables | null>(null);
 
-  // Instance variables are fetched lazily by the SDK, cached internally.
-  // For now, we need the consumer to call getInstanceVariables themselves.
-  // In practice these are resolved at project creation time.
+  useEffect(() => {
+    if (!client) return;
+    getInstanceVariables(client.graphql)
+      .then(setVars)
+      .catch(() => setVars(null));
+  }, [client]);
+
+  const specProjectDesign = vars?.projectDesign ?? { id: "", name: "" };
+  const specProjectProduct = vars?.projectProduct ?? { id: "", name: "" };
+  const specProjectService = vars?.projectService ?? { id: "", name: "" };
+  const specDpp = vars?.dpp ?? { id: "", name: "" };
+  const specMachine = vars?.machine ?? { id: "", name: "" };
+  const specMaterial = vars?.material ?? { id: "", name: "" };
+
+  const hasAllSpecs = !!(
+    specProjectDesign.id &&
+    specProjectProduct.id &&
+    specProjectService.id &&
+    specDpp.id &&
+    specMachine.id
+  );
+
+  const projectSpecIds = hasAllSpecs
+    ? [specProjectDesign.id, specProjectProduct.id, specProjectService.id, specMachine.id]
+    : [];
+
   return {
-    specProjectDesign: { id: "", name: "" },
-    specProjectProduct: { id: "", name: "" },
-    specProjectService: { id: "", name: "" },
-    specDpp: { id: "", name: "" },
-    specMachine: { id: "", name: "" },
-    specMaterial: { id: "", name: "" },
-    projectSpecIds: [] as string[],
-    hasAllSpecs: true,
-    loading: false,
+    specProjectDesign,
+    specProjectProduct,
+    specProjectService,
+    specDpp,
+    specMachine,
+    specMaterial,
+    projectSpecIds,
+    hasAllSpecs,
+    loading: !vars,
   };
 };
