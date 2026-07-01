@@ -14,55 +14,75 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
-import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
-import { GetProjectTypesQuery } from "lib/types";
+import { getInstanceVariables } from "@dyne/interfacer-client";
+import { useEffect, useState } from "react";
+import { useAuth } from "./useAuth";
+
+// Instance variables spec info shape (matches SDK's getInstanceVariables return type)
+interface SpecInfo {
+  id: string;
+  name: string;
+}
+interface InstanceVariables {
+  projectDesign: SpecInfo;
+  projectProduct: SpecInfo;
+  projectService: SpecInfo;
+  dpp?: SpecInfo;
+  machine?: SpecInfo;
+  material?: SpecInfo;
+  currency: SpecInfo;
+  unitOne: string;
+}
 
 /**
- * Hook to get all ResourceSpecification IDs including DPP, Machine, Material
+ * Fetch resource specification IDs from the Zenflows instance.
  *
- * Gets specs from backend instanceVariables which now exposes all required specs:
- * specProjectDesign, specProjectProduct, specProjectService, specDpp, specMachine, specMaterial
+ * Before SDK migration, this used Apollo's useQuery directly.
+ * Now it calls the SDK's getInstanceVariables() which queries
+ * the Zenflows GraphQL endpoint and caches the result.
+ *
+ * Returns stable empty values initially, then populates once
+ * the data arrives from the server.
  */
 export const useResourceSpecs = () => {
-  const { data: instanceData, loading } = useQuery<GetProjectTypesQuery>(QUERY_PROJECT_TYPES);
+  const { client } = useAuth();
+  const [vars, setVars] = useState<InstanceVariables | null>(null);
 
-  const specs = instanceData?.instanceVariables?.specs;
+  useEffect(() => {
+    if (!client) return;
+    getInstanceVariables(client.graphql)
+      .then(setVars)
+      .catch(() => setVars(null));
+  }, [client]);
 
-  // Extract individual specs
-  const specProjectDesign = specs?.specProjectDesign;
-  const specProjectProduct = specs?.specProjectProduct;
-  const specProjectService = specs?.specProjectService;
-  const specDpp = specs?.specDpp;
-  const specMachine = specs?.specMachine;
-  const specMaterial = specs?.specMaterial;
+  const specProjectDesign = vars?.projectDesign ?? { id: "", name: "" };
+  const specProjectProduct = vars?.projectProduct ?? { id: "", name: "" };
+  const specProjectService = vars?.projectService ?? { id: "", name: "" };
+  const specDpp = vars?.dpp ?? { id: "", name: "" };
+  const specMachine = vars?.machine ?? { id: "", name: "" };
+  const specMaterial = vars?.material ?? { id: "", name: "" };
 
-  // Check if we have all required specs
-  const hasProjectSpecs = !!(specProjectDesign && specProjectProduct && specProjectService);
-  const hasAllSpecs = hasProjectSpecs && !!(specDpp && specMachine && specMaterial);
+  const hasAllSpecs = !!(
+    specProjectDesign.id &&
+    specProjectProduct.id &&
+    specProjectService.id &&
+    specDpp.id &&
+    specMachine.id
+  );
+
+  const projectSpecIds = hasAllSpecs
+    ? [specProjectDesign.id, specProjectProduct.id, specProjectService.id, specMachine.id]
+    : [];
 
   return {
-    // Individual specs
     specProjectDesign,
     specProjectProduct,
     specProjectService,
     specDpp,
     specMachine,
     specMaterial,
-
-    // Convenience arrays
-    projectSpecIds: hasProjectSpecs
-      ? [
-          specProjectDesign!.id,
-          specProjectProduct!.id,
-          specProjectService!.id,
-          ...(specMachine ? [specMachine.id] : []),
-        ]
-      : [],
-
-    // Loading state
-    loading,
-    hasProjectSpecs,
+    projectSpecIds,
     hasAllSpecs,
+    loading: !vars,
   };
 };

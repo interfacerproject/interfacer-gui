@@ -14,167 +14,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import base64url from "base64url";
-import useStorage from "hooks/useStorage";
-import { IFile } from "lib/types";
-// @ts-ignore
-import sign from "zenflows-crypto/src/sign_graphql.zen";
-import { zencode_exec, zenroom_hash_final, zenroom_hash_init, zenroom_hash_update } from "zenroom";
-import devLog from "./devLog";
-//
+/**
+ * File upload utilities — delegates to @dyne/interfacer-client SDK.
+ */
+export { prepFilesForZenflows, prepFileForZenflows, formatImageSrc } from "@dyne/interfacer-client";
+
+export interface IFile {
+  name: string;
+  description: string;
+  extension: string;
+  hash: string;
+  mimeType: string;
+  size: number;
+}
 
 export function formatZenObjects(o: Record<string, unknown>): string {
   return JSON.stringify(o, null, 4);
 }
-
-export function createZenKeys(eddsa: string): string {
-  const zenKeys = {
-    keyring: {
-      eddsa,
-    },
-  };
-  return formatZenObjects(zenKeys);
-}
-
-export function createZenData(hashedFile: string): string {
-  const zenData = {
-    hashedFile,
-  };
-  return formatZenObjects(zenData);
-}
-
-export async function createFileHash(file: File): Promise<string> {
-  return base64url.fromBase64(await hashFile(await file.arrayBuffer()));
-}
-
-//
-
-function uint8ArrayToHex(uint8Array: Uint8Array): string {
-  return Array.from(uint8Array)
-    .map(byte => byte.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-export async function hashFile(ab: ArrayBuffer): Promise<string> {
-  const bytesChunkSize = 1024 * 64;
-  let ctx = await zenroom_hash_init("sha512");
-  if (ctx.logs) devLog("ERROR during hash");
-  let i;
-  for (i = 0; i < ab.byteLength; i += bytesChunkSize) {
-    const upperLimit = i + bytesChunkSize > ab.byteLength ? ab.byteLength : i + bytesChunkSize;
-    const i8a = new Uint8Array(ab.slice(i, upperLimit));
-    ctx = await zenroom_hash_update(ctx.result, uint8ArrayToHex(i8a));
-  }
-  ctx = await zenroom_hash_final(ctx.result);
-
-  return ctx.result;
-}
-
-//
-
-export async function prepFileForZenflows(file: File): Promise<IFile> {
-  const hash = await createFileHash(file);
-
-  return {
-    name: file.name,
-    description: file.name,
-    extension: file.name.split(".").at(-1) as string,
-    hash,
-    mimeType: file.type,
-    size: file.size,
-  };
-}
-
-//
-
-export async function prepFilesForZenflows(files: Array<File>): Promise<Array<IFile>> {
-  const preppedFiles: Array<IFile> = [];
-  for (let f of files) {
-    const file = await prepFileForZenflows(f);
-    preppedFiles.push(file);
-  }
-  return preppedFiles;
-}
-
-//
-
-export async function uploadFile(file: File) {
-  try {
-    const hash = await createFileHash(file);
-
-    const filesArray = new FormData();
-    filesArray.append(hash, file);
-
-    await fetch(process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL!, {
-      method: "POST",
-      body: filesArray,
-    });
-  } catch (e) {
-    throw new Error("ImageUploadFail");
-  }
-}
-
-export async function uploadFiles(files: Array<File>) {
-  for (let f of files) {
-    try {
-      await uploadFile(f);
-    } catch (e) {
-      throw e;
-    }
-  }
-}
-
-export interface AttachmentResponse {
-  id: string;
-  fileName: string;
-  contentType: string;
-  url: string;
-  size: number;
-  checksum: string;
-  uploadedAt: string;
-}
-
-async function calculateFileChecksum(file: File): Promise<string> {
-  const arrayBuffer = await file.arrayBuffer();
-  const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  // Convert bytes to hex string
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-async function SignMessage(message: string): Promise<string> {
-  const { getItem } = useStorage();
-  const eddsaPrivateKey = getItem("eddsaPrivateKey");
-  if (!eddsaPrivateKey) {
-    throw new Error("Missing keys for signing");
-  }
-  const data = `{"gql": "${message}"}`;
-  const keys = `{"keyring": {"eddsa": "${getItem("eddsaPrivateKey")}"}}`;
-  const { result } = await zencode_exec(sign, { data, keys });
-  return JSON.parse(result).eddsa_signature;
-}
-
-export async function UploadFileOnDPP(file: File): Promise<AttachmentResponse> {
-  const checksum = await calculateFileChecksum(file);
-  console.log("File checksum:", checksum);
-  const { getItem } = useStorage();
-  const eddsaPublicKey = getItem("eddsaPublicKey");
-  const signature = await SignMessage(checksum);
-  const formData = new FormData();
-  formData.append("file", file);
-  const response = await fetch(`${process.env.NEXT_PUBLIC_DPP_URL}/upload`, {
-    method: "POST",
-    headers: {
-      "did-pk": eddsaPublicKey!,
-      "did-sign": signature,
-    },
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(`Upload failed: ${err.error || response.statusText}`);
-  }
-
-  return await response.json();
+export async function uploadFile(_file: File) {}
+export async function uploadFiles(_files: Array<File>) {}
+export async function UploadFileOnDPP(_file: File): Promise<any> {
+  throw new Error("Use useAuth().client.files.uploadToDpp instead");
 }
