@@ -1200,6 +1200,16 @@ export const UPDATE_METADATA = gql`
   }
 `;
 
+export const UPDATE_RESOURCE_CLASSIFIED_AS = gql`
+  mutation updateResourceClassifiedAs($id: ID!, $classifiedAs: [URI!]) {
+    updateEconomicResource(resource: { id: $id, classifiedAs: $classifiedAs }) {
+      economicResource {
+        id
+      }
+    }
+  }
+`;
+
 export const UPDATE_CONTRIBUTION = gql`
   mutation updateContribution(
     $process: ID!
@@ -1234,6 +1244,7 @@ export const QUERY_PROJECT_FOR_METADATA_UPDATE = gql`
     economicResource(id: $id) {
       id
       name
+      classifiedAs
       metadata
       onhandQuantity {
         hasUnit {

@@ -33,19 +33,18 @@ export default function ModelFilesStep() {
   return (
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle
-        title={t("Upload 3D model files")}
+        title={t("Upload 3D and CAD files")}
         subtitle={t(
-          "Attach fabrication-ready 3D files for this design so people can inspect the model directly in the detail page."
+          "Attach fabrication-ready 3D files and CAD models for this design. You can upload many files — they will be viewable and downloadable from the design detail page."
         )}
       />
       <div>
         <PFileUpload
-          maxFiles={4}
           files={modelFiles}
           onUpdate={handleUpdate}
           accept="file"
           maxSize={maxFileSize}
-          label={t("Upload STEP or STL files")}
+          label={t("Upload STEP, STP or STL files")}
           helpText={`${t("Max file size")}: 50MB | ${t("Accepted formats")}: STEP, STP, STL`}
           customValidators={[
             file => ({

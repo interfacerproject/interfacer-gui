@@ -34,7 +34,7 @@ const ProjectImage = (props: Props) => {
   };
 
   return (
-    <div className="h-60 bg-base-200 rounded-lg flex items-center justify-center overflow-hidden">
+    <div className="h-60 bg-base-200 flex items-center justify-center overflow-hidden">
       {(!image || error) && (
         <div className="opacity-40">
           <ProjectTypeRoundIcon projectType={projectType} />

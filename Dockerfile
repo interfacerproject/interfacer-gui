@@ -17,24 +17,27 @@
 
 # TODO: move config to runtime https://github.com/vercel/next.js/discussions/17641
 
-FROM node:lts-alpine AS builder
+FROM node:lts-alpine
 
+RUN apk add --no-cache libc6-compat
+RUN corepack enable
+
+WORKDIR /build
+
+# Install dependencies first (NODE_ENV is not set yet, so devDeps are included)
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+# Copy source
+COPY . .
+
+# Set NODE_ENV only after deps install (Next.js reads it at build time for optimizations)
 ARG HOST=0.0.0.0
 ENV HOST=$HOST
 ARG PORT=3000
 ENV PORT=$PORT
-ARG NODE_ENV=production
-ENV NODE_ENV=$NODE_ENV
+ENV NODE_ENV=production
 
-RUN apk add --no-cache libc6-compat
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-WORKDIR /build
-
-COPY . .
-
-RUN pnpm install --frozen-lockfile
-
-EXPOSE $NODE_PORT
+EXPOSE $PORT
 
 CMD pnpm build && pnpm start

@@ -28,6 +28,8 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
+import ReviewSection from "./ReviewSection";
+import useFeedbackApi, { type ReviewSummary } from "lib/feedback";
 import StepModelViewer from "./StepModelViewer";
 
 function getProjectType(project: Partial<EconomicResource>): ProjectType {
@@ -51,10 +53,11 @@ const typeColors: Record<string, string> = {
 interface ProjectSidebarNewProps {
   project: Partial<EconomicResource>;
   projectType: ProjectType;
+  sidebarRating?: ReviewSummary | null;
 }
 
 /** Redesigned sidebar following DTEC prototype */
-function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
+function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSidebarNewProps) {
   const { t } = useTranslation("common");
   const { user } = useAuth();
 
@@ -405,6 +408,43 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
                   <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
                 </div>
               )}
+            </div>
+          </>
+        )}
+
+        {/* Rating summary — if reviews exist */}
+        {sidebarRating && sidebarRating.total_reviews > 0 && (
+          <>
+            <hr className="border-t border-[#c9cccf] m-0 mx-4" />
+            <div className="px-4 py-4">
+              <p
+                className="text-ifr-text-secondary mb-2"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {t("Rating")}
+              </p>
+              <div className="flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="#f1bd4d">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.284-3.957z" />
+                </svg>
+                <span
+                  className="text-ifr-text-primary"
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-md)",
+                    fontWeight: "var(--ifr-fw-semibold)",
+                  }}
+                >
+                  {sidebarRating.average_rating.toFixed(1)}
+                </span>
+                <span
+                  className="text-ifr-text-secondary"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                >
+                  {" · "}
+                  {sidebarRating.total_reviews} {sidebarRating.total_reviews === 1 ? t("review") : t("reviews")}
+                </span>
+              </div>
             </div>
           </>
         )}
@@ -1215,11 +1255,6 @@ export default function ProjectDetailNew() {
   const color = typeColors[projectType] || "var(--ifr-green)";
   const images = useMemo(() => findProjectImages(project), [project]);
   const models = useMemo(() => findProjectModels(project), [project]);
-  const primaryModel = useMemo(() => models.find(model => model.isViewable) || models[0], [models]);
-  const additionalModels = useMemo(
-    () => models.filter(model => model.url !== primaryModel?.url),
-    [models, primaryModel]
-  );
 
   // User-facing tags: filtered to `tag-*` entries (prefix stripped) with legacy
   // un-prefixed values kept visible for backwards compatibility.
@@ -1258,6 +1293,11 @@ export default function ProjectDetailNew() {
   const [productDpps, setProductDpps] = useState<DppDocument[]>([]);
   const [dppsLoading, setDppsLoading] = useState(false);
 
+  // Feedback / reviews state
+  const feedbackApi = useFeedbackApi();
+  const [sidebarRating, setSidebarRating] = useState<ReviewSummary | null>(null);
+  const [reviewKey, setReviewKey] = useState(0); // increment to force refresh
+
   useEffect(() => {
     if (projectType !== ProjectType.PRODUCT || !project.id) return;
     let cancelled = false;
@@ -1278,6 +1318,16 @@ export default function ProjectDetailNew() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project.id, projectType]);
+
+  // Fetch sidebar rating summary
+  useEffect(() => {
+    if (!project.id) return;
+    feedbackApi
+      .getReviewSummary(project.id)
+      .then(setSidebarRating)
+      .catch(() => setSidebarRating(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project.id]);
 
   // Breadcrumb
   const typeLabel =
@@ -1384,8 +1434,7 @@ export default function ProjectDetailNew() {
           {/* Image gallery */}
           <ImageGallery images={images} />
 
-          {/* 3D model viewer for designs */}
-          {projectType === ProjectType.DESIGN && primaryModel && (
+          {projectType === ProjectType.DESIGN && models.length > 0 && (
             <DetailSection
               icon={
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -1406,68 +1455,90 @@ export default function ProjectDetailNew() {
                 </svg>
               }
               iconBg="bg-ifr-hover"
-              title={t("3D Model")}
-              subtitle={
-                primaryModel.isViewable
-                  ? t("Inspect the fabrication model directly in the browser")
-                  : t("3D source file attached for download")
-              }
+              title={t("3D and CAD Files")}
+              subtitle={t("{{count}} file(s) attached", { count: models.length })}
               sectionId="3d-model"
+              defaultOpen
             >
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-6">
                 <p className="m-0 text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-base)" }}>
-                  {primaryModel.isViewable
-                    ? t(
-                        "Use the mouse or trackpad to rotate, pan, and zoom the model. If loading fails, open the source file directly."
-                      )
-                    : t(
-                        "This design includes a 3D source file, but browser preview is only available for STEP and STL right now."
-                      )}
+                  {t(
+                    "Interactive 3D previews are available for STEP and STL files. Use your mouse, trackpad, or the control buttons below to rotate, pan, and zoom. Non-viewable files are available for download."
+                  )}
                 </p>
 
-                {primaryModel.isViewable ? (
-                  <StepModelViewer
-                    modelUrl={primaryModel.url}
-                    downloadUrl={primaryModel.downloadUrl}
-                    fileName={primaryModel.name}
-                    height="min(60vh, 640px)"
-                  />
-                ) : (
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <span className="text-ifr-text-primary" style={{ fontWeight: 600 }}>
-                      {primaryModel.name}
-                    </span>
-                    <a
-                      href={primaryModel.downloadUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#036A53] underline hover:no-underline"
-                    >
-                      {t("Open source file")}
-                    </a>
-                  </div>
-                )}
+                <div className="flex flex-col gap-6">
+                  {models.map((model, index) => (
+                    <div key={model.url} className="border border-ifr rounded-ifr-md overflow-hidden">
+                      <div className="flex items-center justify-between px-5 py-3 bg-ifr-hover border-b border-ifr">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span
+                            className="shrink-0 flex items-center justify-center text-ifr-text-primary font-semibold"
+                            style={{
+                              width: "28px",
+                              height: "28px",
+                              borderRadius: "var(--ifr-radius-sm)",
+                              backgroundColor: "rgba(200,212,229,0.4)",
+                              fontSize: "var(--ifr-fs-xs)",
+                            }}
+                          >
+                            {index + 1}
+                          </span>
 
-                {additionalModels.length > 0 && (
-                  <div className="flex flex-col gap-2">
-                    <p className="m-0 text-ifr-text-primary" style={{ fontWeight: 600 }}>
-                      {t("Additional model files")}
-                    </p>
-                    <div className="flex flex-wrap gap-3">
-                      {additionalModels.map(model => (
+                          <span
+                            className="text-ifr-text-primary font-semibold truncate"
+                            style={{
+                              fontFamily: "var(--ifr-font-body)",
+                              fontSize: "var(--ifr-fs-md)",
+                            }}
+                          >
+                            {model.name}
+                          </span>
+
+                          <span
+                            className="shrink-0 px-2 py-0.5 rounded uppercase font-medium"
+                            style={{
+                              fontSize: "var(--ifr-fs-xs)",
+                              backgroundColor: model.isViewable ? "rgba(3,106,83,0.1)" : "rgba(108,112,124,0.1)",
+                              color: model.isViewable ? "#036A53" : "#6c707c",
+                            }}
+                          >
+                            {model.extension}
+                          </span>
+                        </div>
+
                         <a
-                          key={model.url}
                           href={model.downloadUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[#036A53] underline hover:no-underline"
+                          className="shrink-0 text-[#036A53] font-semibold no-underline hover:underline ml-4"
+                          style={{ fontSize: "var(--ifr-fs-sm)" }}
                         >
-                          {model.name}
+                          {t("Download")}
                         </a>
-                      ))}
+                      </div>
+
+                      {model.isViewable ? (
+                        <div className="p-4">
+                          <StepModelViewer
+                            modelUrl={model.url}
+                            downloadUrl={model.downloadUrl}
+                            fileName={model.name}
+                            height="min(55vh, 560px)"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3 px-5 py-4">
+                          <span className="text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                            {t(
+                              "Browser preview is only available for STEP and STL files. You can still download this file."
+                            )}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                )}
+                  ))}
+                </div>
               </div>
             </DetailSection>
           )}
@@ -2011,6 +2082,28 @@ export default function ProjectDetailNew() {
               )}
             </DetailSection>
 
+            {/* Reviews */}
+            <DetailSection
+              icon={
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"
+                    stroke="#0B1324"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              }
+              iconBg="bg-[rgba(241,189,77,0.15)]"
+              title={t("Reviews")}
+              subtitle={t("Community feedback and ratings")}
+              sectionId="reviews"
+              defaultOpen
+            >
+              <ReviewSection key={reviewKey} projectUlid={project.id!} projectName={project.name} />
+            </DetailSection>
+
             {/* Included Projects — sub-assemblies from metadata.relations */}
             {(() => {
               const relations = (project.metadata as Record<string, any>)?.relations;
@@ -2134,13 +2227,13 @@ export default function ProjectDetailNew() {
 
         {/* Sidebar */}
         <div className="hidden lg:block">
-          <ProjectSidebarNew project={project} projectType={projectType} />
+          <ProjectSidebarNew project={project} projectType={projectType} sidebarRating={sidebarRating} />
         </div>
       </div>
 
       {/* Mobile sidebar */}
       <div className="lg:hidden px-6 pb-8">
-        <ProjectSidebarNew project={project} projectType={projectType} />
+        <ProjectSidebarNew project={project} projectType={projectType} sidebarRating={sidebarRating} />
       </div>
     </div>
   );
