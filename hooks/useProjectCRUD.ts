@@ -12,7 +12,6 @@ import {
   prefixedTag,
   TAG_PREFIX,
 } from "lib/tagging";
-import { uploadFiles } from "lib/fileUpload";
 import { uploadModelFilesToDpp } from "lib/projectModelFiles";
 import { useTranslation } from "next-i18next";
 import { LocationStepValues } from "components/partials/create/project/steps/LocationStep";
@@ -137,6 +136,19 @@ export const useProjectCRUD = () => {
         locationId = loc.id;
       }
 
+      // Upload images to DPP and store URLs in metadata
+      const imageUrls: string[] = [];
+      if (formData.images?.length && client?.config.dppUrl) {
+        for (const file of formData.images) {
+          try {
+            const attachment = await client.files.uploadToDpp(file);
+            imageUrls.push(`${client.config.dppUrl}/file/${encodeURIComponent(attachment.id)}`);
+          } catch (e) {
+            devLog("Image upload failed", e);
+          }
+        }
+      }
+
       // Tags
       const machineTags = (formData.machines?.machineDetails || [])
         .map(m => prefixedTag(TAG_PREFIX.MACHINE, m.name))
@@ -176,6 +188,7 @@ export const useProjectCRUD = () => {
         declarations: formData.declarations,
         remote: formData.location.remote || projectType === ProjectType.DESIGN,
         design: formData.linkedDesign || false,
+        image: imageUrls.length === 1 ? imageUrls[0] : imageUrls,
       };
 
       // Create project
@@ -227,9 +240,6 @@ export const useProjectCRUD = () => {
       for (const contributor of formData.contributors) {
         await addContributor(contributor, processId, projectId);
       }
-
-      // Upload images
-      await uploadFiles(formData.images);
 
       // Points
       addIdeaPoints(user!.ulid, IdeaPoints.OnCreate);
