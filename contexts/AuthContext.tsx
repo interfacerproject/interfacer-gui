@@ -188,7 +188,7 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
       }
       setLoading(false);
     }
-  }, [client, router.asPath]);
+  }, [client, publicPage]);
 
   const login: LoginFn = async ({ email }) => {
     if (authenticated || !client) return;
