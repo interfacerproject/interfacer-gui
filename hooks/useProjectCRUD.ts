@@ -124,7 +124,7 @@ export const useProjectCRUD = () => {
     projectType: ProjectType,
     dppUlid?: string
   ): Promise<string | undefined> => {
-    if (!client || !user || !projectTypes) return;
+    if (!client || !user) return;
     setLoading(true);
     try {
       const processId = await client.resources.createProcess(`creation of ${formData.main.title} by ${user!.name}`);
@@ -186,7 +186,8 @@ export const useProjectCRUD = () => {
         tags,
         repo: formData.main.link,
         license: formData.licenses[0]?.licenseId || "",
-        location: locationId ? { name: formData.location.locationName || "" } : undefined,
+        locationId: locationId || undefined,
+        processId,
         metadata,
       });
 

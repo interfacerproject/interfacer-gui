@@ -14,25 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { getInstanceVariables } from "@dyne/interfacer-client";
+import { getInstanceVariables, type InstanceVariables } from "@dyne/interfacer-client";
 import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
-
-// Instance variables spec info shape (matches SDK's getInstanceVariables return type)
-interface SpecInfo {
-  id: string;
-  name: string;
-}
-interface InstanceVariables {
-  projectDesign: SpecInfo;
-  projectProduct: SpecInfo;
-  projectService: SpecInfo;
-  dpp?: SpecInfo;
-  machine?: SpecInfo;
-  material?: SpecInfo;
-  currency: SpecInfo;
-  unitOne: string;
-}
 
 /**
  * Fetch resource specification IDs from the Zenflows instance.
@@ -62,13 +46,7 @@ export const useResourceSpecs = () => {
   const specMachine = vars?.machine ?? { id: "", name: "" };
   const specMaterial = vars?.material ?? { id: "", name: "" };
 
-  const hasAllSpecs = !!(
-    specProjectDesign.id &&
-    specProjectProduct.id &&
-    specProjectService.id &&
-    specDpp.id &&
-    specMachine.id
-  );
+  const hasAllSpecs = !!(specProjectDesign.id && specProjectProduct.id && specProjectService.id && specMachine.id);
 
   const projectSpecIds = hasAllSpecs
     ? [specProjectDesign.id, specProjectProduct.id, specProjectService.id, specMachine.id]
