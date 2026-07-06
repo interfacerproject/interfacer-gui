@@ -21,8 +21,8 @@ importers:
         specifier: ^11.68.0
         version: 11.69.0(react@18.2.0)
       '@dyne/interfacer-client':
-        specifier: ^0.1.0
-        version: 0.1.0(zenroom@5.26.1)
+        specifier: ^0.2.8
+        version: 0.2.8(zenroom@5.36.1)
       '@fontsource/ibm-plex-sans':
         specifier: ^5.2.8
         version: 5.2.8
@@ -240,8 +240,8 @@ importers:
         specifier: ^0.32.11
         version: 0.32.11
       zenroom:
-        specifier: 5.26.1
-        version: 5.26.1
+        specifier: ^5.36.1
+        version: 5.36.1
     devDependencies:
       '@playwright/test':
         specifier: ^1.56.0
@@ -694,10 +694,10 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.10
 
-  '@dyne/interfacer-client@0.1.0':
-    resolution: {integrity: sha512-B2mIPdbDYIXzJbzjK41XviM2XDNefdYiEBGtPtMo4FDvIeg9yU4uxeKOuIODCraxJmTFn99MERLJg/MXRahvXA==}
+  '@dyne/interfacer-client@0.2.8':
+    resolution: {integrity: sha512-JLWqr/mplsw82JpIbtaOtInpmW0ZKi5b7fyVfnwshNa2swU2jy0UrUIcNJFfYXNcFXZB0B1LTmsC6WLKirS35g==}
     peerDependencies:
-      zenroom: ^4.0.0
+      zenroom: ^5.36.1
 
   '@emotion/babel-plugin@11.13.5':
     resolution: {integrity: sha512-pxHCpT2ex+0q+HH91/zsdHkw/lXd468DIN2zvfvLtPKLLMo6gQj7oLObq8PhkrxOZb/gGCq03S3Z7PDhS8pduQ==}
@@ -5349,8 +5349,8 @@ packages:
   zen-observable@0.8.15:
     resolution: {integrity: sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==}
 
-  zenroom@5.26.1:
-    resolution: {integrity: sha512-1YVeUgdujYovaJqogkAELG7FBDlUwiDh9nRQJapRvpBpLIM7NtUTLKYdsh4DprSK15eoeQJsCHS+t3mx0fxo6Q==}
+  zenroom@5.36.1:
+    resolution: {integrity: sha512-4QHUZ8BtHeiOLJj+OnLCfBRlzNPW+d7jchNhL0YZpIrPdK2rPRTDJKE9vEWBAabKxOyreI859xXh7pKPnrv+GQ==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -5833,10 +5833,10 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.1.2
 
-  '@dyne/interfacer-client@0.1.0(zenroom@5.26.1)':
+  '@dyne/interfacer-client@0.2.8(zenroom@5.36.1)':
     dependencies:
       base64url: 3.0.1
-      zenroom: 5.26.1
+      zenroom: 5.36.1
 
   '@emotion/babel-plugin@11.13.5':
     dependencies:
@@ -11494,6 +11494,6 @@ snapshots:
 
   zen-observable@0.8.15: {}
 
-  zenroom@5.26.1: {}
+  zenroom@5.36.1: {}
 
   zwitch@2.0.4: {}
