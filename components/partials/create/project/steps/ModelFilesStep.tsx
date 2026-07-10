@@ -2,22 +2,9 @@ import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { useTranslation } from "next-i18next";
 import { useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
 
-export type ModelFilesStepValues = Array<{ url: string }>;
-
-export const modelFilesStepSchema = () =>
-  yup
-    .array()
-    .of(
-      yup.object({
-        url: yup.string().url().required(),
-      })
-    )
-    .default([]);
-
-export const modelFilesStepDefaultValues: ModelFilesStepValues = [];
+export { type ModelFilesStepValues, modelFilesStepSchema, modelFilesStepDefaultValues } from "./ModelFilesStep.schema";
 
 const allowedExtensions = new Set(["step", "stp", "stl"]);
 

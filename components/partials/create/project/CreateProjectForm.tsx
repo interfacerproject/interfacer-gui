@@ -8,19 +8,19 @@ import {
   contributorsStepDefaultValues,
   contributorsStepSchema,
   ContributorsStepValues,
-} from "./steps/ContributorsStep";
+} from "./steps/ContributorsStep.schema";
 import {
   declarationsStepDefaultValues,
   declarationsStepSchema,
   DeclarationsStepValues,
-} from "./steps/DeclarationsStep";
-import { imagesStepDefaultValues, imagesStepSchema, ImagesStepValues } from "./steps/ImagesStep";
-import { licenseStepDefaultValues, licenseStepSchema, LicenseStepValues } from "./steps/LicenseStep";
-import { linkDesignStepDefaultValues, linkDesignStepSchema, LinkDesignStepValues } from "./steps/LinkDesignStep";
-import { locationStepDefaultValues, LocationStepSchemaContext, LocationStepValues } from "./steps/LocationStep";
-import { mainStepDefaultValues, mainStepSchema, MainStepValues } from "./steps/MainStep";
-import { modelFilesStepDefaultValues, modelFilesStepSchema, ModelFilesStepValues } from "./steps/ModelFilesStep";
-import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep";
+} from "./steps/DeclarationsStep.schema";
+import { imagesStepDefaultValues, imagesStepSchema, ImagesStepValues } from "./steps/ImagesStep.schema";
+import { licenseStepDefaultValues, licenseStepSchema, LicenseStepValues } from "./steps/LicenseStep.schema";
+import { linkDesignStepDefaultValues, linkDesignStepSchema, LinkDesignStepValues } from "./steps/LinkDesignStep.schema";
+import { locationStepDefaultValues, LocationStepSchemaContext, LocationStepValues } from "./steps/LocationStep.schema";
+import { mainStepDefaultValues, mainStepSchema, MainStepValues } from "./steps/MainStep.schema";
+import { modelFilesStepDefaultValues, modelFilesStepSchema, ModelFilesStepValues } from "./steps/ModelFilesStep.schema";
+import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep.schema";
 
 // Partials
 import CreateProjectFields from "./parts/CreateProjectFields";
@@ -39,18 +39,18 @@ import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep";
-import { materialsStepDefaultValues, materialsStepSchema, MaterialsStepValues } from "./steps/MaterialsStep";
+import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep.schema";
+import { materialsStepDefaultValues, materialsStepSchema, MaterialsStepValues } from "./steps/MaterialsStep.schema";
 import {
   productFiltersStepDefaultValues,
   productFiltersStepSchema,
   ProductFiltersStepValues,
-} from "./steps/ProductFiltersStep";
+} from "./steps/ProductFiltersStep.schema";
 import {
   serviceFiltersStepDefaultValues,
   serviceFiltersStepSchema,
   ServiceFiltersStepValues,
-} from "./steps/ServiceFiltersStep";
+} from "./steps/ServiceFiltersStep.schema";
 
 export interface Props {
   projectType: ProjectType;

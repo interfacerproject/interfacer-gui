@@ -5,42 +5,9 @@ import SearchMachines from "components/SearchMachines";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
 
-//
-// Types
-//
-
-export interface MachinesStepValues {
-  machines: string[]; // Array of machine resource IDs
-  machineDetails: Array<{ id: string; name: string }>; // Used for save-time machine-* tags
-}
-
-export const machinesStepDefaultValues: MachinesStepValues = {
-  machines: [],
-  machineDetails: [],
-};
-
-//
-// Schema
-//
-
-export const machinesStepSchema = () =>
-  yup.object().shape({
-    machines: yup.array().of(yup.string().required()).default([]),
-    machineDetails: yup
-      .array()
-      .of(
-        yup
-          .object({
-            id: yup.string().required(),
-            name: yup.string().required(),
-          })
-          .required()
-      )
-      .default([]),
-  });
+export { type MachinesStepValues, machinesStepDefaultValues, machinesStepSchema } from "./MachinesStep.schema";
 
 //
 // Component

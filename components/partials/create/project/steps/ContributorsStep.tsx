@@ -12,14 +12,13 @@ import { useAuth } from "hooks/useAuth";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { PersonWithFileEssential } from "lib/types/extensions";
 import { useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues, useProjectType } from "../CreateProjectForm";
 
-//
-
-export type ContributorsStepValues = Array<string>;
-export const contributorsStepSchema = () => yup.array().of(yup.string().required());
-export const contributorsStepDefaultValues: ContributorsStepValues = [];
+export {
+  type ContributorsStepValues,
+  contributorsStepSchema,
+  contributorsStepDefaultValues,
+} from "./ContributorsStep.schema";
 
 //
 

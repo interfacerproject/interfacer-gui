@@ -1,5 +1,4 @@
 import { useTranslation } from "next-i18next";
-import * as yup from "yup";
 
 // Components
 import { Stack } from "@bbtgnn/polaris-interfacer";
@@ -11,11 +10,7 @@ import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useFormContext } from "react-hook-form";
 import { CreateProjectValues, useProjectType } from "../CreateProjectForm";
 
-//
-
-export type ImagesStepValues = Array<File>;
-export const imagesStepSchema = () => yup.array().min(1).required();
-export const imagesStepDefaultValues: ImagesStepValues = [];
+export { type ImagesStepValues, imagesStepSchema, imagesStepDefaultValues } from "./ImagesStep.schema";
 
 //
 

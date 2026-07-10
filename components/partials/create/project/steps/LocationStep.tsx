@@ -1,58 +1,20 @@
 import { Checkbox, Stack, TextField } from "@bbtgnn/polaris-interfacer";
-import SelectLocation, { SelectedLocation } from "components/SelectLocation";
+import SelectLocation from "components/SelectLocation";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { ProjectType } from "components/types";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import getIdFromFormName from "lib/getIdFromFormName";
 import { useTranslation } from "next-i18next";
 import { Controller, useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
 
-//
-
-export interface LocationStepValues {
-  locationName: string;
-  locationData: SelectedLocation | null;
-  remote: boolean;
-}
-
-export const locationStepDefaultValues: LocationStepValues = {
-  locationName: "",
-  locationData: null,
-  remote: false,
-};
-
-function requiredWhenProduct(projectType: ProjectType, schema: yup.AnySchema) {
-  return projectType === ProjectType.PRODUCT ? schema.required() : schema.nullable();
-}
-
-function requiredWhenLocationName(locationName: string, schema: yup.AnySchema) {
-  return Boolean(locationName) ? schema.required() : schema.nullable();
-}
-
-function requiredWhenEdit(isEdit: boolean, schema: yup.AnySchema) {
-  return isEdit ? schema.required() : schema.nullable();
-}
-
-export const locationStepSchema = yup.object().shape({
-  locationName: yup.string().when("$projectType", requiredWhenProduct),
-  locationData: yup
-    .object({
-      address: yup.string().required(),
-      lat: yup.number().required(),
-      lng: yup.number().required(),
-    })
-    .when("$projectType", requiredWhenProduct)
-    .when("locationName", requiredWhenLocationName)
-    .when("$isEdit", requiredWhenEdit),
-  remote: yup.boolean(),
-});
-
-export interface LocationStepSchemaContext {
-  projectType: ProjectType;
-  isEdit: boolean;
-}
+import {
+  type LocationStepValues,
+  locationStepDefaultValues,
+  locationStepSchema,
+  type LocationStepSchemaContext,
+} from "./LocationStep.schema";
+export { type LocationStepValues, locationStepDefaultValues, locationStepSchema, type LocationStepSchemaContext };
 
 //
 
