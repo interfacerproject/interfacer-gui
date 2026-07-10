@@ -2,7 +2,7 @@ import { Text } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import LicenseDisplay from "./LicenseDisplay";
-import { LicenseStepValues } from "./partials/create/project/steps/LicenseStep";
+import { LicenseStepValues } from "./partials/create/project/steps/LicenseStep.schema";
 
 const ProjectLicenses = ({ project }: { project: Partial<EconomicResource> }) => {
   const licenses: LicenseStepValues = project?.metadata?.licenses;
