@@ -21,8 +21,8 @@ importers:
         specifier: ^11.68.0
         version: 11.69.0(react@18.2.0)
       '@dyne/interfacer-client':
-        specifier: ^0.2.9
-        version: 0.2.9(zenroom@5.36.1)
+        specifier: ^0.3.3
+        version: 0.3.3(zenroom@5.36.1)
       '@fontsource/ibm-plex-sans':
         specifier: ^5.2.8
         version: 5.2.8
@@ -694,8 +694,8 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.10
 
-  '@dyne/interfacer-client@0.2.9':
-    resolution: {integrity: sha512-5tlR45gDNNPj5tyxZDzMXARyTQT8xT/xyTciGjPJRAIxZT++Y0QynzJJkjX+CHpkT4E1FjeKGKU7njecPqUgPg==}
+  '@dyne/interfacer-client@0.3.3':
+    resolution: {integrity: sha512-XWtc9sXITq9wa6wgeS6teLl3JcXFZfjOnyIdobWoZyZACOVuY09Xk0hD4WN/dl+mafi8ql5ugETAGCmO8epFbA==}
     peerDependencies:
       zenroom: ^5.36.1
 
@@ -5833,7 +5833,7 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.1.2
 
-  '@dyne/interfacer-client@0.2.9(zenroom@5.36.1)':
+  '@dyne/interfacer-client@0.3.3(zenroom@5.36.1)':
     dependencies:
       base64url: 3.0.1
       zenroom: 5.36.1
