@@ -28,7 +28,7 @@
     "@bbtgnn/polaris-interfacer": "^0.1.0",
     "@bbtgnn/polaris-interfacer-tokens": "^6.3.0",
     "@carbon/icons-react": "^11.68.0",
-    "@dyne/interfacer-client": "^0.3.3",
+    "@dyne/interfacer-client": "^0.3.4",
     "@fontsource/ibm-plex-sans": "^5.2.8",
     "@fontsource/space-grotesk": "^5.1.10",
     "@graphql-codegen/cli": "^2.16.5",
