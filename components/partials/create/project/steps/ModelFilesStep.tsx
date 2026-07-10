@@ -5,12 +5,9 @@ import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useTranslation } from "next-i18next";
 import { useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
 
-export type ModelFilesStepValues = Array<File>;
-export const modelFilesStepSchema = () => yup.array().default([]);
-export const modelFilesStepDefaultValues: ModelFilesStepValues = [];
+export { type ModelFilesStepValues, modelFilesStepSchema, modelFilesStepDefaultValues } from "./ModelFilesStep.schema";
 
 const allowedExtensions = new Set(["step", "stp", "stl"]);
 const maxFileSize = 50000000;

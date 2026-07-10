@@ -10,15 +10,9 @@ import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
 
-//
-
-export type LicenseStepValues = Array<{ scope: string; licenseId: string }>;
-export const licenseStepSchema = () =>
-  yup.array().of(yup.object().shape({ scope: yup.string(), licenseId: yup.string() }));
-export const licenseStepDefaultValues: LicenseStepValues = [];
+export { type LicenseStepValues, licenseStepSchema, licenseStepDefaultValues } from "./LicenseStep.schema";
 
 //
 

@@ -5,24 +5,14 @@ import { formSetValueOptions } from "lib/formSetValueOptions";
 import { AVAILABILITY_OPTIONS, SERVICE_TYPE_OPTIONS } from "lib/tagging";
 import { useTranslation } from "next-i18next";
 import { useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
 
-export interface ServiceFiltersStepValues {
-  serviceType: string[];
-  availability: string[];
-}
-
-export const serviceFiltersStepDefaultValues: ServiceFiltersStepValues = {
-  serviceType: [],
-  availability: [],
-};
-
-export const serviceFiltersStepSchema = () =>
-  yup.object().shape({
-    serviceType: yup.array().of(yup.string().required()).default([]),
-    availability: yup.array().of(yup.string().required()).default([]),
-  });
+import {
+  type ServiceFiltersStepValues,
+  serviceFiltersStepDefaultValues,
+  serviceFiltersStepSchema,
+} from "./ServiceFiltersStep.schema";
+export { type ServiceFiltersStepValues, serviceFiltersStepDefaultValues, serviceFiltersStepSchema };
 
 function toggleValue(list: string[], value: string, checked: boolean): string[] {
   if (checked) return list.includes(value) ? list : [...list, value];

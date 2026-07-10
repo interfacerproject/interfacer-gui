@@ -11,14 +11,9 @@ import { ProjectType } from "components/types";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { EconomicResource } from "lib/types";
 import { useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues, useProjectType } from "../CreateProjectForm";
 
-//
-
-export type RelationsStepValues = Array<string>;
-export const relationsStepSchema = () => yup.array().of(yup.string().required());
-export const relationsStepDefaultValues: RelationsStepValues = [];
+export { type RelationsStepValues, relationsStepSchema, relationsStepDefaultValues } from "./RelationsStep.schema";
 
 //
 
