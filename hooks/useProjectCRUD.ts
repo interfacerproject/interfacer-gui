@@ -12,7 +12,6 @@ import {
   prefixedTag,
   TAG_PREFIX,
 } from "lib/tagging";
-import { uploadModelFilesToDpp } from "lib/projectModelFiles";
 import { useTranslation } from "next-i18next";
 import { LocationStepValues } from "components/partials/create/project/steps/LocationStep";
 import { useAuth } from "./useAuth";
@@ -180,6 +179,11 @@ export const useProjectCRUD = () => {
         ])
       );
 
+      // Model file URLs (stored as plain strings in metadata.models)
+      const modelUrls = (formData.modelFiles || [])
+        .map(m => m.url?.trim())
+        .filter((url): url is string => Boolean(url));
+
       // Metadata
       const metadata: Record<string, unknown> = {
         contributors: formData.contributors,
@@ -189,6 +193,7 @@ export const useProjectCRUD = () => {
         remote: formData.location.remote || projectType === ProjectType.DESIGN,
         design: formData.linkedDesign || false,
         image: imageUrls.length === 1 ? imageUrls[0] : imageUrls,
+        ...(modelUrls.length > 0 && { models: modelUrls }),
       };
 
       // Create project
