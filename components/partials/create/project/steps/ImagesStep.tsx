@@ -6,9 +6,10 @@ import { Stack } from "@bbtgnn/polaris-interfacer";
 import PError from "components/polaris/PError";
 import PFileUpload from "components/polaris/PFileUpload";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import { ProjectType } from "components/types";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useFormContext } from "react-hook-form";
-import { CreateProjectValues } from "../CreateProjectForm";
+import { CreateProjectValues, useProjectType } from "../CreateProjectForm";
 
 //
 
@@ -20,6 +21,8 @@ export const imagesStepDefaultValues: ImagesStepValues = [];
 
 export default function ImagesStep() {
   const { t } = useTranslation("createProjectProps");
+  const projectType = useProjectType();
+  const isMachine = projectType === ProjectType.MACHINE;
 
   const { setValue, watch, formState } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
@@ -36,9 +39,13 @@ export default function ImagesStep() {
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle
         title={t("Upload pictures")}
-        subtitle={t(
-          "Adding pictures to your open source hardware project is an important way to showcase your work and help others understand your design."
-        )}
+        subtitle={
+          isMachine
+            ? t("Adding pictures of your machine helps others understand its capabilities and condition.")
+            : t(
+                "Adding pictures to your open source hardware project is an important way to showcase your work and help others understand your design."
+              )
+        }
       />
       <div>
         <PFileUpload

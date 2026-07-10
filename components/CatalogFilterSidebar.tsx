@@ -711,7 +711,7 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
 
         <FilterSection icon={<Tag size={16} />} label="Categories & Tags">
           <div className="flex flex-col gap-2 max-h-[216px] overflow-y-auto pr-3">
-            {PRODUCT_CATEGORY_OPTIONS.map(cat => {
+            {PRODUCT_CATEGORY_OPTIONS.map((cat: string) => {
               const active = selectedCategories.includes(cat);
               return (
                 <button

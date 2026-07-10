@@ -46,7 +46,7 @@ export default function ServiceFiltersStep() {
       <Stack vertical spacing="tight">
         <PHelp helpText={t("Select the type(s) of service you offer")} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {SERVICE_TYPE_OPTIONS.map(option => (
+          {SERVICE_TYPE_OPTIONS.map((option: string) => (
             <label key={option} className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -68,7 +68,7 @@ export default function ServiceFiltersStep() {
       <Stack vertical spacing="tight">
         <PHelp helpText={t("Select your availability options")} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {AVAILABILITY_OPTIONS.map(option => (
+          {AVAILABILITY_OPTIONS.map((option: string) => (
             <label key={option} className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"

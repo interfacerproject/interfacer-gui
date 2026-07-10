@@ -35,6 +35,12 @@ const nextConfig = {
       crypto: false,
     };
 
+    // Apollo → SDK compatibility alias
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@apollo/client": require("path").resolve(__dirname, "lib/apollo-compat.tsx"),
+    };
+
     config.module.rules.push({
       test: /\.(zen|lua|json)$/,
       type: "asset/source",

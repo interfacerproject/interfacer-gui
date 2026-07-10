@@ -1,7 +1,7 @@
 import { ProjectType } from "components/types";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // Steps
 import {
@@ -55,6 +55,13 @@ import {
 export interface Props {
   projectType: ProjectType;
 }
+
+export const ProjectTypeContext = createContext<ProjectType | null>(null);
+export const useProjectType = () => {
+  const ctx = useContext(ProjectTypeContext);
+  if (!ctx) throw new Error("useProjectType must be used within ProjectTypeContext");
+  return ctx;
+};
 
 //
 
@@ -215,23 +222,25 @@ export default function CreateProjectForm(props: Props) {
 
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col min-h-screen bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-          <div className="flex-1 flex flex-row justify-center gap-8 lg:gap-12 p-6 max-w-[1280px] mx-auto w-full">
-            <div className="hidden lg:block w-[260px] shrink-0">
-              <div className="sticky top-24">
-                <CreateProjectNav projectType={projectType} />
+      <ProjectTypeContext.Provider value={projectType}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col min-h-screen bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
+            <div className="flex-1 flex flex-row justify-center gap-8 lg:gap-12 p-6 max-w-[1280px] mx-auto w-full">
+              <div className="hidden lg:block w-[260px] shrink-0">
+                <div className="sticky top-24">
+                  <CreateProjectNav projectType={projectType} />
+                </div>
+              </div>
+              <div className="flex-1 max-w-2xl pb-24">
+                <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
               </div>
             </div>
-            <div className="flex-1 max-w-2xl pb-24">
-              <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
-            </div>
+            <CreateProjectSubmit />
           </div>
-          <CreateProjectSubmit />
-        </div>
-      </form>
+        </form>
 
-      {loading && <LoadingOverlay />}
+        {loading && <LoadingOverlay />}
+      </ProjectTypeContext.Provider>
     </FormProvider>
   );
 }

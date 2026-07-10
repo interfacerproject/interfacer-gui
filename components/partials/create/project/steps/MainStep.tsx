@@ -1,13 +1,14 @@
 import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import { ProjectType } from "components/types";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import getIdFromFormName from "lib/getIdFromFormName";
 import { isRequired } from "lib/isFieldRequired";
 import { useTranslation } from "next-i18next";
 import { Controller, useFormContext } from "react-hook-form";
 import * as yup from "yup";
-import { CreateProjectValues } from "../CreateProjectForm";
+import { CreateProjectValues, useProjectType } from "../CreateProjectForm";
 
 //
 
@@ -46,19 +47,30 @@ export const mainStepSchema = () =>
 
 export default function MainStep() {
   const { t } = useTranslation(["createProjectProps", "common"]);
+  const projectType = useProjectType();
 
   const { formState, control, setValue, watch } = useFormContext<CreateProjectValues>();
   const { errors } = formState;
+
+  const isMachine = projectType === ProjectType.MACHINE;
+  const entityLabel = isMachine ? t("Machine") : t("Project");
+  const entityLabelLower = isMachine ? t("machine") : t("project");
 
   //
 
   return (
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle
-        title={t("Project Information")}
-        subtitle={t(
-          "This information will be used to identify your project and provide context to users who may be interested in it."
-        )}
+        title={isMachine ? t("Machine Information") : t("Project Information")}
+        subtitle={
+          isMachine
+            ? t(
+                "This information will be used to identify your machine and provide context to users who may be interested in it."
+              )
+            : t(
+                "This information will be used to identify your project and provide context to users who may be interested in it."
+              )
+        }
       />
 
       <Controller
@@ -74,8 +86,12 @@ export default function MainStep() {
             onChange={onChange}
             focused={true}
             onBlur={onBlur}
-            label={t("Project title")}
-            helpText={t("A clear and concise name for your project that summarizes its purpose or main focus.")}
+            label={isMachine ? t("Machine name") : t("Project title")}
+            helpText={
+              isMachine
+                ? t("A clear and concise name for your machine that summarizes its purpose or main focus.")
+                : t("A clear and concise name for your project that summarizes its purpose or main focus.")
+            }
             error={errors.main?.title?.message}
             requiredIndicator={isRequired(mainStepSchema(), "title")}
           />
@@ -95,12 +111,16 @@ export default function MainStep() {
             onChange={onChange}
             onBlur={onBlur}
             placeholder={"projectsite.com/info"}
-            label={t("Project data")}
-            helpText={t(
-              t(
-                "Add here a link to the repository or page where the projects files or description are contained. The link will be visible in the project page."
-              )
-            )}
+            label={isMachine ? t("Machine data") : t("Project data")}
+            helpText={
+              isMachine
+                ? t(
+                    "Add here a link to the repository or page where the machine's files or description are contained. The link will be visible in the machine page."
+                  )
+                : t(
+                    "Add here a link to the repository or page where the projects files or description are contained. The link will be visible in the project page."
+                  )
+            }
             error={errors.main?.link?.message}
             requiredIndicator={isRequired(mainStepSchema(), "link")}
           />
@@ -112,8 +132,12 @@ export default function MainStep() {
         name="description"
         editorClass="h-60"
         value={watch("main.description")}
-        label={t("Project Description")}
-        subtitle={t("Give a better understanding of what your project is about and why it’s important.")}
+        label={isMachine ? t("Machine Description") : t("Project Description")}
+        subtitle={
+          isMachine
+            ? t("Give a better understanding of what your machine is about and why it's important.")
+            : t("Give a better understanding of what your project is about and why it's important.")
+        }
         onChange={({ text, html }) => {
           setValue("main.description", text, formSetValueOptions);
         }}
