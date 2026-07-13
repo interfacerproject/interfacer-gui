@@ -19,7 +19,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import * as yup from "yup";
 import { useAuth } from "../hooks/useAuth";
 import { clearInstanceVariablesCache } from "@dyne/interfacer-client";
@@ -81,6 +81,7 @@ const Sign_in: NextPageWithLayout = () => {
   const [isQuestions, setIsQuestions] = useState(false);
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
+  const loginAttempted = useRef(false);
 
   const [signInData, setSignInData] = useState({
     email: "",
@@ -158,8 +159,18 @@ const Sign_in: NextPageWithLayout = () => {
         .required()
         .validateSync(signInData);
 
+      // Prevent infinite retry after failure
+      if (loginAttempted.current) return;
+
       // Then logging in
-      (async () => await doLogin())();
+      (async () => {
+        try {
+          loginAttempted.current = true;
+          await doLogin();
+        } catch (err: any) {
+          setError(err?.message || t("Login failed"));
+        }
+      })();
 
       //
     } catch (error) {}
@@ -169,6 +180,7 @@ const Sign_in: NextPageWithLayout = () => {
 
   async function doLogin() {
     if (!client) return;
+    setError("");
     clearInstanceVariablesCache();
 
     // Recreate keys from seed + HMAC via SDK
@@ -207,7 +219,12 @@ const Sign_in: NextPageWithLayout = () => {
           {step === 1 && <ChooseMode viaPassphrase={viaPassphrase} viaQuestions={viaQuestions} />}
 
           {/* Passphrase login */}
-          {step == 2 && isPassprhase && <ViaPassphrase onSubmit={passphraseEntered} />}
+          {step == 2 && isPassprhase && (
+            <>
+              {error && <BrError testID="loginError">{error}</BrError>}
+              <ViaPassphrase onSubmit={passphraseEntered} />
+            </>
+          )}
 
           {/* Questions login */}
           {step === 2 && isQuestions && (
@@ -218,7 +235,20 @@ const Sign_in: NextPageWithLayout = () => {
           {/* Displaying seed */}
           {step === 3 && isQuestions && (
             <Passphrase>
-              <Button size="large" primary fullWidth onClick={async () => await doLogin()} id="loginBtn">
+              {error && <BrError testID="loginError">{error}</BrError>}
+              <Button
+                size="large"
+                primary
+                fullWidth
+                onClick={async () => {
+                  try {
+                    await doLogin();
+                  } catch (err: any) {
+                    setError(err?.message || t("Login failed"));
+                  }
+                }}
+                id="loginBtn"
+              >
                 {t("Login")}
               </Button>
             </Passphrase>
