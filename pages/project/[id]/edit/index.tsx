@@ -14,6 +14,7 @@ import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
+import { ProjectType } from "components/types";
 import { GetStaticPaths } from "next";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
 
@@ -91,7 +92,7 @@ const EditMain: NextPageWithLayout = () => {
   /* Render */
 
   return (
-    <EditFormLayout formMethods={formMethods} onSubmit={onSubmit}>
+    <EditFormLayout formMethods={formMethods} onSubmit={onSubmit} projectType={project.conformsTo?.name as ProjectType}>
       <MainStep />
     </EditFormLayout>
   );
