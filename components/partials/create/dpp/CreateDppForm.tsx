@@ -3,7 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "hooks/useAuth";
 import { useResourceSpecs } from "hooks/useResourceSpecs";
 import useDppApi from "lib/dpp";
-import { UploadFileOnDPP } from "lib/fileUpload";
+
 import { FETCH_RESOURCES } from "lib/QueryAndMutation";
 import type { FetchInventoryQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -228,7 +228,7 @@ export default function CreateDppForm() {
   // Process DPP values: upload Files to DPP backend, replace with URLs
   async function processDppValues(obj: any): Promise<any> {
     if (obj === null || obj === undefined) return obj;
-    if (obj instanceof File) return UploadFileOnDPP(obj);
+    if (obj instanceof File) return dppApi.uploadFile(obj);
     if (Array.isArray(obj)) return Promise.all(obj.map(item => processDppValues(item)));
     if (typeof obj === "object") {
       const processed: any = {};
