@@ -14,43 +14,27 @@ import ModelFilesStep, {
 } from "components/partials/create/project/steps/ModelFilesStep";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
-import useDppApi from "lib/dpp";
 import findProjectModels, { getRawMetadataModelEntries } from "lib/findProjectModels";
-import { uploadModelFilesToDpp } from "lib/projectModelFiles";
-
-type ModelMetadataEntry = string | Record<string, unknown>;
 
 interface EditModelFilesValues {
   modelFiles: ModelFilesStepValues;
 }
 
-const SEPARATOR = " @ ";
-
-function createToken(entry: ReturnType<typeof findProjectModels>[number], index: number): string {
-  return entry.hash || entry.url || `${entry.name}-${index}`;
-}
-
 const EditModelFiles: NextPageWithLayout = () => {
   const { project } = useProject();
   const { updateMetadata } = useProjectCRUD();
-  const { uploadFile: uploadDppFile } = useDppApi();
 
   const metadata = ((project.metadata || {}) as Record<string, unknown>) || {};
   const existingEntries = getRawMetadataModelEntries(metadata);
   const resolvedModels = findProjectModels(project);
 
-  const existingModels = resolvedModels.map((model, index) => {
-    const token = createToken(model, index);
-
-    return {
-      entry: existingEntries[index] as ModelMetadataEntry,
-      file: new File([], `${model.name}${SEPARATOR}${token}`),
-      token,
-    };
-  });
+  // Map existing models to {url} entries
+  const existingModelUrls: ModelFilesStepValues = resolvedModels.map(model => ({
+    url: model.url,
+  }));
 
   const defaultValues: EditModelFilesValues = {
-    modelFiles: existingModels.map(model => model.file),
+    modelFiles: existingModelUrls,
   };
 
   const schema = yup.object({
@@ -63,25 +47,15 @@ const EditModelFiles: NextPageWithLayout = () => {
     defaultValues,
   });
 
-  function getExistingEntry(fileName: string): ModelMetadataEntry | undefined {
-    const fileNameParts = fileName.split(SEPARATOR);
-    const token = fileNameParts[fileNameParts.length - 1];
-    return existingModels.find(model => model.token === token)?.entry;
-  }
-
-  function isExistingEntry(fileName: string): boolean {
-    return Boolean(getExistingEntry(fileName));
-  }
-
   async function onSubmit(values: EditModelFilesValues) {
-    const preservedEntries = values.modelFiles
-      .map(file => getExistingEntry(file.name))
-      .filter((entry): entry is ModelMetadataEntry => Boolean(entry));
+    const newModelUrls = (values.modelFiles || []).map(m => m.url?.trim()).filter((url): url is string => Boolean(url));
 
-    const newFiles = values.modelFiles.filter(file => !isExistingEntry(file.name));
-    const newEntries = await uploadModelFilesToDpp(newFiles, uploadDppFile);
+    // Preserve any existing non-URL entries (e.g. DPP-stored files)
+    const preservedEntries = existingEntries.filter(entry => typeof entry !== "string");
 
-    await updateMetadata(project, { models: [...preservedEntries, ...newEntries] });
+    await updateMetadata(project, {
+      models: [...preservedEntries, ...newModelUrls],
+    });
   }
 
   return (

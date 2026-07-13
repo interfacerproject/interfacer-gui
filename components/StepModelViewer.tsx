@@ -210,6 +210,7 @@ const StepModelViewer = ({
 
   return (
     <div ref={viewerRootRef} style={{ position: "relative" }}>
+      {/* File header: name + download link */}
       {(fileName || downloadUrl) && (
         <div
           style={{
@@ -234,46 +235,65 @@ const StepModelViewer = ({
         </div>
       )}
 
+      {/* Error state — no viewer, just a well-formatted error card */}
       {error ? (
         <div
-          style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap", marginBottom: "0.5rem" }}
+          style={{
+            padding: "20px 24px",
+            borderRadius: "12px",
+            background: "#fef2f2",
+            border: "1px solid #fecaca",
+          }}
         >
-          <p style={{ margin: 0, color: "#a32e2e", fontWeight: 600 }}>{error}</p>
+          <p style={{ margin: 0, color: "#991b1b", fontWeight: 600, marginBottom: "8px" }}>
+            {"Unable to preview this file"}
+          </p>
+          <p style={{ margin: 0, color: "#b91c1c", fontSize: "0.92rem" }}>{error}</p>
           {downloadUrl && (
             <a
               href={downloadUrl}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "#036A53", fontWeight: 600, textDecoration: "underline" }}
+              style={{
+                display: "inline-block",
+                marginTop: "12px",
+                color: "#036A53",
+                fontWeight: 600,
+                textDecoration: "underline",
+              }}
             >
-              {"Download file"}
+              {"Download file instead"}
             </a>
           )}
         </div>
       ) : (
-        <p style={{ margin: "0 0 0.5rem 0", color: "#4a4740" }}>
-          {isLoading ? `Importing model... ${elapsedSeconds}s` : "Model loaded."}
-        </p>
-      )}
+        <>
+          {/* Loading status */}
+          <p style={{ margin: "0 0 0.5rem 0", color: "#4a4740" }}>
+            {isLoading ? `Importing model... ${elapsedSeconds}s` : "Model loaded."}
+          </p>
 
-      {isLoading && elapsedSeconds > 8 && (
-        <p style={{ margin: "0 0 0.5rem 0", color: "#6a665d", fontSize: "0.95rem" }}>
-          {"Large STEP files can take 20-90 seconds to parse in the browser, especially on first load."}
-        </p>
-      )}
+          {isLoading && elapsedSeconds > 8 && (
+            <p style={{ margin: "0 0 0.5rem 0", color: "#6a665d", fontSize: "0.95rem" }}>
+              {"Large STEP files can take 20-90 seconds to parse in the browser, especially on first load."}
+            </p>
+          )}
 
-      <div
-        ref={viewerContainerRef}
-        style={{
-          width: "100%",
-          height: height,
-          borderRadius: "18px",
-          border: "1px solid #d0ccc3",
-          boxShadow: "0 12px 40px rgba(76, 72, 61, 0.13)",
-          background: "#f7f7f5",
-          overflow: "hidden",
-        }}
-      />
+          {/* Viewer container — hidden when errored */}
+          <div
+            ref={viewerContainerRef}
+            style={{
+              width: "100%",
+              height: height,
+              borderRadius: "18px",
+              border: "1px solid #d0ccc3",
+              boxShadow: "0 12px 40px rgba(76, 72, 61, 0.13)",
+              background: "#f7f7f5",
+              overflow: "hidden",
+            }}
+          />
+        </>
+      )}
 
       {showControls && !isLoading && !error && (
         <div
