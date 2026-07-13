@@ -4,6 +4,8 @@ import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form";
 
 // Components
 import LoadingOverlay from "components/LoadingOverlay";
+import { ProjectTypeContext } from "components/partials/create/project/CreateProjectForm";
+import { ProjectType } from "components/types";
 import { useTranslation } from "next-i18next";
 import EditProjectNav from "./EditProjectNav";
 import SubmitChangesBar from "./SubmitChangesBar";
@@ -16,12 +18,13 @@ export interface EditFormLayoutProps<T extends FieldValues> {
   nav?: React.ReactNode;
   onSubmit: (values: T) => Promise<void>;
   redirect?: string | NextRouter;
+  projectType?: ProjectType;
 }
 
 //
 
 export default function EditFormLayout<T extends FieldValues>(props: EditFormLayoutProps<T>) {
-  const { children, formMethods, nav, onSubmit = () => {}, redirect } = props;
+  const { children, formMethods, nav, onSubmit = () => {}, redirect, projectType } = props;
   const { t } = useTranslation("common");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -73,7 +76,7 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
 
   /* Render */
 
-  return (
+  const content = (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(onSubmitWrapper)}>
         <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
@@ -88,4 +91,10 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
       {loading && <LoadingOverlay />}
     </FormProvider>
   );
+
+  if (projectType) {
+    return <ProjectTypeContext.Provider value={projectType}>{content}</ProjectTypeContext.Provider>;
+  }
+
+  return content;
 }
