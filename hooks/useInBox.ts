@@ -86,6 +86,8 @@ const useInBox = (): UseInBoxReturnValue => {
     if (!client) return;
     try {
       await client.inbox.sendMessage(message, receivers, subject);
+      // Invalidate the cache so all components see the new message
+      mutateMessages();
     } catch (err) {
       console.error("Failed to send inbox message:", err);
     }
