@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { clearInstanceVariablesCache, InterfacerClient, createConfig } from "@dyne/interfacer-client";
+import { setFileUploadClient } from "lib/fileUpload";
 import useStorage from "hooks/useStorage";
 import { PersonWithFileEssential } from "lib/types/extensions";
 import { useRouter } from "next/router";
@@ -123,7 +124,10 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
 
   // Initialize client
   useEffect(() => {
-    setClient(createClient());
+    const c = createClient();
+    setClient(c);
+    setFileUploadClient(c);
+    return () => setFileUploadClient(null);
   }, []);
 
   // Restore session from localStorage

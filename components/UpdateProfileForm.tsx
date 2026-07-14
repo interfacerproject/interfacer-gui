@@ -22,8 +22,9 @@ import ProfileImageEditor from "./partials/profile/[id]/ProfileImageEditor";
 import { Card, Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import { CREATE_LOCATION } from "lib/QueryAndMutation";
 import devLog from "lib/devLog";
-import { prepFileForZenflows, uploadFile } from "lib/fileUpload";
+import { prepFileForZenflows } from "lib/fileUpload";
 import { createImageSrc, fileToIfile } from "lib/resourceImages";
+import { useAuth } from "hooks/useAuth";
 import { useRouter } from "next/router";
 import SelectLocation, { SelectedLocation } from "./SelectLocation";
 import TableOfContents from "./TableOfContents";
@@ -43,6 +44,7 @@ export interface UpdateProfileValues {
 export default function UpdateProfileForm(props: { user: Partial<Person> }) {
   const { user } = props;
   const { t } = useTranslation("common");
+  const { client } = useAuth();
   const router = useRouter();
 
   /* */
@@ -137,12 +139,16 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
         }
       }
 
-      if (touchedFields.image) {
-        variables.images = [await prepFileForZenflows(formData.image!)];
+      if (touchedFields.image && formData.image) {
+        variables.images = [await prepFileForZenflows(formData.image)];
       }
 
       await updateUser({ variables });
-      if (formData.image) await uploadFile(formData.image);
+
+      // Upload image binary to Zenflows file storage so images[].bin is populated
+      if (formData.image && client) {
+        await client.files.uploadToZenflows(formData.image);
+      }
     } catch (e) {
       devLog(e);
     }

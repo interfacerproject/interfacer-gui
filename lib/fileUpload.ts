@@ -18,6 +18,7 @@
  * File upload utilities — delegates to @dyne/interfacer-client SDK.
  */
 export { prepFilesForZenflows, prepFileForZenflows, formatImageSrc } from "@dyne/interfacer-client";
+import type { InterfacerClient } from "@dyne/interfacer-client";
 
 export interface IFile {
   name: string;
@@ -31,8 +32,39 @@ export interface IFile {
 export function formatZenObjects(o: Record<string, unknown>): string {
   return JSON.stringify(o, null, 4);
 }
-export async function uploadFile(_file: File) {}
-export async function uploadFiles(_files: Array<File>) {}
-export async function UploadFileOnDPP(_file: File): Promise<any> {
-  throw new Error("Use useAuth().client.files.uploadToDpp instead");
+
+/** Module-level client reference — set by AuthContext on init so uploadFile/uploadFiles work. */
+let _client: InterfacerClient | null = null;
+
+/** Called by AuthContext to register the client. */
+export function setFileUploadClient(client: InterfacerClient | null) {
+  _client = client;
+}
+
+/** Upload a single file to Zenflows file storage (so images[].bin is populated). */
+export async function uploadFile(file: File): Promise<void> {
+  if (!_client) {
+    console.warn("uploadFile: no client registered, skipping upload");
+    return;
+  }
+  try {
+    await _client.files.uploadToZenflows(file);
+  } catch (e) {
+    console.error("uploadFile failed:", e);
+  }
+}
+
+/** Upload multiple files to Zenflows file storage. */
+export async function uploadFiles(files: Array<File>): Promise<void> {
+  if (!_client) {
+    console.warn("uploadFiles: no client registered, skipping uploads");
+    return;
+  }
+  await Promise.all(files.map(file => uploadFile(file)));
+}
+
+/** Upload a single file to DPP for permanent hosting. */
+export async function UploadFileOnDPP(file: File): Promise<any> {
+  if (!_client) throw new Error("No client registered — call setFileUploadClient first");
+  return _client.files.uploadToDpp(file);
 }
