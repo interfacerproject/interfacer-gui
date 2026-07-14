@@ -67,7 +67,7 @@ export enum MessageGroup {
 
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { messages, isLoading, error } = useInBoxContext();
+  const { messages, isLoading, error, setReadedMessage } = useInBoxContext();
 
   /* Message grouping */
 
@@ -151,6 +151,13 @@ const Notification = () => {
   /* Main render */
 
   const nonEmptyGroups = Object.entries(groupedMessages).filter(([, group]) => group.length > 0);
+  const unreadCount = messages.filter((m: any) => !m.read).length;
+
+  const handleMarkAllRead = async () => {
+    for (const m of messages as any[]) {
+      if (!m.read) await setReadedMessage(m.id);
+    }
+  };
 
   return (
     <div className="flex flex-wrap mx-auto justify-center">
@@ -165,6 +172,11 @@ const Notification = () => {
       </div>
 
       <div className="max-w-lg p-6 space-y-8">
+        {unreadCount > 0 && (
+          <div className="flex justify-end">
+            <Button onClick={handleMarkAllRead}>{`${t("Mark all as read")} (${unreadCount})`}</Button>
+          </div>
+        )}
         {nonEmptyGroups.map(([groupName, group]) => (
           <div key={groupName}>
             <Text id={groupName} as="h2" variant="headingMd">

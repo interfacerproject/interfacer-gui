@@ -56,14 +56,20 @@ const useInBox = (): UseInBoxReturnValue => {
     error,
     isLoading,
     mutate: mutateMessages,
-  } = useSWR(client && user?.ulid ? ["inbox-messages", user.ulid] : null, async () => {
-    if (!client) return [];
-    const msgs = await client.inbox.getMessages();
-    // Already sorted by date descending in the SDK, but sort again for safety
-    return msgs.sort((a, b) => {
-      return dayjs(b.content.data).unix() - dayjs(a.content.data).unix();
-    });
-  });
+  } = useSWR(
+    client && user?.ulid ? ["inbox-messages", user.ulid] : null,
+    async () => {
+      if (!client) return [];
+      const msgs = await client.inbox.getMessages();
+      // Already sorted by date descending in the SDK, but sort again for safety
+      return msgs.sort((a, b) => {
+        return dayjs(b.content.data).unix() - dayjs(a.content.data).unix();
+      });
+    },
+    {
+      refreshInterval: Number(process.env.NEXT_PUBLIC_INBOX_COUNT_INTERVAL) || 0,
+    }
+  );
 
   const { data: unread } = useSWR(
     client && user?.ulid ? ["inbox-unread-count", user.ulid] : null,
@@ -78,7 +84,11 @@ const useInBox = (): UseInBoxReturnValue => {
 
   const sendMessage = async (message: any, receivers: string[], subject: string = "Subject") => {
     if (!client) return;
-    await client.inbox.sendMessage(message, receivers, subject);
+    try {
+      await client.inbox.sendMessage(message, receivers, subject);
+    } catch (err) {
+      console.error("Failed to send inbox message:", err);
+    }
   };
 
   const setReadedMessage = async (id: number) => {
