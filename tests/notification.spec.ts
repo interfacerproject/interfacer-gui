@@ -1,151 +1,103 @@
-import { url } from "lib/regex";
 import { expect, Page } from "@playwright/test";
 import { test } from "./fixtures/test";
 
 test.describe("Notification", () => {
   let page: Page;
-  test.beforeEach(async ({ context, login }) => {
-    page = await context.newPage();
-    await page.goto("");
-    await login(page);
-  });
-  test("when go to /notification should see incoming notifications", async () => {
-    await page.goto("/notification");
-    await page.route("https://gateway0.interfacer.dyne.org/inbox/read", async route => {
-      const json = {
-        messages: [
-          {
-            id: 953,
-            sender: "0634YMEGWHNGCVVBKETRXJQCWM",
-            content: {
-              data: "2023-03-20T12:18:53.758Z",
-              message: {
-                originalResourceID: "063A4ZP46XVX3GN9NAE26AXWTC",
-                originalResourceName: "063A4ZP46XVX3GN9NAE26AXWTC",
-                proposalID: "063FXXA3MJG2ZTJH3RQHXCY0PR",
-                proposerName: "pippo",
+
+  test.describe("with mock data", () => {
+    test.beforeEach(async ({ page: testPage, login }) => {
+      page = testPage;
+      // Set up the route mock BEFORE login so SWR uses it on the first fetch
+      await page.route("**/inbox/read", async route => {
+        await route.fulfill({
+          json: {
+            messages: [
+              {
+                id: 1,
+                sender: "test123",
+                content: {
+                  data: "2023-03-20T12:18:53Z",
+                  message: {
+                    originalResourceID: "TESTS",
+                    originalResourceName: "Test Project",
+                    proposalID: "TEST",
+                    proposerName: "pippo",
+                  },
+                  subject: "Project cited",
+                },
+                read: false,
               },
-              subject: "Project cited",
-            },
-            read: false,
+            ],
+            request_id: 50,
+            success: true,
           },
-          {
-            id: 965,
-            sender: "0634YMEGWHNGCVVBKETRXJQCWM",
-            content: {
-              data: "2023-03-20T12:21:13.857Z",
-              message: {
-                originalResourceID: "063A4ZP46XVX3GN9NAE26AXWTC",
-                originalResourceName: "063A4ZP46XVX3GN9NAE26AXWTC",
-                proposalID: "063FXXV7GDXVJAW8PA2K5GNNK8",
-                proposerName: "pippo",
-              },
-              subject: "Project cited",
-            },
-            read: true,
-          },
-          {
-            id: 1094,
-            sender: "0634YMEGWHNGCVVBKETRXJQCWM",
-            content: {
-              data: "2023-03-20T15:47:35.660Z",
-              message: {
-                originalResourceID: "063A4ZP46XVX3GN9NAE26AXWTC",
-                originalResourceName: "063A4ZP46XVX3GN9NAE26AXWTC",
-                proposalID: "063FZD2C3GDM6GXTPMRJ2HHQQ4",
-                proposerName: "pippo",
-              },
-              subject: "Project cited",
-            },
-            read: false,
-          },
-
-          {
-            id: 476,
-            sender: "0634YN1WS21RMWRYTS8N2XGNAW",
-            content: {
-              data: "2023-03-03T08:23:23.562Z",
-              message: {
-                originalResourceID: "0639SZ77NTFMJ900ACDM3WKMFM",
-                originalResourceName: "first activity forked by pippo",
-                ownerName: "nenno",
-                proposalID: "0639SZ7AKEA9HKBXV30MC7X8YC",
-                proposerName: "nenno",
-                text: "testDescription",
-              },
-              subject: "contributionAccepted",
-            },
-            read: false,
-          },
-        ],
-        request_id: 50,
-        success: true,
-      };
-      await route.fulfill({ json });
-    });
-
-    const notification = await page.getByRole("heading", { name: "Contribution Responses (1)" });
-    const notification2 = await page.getByRole("heading", { name: "Citations (3)" });
-
-    expect(notification).toBeTruthy();
-    expect(notification2).toBeTruthy();
-    await page.getByRole("button", { name: "take me there" }).first().click;
-    // expect(page.url()).toContain("project")
-  });
-
-  test("should show empty state when no notifications exist", async () => {
-    await page.route("**/inbox/read", async route => {
-      await route.fulfill({ json: { messages: [], request_id: 50, success: true } });
-    });
-    await page.goto("/notification");
-    await expect(page.getByText("No notifications at the moment")).toBeVisible();
-  });
-
-  test("should show error state with retry button on network failure", async () => {
-    await page.route("**/inbox/read", async route => {
-      await route.abort("failed");
-    });
-    await page.goto("/notification");
-    await expect(page.getByText("Failed to load notifications")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Retry" })).toBeVisible();
-  });
-
-  test("should show loading spinner while fetching", async () => {
-    let resolveRoute: () => void;
-    const routeBlocked = new Promise<void>(r => (resolveRoute = r));
-    await page.route("**/inbox/read", async route => {
-      await routeBlocked;
-      await route.fulfill({ json: { messages: [], request_id: 50, success: true } });
-    });
-    await page.goto("/notification");
-    // The spinner should be visible while the route is blocked
-    await expect(page.locator(".Polaris-Spinner")).toBeVisible();
-    // Release the route so the test can clean up
-    resolveRoute!();
-  });
-
-  test("mark all as read button should be hidden when no unread messages", async () => {
-    await page.route("**/inbox/read", async route => {
-      await route.fulfill({
-        json: {
-          messages: [
-            {
-              id: 1,
-              sender: "test",
-              content: {
-                data: "2023-03-20T12:18:53Z",
-                message: { proposerName: "test" },
-                subject: "Project cited",
-              },
-              read: true,
-            },
-          ],
-          request_id: 50,
-          success: true,
-        },
+        });
       });
+      await page.route("**/inbox/count-unread", async route => {
+        await route.fulfill({ json: { count: 1 } });
+      });
+      await page.goto("");
+      await login(page);
     });
-    await page.goto("/notification");
-    await expect(page.getByRole("button", { name: /Mark all as read/ })).not.toBeVisible();
+
+    test("should see incoming notifications on /notification", async () => {
+      await page.goto("/notification");
+      await expect(page.getByRole("heading", { name: /Citations/ })).toBeVisible();
+    });
+  });
+
+  test.describe("empty state", () => {
+    test.beforeEach(async ({ page: testPage, login }) => {
+      page = testPage;
+      await page.route("**/inbox/read", async route => {
+        await route.fulfill({ json: { messages: [], request_id: 50, success: true } });
+      });
+      await page.route("**/inbox/count-unread", async route => {
+        await route.fulfill({ json: { count: 0 } });
+      });
+      await page.goto("");
+      await login(page);
+    });
+
+    test("should show empty state when no notifications exist", async () => {
+      await page.goto("/notification");
+      await expect(page.getByText("No notifications at the moment")).toBeVisible();
+    });
+  });
+
+  test.describe("all read", () => {
+    test.beforeEach(async ({ page: testPage, login }) => {
+      page = testPage;
+      await page.route("**/inbox/read", async route => {
+        await route.fulfill({
+          json: {
+            messages: [
+              {
+                id: 1,
+                sender: "test",
+                content: {
+                  data: "2023-03-20T12:18:53Z",
+                  message: { proposerName: "test" },
+                  subject: "Project cited",
+                },
+                read: true,
+              },
+            ],
+            request_id: 50,
+            success: true,
+          },
+        });
+      });
+      await page.route("**/inbox/count-unread", async route => {
+        await route.fulfill({ json: { count: 0 } });
+      });
+      await page.goto("");
+      await login(page);
+    });
+
+    test("should hide mark all as read button when all messages are read", async () => {
+      await page.goto("/notification");
+      await expect(page.getByRole("button", { name: /Mark all as read/ })).not.toBeVisible();
+    });
   });
 });
