@@ -3,103 +3,102 @@ import { test } from "./fixtures/test";
 
 test.describe("Notification", () => {
   let page: Page;
-
-  test.describe("with mock data", () => {
-    test.beforeEach(async ({ page: testPage, login }) => {
-      page = testPage;
-      // Set up the route mock BEFORE login so SWR uses it on the first fetch
-      await page.route("**/inbox/read", async route => {
-        await route.fulfill({
-          json: {
-            messages: [
-              {
-                id: 1,
-                sender: "test123",
-                content: {
-                  data: "2023-03-20T12:18:53Z",
-                  message: {
-                    originalResourceID: "TESTS",
-                    originalResourceName: "Test Project",
-                    proposalID: "TEST",
-                    proposerName: "pippo",
-                  },
-                  subject: "Project cited",
-                },
-                read: false,
-              },
-            ],
-            request_id: 50,
-            success: true,
-          },
-        });
-      });
-      await page.route("**/inbox/count-unread", async route => {
-        await route.fulfill({ json: { count: 1 } });
-      });
-      await page.goto("");
-      await login(page);
-    });
-
-    test("should see incoming notifications on /notification", async () => {
-      await page.goto("/notification");
-      // Wait for SWR to fetch and render (auth restore is async)
-      await page.waitForSelector(`text="pippo"`, { timeout: 15000 });
-      expect(true).toBeTruthy(); // Page rendered notification content with proposerName
-    });
+  test.beforeEach(async ({ context, login }) => {
+    page = await context.newPage();
+    await page.goto("");
+    await login(page);
   });
 
-  test.describe("empty state", () => {
-    test.beforeEach(async ({ page: testPage, login }) => {
-      page = testPage;
-      await page.route("**/inbox/read", async route => {
-        await route.fulfill({ json: { messages: [], request_id: 50, success: true } });
+  test("should show grouped notifications on /notification", async () => {
+    // Set up route mock BEFORE navigation to avoid race with SWR
+    await page.route("https://gateway0.interfacer.dyne.org/inbox/read", async route => {
+      await route.fulfill({
+        json: {
+          messages: [
+            {
+              id: 1,
+              sender: "user1",
+              content: {
+                data: "2023-03-20T12:18:53Z",
+                message: {
+                  proposerName: "pippo",
+                  originalResourceName: "Test Project",
+                  proposalID: "P1",
+                  originalResourceID: "R1",
+                },
+                subject: "Project cited",
+              },
+              read: false,
+            },
+            {
+              id: 2,
+              sender: "user1",
+              content: {
+                data: "2023-03-20T12:18:53Z",
+                message: {
+                  originalResourceName: "Design",
+                  ownerName: "bob",
+                  proposalID: "P2",
+                  originalResourceID: "R2",
+                  proposerName: "bob",
+                  text: "test",
+                },
+                subject: "contributionAccepted",
+              },
+              read: false,
+            },
+          ],
+          request_id: 50,
+          success: true,
+        },
       });
-      await page.route("**/inbox/count-unread", async route => {
-        await route.fulfill({ json: { count: 0 } });
-      });
-      await page.goto("");
-      await login(page);
+    });
+    await page.route("https://gateway0.interfacer.dyne.org/inbox/count-unread", async route => {
+      await route.fulfill({ json: { count: 2 } });
     });
 
-    test("should show empty state when no notifications exist", async () => {
-      await page.goto("/notification");
-      await expect(page.getByText("No notifications at the moment")).toBeVisible();
-    });
+    // Navigate AFTER routes are set up
+    await page.goto("/notification");
+    await expect(page.getByRole("heading", { name: /Included/ })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("heading", { name: /Contribution Responses/ })).toBeVisible();
   });
 
-  test.describe("all read", () => {
-    test.beforeEach(async ({ page: testPage, login }) => {
-      page = testPage;
-      await page.route("**/inbox/read", async route => {
-        await route.fulfill({
-          json: {
-            messages: [
-              {
-                id: 1,
-                sender: "test",
-                content: {
-                  data: "2023-03-20T12:18:53Z",
-                  message: { proposerName: "test" },
-                  subject: "Project cited",
-                },
-                read: true,
-              },
-            ],
-            request_id: 50,
-            success: true,
-          },
-        });
-      });
-      await page.route("**/inbox/count-unread", async route => {
-        await route.fulfill({ json: { count: 0 } });
-      });
-      await page.goto("");
-      await login(page);
+  test("should show empty state when no notifications", async () => {
+    await page.route("https://gateway0.interfacer.dyne.org/inbox/read", async route => {
+      await route.fulfill({ json: { messages: [], request_id: 50, success: true } });
     });
+    await page.route("https://gateway0.interfacer.dyne.org/inbox/count-unread", async route => {
+      await route.fulfill({ json: { count: 0 } });
+    });
+    await page.goto("/notification");
+    await expect(page.getByText("No notifications at the moment")).toBeVisible({ timeout: 10000 });
+  });
 
-    test("should hide mark all as read button when all messages are read", async () => {
-      await page.goto("/notification");
-      await expect(page.getByRole("button", { name: /Mark all as read/ })).not.toBeVisible();
+  test("should hide mark all as read when all read", async () => {
+    await page.route("https://gateway0.interfacer.dyne.org/inbox/read", async route => {
+      await route.fulfill({
+        json: {
+          messages: [
+            {
+              id: 1,
+              sender: "user1",
+              content: {
+                data: "2023-03-20T12:18:53Z",
+                message: { proposerName: "test" },
+                subject: "contributionAccepted",
+              },
+              read: true,
+            },
+          ],
+          request_id: 50,
+          success: true,
+        },
+      });
     });
+    await page.route("https://gateway0.interfacer.dyne.org/inbox/count-unread", async route => {
+      await route.fulfill({ json: { count: 0 } });
+    });
+    await page.goto("/notification");
+    await expect(page.getByRole("button", { name: /Mark all as read/ })).not.toBeVisible({ timeout: 10000 });
   });
 });
