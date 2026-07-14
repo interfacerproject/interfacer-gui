@@ -20,7 +20,7 @@ import classNames from "classnames";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import ContributionMessage from "../components/ContributionMessage";
 import useInBox from "../hooks/useInBox";
 
@@ -71,55 +71,31 @@ const Notification = () => {
 
   /* Message grouping */
 
-  type Message = typeof messages[number];
+  type Message = (typeof messages)[number];
 
-  const [groupedMessages, setGroupedMessages] = useState<Record<MessageGroup, Array<Message>>>({
-    [MessageGroup.CONTRIBUTION_REQUESTS]: [],
-    [MessageGroup.CONTRIBUTION_RESPONSES]: [],
-    [MessageGroup.CITATIONS]: [],
-    [MessageGroup.ADDED_AS_CONTRIBUTOR]: [],
-  });
-
-  useEffect(() => {
-    function clearGroupedMessages() {
-      groupedMessages.contributionRequests = [];
-      groupedMessages.contributionResponses = [];
-      groupedMessages.citations = [];
-    }
-    if (!isLoading && !error) {
-      clearGroupedMessages();
-    }
-  }, [messages, isLoading, error, groupedMessages]);
-
-  useEffect(() => {
-    function groupMessagesBySubject(messages: Array<Message>): void {
-      // Contribution requests
-      let group: Record<MessageGroup, Array<Message>> = {
-        [MessageGroup.CONTRIBUTION_REQUESTS]: [],
-        [MessageGroup.CONTRIBUTION_RESPONSES]: [],
-        [MessageGroup.CITATIONS]: [],
-        [MessageGroup.ADDED_AS_CONTRIBUTOR]: [],
-      };
-      for (let m of messages) {
-        if (m.content.subject === MessageSubject.CONTRIBUTION_REQUEST) {
-          group.contributionRequests.push(m);
-        } else if (
-          m.content.subject === MessageSubject.CONTRIBUTION_ACCEPTED ||
-          m.content.subject === MessageSubject.CONTRIBUTION_REJECTED
-        ) {
-          group.contributionResponses.push(m);
-        } else if (m.content.subject === "Project cited") {
-          group.citations.push(m);
-        } else if (m.content.subject === MessageSubject.ADDED_AS_CONTRIBUTOR) {
-          group.addedAsContributor.push(m);
-        }
+  const groupedMessages: Record<MessageGroup, Array<Message>> = useMemo(() => {
+    const group: Record<MessageGroup, Array<Message>> = {
+      [MessageGroup.CONTRIBUTION_REQUESTS]: [],
+      [MessageGroup.CONTRIBUTION_RESPONSES]: [],
+      [MessageGroup.CITATIONS]: [],
+      [MessageGroup.ADDED_AS_CONTRIBUTOR]: [],
+    };
+    if (isLoading || error) return group;
+    for (const m of messages) {
+      if (m.content.subject === MessageSubject.CONTRIBUTION_REQUEST) {
+        group.contributionRequests.push(m);
+      } else if (
+        m.content.subject === MessageSubject.CONTRIBUTION_ACCEPTED ||
+        m.content.subject === MessageSubject.CONTRIBUTION_REJECTED
+      ) {
+        group.contributionResponses.push(m);
+      } else if (m.content.subject === "Project cited") {
+        group.citations.push(m);
+      } else if (m.content.subject === MessageSubject.ADDED_AS_CONTRIBUTOR) {
+        group.addedAsContributor.push(m);
       }
-      //
-      setGroupedMessages(group);
     }
-    if (!isLoading && !error) {
-      groupMessagesBySubject(messages);
-    }
+    return group;
   }, [messages, isLoading, error]);
 
   const groupsLabels: Record<MessageGroup, string> = {
