@@ -19,7 +19,7 @@ import InterfacerLogo from "components/InterfacerLogo";
 import NavigationMenu from "components/NavigationMenu";
 import UserDropdown from "components/UserDropdown";
 import { useAuth } from "hooks/useAuth";
-import useInBox from "hooks/useInBox";
+import { useInBoxContext } from "hooks/useInBox";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -38,7 +38,7 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
   const path = router.asPath;
   const { user } = useAuth();
   const { t } = useTranslation("common");
-  const { unread } = useInBox();
+  const { unread } = useInBoxContext();
   const isSignup = path === "/sign_up";
   const isSignin = path === "/sign_in";
 

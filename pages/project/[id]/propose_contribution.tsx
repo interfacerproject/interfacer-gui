@@ -23,7 +23,7 @@ import { ReactElement, useState } from "react";
 // Request
 import { useMutation, useQuery } from "@apollo/client";
 import { useAuth } from "hooks/useAuth";
-import useInBox from "hooks/useInBox";
+import { useInBoxContext } from "hooks/useInBox";
 import {
   CREATE_PROCESS,
   CREATE_PROPOSAL,
@@ -51,7 +51,7 @@ const ProposeContribution: NextPageWithLayout = () => {
 
   const router = useRouter();
   const { user } = useAuth();
-  const { sendMessage } = useInBox();
+  const { sendMessage } = useInBoxContext();
   const { addStrengthsPoints, addIdeaPoints } = useWallet({});
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;

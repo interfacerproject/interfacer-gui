@@ -45,6 +45,7 @@ type UseInBoxReturnValue = {
   isLoading: boolean;
   error: any;
   setReadedMessage: (id: number, read?: boolean) => Promise<any>;
+  mutateMessages: () => void;
 };
 
 const useInBox = (): UseInBoxReturnValue => {
@@ -54,6 +55,7 @@ const useInBox = (): UseInBoxReturnValue => {
     data: messages,
     error,
     isLoading,
+    mutate: mutateMessages,
   } = useSWR(client && user?.ulid ? ["inbox-messages", user.ulid] : null, async () => {
     if (!client) return [];
     const msgs = await client.inbox.getMessages();
@@ -91,7 +93,11 @@ const useInBox = (): UseInBoxReturnValue => {
     isLoading,
     error,
     setReadedMessage,
+    mutateMessages,
   };
 };
 
 export default useInBox;
+
+// Re-export from context for components that need the shared instance
+export { useInBoxContext } from "../contexts/InBoxContext";

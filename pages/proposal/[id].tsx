@@ -37,7 +37,7 @@ import { GetUnitAndCurrencyQuery, ProposedStatus, QueryProposalQuery, QueryPropo
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import useInBox from "../../hooks/useInBox";
+import { useInBoxContext } from "../../hooks/useInBox";
 import MdParser from "../../lib/MdParser";
 import { MessageSubject, ProposalNotification } from "../notification";
 
@@ -49,7 +49,7 @@ const Proposal = () => {
   const { data, loading, refetch } = useQuery<QueryProposalQuery, QueryProposalQueryVariables>(QUERY_PROPOSAL, {
     variables: { id: id?.toString() || "" },
   });
-  const { sendMessage } = useInBox();
+  const { sendMessage } = useInBoxContext();
   const { addStrengthsPoints, addIdeaPoints } = useWallet({});
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;

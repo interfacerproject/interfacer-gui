@@ -1,7 +1,7 @@
 import { CreateProjectValues } from "components/partials/create/project/CreateProjectForm";
 import { DeclarationsStepValues } from "components/partials/create/project/steps/DeclarationsStep";
 import { ProjectType } from "components/types";
-import useInBox from "hooks/useInBox";
+import { useInBoxContext } from "hooks/useInBox";
 import useWallet from "hooks/useWallet";
 import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import { errorFormatter } from "lib/errorFormatter";
@@ -22,7 +22,7 @@ import { AddedAsContributorNotification, MessageSubject, ProposalNotification } 
 
 export const useProjectCRUD = () => {
   const { user, client } = useAuth();
-  const { sendMessage } = useInBox();
+  const { sendMessage } = useInBoxContext();
   const { addIdeaPoints, addStrengthsPoints } = useWallet({});
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);

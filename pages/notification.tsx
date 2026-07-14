@@ -22,7 +22,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useMemo } from "react";
 import ContributionMessage from "../components/ContributionMessage";
-import useInBox from "../hooks/useInBox";
+import { useInBoxContext } from "../hooks/useInBox";
 
 export enum ProposalType {
   HARDWARE_IMPROVEMENT = "Hardware Improvement",
@@ -67,7 +67,7 @@ export enum MessageGroup {
 
 const Notification = () => {
   const { t } = useTranslation("notificationProps");
-  const { messages, isLoading, error } = useInBox();
+  const { messages, isLoading, error } = useInBoxContext();
 
   /* Message grouping */
 
@@ -89,7 +89,7 @@ const Notification = () => {
         m.content.subject === MessageSubject.CONTRIBUTION_REJECTED
       ) {
         group.contributionResponses.push(m);
-      } else if (m.content.subject === "Project cited") {
+      } else if (m.content.subject === MessageSubject.PROJECT_CITED) {
         group.citations.push(m);
       } else if (m.content.subject === MessageSubject.ADDED_AS_CONTRIBUTOR) {
         group.addedAsContributor.push(m);
@@ -123,10 +123,12 @@ const Notification = () => {
 
   /* Main render */
 
+  const nonEmptyGroups = Object.entries(groupedMessages).filter(([, group]) => group.length > 0);
+
   return (
     <div className="flex flex-wrap mx-auto justify-center">
       <div className="flex flex-col p-6 space-y-1 sticky top-0 self-start z-40">
-        {Object.entries(groupedMessages).map(([groupName, group]) => (
+        {nonEmptyGroups.map(([groupName, group]) => (
           <Button key={groupName} url={`#${groupName}`}>
             {/* @ts-ignore */}
             {groupsLabels[groupName]}
@@ -136,37 +138,33 @@ const Notification = () => {
       </div>
 
       <div className="max-w-lg p-6 space-y-8">
-        {Object.entries(groupedMessages).map(([groupName, group]) => (
-          <>
-            {group.length > 0 && (
-              <div key={groupName}>
-                <Text id={groupName} as="h2" variant="headingMd">
-                  {/* @ts-ignore */}
-                  {groupsLabels[groupName]}
-                  {` (${group.length})`}
-                </Text>
+        {nonEmptyGroups.map(([groupName, group]) => (
+          <div key={groupName}>
+            <Text id={groupName} as="h2" variant="headingMd">
+              {/* @ts-ignore */}
+              {groupsLabels[groupName]}
+              {` (${group.length})`}
+            </Text>
 
-                <div className="mt-4 space-y-2">
-                  {group.map((m: any) => {
-                    // @ts-ignore
-                    const isUnread = !m.read;
-                    const classes = classNames("relative p-4 bg-white rounded-md", {
-                      "border-2 border-text-primary": isUnread,
-                      "border-1 border-border-subdued": !isUnread,
-                    });
-                    return (
-                      <div key={m.id} className={classes}>
-                        <ContributionMessage message={m.content} sender={m.sender} data={m.content.data} id={m.id} />
-                        {isUnread && (
-                          <div className="absolute -top-2 -right-2 w-4 h-4 bg-text-primary border-2 border-white rounded-full shadow-md" />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </>
+            <div className="mt-4 space-y-2">
+              {group.map((m: any) => {
+                // @ts-ignore
+                const isUnread = !m.read;
+                const classes = classNames("relative p-4 bg-white rounded-md", {
+                  "border-2 border-text-primary": isUnread,
+                  "border-1 border-border-subdued": !isUnread,
+                });
+                return (
+                  <div key={m.id} className={classes}>
+                    <ContributionMessage message={m.content} sender={m.sender} data={m.content.data} id={m.id} />
+                    {isUnread && (
+                      <div className="absolute -top-2 -right-2 w-4 h-4 bg-text-primary border-2 border-white rounded-full shadow-md" />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         ))}
       </div>
     </div>

@@ -16,7 +16,7 @@
 
 import { useQuery } from "@apollo/client";
 import { Button } from "@bbtgnn/polaris-interfacer";
-import useInBox, { Notification } from "hooks/useInBox";
+import { useInBoxContext, Notification } from "hooks/useInBox";
 import MdParser from "lib/MdParser";
 import { ASK_RESOURCE_PRIMARY_ACCOUNTABLE } from "lib/QueryAndMutation";
 import {
@@ -117,7 +117,7 @@ const ContributionMessage = ({
 
   const hasMessage = Boolean(m.message);
   const request = MessageSubject.CONTRIBUTION_REQUEST === m.subject;
-  const { setReadedMessage } = useInBox();
+  const { setReadedMessage } = useInBoxContext();
 
   return (
     <div className="space-y-3">
