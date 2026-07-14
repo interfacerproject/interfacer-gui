@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Button, Text } from "@bbtgnn/polaris-interfacer";
+import { Button, Spinner, Text } from "@bbtgnn/polaris-interfacer";
 import { BellIcon } from "@heroicons/react/outline";
 import classNames from "classnames";
 import { useTranslation } from "next-i18next";
@@ -105,9 +105,36 @@ const Notification = () => {
     [MessageGroup.ADDED_AS_CONTRIBUTOR]: t("Added as contributor"),
   };
 
+  /* Loading state */
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[90vh] space-y-4 text-gray-500">
+        <Spinner />
+        <Text as="p" variant="bodyLg">
+          {t("Loading notifications...")}
+        </Text>
+      </div>
+    );
+  }
+
+  /* Error state */
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[90vh] space-y-4 text-gray-500">
+        <BellIcon className="w-8 h-8" />
+        <Text as="p" variant="bodyLg">
+          {t("Failed to load notifications")}
+        </Text>
+        <Button onClick={() => window.location.reload()}>{t("Retry")}</Button>
+      </div>
+    );
+  }
+
   /* Empty state */
 
-  if (!isLoading && messages.length === 0) {
+  if (messages.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[90vh] space-y-2 text-gray-500">
         <BellIcon className="w-5 h-5" />

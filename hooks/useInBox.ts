@@ -84,6 +84,8 @@ const useInBox = (): UseInBoxReturnValue => {
   const setReadedMessage = async (id: number) => {
     if (!client) return;
     await client.inbox.markRead(id);
+    // Invalidate the messages cache so all components see the update
+    mutateMessages();
   };
 
   return {
