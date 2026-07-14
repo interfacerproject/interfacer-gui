@@ -92,4 +92,60 @@ test.describe("Notification", () => {
     await page.getByRole("button", { name: "take me there" }).first().click;
     // expect(page.url()).toContain("project")
   });
+
+  test("should show empty state when no notifications exist", async () => {
+    await page.route("**/inbox/read", async route => {
+      await route.fulfill({ json: { messages: [], request_id: 50, success: true } });
+    });
+    await page.goto("/notification");
+    await expect(page.getByText("No notifications at the moment")).toBeVisible();
+  });
+
+  test("should show error state with retry button on network failure", async () => {
+    await page.route("**/inbox/read", async route => {
+      await route.abort("failed");
+    });
+    await page.goto("/notification");
+    await expect(page.getByText("Failed to load notifications")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Retry" })).toBeVisible();
+  });
+
+  test("should show loading spinner while fetching", async () => {
+    let resolveRoute: () => void;
+    const routeBlocked = new Promise<void>(r => (resolveRoute = r));
+    await page.route("**/inbox/read", async route => {
+      await routeBlocked;
+      await route.fulfill({ json: { messages: [], request_id: 50, success: true } });
+    });
+    await page.goto("/notification");
+    // The spinner should be visible while the route is blocked
+    await expect(page.locator(".Polaris-Spinner")).toBeVisible();
+    // Release the route so the test can clean up
+    resolveRoute!();
+  });
+
+  test("mark all as read button should be hidden when no unread messages", async () => {
+    await page.route("**/inbox/read", async route => {
+      await route.fulfill({
+        json: {
+          messages: [
+            {
+              id: 1,
+              sender: "test",
+              content: {
+                data: "2023-03-20T12:18:53Z",
+                message: { proposerName: "test" },
+                subject: "Project cited",
+              },
+              read: true,
+            },
+          ],
+          request_id: 50,
+          success: true,
+        },
+      });
+    });
+    await page.goto("/notification");
+    await expect(page.getByRole("button", { name: /Mark all as read/ })).not.toBeVisible();
+  });
 });
