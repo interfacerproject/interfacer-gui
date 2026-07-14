@@ -49,17 +49,24 @@ const ContributionMessage = ({
   const router = useRouter();
   const { t } = useTranslation("common");
   const { message: parsedMessage } = message;
-  const { refetch: fetchUser } = useQuery<ARPAQuery, ARPAQueryVariables>(ASK_RESOURCE_PRIMARY_ACCOUNTABLE);
+  const { refetch: fetchUser } = useQuery<ARPAQuery, ARPAQueryVariables>(ASK_RESOURCE_PRIMARY_ACCOUNTABLE, {
+    skip: true,
+  });
 
   useEffect(() => {
     const findResourceData = async (id: string) => {
-      const { data } = await fetchUser({ id });
-      const economicResource = data?.economicResource;
-      if (!economicResource) return;
-      setOwnerName(economicResource.primaryAccountable.name);
-      // @ts-ignore
-      setUser(economicResource.primaryAccountable);
-      setOriginalResourceName(economicResource.name);
+      if (!id) return;
+      try {
+        const { data } = await fetchUser({ id });
+        const economicResource = data?.economicResource;
+        if (!economicResource) return;
+        setOwnerName(economicResource.primaryAccountable.name);
+        // @ts-ignore
+        setUser(economicResource.primaryAccountable);
+        setOriginalResourceName(economicResource.name);
+      } catch {
+        // silently ignore fetch errors on notification cards
+      }
     };
     if (message.subject !== MessageSubject.ADDED_AS_CONTRIBUTOR) findResourceData(parsedMessage.originalResourceID);
     else {

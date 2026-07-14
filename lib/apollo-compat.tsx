@@ -32,61 +32,78 @@ export function useQuery<TData = any, TVars = Record<string, any>>(
   }
 ) {
   const { client } = useAuth();
-  const vars = options?.variables;
   const [data, setData] = useState<TData | undefined>();
   const [loading, setLoading] = useState(!options?.skip);
   const [error, setError] = useState<any>(undefined);
   const mountedRef = useRef(true);
 
-  const execute = useCallback(async () => {
-    if (!client || options?.skip) {
-      setLoading(false);
-      return;
-    }
-    const v = vars as any;
-    setLoading(true);
-    try {
-      const res = await client.graphql.request<any>(query, v);
-      if (mountedRef.current) {
-        if (res.errors?.length) setError(res.errors[0]);
-        else {
-          setData(res.data);
-          setError(undefined);
-        }
+  const doFetch = useCallback(
+    async (overrideVars?: Record<string, any>) => {
+      if (!client || options?.skip) {
+        setLoading(false);
+        return { data: undefined as TData | undefined };
       }
-    } catch (e) {
-      if (mountedRef.current) setError(e);
-    } finally {
-      if (mountedRef.current) setLoading(false);
-    }
-  }, [client, query, JSON.stringify(vars), options?.skip]);
+      const v = overrideVars ?? (options?.variables as any);
+      setLoading(true);
+      try {
+        const res = await client.graphql.request<any>(query, v);
+        if (mountedRef.current) {
+          if (res.errors?.length) setError(res.errors[0]);
+          else {
+            setData(res.data);
+            setError(undefined);
+          }
+        }
+        return { data: res.data as TData | undefined };
+      } catch (e) {
+        if (mountedRef.current) setError(e);
+        return { data: undefined as TData | undefined };
+      } finally {
+        if (mountedRef.current) setLoading(false);
+      }
+    },
+    [client, query, JSON.stringify(options?.variables), options?.skip]
+  );
 
   useEffect(() => {
     mountedRef.current = true;
-    execute();
+    doFetch();
     return () => {
       mountedRef.current = false;
     };
-  }, [execute]);
+  }, [doFetch]);
+
+  // refetch with optional new variables (matches Apollo's refetch(newVars?) API)
+  // Using Partial to allow callers to pass optional/partial variables
+  const refetch = useCallback(
+    async (newVars?: Partial<TVars>): Promise<ApolloQueryResult<TData>> => {
+      const { data: resultData } = await doFetch(newVars as Record<string, any>);
+      return { data: resultData as TData, loading: false, networkStatus: 7 };
+    },
+    [doFetch]
+  );
 
   const fetchMore = useCallback(
     async (opts: { variables: Record<string, any>; updateQuery: (prev: any, result: any) => any }) => {
       if (!client) return;
-      const res = await client.graphql.request<any>(query, { ...(vars as any), ...opts.variables });
+      const res = await client.graphql.request<any>(query, {
+        ...(options?.variables as any),
+        ...opts.variables,
+      });
       if (mountedRef.current && res.data) {
         setData(prev => opts.updateQuery(prev, { fetchMoreResult: res.data }));
       }
     },
-    [client, query, JSON.stringify(vars)]
+    [client, query, JSON.stringify(options?.variables)]
   );
 
   return {
     data,
     loading,
     error,
-    refetch: execute as any,
+    refetch,
     fetchMore,
-    variables: vars as any,
+    variables: options?.variables as any,
     startPolling: (_interval?: number) => {},
     stopPolling: () => {},
     subscribeToMore: () => () => {},
@@ -156,8 +173,6 @@ export class HttpLink {
 export class ApolloClient {
   constructor(_config?: any) {}
   async query<TData = any, TVars = any>(_opts: { query: string; variables?: TVars }) {
-    // Delegate to the SDK — caller must have access to the client
-    // This stub is replaced by the actual SDK-backed client at runtime via the AuthProvider
     return { data: undefined as TData | undefined };
   }
   async mutate<TData = any, TVars = any>(_opts: { mutation: string; variables?: TVars }) {
@@ -165,5 +180,4 @@ export class ApolloClient {
   }
 }
 
-// Stub types
 export type ApolloQueryResult<T> = { data: T; loading: boolean; networkStatus: number };
