@@ -42,7 +42,7 @@ test.describe("Notification", () => {
 
     test("should see incoming notifications on /notification", async () => {
       await page.goto("/notification");
-      await expect(page.getByRole("heading", { name: /Citations/ })).toBeVisible();
+      await expect(page.getByRole("heading", { name: /Included/ })).toBeVisible();
     });
   });
 
