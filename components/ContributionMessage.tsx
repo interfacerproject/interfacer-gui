@@ -14,20 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
 import { Button } from "@bbtgnn/polaris-interfacer";
 import { useInBoxContext, Notification } from "hooks/useInBox";
 import MdParser from "lib/MdParser";
-import { ASK_RESOURCE_PRIMARY_ACCOUNTABLE } from "lib/QueryAndMutation";
-import {
-  AskResourcePrimaryAccountableQuery as ARPAQuery,
-  AskResourcePrimaryAccountableQueryVariables as ARPAQueryVariables,
-  Person,
-} from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import dayjs from "../lib/dayjs";
 import { MessageSubject } from "../pages/notification";
 import BrUserDisplay from "./brickroom/BrUserDisplay";
@@ -43,44 +35,19 @@ const ContributionMessage = ({
   data: Date;
   id: number;
 }) => {
-  const [ownerName, setOwnerName] = useState("");
-  const [user, setUser] = useState<Partial<Person>>();
-  const [originalResourceName, setOriginalResourceName] = useState("");
   const router = useRouter();
   const { t } = useTranslation("common");
   const { message: parsedMessage } = message;
-  const { refetch: fetchUser } = useQuery<ARPAQuery, ARPAQueryVariables>(ASK_RESOURCE_PRIMARY_ACCOUNTABLE, {
-    skip: true,
-  });
 
-  useEffect(() => {
-    const findResourceData = async (id: string) => {
-      if (!id) return;
-      try {
-        const { data } = await fetchUser({ id });
-        const economicResource = data?.economicResource;
-        if (!economicResource) return;
-        setOwnerName(economicResource.primaryAccountable.name);
-        // @ts-ignore
-        setUser(economicResource.primaryAccountable);
-        setOriginalResourceName(economicResource.name);
-      } catch {
-        // silently ignore fetch errors on notification cards
-      }
-    };
-    if (message.subject !== MessageSubject.ADDED_AS_CONTRIBUTOR) findResourceData(parsedMessage.originalResourceID);
-    else {
-      findResourceData(message.message.resourceID);
-    }
-  }, [parsedMessage.originalResourceID, message.subject, message.message.resourceID, fetchUser]);
-
+  // All display data is included in the notification payload at send time.
+  // No GraphQL query needed — avoids N+1 per notification card.
   const commonProps = {
     data,
     userId: sender,
     message: parsedMessage.text,
-    resourceName: originalResourceName,
+    resourceName: parsedMessage.originalResourceName || "",
     resourceId: parsedMessage.originalResourceID,
-    userName: parsedMessage.proposerName,
+    userName: (parsedMessage as any).proposerName || "",
     proposalId: parsedMessage.proposalID,
     subject: message.subject,
     id: id,
@@ -88,15 +55,16 @@ const ContributionMessage = ({
 
   const makeMessageProps = () => {
     switch (message.subject) {
-      case MessageSubject.ADDED_AS_CONTRIBUTOR:
-        const { message: addedAsContributorMessage } = message;
+      case MessageSubject.ADDED_AS_CONTRIBUTOR: {
+        const am = message.message as any;
         return {
           ...commonProps,
-          resourceName: originalResourceName,
-          resourceId: addedAsContributorMessage.resourceID,
-          userName: ownerName,
-          proposalId: user?.id,
+          resourceName: am.resourceName || commonProps.resourceName,
+          resourceId: am.resourceID,
+          userName: am.projectOwnerName || commonProps.userName,
+          proposalId: undefined,
         };
+      }
       case MessageSubject.PROJECT_CITED:
       case MessageSubject.CONTRIBUTION_REQUEST:
       case MessageSubject.CONTRIBUTION_ACCEPTED:
@@ -123,49 +91,45 @@ const ContributionMessage = ({
     <div className="space-y-3">
       <div>
         <p className="mr-1">{dayjs(m.data).fromNow()}</p>
-        <p className="text-xs">{dayjs(m.data).format("HH:mm DD/MM/YYYY")}</p>
-      </div>
-      <div className="flex flex-row my-2 center">
-        <div className="mr-2">
-          <BrUserDisplay userId={m.userId}>
-            <BrUserDisplay.Avatar />
-            <BrUserDisplay.Name />
-          </BrUserDisplay>
-        </div>
-        <div className="pt-3.5">
-          <span className="mr-1">{headlinesDict[m.subject as MessageSubject]}</span>
-          <Link href={`/project/${m.resourceId}`}>
-            <a className="break-all text-primary hover:underline">{m.resourceName}</a>
-          </Link>
+        <div className="flex flex-row items-center space-x-2">
+          {m.userId && <BrUserDisplay userId={m.userId} />}
+          <p>
+            <span className="font-semibold">{m.userName || m.userId} </span>
+            {headlinesDict[m.subject as keyof typeof headlinesDict]}
+            <Link href={`/project/${m.resourceId}`}>
+              <span className="font-semibold cursor-pointer hover:underline">{m.resourceName || m.resourceId}</span>
+            </Link>
+          </p>
         </div>
       </div>
+
       {hasMessage && (
-        <div className="text-xs bg-[#E0E0E0] p-2 my-2 overflow-x-scroll">
-          <div dangerouslySetInnerHTML={{ __html: MdParser.render(m.message) }} />
+        <div className="pl-2 border-l-2 border-gray-200">
+          {request ? (
+            <div dangerouslySetInnerHTML={{ __html: MdParser.render(m.message || "") }} />
+          ) : (
+            <p>{m.message}</p>
+          )}
         </div>
       )}
-      {request && <p>{t("Make your call")}</p>}
-      {request && (
-        <Button
-          fullWidth
-          onClick={() => {
-            router.replace(`/proposal/${m.proposalId}`);
-          }}
-        >
-          {t("Review")}
-        </Button>
-      )}{" "}
-      {!request && (
-        <Button
-          fullWidth
-          onClick={() => {
-            setReadedMessage(m.id);
-            router.replace(`/project/${m.resourceId}`);
-          }}
-        >
-          {t("take me there")}
-        </Button>
-      )}
+
+      <div className="flex space-x-2">
+        {m.proposalId && (
+          <Button
+            onClick={async () => {
+              await setReadedMessage(m.id);
+              router.push(`/proposal/${m.proposalId}`);
+            }}
+          >
+            {t("take me there")}
+          </Button>
+        )}
+        {request && (
+          <Link href={`/proposal/${m.proposalId}`}>
+            <Button primary>{t("Make your call")}</Button>
+          </Link>
+        )}
+      </div>
     </div>
   );
 };
