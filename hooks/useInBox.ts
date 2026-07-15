@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import dayjs from "dayjs";
+import useSWR from "swr";
 import { useAuth } from "./useAuth";
 
 // Keep Notification type for backward compatibility
@@ -44,29 +45,73 @@ type UseInBoxReturnValue = {
   isLoading: boolean;
   error: any;
   setReadedMessage: (id: number, read?: boolean) => Promise<any>;
+  mutateMessages: () => void;
 };
 
 const useInBox = (): UseInBoxReturnValue => {
   const { user, client } = useAuth();
 
+  const {
+    data: messages,
+    error,
+    isLoading,
+    mutate: mutateMessages,
+  } = useSWR(
+    client && user?.ulid ? ["inbox-messages", user.ulid] : null,
+    async () => {
+      if (!client) return [];
+      const msgs = await client.inbox.getMessages();
+      // Already sorted by date descending in the SDK, but sort again for safety
+      return msgs.sort((a, b) => {
+        return dayjs(b.content.data).unix() - dayjs(a.content.data).unix();
+      });
+    },
+    {
+      refreshInterval: Number(process.env.NEXT_PUBLIC_INBOX_COUNT_INTERVAL) || 0,
+    }
+  );
+
+  const { data: unread } = useSWR(
+    client && user?.ulid ? ["inbox-unread-count", user.ulid] : null,
+    async () => {
+      if (!client) return 0;
+      return client.inbox.getUnreadCount();
+    },
+    {
+      refreshInterval: Number(process.env.NEXT_PUBLIC_INBOX_COUNT_INTERVAL) || 0,
+    }
+  );
+
   const sendMessage = async (message: any, receivers: string[], subject: string = "Subject") => {
     if (!client) return;
-    await client.inbox.sendMessage(message, receivers, subject);
+    try {
+      await client.inbox.sendMessage(message, receivers, subject);
+      // Invalidate the cache so all components see the new message
+      mutateMessages();
+    } catch (err) {
+      console.error("Failed to send inbox message:", err);
+    }
   };
 
   const setReadedMessage = async (id: number) => {
     if (!client) return;
     await client.inbox.markRead(id);
+    // Invalidate the messages cache so all components see the update
+    mutateMessages();
   };
 
   return {
     sendMessage,
-    messages: [],
-    unread: 0,
-    isLoading: false,
-    error: null,
+    messages: messages || [],
+    unread: unread || 0,
+    isLoading,
+    error,
     setReadedMessage,
+    mutateMessages,
   };
 };
 
 export default useInBox;
+
+// Re-export from context for components that need the shared instance
+export { useInBoxContext } from "../contexts/InBoxContext";

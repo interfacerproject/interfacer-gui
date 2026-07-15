@@ -17,7 +17,7 @@ import InterfacerLogo from "components/InterfacerLogo";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
-import useInBox from "hooks/useInBox";
+import { useInBoxContext } from "hooks/useInBox";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -171,7 +171,7 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
   const router = useRouter();
   const { user } = useAuth();
   const { t } = useTranslation("SideBarProps");
-  const { unread } = useInBox();
+  const { unread } = useInBoxContext();
   const [myProjectsExpanded, setMyProjectsExpanded] = useState(true);
 
   const handleNavigate = (path: string) => {

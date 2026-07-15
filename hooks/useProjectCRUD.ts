@@ -1,7 +1,7 @@
 import { CreateProjectValues } from "components/partials/create/project/CreateProjectForm";
 import { DeclarationsStepValues } from "components/partials/create/project/steps/DeclarationsStep";
 import { ProjectType } from "components/types";
-import useInBox from "hooks/useInBox";
+import { useInBoxContext } from "hooks/useInBox";
 import useWallet from "hooks/useWallet";
 import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import { errorFormatter } from "lib/errorFormatter";
@@ -22,7 +22,7 @@ import { AddedAsContributorNotification, MessageSubject, ProposalNotification } 
 
 export const useProjectCRUD = () => {
   const { user, client } = useAuth();
-  const { sendMessage } = useInBox();
+  const { sendMessage } = useInBoxContext();
   const { addIdeaPoints, addStrengthsPoints } = useWallet({});
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
@@ -63,10 +63,36 @@ export const useProjectCRUD = () => {
     }
   }
 
-  const addRelation = async (projectId: string, processId: string) => {
+  const addRelation = async (projectId: string, processId: string, newProjectId: string) => {
     if (!client || !user) return;
     try {
       await client.resources.citeResource(projectId, processId);
+
+      // Send PROJECT_CITED notification to the cited project's owner
+      try {
+        const res = await client.graphql.request<any>(
+          `query($id: ID!) { economicResource(id: $id) { id name primaryAccountable { id } } }`,
+          { id: projectId }
+        );
+        const citedProject = res.data?.economicResource;
+        if (citedProject?.primaryAccountable?.id) {
+          const message: ProposalNotification = {
+            originalResourceID: citedProject.id,
+            originalResourceName: citedProject.name || citedProject.id,
+            proposalID: newProjectId,
+            ownerName: user!.name,
+            proposerName: user!.name,
+            text: "",
+          };
+          // Don't send notification to yourself
+          if (citedProject.primaryAccountable.id !== user!.ulid) {
+            await sendMessage(message, [citedProject.primaryAccountable.id], MessageSubject.PROJECT_CITED);
+          }
+        }
+      } catch (e) {
+        devLog("Failed to send PROJECT_CITED notification", e);
+      }
+
       addIdeaPoints(user!.ulid, IdeaPoints.OnCite);
     } catch (e) {
       devLog("error: relation not created", e);
@@ -238,7 +264,7 @@ export const useProjectCRUD = () => {
 
       // Relations
       for (const rel of formData.relations) {
-        await addRelation(rel, processId);
+        await addRelation(rel, processId, projectId);
       }
 
       // Contributors

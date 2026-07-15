@@ -2,7 +2,7 @@ import { Logout } from "@carbon/icons-react";
 import { BellIcon, BookmarkIcon, CogIcon, UserIcon } from "@heroicons/react/outline";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import { useAuth } from "hooks/useAuth";
-import useInBox from "hooks/useInBox";
+import { useInBoxContext } from "hooks/useInBox";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -55,7 +55,7 @@ interface UserDropdownProps {
 
 export default function UserDropdown({ onClose }: UserDropdownProps) {
   const { user, logout } = useAuth();
-  const { unread } = useInBox();
+  const { unread } = useInBoxContext();
   const { t } = useTranslation("common");
   const router = useRouter();
 

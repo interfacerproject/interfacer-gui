@@ -16,10 +16,10 @@
 
 import { BellIcon } from "@heroicons/react/outline";
 import Link from "next/link";
-import useInBox from "../hooks/useInBox";
+import { useInBoxContext } from "../hooks/useInBox";
 
 const NotificationBell = () => {
-  const { unread } = useInBox();
+  const { unread } = useInBoxContext();
   return (
     <Link href="/notification">
       <a className="relative" id="notification-bell">
