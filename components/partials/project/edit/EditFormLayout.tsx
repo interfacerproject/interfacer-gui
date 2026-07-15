@@ -36,6 +36,7 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
     setLoading(true);
     try {
       await onSubmit(values);
+      setLoading(false);
     } catch (e) {
       setLoading(false);
     }
@@ -65,7 +66,12 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
     //
     else if (isSubmitSuccessful) {
       if (!redirect) router.reload();
-      else router.push(redirect);
+      else if (typeof redirect === "string" && router.asPath === redirect) {
+        // Already on the redirect URL — reset form state to break the infinite loop
+        // caused by react-hook-form preserving isSubmitSuccessful across same-page navigations
+        formMethods.reset();
+        setLoading(false);
+      } else router.push(redirect);
     }
 
     return () => {
