@@ -85,6 +85,7 @@ function createClient() {
       zenflowsUrl: process.env.NEXT_PUBLIC_ZENFLOWS_URL || "",
       zenflowsFileUrl: process.env.NEXT_PUBLIC_ZENFLOWS_FILE_URL || "",
       dppUrl: process.env.NEXT_PUBLIC_DPP_URL || "",
+      feedbackUrl: process.env.NEXT_PUBLIC_FEEDBACK_URL || "",
       inbox: {
         send: process.env.NEXT_PUBLIC_INBOX_SEND || "",
         read: process.env.NEXT_PUBLIC_INBOX_READ || "",
