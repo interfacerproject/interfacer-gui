@@ -14,7 +14,7 @@ export default function LoshCard(props: ProjectCardProps) {
   const { project } = props;
   const { t } = useTranslation("common");
   const router = useRouter();
-  const addedOn = <LoshImportedDate projectId={project.id!} />;
+  const addedOn = <LoshImportedDate addedOn={undefined} />;
   return (
     <GeneralCard project={project} baseUrl="/resource/">
       <GeneralCard.CardHeader>

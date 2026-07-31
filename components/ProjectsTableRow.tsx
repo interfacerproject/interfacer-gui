@@ -28,8 +28,8 @@ const ProjectsTableRow = (props: { project: { node: EconomicResource } }) => {
   const e = props.project.node;
   const router = useRouter();
 
-  // @ts-ignore
-  const data = e.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime;
+  // @ts-ignore - trace is not fetched in FETCH_RESOURCES; use safe optional chain to avoid crash
+  const data = e.trace?.filter((t: any) => !!t.hasPointInTime)?.[0]?.hasPointInTime;
 
   const conformsToColors: { [key: string]: string } = {
     Design: "bg-[#E4CCE3] text-[#C18ABF] border-[#C18ABF]",

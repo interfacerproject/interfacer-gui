@@ -1,4 +1,3 @@
-import { gql, useQuery } from "@apollo/client";
 import { Stack, Tabs } from "@bbtgnn/polaris-interfacer";
 import { Cube, Events, ListBoxes, Purchase } from "@carbon/icons-react";
 import { useProject } from "components/layout/FetchProjectLayout";
@@ -16,43 +15,7 @@ const ContributorsTable = dynamic(() => import("components/ContributorsTable"), 
 const ContributionsTable = dynamic(() => import("components/ContributionsTable"), { ssr: false });
 const DynamicGC1DPP = dynamic(() => import("./GC1DPP"), { ssr: false });
 
-// Query to get traceDpp for extracting DPP service ULID and machines
-const QUERY_TRACE_DPP = gql`
-  query getTraceDpp($id: ID!) {
-    economicResource(id: $id) {
-      traceDpp
-    }
-  }
-`;
 
-// Helper function to recursively find DPP service ULID and machines from traceDpp tree
-function extractFromTraceDpp(traceDpp: any[]): { dppServiceUlid?: string; machines: any[] } {
-  let dppServiceUlid: string | undefined;
-  const machines: any[] = [];
-
-  function traverse(node: any) {
-    if (!node) return;
-
-    // Check if this node is an EconomicResource with dppServiceUlid in metadata
-    if (node.type === "EconomicResource" && node.node?.metadata?.dppServiceUlid) {
-      dppServiceUlid = node.node.metadata.dppServiceUlid;
-    }
-
-    // Check if this is a machine resource (you could add machine detection logic here)
-    // For now, we'll identify machines by their conformsTo or other properties
-
-    // Traverse children
-    if (node.children && Array.isArray(node.children)) {
-      node.children.forEach(traverse);
-    }
-  }
-
-  if (Array.isArray(traceDpp)) {
-    traceDpp.forEach(traverse);
-  }
-
-  return { dppServiceUlid, machines };
-}
 
 const ProjectTabs = () => {
   const { project } = useProject();
@@ -63,22 +26,9 @@ const ProjectTabs = () => {
   const [pageLoaded, setPageLoaded] = useState(false);
   const { authenticated } = useAuth();
 
-  // Query traceDpp to extract DPP service ULID
-  const { data: traceDppData } = useQuery(QUERY_TRACE_DPP, {
-    variables: { id: project?.id },
-    skip: !project?.id,
-  });
-
-  // Extract dppServiceUlid and machines from traceDpp
-  const { dppServiceUlid, machines } = useMemo(() => {
-    if (!traceDppData?.economicResource?.traceDpp) {
-      return { dppServiceUlid: undefined, machines: [] };
-    }
-    return extractFromTraceDpp(traceDppData.economicResource.traceDpp);
-  }, [traceDppData]);
-
-  // Fallback to legacy metadata.dpp if no cited DPP resource found
-  const dppUlid = dppServiceUlid || project.metadata?.dpp;
+  // Use metadata.dpp for DPP ULID (traceDpp is fetched only on-demand when user clicks DPP tab)
+  const dppUlid = project.metadata?.dpp;
+  const machines: any[] = [];
 
   // Map tab IDs to their indices for URL parameter handling
   const allTabsMap: Record<string, number> = {
@@ -230,7 +180,7 @@ const ProjectTabs = () => {
           contributors={project.metadata?.contributors}
           title={t("Contributors")}
           // @ts-ignore
-          data={project.trace?.filter((t: any) => !!t.hasPointInTime)[0].hasPointInTime}
+          data={undefined}
         />
       )}
       {selected == 3 && <ContributionsTable id={String(id)} title={t("Contributions")} />}
