@@ -507,48 +507,18 @@ export const FETCH_RESOURCES = gql`
           classifiedAs
           note
           metadata
-          okhv
-          repo
           images {
             hash
             name
             mimeType
           }
-          version
-          licensor
           license
           primaryAccountable {
             id
             name
-            note
             images {
-              bin
               mimeType
             }
-            primaryLocation {
-              name
-            }
-          }
-          custodian {
-            id
-            name
-            note
-          }
-          accountingQuantity {
-            hasUnit {
-              id
-              label
-              symbol
-            }
-            hasNumericalValue
-          }
-          onhandQuantity {
-            hasUnit {
-              id
-              label
-              symbol
-            }
-            hasNumericalValue
           }
         }
       }

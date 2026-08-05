@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { Button, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { ListBoxes, MagicWand } from "@carbon/icons-react";
 import { useProject } from "components/layout/FetchProjectLayout";
@@ -9,41 +9,7 @@ import { ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/typ
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useProjectTabs } from "pages/project/[id]";
-import { useMemo } from "react";
 import QRCode from "react-qr-code";
-
-// Query to get traceDpp for extracting DPP service ULID
-const QUERY_TRACE_DPP = gql`
-  query getTraceDpp($id: ID!) {
-    economicResource(id: $id) {
-      traceDpp
-    }
-  }
-`;
-
-// Helper function to recursively find DPP service ULID from traceDpp tree
-function extractDppServiceUlid(traceDpp: any[]): string | undefined {
-  let dppServiceUlid: string | undefined;
-
-  function traverse(node: any) {
-    if (!node || dppServiceUlid) return;
-
-    if (node.type === "EconomicResource" && node.node?.metadata?.dppServiceUlid) {
-      dppServiceUlid = node.node.metadata.dppServiceUlid;
-      return;
-    }
-
-    if (node.children && Array.isArray(node.children)) {
-      node.children.forEach(traverse);
-    }
-  }
-
-  if (Array.isArray(traceDpp)) {
-    traceDpp.forEach(traverse);
-  }
-
-  return dppServiceUlid;
-}
 
 const ContributionsCard = () => {
   const { project } = useProject();
@@ -55,20 +21,11 @@ const ContributionsCard = () => {
 
   const { data: contributions } = useQuery<ResourceProposalsQuery, ResourceProposalsQueryVariables>(
     QUERY_RESOURCE_PROPOSAlS,
-    {
-      variables: { id: id as string },
-    }
+    { variables: { id: id as string } }
   );
-  const { data: traceDppData } = useQuery(QUERY_TRACE_DPP, {
-    variables: { id: project?.id },
-    skip: !project?.id,
-  });
   const url = window.location.protocol + "//" + window.location.host + `/project/${project.id}?tab=gc1dpp`;
-  const dppServiceUlid = useMemo(() => {
-    if (!traceDppData?.economicResource?.traceDpp) return undefined;
-    return extractDppServiceUlid(traceDppData.economicResource.traceDpp);
-  }, [traceDppData]);
-  const dppUlid = dppServiceUlid || project.metadata?.dpp;
+  // Use metadata.dpp for DPP ULID (traceDpp is fetched only on-demand when user clicks DPP tab)
+  const dppUlid = project.metadata?.dpp;
   const showDppQr = project.conformsTo?.name === "Product" && !!dppUlid;
 
   const contributionsCount = contributions?.proposals.edges.length || 0;
