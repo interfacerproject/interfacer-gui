@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import { Button, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { ListBoxes, MagicWand } from "@carbon/icons-react";
 import { useProject } from "components/layout/FetchProjectLayout";
@@ -19,6 +20,9 @@ const ContributionsCard = () => {
   const { authenticated } = useAuth();
 
   const { data: contributions } = useQuery<ResourceProposalsQuery, ResourceProposalsQueryVariables>(
+    QUERY_RESOURCE_PROPOSAlS,
+    { variables: { id: id as string } }
+  );
   const url = window.location.protocol + "//" + window.location.host + `/project/${project.id}?tab=gc1dpp`;
   // Use metadata.dpp for DPP ULID (traceDpp is fetched only on-demand when user clicks DPP tab)
   const dppUlid = project.metadata?.dpp;
