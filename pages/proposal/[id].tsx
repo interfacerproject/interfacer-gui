@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "lib/apollo-compat";
 import { Badge, Button, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { Status } from "@bbtgnn/polaris-interfacer/build/ts/latest/src/components/Badge";
 import { AddProductMajor, RemoveProductMajor } from "@shopify/polaris-icons";

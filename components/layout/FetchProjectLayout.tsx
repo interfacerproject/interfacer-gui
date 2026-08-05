@@ -1,4 +1,5 @@
-import { ApolloQueryResult, gql, useQuery } from "@apollo/client";
+import { SdkQueryResult, useQuery } from "lib/apollo-compat";
+import { GET_PROJECT_LAYOUT } from "@dyne/interfacer-client";
 import { Spinner } from "@bbtgnn/polaris-interfacer";
 import { useAuth } from "hooks/useAuth";
 import { EconomicResource, GetProjectLayoutQuery, GetProjectLayoutQueryVariables } from "lib/types";
@@ -8,7 +9,7 @@ import { createContext, useContext } from "react";
 //
 interface ProjectContextValue {
   project: Partial<EconomicResource>;
-  refetch: (variables?: { id?: string }) => Promise<ApolloQueryResult<GetProjectLayoutQuery>>;
+  refetch: (variables?: { id?: string }) => Promise<SdkQueryResult<GetProjectLayoutQuery>>;
   isOwner?: boolean;
   loading: boolean;
 }
@@ -60,60 +61,3 @@ const FetchProjectLayout: React.FunctionComponent<Props> = (props: Props) => {
 };
 
 export default FetchProjectLayout;
-
-//
-
-export const GET_PROJECT_LAYOUT = gql`
-  query getProjectLayout($id: ID!) {
-    economicResource(id: $id) {
-      id
-      name
-      note
-      metadata
-      license
-      repo
-      classifiedAs
-      accountingQuantity {
-        hasNumericalValue
-      }
-      onhandQuantity {
-        hasUnit {
-          id
-        }
-        hasNumericalValue
-      }
-      conformsTo {
-        id
-        name
-      }
-      primaryAccountable {
-        id
-        name
-        primaryLocation {
-          name
-          mappableAddress
-          lat
-          long
-        }
-      }
-      currentLocation {
-        id
-        name
-        mappableAddress
-        lat
-        long
-      }
-      images {
-        hash
-        name
-        mimeType
-        bin
-        date
-        description
-        extension
-        size
-      }
-
-    }
-  }
-`;

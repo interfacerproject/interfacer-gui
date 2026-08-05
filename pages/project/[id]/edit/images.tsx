@@ -1,4 +1,5 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "lib/apollo-compat";
+import { EDIT_IMAGES } from "@dyne/interfacer-client";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
 
@@ -93,18 +94,6 @@ const EditImages: NextPageWithLayout = () => {
     </EditFormLayout>
   );
 };
-
-//
-
-export const EDIT_IMAGES = gql`
-  mutation EditImages($id: ID!, $images: [IFile!]) {
-    updateEconomicResource(resource: { id: $id, images: $images }) {
-      economicResource {
-        id
-      }
-    }
-  }
-`;
 
 //
 

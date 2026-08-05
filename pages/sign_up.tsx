@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Functionality
-import { useMutation } from "@apollo/client";
+import { useMutation } from "lib/apollo-compat";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import { CLAIM_DID } from "lib/QueryAndMutation";

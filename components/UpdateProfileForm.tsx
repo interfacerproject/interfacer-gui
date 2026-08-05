@@ -1,4 +1,5 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "lib/apollo-compat";
+import { UPDATE_USER } from "@dyne/interfacer-client";
 import { useTranslation } from "next-i18next";
 import {
   CreateLocationMutation,
@@ -247,28 +248,3 @@ export default function UpdateProfileForm(props: { user: Partial<Person> }) {
     </EditFormLayout>
   );
 }
-
-//
-
-const UPDATE_USER = gql`
-  mutation updateUser($id: ID!, $name: String, $note: String, $primaryLocation: ID, $user: String, $images: [IFile!]) {
-    updatePerson(
-      person: { id: $id, name: $name, note: $note, primaryLocation: $primaryLocation, user: $user, images: $images }
-    ) {
-      agent {
-        id
-        name
-        note
-        images {
-          name
-        }
-        primaryLocation {
-          id
-          lat
-          long
-          name
-        }
-      }
-    }
-  }
-`;

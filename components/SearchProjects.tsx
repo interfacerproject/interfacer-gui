@@ -1,4 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
+import { SEARCH_PROJECTS } from "@dyne/interfacer-client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
 import { ProjectType, SelectOption } from "components/types";
@@ -139,36 +140,3 @@ export default function SearchProjects(props: Props) {
     <Autocomplete options={options} selected={[]} onSelect={handleSelect} loading={loading} textField={textField} />
   );
 }
-
-//
-
-export const SEARCH_PROJECTS = gql`
-  query SearchProjects($last: Int, $IDs: [ID!], $name: String, $conformsTo: [ID!], $primaryAccountable: [ID!]) {
-    economicResources(
-      last: $last
-      filter: { id: $IDs, name: $name, conformsTo: $conformsTo, primaryAccountable: $primaryAccountable }
-    ) {
-      edges {
-        node {
-          id
-          name
-          metadata
-          conformsTo {
-            id
-            name
-          }
-          primaryAccountable {
-            id
-            name
-          }
-          images {
-            hash
-            name
-            mimeType
-            bin
-          }
-        }
-      }
-    }
-  }
-`;

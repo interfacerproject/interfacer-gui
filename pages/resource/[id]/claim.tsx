@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useMutation } from "@apollo/client";
+import { useMutation } from "lib/apollo-compat";
 import { Banner, Button, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ProjectDisplay from "components/ProjectDisplay";

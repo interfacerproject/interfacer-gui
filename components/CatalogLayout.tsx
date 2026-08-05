@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { AdjustmentsIcon, SearchIcon } from "@heroicons/react/outline";
 import CatalogFilterSidebar, { CatalogVariant } from "components/CatalogFilterSidebar";
 import EmptyState from "components/EmptyState";

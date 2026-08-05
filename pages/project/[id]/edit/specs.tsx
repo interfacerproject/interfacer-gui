@@ -1,4 +1,5 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "lib/apollo-compat";
+import { EDIT_SPECS } from "@dyne/interfacer-client";
 import { yupResolver } from "@hookform/resolvers/yup";
 import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
@@ -167,16 +168,6 @@ EditSpecs.getLayout = page => (
 );
 
 export default EditSpecs;
-
-export const EDIT_SPECS = gql`
-  mutation EditSpecs($id: ID!, $classifiedAs: [URI!]) {
-    updateEconomicResource(resource: { id: $id, classifiedAs: $classifiedAs }) {
-      economicResource {
-        id
-      }
-    }
-  }
-`;
 
 //
 

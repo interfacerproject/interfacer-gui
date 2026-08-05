@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "lib/apollo-compat";
 import { Button, Card, Link, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import DetailMap from "components/DetailMap";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";

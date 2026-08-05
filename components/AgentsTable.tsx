@@ -18,7 +18,7 @@ import cn from "classnames";
 import { useTranslation } from "next-i18next";
 
 // Request
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { FETCH_AGENTS } from "lib/QueryAndMutation";
 
 // Components
