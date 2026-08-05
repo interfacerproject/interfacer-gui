@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "hooks/useAuth";
 import { useResourceSpecs } from "hooks/useResourceSpecs";

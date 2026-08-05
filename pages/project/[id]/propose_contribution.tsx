@@ -21,7 +21,7 @@ import { NextPageWithLayout } from "pages/_app";
 import { ReactElement, useState } from "react";
 
 // Request
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "lib/apollo-compat";
 import { useAuth } from "hooks/useAuth";
 import { useInBoxContext } from "hooks/useInBox";
 import {

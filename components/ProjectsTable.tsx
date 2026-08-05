@@ -19,7 +19,7 @@ import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 
 // Request
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { FETCH_RESOURCES } from "lib/QueryAndMutation";
 import { EconomicResourceFilterParams, FetchInventoryQuery, FetchInventoryQueryVariables } from "lib/types";
 import { useProjectSpecs } from "../hooks/useProjectSpecs";

@@ -4,8 +4,8 @@
  * Provides drop-in replacements for Apollo's useQuery, useMutation, gql
  * using the @dyne/interfacer-client SDK.
  *
- * Aliased via next.config.js webpack config so existing imports
- * from "@apollo/client" are redirected here.
+ * Imported directly by legacy React components while their request lifecycle
+ * is progressively moved to typed SDK client methods.
  */
 
 import { useEffect, useState, useCallback, useRef } from "react";
@@ -76,7 +76,7 @@ export function useQuery<TData = any, TVars = Record<string, any>>(
   // refetch with optional new variables (matches Apollo's refetch(newVars?) API)
   // Using Partial to allow callers to pass optional/partial variables
   const refetch = useCallback(
-    async (newVars?: Partial<TVars>): Promise<ApolloQueryResult<TData>> => {
+    async (newVars?: Partial<TVars>): Promise<SdkQueryResult<TData>> => {
       const { data: resultData } = await doFetch(newVars as Record<string, any>);
       return { data: resultData as TData, loading: false, networkStatus: 7 };
     },
@@ -154,30 +154,4 @@ export function useMutation<TData = any, TVars = any>(
   return [mutate, { loading, error, data }];
 }
 
-// ─── ApolloProvider (no-op) ────────────────────────────────────────
-
-export function ApolloProvider({ children }: any) {
-  return children;
-}
-
-// ─── InMemoryCache, HttpLink (stubs) ───────────────────────────────
-
-export class InMemoryCache {
-  constructor(_config?: any) {}
-}
-
-export class HttpLink {
-  constructor(_config?: any) {}
-}
-
-export class ApolloClient {
-  constructor(_config?: any) {}
-  async query<TData = any, TVars = any>(_opts: { query: string; variables?: TVars }) {
-    return { data: undefined as TData | undefined };
-  }
-  async mutate<TData = any, TVars = any>(_opts: { mutation: string; variables?: TVars }) {
-    return { data: undefined as TData | undefined };
-  }
-}
-
-export type ApolloQueryResult<T> = { data: T; loading: boolean; networkStatus: number };
+export type SdkQueryResult<T> = { data: T; loading: boolean; networkStatus: number };

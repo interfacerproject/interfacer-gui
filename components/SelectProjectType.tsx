@@ -17,7 +17,7 @@
 import { projectTypesQueryToSelectOptions } from "lib/formatProjectTypes";
 
 // Request
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
 import { GetProjectTypesQuery } from "lib/types";
 

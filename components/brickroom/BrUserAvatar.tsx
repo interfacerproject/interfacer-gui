@@ -1,4 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
+import { GET_USER_IMAGES } from "@dyne/interfacer-client";
 import Avatar from "boring-avatars";
 import { useAuth } from "hooks/useAuth";
 import { getUserImage } from "lib/resourceImages";
@@ -32,7 +33,7 @@ export default function BrUserAvatar(props: Props) {
 
   return (
     <AvatarContainer size={size}>
-      {img && <img className="w-full h-full object-cover" src={img} />}
+      {img && <img className="w-full h-full object-cover" src={img} alt="" />}
       {!img && (
         <Avatar
           size="full"
@@ -53,22 +54,3 @@ function AvatarContainer(props: { size: string; children?: React.ReactNode }) {
     </div>
   );
 }
-
-export const GET_USER_IMAGES = gql`
-  query GetUserImages($userId: ID!) {
-    person(id: $userId) {
-      id
-      name
-      images {
-        bin
-        mimeType
-        date
-        description
-        extension
-        hash
-        name
-        size
-      }
-    }
-  }
-`;

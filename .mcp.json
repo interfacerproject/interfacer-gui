@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"],
+      "directTools": [
+        "take_screenshot",
+        "take_snapshot",
+        "navigate_page",
+        "click",
+        "fill",
+        "evaluate_script",
+        "list_pages",
+        "select_page",
+        "new_page",
+        "close_page",
+        "press_key",
+        "hover",
+        "wait_for",
+        "list_console_messages",
+        "list_network_requests",
+        "get_network_request",
+        "get_console_message",
+        "resize_page"
+      ],
+      "lifecycle": "lazy",
+      "idleTimeout": 5
+    }
+  }
+}

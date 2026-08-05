@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
+import { SEARCH_PROJECT } from "@dyne/interfacer-client";
 import { ChevronDown, ChevronLeft, ChevronRight } from "@carbon/icons-react";
 import { BookmarkIcon, ExternalLinkIcon, StarIcon } from "@heroicons/react/outline";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
@@ -14,7 +15,6 @@ import ProjectsCards from "components/ProjectsCards";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
 
-import { SEARCH_PROJECT } from "components/ProjectDisplay";
 import useDppApi from "lib/dpp";
 import type { DppDocument } from "lib/dpp-types";
 import findProjectImages from "lib/findProjectImages";
@@ -25,12 +25,15 @@ import { extractUserTagValues } from "lib/tagging";
 
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import ReviewSection from "./ReviewSection";
 import useFeedbackApi, { type ReviewSummary } from "lib/feedback";
 import StepModelViewer from "./StepModelViewer";
+
+const ProjectTraceability = dynamic(() => import("./ProjectTraceability"), { ssr: false });
 
 function getProjectType(project: Partial<EconomicResource>): ProjectType {
   const name = project.conformsTo?.name;
@@ -66,6 +69,8 @@ function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSideb
   const price = meta.price as string | undefined;
   const availability = meta.availability as string | undefined;
   const websiteLink = meta.websiteLink as string | undefined;
+  const license = project.license || (meta.licenses as Array<{ licenseId?: string }> | undefined)?.[0]?.licenseId;
+  const licensor = project.licensor || (meta.licensor as string | undefined);
   const basedOnDesignMeta = meta.basedOnDesign as { id?: string; name?: string } | string | undefined;
   const designId = basedOnDesignMeta
     ? typeof basedOnDesignMeta === "object"
@@ -304,7 +309,7 @@ function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSideb
               </p>
               <Link href={`/profile/${project.primaryAccountable.id}`}>
                 <a className="flex items-center gap-3 p-3 border border-ifr rounded-ifr-sm no-underline group hover:bg-ifr-hover transition-colors">
-                  <BrUserAvatar userId={project.primaryAccountable.id} size="40px" />
+                  <BrUserAvatar user={project.primaryAccountable} size="40px" />
                   <div className="flex-1 min-w-0">
                     <p
                       className="text-ifr-text-primary group-hover:underline"
@@ -407,6 +412,34 @@ function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSideb
                   </span>
                   <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
                 </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* License provenance */}
+        {(license || licensor) && (
+          <>
+            <hr className="border-t border-[#c9cccf] m-0 mx-4" />
+            <div className="px-4 py-4">
+              <p
+                className="text-ifr-text-secondary mb-2"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {t("License")}
+              </p>
+              {license && (
+                <p
+                  className="m-0 text-ifr-text-primary break-words"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)", fontWeight: 600 }}
+                >
+                  {license}
+                </p>
+              )}
+              {licensor && (
+                <p className="mt-1 mb-0 text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                  {t("Licensed by {{licensor}}", { licensor })}
+                </p>
               )}
             </div>
           </>
@@ -1593,6 +1626,8 @@ export default function ProjectDetailNew() {
                 )}
               </div>
             </DetailSection>
+
+            <ProjectTraceability key={project.id} projectId={project.id!} />
 
             {/* Equipment — designs */}
             {(projectType === ProjectType.DESIGN || projectType === ProjectType.MACHINE) && machines.length > 0 && (
