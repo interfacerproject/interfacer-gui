@@ -16,7 +16,7 @@
 
 import { Card } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource, FetchInventoryQuery, EconomicResourceFilterParams } from "lib/types";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import CardsGroup from "./CardsGroup";
 import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";

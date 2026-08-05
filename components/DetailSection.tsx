@@ -9,6 +9,7 @@ interface DetailSectionProps {
   badge?: ReactNode;
   defaultOpen?: boolean;
   sectionId?: string;
+  onOpen?: () => void;
   children: ReactNode;
 }
 
@@ -20,6 +21,7 @@ export default function DetailSection({
   badge,
   defaultOpen = false,
   sectionId,
+  onOpen,
   children,
 }: DetailSectionProps) {
   const [open, setOpen] = useState(defaultOpen);
@@ -27,10 +29,11 @@ export default function DetailSection({
   const handleOpenEvent = useCallback(
     (e: Event) => {
       if (sectionId && (e as CustomEvent).detail === sectionId) {
+        if (!open) onOpen?.();
         setOpen(true);
       }
     },
-    [sectionId]
+    [onOpen, open, sectionId]
   );
 
   useEffect(() => {
@@ -40,7 +43,16 @@ export default function DetailSection({
 
   return (
     <div id={sectionId} className="bg-ifr-surface border border-ifr rounded-ifr-md shadow-ifr-sm overflow-hidden">
-      <button type="button" onClick={() => setOpen(!open)} className="flex items-center w-full gap-4 p-6 text-left">
+      <button
+        type="button"
+        onClick={() => {
+          if (!open) onOpen?.();
+          setOpen(!open);
+        }}
+        className="flex items-center w-full gap-4 p-6 text-left"
+        aria-expanded={open}
+        aria-controls={sectionId ? `${sectionId}-content` : undefined}
+      >
         <div className={`flex items-center justify-center w-10 h-10 rounded-ifr-sm shrink-0 ${iconBg}`}>{icon}</div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -59,7 +71,9 @@ export default function DetailSection({
       {open && (
         <>
           <div className="border-t border-ifr mx-6" />
-          <div className="p-6">{children}</div>
+          <div id={sectionId ? `${sectionId}-content` : undefined} className="p-6">
+            {children}
+          </div>
         </>
       )}
     </div>

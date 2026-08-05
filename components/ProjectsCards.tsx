@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { DraftProject } from "lib/db";
 import React from "react";
 import useLoadMore from "../hooks/useLoadMore";

@@ -1,4 +1,5 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "lib/apollo-compat";
+import { EDIT_MAIN } from "@dyne/interfacer-client";
 import { EditMainMutation, EditMainMutationVariables } from "lib/types";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
@@ -109,15 +110,3 @@ EditMain.getLayout = page => (
 );
 
 export default EditMain;
-
-//
-
-export const EDIT_MAIN = gql`
-  mutation EditMain($id: ID!, $classifiedAs: [URI!], $note: String, $name: String, $repo: String) {
-    updateEconomicResource(resource: { id: $id, classifiedAs: $classifiedAs, name: $name, note: $note, repo: $repo }) {
-      economicResource {
-        id
-      }
-    }
-  }
-`;

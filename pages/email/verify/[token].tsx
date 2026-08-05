@@ -1,4 +1,5 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "lib/apollo-compat";
+import { VERIFY_EMAIL } from "@dyne/interfacer-client";
 import { Banner, Button, Spinner, Text } from "@bbtgnn/polaris-interfacer";
 import { VerifyEmailMutation, VerifyEmailMutationVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -53,9 +54,3 @@ export default function EmailVerify() {
     </div>
   );
 }
-
-const VERIFY_EMAIL = gql`
-  mutation VerifyEmail($token: String!) {
-    personVerifyEmailVerification(token: $token)
-  }
-`;

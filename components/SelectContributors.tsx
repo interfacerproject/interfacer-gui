@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { useAuth } from "hooks/useAuth";
 import { QUERY_AGENTS } from "lib/QueryAndMutation";
 import { Agent, GetAgentQuery, Organization } from "lib/types";

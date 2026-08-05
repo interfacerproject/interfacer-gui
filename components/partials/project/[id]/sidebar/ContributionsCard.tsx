@@ -1,10 +1,10 @@
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { Button, Card, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { ListBoxes, MagicWand } from "@carbon/icons-react";
 import { useProject } from "components/layout/FetchProjectLayout";
 import ProjectContributors from "components/ProjectContributors";
 import { useAuth } from "hooks/useAuth";
-import { QUERY_RESOURCE_PROPOSAlS } from "lib/QueryAndMutation";
+import { QUERY_RESOURCE_PROPOSALS } from "lib/QueryAndMutation";
 import { ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -20,7 +20,7 @@ const ContributionsCard = () => {
   const { authenticated } = useAuth();
 
   const { data: contributions } = useQuery<ResourceProposalsQuery, ResourceProposalsQueryVariables>(
-    QUERY_RESOURCE_PROPOSAlS,
+    QUERY_RESOURCE_PROPOSALS,
     { variables: { id: id as string } }
   );
   const url = window.location.protocol + "//" + window.location.host + `/project/${project.id}?tab=gc1dpp`;

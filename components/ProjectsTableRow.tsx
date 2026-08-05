@@ -28,8 +28,7 @@ const ProjectsTableRow = (props: { project: { node: EconomicResource } }) => {
   const e = props.project.node;
   const router = useRouter();
 
-  // @ts-ignore - trace is not fetched in FETCH_RESOURCES; use safe optional chain to avoid crash
-  const data = e.trace?.filter((t: any) => !!t.hasPointInTime)?.[0]?.hasPointInTime;
+  const timestamp = e.metadata?.updatedAt || e.metadata?.createdAt || e.metadata?.importedAt;
 
   const conformsToColors: { [key: string]: string } = {
     Design: "bg-[#E4CCE3] text-[#C18ABF] border-[#C18ABF]",
@@ -70,8 +69,14 @@ const ProjectsTableRow = (props: { project: { node: EconomicResource } }) => {
       </td>
 
       <td className="">
-        <p className="mr-1">{dayjs(data).fromNow()}</p>
-        <p className="text-xs">{dayjs(data).format("HH:mm DD/MM/YYYY")}</p>
+        {timestamp ? (
+          <>
+            <p className="mr-1">{dayjs(timestamp).fromNow()}</p>
+            <p className="text-xs">{dayjs(timestamp).format("HH:mm DD/MM/YYYY")}</p>
+          </>
+        ) : (
+          <span aria-label="Date unavailable">{"—"}</span>
+        )}
       </td>
 
       <td className="max-w-[12rem]">

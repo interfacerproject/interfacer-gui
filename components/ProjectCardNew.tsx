@@ -106,6 +106,7 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
 
   // License
   const license = project.license || project.metadata?.licenses?.[0]?.licenseId;
+  const licensor = project.licensor || project.metadata?.licensor;
 
   const handleStar = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -312,6 +313,7 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
                       }}
                     >
                       {t("LICENSE: {{license}}", { license })}
+                      {licensor ? ` · ${t("by")} ${licensor}` : ""}
                     </span>
                   </div>
                 )}

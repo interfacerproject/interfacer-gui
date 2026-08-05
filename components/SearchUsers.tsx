@@ -1,4 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
+import { SEARCH_PEOPLE } from "@dyne/interfacer-client";
 import { Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { SearchMinor } from "@shopify/polaris-icons";
 import { SelectOption } from "components/types";
@@ -99,28 +100,3 @@ export default function SearchUsers(props: Props) {
     <Autocomplete options={options} selected={[]} onSelect={handleSelect} loading={loading} textField={textField} />
   );
 }
-
-//
-
-export const SEARCH_PEOPLE = gql`
-  query SearchPeople($filter: PersonFilterParams, $last: Int) {
-    people(last: $last, filter: $filter) {
-      edges {
-        node {
-          id
-          name
-          user
-          note
-          images {
-            bin
-            mimeType
-          }
-          primaryLocation {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`;
