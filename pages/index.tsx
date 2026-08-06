@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
+// Copyright (C) 2022-2026 Dyne.org foundation <foundation@dyne.org>.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -14,241 +14,147 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Button, ButtonGroup, Text } from "@bbtgnn/polaris-interfacer";
-import { GlobeAltIcon, LightningBoltIcon, ScaleIcon } from "@heroicons/react/outline";
-import ProjectsCards from "components/ProjectsCards";
-import ProjectMaps from "components/ProjectsMaps";
-import Layout from "components/layout/Layout";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Link from "next/link";
-import { ReactNode } from "react";
-import { useAuth } from "../hooks/useAuth";
+/* eslint-disable i18next/no-literal-string --
+ * scroll-world homepage prototype: all copy is hardcoded in WORLD_CONFIG;
+ * i18n wiring is deferred until the page is finalized. */
+import Head from "next/head";
+import { useEffect, useRef } from "react";
 import { NextPageWithLayout } from "./_app";
 
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      publicPage: true,
-      ...(await serverSideTranslations(locale, [
-        "common",
-        "signInProps",
-        "homeProps",
-        "SideBarProps",
-        "lastUpdatedProps",
-      ])),
+/**
+ * Scroll-world homepage: scroll scrubs a pre-rendered, seamless camera flight
+ * through the Interfacer world (locked-isometric glide, architecture A — the
+ * legs ARE the journey, no connectors). Engine: lib/scroll-world/scrub-engine.js
+ */
+
+const WORLD_CONFIG = {
+  brand: { name: "INTERFACER", href: "#top" },
+  diveScroll: 1.3,
+  connScroll: 0.9,
+  crossfade: 0.08, // architecture A: legs hand off frame-identically; small dissolve
+  hint: "scroll to fly the world",
+  sections: [
+    {
+      id: "commons",
+      label: "The Commons",
+      still: "/sw/commons.webp",
+      clip: "/sw/vid/commons.mp4",
+      accent: "#036a53",
+      scroll: 1.6,
+      eyebrow: "Open by design",
+      title: "Every design, free to study and remix.",
+      body: "Import from git, LOSH or Thingiverse — files, licenses and history stay in the commons.",
+      tags: ["CERN-OHL", "Import from LOSH"],
     },
-  };
-}
+    {
+      id: "fablab",
+      label: "The FabLab",
+      still: "/sw/fablab.webp",
+      clip: "/sw/vid/fablab.mp4",
+      accent: "#e5a100",
+      eyebrow: "Made near you",
+      title: "Local labs turn files into things.",
+      body: "Filter by machines, materials and repairability — then manufacture with a lab around the corner.",
+      tags: ["3D printing", "CNC", "Laser cut"],
+    },
+    {
+      id: "passport",
+      label: "The Passport",
+      still: "/sw/passport.webp",
+      clip: "/sw/vid/passport.mp4",
+      accent: "#eb7b35",
+      eyebrow: "Every part, accounted for",
+      title: "A passport for everything you make.",
+      body: "Digital Product Passports trace components, processes and recycling — batch by batch, unit by unit.",
+      tags: ["Traceability", "Recycling"],
+    },
+    {
+      id: "map",
+      label: "The Map",
+      still: "/sw/map.webp",
+      clip: "/sw/vid/map.mp4",
+      accent: "#5da091",
+      eyebrow: "A city that makes",
+      title: "Find makers and labs near you.",
+      body: "A federated network of Fab Cities — search projects, experts and labs on the map.",
+      tags: ["Fab Cities", "Geolocation"],
+    },
+    {
+      id: "wallet",
+      label: "The Wallet",
+      still: "/sw/wallet.webp",
+      clip: "/sw/vid/wallet.mp4",
+      accent: "#e5a100",
+      eyebrow: "Value returns to makers",
+      title: "Contribution, rewarded.",
+      body: "A password-less W3C-DID wallet — activity earns points that convert to tokens.",
+      tags: ["W3C-DID", "Password-less"],
+    },
+    {
+      id: "world",
+      label: "The World",
+      still: "/sw/world.webp",
+      clip: "/sw/vid/world.mp4",
+      accent: "#014837",
+      scroll: 1.6,
+      eyebrow: "Digital infrastructure for Fab Cities",
+      title: "Produce what you consume, together.",
+      body: "Join the open source hardware community — share, manufacture, trace and thrive.",
+      tags: ["Open hardware"],
+      cta: {
+        primary: { label: "Explore the catalogue", href: "/products" },
+        secondary: { label: "Join Interfacer", href: "/sign_up" },
+      },
+    },
+  ],
+  connectors: [], // architecture A — no connectors; seams are frame-identical handoffs
+  // mobile chain (clipMobile/stillMobile, native 9:16) frozen by user decision 2026-08-06 — render later
+};
 
 const Home: NextPageWithLayout = () => {
-  const { t } = useTranslation("homeProps");
-  const { authenticated } = useAuth();
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const { mountScrollWorld } = require("../lib/scroll-world/scrub-engine.js");
+    const api = mountScrollWorld(ref.current, WORLD_CONFIG);
+    return () => api?.unmount?.();
+  }, []);
 
   return (
     <>
-      <div className="flex items-center justify-center bg-[#e9e9e8] w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 items-center container mx-auto">
-          <div className="space-y-6 px-8 py-12">
-            <div className="mb-6 logo" />
-
-            <Text variant="heading4xl" as="h1">
-              {t("Empowering the Open Source Hardware Community")}
-            </Text>
-
-            <Text variant="bodyMd" as="p">
-              {t(
-                "Innovative federated open source platform for sharing and collaborating on Open Source Hardware projects. Find and share open source hardware projects, collaborate with others and discover new products and services. Import your projects to allow access to the community and grow your reputation."
-              )}
-            </Text>
-
-            <div className="flex space-x-2">
-              {!authenticated && (
-                <ButtonGroup>
-                  <Link href="/sign_in">
-                    <Button size="large" primary>
-                      {t("Log In")}
-                    </Button>
-                  </Link>
-                  <Link href="/sign_up">
-                    <Button size="large">{t("Register")}</Button>
-                  </Link>
-                </ButtonGroup>
-              )}
-              {authenticated && (
-                <ButtonGroup>
-                  <Link href="/create/project">
-                    <Button size="large" primary>
-                      {t("Create a new project")}
-                    </Button>
-                  </Link>
-                  <Link href="/products">
-                    <Button size="large">{t("Explore")}</Button>
-                  </Link>
-                </ButtonGroup>
-              )}
-            </div>
-          </div>
-          <div className="order-first lg:order-last">
-            <img src="/hero.png" alt="" className="contain w-full rounded-md" />
-          </div>
-        </div>
-      </div>
-
-      {/* PROJECT CARDS */}
-      <div className="container mx-auto mb-24 mt-4">
-        <ProjectsCards hideFilters />
-      </div>
-
-      {/* MAP */}
-      <div className="container mx-auto mb-24 mt-4">
-        <ProjectMaps />
-      </div>
-
-      <Features />
-
-      <div className="flex items-center justify-center bg-[#335259] w-full text-white mt-20 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-5 items-center container mx-auto">
-          <div className="col-span-2">
-            <img src="/hero_1.png" alt="" className="contain w-full" />
-          </div>
-          <div className="space-y-6 p-8 order-first lg:order-last col-span-3">
-            <Text variant="heading4xl" as="h1">
-              {t("Sign-in and connect your designs")}
-            </Text>
-
-            <Text variant="bodyMd" as="p">
-              {t(
-                "Our platform brings together makers, designers, and engineers from all over the world, creating a space for collaboration and innovation. Whether you"
-              )}
-            </Text>
-
-            <div className="flex space-x-2">
-              {!authenticated && (
-                <ButtonGroup>
-                  <Link href="/sign_in">
-                    <Button size="large" primary>
-                      {t("Log In")}
-                    </Button>
-                  </Link>
-                  <Link href="/products">
-                    <Button size="large">{t("Explore")}</Button>
-                  </Link>
-                </ButtonGroup>
-              )}
-              {authenticated && (
-                <ButtonGroup>
-                  <Link href="/create/project">
-                    <Button size="large" primary>
-                      {t("Create a new project")}
-                    </Button>
-                  </Link>
-                  <Link href="/products">
-                    <Button size="large">{t("Explore")}</Button>
-                  </Link>
-                </ButtonGroup>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+      <Head>
+        <title>Interfacer — the open source hardware commons</title>
+        <meta
+          name="description"
+          content="A federated open source platform to share, manufacture and trace open hardware — from the commons to your city."
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <style>{`
+          :root {
+            --sw-bg: #e9e9e8;
+            --sw-ink: #0b1324;
+            --sw-ink-soft: #4b5563;
+            --sw-accent: #036a53;
+            --sw-font-display: "Space Grotesk", sans-serif;
+            --sw-font-body: "IBM Plex Sans", sans-serif;
+          }
+          html, body { background: #e9e9e8; }
+          /* Tailwind preflight (unlayered img,video{height:auto;max-width:100%}) beats the
+             engine's @layer sw box rules — restore full-bleed stage media. */
+          .sw-stage video, .sw-stage img { width: 100%; height: 100%; max-width: none; object-fit: cover; }
+          /* Preflight (unlayered) beats @layer sw on a few rules — restore them. */
+          .sw-btn--primary { color: #fff; background: var(--sw-ink); }
+          .sw-btn--ghost { color: var(--sw-ink); border: 1.5px solid rgba(11, 19, 36, 0.25); }
+          .sw-nav__item.is-active { color: #fff; background: var(--sw-accent); }
+        `}</style>
+      </Head>
+      <div id="world" ref={ref} />
     </>
   );
 };
 
 Home.publicPage = true;
-Home.getLayout = page => <Layout>{page}</Layout>;
+Home.getLayout = page => page;
 
 export default Home;
-
-/* Partials */
-
-type Feature = { icon: ReactNode; title: string; items: Array<string> };
-
-function Feature(props: { feature: Feature }) {
-  const { feature } = props;
-  return (
-    <div className="p-4 space-y-4 rounded-md border-1 border-border-subdued bg-white">
-      <div className="flex flex-row items-center space-x-3">
-        <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-lg bg-primary/10 text-text">
-          <div className="w-6 h-6">{feature.icon}</div>
-        </div>
-        <Text as="h3" variant="headingLg">
-          {feature.title}
-        </Text>
-      </div>
-
-      <ul className="list-disc pl-4">
-        {feature.items.map((item, i) => (
-          <li key={i} className="text-text-subdued">
-            <Text as="p" variant="bodyMd">
-              {item}
-            </Text>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function Features() {
-  const { t } = useTranslation("homeProps");
-
-  const features: Array<Feature> = [
-    {
-      icon: <LightningBoltIcon />,
-      title: t("Your designs, products, services"),
-      items: [
-        t("Showcase your digital designs, physical products and services"),
-        t("Import from git, thingiverse, losh"),
-      ],
-    },
-    {
-      icon: <ScaleIcon />,
-      title: t("Collaboration"),
-      items: [t("Collaborate on projects"), t("Compose your projects from other users’ projects")],
-    },
-    {
-      icon: <GlobeAltIcon />,
-      title: t("Geolocation"),
-      items: [t("See who and what is near you"), t("Search projects, collaborators, experts and labs on the map")],
-    },
-    {
-      icon: <LightningBoltIcon />,
-      title: t("Digital Product Passport"),
-      items: [
-        t("Trace and visualize your projects components"),
-        t("Prove the green factor and recyclability of your products"),
-      ],
-    },
-    {
-      icon: <GlobeAltIcon />,
-      title: t("W3C-DID, password-less crypto wallet"),
-      items: [
-        t("Your user is linked to a W3C-DID based crypto wallet"),
-        t("Complete end-to-end encryption with password-less login"),
-      ],
-    },
-    {
-      icon: <ScaleIcon />,
-      title: t("Economic model"),
-      items: [
-        t("Reward system for continous activity on the platform"),
-        t("Reward points are converted to crypto-tokens"),
-      ],
-    },
-  ];
-
-  return (
-    <div className="container mx-auto space-y-4 max-sm:px-4">
-      <Text as="h2" variant="heading2xl">
-        {t("What’s included")} {"👌"}
-      </Text>
-      <div className="grid max-sm:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
-        {features.map((f, i) => {
-          return <Feature feature={f} key={f.title} />;
-        })}
-      </div>
-    </div>
-  );
-}
