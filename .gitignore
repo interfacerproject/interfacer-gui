@@ -70,3 +70,6 @@ cypress.env.json
 *.db
 .beads-credential-key
 .beads/proxieddb/
+
+# scroll-world build scratch (raw renders, prompts, chain scripts)
+.sw-build/
