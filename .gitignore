@@ -70,3 +70,6 @@ cypress.env.json
 *.db
 .beads-credential-key
 .beads/proxieddb/
+
+# Local build/screenshot artifacts
+.sw-build/

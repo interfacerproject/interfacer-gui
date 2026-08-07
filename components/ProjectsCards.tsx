@@ -25,16 +25,95 @@ import { EconomicResource, EconomicResourceFilterParams, FetchInventoryQuery } f
 // import DraftCard from "./DraftCard";
 import Link from "next/link";
 import EmptyState from "./EmptyState";
+import EntityTypeIcon from "./EntityTypeIcon";
 import LoshCard from "./LoshCard";
+import findProjectImages from "lib/findProjectImages";
+import { isProjectType } from "lib/isProjectType";
+import { ProjectType } from "./types";
 import ProductCardSkeleton from "./ProductCardSkeleton";
 // import ProjectDisplay from "./ProjectDisplay";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import ProjectCardFigma from "./ProjectCardFigma";
 
-const ProjectDisplay = dynamic(() => import("./ProjectDisplay"), { ssr: false });
 const CardsGroup = dynamic(() => import("./CardsGroup"), { ssr: false });
 const DraftCard = dynamic(() => import("./DraftCard"), { ssr: false });
+
+function miniType(project: Partial<EconomicResource>): ProjectType {
+  const name = project.conformsTo?.name;
+  if (!name) return ProjectType.DESIGN;
+  const check = isProjectType(name);
+  if (check[ProjectType.PRODUCT]) return ProjectType.PRODUCT;
+  if (check[ProjectType.SERVICE]) return ProjectType.SERVICE;
+  if (check[ProjectType.DPP]) return ProjectType.DPP;
+  if (check[ProjectType.MACHINE]) return ProjectType.MACHINE;
+  return ProjectType.DESIGN;
+}
+
+const miniTypeColor: Record<string, string> = {
+  [ProjectType.DESIGN]: "var(--ifr-green)",
+  [ProjectType.PRODUCT]: "var(--ifr-type-product)",
+  [ProjectType.SERVICE]: "var(--ifr-type-service)",
+  [ProjectType.DPP]: "var(--ifr-type-dpp)",
+  [ProjectType.MACHINE]: "var(--ifr-type-product)",
+};
+
+/** Compact horizontal card used for "Included Projects" / related lists. */
+function TinyProjectCard({ project }: { project: Partial<EconomicResource> }) {
+  const type = miniType(project);
+  const src = findProjectImages(project)?.[0];
+  return (
+    <div
+      className="flex items-center gap-3 p-3 bg-ifr-surface border border-ifr hover:bg-ifr-hover transition-colors"
+      style={{ borderRadius: "var(--ifr-radius-md)" }}
+    >
+      <div
+        className="shrink-0 overflow-hidden flex items-center justify-center bg-base-200"
+        style={{ width: 56, height: 56, borderRadius: "var(--ifr-radius-sm)" }}
+      >
+        {src ? (
+          <img src={src} alt="" className="w-full h-full object-cover" />
+        ) : (
+          <EntityTypeIcon type={type} size="default" fill="var(--ifr-green)" />
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <p
+            className="text-ifr-text-primary m-0 truncate"
+            style={{
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-md)",
+              fontWeight: "var(--ifr-fw-semibold)",
+            }}
+          >
+            {project.name}
+          </p>
+          <span
+            className="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 text-white"
+            style={{
+              borderRadius: "var(--ifr-radius-sm)",
+              backgroundColor: miniTypeColor[type],
+              fontSize: "var(--ifr-fs-xs)",
+              fontWeight: "var(--ifr-fw-semibold)",
+            }}
+          >
+            <EntityTypeIcon type={type} size="small" fill="#fff" />
+            {type}
+          </span>
+        </div>
+        {project.note && (
+          <p
+            className="text-ifr-text-secondary m-0 truncate"
+            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+          >
+            {project.note}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export enum CardType {
   PROJECT = "project",
@@ -167,16 +246,17 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
           {projects?.map(({ node }: { node: EconomicResource }) => distinguishProjects(node))}
         </CardsGroup>
       )}
-      {tiny &&
-        projects?.map(({ node }: { node: EconomicResource }) => (
-          <div className="py-2 hover:bg-base-300" key={node.id}>
-            <Link href={`/project/${node.id}`}>
-              <a>
-                <ProjectDisplay project={node} />
+      {tiny && (
+        <div className="flex flex-col gap-3">
+          {projects?.map(({ node }: { node: EconomicResource }) => (
+            <Link href={`/project/${node.id}`} key={node.id}>
+              <a className="block no-underline">
+                <TinyProjectCard project={node} />
               </a>
             </Link>
-          </div>
-        ))}
+          ))}
+        </div>
+      )}
       {type === CardType.DRAFT && !tiny && drafts && (
         <CardsGroup
           onLoadMore={loadMore}

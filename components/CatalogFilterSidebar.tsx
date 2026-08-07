@@ -1,7 +1,19 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { Chemistry, Close, Cube, Flash, LocationStar, Recycle, Settings, Tag, Time, Tools } from "@carbon/icons-react";
+import {
+  Analytics,
+  Chemistry,
+  Close,
+  Cube,
+  Flash,
+  LocationStar,
+  Recycle,
+  Settings,
+  Tag,
+  Time,
+  Tools,
+} from "@carbon/icons-react";
 import { ScaleIcon } from "@heroicons/react/outline";
 import CheckboxFilter from "components/CheckboxFilter";
 import DualRangeSlider from "components/DualRangeSlider";
@@ -10,6 +22,8 @@ import ToggleSwitch from "components/ToggleSwitch";
 import { FetchLocation, fetchLocation, lookupLocation } from "lib/fetchLocation";
 import {
   AVAILABILITY_OPTIONS,
+  COMPLEXITY_LEVELS,
+  COMPLEXITY_PREFIX,
   MANUFACTURABLE_TRUE_TAG,
   POWER_COMPATIBILITY_OPTIONS,
   PRODUCT_CATEGORY_OPTIONS,
@@ -23,6 +37,8 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export type CatalogVariant = "designs" | "products" | "services";
+
+const COMPLEXITY_LABELS = COMPLEXITY_LEVELS.map(l => l.label);
 
 interface CatalogFilterSidebarProps {
   variant: CatalogVariant;
@@ -215,6 +231,10 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
     () => getSelectedItems(currentTags, TAG_PREFIX.POWER_COMPAT, POWER_COMPATIBILITY_OPTIONS),
     [currentTags]
   );
+  const selectedComplexity = useMemo(
+    () => getSelectedItems(currentTags, COMPLEXITY_PREFIX, COMPLEXITY_LABELS),
+    [currentTags]
+  );
   const repairInfo = useMemo(() => currentTags.includes(REPAIRABILITY_AVAILABLE_TAG), [currentTags]);
 
   // Toggle a tag in the URL
@@ -267,18 +287,21 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
 
   return (
     <div
-      className="bg-ifr-surface border-r border-ifr h-full shrink-0 relative"
+      className="bg-ifr-surface border-r border-ifr shrink-0 relative sticky self-start"
       style={{
         width: collapsed ? "0px" : "var(--ifr-sidebar-width)",
         overflow: "hidden",
         transition: "width 250ms ease",
         borderRightWidth: collapsed ? "0px" : undefined,
+        top: "var(--ifr-topbar-height)",
+        maxHeight: "calc(100vh - var(--ifr-topbar-height))",
       }}
     >
       <div
-        className="h-full overflow-y-auto"
+        className="overflow-y-auto"
         style={{
           width: "var(--ifr-sidebar-width)",
+          maxHeight: "calc(100vh - var(--ifr-topbar-height))",
           opacity: collapsed ? 0 : 1,
           transition: "opacity 200ms ease",
           pointerEvents: collapsed ? "none" : undefined,
@@ -414,6 +437,18 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
                   );
                 })}
               </div>
+            </FilterSection>
+
+            <FilterSection
+              icon={<Analytics size={16} />}
+              label="Complexity"
+              badge={selectedComplexity.length || undefined}
+            >
+              <CheckboxFilter
+                items={COMPLEXITY_LABELS}
+                selectedItems={selectedComplexity}
+                onToggle={toggleTag(COMPLEXITY_PREFIX)}
+              />
             </FilterSection>
           </>
         )}
@@ -617,8 +652,8 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
 
         {/* Shared sections */}
 
-        {/* Location — designs and products only */}
-        {variant !== "services" && (
+        {/* Location — products and services (not designs) */}
+        {variant !== "designs" && (
           <FilterSection icon={<LocationStar size={16} />} label="Location" badge={hasActiveLocation ? 1 : undefined}>
             <div className="flex flex-col gap-2" ref={locationDropdownRef}>
               {locationLabel ? (

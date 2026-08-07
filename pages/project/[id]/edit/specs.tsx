@@ -88,6 +88,14 @@ const EditSpecs: NextPageWithLayout = () => {
       energyKwh:
         typeof existing.energyKwh === "number" ? String(existing.energyKwh) : productFiltersStepDefaultValues.energyKwh,
       co2Kg: typeof existing.co2Kg === "number" ? String(existing.co2Kg) : productFiltersStepDefaultValues.co2Kg,
+      price:
+        (project.metadata?.price as string | undefined) ||
+        (existing.price as string | undefined) ||
+        productFiltersStepDefaultValues.price,
+      availability:
+        (project.metadata?.availability as string | undefined) ||
+        (existing.availability as string | undefined) ||
+        productFiltersStepDefaultValues.availability,
     },
   };
 
@@ -121,6 +129,8 @@ const EditSpecs: NextPageWithLayout = () => {
       powerRequirementW: Number.isFinite(powerRequirementW as number) ? (powerRequirementW as number) : undefined,
       energyKwh: Number.isFinite(energyKwh as number) ? (energyKwh as number) : undefined,
       co2Kg: Number.isFinite(co2Kg as number) ? (co2Kg as number) : undefined,
+      price: values.price || undefined,
+      availability: values.availability || undefined,
     };
   };
 
@@ -149,7 +159,11 @@ const EditSpecs: NextPageWithLayout = () => {
       },
     });
 
-    await updateMetadata(project, { productFilters: normalized });
+    await updateMetadata(project, {
+      productFilters: normalized,
+      price: normalized.price || "",
+      availability: normalized.availability || "",
+    });
   }
 
   return (

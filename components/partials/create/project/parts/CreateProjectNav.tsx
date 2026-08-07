@@ -43,19 +43,11 @@ export default function CreateProjectNav(props: Props) {
   }, []);
 
   return (
-    <nav className="bg-ifr-surface border border-ifr rounded-ifr-md p-4 flex flex-col gap-1" aria-label={t("Sections")}>
-      <p
-        className="text-ifr-text-secondary m-0 mb-2 px-3"
-        style={{
-          fontFamily: "var(--ifr-font-body)",
-          fontSize: "var(--ifr-fs-sm)",
-          fontWeight: "var(--ifr-fw-semibold)",
-          textTransform: "uppercase",
-          letterSpacing: "0.05em",
-        }}
-      >
-        {t("Sections")}
-      </p>
+    <nav
+      className="bg-ifr-surface border border-ifr flex flex-col gap-2"
+      style={{ borderRadius: "var(--ifr-radius-md)", padding: "24px" }}
+      aria-label={t("Sections")}
+    >
       {sections.map(section => {
         const isActive = activeId === section.id;
         const isRequired = section.required?.includes(projectType);
@@ -65,19 +57,17 @@ export default function CreateProjectNav(props: Props) {
             key={section.id}
             type="button"
             onClick={() => scrollTo(section.id)}
-            className={`text-left px-3 py-2 border-none cursor-pointer transition-colors rounded-sm ${
-              isActive ? "bg-ifr-hover" : "bg-transparent hover:bg-ifr-hover/50"
-            }`}
+            className="text-left border-none cursor-pointer transition-colors bg-transparent hover:opacity-70"
             style={{
               fontFamily: "var(--ifr-font-body)",
               fontSize: "var(--ifr-fs-base)",
               fontWeight: isActive ? "var(--ifr-fw-semibold)" : "var(--ifr-fw-medium)",
-              color: isActive ? "var(--ifr-text-primary)" : "var(--ifr-text-secondary)",
-              borderRadius: "var(--ifr-radius-sm)",
+              color: "var(--ifr-text-primary)",
+              padding: "4px 0",
             }}
           >
-            {section.navLabel}
-            {isRequired && <span style={{ color: "var(--ifr-green)" }}>{" *"}</span>}
+            {section.navLabelByType?.[projectType] || section.navLabel}
+            {isRequired && <span style={{ color: "var(--ifr-red)" }}>{" *"}</span>}
           </button>
         );
       })}

@@ -1,4 +1,5 @@
-import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import { RangeSlider, Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import { complexityLevelFromLabel, complexityLevelFromNumber } from "lib/tagging";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { ProjectType } from "components/types";
@@ -113,6 +114,67 @@ export default function MainStep() {
         requiredIndicator={isRequired(mainStepSchema(), "description")}
         error={errors.main?.description?.message}
       />
+
+      {projectType === ProjectType.DESIGN && (
+        <>
+          {(() => {
+            const stored = watch("main.complexity");
+            const current = complexityLevelFromLabel(stored) || complexityLevelFromNumber(3);
+            const display = `${t(current.label)} (${current.level})`;
+            return (
+              <div className="flex flex-col gap-3">
+                <div className="text-ifr-text-primary" style={{ fontWeight: 600, fontSize: "var(--ifr-fs-md)" }}>
+                  {t("Complexity of this project")} <span style={{ color: "var(--ifr-danger)" }}>*</span>
+                </div>
+                <RangeSlider
+                  id="main-complexity"
+                  label={t("Complexity of this project")}
+                  labelHidden
+                  min={1}
+                  max={5}
+                  step={1}
+                  value={current.level}
+                  output={false}
+                  onChange={v =>
+                    setValue("main.complexity", complexityLevelFromNumber(Number(v)).label, formSetValueOptions)
+                  }
+                />
+                <div className="flex justify-between text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                  {[1, 2, 3, 4, 5].map(n => (
+                    <span key={n}>{n}</span>
+                  ))}
+                </div>
+                <div className="text-ifr-text-primary" style={{ fontWeight: 600 }}>
+                  {display}
+                </div>
+                <p className="text-ifr-text-secondary m-0" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                  {current.description}
+                </p>
+              </div>
+            );
+          })()}
+
+          <Controller
+            control={control}
+            name="main.bom"
+            render={({ field: { onChange, onBlur, name, value } }) => (
+              <TextField
+                type="text"
+                id={getIdFromFormName(name)}
+                name={name}
+                value={value || ""}
+                autoComplete="off"
+                onChange={onChange}
+                onBlur={onBlur}
+                placeholder={"https://github.com/you/project/blob/main/BOM.csv"}
+                label={t("Bill of Materials (BOM)")}
+                helpText={t("Add a link to your bill of materials. The link will be visible in the design page.")}
+                error={errors.main?.bom?.message}
+              />
+            )}
+          />
+        </>
+      )}
     </Stack>
   );
 }

@@ -356,3 +356,25 @@ table {
   width: 50%;
   justify-content: flex-end;
 }
+
+/* Restore markdown list indentation inside project detail Overview (Polaris resets lists) */
+.prose ul {
+  list-style: disc !important;
+  padding-left: 1.5em !important;
+  margin: 0.5em 0 !important;
+}
+.prose ol {
+  list-style: decimal !important;
+  padding-left: 1.5em !important;
+  margin: 0.5em 0 !important;
+}
+.prose li {
+  margin: 0.25em 0 !important;
+}
+.prose ul ul,
+.prose ol ul,
+.prose ul ol,
+.prose ol ol {
+  padding-left: 1.25em !important;
+  margin: 0.25em 0 !important;
+}

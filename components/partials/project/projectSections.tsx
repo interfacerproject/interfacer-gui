@@ -21,6 +21,7 @@ export type ProjectSectionsIDs = keyof CreateProjectValues | "importDesign" | "i
 
 export type ProjectSection = {
   navLabel: string;
+  navLabelByType?: Partial<Record<ProjectType, string>>;
   id: ProjectSectionsIDs;
   component: React.ReactNode;
   for?: Array<ProjectType>;
@@ -31,9 +32,11 @@ export type ProjectSection = {
 export const projectSections: Array<ProjectSection> = [
   {
     navLabel: "Import design",
+    navLabelByType: { [ProjectType.DESIGN]: "Repository info" },
     id: "importDesign",
     component: <ImportDesignStep />,
     for: [ProjectType.DESIGN],
+    required: [ProjectType.DESIGN],
   },
   {
     navLabel: "General info",
@@ -65,6 +68,7 @@ export const projectSections: Array<ProjectSection> = [
   },
   {
     navLabel: "3D files",
+    navLabelByType: { [ProjectType.DESIGN]: "CAD & 3D files" },
     id: "modelFiles",
     component: <ModelFilesStep />,
     for: [ProjectType.DESIGN],
@@ -108,6 +112,7 @@ export const projectSections: Array<ProjectSection> = [
   },
   {
     navLabel: "Licenses",
+    navLabelByType: { [ProjectType.DESIGN]: "License info" },
     id: "licenses",
     component: <LicenseStep />,
     for: [ProjectType.DESIGN],
@@ -115,6 +120,7 @@ export const projectSections: Array<ProjectSection> = [
   },
   {
     navLabel: "Contributors",
+    navLabelByType: { [ProjectType.DESIGN]: "Contributors and included projects" },
     id: "contributors",
     component: <ContributorsStep />,
     for: [ProjectType.DESIGN, ProjectType.PRODUCT, ProjectType.SERVICE, ProjectType.MACHINE],
@@ -129,16 +135,18 @@ export const projectSections: Array<ProjectSection> = [
   },
   {
     navLabel: "Machines",
+    navLabelByType: { [ProjectType.DESIGN]: "Required tools and machine code" },
     id: "machines",
     component: <MachinesStep />,
-    for: [ProjectType.PRODUCT],
+    for: [ProjectType.PRODUCT, ProjectType.DESIGN],
     editPage: "edit/machines",
   },
   {
     navLabel: "Materials",
+    navLabelByType: { [ProjectType.DESIGN]: "Materials needed" },
     id: "materials",
     component: <MaterialsStep />,
-    for: [ProjectType.PRODUCT],
+    for: [ProjectType.PRODUCT, ProjectType.DESIGN],
   },
 ];
 

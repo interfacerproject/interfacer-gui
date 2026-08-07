@@ -18,6 +18,7 @@ import {
 import { ExternalLinkIcon, LocationMarkerIcon } from "@heroicons/react/outline";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import EntityTypeIcon from "components/EntityTypeIcon";
+import MachineDrawer from "components/MachineDrawer";
 import { useUser } from "components/layout/FetchUserLayout";
 import ProjectCardNew from "components/ProjectCardNew";
 import { ProjectType } from "components/types";
@@ -187,9 +188,11 @@ function ProfileTabContent({
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <Link href={ctaConfig.createUrl}>
-                <a
-                  className="flex items-center gap-2 px-4 no-underline transition-colors hover:opacity-90"
+              {tabType === ProjectType.MACHINE ? (
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent("open-machine-drawer"))}
+                  className="flex items-center gap-2 px-4 border-none cursor-pointer transition-colors hover:opacity-90"
                   style={{
                     height: "var(--ifr-control-height)",
                     borderRadius: "var(--ifr-radius-sm)",
@@ -202,8 +205,26 @@ function ProfileTabContent({
                 >
                   {t(ctaConfig.createLabel)}
                   <ArrowRight size={16} />
-                </a>
-              </Link>
+                </button>
+              ) : (
+                <Link href={ctaConfig.createUrl}>
+                  <a
+                    className="flex items-center gap-2 px-4 no-underline transition-colors hover:opacity-90"
+                    style={{
+                      height: "var(--ifr-control-height)",
+                      borderRadius: "var(--ifr-radius-sm)",
+                      backgroundColor: "var(--ifr-yellow)",
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "var(--ifr-fs-base)",
+                      fontWeight: "var(--ifr-fw-medium)",
+                      color: "var(--ifr-text-primary)",
+                    }}
+                  >
+                    {t(ctaConfig.createLabel)}
+                    <ArrowRight size={16} />
+                  </a>
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -1044,6 +1065,14 @@ export default function ProfilePageNew() {
 
   const isOwner = user?.ulid === id;
 
+  // Machine creation drawer
+  const [machineDrawerOpen, setMachineDrawerOpen] = useState(false);
+  useEffect(() => {
+    const open = () => setMachineDrawerOpen(true);
+    window.addEventListener("open-machine-drawer", open);
+    return () => window.removeEventListener("open-machine-drawer", open);
+  }, []);
+
   // Tab state from URL
   const tabParam = (router.query.tab as string) || "designs";
   const activeTab: ProfileTabId = (
@@ -1281,6 +1310,8 @@ export default function ProfilePageNew() {
           />
         )}
       </div>
+
+      <MachineDrawer open={machineDrawerOpen} onClose={() => setMachineDrawerOpen(false)} />
     </div>
   );
 }

@@ -32,9 +32,9 @@ export default function CreateProjectFields(props: Props) {
       ),
     },
     [ProjectType.DESIGN]: {
-      title: t("Add a design"),
+      title: t("Add a new project to Interfacer"),
       subtitle: t(
-        "Import your project repository. Share your open source hardware project documentation and collaborate on building it. Your contribution will help others learn and build upon your work."
+        "Add all the info needed about your project. Add purchase information (if available), and specify the location where your product is available. Create a Digital Product Passport for your product."
       ),
     },
     [ProjectType.MACHINE]: {
@@ -57,15 +57,15 @@ export default function CreateProjectFields(props: Props) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header card */}
-      <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-8 px-8">
+      {/* Header (borderless, prototype typography) */}
+      <div className="pt-2 pb-2">
         <h1
-          className="text-ifr-text-primary m-0 mb-2"
+          className="text-ifr-text-primary m-0 mb-3"
           style={{
             fontFamily: "var(--ifr-font-heading)",
-            fontSize: "var(--ifr-fs-2xl)",
+            fontSize: "var(--ifr-fs-xl)",
             fontWeight: "var(--ifr-fw-bold)",
-            lineHeight: "1.2",
+            lineHeight: "1.5",
           }}
         >
           {titles[projectType].title}
@@ -74,8 +74,9 @@ export default function CreateProjectFields(props: Props) {
           className="text-ifr-text-secondary m-0"
           style={{
             fontFamily: "var(--ifr-font-body)",
-            fontSize: "var(--ifr-fs-md)",
-            lineHeight: "1.6",
+            fontSize: "var(--ifr-fs-base)",
+            lineHeight: "1.5",
+            maxWidth: "720px",
           }}
         >
           {titles[projectType].subtitle}

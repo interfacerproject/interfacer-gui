@@ -5,6 +5,8 @@ export interface MainStepValues {
   description: string;
   link: string;
   tags: Array<string>;
+  bom?: string;
+  complexity?: string;
 }
 
 export const mainStepDefaultValues: MainStepValues = {
@@ -12,6 +14,8 @@ export const mainStepDefaultValues: MainStepValues = {
   description: "",
   link: "",
   tags: [],
+  bom: "",
+  complexity: "",
 };
 
 export const mainStepSchema = () =>
@@ -19,6 +23,8 @@ export const mainStepSchema = () =>
     title: yup.string().required(),
     link: yup.string().url().required(),
     tags: yup.array().of(yup.string()),
+    bom: yup.string().url().notRequired().default(""),
+    complexity: yup.string().notRequired().default(""),
     description: yup
       .string()
       .test(

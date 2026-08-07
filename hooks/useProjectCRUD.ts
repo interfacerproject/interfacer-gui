@@ -6,6 +6,7 @@ import useWallet from "hooks/useWallet";
 import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import { errorFormatter } from "lib/errorFormatter";
 import {
+  COMPLEXITY_PREFIX,
   derivedProductFilterTags,
   MANUFACTURABLE_TRUE_TAG,
   normalizeUserTagsForSave,
@@ -191,6 +192,9 @@ export const useProjectCRUD = () => {
       const licenseTags = (formData.licenses || [])
         .map(l => prefixedTag(TAG_PREFIX.LICENSE, l.licenseId))
         .filter(Boolean) as string[];
+      const complexityTags = formData.main.complexity
+        ? ([prefixedTag(COMPLEXITY_PREFIX, formData.main.complexity)].filter(Boolean) as string[])
+        : [];
       const baseTags = normalizeUserTagsForSave(formData.main.tags);
 
       const tags = Array.from(
@@ -202,6 +206,7 @@ export const useProjectCRUD = () => {
           ...serviceTypeTags,
           ...availabilityTags,
           ...licenseTags,
+          ...complexityTags,
         ])
       );
 
@@ -220,6 +225,12 @@ export const useProjectCRUD = () => {
         design: formData.linkedDesign || false,
         image: imageUrls.length === 1 ? imageUrls[0] : imageUrls,
         ...(modelUrls.length > 0 && { models: modelUrls }),
+        ...(formData.main.bom && { bom: formData.main.bom }),
+        ...(formData.main.complexity && { complexity: formData.main.complexity }),
+        ...((formData.productFilters as any)?.price && { price: (formData.productFilters as any).price }),
+        ...((formData.productFilters as any)?.availability && {
+          availability: (formData.productFilters as any).availability,
+        }),
       };
 
       // Create project
