@@ -42,6 +42,11 @@ import * as yup from "yup";
 import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep.schema";
 import { materialsStepDefaultValues, materialsStepSchema, MaterialsStepValues } from "./steps/MaterialsStep.schema";
 import {
+  powerRequirementsStepDefaultValues,
+  powerRequirementsStepSchema,
+  PowerRequirementsStepValues,
+} from "./steps/PowerRequirementsStep.schema";
+import {
   productFiltersStepDefaultValues,
   productFiltersStepSchema,
   ProductFiltersStepValues,
@@ -79,6 +84,7 @@ export interface CreateProjectValues {
   licenses: LicenseStepValues;
   machines: MachinesStepValues;
   materials: MaterialsStepValues;
+  power: PowerRequirementsStepValues;
 }
 
 export const createProjectDefaultValues: CreateProjectValues = {
@@ -95,6 +101,7 @@ export const createProjectDefaultValues: CreateProjectValues = {
   licenses: licenseStepDefaultValues,
   machines: machinesStepDefaultValues,
   materials: materialsStepDefaultValues,
+  power: powerRequirementsStepDefaultValues,
 };
 
 export const createProjectSchema = () =>
@@ -121,6 +128,7 @@ export const createProjectSchema = () =>
     licenses: licenseStepSchema(),
     machines: machinesStepSchema(),
     materials: materialsStepSchema(),
+    power: powerRequirementsStepSchema(),
   });
 
 export type CreateProjectSchemaContext = LocationStepSchemaContext;
@@ -166,6 +174,7 @@ export default function CreateProjectForm(props: Props) {
     licenses: licenseStepDefaultValues,
     machines: machinesStepDefaultValues,
     materials: materialsStepDefaultValues,
+    power: powerRequirementsStepDefaultValues,
   };
 
   useEffect(() => {
@@ -225,13 +234,13 @@ export default function CreateProjectForm(props: Props) {
       <ProjectTypeContext.Provider value={projectType}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col min-h-screen bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-            <div className="flex-1 flex flex-row justify-center gap-8 lg:gap-12 p-6 max-w-[1280px] mx-auto w-full">
-              <div className="hidden lg:block w-[260px] shrink-0">
+            <div className="flex-1 flex flex-row justify-center gap-8 lg:gap-12 p-6 lg:p-10 max-w-[1440px] mx-auto w-full">
+              <div className="hidden lg:block w-[300px] shrink-0">
                 <div className="sticky top-24">
                   <CreateProjectNav projectType={projectType} />
                 </div>
               </div>
-              <div className="flex-1 max-w-2xl pb-24">
+              <div className="flex-1 min-w-0 pb-24">
                 <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
               </div>
             </div>

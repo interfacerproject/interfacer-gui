@@ -9,6 +9,8 @@ export interface ProductFiltersStepValues {
   repairability: boolean;
   energyKwh: string;
   co2Kg: string;
+  price?: string;
+  availability?: string;
 }
 
 export const productFiltersStepDefaultValues: ProductFiltersStepValues = {
@@ -20,6 +22,8 @@ export const productFiltersStepDefaultValues: ProductFiltersStepValues = {
   repairability: false,
   energyKwh: "",
   co2Kg: "",
+  price: "",
+  availability: "",
 };
 
 export const productFiltersStepSchema = () =>
@@ -57,4 +61,6 @@ export const productFiltersStepSchema = () =>
         return Number.isFinite(Number(value));
       })
       .default(""),
+    price: yup.string().default(""),
+    availability: yup.string().default(""),
   });

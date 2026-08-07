@@ -28,7 +28,7 @@ import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import ReviewSection from "./ReviewSection";
 import useFeedbackApi, { type ReviewSummary } from "lib/feedback";
 import StepModelViewer from "./StepModelViewer";
@@ -91,16 +91,33 @@ function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSideb
     : undefined;
 
   return (
-    <div className="w-full lg:w-[300px] shrink-0">
+    <div className="w-full lg:w-[300px] shrink-0 h-full">
       <div
         className="sticky flex flex-col"
         style={{
-          top: "calc(var(--ifr-topbar-height) + 80px)",
+          top: "calc(var(--ifr-topbar-height) + 16px)",
           border: "1px solid #c9cccf",
           borderRadius: "4px",
           backgroundColor: "#fff",
+          maxHeight: "calc(100vh - var(--ifr-topbar-height) - 32px)",
+          overflowY: "auto",
         }}
       >
+        {/* Title */}
+        <div className="px-4 pt-4">
+          <h2
+            className="text-ifr-text-primary m-0"
+            style={{
+              fontFamily: "var(--ifr-font-heading)",
+              fontSize: "var(--ifr-fs-lg)",
+              fontWeight: "var(--ifr-fw-bold)",
+              lineHeight: "1.3",
+            }}
+          >
+            {project.name}
+          </h2>
+        </div>
+
         {/* Price & CTA section */}
         <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
           {/* Product: Price & Availability */}
@@ -595,6 +612,50 @@ function ImageGallery({ images }: { images: string[] }) {
             </button>
           ))}
         </div>
+      )}
+    </div>
+  );
+}
+
+/** Markdown body that clamps to a fixed height with a Read more / Show less toggle. */
+function ReadMoreMarkdown({ html }: { html: string }) {
+  const { t } = useTranslation("common");
+  const ref = useRef<HTMLDivElement>(null);
+  const [overflowing, setOverflowing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const CLAMP_PX = 220;
+
+  useEffect(() => {
+    if (ref.current) setOverflowing(ref.current.scrollHeight > CLAMP_PX + 20);
+  }, [html]);
+
+  return (
+    <div>
+      <div
+        ref={ref}
+        className="prose max-w-none text-ifr-text-primary"
+        style={{
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: "var(--ifr-fs-md)",
+          maxHeight: expanded ? undefined : CLAMP_PX,
+          overflow: expanded ? undefined : "hidden",
+        }}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+      {overflowing && (
+        <button
+          type="button"
+          onClick={() => setExpanded(v => !v)}
+          className="mt-2 bg-transparent border-none p-0 cursor-pointer hover:underline"
+          style={{
+            color: "var(--ifr-green)",
+            fontFamily: "var(--ifr-font-body)",
+            fontSize: "var(--ifr-fs-sm)",
+            fontWeight: "var(--ifr-fw-medium)",
+          }}
+        >
+          {expanded ? t("Show less") : t("Read more")}
+        </button>
       )}
     </div>
   );
@@ -1369,7 +1430,7 @@ export default function ProjectDetailNew() {
 
   return (
     <div className="flex-1 bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-      <div className="max-w-[1280px] mx-auto px-6 py-8 flex gap-8 items-start">
+      <div className="max-w-[1280px] mx-auto px-6 py-8 flex gap-8">
         {/* Main content */}
         <div className="flex-1 min-w-0 flex flex-col gap-4">
           {/* Breadcrumb */}
@@ -1604,17 +1665,11 @@ export default function ProjectDetailNew() {
               iconBg="bg-ifr-hover"
               title={t("Overview")}
               subtitle={t("Description and key features")}
-              defaultOpen
+              collapsible={false}
               sectionId="overview"
             >
               <div className="flex flex-col gap-6">
-                {project.note && (
-                  <div
-                    className="prose max-w-none text-ifr-text-primary"
-                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-md)" }}
-                    dangerouslySetInnerHTML={{ __html: MdParser.render(project.note) }}
-                  />
-                )}
+                {project.note && <ReadMoreMarkdown html={MdParser.render(project.note)} />}
 
                 {/* Tags */}
                 {tags.length > 0 && (

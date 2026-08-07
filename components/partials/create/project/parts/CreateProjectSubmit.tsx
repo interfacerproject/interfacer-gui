@@ -11,6 +11,8 @@ export default function CreateProjectSubmit() {
   const typeAsProjectType = type.charAt(0).toUpperCase() + type.slice(1);
   const { formState, getValues } = useFormContext();
   const { isValid } = formState;
+  const isDesign = type === "design";
+  const primaryLabel = isDesign ? t("Publish design") : t("Save");
   const { SaveDraftButton, DeleteDraftButton, EditDraftButton } = useFormSaveDraft(
     `${getValues("main.title")}`,
     typeAsProjectType as ProjectType
@@ -32,18 +34,19 @@ export default function CreateProjectSubmit() {
           id="project-create-submit"
           type="submit"
           disabled={!isValid}
-          className="border-none cursor-pointer text-white transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="border-none cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
             height: "var(--ifr-control-height)",
             borderRadius: "var(--ifr-radius-sm)",
-            backgroundColor: "var(--ifr-green)",
+            backgroundColor: "var(--ifr-yellow)",
+            color: "var(--ifr-text-primary)",
             fontFamily: "var(--ifr-font-body)",
             fontSize: "var(--ifr-fs-base)",
-            fontWeight: "var(--ifr-fw-semibold)",
+            fontWeight: "var(--ifr-fw-medium)",
             padding: "0 24px",
           }}
         >
-          {t("Save")}
+          {primaryLabel}
         </button>
       </div>
     </div>
