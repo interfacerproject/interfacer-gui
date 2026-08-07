@@ -195,6 +195,9 @@ export const useProjectCRUD = () => {
       const complexityTags = formData.main.complexity
         ? ([prefixedTag(COMPLEXITY_PREFIX, formData.main.complexity)].filter(Boolean) as string[])
         : [];
+      const powerSourceTags = (formData.power?.powerSources || [])
+        .map(s => prefixedTag(TAG_PREFIX.POWER_COMPAT, s))
+        .filter(Boolean) as string[];
       const baseTags = normalizeUserTagsForSave(formData.main.tags);
 
       const tags = Array.from(
@@ -207,6 +210,7 @@ export const useProjectCRUD = () => {
           ...availabilityTags,
           ...licenseTags,
           ...complexityTags,
+          ...powerSourceTags,
         ])
       );
 
@@ -227,6 +231,12 @@ export const useProjectCRUD = () => {
         ...(modelUrls.length > 0 && { models: modelUrls }),
         ...(formData.main.bom && { bom: formData.main.bom }),
         ...(formData.main.complexity && { complexity: formData.main.complexity }),
+        ...(formData.power?.powerSources?.length && {
+          powerSources: formData.power.powerSources,
+        }),
+        ...(formData.power?.powerRequirementW && {
+          powerRequirementW: formData.power.powerRequirementW,
+        }),
         ...((formData.productFilters as any)?.price && { price: (formData.productFilters as any).price }),
         ...((formData.productFilters as any)?.availability && {
           availability: (formData.productFilters as any).availability,

@@ -8,10 +8,7 @@
   "Value of this project": "Value of this project",
   "Load more": "Load more...",
   "projects": "Projects",
-  "contributorsHead": [
-    "UserName",
-    "Date"
-  ],
+  "contributorsHead": ["UserName", "Date"],
   "watch": "Watch",
   "add to list": "Add to list",
   "unwatch": "unwatch",
@@ -156,7 +153,7 @@
   "Included": "Included",
   "Include": "Include",
   "Interfacer ID:": "Interfacer ID:",
-  "Save Draft": "Save draf",
+  "Save Draft": "Save draft",
   "Submit!": "Submit!",
   "Save": "Save",
   "All projects": "All projects",

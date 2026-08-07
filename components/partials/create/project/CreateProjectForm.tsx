@@ -42,6 +42,11 @@ import * as yup from "yup";
 import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep.schema";
 import { materialsStepDefaultValues, materialsStepSchema, MaterialsStepValues } from "./steps/MaterialsStep.schema";
 import {
+  powerRequirementsStepDefaultValues,
+  powerRequirementsStepSchema,
+  PowerRequirementsStepValues,
+} from "./steps/PowerRequirementsStep.schema";
+import {
   productFiltersStepDefaultValues,
   productFiltersStepSchema,
   ProductFiltersStepValues,
@@ -79,6 +84,7 @@ export interface CreateProjectValues {
   licenses: LicenseStepValues;
   machines: MachinesStepValues;
   materials: MaterialsStepValues;
+  power: PowerRequirementsStepValues;
 }
 
 export const createProjectDefaultValues: CreateProjectValues = {
@@ -95,6 +101,7 @@ export const createProjectDefaultValues: CreateProjectValues = {
   licenses: licenseStepDefaultValues,
   machines: machinesStepDefaultValues,
   materials: materialsStepDefaultValues,
+  power: powerRequirementsStepDefaultValues,
 };
 
 export const createProjectSchema = () =>
@@ -121,6 +128,7 @@ export const createProjectSchema = () =>
     licenses: licenseStepSchema(),
     machines: machinesStepSchema(),
     materials: materialsStepSchema(),
+    power: powerRequirementsStepSchema(),
   });
 
 export type CreateProjectSchemaContext = LocationStepSchemaContext;
@@ -166,6 +174,7 @@ export default function CreateProjectForm(props: Props) {
     licenses: licenseStepDefaultValues,
     machines: machinesStepDefaultValues,
     materials: materialsStepDefaultValues,
+    power: powerRequirementsStepDefaultValues,
   };
 
   useEffect(() => {

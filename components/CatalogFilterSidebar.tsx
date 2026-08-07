@@ -32,6 +32,7 @@ import {
   TAG_PREFIX,
   slugifyTagValue,
 } from "lib/tagging";
+import { DESIGN_POWER_SOURCE_OPTIONS } from "components/partials/create/project/steps/PowerRequirementsStep";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -228,8 +229,13 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
     [currentTags]
   );
   const selectedPower = useMemo(
-    () => getSelectedItems(currentTags, TAG_PREFIX.POWER_COMPAT, POWER_COMPATIBILITY_OPTIONS),
-    [currentTags]
+    () =>
+      getSelectedItems(
+        currentTags,
+        TAG_PREFIX.POWER_COMPAT,
+        variant === "designs" ? DESIGN_POWER_SOURCE_OPTIONS : POWER_COMPATIBILITY_OPTIONS
+      ),
+    [currentTags, variant]
   );
   const selectedComplexity = useMemo(
     () => getSelectedItems(currentTags, COMPLEXITY_PREFIX, COMPLEXITY_LABELS),
@@ -779,7 +785,7 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
               badge={selectedPower.length || undefined}
             >
               <CheckboxFilter
-                items={[...POWER_COMPATIBILITY_OPTIONS]}
+                items={variant === "designs" ? [...DESIGN_POWER_SOURCE_OPTIONS] : [...POWER_COMPATIBILITY_OPTIONS]}
                 selectedItems={selectedPower}
                 onToggle={toggleTag(TAG_PREFIX.POWER_COMPAT)}
               />
