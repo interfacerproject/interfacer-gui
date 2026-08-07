@@ -34,6 +34,7 @@ import ProductCardSkeleton from "./ProductCardSkeleton";
 // import ProjectDisplay from "./ProjectDisplay";
 import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
+import { Checkmark, Launch } from "@carbon/icons-react";
 import ProjectCardFigma from "./ProjectCardFigma";
 
 const CardsGroup = dynamic(() => import("./CardsGroup"), { ssr: false });
@@ -50,66 +51,97 @@ function miniType(project: Partial<EconomicResource>): ProjectType {
   return ProjectType.DESIGN;
 }
 
-const miniTypeColor: Record<string, string> = {
-  [ProjectType.DESIGN]: "var(--ifr-green)",
-  [ProjectType.PRODUCT]: "var(--ifr-type-product)",
-  [ProjectType.SERVICE]: "var(--ifr-type-service)",
-  [ProjectType.DPP]: "var(--ifr-type-dpp)",
-  [ProjectType.MACHINE]: "var(--ifr-type-product)",
-};
-
 /** Compact horizontal card used for "Included Projects" / related lists. */
 function TinyProjectCard({ project }: { project: Partial<EconomicResource> }) {
+  const { t } = useTranslation("common");
   const type = miniType(project);
   const src = findProjectImages(project)?.[0];
+  const author = project.primaryAccountable?.name;
+  const capType = type.charAt(0).toUpperCase() + type.slice(1);
+  const viewLabel = `${t("View")} ${capType}`;
   return (
     <div
-      className="flex items-center gap-3 p-3 bg-ifr-surface border border-ifr hover:bg-ifr-hover transition-colors"
-      style={{ borderRadius: "var(--ifr-radius-md)" }}
+      className="w-full flex cursor-pointer transition-colors duration-150 hover:bg-ifr-hover overflow-hidden"
+      style={{ borderRadius: "var(--ifr-radius-md)", border: "1px solid var(--ifr-border)", height: 104 }}
     >
       <div
-        className="shrink-0 overflow-hidden flex items-center justify-center bg-base-200"
-        style={{ width: 56, height: 56, borderRadius: "var(--ifr-radius-sm)" }}
+        className="shrink-0 overflow-hidden bg-ifr-surface flex items-center justify-center"
+        style={{ width: 104, height: "100%" }}
       >
         {src ? (
-          <img src={src} alt="" className="w-full h-full object-cover" />
+          <img src={src} alt={project.name || ""} className="w-full h-full object-cover" />
         ) : (
           <EntityTypeIcon type={type} size="default" fill="var(--ifr-green)" />
         )}
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <p
-            className="text-ifr-text-primary m-0 truncate"
+      <div className="flex flex-col gap-[8px] flex-1 min-w-0 px-[14px] py-[12px] justify-between">
+        <div className="flex flex-col gap-[4px] flex-1 min-w-0">
+          <div className="flex items-center gap-[8px]">
+            <span
+              className="text-ifr-text-primary truncate"
+              style={{
+                fontFamily: "var(--ifr-font-body)",
+                fontSize: "var(--ifr-fs-md)",
+                fontWeight: "var(--ifr-fw-medium)",
+                lineHeight: "24px",
+              }}
+            >
+              {project.name}
+            </span>
+            <span
+              className="shrink-0 flex items-center justify-center"
+              style={{
+                width: 22,
+                height: 22,
+                borderRadius: "var(--ifr-radius-sm)",
+                backgroundColor: "var(--ifr-green)",
+              }}
+            >
+              <Checkmark size={12} fill="#fff" style={{ display: "block", flexShrink: 0 }} />
+            </span>
+          </div>
+          {author && (
+            <div className="flex items-center gap-[8px]">
+              <span
+                className="text-ifr-text-secondary truncate"
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-base)",
+                  fontWeight: "var(--ifr-fw-regular)",
+                  lineHeight: "21px",
+                }}
+              >
+                {`@${author}`}
+              </span>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center justify-between">
+          <span
+            className="text-ifr-text-secondary truncate"
             style={{
               fontFamily: "var(--ifr-font-body)",
-              fontSize: "var(--ifr-fs-md)",
-              fontWeight: "var(--ifr-fw-semibold)",
+              fontSize: "var(--ifr-fs-sm)",
+              fontWeight: "var(--ifr-fw-regular)",
+              lineHeight: "18px",
             }}
           >
-            {project.name}
-          </p>
+            {project.id}
+          </span>
           <span
-            className="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 text-white"
+            className="flex items-center gap-[4px] shrink-0"
             style={{
-              borderRadius: "var(--ifr-radius-sm)",
-              backgroundColor: miniTypeColor[type],
-              fontSize: "var(--ifr-fs-xs)",
-              fontWeight: "var(--ifr-fw-semibold)",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-base)",
+              fontWeight: "var(--ifr-fw-medium)",
+              lineHeight: "21px",
+              color: "var(--ifr-green)",
             }}
           >
-            <EntityTypeIcon type={type} size="small" fill="#fff" />
-            {type}
+            {viewLabel}
+            <Launch size={14} style={{ color: "var(--ifr-green)" }} />
           </span>
         </div>
-        {project.note && (
-          <p
-            className="text-ifr-text-secondary m-0 truncate"
-            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-          >
-            {project.note}
-          </p>
-        )}
       </div>
     </div>
   );
