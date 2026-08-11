@@ -16,7 +16,7 @@
 
 import { useState } from "react";
 // Import Swiper React components
-import { Navigation, Thumbs } from "swiper";
+import { Navigation, Thumbs } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
