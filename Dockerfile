@@ -17,7 +17,7 @@
 
 # TODO: move config to runtime https://github.com/vercel/next.js/discussions/17641
 
-FROM node:lts-alpine
+FROM node:24-alpine
 
 RUN apk add --no-cache libc6-compat
 RUN corepack enable
