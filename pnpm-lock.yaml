@@ -198,9 +198,6 @@ importers:
       online-3d-viewer:
         specifier: ^0.18.0
         version: 0.18.0
-      playwright:
-        specifier: 1.34.0-alpha-may-11-2023
-        version: 1.34.0-alpha-may-11-2023
       postcss:
         specifier: ^8.5.26
         version: 8.5.26
@@ -3896,18 +3893,9 @@ packages:
     resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}
     engines: {node: '>= 6'}
 
-  playwright-core@1.34.0-alpha-may-11-2023:
-    resolution: {integrity: sha512-tRXXyiPP8tb/DhOvkqnVcmMKHieHtSCv6nYEbtKnmfZCybsLqUIjeFLWYdI8p69LE54WZKdZolRstLg8WKb+4A==}
-    engines: {node: '>=14'}
-
   playwright-core@1.56.0:
     resolution: {integrity: sha512-1SXl7pMfemAMSDn5rkPeZljxOCYAmQnYLBTExuh6E8USHXGSX3dx6lYZN/xPpTz1vimXmPA9CDnILvmJaB8aSQ==}
     engines: {node: '>=18'}
-    hasBin: true
-
-  playwright@1.34.0-alpha-may-11-2023:
-    resolution: {integrity: sha512-sgy3x9LC/oek8/IDyKnCTcasiitRWFyA9B80pc47fhCDnq+Ashbrw6JirP5keN9H3W4gdImorMTsIMAwhPtsNA==}
-    engines: {node: '>=14'}
     hasBin: true
 
   playwright@1.56.0:
@@ -9566,13 +9554,7 @@ snapshots:
 
   pirates@4.0.7: {}
 
-  playwright-core@1.34.0-alpha-may-11-2023: {}
-
   playwright-core@1.56.0: {}
-
-  playwright@1.34.0-alpha-may-11-2023:
-    dependencies:
-      playwright-core: 1.34.0-alpha-may-11-2023
 
   playwright@1.56.0:
     dependencies:
