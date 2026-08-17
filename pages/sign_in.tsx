@@ -208,8 +208,8 @@ const Sign_in: NextPageWithLayout = () => {
 
   return (
     <div className="grid h-full grid-cols-6">
-      <div className="col-span-6 p-2 md:col-span-4 md:col-start-2 md:col-end-6">
-        <div className="w-full h-full pt-56">
+      <div className="col-span-6 px-4 py-2 md:col-span-4 md:col-start-2 md:col-end-6">
+        <div className="w-full h-full pt-12 md:pt-32 lg:pt-56">
           {/* Entering email */}
           {step === 0 && (
             <EnterEmail onSubmit={emailEntered}>{error && <BrError testID="error">{error}</BrError>}</EnterEmail>

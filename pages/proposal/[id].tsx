@@ -172,7 +172,7 @@ const Proposal = () => {
 
   return (
     <>
-      <div className="mx-auto max-w-lg pt-6 min-h-full">
+      <div className="mx-auto w-full max-w-lg px-4 pt-6 min-h-full">
         <Stack vertical spacing="extraLoose">
           <div className="flex justify-between">
             <PTitleSubtitle title={t("Contribution Proposal")} subtitle={t("Read the comunity guidelines")} />
@@ -219,7 +219,7 @@ const Proposal = () => {
       </div>
 
       {renderActions && (
-        <div className="bg-yellow-100 border-t-1 border-t-border-warning-subdued p-4 flex justify-end items-center space-x-6 sticky bottom-0 z-20">
+        <div className="bg-yellow-100 border-t-1 border-t-border-warning-subdued p-4 flex flex-wrap justify-end items-center gap-3 sm:gap-6 sticky bottom-0 z-20">
           <div className="space-x-2">
             <Button
               size="large"

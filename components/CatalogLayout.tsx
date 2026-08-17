@@ -20,6 +20,7 @@ import {
 } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import { useIsDesktop } from "hooks/useMediaQuery";
 import React, { ReactNode, useState } from "react";
 
 interface CatalogHeroProps {
@@ -49,7 +50,13 @@ export default function CatalogLayout({
 }: CatalogLayoutProps) {
   const { t } = useTranslation("common");
   const router = useRouter();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const isDesktop = useIsDesktop();
+  // The filter panel starts open as a desktop column but closed as a mobile
+  // drawer — an overlay that covers the results on arrival would be hostile.
+  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
+  const [drawerCollapsed, setDrawerCollapsed] = useState(true);
+  const sidebarCollapsed = isDesktop ? desktopCollapsed : drawerCollapsed;
+  const toggleSidebar = () => (isDesktop ? setDesktopCollapsed(v => !v) : setDrawerCollapsed(v => !v));
   const [searchQuery, setSearchQuery] = useState((router.query.q as string) || "");
 
   const sortBy = (router.query.sort as string) || "Latest";
@@ -137,56 +144,55 @@ export default function CatalogLayout({
   };
 
   return (
-    <div className="flex flex-1 items-start">
-      {/* Filter Sidebar */}
+    <div className="flex flex-1 items-start min-w-0">
+      {/* Filter Sidebar — inline column on desktop, overlay drawer below `lg` */}
       <CatalogFilterSidebar
         variant={variant}
         collapsed={sidebarCollapsed}
-        onToggle={() => setSidebarCollapsed(v => !v)}
+        onToggle={toggleSidebar}
+        asDrawer={!isDesktop}
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-y-auto">
+      <div className="flex-1 min-w-0 flex flex-col overflow-y-auto">
         {/* Hero Section */}
         <div className="relative border-b border-ifr" style={{ background: heroGradients[variant] }}>
-          <div className="relative px-6 py-10">
-            <div className="relative z-10 flex items-center gap-6">
+          <div className="relative px-4 py-6 md:px-6 md:py-10">
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-6">
               {/* Left: Title + Description */}
-              <div className="flex-1 flex flex-col gap-2">
+              <div className="flex-1 min-w-0 flex flex-col gap-2">
                 <h1
-                  className="m-0"
+                  className="m-0 text-[24px] leading-[30px] md:text-[30px] md:leading-[36px]"
                   style={{
                     fontFamily: "var(--ifr-font-heading)",
-                    fontSize: "30px",
                     fontWeight: 700,
-                    lineHeight: "36px",
                     color: "#ffffff",
                   }}
                 >
                   {hero.title}
                 </h1>
                 <p
-                  className="m-0 max-w-[640px]"
-                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "16px", lineHeight: "24px", color: "#fafafa" }}
+                  className="m-0 max-w-[640px] text-[15px] leading-[22px] md:text-[16px] md:leading-[24px]"
+                  style={{ fontFamily: "var(--ifr-font-body)", color: "#fafafa" }}
                 >
                   {hero.description}
                 </p>
               </div>
 
-              {/* Right: Stats */}
-              <div className="flex gap-[15px] shrink-0">{hero.stats}</div>
+              {/* Right: Stats — wrap rather than overflow on narrow screens */}
+              <div className="flex flex-wrap gap-[10px] md:gap-[15px] lg:shrink-0">{hero.stats}</div>
             </div>
           </div>
         </div>
 
         {/* Search & Sort Bar */}
-        <div className="bg-ifr-surface border-b border-ifr px-6 py-5">
-          <div className="flex items-center justify-between gap-6">
+        <div className="bg-ifr-surface border-b border-ifr px-4 md:px-6 py-4 md:py-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 md:gap-6">
             {/* Filters toggle */}
             <button
               type="button"
-              onClick={() => setSidebarCollapsed(v => !v)}
-              className={`flex items-center gap-[8px] px-3 shrink-0 border transition-colors cursor-pointer ${
+              onClick={toggleSidebar}
+              className={`order-1 flex items-center gap-[8px] px-3 shrink-0 border transition-colors cursor-pointer ${
                 !sidebarCollapsed
                   ? "bg-ifr-hover border-ifr text-ifr-text-primary"
                   : "bg-ifr-surface border-transparent text-ifr-text-secondary hover:border-ifr hover:text-ifr-text-primary"
@@ -207,30 +213,33 @@ export default function CatalogLayout({
               </span>
             </button>
 
-            {/* Search */}
-            <form onSubmit={handleSearch} className="flex-1 max-w-[845px] relative">
-              <div className="bg-ifr-search border border-ifr rounded-full px-4 py-3 flex items-center gap-3">
-                <SearchIcon className="w-5 h-5 text-ifr-text-secondary" />
+            {/* Search — drops to its own full-width row once the toolbar runs out of space */}
+            <form
+              onSubmit={handleSearch}
+              className="order-3 md:order-2 w-full md:w-auto md:flex-1 max-w-[845px] relative"
+            >
+              <div className="bg-ifr-search border border-ifr rounded-full px-4 py-2.5 md:py-3 flex items-center gap-3">
+                <SearchIcon className="w-5 h-5 shrink-0 text-ifr-text-secondary" />
                 <input
-                  type="text"
+                  type="search"
                   placeholder={searchPlaceholder}
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="flex-1 bg-transparent text-ifr-text-primary placeholder:text-ifr-text-muted outline-none"
-                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)", lineHeight: "21px" }}
+                  className="flex-1 min-w-0 bg-transparent text-ifr-text-primary placeholder:text-ifr-text-muted outline-none"
+                  style={{ fontFamily: "var(--ifr-font-body)", lineHeight: "21px" }}
                 />
               </div>
             </form>
 
             {/* Sort */}
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="order-2 md:order-3 flex items-center gap-3 shrink-0">
               <ToolbarDropdown label={t("Sort by")} value={sortBy} options={sortOptions} onChange={handleSortChange} />
             </div>
           </div>
         </div>
 
         {/* Results */}
-        <div className="bg-ifr-results flex-1 p-6">
+        <div className="bg-ifr-results flex-1 p-4 md:p-6">
           {/* Results count */}
           <p
             className="text-ifr-text-secondary"
@@ -253,7 +262,7 @@ export default function CatalogLayout({
             <div
               className="grid justify-center"
               style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(var(--ifr-card-min-width), var(--ifr-card-max-width)))",
+                gridTemplateColumns: "repeat(auto-fill, var(--ifr-card-track))",
                 gap: "var(--ifr-grid-gap)",
               }}
             >
@@ -295,8 +304,7 @@ export default function CatalogLayout({
               <div
                 className="grid justify-center"
                 style={{
-                  gridTemplateColumns:
-                    "repeat(auto-fill, minmax(var(--ifr-card-min-width), var(--ifr-card-max-width)))",
+                  gridTemplateColumns: "repeat(auto-fill, var(--ifr-card-track))",
                   gap: "var(--ifr-grid-gap)",
                 }}
               >
@@ -335,9 +343,13 @@ export default function CatalogLayout({
 export function HeroStatCard({ value, label }: { icon?: ReactNode; value: string | number; label: string }) {
   return (
     <div
-      className="flex flex-col justify-center"
+      className="flex flex-col justify-center flex-1 lg:flex-none"
       style={{
-        width: 140,
+        // Two cards still fit side by side on a 320px screen; wider viewports
+        // settle back to the fixed prototype width.
+        flexBasis: 130,
+        minWidth: 130,
+        maxWidth: 140,
         height: 56,
         padding: "10px 14px",
         borderRadius: "6px",

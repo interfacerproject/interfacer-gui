@@ -111,9 +111,12 @@ function CreateDppNav() {
   }, []);
 
   return (
-    <nav className="bg-ifr-surface border border-ifr rounded-ifr-md p-4 flex flex-col gap-1" aria-label={t("Sections")}>
+    <nav
+      className="bg-ifr-surface border border-ifr rounded-ifr-md p-3 lg:p-4 flex flex-row lg:flex-col items-center lg:items-stretch gap-2 lg:gap-1 overflow-x-auto lg:overflow-visible overscroll-x-contain"
+      aria-label={t("Sections")}
+    >
       <p
-        className="text-ifr-text-secondary m-0 mb-2 px-3"
+        className="hidden lg:block text-ifr-text-secondary m-0 mb-2 px-3"
         style={{
           fontFamily: "var(--ifr-font-body)",
           fontSize: "var(--ifr-fs-sm)",
@@ -131,7 +134,7 @@ function CreateDppNav() {
             key={section.id}
             type="button"
             onClick={() => scrollTo(section.id)}
-            className={`text-left px-3 py-2 border-none cursor-pointer transition-colors rounded-sm ${
+            className={`text-left shrink-0 whitespace-nowrap px-3 py-2 border-none cursor-pointer transition-colors rounded-sm ${
               isActive ? "bg-ifr-hover" : "bg-transparent hover:bg-ifr-hover/50"
             }`}
             style={{
@@ -268,16 +271,16 @@ export default function CreateDppForm() {
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col min-h-screen bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-          <div className="flex-1 flex flex-row justify-center gap-8 lg:gap-12 p-6 max-w-[1280px] mx-auto w-full">
-            {/* Sidebar Nav */}
-            <div className="hidden lg:block w-[260px] shrink-0">
-              <div className="sticky top-24">
+          <div className="flex-1 flex flex-col lg:flex-row lg:justify-center gap-6 lg:gap-12 p-4 md:p-6 max-w-[1280px] mx-auto w-full">
+            {/* Sidebar Nav — sticky rail on desktop, jump strip on phones */}
+            <div className="lg:w-[260px] lg:shrink-0">
+              <div className="lg:sticky lg:top-24">
                 <CreateDppNav />
               </div>
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 max-w-2xl pb-24">
+            <div className="flex-1 min-w-0 max-w-2xl pb-24">
               <div className="flex flex-col gap-6">
                 {/* Header */}
                 <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-8 px-8">
@@ -756,7 +759,10 @@ export default function CreateDppForm() {
             className="sticky bottom-0 right-0 z-30 border-t border-ifr"
             style={{ backgroundColor: "var(--ifr-bg-surface)", fontFamily: "var(--ifr-font-body)" }}
           >
-            <div className="max-w-[1280px] mx-auto flex flex-row items-center justify-end gap-3 px-6 py-3">
+            <div
+              className="max-w-[1280px] mx-auto flex flex-wrap items-center justify-end gap-2 md:gap-3 px-4 md:px-6 py-3"
+              style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+            >
               <button
                 type="button"
                 onClick={() => router.back()}

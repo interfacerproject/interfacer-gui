@@ -594,10 +594,7 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
           </div>
 
           {/* KPI Stats right */}
-          <div
-            className="grid grid-cols-2 gap-px border border-ifr rounded-ifr-md overflow-hidden shrink-0"
-            style={{ width: "320px" }}
-          >
+          <div className="grid grid-cols-2 gap-px border border-ifr rounded-ifr-md overflow-hidden w-full md:w-[320px] md:shrink-0">
             {(
               [
                 { label: "Total DPPs", value: statusCounts.total },
@@ -1096,19 +1093,19 @@ export default function ProfilePageNew() {
 
   return (
     <div className="flex-1 bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-      <div className="max-w-[1280px] mx-auto px-6 py-8">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8">
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row gap-6 mb-8">
           {/* Avatar */}
           <div className="shrink-0">
-            <div className="rounded-full overflow-hidden border border-ifr" style={{ width: "120px", height: "120px" }}>
-              <BrUserAvatar userId={id} size="120px" />
+            <div className="rounded-full overflow-hidden border border-ifr w-20 h-20 md:w-[120px] md:h-[120px]">
+              <BrUserAvatar userId={id} size="100%" />
             </div>
           </div>
 
           {/* Info */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="flex flex-col gap-2 min-w-0">
                 {/* Name + verified */}
                 <div className="flex items-center gap-2">

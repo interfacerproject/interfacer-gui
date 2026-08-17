@@ -17,12 +17,15 @@ export default function SubmitChangesBar(props: SubmitChangesProps) {
   return (
     <>
       {isDirty && (
-        <div className="bg-yellow-100 border-t-1 border-t-border-warning-subdued p-4 flex justify-end items-center space-x-6 sticky bottom-0 z-20">
+        <div
+          className="bg-yellow-100 border-t-1 border-t-border-warning-subdued px-4 py-3 flex flex-wrap justify-end items-center gap-3 sm:gap-6 sticky bottom-0 z-20"
+          style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+        >
           <Text variant="bodyMd" as="p">
             {t("You have unsaved changes")}
           </Text>
 
-          <div className="space-x-2">
+          <div className="flex flex-wrap gap-2">
             <Button onClick={handleReset} icon={<Icon source={CancelMinor} />}>
               {t("Discard changes")}
             </Button>

@@ -54,7 +54,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <AppProvider i18n={enTranslations}>
       <Head>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width, viewport-fit=cover" />
       </Head>
       <AuthProvider publicPage={publicPage}>
         <InBoxProvider>{getLayout(<Component {...pageProps} />)}</InBoxProvider>

@@ -97,7 +97,7 @@ const ResourcesCards = (props: ResourcesCardsProps) => {
               ]}
             >
               <img src={e.node.metadata?.image} className="w-20 h-20" alt={e.node.name} />
-              <p className="w-64">{e.node.note}</p>
+              <p className="w-full max-w-xs">{e.node.note}</p>
             </Card>
           </>
         ))}

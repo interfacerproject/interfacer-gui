@@ -85,12 +85,14 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
   const content = (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(onSubmitWrapper)}>
-        <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
-          <div className="sticky top-24">
+        {/* Section nav rides above the fields on phones and becomes a sticky
+            rail beside them from `lg` up, where the two fit side by side. */}
+        <div className="flex flex-col lg:flex-row lg:justify-center items-stretch lg:items-start gap-6 lg:gap-0 lg:space-x-16 xl:space-x-24 p-4 md:p-6">
+          <div className="lg:sticky lg:top-24 lg:shrink-0">
             {!nav && <EditProjectNav />}
             {nav}
           </div>
-          <div className="grow max-w-xl px-6 pb-24 pt-0">{children}</div>
+          <div className="grow min-w-0 w-full max-w-xl mx-auto lg:mx-0 px-0 md:px-6 pb-24 pt-0">{children}</div>
         </div>
         <SubmitChangesBar />
       </form>
