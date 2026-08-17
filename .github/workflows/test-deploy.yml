@@ -37,20 +37,22 @@ jobs:
           git submodule update --init
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 24
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install dependencies
-        run: npm i --legacy-peer-deps
+        run: pnpm install --frozen-lockfile
       - name: Write local env file
         run: cp .env.example .env.local
-      - run: npm run build
+      - run: pnpm build
       - name: Install Playwright Browsers
         timeout-minutes: 10
         run: |
           sudo sed -i 's/azure\.archive\.ubuntu\.com/archive.ubuntu.com/g' /etc/apt/sources.list /etc/apt/sources.list.d/*.list 2>/dev/null || true
           sudo apt-get update -qq
-          npx playwright install --with-deps
+          pnpm exec playwright install --with-deps
       - name: Run Playwright tests
-        run: npx playwright test
+        run: pnpm exec playwright test
       - uses: actions/upload-artifact@v4.6.0
         if: always()
         with:
@@ -83,10 +85,9 @@ jobs:
   #       id: deployment
   #       uses: actions/deploy-pages@v2
 
-
   # deploy:
   #   name: 🚀 Deploy on staging server
-  #   needs: test 
+  #   needs: test
   #   if: github.ref == 'refs/heads/main'
   #   uses: interfacerproject/workflows/.github/workflows/node-staging-deploy.yml@main
   #   secrets: inherit
