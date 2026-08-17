@@ -160,8 +160,10 @@ const Notification = () => {
   };
 
   return (
-    <div className="flex flex-wrap mx-auto justify-center">
-      <div className="flex flex-col p-6 space-y-1 sticky top-0 self-start z-40">
+    <div className="flex flex-col lg:flex-row flex-wrap mx-auto lg:justify-center">
+      {/* Group jump-links: a horizontal strip above the feed on phones, a
+          sticky rail beside it once there is room. */}
+      <div className="flex flex-row lg:flex-col gap-2 lg:gap-0 overflow-x-auto lg:overflow-visible p-4 md:p-6 lg:space-y-1 lg:sticky lg:top-0 self-start z-40">
         {nonEmptyGroups.map(([groupName, group]) => (
           <Button key={groupName} url={`#${groupName}`}>
             {/* @ts-ignore */}
@@ -171,7 +173,7 @@ const Notification = () => {
         ))}
       </div>
 
-      <div className="max-w-lg p-6 space-y-8">
+      <div className="w-full max-w-lg p-4 md:p-6 space-y-8">
         {unreadCount > 0 && (
           <div className="flex justify-end">
             <Button onClick={handleMarkAllRead}>{`${t("Mark all as read")} (${unreadCount})`}</Button>

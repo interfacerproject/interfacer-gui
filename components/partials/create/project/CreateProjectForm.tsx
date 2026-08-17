@@ -234,9 +234,9 @@ export default function CreateProjectForm(props: Props) {
       <ProjectTypeContext.Provider value={projectType}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col min-h-screen bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-            <div className="flex-1 flex flex-row justify-center gap-8 lg:gap-12 p-6 lg:p-10 max-w-[1440px] mx-auto w-full">
-              <div className="hidden lg:block w-[300px] shrink-0">
-                <div className="sticky top-24">
+            <div className="flex-1 flex flex-col lg:flex-row lg:justify-center gap-6 lg:gap-12 p-4 md:p-6 lg:p-10 max-w-[1440px] mx-auto w-full">
+              <div className="lg:w-[300px] lg:shrink-0">
+                <div className="lg:sticky lg:top-24">
                   <CreateProjectNav projectType={projectType} />
                 </div>
               </div>

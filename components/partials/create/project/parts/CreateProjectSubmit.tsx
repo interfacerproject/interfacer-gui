@@ -26,7 +26,10 @@ export default function CreateProjectSubmit() {
         fontFamily: "var(--ifr-font-body)",
       }}
     >
-      <div className="max-w-[1280px] mx-auto flex flex-row items-center justify-end gap-3 px-6 py-3">
+      <div
+        className="max-w-[1280px] mx-auto flex flex-wrap items-center justify-end gap-2 md:gap-3 px-4 md:px-6 py-3"
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+      >
         <DeleteDraftButton />
         <EditDraftButton />
         <SaveDraftButton />

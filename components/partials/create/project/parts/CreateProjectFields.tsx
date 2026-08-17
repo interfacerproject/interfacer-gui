@@ -87,7 +87,7 @@ export default function CreateProjectFields(props: Props) {
       {sections.map((section, index) => (
         <div key={index}>
           <div id={section.id} className="scroll-mt-24" />
-          <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-8 px-8">
+          <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-6 px-4 md:py-8 md:px-8">
             <div className="flex flex-col gap-6">{section.component}</div>
           </div>
         </div>

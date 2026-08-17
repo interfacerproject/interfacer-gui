@@ -187,7 +187,7 @@ function ProfileTabContent({
                 {t(ctaConfig.ctaDescription)}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
               {tabType === ProjectType.MACHINE ? (
                 <button
                   type="button"
@@ -232,11 +232,11 @@ function ProfileTabContent({
 
       {/* Search & Sort toolbar */}
       <div
-        className="bg-ifr-surface border border-ifr rounded-ifr-md flex items-center gap-3 px-4"
+        className="bg-ifr-surface border border-ifr rounded-ifr-md flex flex-col items-stretch gap-3 px-4 sm:flex-row sm:items-center"
         style={{ minHeight: "var(--ifr-control-height)", padding: "12px 16px" }}
       >
         {/* Search input */}
-        <div className="flex-1 flex items-center gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <Search size={18} className="text-ifr-text-secondary shrink-0" />
           <input
             type="text"
@@ -256,9 +256,9 @@ function ProfileTabContent({
           <button
             type="button"
             onClick={() => setShowSortMenu(!showSortMenu)}
-            className="flex items-center gap-2 px-3 bg-transparent border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors"
+            className="flex w-full items-center justify-between gap-2 px-3 bg-transparent border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors sm:w-auto sm:justify-start"
             style={{
-              height: "36px",
+              height: "var(--ifr-control-height)",
               borderRadius: "var(--ifr-radius-sm)",
               fontFamily: "var(--ifr-font-body)",
               fontSize: "var(--ifr-fs-sm)",
@@ -302,9 +302,9 @@ function ProfileTabContent({
         {isOwner && (
           <Link href={ctaConfig.createUrl}>
             <a
-              className="flex items-center gap-2 px-3 no-underline shrink-0 transition-colors hover:opacity-90"
+              className="flex w-full items-center justify-center gap-2 px-3 no-underline transition-colors hover:opacity-90 sm:w-auto"
               style={{
-                height: "36px",
+                height: "var(--ifr-control-height)",
                 borderRadius: "var(--ifr-radius-sm)",
                 backgroundColor: "var(--ifr-yellow)",
                 fontFamily: "var(--ifr-font-body)",
@@ -329,7 +329,7 @@ function ProfileTabContent({
           />
         </div>
       ) : showEmptyState ? (
-        <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-12 text-center">
+        <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-6 text-center md:p-12">
           <EntityTypeIcon type={tabType} size="default" className="mx-auto mb-3 opacity-40" />
           <p
             className="text-ifr-text-secondary"
@@ -345,7 +345,7 @@ function ProfileTabContent({
         <div
           className="grid gap-5"
           style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(var(--ifr-card-min-width, 280px), 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, var(--ifr-card-min-width, 280px)), 1fr))",
           }}
         >
           {projects?.map((edge: any) => (
@@ -558,7 +558,7 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
                 {t(ctaConfig.ctaDescription)}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
               <Link href={ctaConfig.createUrl}>
                 <a
                   className="flex items-center gap-2 px-4 no-underline transition-colors hover:opacity-90"
@@ -594,10 +594,7 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
           </div>
 
           {/* KPI Stats right */}
-          <div
-            className="grid grid-cols-2 gap-px border border-ifr rounded-ifr-md overflow-hidden shrink-0"
-            style={{ width: "320px" }}
-          >
+          <div className="grid grid-cols-2 gap-px border border-ifr rounded-ifr-md overflow-hidden w-full md:w-[320px] md:shrink-0">
             {(
               [
                 { label: "Total DPPs", value: statusCounts.total },
@@ -635,10 +632,10 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
 
       {/* Search & Sort & Filter toolbar */}
       <div
-        className="bg-ifr-surface border border-ifr rounded-ifr-md flex items-center gap-3 px-4"
+        className="bg-ifr-surface border border-ifr rounded-ifr-md flex flex-col items-stretch gap-3 px-4 sm:flex-row sm:flex-wrap sm:items-center"
         style={{ minHeight: "var(--ifr-control-height)", padding: "12px 16px" }}
       >
-        <div className="flex-1 flex items-center gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <Search size={18} className="text-ifr-text-secondary shrink-0" />
           <input
             type="text"
@@ -659,9 +656,9 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
               setShowSortMenu(!showSortMenu);
               setShowFilterMenu(false);
             }}
-            className="flex items-center gap-2 px-3 bg-transparent border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors"
+            className="flex w-full items-center justify-between gap-2 px-3 bg-transparent border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors sm:w-auto sm:justify-start"
             style={{
-              height: "36px",
+              height: "var(--ifr-control-height)",
               borderRadius: "var(--ifr-radius-sm)",
               fontFamily: "var(--ifr-font-body)",
               fontSize: "var(--ifr-fs-sm)",
@@ -714,9 +711,9 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
               setShowFilterMenu(!showFilterMenu);
               setShowSortMenu(false);
             }}
-            className="flex items-center gap-2 px-3 bg-transparent border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors"
+            className="flex w-full items-center justify-between gap-2 px-3 bg-transparent border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors sm:w-auto sm:justify-start"
             style={{
-              height: "36px",
+              height: "var(--ifr-control-height)",
               borderRadius: "var(--ifr-radius-sm)",
               fontFamily: "var(--ifr-font-body)",
               fontSize: "var(--ifr-fs-sm)",
@@ -763,9 +760,9 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
         {isOwner && (
           <Link href={ctaConfig.createUrl}>
             <a
-              className="flex items-center gap-2 px-3 no-underline shrink-0 transition-colors hover:opacity-90"
+              className="flex w-full items-center justify-center gap-2 px-3 no-underline transition-colors hover:opacity-90 sm:w-auto"
               style={{
-                height: "36px",
+                height: "var(--ifr-control-height)",
                 borderRadius: "var(--ifr-radius-sm)",
                 backgroundColor: "var(--ifr-yellow)",
                 fontFamily: "var(--ifr-font-body)",
@@ -790,7 +787,7 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
           />
         </div>
       ) : filteredDpps.length === 0 ? (
-        <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-12 text-center">
+        <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-6 text-center md:p-12">
           <p
             className="text-ifr-text-secondary"
             style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-md)" }}
@@ -802,7 +799,7 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
         <div className="bg-ifr-surface border border-ifr rounded-ifr-md overflow-hidden">
           {/* Table header */}
           <div
-            className="grid gap-4 px-5 py-3 border-b border-ifr text-ifr-text-secondary"
+            className="hidden gap-4 border-b border-ifr px-5 py-3 text-ifr-text-secondary md:grid"
             style={{
               gridTemplateColumns: "2fr 110px 1fr 90px 140px 70px 50px",
               fontFamily: "var(--ifr-font-body)",
@@ -832,7 +829,7 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
             return (
               <div
                 key={dpp.id}
-                className="grid gap-4 px-5 py-4 border-b border-ifr last:border-b-0 hover:bg-ifr-hover/50 transition-colors items-center"
+                className="hidden gap-4 border-b border-ifr px-5 py-4 transition-colors hover:bg-ifr-hover/50 md:grid md:items-center"
                 style={{
                   gridTemplateColumns: "2fr 110px 1fr 90px 140px 70px 50px",
                   fontFamily: "var(--ifr-font-body)",
@@ -994,6 +991,143 @@ function DppsTabContent({ userId, isOwner, ctaConfig }: { userId: string; isOwne
             );
           })}
 
+          {/* Mobile DPP cards: preserve all record details without a scrollable table. */}
+          <div className="divide-y divide-ifr md:hidden">
+            {filteredDpps.map(dpp => {
+              const productName =
+                dpp.productOverview?.productName?.value || dpp.productOverview?.brandName?.value || t("Untitled DPP");
+              const status = dpp.status || "draft";
+              const colors = statusColors[status] || statusColors.draft;
+              const dppUrl = `/dpps/${encodeURIComponent(dpp.id)}`;
+
+              return (
+                <article
+                  key={dpp.id}
+                  className="flex flex-col gap-4 p-4"
+                  style={{ fontFamily: "var(--ifr-font-body)" }}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="m-0 truncate text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                        {dpp.productId || "—"}
+                      </p>
+                      <Link href={dppUrl}>
+                        <a
+                          className="block truncate text-ifr-text-primary no-underline hover:underline"
+                          style={{ fontWeight: "var(--ifr-fw-semibold)" }}
+                        >
+                          {productName}
+                        </a>
+                      </Link>
+                    </div>
+                    <span
+                      className="shrink-0 px-2 py-0.5"
+                      style={{
+                        borderRadius: "var(--ifr-radius-sm)",
+                        backgroundColor: colors.bg,
+                        color: colors.text,
+                        fontSize: "var(--ifr-fs-sm)",
+                        fontWeight: "var(--ifr-fw-medium)",
+                      }}
+                    >
+                      {t(status.charAt(0).toUpperCase() + status.slice(1))}
+                    </span>
+                  </div>
+
+                  <dl
+                    className="grid grid-cols-2 gap-x-4 gap-y-3 m-0 text-ifr-text-secondary"
+                    style={{ fontSize: "var(--ifr-fs-sm)" }}
+                  >
+                    <div className="min-w-0">
+                      <dt>{t("DPP ID")}</dt>
+                      <dd className="m-0 truncate text-ifr-text-primary" title={dpp.id}>
+                        {dpp.id}
+                      </dd>
+                    </div>
+                    <div className="min-w-0">
+                      <dt>{t("Batch / Unit")}</dt>
+                      <dd className="m-0 truncate text-ifr-text-primary">{dpp.batchId || "—"}</dd>
+                    </div>
+                    <div>
+                      <dt>{t("Created")}</dt>
+                      <dd className="m-0 text-ifr-text-primary">
+                        {dpp.createdAt
+                          ? new Date(dpp.createdAt).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })
+                          : "—"}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Link href={dppUrl}>
+                      <a
+                        className="flex min-h-[var(--ifr-tap-min)] items-center px-3 text-ifr-text-primary no-underline hover:underline"
+                        style={{ fontSize: "var(--ifr-fs-sm)", fontWeight: "var(--ifr-fw-medium)" }}
+                      >
+                        {t("View")}
+                      </a>
+                    </Link>
+                    <a
+                      href={dppApi.getQrCodeUrl(dpp.id, 256)}
+                      download={`dpp-${dpp.id}-qr.png`}
+                      className="inline-flex min-h-[var(--ifr-tap-min)] items-center gap-2 px-3 text-ifr-text-primary no-underline hover:underline"
+                      style={{ fontSize: "var(--ifr-fs-sm)", fontWeight: "var(--ifr-fw-medium)" }}
+                    >
+                      <Download size={16} />
+                      {t("QR code")}
+                    </a>
+                    {isOwner && status === "draft" && (
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange(dpp.id, "active")}
+                        className="min-h-[var(--ifr-tap-min)] border-none bg-transparent px-3 cursor-pointer text-ifr-green hover:underline"
+                        style={{
+                          fontFamily: "var(--ifr-font-body)",
+                          fontSize: "var(--ifr-fs-sm)",
+                          fontWeight: "var(--ifr-fw-medium)",
+                        }}
+                      >
+                        {t("Publish")}
+                      </button>
+                    )}
+                    {isOwner && (status === "draft" || status === "active") && (
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange(dpp.id, "archived")}
+                        className="min-h-[var(--ifr-tap-min)] border-none bg-transparent px-3 cursor-pointer text-ifr-text-secondary hover:underline"
+                        style={{
+                          fontFamily: "var(--ifr-font-body)",
+                          fontSize: "var(--ifr-fs-sm)",
+                          fontWeight: "var(--ifr-fw-medium)",
+                        }}
+                      >
+                        {t("Archive")}
+                      </button>
+                    )}
+                    {isOwner && status === "archived" && (
+                      <button
+                        type="button"
+                        onClick={() => handleStatusChange(dpp.id, "draft")}
+                        className="min-h-[var(--ifr-tap-min)] border-none bg-transparent px-3 cursor-pointer text-ifr-green hover:underline"
+                        style={{
+                          fontFamily: "var(--ifr-font-body)",
+                          fontSize: "var(--ifr-fs-sm)",
+                          fontWeight: "var(--ifr-fw-medium)",
+                        }}
+                      >
+                        {t("Restore to Draft")}
+                      </button>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
           {/* Pagination footer */}
           <div
             className="flex items-center justify-between px-5 py-3 border-t border-ifr"
@@ -1040,7 +1174,7 @@ function CommunityTabContent() {
   const { t } = useTranslation("common");
 
   return (
-    <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-12 text-center">
+    <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-6 text-center md:p-12">
       <p
         className="text-ifr-text-secondary"
         style={{
@@ -1096,24 +1230,24 @@ export default function ProfilePageNew() {
 
   return (
     <div className="flex-1 bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-      <div className="max-w-[1280px] mx-auto px-6 py-8">
+      <div className="max-w-[1280px] mx-auto px-4 py-6 md:px-6 md:py-8">
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row gap-6 mb-8">
           {/* Avatar */}
           <div className="shrink-0">
-            <div className="rounded-full overflow-hidden border border-ifr" style={{ width: "120px", height: "120px" }}>
-              <BrUserAvatar userId={id} size="120px" />
+            <div className="rounded-full overflow-hidden border border-ifr w-20 h-20 md:w-[120px] md:h-[120px]">
+              <BrUserAvatar userId={id} size="100%" />
             </div>
           </div>
 
           {/* Info */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="flex flex-col gap-2 min-w-0">
                 {/* Name + verified */}
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <h1
-                    className="text-ifr-text-primary m-0 truncate"
+                    className="m-0 min-w-0 max-w-full truncate text-ifr-text-primary"
                     style={{
                       fontFamily: "var(--ifr-font-heading)",
                       fontSize: "var(--ifr-fs-2xl)",
@@ -1171,10 +1305,10 @@ export default function ProfilePageNew() {
                 {/* Meta row */}
                 <div className="flex flex-wrap items-center gap-4 mt-1">
                   {person?.primaryLocation?.name && (
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex min-w-0 max-w-full items-center gap-1.5">
                       <LocationMarkerIcon className="w-4 h-4" style={{ color: "var(--ifr-green)" }} />
                       <span
-                        className="text-ifr-text-secondary"
+                        className="truncate text-ifr-text-secondary"
                         style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
                       >
                         {person.primaryLocation.name}
@@ -1182,10 +1316,10 @@ export default function ProfilePageNew() {
                     </div>
                   )}
                   {person?.email && (
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex min-w-0 max-w-full items-center gap-1.5">
                       <ExternalLinkIcon className="w-4 h-4" style={{ color: "var(--ifr-green)" }} />
                       <span
-                        className="text-ifr-text-secondary"
+                        className="truncate text-ifr-text-secondary"
                         style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
                       >
                         {person.email}
@@ -1196,11 +1330,11 @@ export default function ProfilePageNew() {
               </div>
 
               {/* Action buttons */}
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex w-full items-center gap-2 shrink-0 sm:w-auto">
                 {isOwner ? (
                   <Link href={`/profile/${id}/edit`}>
                     <a
-                      className="flex items-center gap-1.5 px-4 no-underline text-white transition-opacity hover:opacity-90"
+                      className="flex w-full items-center justify-center gap-1.5 px-4 no-underline text-white transition-opacity hover:opacity-90 sm:w-auto"
                       style={{
                         height: "var(--ifr-control-height)",
                         borderRadius: "var(--ifr-radius-sm)",
@@ -1216,7 +1350,7 @@ export default function ProfilePageNew() {
                 ) : (
                   <button
                     type="button"
-                    className="flex items-center gap-1.5 px-4 text-white border-none cursor-pointer transition-opacity hover:opacity-90"
+                    className="flex w-full items-center justify-center gap-1.5 px-4 text-white border-none cursor-pointer transition-opacity hover:opacity-90 sm:w-auto"
                     style={{
                       height: "var(--ifr-control-height)",
                       borderRadius: "var(--ifr-radius-sm)",
@@ -1235,17 +1369,18 @@ export default function ProfilePageNew() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-1.5 flex gap-1 mb-6 overflow-x-auto">
+        <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-1.5 flex gap-1 mb-6 overflow-x-auto overscroll-x-contain">
           {tabs.map(tab => (
             <button
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
+              aria-current={activeTab === tab.id ? "page" : undefined}
               className={`flex items-center gap-2 px-4 border-none cursor-pointer transition-colors whitespace-nowrap ${
                 activeTab === tab.id ? "bg-ifr-hover border border-ifr" : "bg-transparent hover:bg-ifr-hover/50"
               }`}
               style={{
-                height: "36px",
+                height: "var(--ifr-control-height)",
                 borderRadius: "var(--ifr-radius-sm)",
                 fontFamily: "var(--ifr-font-body)",
                 fontSize: "var(--ifr-fs-base)",
@@ -1264,11 +1399,12 @@ export default function ProfilePageNew() {
           <button
             type="button"
             onClick={() => setActiveTab("community")}
+            aria-current={activeTab === "community" ? "page" : undefined}
             className={`flex items-center gap-2 px-4 border-none cursor-pointer transition-colors whitespace-nowrap ${
               activeTab === "community" ? "bg-ifr-hover border border-ifr" : "bg-transparent hover:bg-ifr-hover/50"
             }`}
             style={{
-              height: "36px",
+              height: "var(--ifr-control-height)",
               borderRadius: "var(--ifr-radius-sm)",
               fontFamily: "var(--ifr-font-body)",
               fontSize: "var(--ifr-fs-base)",

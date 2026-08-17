@@ -34,6 +34,43 @@ body {
   color: var(--ifr-text-primary);
 }
 
+/* No surface may push the page sideways. Wide content (tables, diagrams,
+   traceability graphs) scrolls inside its own container instead.
+   Scoped to `html` on purpose: adding it to `body` too would make body a
+   scroll container and break the sticky topbar and sidebars. */
+html {
+  overflow-x: hidden;
+}
+
+/* Respect notches and home indicators on the fixed page edges. */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* iOS zooms the page when a focused input is under 16px. Keep form controls
+   at 16px on touch devices; the visual scale is restored for fine pointers. */
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Guarantee a thumb-sized hit area on touch input without inflating the
+   control for mouse users. Applied to icon-only buttons. */
+.tap-target {
+  @apply inline-flex items-center justify-center;
+}
+
+@media (pointer: coarse) {
+  .tap-target {
+    min-width: var(--ifr-tap-min);
+    min-height: var(--ifr-tap-min);
+  }
+}
+
 button,
 input,
 select,
@@ -85,6 +122,19 @@ p,
 }
 table {
   @apply table;
+}
+
+/* Wrapper for any data table too wide to fit a phone. The table keeps its
+   columns and scrolls horizontally inside this box; the page does not. */
+.table-scroll {
+  @apply w-full overflow-x-auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.table-scroll > table {
+  min-width: 100%;
+  width: max-content;
 }
 
 .swiper-slide {

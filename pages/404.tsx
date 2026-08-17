@@ -27,11 +27,11 @@ const FourOhFour: NextPageWithLayout = () => {
   const { t } = useTranslation("common");
   return (
     <div className="grid h-full grid-cols-6">
-      <div className="col-span-6 p-2 md:col-span-4 md:col-start-2 md:col-end-6">
-        <div className="w-full h-full pt-56">
+      <div className="col-span-6 px-4 py-2 md:col-span-4 md:col-start-2 md:col-end-6">
+        <div className="w-full h-full pt-20 md:pt-40 lg:pt-56">
           <Stack vertical spacing="loose">
-            <h1 className="text-4xl font-bold">{t("Oops We Couldnt Find What You Were Looking For")}</h1>
-            <h3 id="error404" className="text-primary text-3xl">
+            <h1 className="text-3xl md:text-4xl font-bold">{t("Oops We Couldnt Find What You Were Looking For")}</h1>
+            <h3 id="error404" className="text-primary text-2xl md:text-3xl">
               {t("Error: 404")}
             </h3>
             <p className="text-l">

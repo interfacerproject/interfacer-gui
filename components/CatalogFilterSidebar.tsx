@@ -45,6 +45,11 @@ interface CatalogFilterSidebarProps {
   variant: CatalogVariant;
   collapsed?: boolean;
   onToggle?: () => void;
+  /**
+   * Below `lg` there is no room for a permanent column, so the same panel is
+   * presented as an overlay drawer over the results instead of shrinking them.
+   */
+  asDrawer?: boolean;
 }
 
 /** Given current URL tags, a tag prefix, and the items list, return which items are currently selected */
@@ -100,9 +105,34 @@ const LICENSES = [
   "Apache 2.0",
 ];
 
-export default function CatalogFilterSidebar({ variant, collapsed = false, onToggle }: CatalogFilterSidebarProps) {
+export default function CatalogFilterSidebar({
+  variant,
+  collapsed = false,
+  onToggle,
+  asDrawer = false,
+}: CatalogFilterSidebarProps) {
   const { t } = useTranslation("common");
   const router = useRouter();
+  const drawerOpen = asDrawer && !collapsed;
+
+  // While the drawer covers the results, scrolling belongs to the drawer.
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [drawerOpen]);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onToggle?.();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [drawerOpen, onToggle]);
 
   // --- Geo location state ---
   const urlRadius = router.query.nearDistanceKm ? Number(router.query.nearDistanceKm) : 50;
@@ -291,376 +321,196 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
 
   const hasActiveFilters = currentTags.length > 0 || !!router.query.q || hasActiveLocation;
 
-  return (
-    <div
-      className="bg-ifr-surface border-r border-ifr shrink-0 relative sticky self-start"
-      style={{
-        width: collapsed ? "0px" : "var(--ifr-sidebar-width)",
-        overflow: "hidden",
-        transition: "width 250ms ease",
-        borderRightWidth: collapsed ? "0px" : undefined,
-        top: "var(--ifr-topbar-height)",
-        maxHeight: "calc(100vh - var(--ifr-topbar-height))",
-      }}
-    >
-      <div
-        className="overflow-y-auto"
-        style={{
-          width: "var(--ifr-sidebar-width)",
-          maxHeight: "calc(100vh - var(--ifr-topbar-height))",
-          opacity: collapsed ? 0 : 1,
-          transition: "opacity 200ms ease",
-          pointerEvents: collapsed ? "none" : undefined,
-        }}
-      >
-        {/* Header */}
-        <div className="border-b border-ifr px-6 py-4 flex items-center justify-between">
-          <p
-            className="text-ifr-text-primary"
-            style={{
-              fontFamily: "var(--ifr-font-body)",
-              fontSize: "var(--ifr-fs-md)",
-              fontWeight: "var(--ifr-fw-regular)",
-            }}
+  // Filter sections — identical in the inline column and the drawer.
+  const sections = (
+    <>
+      {/* DESIGNS variant */}
+      {variant === "designs" && (
+        <>
+          <FilterSection
+            icon={<Settings size={16} />}
+            label="Machines Needed"
+            defaultOpen
+            badge={selectedMachines.length || undefined}
           >
-            {t("Filter by")}
-          </p>
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={clearAllFilters}
-              className="text-ifr-text-secondary hover:text-ifr-text-primary text-ifr-sm underline transition-colors cursor-pointer"
-              style={{
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "var(--ifr-fs-sm)",
-                fontWeight: "var(--ifr-fw-medium)",
-              }}
-            >
-              {t("Reset")}
-            </button>
-          )}
-        </div>
+            <CheckboxFilter
+              items={MACHINES}
+              searchPlaceholder="Search machines..."
+              selectedItems={selectedMachines}
+              onToggle={toggleTag(TAG_PREFIX.MACHINE)}
+            />
+          </FilterSection>
 
-        {/* DESIGNS variant */}
-        {variant === "designs" && (
-          <>
-            <FilterSection
-              icon={<Settings size={16} />}
-              label="Machines Needed"
-              defaultOpen
-              badge={selectedMachines.length || undefined}
-            >
-              <CheckboxFilter
-                items={MACHINES}
-                searchPlaceholder="Search machines..."
-                selectedItems={selectedMachines}
-                onToggle={toggleTag(TAG_PREFIX.MACHINE)}
-              />
-            </FilterSection>
+          <FilterSection
+            icon={<Cube size={16} />}
+            label="Materials Needed"
+            badge={selectedMaterials.length || undefined}
+          >
+            <CheckboxFilter
+              items={MATERIALS}
+              searchPlaceholder="Search materials..."
+              selectedItems={selectedMaterials}
+              onToggle={toggleTag(TAG_PREFIX.MATERIAL)}
+            />
+          </FilterSection>
 
-            <FilterSection
-              icon={<Cube size={16} />}
-              label="Materials Needed"
-              badge={selectedMaterials.length || undefined}
-            >
-              <CheckboxFilter
-                items={MATERIALS}
-                searchPlaceholder="Search materials..."
-                selectedItems={selectedMaterials}
-                onToggle={toggleTag(TAG_PREFIX.MATERIAL)}
-              />
-            </FilterSection>
+          <FilterSection
+            icon={<ScaleIcon className="w-4 h-4" />}
+            label="License"
+            badge={selectedLicenses.length || undefined}
+          >
+            <CheckboxFilter
+              items={LICENSES}
+              searchPlaceholder="Search licenses..."
+              selectedItems={selectedLicenses}
+              onToggle={toggleTag(TAG_PREFIX.LICENSE)}
+            />
+          </FilterSection>
 
-            <FilterSection
-              icon={<ScaleIcon className="w-4 h-4" />}
-              label="License"
-              badge={selectedLicenses.length || undefined}
-            >
-              <CheckboxFilter
-                items={LICENSES}
-                searchPlaceholder="Search licenses..."
-                selectedItems={selectedLicenses}
-                onToggle={toggleTag(TAG_PREFIX.LICENSE)}
-              />
-            </FilterSection>
+          <FilterSection
+            icon={<Tools size={16} />}
+            label="Manufacturability"
+            defaultOpen
+            badge={currentTags.includes(MANUFACTURABLE_TRUE_TAG) ? 1 : undefined}
+          >
+            <div className="flex flex-col gap-2.5">
+              {[
+                { value: "all", label: "All" },
+                { value: "can_be_manufactured", label: "Can be manufactured" },
+              ].map(option => {
+                const isSelected =
+                  option.value === "all"
+                    ? !currentTags.includes(MANUFACTURABLE_TRUE_TAG)
+                    : currentTags.includes(MANUFACTURABLE_TRUE_TAG);
 
-            <FilterSection
-              icon={<Tools size={16} />}
-              label="Manufacturability"
-              defaultOpen
-              badge={currentTags.includes(MANUFACTURABLE_TRUE_TAG) ? 1 : undefined}
-            >
-              <div className="flex flex-col gap-2.5">
-                {[
-                  { value: "all", label: "All" },
-                  { value: "can_be_manufactured", label: "Can be manufactured" },
-                ].map(option => {
-                  const isSelected =
-                    option.value === "all"
-                      ? !currentTags.includes(MANUFACTURABLE_TRUE_TAG)
-                      : currentTags.includes(MANUFACTURABLE_TRUE_TAG);
+                return (
+                  <div
+                    key={option.value}
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => {
+                      if (isSelected) return;
 
-                  return (
+                      let newTags: string[];
+                      if (option.value === "all") {
+                        newTags = currentTags.filter(t => t !== MANUFACTURABLE_TRUE_TAG);
+                      } else {
+                        newTags = [...currentTags, MANUFACTURABLE_TRUE_TAG];
+                      }
+
+                      const query = { ...router.query };
+                      if (newTags.length > 0) {
+                        query.tags = newTags.join(",");
+                      } else {
+                        delete query.tags;
+                      }
+                      router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
+                    }}
+                  >
                     <div
-                      key={option.value}
-                      className="flex items-center gap-2 cursor-pointer"
-                      onClick={() => {
-                        if (isSelected) return;
-
-                        let newTags: string[];
-                        if (option.value === "all") {
-                          newTags = currentTags.filter(t => t !== MANUFACTURABLE_TRUE_TAG);
-                        } else {
-                          newTags = [...currentTags, MANUFACTURABLE_TRUE_TAG];
-                        }
-
-                        const query = { ...router.query };
-                        if (newTags.length > 0) {
-                          query.tags = newTags.join(",");
-                        } else {
-                          delete query.tags;
-                        }
-                        router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
+                      className="w-4 h-4 border shrink-0 flex items-center justify-center transition-colors"
+                      style={{
+                        borderRadius: "50%",
+                        backgroundColor: isSelected ? "var(--ifr-green)" : "var(--ifr-bg-surface)",
+                        borderColor: isSelected ? "var(--ifr-green)" : "var(--ifr-border)",
                       }}
                     >
-                      <div
-                        className="w-4 h-4 border shrink-0 flex items-center justify-center transition-colors"
-                        style={{
-                          borderRadius: "50%",
-                          backgroundColor: isSelected ? "var(--ifr-green)" : "var(--ifr-bg-surface)",
-                          borderColor: isSelected ? "var(--ifr-green)" : "var(--ifr-border)",
-                        }}
-                      >
-                        {isSelected && <div className="w-1.5 h-1.5 bg-white" style={{ borderRadius: "50%" }} />}
-                      </div>
-                      <span
-                        className="text-ifr-text-primary"
-                        style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
-                      >
-                        {t(option.label)}
-                      </span>
+                      {isSelected && <div className="w-1.5 h-1.5 bg-white" style={{ borderRadius: "50%" }} />}
                     </div>
-                  );
-                })}
-              </div>
-            </FilterSection>
-
-            <FilterSection
-              icon={<Analytics size={16} />}
-              label="Complexity"
-              badge={selectedComplexity.length || undefined}
-            >
-              <CheckboxFilter
-                items={COMPLEXITY_LABELS}
-                selectedItems={selectedComplexity}
-                onToggle={toggleTag(COMPLEXITY_PREFIX)}
-              />
-            </FilterSection>
-          </>
-        )}
-
-        {/* PRODUCTS variant */}
-        {variant === "products" && (
-          <>
-            <FilterSection
-              icon={<Settings size={16} />}
-              label="Machines Needed"
-              defaultOpen
-              badge={selectedMachines.length || undefined}
-            >
-              <CheckboxFilter
-                items={MACHINES}
-                searchPlaceholder="Search machines..."
-                selectedItems={selectedMachines}
-                onToggle={toggleTag(TAG_PREFIX.MACHINE)}
-              />
-            </FilterSection>
-
-            <FilterSection icon={<Cube size={16} />} label="Materials" badge={selectedMaterials.length || undefined}>
-              <CheckboxFilter
-                items={MATERIALS}
-                searchPlaceholder="Search materials..."
-                selectedItems={selectedMaterials}
-                onToggle={toggleTag(TAG_PREFIX.MATERIAL)}
-              />
-            </FilterSection>
-
-            <FilterSection icon={<Flash size={16} />} label="Power Requirement">
-              <DualRangeSlider
-                min={0}
-                max={2000}
-                step={50}
-                unit="W"
-                valueLow={powerRange[0]}
-                valueHigh={powerRange[1]}
-                onChange={(low, high) => setPowerRange([low, high])}
-              />
-            </FilterSection>
-
-            <FilterSection icon={<Tools size={16} />} label="Repairability">
-              <ToggleSwitch
-                label={t("Repair Info Available")}
-                description={t("Projects with repair and maintenance info")}
-                checked={repairInfo}
-                onChange={checked => {
-                  const newTags = checked
-                    ? [...currentTags, REPAIRABILITY_AVAILABLE_TAG]
-                    : currentTags.filter(t => t !== REPAIRABILITY_AVAILABLE_TAG);
-                  const query = { ...router.query };
-                  if (newTags.length > 0) {
-                    query.tags = newTags.join(",");
-                  } else {
-                    delete query.tags;
-                  }
-                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
-                }}
-              />
-            </FilterSection>
-          </>
-        )}
-
-        {/* SERVICES variant */}
-        {variant === "services" && (
-          <>
-            <FilterSection
-              icon={<LocationStar size={16} />}
-              label="Location"
-              defaultOpen
-              badge={hasActiveLocation ? 1 : undefined}
-            >
-              <div className="flex flex-col gap-2" ref={locationDropdownRef}>
-                {locationLabel ? (
-                  <div
-                    className="flex items-center gap-2 px-3 bg-ifr-active border border-ifr rounded-ifr-sm"
-                    style={{ height: "var(--ifr-control-height)" }}
-                  >
-                    <LocationStar size={14} className="text-ifr-green shrink-0" />
                     <span
-                      className="flex-1 text-ifr-text-primary truncate"
+                      className="text-ifr-text-primary"
                       style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
                     >
-                      {locationLabel}
+                      {t(option.label)}
                     </span>
-                    <button
-                      type="button"
-                      onClick={clearLocation}
-                      className="shrink-0 text-ifr-text-secondary hover:text-ifr-text-primary cursor-pointer"
-                    >
-                      <Close size={14} />
-                    </button>
                   </div>
-                ) : (
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={locationInput}
-                      onChange={e => setLocationInput(e.target.value)}
-                      onFocus={() => locationOptions.length > 0 && setShowLocationDropdown(true)}
-                      placeholder={t("Search city or address...")}
-                      className="w-full px-3 bg-ifr-form-input border border-ifr-form-input rounded-ifr-sm outline-none focus:border-ifr-green"
-                      style={{
-                        height: "var(--ifr-control-height)",
-                        fontFamily: "var(--ifr-font-body)",
-                        fontSize: "var(--ifr-fs-base)",
-                      }}
-                    />
-                    {showLocationDropdown && locationOptions.length > 0 && (
-                      <div className="absolute z-50 left-0 right-0 mt-1 bg-ifr-surface border border-ifr rounded-ifr-sm shadow-lg max-h-[200px] overflow-y-auto">
-                        {locationOptions.map(loc => (
-                          <button
-                            key={loc.id}
-                            type="button"
-                            className="w-full text-left px-3 py-2 hover:bg-ifr-hover transition-colors cursor-pointer"
-                            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-                            onClick={() => handleLocationSelect(loc)}
-                          >
-                            {loc.title}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                    {locationLoading && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        <div className="w-4 h-4 border-2 border-ifr-green border-t-transparent rounded-full animate-spin" />
-                      </div>
-                    )}
-                  </div>
-                )}
-                <label
-                  className="text-ifr-text-primary mt-2"
-                  style={{
-                    fontFamily: "var(--ifr-font-body)",
-                    fontSize: "var(--ifr-fs-sm)",
-                    fontWeight: "var(--ifr-fw-medium)",
-                  }}
-                >
-                  {t("Search Radius")}
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {[10, 25, 50, 100, 250].map(km => (
-                    <button
-                      key={km}
-                      type="button"
-                      onClick={() => handleRadiusChange(km)}
-                      className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                        searchRadius === km
-                          ? "bg-[#036a53] text-white"
-                          : "border border-[#c9cccf] text-[#0b1324] hover:bg-ifr-hover"
-                      }`}
-                    >
-                      {km}
-                      {t("km")}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </FilterSection>
+                );
+              })}
+            </div>
+          </FilterSection>
 
-            <FilterSection
-              icon={<Chemistry size={16} />}
-              label="Service Type"
-              defaultOpen
-              badge={selectedServiceTypes.length || undefined}
-            >
-              <CheckboxFilter
-                items={[...SERVICE_TYPE_OPTIONS]}
-                selectedItems={selectedServiceTypes}
-                onToggle={toggleTag(TAG_PREFIX.SERVICE_TYPE)}
-              />
-            </FilterSection>
+          <FilterSection
+            icon={<Analytics size={16} />}
+            label="Complexity"
+            badge={selectedComplexity.length || undefined}
+          >
+            <CheckboxFilter
+              items={COMPLEXITY_LABELS}
+              selectedItems={selectedComplexity}
+              onToggle={toggleTag(COMPLEXITY_PREFIX)}
+            />
+          </FilterSection>
+        </>
+      )}
 
-            <FilterSection
-              icon={<Time size={16} />}
-              label="Availability"
-              badge={selectedAvailability.length || undefined}
-            >
-              <CheckboxFilter
-                items={[...AVAILABILITY_OPTIONS]}
-                selectedItems={selectedAvailability}
-                onToggle={toggleTag(TAG_PREFIX.AVAILABILITY)}
-              />
-            </FilterSection>
+      {/* PRODUCTS variant */}
+      {variant === "products" && (
+        <>
+          <FilterSection
+            icon={<Settings size={16} />}
+            label="Machines Needed"
+            defaultOpen
+            badge={selectedMachines.length || undefined}
+          >
+            <CheckboxFilter
+              items={MACHINES}
+              searchPlaceholder="Search machines..."
+              selectedItems={selectedMachines}
+              onToggle={toggleTag(TAG_PREFIX.MACHINE)}
+            />
+          </FilterSection>
 
-            <FilterSection
-              icon={<Settings size={16} />}
-              label="Machines Available"
-              badge={selectedMachines.length || undefined}
-            >
-              <CheckboxFilter
-                items={MACHINES}
-                searchPlaceholder="Search machines..."
-                selectedItems={selectedMachines}
-                onToggle={toggleTag(TAG_PREFIX.MACHINE)}
-              />
-            </FilterSection>
-          </>
-        )}
+          <FilterSection icon={<Cube size={16} />} label="Materials" badge={selectedMaterials.length || undefined}>
+            <CheckboxFilter
+              items={MATERIALS}
+              searchPlaceholder="Search materials..."
+              selectedItems={selectedMaterials}
+              onToggle={toggleTag(TAG_PREFIX.MATERIAL)}
+            />
+          </FilterSection>
 
-        {/* Shared sections */}
+          <FilterSection icon={<Flash size={16} />} label="Power Requirement">
+            <DualRangeSlider
+              min={0}
+              max={2000}
+              step={50}
+              unit="W"
+              valueLow={powerRange[0]}
+              valueHigh={powerRange[1]}
+              onChange={(low, high) => setPowerRange([low, high])}
+            />
+          </FilterSection>
 
-        {/* Location — products and services (not designs) */}
-        {variant !== "designs" && (
-          <FilterSection icon={<LocationStar size={16} />} label="Location" badge={hasActiveLocation ? 1 : undefined}>
+          <FilterSection icon={<Tools size={16} />} label="Repairability">
+            <ToggleSwitch
+              label={t("Repair Info Available")}
+              description={t("Projects with repair and maintenance info")}
+              checked={repairInfo}
+              onChange={checked => {
+                const newTags = checked
+                  ? [...currentTags, REPAIRABILITY_AVAILABLE_TAG]
+                  : currentTags.filter(t => t !== REPAIRABILITY_AVAILABLE_TAG);
+                const query = { ...router.query };
+                if (newTags.length > 0) {
+                  query.tags = newTags.join(",");
+                } else {
+                  delete query.tags;
+                }
+                router.push({ pathname: router.pathname, query }, undefined, { shallow: true });
+              }}
+            />
+          </FilterSection>
+        </>
+      )}
+
+      {/* SERVICES variant */}
+      {variant === "services" && (
+        <>
+          <FilterSection
+            icon={<LocationStar size={16} />}
+            label="Location"
+            defaultOpen
+            badge={hasActiveLocation ? 1 : undefined}
+          >
             <div className="flex flex-col gap-2" ref={locationDropdownRef}>
               {locationLabel ? (
                 <div
@@ -748,97 +598,327 @@ export default function CatalogFilterSidebar({ variant, collapsed = false, onTog
               </div>
             </div>
           </FilterSection>
-        )}
 
-        <FilterSection icon={<Tag size={16} />} label="Categories & Tags">
-          <div className="flex flex-col gap-2 max-h-[216px] overflow-y-auto pr-3">
-            {PRODUCT_CATEGORY_OPTIONS.map((cat: string) => {
-              const active = selectedCategories.includes(cat);
-              return (
+          <FilterSection
+            icon={<Chemistry size={16} />}
+            label="Service Type"
+            defaultOpen
+            badge={selectedServiceTypes.length || undefined}
+          >
+            <CheckboxFilter
+              items={[...SERVICE_TYPE_OPTIONS]}
+              selectedItems={selectedServiceTypes}
+              onToggle={toggleTag(TAG_PREFIX.SERVICE_TYPE)}
+            />
+          </FilterSection>
+
+          <FilterSection
+            icon={<Time size={16} />}
+            label="Availability"
+            badge={selectedAvailability.length || undefined}
+          >
+            <CheckboxFilter
+              items={[...AVAILABILITY_OPTIONS]}
+              selectedItems={selectedAvailability}
+              onToggle={toggleTag(TAG_PREFIX.AVAILABILITY)}
+            />
+          </FilterSection>
+
+          <FilterSection
+            icon={<Settings size={16} />}
+            label="Machines Available"
+            badge={selectedMachines.length || undefined}
+          >
+            <CheckboxFilter
+              items={MACHINES}
+              searchPlaceholder="Search machines..."
+              selectedItems={selectedMachines}
+              onToggle={toggleTag(TAG_PREFIX.MACHINE)}
+            />
+          </FilterSection>
+        </>
+      )}
+
+      {/* Shared sections */}
+
+      {/* Location — products and services (not designs) */}
+      {variant !== "designs" && (
+        <FilterSection icon={<LocationStar size={16} />} label="Location" badge={hasActiveLocation ? 1 : undefined}>
+          <div className="flex flex-col gap-2" ref={locationDropdownRef}>
+            {locationLabel ? (
+              <div
+                className="flex items-center gap-2 px-3 bg-ifr-active border border-ifr rounded-ifr-sm"
+                style={{ height: "var(--ifr-control-height)" }}
+              >
+                <LocationStar size={14} className="text-ifr-green shrink-0" />
+                <span
+                  className="flex-1 text-ifr-text-primary truncate"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
+                >
+                  {locationLabel}
+                </span>
                 <button
-                  key={cat}
                   type="button"
-                  onClick={() => toggleCategory(cat)}
-                  className={`text-left px-3 py-2 rounded-ifr-sm transition-colors cursor-pointer ${
-                    active ? "bg-ifr-active text-ifr-green font-medium" : "hover:bg-ifr-search text-ifr-text-secondary"
-                  }`}
+                  onClick={clearLocation}
+                  className="shrink-0 text-ifr-text-secondary hover:text-ifr-text-primary cursor-pointer"
+                >
+                  <Close size={14} />
+                </button>
+              </div>
+            ) : (
+              <div className="relative">
+                <input
+                  type="text"
+                  value={locationInput}
+                  onChange={e => setLocationInput(e.target.value)}
+                  onFocus={() => locationOptions.length > 0 && setShowLocationDropdown(true)}
+                  placeholder={t("Search city or address...")}
+                  className="w-full px-3 bg-ifr-form-input border border-ifr-form-input rounded-ifr-sm outline-none focus:border-ifr-green"
                   style={{
+                    height: "var(--ifr-control-height)",
                     fontFamily: "var(--ifr-font-body)",
                     fontSize: "var(--ifr-fs-base)",
+                  }}
+                />
+                {showLocationDropdown && locationOptions.length > 0 && (
+                  <div className="absolute z-50 left-0 right-0 mt-1 bg-ifr-surface border border-ifr rounded-ifr-sm shadow-lg max-h-[200px] overflow-y-auto">
+                    {locationOptions.map(loc => (
+                      <button
+                        key={loc.id}
+                        type="button"
+                        className="w-full text-left px-3 py-2 hover:bg-ifr-hover transition-colors cursor-pointer"
+                        style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                        onClick={() => handleLocationSelect(loc)}
+                      >
+                        {loc.title}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {locationLoading && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="w-4 h-4 border-2 border-ifr-green border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
+              </div>
+            )}
+            <label
+              className="text-ifr-text-primary mt-2"
+              style={{
+                fontFamily: "var(--ifr-font-body)",
+                fontSize: "var(--ifr-fs-sm)",
+                fontWeight: "var(--ifr-fw-medium)",
+              }}
+            >
+              {t("Search Radius")}
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {[10, 25, 50, 100, 250].map(km => (
+                <button
+                  key={km}
+                  type="button"
+                  onClick={() => handleRadiusChange(km)}
+                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                    searchRadius === km
+                      ? "bg-[#036a53] text-white"
+                      : "border border-[#c9cccf] text-[#0b1324] hover:bg-ifr-hover"
+                  }`}
+                >
+                  {km}
+                  {t("km")}
+                </button>
+              ))}
+            </div>
+          </div>
+        </FilterSection>
+      )}
+
+      <FilterSection icon={<Tag size={16} />} label="Categories & Tags">
+        <div className="flex flex-col gap-2 max-h-[216px] overflow-y-auto pr-3">
+          {PRODUCT_CATEGORY_OPTIONS.map((cat: string) => {
+            const active = selectedCategories.includes(cat);
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => toggleCategory(cat)}
+                className={`text-left px-3 py-2 rounded-ifr-sm transition-colors cursor-pointer ${
+                  active ? "bg-ifr-active text-ifr-green font-medium" : "hover:bg-ifr-search text-ifr-text-secondary"
+                }`}
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-base)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                }}
+              >
+                {active ? "✓ " : "+ "}
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+      </FilterSection>
+
+      {/* Power/Environmental — designs and products */}
+      {variant !== "services" && (
+        <>
+          <FilterSection
+            icon={<Flash size={16} />}
+            label="Power Compatibility"
+            badge={selectedPower.length || undefined}
+          >
+            <CheckboxFilter
+              items={variant === "designs" ? [...DESIGN_POWER_SOURCE_OPTIONS] : [...POWER_COMPATIBILITY_OPTIONS]}
+              selectedItems={selectedPower}
+              onToggle={toggleTag(TAG_PREFIX.POWER_COMPAT)}
+            />
+          </FilterSection>
+
+          <FilterSection icon={<Recycle size={16} />} label="Environmental Impact">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <span
+                  className="text-ifr-text-primary"
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-sm)",
                     fontWeight: "var(--ifr-fw-medium)",
                   }}
                 >
-                  {active ? "✓ " : "+ "}
-                  {cat}
-                </button>
-              );
-            })}
-          </div>
-        </FilterSection>
-
-        {/* Power/Environmental — designs and products */}
-        {variant !== "services" && (
-          <>
-            <FilterSection
-              icon={<Flash size={16} />}
-              label="Power Compatibility"
-              badge={selectedPower.length || undefined}
-            >
-              <CheckboxFilter
-                items={variant === "designs" ? [...DESIGN_POWER_SOURCE_OPTIONS] : [...POWER_COMPATIBILITY_OPTIONS]}
-                selectedItems={selectedPower}
-                onToggle={toggleTag(TAG_PREFIX.POWER_COMPAT)}
-              />
-            </FilterSection>
-
-            <FilterSection icon={<Recycle size={16} />} label="Environmental Impact">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <span
-                    className="text-ifr-text-primary"
-                    style={{
-                      fontFamily: "var(--ifr-font-body)",
-                      fontSize: "var(--ifr-fs-sm)",
-                      fontWeight: "var(--ifr-fw-medium)",
-                    }}
-                  >
-                    {t("CO\u2082 Emissions")}
-                  </span>
-                  <DualRangeSlider
-                    min={0}
-                    max={500}
-                    step={10}
-                    unit="kg"
-                    valueLow={co2Range[0]}
-                    valueHigh={co2Range[1]}
-                    onChange={(low, high) => setCo2Range([low, high])}
-                  />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span
-                    className="text-ifr-text-primary"
-                    style={{
-                      fontFamily: "var(--ifr-font-body)",
-                      fontSize: "var(--ifr-fs-sm)",
-                      fontWeight: "var(--ifr-fw-medium)",
-                    }}
-                  >
-                    {t("Energy Consumption")}
-                  </span>
-                  <DualRangeSlider
-                    min={0}
-                    max={1000}
-                    step={10}
-                    unit="kWh"
-                    valueLow={energyRange[0]}
-                    valueHigh={energyRange[1]}
-                    onChange={(low, high) => setEnergyRange([low, high])}
-                  />
-                </div>
+                  {t("CO\u2082 Emissions")}
+                </span>
+                <DualRangeSlider
+                  min={0}
+                  max={500}
+                  step={10}
+                  unit="kg"
+                  valueLow={co2Range[0]}
+                  valueHigh={co2Range[1]}
+                  onChange={(low, high) => setCo2Range([low, high])}
+                />
               </div>
-            </FilterSection>
-          </>
+              <div className="flex flex-col gap-1">
+                <span
+                  className="text-ifr-text-primary"
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-sm)",
+                    fontWeight: "var(--ifr-fw-medium)",
+                  }}
+                >
+                  {t("Energy Consumption")}
+                </span>
+                <DualRangeSlider
+                  min={0}
+                  max={1000}
+                  step={10}
+                  unit="kWh"
+                  valueLow={energyRange[0]}
+                  valueHigh={energyRange[1]}
+                  onChange={(low, high) => setEnergyRange([low, high])}
+                />
+              </div>
+            </div>
+          </FilterSection>
+        </>
+      )}
+    </>
+  );
+
+  // Shared by both presentations — the panel content never changes, only its frame.
+  const header = (
+    <div className="border-b border-ifr px-6 py-4 flex items-center justify-between gap-3 shrink-0">
+      <p
+        className="text-ifr-text-primary"
+        style={{
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: "var(--ifr-fs-md)",
+          fontWeight: "var(--ifr-fw-regular)",
+        }}
+      >
+        {t("Filter by")}
+      </p>
+      <div className="flex items-center gap-3">
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={clearAllFilters}
+            className="text-ifr-text-secondary hover:text-ifr-text-primary text-ifr-sm underline transition-colors cursor-pointer"
+            style={{
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-sm)",
+              fontWeight: "var(--ifr-fw-medium)",
+            }}
+          >
+            {t("Reset")}
+          </button>
         )}
+        {asDrawer && (
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-label={t("Close filters")}
+            className="flex items-center justify-center -mr-2 text-ifr-text-secondary hover:text-ifr-text-primary transition-colors cursor-pointer bg-transparent border-none"
+            style={{ width: "var(--ifr-control-height)", height: "var(--ifr-control-height)" }}
+          >
+            <Close size={20} />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
+  if (asDrawer) {
+    return (
+      <>
+        {drawerOpen && (
+          <div className="fixed inset-0 z-[60] bg-[var(--ifr-overlay-dark)]" onClick={onToggle} aria-hidden="true" />
+        )}
+        <aside
+          className="fixed top-0 left-0 bottom-0 z-[70] bg-ifr-surface flex flex-col"
+          style={{
+            width: "min(var(--ifr-sidebar-width), calc(100vw - 40px))",
+            paddingTop: "env(safe-area-inset-top)",
+            paddingBottom: "env(safe-area-inset-bottom)",
+            transform: drawerOpen ? "translateX(0)" : "translateX(-100%)",
+            transition: "transform 250ms ease",
+            boxShadow: drawerOpen ? "var(--ifr-shadow-dropdown)" : "none",
+            overscrollBehavior: "contain",
+          }}
+          aria-hidden={!drawerOpen}
+        >
+          {header}
+          <div className="flex-1 overflow-y-auto">{sections}</div>
+        </aside>
+      </>
+    );
+  }
+
+  return (
+    <div
+      className="bg-ifr-surface border-r border-ifr shrink-0 relative sticky self-start"
+      style={{
+        width: collapsed ? "0px" : "var(--ifr-sidebar-width)",
+        overflow: "hidden",
+        transition: "width 250ms ease",
+        borderRightWidth: collapsed ? "0px" : undefined,
+        top: "var(--ifr-topbar-height)",
+        maxHeight: "calc(100vh - var(--ifr-topbar-height))",
+      }}
+    >
+      <div
+        className="overflow-y-auto"
+        style={{
+          width: "var(--ifr-sidebar-width)",
+          maxHeight: "calc(100vh - var(--ifr-topbar-height))",
+          opacity: collapsed ? 0 : 1,
+          transition: "opacity 200ms ease",
+          pointerEvents: collapsed ? "none" : undefined,
+        }}
+      >
+        {header}
+
+        {sections}
       </div>
     </div>
   );

@@ -43,9 +43,11 @@ export default function CreateProjectNav(props: Props) {
   }, []);
 
   return (
+    // A long form needs its jump list on a phone more than on a desktop, so
+    // instead of dropping it the rail lies down into a scrollable strip.
     <nav
-      className="bg-ifr-surface border border-ifr flex flex-col gap-2"
-      style={{ borderRadius: "var(--ifr-radius-md)", padding: "24px" }}
+      className="bg-ifr-surface border border-ifr flex flex-row lg:flex-col gap-3 lg:gap-2 overflow-x-auto lg:overflow-visible overscroll-x-contain p-3 lg:p-6"
+      style={{ borderRadius: "var(--ifr-radius-md)" }}
       aria-label={t("Sections")}
     >
       {sections
@@ -59,13 +61,12 @@ export default function CreateProjectNav(props: Props) {
               key={section.id}
               type="button"
               onClick={() => scrollTo(section.id)}
-              className="text-left border-none cursor-pointer transition-colors bg-transparent hover:opacity-70"
+              className="text-left shrink-0 whitespace-nowrap border-none cursor-pointer transition-colors bg-transparent hover:opacity-70 py-1 lg:py-1"
               style={{
                 fontFamily: "var(--ifr-font-body)",
                 fontSize: "var(--ifr-fs-base)",
                 fontWeight: isActive ? "var(--ifr-fw-semibold)" : "var(--ifr-fw-medium)",
                 color: "var(--ifr-text-primary)",
-                padding: "4px 0",
               }}
             >
               {section.navLabelByType?.[projectType] || section.navLabel}

@@ -47,11 +47,13 @@ const ProfileHeading = () => {
           </div>
           <Card sectioned>
             <Stack vertical spacing="extraLoose">
-              <BrUserAvatar user={person} size="300px" />
+              <div className="w-full max-w-[300px] mx-auto">
+                <BrUserAvatar user={person} size="100%" />
+              </div>
               {person?.primaryLocation && (
                 <Stack vertical>
                   <PTitleSubtitle title={t("Location")} titleTag="h2" />
-                  <div className="w-72">
+                  <div className="w-full max-w-xs">
                     <DetailMap height={180} location={person?.primaryLocation} />
                   </div>
                 </Stack>
@@ -65,8 +67,8 @@ const ProfileHeading = () => {
   };
 
   return (
-    <div className="p-4 flex space-x-4">
-      <div className="grow">
+    <div className="p-4 flex min-w-0 lg:space-x-4">
+      <div className="grow min-w-0">
         <Stack vertical spacing="extraLoose">
           <div className="flex flex-row">
             <Stack vertical spacing="extraLoose">
@@ -106,7 +108,7 @@ const ProfileHeading = () => {
           </div>
         </Stack>
       </div>
-      <div className="hidden lg:block w-128">
+      <div className="hidden lg:block w-128 shrink-0">
         <ProfileHeadingSideBar />
       </div>
     </div>

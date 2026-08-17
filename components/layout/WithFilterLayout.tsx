@@ -28,7 +28,7 @@ const WithFilterLayout = ({
   return (
     <>
       <div className="flex flex-col">
-        <div className="flex items-center justify-between py-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 py-5">
           {header ? <PTitleCounter title={header} titleTag="h2" length={length} /> : <div />}
           {!hideFilters && (
             <Button
@@ -41,10 +41,12 @@ const WithFilterLayout = ({
             </Button>
           )}
         </div>
-        <div className="flex flex-row flex-nowrap items-start space-x-8 w-full">
-          {children}
+        {/* Filters sit beside the results only where there is room for both;
+            below `lg` they open above the list instead of squeezing it. */}
+        <div className="flex flex-col-reverse lg:flex-row lg:flex-nowrap items-stretch lg:items-start gap-6 lg:gap-0 lg:space-x-8 w-full min-w-0">
+          <div className="flex-1 min-w-0">{children}</div>
           {!hideFilters && showFilter && (
-            <div className="basis-96 sticky top-8">
+            <div className="w-full lg:w-auto lg:basis-96 lg:shrink-0 lg:sticky lg:top-8">
               <ProjectsFilters hidePrimaryAccountable={hidePrimaryAccountable} hideConformsTo={hideConformsTo} />
             </div>
           )}
