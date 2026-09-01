@@ -92,15 +92,15 @@ function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSideb
 
   return (
     <div className="w-full lg:w-[300px] shrink-0 h-full">
+      {/* Sticks alongside the article on desktop; below `lg` it is a normal
+          block in the flow, so it must not cap its own height or scroll. */}
       <div
-        className="sticky flex flex-col"
+        className="flex flex-col lg:sticky lg:max-h-[calc(100vh-var(--ifr-topbar-height)-32px)] lg:overflow-y-auto"
         style={{
           top: "calc(var(--ifr-topbar-height) + 16px)",
           border: "1px solid #c9cccf",
           borderRadius: "4px",
           backgroundColor: "#fff",
-          maxHeight: "calc(100vh - var(--ifr-topbar-height) - 32px)",
-          overflowY: "auto",
         }}
       >
         {/* Title */}
@@ -684,14 +684,13 @@ function TagBadgeDetail({ text }: { text: string }) {
 function DppFieldRow({ label, value }: { label: string; value?: string }) {
   if (!value) return null;
   return (
-    <div className="flex items-start gap-3 w-full">
+    <div className="flex flex-col sm:flex-row items-start gap-1 sm:gap-3 w-full">
       <span
-        className="text-ifr-text-secondary shrink-0"
+        className="text-ifr-text-secondary sm:shrink-0 sm:w-[180px]"
         style={{
           fontFamily: "var(--ifr-font-body)",
           fontSize: "var(--ifr-fs-base)",
           lineHeight: "24px",
-          width: "180px",
         }}
       >
         {label}
@@ -845,7 +844,7 @@ function SustainabilityMetrics({ dpp }: { dpp: Record<string, string> }) {
   if (metrics.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {metrics.map(m => (
         <MetricCard key={m.label} icon={m.icon} iconBg={m.iconBg} label={m.label} value={m.value} unit={m.unit} />
       ))}
@@ -1430,7 +1429,7 @@ export default function ProjectDetailNew() {
 
   return (
     <div className="flex-1 bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-      <div className="max-w-[1280px] mx-auto px-6 py-8 flex gap-8">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8 flex gap-8">
         {/* Main content */}
         <div className="flex-1 min-w-0 flex flex-col gap-4">
           {/* Breadcrumb */}
@@ -1445,7 +1444,7 @@ export default function ProjectDetailNew() {
           </nav>
 
           {/* Header */}
-          <div className="flex items-start justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div className="flex flex-col gap-2 flex-1 min-w-0">
               {/* Type badge + ID */}
               <div className="flex items-center gap-2">
@@ -2322,7 +2321,7 @@ export default function ProjectDetailNew() {
       </div>
 
       {/* Mobile sidebar */}
-      <div className="lg:hidden px-6 pb-8">
+      <div className="lg:hidden px-4 md:px-6 pb-8">
         <ProjectSidebarNew project={project} projectType={projectType} sidebarRating={sidebarRating} />
       </div>
     </div>

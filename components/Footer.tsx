@@ -7,9 +7,9 @@ const Footer = () => {
 
   return (
     <div className="border-t-1 border-t-border-subdued bg-white">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-9 py-8 lg:py-12 bg-white">
-          <div className="col-span-4 max-w-sm text-primary lg:place-self-end pr-12">
+          <div className="col-span-4 max-w-sm text-primary lg:place-self-end lg:pr-12">
             <Stack vertical>
               <div className="logo h-16 w-20"></div>
               <Text as={"h1"} variant={"headingLg"}>
@@ -18,7 +18,7 @@ const Footer = () => {
             </Stack>
           </div>
 
-          <div className="flex font-bold col-span-5 justify-between lg:justify-evenly">
+          <div className="flex flex-wrap gap-8 font-bold col-span-5 justify-between lg:justify-evenly">
             <Stack vertical spacing="loose">
               <Text as="h3" variant="headingLg">
                 {t("Projects")}
@@ -97,7 +97,7 @@ const Footer = () => {
         </div>
       </div>
       <div>
-        <div className=" flex flex-col items-start space-y-6 md:flex-row md:items-center md:justify-center md:space-x-6 md:space-y-0 border border-subdued p-8">
+        <div className="flex flex-col items-start gap-6 md:flex-row md:flex-wrap md:items-center md:justify-center border border-subdued p-6 md:p-8">
           <div className="flex items-center space-x-2">
             <Text as="p" variant="bodySm">
               {t("Software by")}
@@ -109,7 +109,7 @@ const Footer = () => {
             </NextLink>
           </div>
 
-          <div className="max-w-[250px] md:pl-4">
+          <div className="max-w-[250px]">
             <Text as="p" variant="bodySm">
               {t("Project funded")}{" "}
               <a

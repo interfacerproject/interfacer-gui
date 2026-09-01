@@ -126,7 +126,7 @@ const SignUp: NextPageWithLayout = () => {
 
   return (
     <div className="grid h-full grid-cols-6 mt-2 md:mt-40">
-      <div className="col-span-6 p-2 md:col-span-4 md:col-start-2 md:col-end-6">
+      <div className="col-span-6 px-4 py-2 md:col-span-4 md:col-start-2 md:col-end-6">
         {/* Step 0: invitation key */}
         {step === 0 && <InvitationKey onSubmit={nextStep} />}
 
