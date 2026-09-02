@@ -23,10 +23,10 @@ type LayoutProps = {
   children: React.ReactNode;
 };
 
-// The prototype keeps the whole creation flow on one tinted page: the back
-// link, the heading and the two columns all share a single 1200px column,
-// rather than the link sitting on its own white band above the form.
-const CreateProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: LayoutProps) => {
+// The prototype keeps every creation flow on one tinted page: the back link,
+// the heading and the two columns all share a single 1200px column, rather
+// than the link sitting on its own white band above the form.
+const CreateFormLayout: React.FunctionComponent<LayoutProps> = (layoutProps: LayoutProps) => {
   const { t } = useTranslation();
   const { children } = layoutProps;
   const { user } = useAuth();
@@ -53,4 +53,4 @@ const CreateProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: 
   );
 };
 
-export default CreateProjectLayout;
+export default CreateFormLayout;

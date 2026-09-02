@@ -1,10 +1,10 @@
-import { FormSectionContext } from "components/polaris/PTitleSubtitle";
 import { ProjectType } from "components/types";
 import { useTranslation } from "next-i18next";
 import { CreateProjectValues } from "../CreateProjectForm";
 
 // Steps
 import { getSectionsByProjectType } from "components/partials/project/projectSections";
+import { FormHeading, FormSection, formAccents } from "../../FormShell";
 
 //
 
@@ -57,22 +57,22 @@ export default function CreateProjectFields(props: Props) {
   const sections = getSectionsByProjectType(projectType);
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Section cards */}
+    <>
       {sections.map((section, index) => (
-        <section
-          key={index}
-          id={section.id}
-          className="bg-ifr-surface border border-ifr scroll-mt-6"
-          style={{ borderRadius: "var(--ifr-radius-lg)" }}
-        >
-          <div className="flex flex-col gap-10 items-start py-6 px-4 md:py-8 md:px-[33px]">
-            <FormSectionContext.Provider value={true}>{section.component}</FormSectionContext.Provider>
-          </div>
-        </section>
+        <FormSection key={index} id={section.id} accent={accentFor(projectType)}>
+          {section.component}
+        </FormSection>
       ))}
-    </div>
+    </>
   );
+}
+
+/** The marker beside each section heading is tinted by what is being created. */
+function accentFor(projectType: ProjectType): string {
+  if (projectType === ProjectType.PRODUCT) return formAccents.product;
+  if (projectType === ProjectType.SERVICE) return formAccents.service;
+  if (projectType === ProjectType.DPP) return formAccents.dpp;
+  return formAccents.design;
 }
 
 /** Page heading — rendered above both columns, as in the prototype. */
@@ -80,30 +80,5 @@ export function CreateProjectHeader(props: { projectType: ProjectType }) {
   const { t } = useTranslation("createProjectProps");
   const { title, subtitle } = getTitles(t)[props.projectType];
 
-  return (
-    <div className="mb-6">
-      <h1
-        className="text-ifr-text-primary m-0"
-        style={{
-          fontFamily: "var(--ifr-font-heading)",
-          fontSize: "var(--ifr-fs-xl)",
-          fontWeight: "var(--ifr-fw-bold)",
-          lineHeight: "36px",
-        }}
-      >
-        {title}
-      </h1>
-      <p
-        className="text-ifr-text-secondary m-0 mt-2 max-w-[791px]"
-        style={{
-          fontFamily: "var(--ifr-font-body)",
-          fontSize: "var(--ifr-fs-base)",
-          fontWeight: "var(--ifr-fw-regular)",
-          lineHeight: "21px",
-        }}
-      >
-        {subtitle}
-      </p>
-    </div>
-  );
+  return <FormHeading title={title} subtitle={subtitle} />;
 }

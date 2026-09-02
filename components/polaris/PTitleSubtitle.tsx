@@ -1,41 +1,43 @@
-import { createContext, useContext } from "react";
+import { FormSectionContext } from "components/partials/create/formSectionContext";
+import { useContext } from "react";
 
 export interface Props {
   title?: string | React.ReactNode;
   subtitle?: string | React.ReactNode;
   titleTag?: "h1" | "h2" | "h3";
+  /** Appends the prototype's red asterisk to the heading. */
+  required?: boolean;
 }
-
-/**
- * Set by the surface that draws a form section card (see CreateProjectFields).
- * Inside one, the heading grows the prototype's chrome — a tinted 52px marker
- * and the rule that separates the header from the fields — while every other
- * caller keeps the plain stacked heading.
- */
-export const FormSectionContext = createContext(false);
 
 // Section header typography aligned with the Figma prototype:
 // title = Space Grotesk 20px/700, subtitle = IBM Plex Sans 16px/500 subdued.
 export default function PTitleSubtitle(props: Props) {
-  const { title = "", subtitle = "", titleTag = "h1" } = props;
-  const inSection = useContext(FormSectionContext);
+  const { title = "", subtitle = "", titleTag = "h1", required = false } = props;
+  const heading = (
+    <>
+      {title}
+      {required && <span style={{ color: "var(--ifr-red)" }}>{" *"}</span>}
+    </>
+  );
+  const section = useContext(FormSectionContext);
 
-  if (inSection) {
+  if (section) {
     // The page itself owns the h1, so a section heading nests under it.
     const sectionTag = titleTag === "h1" ? "h2" : titleTag;
     return (
       <div className="w-full pb-8" style={{ borderBottom: "1px solid var(--ifr-border)" }}>
         <div className="flex gap-4 items-start w-full">
           <div
-            className="shrink-0 bg-ifr-green-bg"
+            className="shrink-0"
             style={{
               width: "var(--ifr-section-icon-size)",
               height: "var(--ifr-section-icon-size)",
               borderRadius: "16px",
+              backgroundColor: section.accent,
             }}
           />
           <div className="flex flex-col gap-1 flex-1 min-w-0">
-            {title && <Text_ as={sectionTag}>{title}</Text_>}
+            {title && <Text_ as={sectionTag}>{heading}</Text_>}
             {subtitle && (
               <Subtitle_ size="var(--ifr-fs-md)" weight="var(--ifr-fw-medium)">
                 {subtitle}
@@ -49,7 +51,7 @@ export default function PTitleSubtitle(props: Props) {
 
   return (
     <div className="flex flex-col gap-2">
-      {title && <Text_ as={titleTag}>{title}</Text_>}
+      {title && <Text_ as={titleTag}>{heading}</Text_>}
       {subtitle && (
         <Subtitle_ size="var(--ifr-fs-base)" weight="var(--ifr-fw-regular)">
           {subtitle}

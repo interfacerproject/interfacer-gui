@@ -23,6 +23,7 @@ import { modelFilesStepDefaultValues, modelFilesStepSchema, ModelFilesStepValues
 import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep.schema";
 
 // Partials
+import { FormColumns } from "../FormShell";
 import CreateProjectFields, { CreateProjectHeader } from "./parts/CreateProjectFields";
 import CreateProjectNav from "./parts/CreateProjectNav";
 import CreateProjectSubmit from "./parts/CreateProjectSubmit";
@@ -235,17 +236,10 @@ export default function CreateProjectForm(props: Props) {
         <form onSubmit={handleSubmit(onSubmit)}>
           <CreateProjectHeader projectType={projectType} />
 
-          <div className="flex flex-col lg:flex-row gap-6">
-            <div className="lg:shrink-0" style={{ width: "var(--ifr-form-sidebar-width)", maxWidth: "100%" }}>
-              <div className="lg:sticky lg:top-6">
-                <CreateProjectNav projectType={projectType} />
-              </div>
-            </div>
-            <div className="flex-1 min-w-0 flex flex-col gap-6">
-              <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
-              <CreateProjectSubmit />
-            </div>
-          </div>
+          <FormColumns nav={<CreateProjectNav projectType={projectType} />}>
+            <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
+            <CreateProjectSubmit />
+          </FormColumns>
         </form>
 
         {loading && <LoadingOverlay />}

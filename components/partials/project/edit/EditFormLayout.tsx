@@ -4,6 +4,7 @@ import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form";
 
 // Components
 import LoadingOverlay from "components/LoadingOverlay";
+import { FormColumns } from "components/partials/create/FormShell";
 import { ProjectTypeContext } from "components/partials/create/project/CreateProjectForm";
 import { ProjectType } from "components/types";
 import { useTranslation } from "next-i18next";
@@ -85,14 +86,13 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
   const content = (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(onSubmitWrapper)}>
-        {/* Section nav rides above the fields on phones and becomes a sticky
-            rail beside them from `lg` up, where the two fit side by side. */}
-        <div className="flex flex-col lg:flex-row lg:justify-center items-stretch lg:items-start gap-6 lg:gap-0 lg:space-x-16 xl:space-x-24 p-4 md:p-6">
-          <div className="lg:sticky lg:top-24 lg:shrink-0">
-            {!nav && <EditProjectNav />}
-            {nav}
+        {/* Same page as the creation flows: one tinted 1200px column with the
+            section rail beside the fields from `lg` up, lying down into a jump
+            strip on phones. */}
+        <div className="min-h-screen bg-ifr-profile" style={{ fontFamily: "var(--ifr-font-body)" }}>
+          <div className="max-w-[1200px] mx-auto w-full px-4 md:px-6 py-6 md:py-[42px]">
+            <FormColumns nav={nav || <EditProjectNav />}>{children}</FormColumns>
           </div>
-          <div className="grow min-w-0 w-full max-w-xl mx-auto lg:mx-0 px-0 md:px-6 pb-24 pt-0">{children}</div>
         </div>
         <SubmitChangesBar />
       </form>
