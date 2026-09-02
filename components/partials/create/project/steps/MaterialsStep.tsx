@@ -1,5 +1,4 @@
 import { Stack, Tag } from "@bbtgnn/polaris-interfacer";
-import PHelp from "components/polaris/PHelp";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SearchMaterials from "components/SearchMaterials";
 import { useTranslation } from "next-i18next";
@@ -52,15 +51,19 @@ export default function MaterialsStep() {
 
   return (
     <Stack vertical spacing="loose">
-      <PTitleSubtitle title={t("Materials Used")} />
-      <PHelp helpText={t("Select the materials that will be consumed to create this product")} />
+      <PTitleSubtitle
+        title={t("Materials Used")}
+        subtitle={t("Select the materials that will be consumed to create this product")}
+      />
 
       <button
         type="button"
         onClick={handleMaterialsToggle}
-        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-          materialsEnabled ? "bg-green-600" : "bg-gray-300"
-        }`}
+        className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors"
+        style={{
+          backgroundColor: materialsEnabled ? "var(--ifr-switch-on)" : "var(--ifr-switch-off)",
+          boxShadow: "var(--ifr-shadow-toggle)",
+        }}
       >
         <span className="sr-only">{t("Enable materials")}</span>
         <span

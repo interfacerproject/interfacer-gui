@@ -1,3 +1,4 @@
+import { FormSectionContext } from "components/polaris/PTitleSubtitle";
 import { ProjectType } from "components/types";
 import { useTranslation } from "next-i18next";
 import { CreateProjectValues } from "../CreateProjectForm";
@@ -14,11 +15,10 @@ export interface Props {
 
 //
 
-export default function CreateProjectFields(props: Props) {
-  const { t } = useTranslation("createProjectProps");
-  const { projectType } = props;
+type TFunc = (key: string) => string;
 
-  const titles: Record<ProjectType, { title: string; subtitle: string }> = {
+function getTitles(t: TFunc): Record<ProjectType, { title: string; subtitle: string }> {
+  return {
     [ProjectType.SERVICE]: {
       title: t("Add a service"),
       subtitle: t(
@@ -50,48 +50,60 @@ export default function CreateProjectFields(props: Props) {
       ),
     },
   };
+}
 
+export default function CreateProjectFields(props: Props) {
+  const { projectType } = props;
   const sections = getSectionsByProjectType(projectType);
-
-  //
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header (borderless, prototype typography) */}
-      <div className="pt-2 pb-2">
-        <h1
-          className="text-ifr-text-primary m-0 mb-3"
-          style={{
-            fontFamily: "var(--ifr-font-heading)",
-            fontSize: "var(--ifr-fs-xl)",
-            fontWeight: "var(--ifr-fw-bold)",
-            lineHeight: "1.5",
-          }}
-        >
-          {titles[projectType].title}
-        </h1>
-        <p
-          className="text-ifr-text-secondary m-0"
-          style={{
-            fontFamily: "var(--ifr-font-body)",
-            fontSize: "var(--ifr-fs-base)",
-            lineHeight: "1.5",
-            maxWidth: "720px",
-          }}
-        >
-          {titles[projectType].subtitle}
-        </p>
-      </div>
-
       {/* Section cards */}
       {sections.map((section, index) => (
-        <div key={index}>
-          <div id={section.id} className="scroll-mt-24" />
-          <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-6 px-4 md:py-8 md:px-8">
-            <div className="flex flex-col gap-6">{section.component}</div>
+        <section
+          key={index}
+          id={section.id}
+          className="bg-ifr-surface border border-ifr scroll-mt-6"
+          style={{ borderRadius: "var(--ifr-radius-lg)" }}
+        >
+          <div className="flex flex-col gap-10 items-start py-6 px-4 md:py-8 md:px-[33px]">
+            <FormSectionContext.Provider value={true}>{section.component}</FormSectionContext.Provider>
           </div>
-        </div>
+        </section>
       ))}
+    </div>
+  );
+}
+
+/** Page heading — rendered above both columns, as in the prototype. */
+export function CreateProjectHeader(props: { projectType: ProjectType }) {
+  const { t } = useTranslation("createProjectProps");
+  const { title, subtitle } = getTitles(t)[props.projectType];
+
+  return (
+    <div className="mb-6">
+      <h1
+        className="text-ifr-text-primary m-0"
+        style={{
+          fontFamily: "var(--ifr-font-heading)",
+          fontSize: "var(--ifr-fs-xl)",
+          fontWeight: "var(--ifr-fw-bold)",
+          lineHeight: "36px",
+        }}
+      >
+        {title}
+      </h1>
+      <p
+        className="text-ifr-text-secondary m-0 mt-2 max-w-[791px]"
+        style={{
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: "var(--ifr-fs-base)",
+          fontWeight: "var(--ifr-fw-regular)",
+          lineHeight: "21px",
+        }}
+      >
+        {subtitle}
+      </p>
     </div>
   );
 }

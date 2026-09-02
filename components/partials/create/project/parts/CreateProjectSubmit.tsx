@@ -1,3 +1,4 @@
+import { ArrowRightMinor } from "@shopify/polaris-icons";
 import { ProjectType } from "components/types";
 import useFormSaveDraft from "hooks/useFormSaveDraft";
 import { useTranslation } from "next-i18next";
@@ -20,38 +21,38 @@ export default function CreateProjectSubmit() {
 
   return (
     <div
-      className="sticky bottom-0 right-0 z-30 border-t border-ifr"
+      className="ifr-form-actions flex flex-wrap items-center justify-between gap-3 pt-4"
       style={{
-        backgroundColor: "var(--ifr-bg-surface)",
+        borderTop: "1px solid var(--ifr-border)",
         fontFamily: "var(--ifr-font-body)",
+        paddingBottom: "env(safe-area-inset-bottom)",
       }}
     >
-      <div
-        className="max-w-[1280px] mx-auto flex flex-wrap items-center justify-end gap-2 md:gap-3 px-4 md:px-6 py-3"
-        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
-      >
+      <div className="flex flex-wrap items-center gap-2 md:gap-3">
         <DeleteDraftButton />
         <EditDraftButton />
         <SaveDraftButton />
-        <button
-          id="project-create-submit"
-          type="submit"
-          disabled={!isValid}
-          className="border-none cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{
-            height: "var(--ifr-control-height)",
-            borderRadius: "var(--ifr-radius-sm)",
-            backgroundColor: "var(--ifr-yellow)",
-            color: "var(--ifr-text-primary)",
-            fontFamily: "var(--ifr-font-body)",
-            fontSize: "var(--ifr-fs-base)",
-            fontWeight: "var(--ifr-fw-medium)",
-            padding: "0 24px",
-          }}
-        >
-          {primaryLabel}
-        </button>
       </div>
+      <button
+        id="project-create-submit"
+        type="submit"
+        disabled={!isValid}
+        className="flex items-center justify-center gap-2 border-none cursor-pointer transition-colors bg-ifr-yellow hover:bg-ifr-yellow-hover disabled:opacity-50 disabled:cursor-not-allowed"
+        style={{
+          minWidth: "241px",
+          height: "var(--ifr-control-height)",
+          borderRadius: "var(--ifr-radius-sm)",
+          color: "var(--ifr-text-primary)",
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: "var(--ifr-fs-base)",
+          fontWeight: "var(--ifr-fw-medium)",
+          lineHeight: "20px",
+          padding: "0 24px",
+        }}
+      >
+        {primaryLabel}
+        <ArrowRightMinor className="w-4 h-4 fill-current" />
+      </button>
     </div>
   );
 }

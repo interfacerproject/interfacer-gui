@@ -23,7 +23,7 @@ import { modelFilesStepDefaultValues, modelFilesStepSchema, ModelFilesStepValues
 import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep.schema";
 
 // Partials
-import CreateProjectFields from "./parts/CreateProjectFields";
+import CreateProjectFields, { CreateProjectHeader } from "./parts/CreateProjectFields";
 import CreateProjectNav from "./parts/CreateProjectNav";
 import CreateProjectSubmit from "./parts/CreateProjectSubmit";
 
@@ -233,18 +233,18 @@ export default function CreateProjectForm(props: Props) {
     <FormProvider {...formMethods}>
       <ProjectTypeContext.Provider value={projectType}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col min-h-screen bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-            <div className="flex-1 flex flex-col lg:flex-row lg:justify-center gap-6 lg:gap-12 p-4 md:p-6 lg:p-10 max-w-[1440px] mx-auto w-full">
-              <div className="lg:w-[300px] lg:shrink-0">
-                <div className="lg:sticky lg:top-24">
-                  <CreateProjectNav projectType={projectType} />
-                </div>
-              </div>
-              <div className="flex-1 min-w-0 pb-24">
-                <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
+          <CreateProjectHeader projectType={projectType} />
+
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="lg:shrink-0" style={{ width: "var(--ifr-form-sidebar-width)", maxWidth: "100%" }}>
+              <div className="lg:sticky lg:top-6">
+                <CreateProjectNav projectType={projectType} />
               </div>
             </div>
-            <CreateProjectSubmit />
+            <div className="flex-1 min-w-0 flex flex-col gap-6">
+              <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
+              <CreateProjectSubmit />
+            </div>
           </div>
         </form>
 
