@@ -24,6 +24,7 @@
  */
 
 import EntityTypeIcon from "components/EntityTypeIcon";
+import ProjectCardImage from "components/ProjectCardImage";
 import { ProjectType } from "components/types";
 import findProjectImages from "lib/findProjectImages";
 import { isProjectType } from "lib/isProjectType";
@@ -67,8 +68,10 @@ export default function MapMiniCard({ project }: MapMiniCardProps) {
         className="flex h-[120px] w-[318px] items-stretch overflow-hidden rounded-ifr-lg border border-ifr bg-ifr-surface no-underline transition-shadow hover:shadow-ifr-dropdown"
         style={{ boxShadow: "0px 4px 16px 0px rgba(0, 0, 0, 0.12)" }}
       >
-        <div className="relative h-auto w-[120px] shrink-0 overflow-hidden bg-ifr-search">
-          {image && <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover" />}
+        <div className="relative h-auto w-[120px] shrink-0 overflow-hidden">
+          {/* Same image component the catalogue cards use, so a broken or missing
+              photo falls back to the tinted type icon instead of an empty box. */}
+          <ProjectCardImage image={image} projectType={type} />
           <span
             aria-hidden
             className="absolute left-0 top-0 flex h-8 items-center rounded-ifr-sm px-2"
