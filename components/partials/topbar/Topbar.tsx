@@ -16,6 +16,7 @@
 
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import InterfacerLogo from "components/InterfacerLogo";
+import LocationMenu from "components/LocationMenu";
 import NavigationMenu from "components/NavigationMenu";
 import UserDropdown from "components/UserDropdown";
 import { useAuth } from "hooks/useAuth";
@@ -256,6 +257,9 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
               </button>
             </div>
           )}
+
+          {/* Language picker */}
+          <LocationMenu />
 
           {/* User avatar with notification dot */}
           {user && userMenu && (
