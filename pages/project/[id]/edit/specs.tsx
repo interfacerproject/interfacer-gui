@@ -1,4 +1,5 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "lib/apollo-compat";
+import { EDIT_SPECS } from "@dyne/interfacer-client";
 import { yupResolver } from "@hookform/resolvers/yup";
 import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
@@ -87,6 +88,14 @@ const EditSpecs: NextPageWithLayout = () => {
       energyKwh:
         typeof existing.energyKwh === "number" ? String(existing.energyKwh) : productFiltersStepDefaultValues.energyKwh,
       co2Kg: typeof existing.co2Kg === "number" ? String(existing.co2Kg) : productFiltersStepDefaultValues.co2Kg,
+      price:
+        (project.metadata?.price as string | undefined) ||
+        (existing.price as string | undefined) ||
+        productFiltersStepDefaultValues.price,
+      availability:
+        (project.metadata?.availability as string | undefined) ||
+        (existing.availability as string | undefined) ||
+        productFiltersStepDefaultValues.availability,
     },
   };
 
@@ -120,6 +129,8 @@ const EditSpecs: NextPageWithLayout = () => {
       powerRequirementW: Number.isFinite(powerRequirementW as number) ? (powerRequirementW as number) : undefined,
       energyKwh: Number.isFinite(energyKwh as number) ? (energyKwh as number) : undefined,
       co2Kg: Number.isFinite(co2Kg as number) ? (co2Kg as number) : undefined,
+      price: values.price || undefined,
+      availability: values.availability || undefined,
     };
   };
 
@@ -148,7 +159,11 @@ const EditSpecs: NextPageWithLayout = () => {
       },
     });
 
-    await updateMetadata(project, { productFilters: normalized });
+    await updateMetadata(project, {
+      productFilters: normalized,
+      price: normalized.price || "",
+      availability: normalized.availability || "",
+    });
   }
 
   return (
@@ -167,16 +182,6 @@ EditSpecs.getLayout = page => (
 );
 
 export default EditSpecs;
-
-export const EDIT_SPECS = gql`
-  mutation EditSpecs($id: ID!, $classifiedAs: [URI!]) {
-    updateEconomicResource(resource: { id: $id, classifiedAs: $classifiedAs }) {
-      economicResource {
-        id
-      }
-    }
-  }
-`;
 
 //
 

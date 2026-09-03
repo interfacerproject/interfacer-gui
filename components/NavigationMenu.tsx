@@ -17,10 +17,10 @@ import InterfacerLogo from "components/InterfacerLogo";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
-import useInBox from "hooks/useInBox";
+import { useInBoxContext } from "hooks/useInBox";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /* ── Reusable sub-components ── */
 
@@ -171,7 +171,7 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
   const router = useRouter();
   const { user } = useAuth();
   const { t } = useTranslation("SideBarProps");
-  const { unread } = useInBox();
+  const { unread } = useInBoxContext();
   const [myProjectsExpanded, setMyProjectsExpanded] = useState(true);
 
   const handleNavigate = (path: string) => {
@@ -194,6 +194,26 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
   };
   const isProfileDefault = user ? router.asPath === user.profileUrl : false;
 
+  // Lock the page behind the drawer so touch scrolling stays inside it.
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
+
+  // Escape closes the drawer, matching the backdrop tap.
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
+
   const iconColor = (active: boolean) => (active ? "var(--ifr-text-primary)" : "var(--ifr-text-secondary)");
   const entityIconColor = (path: string, entityColor: string) =>
     isActive(path) ? entityColor : "var(--ifr-text-secondary)";
@@ -210,10 +230,17 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
         className="fixed top-0 left-0 bottom-0 z-[70] bg-[var(--ifr-bg-surface)] flex flex-col"
         style={{
           width: "var(--ifr-nav-menu-width)",
+          // Always leave a strip of backdrop to tap on the narrowest phones
+          maxWidth: "calc(100vw - 40px)",
+          paddingTop: "env(safe-area-inset-top)",
+          paddingLeft: "env(safe-area-inset-left)",
+          paddingBottom: "env(safe-area-inset-bottom)",
           transform: open ? "translateX(0)" : "translateX(-100%)",
           transition: "transform 250ms ease",
           boxShadow: open ? "var(--ifr-shadow-dropdown)" : "none",
+          overscrollBehavior: "contain",
         }}
+        aria-hidden={!open}
       >
         {/* Logo header */}
         <div className="px-6 pt-5 pb-4">

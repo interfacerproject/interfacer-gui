@@ -26,8 +26,8 @@ const Resources: NextPageWithLayout = () => {
   devLog("Resources", resourceFilter);
   const { t } = useTranslation("resourcesProps");
   return (
-    <div className="p-8">
-      <div className="mb-6 w-80">
+    <div className="p-4 md:p-8">
+      <div className="mb-6 w-full max-w-xs">
         <h1>{t("Resources")}</h1>
         <p>{t("Use this page to generate digital product passports of resources")}</p>
       </div>

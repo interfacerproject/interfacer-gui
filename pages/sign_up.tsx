@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Functionality
-import { useMutation } from "@apollo/client";
+import { useMutation } from "lib/apollo-compat";
 import { useAuth } from "hooks/useAuth";
 import useStorage from "hooks/useStorage";
 import { CLAIM_DID } from "lib/QueryAndMutation";
@@ -126,7 +126,7 @@ const SignUp: NextPageWithLayout = () => {
 
   return (
     <div className="grid h-full grid-cols-6 mt-2 md:mt-40">
-      <div className="col-span-6 p-2 md:col-span-4 md:col-start-2 md:col-end-6">
+      <div className="col-span-6 px-4 py-2 md:col-span-4 md:col-start-2 md:col-end-6">
         {/* Step 0: invitation key */}
         {step === 0 && <InvitationKey onSubmit={nextStep} />}
 

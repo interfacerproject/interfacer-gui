@@ -1,29 +1,30 @@
 import { ProjectType } from "components/types";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // Steps
 import {
   contributorsStepDefaultValues,
   contributorsStepSchema,
   ContributorsStepValues,
-} from "./steps/ContributorsStep";
+} from "./steps/ContributorsStep.schema";
 import {
   declarationsStepDefaultValues,
   declarationsStepSchema,
   DeclarationsStepValues,
-} from "./steps/DeclarationsStep";
-import { imagesStepDefaultValues, imagesStepSchema, ImagesStepValues } from "./steps/ImagesStep";
-import { licenseStepDefaultValues, licenseStepSchema, LicenseStepValues } from "./steps/LicenseStep";
-import { linkDesignStepDefaultValues, linkDesignStepSchema, LinkDesignStepValues } from "./steps/LinkDesignStep";
-import { locationStepDefaultValues, LocationStepSchemaContext, LocationStepValues } from "./steps/LocationStep";
-import { mainStepDefaultValues, mainStepSchema, MainStepValues } from "./steps/MainStep";
-import { modelFilesStepDefaultValues, modelFilesStepSchema, ModelFilesStepValues } from "./steps/ModelFilesStep";
-import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep";
+} from "./steps/DeclarationsStep.schema";
+import { imagesStepDefaultValues, imagesStepSchema, ImagesStepValues } from "./steps/ImagesStep.schema";
+import { licenseStepDefaultValues, licenseStepSchema, LicenseStepValues } from "./steps/LicenseStep.schema";
+import { linkDesignStepDefaultValues, linkDesignStepSchema, LinkDesignStepValues } from "./steps/LinkDesignStep.schema";
+import { locationStepDefaultValues, LocationStepSchemaContext, LocationStepValues } from "./steps/LocationStep.schema";
+import { mainStepDefaultValues, mainStepSchema, MainStepValues } from "./steps/MainStep.schema";
+import { modelFilesStepDefaultValues, modelFilesStepSchema, ModelFilesStepValues } from "./steps/ModelFilesStep.schema";
+import { relationsStepDefaultValues, relationsStepSchema, RelationsStepValues } from "./steps/RelationsStep.schema";
 
 // Partials
-import CreateProjectFields from "./parts/CreateProjectFields";
+import { FormColumns } from "../FormShell";
+import CreateProjectFields, { CreateProjectHeader } from "./parts/CreateProjectFields";
 import CreateProjectNav from "./parts/CreateProjectNav";
 import CreateProjectSubmit from "./parts/CreateProjectSubmit";
 
@@ -39,22 +40,34 @@ import useYupLocaleObject from "hooks/useYupLocaleObject";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep";
-import { materialsStepDefaultValues, materialsStepSchema, MaterialsStepValues } from "./steps/MaterialsStep";
+import { machinesStepDefaultValues, machinesStepSchema, MachinesStepValues } from "./steps/MachinesStep.schema";
+import { materialsStepDefaultValues, materialsStepSchema, MaterialsStepValues } from "./steps/MaterialsStep.schema";
+import {
+  powerRequirementsStepDefaultValues,
+  powerRequirementsStepSchema,
+  PowerRequirementsStepValues,
+} from "./steps/PowerRequirementsStep.schema";
 import {
   productFiltersStepDefaultValues,
   productFiltersStepSchema,
   ProductFiltersStepValues,
-} from "./steps/ProductFiltersStep";
+} from "./steps/ProductFiltersStep.schema";
 import {
   serviceFiltersStepDefaultValues,
   serviceFiltersStepSchema,
   ServiceFiltersStepValues,
-} from "./steps/ServiceFiltersStep";
+} from "./steps/ServiceFiltersStep.schema";
 
 export interface Props {
   projectType: ProjectType;
 }
+
+export const ProjectTypeContext = createContext<ProjectType | null>(null);
+export const useProjectType = () => {
+  const ctx = useContext(ProjectTypeContext);
+  if (!ctx) throw new Error("useProjectType must be used within ProjectTypeContext");
+  return ctx;
+};
 
 //
 
@@ -72,6 +85,7 @@ export interface CreateProjectValues {
   licenses: LicenseStepValues;
   machines: MachinesStepValues;
   materials: MaterialsStepValues;
+  power: PowerRequirementsStepValues;
 }
 
 export const createProjectDefaultValues: CreateProjectValues = {
@@ -88,6 +102,7 @@ export const createProjectDefaultValues: CreateProjectValues = {
   licenses: licenseStepDefaultValues,
   machines: machinesStepDefaultValues,
   materials: materialsStepDefaultValues,
+  power: powerRequirementsStepDefaultValues,
 };
 
 export const createProjectSchema = () =>
@@ -114,6 +129,7 @@ export const createProjectSchema = () =>
     licenses: licenseStepSchema(),
     machines: machinesStepSchema(),
     materials: materialsStepSchema(),
+    power: powerRequirementsStepSchema(),
   });
 
 export type CreateProjectSchemaContext = LocationStepSchemaContext;
@@ -159,6 +175,7 @@ export default function CreateProjectForm(props: Props) {
     licenses: licenseStepDefaultValues,
     machines: machinesStepDefaultValues,
     materials: materialsStepDefaultValues,
+    power: powerRequirementsStepDefaultValues,
   };
 
   useEffect(() => {
@@ -215,23 +232,18 @@ export default function CreateProjectForm(props: Props) {
 
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col min-h-screen bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-          <div className="flex-1 flex flex-row justify-center gap-8 lg:gap-12 p-6 max-w-[1280px] mx-auto w-full">
-            <div className="hidden lg:block w-[260px] shrink-0">
-              <div className="sticky top-24">
-                <CreateProjectNav projectType={projectType} />
-              </div>
-            </div>
-            <div className="flex-1 max-w-2xl pb-24">
-              <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
-            </div>
-          </div>
-          <CreateProjectSubmit />
-        </div>
-      </form>
+      <ProjectTypeContext.Provider value={projectType}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <CreateProjectHeader projectType={projectType} />
 
-      {loading && <LoadingOverlay />}
+          <FormColumns nav={<CreateProjectNav projectType={projectType} />}>
+            <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
+            <CreateProjectSubmit />
+          </FormColumns>
+        </form>
+
+        {loading && <LoadingOverlay />}
+      </ProjectTypeContext.Provider>
     </FormProvider>
   );
 }

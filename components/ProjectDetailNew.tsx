@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
+import { SEARCH_PROJECT } from "@dyne/interfacer-client";
 import { ChevronDown, ChevronLeft, ChevronRight } from "@carbon/icons-react";
 import { BookmarkIcon, ExternalLinkIcon, StarIcon } from "@heroicons/react/outline";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
@@ -14,7 +15,6 @@ import ProjectsCards from "components/ProjectsCards";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
 
-import { SEARCH_PROJECT } from "components/ProjectDisplay";
 import useDppApi from "lib/dpp";
 import type { DppDocument } from "lib/dpp-types";
 import findProjectImages from "lib/findProjectImages";
@@ -25,12 +25,15 @@ import { extractUserTagValues } from "lib/tagging";
 
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import ReviewSection from "./ReviewSection";
 import useFeedbackApi, { type ReviewSummary } from "lib/feedback";
 import StepModelViewer from "./StepModelViewer";
+
+const ProjectTraceability = dynamic(() => import("./ProjectTraceability"), { ssr: false });
 
 function getProjectType(project: Partial<EconomicResource>): ProjectType {
   const name = project.conformsTo?.name;
@@ -66,6 +69,8 @@ function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSideb
   const price = meta.price as string | undefined;
   const availability = meta.availability as string | undefined;
   const websiteLink = meta.websiteLink as string | undefined;
+  const license = project.license || (meta.licenses as Array<{ licenseId?: string }> | undefined)?.[0]?.licenseId;
+  const licensor = project.licensor || (meta.licensor as string | undefined);
   const basedOnDesignMeta = meta.basedOnDesign as { id?: string; name?: string } | string | undefined;
   const designId = basedOnDesignMeta
     ? typeof basedOnDesignMeta === "object"
@@ -86,16 +91,33 @@ function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSideb
     : undefined;
 
   return (
-    <div className="w-full lg:w-[300px] shrink-0">
+    <div className="w-full lg:w-[300px] shrink-0 h-full">
+      {/* Sticks alongside the article on desktop; below `lg` it is a normal
+          block in the flow, so it must not cap its own height or scroll. */}
       <div
-        className="sticky flex flex-col"
+        className="flex flex-col lg:sticky lg:max-h-[calc(100vh-var(--ifr-topbar-height)-32px)] lg:overflow-y-auto"
         style={{
-          top: "calc(var(--ifr-topbar-height) + 80px)",
+          top: "calc(var(--ifr-topbar-height) + 16px)",
           border: "1px solid #c9cccf",
           borderRadius: "4px",
           backgroundColor: "#fff",
         }}
       >
+        {/* Title */}
+        <div className="px-4 pt-4">
+          <h2
+            className="text-ifr-text-primary m-0"
+            style={{
+              fontFamily: "var(--ifr-font-heading)",
+              fontSize: "var(--ifr-fs-lg)",
+              fontWeight: "var(--ifr-fw-bold)",
+              lineHeight: "1.3",
+            }}
+          >
+            {project.name}
+          </h2>
+        </div>
+
         {/* Price & CTA section */}
         <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
           {/* Product: Price & Availability */}
@@ -304,7 +326,7 @@ function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSideb
               </p>
               <Link href={`/profile/${project.primaryAccountable.id}`}>
                 <a className="flex items-center gap-3 p-3 border border-ifr rounded-ifr-sm no-underline group hover:bg-ifr-hover transition-colors">
-                  <BrUserAvatar userId={project.primaryAccountable.id} size="40px" />
+                  <BrUserAvatar user={project.primaryAccountable} size="40px" />
                   <div className="flex-1 min-w-0">
                     <p
                       className="text-ifr-text-primary group-hover:underline"
@@ -407,6 +429,34 @@ function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSideb
                   </span>
                   <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
                 </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* License provenance */}
+        {(license || licensor) && (
+          <>
+            <hr className="border-t border-[#c9cccf] m-0 mx-4" />
+            <div className="px-4 py-4">
+              <p
+                className="text-ifr-text-secondary mb-2"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {t("License")}
+              </p>
+              {license && (
+                <p
+                  className="m-0 text-ifr-text-primary break-words"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)", fontWeight: 600 }}
+                >
+                  {license}
+                </p>
+              )}
+              {licensor && (
+                <p className="mt-1 mb-0 text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                  {t("Licensed by {{licensor}}", { licensor })}
+                </p>
               )}
             </div>
           </>
@@ -567,6 +617,50 @@ function ImageGallery({ images }: { images: string[] }) {
   );
 }
 
+/** Markdown body that clamps to a fixed height with a Read more / Show less toggle. */
+function ReadMoreMarkdown({ html }: { html: string }) {
+  const { t } = useTranslation("common");
+  const ref = useRef<HTMLDivElement>(null);
+  const [overflowing, setOverflowing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const CLAMP_PX = 220;
+
+  useEffect(() => {
+    if (ref.current) setOverflowing(ref.current.scrollHeight > CLAMP_PX + 20);
+  }, [html]);
+
+  return (
+    <div>
+      <div
+        ref={ref}
+        className="prose max-w-none text-ifr-text-primary"
+        style={{
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: "var(--ifr-fs-md)",
+          maxHeight: expanded ? undefined : CLAMP_PX,
+          overflow: expanded ? undefined : "hidden",
+        }}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+      {overflowing && (
+        <button
+          type="button"
+          onClick={() => setExpanded(v => !v)}
+          className="mt-2 bg-transparent border-none p-0 cursor-pointer hover:underline"
+          style={{
+            color: "var(--ifr-green)",
+            fontFamily: "var(--ifr-font-body)",
+            fontSize: "var(--ifr-fs-sm)",
+            fontWeight: "var(--ifr-fw-medium)",
+          }}
+        >
+          {expanded ? t("Show less") : t("Read more")}
+        </button>
+      )}
+    </div>
+  );
+}
+
 /** Tag badge */
 function TagBadgeDetail({ text }: { text: string }) {
   return (
@@ -590,14 +684,13 @@ function TagBadgeDetail({ text }: { text: string }) {
 function DppFieldRow({ label, value }: { label: string; value?: string }) {
   if (!value) return null;
   return (
-    <div className="flex items-start gap-3 w-full">
+    <div className="flex flex-col sm:flex-row items-start gap-1 sm:gap-3 w-full">
       <span
-        className="text-ifr-text-secondary shrink-0"
+        className="text-ifr-text-secondary sm:shrink-0 sm:w-[180px]"
         style={{
           fontFamily: "var(--ifr-font-body)",
           fontSize: "var(--ifr-fs-base)",
           lineHeight: "24px",
-          width: "180px",
         }}
       >
         {label}
@@ -751,7 +844,7 @@ function SustainabilityMetrics({ dpp }: { dpp: Record<string, string> }) {
   if (metrics.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {metrics.map(m => (
         <MetricCard key={m.label} icon={m.icon} iconBg={m.iconBg} label={m.label} value={m.value} unit={m.unit} />
       ))}
@@ -1336,7 +1429,7 @@ export default function ProjectDetailNew() {
 
   return (
     <div className="flex-1 bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-      <div className="max-w-[1280px] mx-auto px-6 py-8 flex gap-8 items-start">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8 flex gap-8">
         {/* Main content */}
         <div className="flex-1 min-w-0 flex flex-col gap-4">
           {/* Breadcrumb */}
@@ -1351,7 +1444,7 @@ export default function ProjectDetailNew() {
           </nav>
 
           {/* Header */}
-          <div className="flex items-start justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div className="flex flex-col gap-2 flex-1 min-w-0">
               {/* Type badge + ID */}
               <div className="flex items-center gap-2">
@@ -1571,17 +1664,11 @@ export default function ProjectDetailNew() {
               iconBg="bg-ifr-hover"
               title={t("Overview")}
               subtitle={t("Description and key features")}
-              defaultOpen
+              collapsible={false}
               sectionId="overview"
             >
               <div className="flex flex-col gap-6">
-                {project.note && (
-                  <div
-                    className="prose max-w-none text-ifr-text-primary"
-                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-md)" }}
-                    dangerouslySetInnerHTML={{ __html: MdParser.render(project.note) }}
-                  />
-                )}
+                {project.note && <ReadMoreMarkdown html={MdParser.render(project.note)} />}
 
                 {/* Tags */}
                 {tags.length > 0 && (
@@ -1593,6 +1680,8 @@ export default function ProjectDetailNew() {
                 )}
               </div>
             </DetailSection>
+
+            <ProjectTraceability key={project.id} projectId={project.id!} />
 
             {/* Equipment — designs */}
             {(projectType === ProjectType.DESIGN || projectType === ProjectType.MACHINE) && machines.length > 0 && (
@@ -2232,7 +2321,7 @@ export default function ProjectDetailNew() {
       </div>
 
       {/* Mobile sidebar */}
-      <div className="lg:hidden px-6 pb-8">
+      <div className="lg:hidden px-4 md:px-6 pb-8">
         <ProjectSidebarNew project={project} projectType={projectType} sidebarRating={sidebarRating} />
       </div>
     </div>

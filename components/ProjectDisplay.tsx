@@ -1,4 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
+import { SEARCH_PROJECT } from "@dyne/interfacer-client";
 import { Spinner, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource, SearchProjectQuery, SearchProjectQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -63,23 +64,3 @@ export default function ProjectDisplay(props: Props) {
     </Stack>
   );
 }
-
-export const SEARCH_PROJECT = gql`
-  query SearchProject($id: ID!) {
-    economicResource(id: $id) {
-      id
-      name
-      images {
-        bin
-        mimeType
-      }
-      conformsTo {
-        name
-        id
-      }
-      primaryAccountable {
-        name
-      }
-    }
-  }
-`;

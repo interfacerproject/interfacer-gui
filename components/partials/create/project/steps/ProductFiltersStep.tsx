@@ -1,71 +1,25 @@
-import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
-import PHelp from "components/polaris/PHelp";
+import { Select, Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import {
+  CategoryGrid,
+  CategoryOption,
+  CheckOption,
+  OptionGrid,
+  OptionGroup,
+  ToggleField,
+} from "components/partials/create/FormControls";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { POWER_COMPATIBILITY_OPTIONS, PRODUCT_CATEGORY_OPTIONS, REPLICABILITY_OPTIONS } from "lib/tagging";
 import { useTranslation } from "next-i18next";
 import { useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
 
-export interface ProductFiltersStepValues {
-  categories: string[];
-  powerCompatibility: string[];
-  powerRequirementW: string;
-  replicability: string[];
-  recyclabilityPct: string;
-  repairability: boolean;
-  energyKwh: string;
-  co2Kg: string;
-}
-
-export const productFiltersStepDefaultValues: ProductFiltersStepValues = {
-  categories: [],
-  powerCompatibility: [],
-  powerRequirementW: "",
-  replicability: [],
-  recyclabilityPct: "",
-  repairability: false,
-  energyKwh: "",
-  co2Kg: "",
-};
-
-export const productFiltersStepSchema = () =>
-  yup.object().shape({
-    categories: yup.array().of(yup.string().required()).default([]),
-    powerCompatibility: yup.array().of(yup.string().required()).default([]),
-    powerRequirementW: yup
-      .string()
-      .test("is-number-or-empty", "Must be a number", value => {
-        if (!value) return true;
-        return Number.isFinite(Number(value));
-      })
-      .default(""),
-    replicability: yup.array().of(yup.string().required()).default([]),
-    recyclabilityPct: yup
-      .string()
-      .test("is-pct-or-empty", "Must be a number between 0 and 100", value => {
-        if (!value) return true;
-        const n = Number(value);
-        return Number.isFinite(n) && n >= 0 && n <= 100;
-      })
-      .default(""),
-    repairability: yup.boolean().default(false),
-    energyKwh: yup
-      .string()
-      .test("is-number-or-empty", "Must be a number", value => {
-        if (!value) return true;
-        return Number.isFinite(Number(value));
-      })
-      .default(""),
-    co2Kg: yup
-      .string()
-      .test("is-number-or-empty", "Must be a number", value => {
-        if (!value) return true;
-        return Number.isFinite(Number(value));
-      })
-      .default(""),
-  });
+import {
+  type ProductFiltersStepValues,
+  productFiltersStepDefaultValues,
+  productFiltersStepSchema,
+} from "./ProductFiltersStep.schema";
+export { type ProductFiltersStepValues, productFiltersStepDefaultValues, productFiltersStepSchema };
 
 function toggleValue(list: string[], value: string, checked: boolean): string[] {
   if (checked) return list.includes(value) ? list : [...list, value];
@@ -83,49 +37,69 @@ export default function ProductFiltersStep() {
     <Stack vertical spacing="loose">
       <PTitleSubtitle title={t("Product specifications")} subtitle={t("These fields help users filter products.")} />
 
-      <Stack vertical spacing="tight">
-        <PHelp helpText={t("Select one or more categories for your product")} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {PRODUCT_CATEGORY_OPTIONS.map(option => (
-            <label key={option} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={values.categories.includes(option)}
-                onChange={e =>
-                  setValue(
-                    "productFilters.categories",
-                    toggleValue(values.categories, option, e.target.checked),
-                    formSetValueOptions
-                  )
-                }
-              />
-              <span>{t(option)}</span>
-            </label>
-          ))}
-        </div>
-      </Stack>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <TextField
+          type="text"
+          label={t("Price")}
+          placeholder={t("e.g. €1,200")}
+          value={values.price || ""}
+          onChange={value => setValue("productFilters.price", value, formSetValueOptions)}
+          helpText={t("Indicative price shown on the product page.")}
+          autoComplete="off"
+        />
+        <Select
+          label={t("Availability")}
+          options={[
+            { label: t("Select availability…"), value: "" },
+            { label: t("Available Now"), value: "Available Now" },
+            { label: t("Made to Order"), value: "Made to Order" },
+            { label: t("Limited Stock"), value: "Limited Stock" },
+            { label: t("Out of Stock"), value: "Out of Stock" },
+          ]}
+          value={values.availability || ""}
+          onChange={value => setValue("productFilters.availability", value, formSetValueOptions)}
+          helpText={t("Current availability shown on the product page.")}
+        />
+      </div>
 
-      <Stack vertical spacing="tight">
-        <PHelp helpText={t("Select compatible power sources (if applicable)")} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {POWER_COMPATIBILITY_OPTIONS.map(option => (
-            <label key={option} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={values.powerCompatibility.includes(option)}
-                onChange={e =>
-                  setValue(
-                    "productFilters.powerCompatibility",
-                    toggleValue(values.powerCompatibility, option, e.target.checked),
-                    formSetValueOptions
-                  )
-                }
-              />
-              <span>{option}</span>
-            </label>
+      <OptionGroup label={t("Categories")} helpText={t("Select one or more categories for your product")}>
+        <CategoryGrid>
+          {PRODUCT_CATEGORY_OPTIONS.map((option: string) => (
+            <CategoryOption
+              key={option}
+              value={option}
+              label={t(option)}
+              selected={values.categories.includes(option)}
+              onToggle={() =>
+                setValue(
+                  "productFilters.categories",
+                  toggleValue(values.categories, option, !values.categories.includes(option)),
+                  formSetValueOptions
+                )
+              }
+            />
           ))}
-        </div>
-      </Stack>
+        </CategoryGrid>
+      </OptionGroup>
+
+      <OptionGroup label={t("Power compatibility")} helpText={t("Select compatible power sources (if applicable)")}>
+        <OptionGrid>
+          {POWER_COMPATIBILITY_OPTIONS.map((option: string) => (
+            <CheckOption
+              key={option}
+              label={option}
+              checked={values.powerCompatibility.includes(option)}
+              onChange={checked =>
+                setValue(
+                  "productFilters.powerCompatibility",
+                  toggleValue(values.powerCompatibility, option, checked),
+                  formSetValueOptions
+                )
+              }
+            />
+          ))}
+        </OptionGrid>
+      </OptionGroup>
 
       <TextField
         type="number"
@@ -136,27 +110,24 @@ export default function ProductFiltersStep() {
         autoComplete="off"
       />
 
-      <Stack vertical spacing="tight">
-        <PHelp helpText={t("Select replicability level(s)")} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {REPLICABILITY_OPTIONS.map(option => (
-            <label key={option} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={values.replicability.includes(option)}
-                onChange={e =>
-                  setValue(
-                    "productFilters.replicability",
-                    toggleValue(values.replicability, option, e.target.checked),
-                    formSetValueOptions
-                  )
-                }
-              />
-              <span>{t(option)}</span>
-            </label>
+      <OptionGroup label={t("Replicability")} helpText={t("Select replicability level(s)")}>
+        <OptionGrid>
+          {REPLICABILITY_OPTIONS.map((option: string) => (
+            <CheckOption
+              key={option}
+              label={t(option)}
+              checked={values.replicability.includes(option)}
+              onChange={checked =>
+                setValue(
+                  "productFilters.replicability",
+                  toggleValue(values.replicability, option, checked),
+                  formSetValueOptions
+                )
+              }
+            />
           ))}
-        </div>
-      </Stack>
+        </OptionGrid>
+      </OptionGroup>
 
       <TextField
         type="number"
@@ -169,31 +140,15 @@ export default function ProductFiltersStep() {
         max={100}
       />
 
-      <Stack vertical spacing="tight">
-        <PHelp helpText={t("Is this product available for repair?")} />
-        <label className="flex items-center gap-3 text-sm cursor-pointer">
-          <button
-            type="button"
-            role="switch"
-            aria-checked={values.repairability}
-            onClick={() => setValue("productFilters.repairability", !values.repairability, formSetValueOptions)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#036A53] focus:ring-offset-2 ${
-              values.repairability ? "bg-[#036A53]" : "bg-gray-300"
-            }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                values.repairability ? "translate-x-6" : "translate-x-1"
-              }`}
-            />
-          </button>
-          <span className="font-medium">{t("Repair Info Available")}</span>
-        </label>
-      </Stack>
+      <ToggleField
+        label={t("Repair Info Available")}
+        description={t("Is this product available for repair?")}
+        checked={values.repairability}
+        onChange={checked => setValue("productFilters.repairability", checked, formSetValueOptions)}
+      />
 
-      <Stack vertical spacing="tight">
-        <PHelp helpText={t("Environmental impact (optional)")} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <OptionGroup label={t("Environmental impact")} helpText={t("Optional.")}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
           <TextField
             type="number"
             label={t("Energy consumption (kWh)")}
@@ -209,7 +164,7 @@ export default function ProductFiltersStep() {
             autoComplete="off"
           />
         </div>
-      </Stack>
+      </OptionGroup>
     </Stack>
   );
 }

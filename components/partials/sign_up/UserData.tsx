@@ -24,7 +24,7 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import { gql } from "@apollo/client";
+import { PERSON_EXISTS } from "@dyne/interfacer-client";
 import { Button, TextField } from "@bbtgnn/polaris-interfacer";
 import createApolloClient from "lib/createApolloClient";
 import { isRequired } from "lib/isFieldRequired";
@@ -84,7 +84,7 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
         query: PERSON_EXISTS,
         variables,
       });
-      return !data.personExists;
+      return !data!.personExists;
     } catch (e) {
       console.warn("userExistsTest validation GQL error: ↓");
       console.warn(e);
@@ -188,11 +188,3 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
     </div>
   );
 }
-
-//
-
-const PERSON_EXISTS = gql`
-  query PersonExists($email: String, $user: String) {
-    personExists(email: $email, user: $user)
-  }
-`;

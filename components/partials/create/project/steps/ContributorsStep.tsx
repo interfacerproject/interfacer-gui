@@ -7,23 +7,25 @@ import SearchUsers from "components/SearchUsers";
 import BrUserDisplay from "components/brickroom/BrUserDisplay";
 import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { PersonWithFileEssential } from "lib/types/extensions";
 import { useFormContext } from "react-hook-form";
-import * as yup from "yup";
-import { CreateProjectValues } from "../CreateProjectForm";
+import { CreateProjectValues, useProjectType } from "../CreateProjectForm";
 
-//
-
-export type ContributorsStepValues = Array<string>;
-export const contributorsStepSchema = () => yup.array().of(yup.string().required());
-export const contributorsStepDefaultValues: ContributorsStepValues = [];
+export {
+  type ContributorsStepValues,
+  contributorsStepSchema,
+  contributorsStepDefaultValues,
+} from "./ContributorsStep.schema";
 
 //
 
 export default function ContributorsStep() {
   const { t } = useTranslation("createProjectProps");
+  const projectType = useProjectType();
+  const isMachine = projectType === ProjectType.MACHINE;
   const { setValue, watch } = useFormContext<CreateProjectValues>();
   const { user } = useAuth();
 
@@ -47,9 +49,15 @@ export default function ContributorsStep() {
     <Stack vertical spacing="extraLoose">
       <PTitleSubtitle
         title={t("Add contributors")}
-        subtitle={t(
-          "Add the users who contributed to the project. You can also add contributors and modofy the project later."
-        )}
+        subtitle={
+          isMachine
+            ? t(
+                "Add the users who contributed to this machine. You can also add contributors and modify the machine later."
+              )
+            : t(
+                "Add the users who contributed to the project. You can also add contributors and modify the project later."
+              )
+        }
       />
       <SearchUsers
         id="add-contributors-search"

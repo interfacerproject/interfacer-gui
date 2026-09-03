@@ -8,14 +8,9 @@ import { formSetValueOptions } from "lib/formSetValueOptions";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
 
-//
-
-export type LinkDesignStepValues = string;
-export const linkDesignStepSchema = () => yup.string();
-export const linkDesignStepDefaultValues: LinkDesignStepValues = "";
+export { type LinkDesignStepValues, linkDesignStepSchema, linkDesignStepDefaultValues } from "./LinkDesignStep.schema";
 
 //
 

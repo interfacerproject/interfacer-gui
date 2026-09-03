@@ -4,6 +4,7 @@ import { CreateProjectValues } from "../CreateProjectForm";
 
 // Steps
 import { getSectionsByProjectType } from "components/partials/project/projectSections";
+import { FormHeading, FormSection, formAccents } from "../../FormShell";
 
 //
 
@@ -14,11 +15,10 @@ export interface Props {
 
 //
 
-export default function CreateProjectFields(props: Props) {
-  const { t } = useTranslation("createProjectProps");
-  const { projectType } = props;
+type TFunc = (key: string) => string;
 
-  const titles: Record<ProjectType, { title: string; subtitle: string }> = {
+function getTitles(t: TFunc): Record<ProjectType, { title: string; subtitle: string }> {
+  return {
     [ProjectType.SERVICE]: {
       title: t("Add a service"),
       subtitle: t(
@@ -32,9 +32,9 @@ export default function CreateProjectFields(props: Props) {
       ),
     },
     [ProjectType.DESIGN]: {
-      title: t("Add a design"),
+      title: t("Add a new project to Interfacer"),
       subtitle: t(
-        "Import your project repository. Share your open source hardware project documentation and collaborate on building it. Your contribution will help others learn and build upon your work."
+        "Add all the info needed about your project. Add purchase information (if available), and specify the location where your product is available. Create a Digital Product Passport for your product."
       ),
     },
     [ProjectType.MACHINE]: {
@@ -50,47 +50,35 @@ export default function CreateProjectFields(props: Props) {
       ),
     },
   };
+}
 
+export default function CreateProjectFields(props: Props) {
+  const { projectType } = props;
   const sections = getSectionsByProjectType(projectType);
 
-  //
-
   return (
-    <div className="flex flex-col gap-6">
-      {/* Header card */}
-      <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-8 px-8">
-        <h1
-          className="text-ifr-text-primary m-0 mb-2"
-          style={{
-            fontFamily: "var(--ifr-font-heading)",
-            fontSize: "var(--ifr-fs-2xl)",
-            fontWeight: "var(--ifr-fw-bold)",
-            lineHeight: "1.2",
-          }}
-        >
-          {titles[projectType].title}
-        </h1>
-        <p
-          className="text-ifr-text-secondary m-0"
-          style={{
-            fontFamily: "var(--ifr-font-body)",
-            fontSize: "var(--ifr-fs-md)",
-            lineHeight: "1.6",
-          }}
-        >
-          {titles[projectType].subtitle}
-        </p>
-      </div>
-
-      {/* Section cards */}
+    <>
       {sections.map((section, index) => (
-        <div key={index}>
-          <div id={section.id} className="scroll-mt-24" />
-          <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-8 px-8">
-            <div className="flex flex-col gap-6">{section.component}</div>
-          </div>
-        </div>
+        <FormSection key={index} id={section.id} accent={accentFor(projectType)}>
+          {section.component}
+        </FormSection>
       ))}
-    </div>
+    </>
   );
+}
+
+/** The marker beside each section heading is tinted by what is being created. */
+function accentFor(projectType: ProjectType): string {
+  if (projectType === ProjectType.PRODUCT) return formAccents.product;
+  if (projectType === ProjectType.SERVICE) return formAccents.service;
+  if (projectType === ProjectType.DPP) return formAccents.dpp;
+  return formAccents.design;
+}
+
+/** Page heading — rendered above both columns, as in the prototype. */
+export function CreateProjectHeader(props: { projectType: ProjectType }) {
+  const { t } = useTranslation("createProjectProps");
+  const { title, subtitle } = getTitles(t)[props.projectType];
+
+  return <FormHeading title={title} subtitle={subtitle} />;
 }

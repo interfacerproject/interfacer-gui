@@ -1,22 +1,36 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import dayjs from "dayjs";
 import useSWR from "swr";
 import { useAuth } from "./useAuth";
-import useSignedPost from "./useSignedPost";
 
+// Keep Notification type for backward compatibility
 export declare module Notification {
   export interface Content {
     data: Date;
     message: any;
     subject: string;
   }
-
   export interface Message {
     id: number;
     sender: string;
     content: Content;
     read: boolean;
   }
-
   export interface RootObject {
     messages: Message[];
     request_id: number;
@@ -25,86 +39,79 @@ export declare module Notification {
 }
 
 type UseInBoxReturnValue = {
-  sendMessage: (message: any, receivers: string[], subject: string) => Promise<Response>;
-  readMessages: () => Promise<Notification.RootObject>;
-  countMessages: () => Promise<{ count: number; success: boolean }>;
-  setMessage: (id: number, read?: boolean) => Promise<Response>;
-  countUnread: number;
-  hasNewMessages: boolean;
-  messages: { id: number; sender: string; content: { data: string; message: any; subject: string } }[];
-  startReading: () => void;
-  setReadedMessages: (ids: number[]) => void;
-  readedMessages: number[];
+  sendMessage: (message: any, receivers: string[], subject: string) => Promise<void>;
+  messages: any[];
+  unread: number;
+  isLoading: boolean;
+  error: any;
+  setReadedMessage: (id: number, read?: boolean) => Promise<any>;
+  mutateMessages: () => void;
 };
 
-const useInBox = () => {
-  const { user } = useAuth();
-  const { signRequest, signedPost } = useSignedPost();
-  const fetcher = async (url: string, request: any) => {
-    const requestJSON = JSON.stringify(request);
-    const requestHeaders = await signRequest(requestJSON);
-    return await fetch(url, {
-      method: "POST",
-      headers: requestHeaders,
-      body: JSON.stringify(request),
-    }).then(res => res.json());
-  };
-
-  const { data, error, isLoading } = useSWR(
-    [
-      process.env.NEXT_PUBLIC_INBOX_READ!,
-      {
-        request_id: 50,
-        receiver: user?.ulid,
-        only_unread: false,
-      },
-    ],
-    ([url, request]) => fetcher(url, request)
-  );
+const useInBox = (): UseInBoxReturnValue => {
+  const { user, client } = useAuth();
 
   const {
-    data: unreadData,
-    error: errorUnread,
-    isLoading: isLoadingUnread,
+    data: messages,
+    error,
+    isLoading,
+    mutate: mutateMessages,
   } = useSWR(
-    [
-      process.env.NEXT_PUBLIC_INBOX_COUNT_UNREAD!,
-      {
-        receiver: user?.ulid,
-      },
-    ],
-    ([url, request]) => fetcher(url, request),
-    { refreshInterval: process.env.NEXT_PUBLIC_INBOX_COUNT_INTERVAL! as unknown as number }
+    client && user?.ulid ? ["inbox-messages", user.ulid] : null,
+    async () => {
+      if (!client) return [];
+      const msgs = await client.inbox.getMessages();
+      // Already sorted by date descending in the SDK, but sort again for safety
+      return msgs.sort((a, b) => {
+        return dayjs(b.content.data).unix() - dayjs(a.content.data).unix();
+      });
+    },
+    {
+      refreshInterval: Number(process.env.NEXT_PUBLIC_INBOX_COUNT_INTERVAL) || 0,
+    }
   );
 
-  const sendMessage = async (message: any, receivers: string[], subject: string = "Subject"): Promise<Response> => {
-    const request = {
-      sender: user?.ulid,
-      receivers: receivers,
-      content: {
-        message: message,
-        subject: subject,
-        data: dayjs(),
-      },
-    };
-    return await signedPost(process.env.NEXT_PUBLIC_INBOX_SEND!, request);
+  const { data: unread } = useSWR(
+    client && user?.ulid ? ["inbox-unread-count", user.ulid] : null,
+    async () => {
+      if (!client) return 0;
+      return client.inbox.getUnreadCount();
+    },
+    {
+      refreshInterval: Number(process.env.NEXT_PUBLIC_INBOX_COUNT_INTERVAL) || 0,
+    }
+  );
+
+  const sendMessage = async (message: any, receivers: string[], subject: string = "Subject") => {
+    if (!client) return;
+    try {
+      await client.inbox.sendMessage(message, receivers, subject);
+      // Invalidate the cache so all components see the new message
+      mutateMessages();
+    } catch (err) {
+      console.error("Failed to send inbox message:", err);
+    }
   };
 
-  const setReadedMessage = async (id: number, read = true) => {
-    const request = {
-      message_id: id,
-      receiver: user?.ulid,
-      read: read,
-    };
-    return await signedPost(process.env.NEXT_PUBLIC_INBOX_SET_READ!, request).then(res => res.json());
+  const setReadedMessage = async (id: number) => {
+    if (!client) return;
+    await client.inbox.markRead(id);
+    // Invalidate the messages cache so all components see the update
+    mutateMessages();
   };
 
-  const messages = (data?.messages as Array<Notification.Message>)?.sort((a, b) => {
-    return dayjs(b.content.data).unix() - dayjs(a.content.data).unix();
-  });
-  const unread: number = unreadData?.count;
-
-  return { messages, error, isLoading, sendMessage, unread, setReadedMessage };
+  return {
+    sendMessage,
+    messages: messages || [],
+    unread: unread || 0,
+    isLoading,
+    error,
+    setReadedMessage,
+    mutateMessages,
+  };
 };
 
 export default useInBox;
+
+// Re-export from context for components that need the shared instance
+export { useInBoxContext } from "../contexts/InBoxContext";

@@ -2,7 +2,7 @@ import { Button } from "@bbtgnn/polaris-interfacer";
 import { Notification } from "@carbon/icons-react";
 import { BellIcon } from "@heroicons/react/outline";
 import ContributionMessage from "components/ContributionMessage";
-import useInBox from "hooks/useInBox";
+import { useInBoxContext } from "hooks/useInBox";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import TopbarPopover from "./TopbarPopover";
@@ -10,7 +10,7 @@ import TopbarPopover from "./TopbarPopover";
 //
 
 export default function TopbarNotifications() {
-  const { unread, messages } = useInBox();
+  const { unread, messages } = useInBoxContext();
   const { t } = useTranslation("common");
   const MAX_MESSAGES = 5;
 

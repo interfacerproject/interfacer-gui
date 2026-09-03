@@ -92,6 +92,11 @@
   --ifr-bg-bookmark: rgba(255, 255, 255, 0.9);
   --ifr-bg-avatar: rgba(3, 106, 83, 0.2);
   --ifr-bg-quote: #f6f6f7;
+  --ifr-bg-dark: #042220;
+  --ifr-bg-subdued: #fafbfb;
+
+  /* --- Inverse text, for use on --ifr-bg-dark --- */
+  --ifr-text-inverse: #ffffff;
 
   /* --- Border colors --- */
   --ifr-border: #c9cccf;
@@ -119,20 +124,34 @@
   --ifr-radius-lg: 8px;
   --ifr-radius-full: 9999px;
 
-  /* --- Layout sizes --- */
-  --ifr-topbar-height: 64px;
+  /* --- Layout sizes ---
+   * Mobile-first: these are the phone values. The `min-width` blocks below
+   * step them up for tablet and desktop. Anything sized from these tokens
+   * adapts without its own media query.
+   */
+  --ifr-topbar-height: 56px;
   --ifr-sidebar-width: 288px;
   --ifr-dropdown-width: 240px;
-  --ifr-avatar-size: 44px;
-  --ifr-avatar-profile-size: 88px;
-  --ifr-control-height: 36px;
-  --ifr-card-image-height: 240px;
+  --ifr-avatar-size: 36px;
+  --ifr-avatar-profile-size: 64px;
+  --ifr-control-height: 40px;
+  --ifr-card-image-height: 200px;
   --ifr-card-min-width: 300px;
   --ifr-card-max-width: 360px;
-  --ifr-grid-gap: 24px;
+  --ifr-grid-gap: 16px;
   --ifr-form-sidebar-width: 304px;
   --ifr-nav-menu-width: 280px;
   --ifr-nav-menu-divider: #e5a100;
+
+  /* Horizontal page gutter — shared by shells, heroes and toolbars */
+  --ifr-page-px: 16px;
+  /* Minimum comfortable touch target */
+  --ifr-tap-min: 44px;
+  /* Card grid track. `min(100%, …)` keeps a single card inside a 320px
+     viewport instead of forcing a horizontal scroll; the `1fr` maximum lets
+     the columns that do fit share the row evenly, rather than capping at
+     360px and stranding a wide gutter at tablet widths. */
+  --ifr-card-track: minmax(min(100%, var(--ifr-card-min-width)), 1fr);
 
   /* --- Form-specific --- */
   --ifr-bg-form-input: #fafbfb;
@@ -145,4 +164,32 @@
   /* --- Toggle switch --- */
   --ifr-switch-off: #cbd5e1;
   --ifr-switch-on: var(--ifr-green);
+}
+
+/* Tablet — Tailwind `md` */
+@media (min-width: 768px) {
+  :root {
+    --ifr-topbar-height: 64px;
+    --ifr-avatar-size: 44px;
+    --ifr-avatar-profile-size: 88px;
+    --ifr-card-image-height: 240px;
+    --ifr-grid-gap: 24px;
+    --ifr-page-px: 24px;
+  }
+}
+
+/* Desktop — Tailwind `lg` */
+@media (min-width: 1024px) {
+  :root {
+    --ifr-avatar-profile-size: 88px;
+  }
+}
+
+/* Pointer-based sizing: a mouse can hit a 36px control, a thumb cannot.
+   This keys off input method rather than screen width, so a touch laptop
+   gets the larger target too. */
+@media (pointer: fine) {
+  :root {
+    --ifr-control-height: 36px;
+  }
 }

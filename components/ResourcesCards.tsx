@@ -16,7 +16,7 @@
 
 import { Card } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource, FetchInventoryQuery, EconomicResourceFilterParams } from "lib/types";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import CardsGroup from "./CardsGroup";
 import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
@@ -97,7 +97,7 @@ const ResourcesCards = (props: ResourcesCardsProps) => {
               ]}
             >
               <img src={e.node.metadata?.image} className="w-20 h-20" alt={e.node.name} />
-              <p className="w-64">{e.node.note}</p>
+              <p className="w-full max-w-xs">{e.node.note}</p>
             </Card>
           </>
         ))}

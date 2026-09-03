@@ -14,7 +14,9 @@ const TechnicalInfoCard = () => {
   return (
     <Card sectioned>
       <Stack vertical spacing="loose">
-        <LoshImportedDate projectId={project.id!} />
+        <LoshImportedDate
+          addedOn={project.metadata?.addedOn || project.metadata?.createdAt || project.metadata?.importedAt}
+        />
         <Text as="h3" variant="headingMd">
           {t("Licenses")}
         </Text>

@@ -4,6 +4,9 @@ import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form";
 
 // Components
 import LoadingOverlay from "components/LoadingOverlay";
+import { FormColumns } from "components/partials/create/FormShell";
+import { ProjectTypeContext } from "components/partials/create/project/CreateProjectForm";
+import { ProjectType } from "components/types";
 import { useTranslation } from "next-i18next";
 import EditProjectNav from "./EditProjectNav";
 import SubmitChangesBar from "./SubmitChangesBar";
@@ -16,12 +19,13 @@ export interface EditFormLayoutProps<T extends FieldValues> {
   nav?: React.ReactNode;
   onSubmit: (values: T) => Promise<void>;
   redirect?: string | NextRouter;
+  projectType?: ProjectType;
 }
 
 //
 
 export default function EditFormLayout<T extends FieldValues>(props: EditFormLayoutProps<T>) {
-  const { children, formMethods, nav, onSubmit = () => {}, redirect } = props;
+  const { children, formMethods, nav, onSubmit = () => {}, redirect, projectType } = props;
   const { t } = useTranslation("common");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -33,6 +37,7 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
     setLoading(true);
     try {
       await onSubmit(values);
+      setLoading(false);
     } catch (e) {
       setLoading(false);
     }
@@ -62,7 +67,12 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
     //
     else if (isSubmitSuccessful) {
       if (!redirect) router.reload();
-      else router.push(redirect);
+      else if (typeof redirect === "string" && router.asPath === redirect) {
+        // Already on the redirect URL — reset form state to break the infinite loop
+        // caused by react-hook-form preserving isSubmitSuccessful across same-page navigations
+        formMethods.reset();
+        setLoading(false);
+      } else router.push(redirect);
     }
 
     return () => {
@@ -73,19 +83,26 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
 
   /* Render */
 
-  return (
+  const content = (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(onSubmitWrapper)}>
-        <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
-          <div className="sticky top-24">
-            {!nav && <EditProjectNav />}
-            {nav}
+        {/* Same page as the creation flows: one tinted 1200px column with the
+            section rail beside the fields from `lg` up, lying down into a jump
+            strip on phones. */}
+        <div className="min-h-screen bg-ifr-profile" style={{ fontFamily: "var(--ifr-font-body)" }}>
+          <div className="max-w-[1200px] mx-auto w-full px-4 md:px-6 py-6 md:py-[42px]">
+            <FormColumns nav={nav || <EditProjectNav />}>{children}</FormColumns>
           </div>
-          <div className="grow max-w-xl px-6 pb-24 pt-0">{children}</div>
         </div>
         <SubmitChangesBar />
       </form>
       {loading && <LoadingOverlay />}
     </FormProvider>
   );
+
+  if (projectType) {
+    return <ProjectTypeContext.Provider value={projectType}>{content}</ProjectTypeContext.Provider>;
+  }
+
+  return content;
 }

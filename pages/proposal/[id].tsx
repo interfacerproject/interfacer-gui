@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "lib/apollo-compat";
 import { Badge, Button, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { Status } from "@bbtgnn/polaris-interfacer/build/ts/latest/src/components/Badge";
 import { AddProductMajor, RemoveProductMajor } from "@shopify/polaris-icons";
@@ -37,7 +37,7 @@ import { GetUnitAndCurrencyQuery, ProposedStatus, QueryProposalQuery, QueryPropo
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import useInBox from "../../hooks/useInBox";
+import { useInBoxContext } from "../../hooks/useInBox";
 import MdParser from "../../lib/MdParser";
 import { MessageSubject, ProposalNotification } from "../notification";
 
@@ -49,7 +49,7 @@ const Proposal = () => {
   const { data, loading, refetch } = useQuery<QueryProposalQuery, QueryProposalQueryVariables>(QUERY_PROPOSAL, {
     variables: { id: id?.toString() || "" },
   });
-  const { sendMessage } = useInBox();
+  const { sendMessage } = useInBoxContext();
   const { addStrengthsPoints, addIdeaPoints } = useWallet({});
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
@@ -172,7 +172,7 @@ const Proposal = () => {
 
   return (
     <>
-      <div className="mx-auto max-w-lg pt-6 min-h-full">
+      <div className="mx-auto w-full max-w-lg px-4 pt-6 min-h-full">
         <Stack vertical spacing="extraLoose">
           <div className="flex justify-between">
             <PTitleSubtitle title={t("Contribution Proposal")} subtitle={t("Read the comunity guidelines")} />
@@ -219,7 +219,7 @@ const Proposal = () => {
       </div>
 
       {renderActions && (
-        <div className="bg-yellow-100 border-t-1 border-t-border-warning-subdued p-4 flex justify-end items-center space-x-6 sticky bottom-0 z-20">
+        <div className="bg-yellow-100 border-t-1 border-t-border-warning-subdued p-4 flex flex-wrap justify-end items-center gap-3 sm:gap-6 sticky bottom-0 z-20">
           <div className="space-x-2">
             <Button
               size="large"
