@@ -186,7 +186,7 @@ export function FormSection({ id, accent = formAccents.design, children }: FormS
       className="bg-ifr-surface border border-ifr scroll-mt-6"
       style={{ borderRadius: "var(--ifr-radius-lg)" }}
     >
-      <div className="flex flex-col gap-10 items-start py-6 px-4 md:py-8 md:px-[33px]">
+      <div className="flex flex-col gap-10 items-stretch py-6 px-4 md:py-8 md:px-[33px]">
         <FormSectionContext.Provider value={{ accent }}>{children}</FormSectionContext.Provider>
       </div>
     </section>
