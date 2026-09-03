@@ -4,9 +4,13 @@ import { EnvVariables, test } from "./fixtures/test";
 test.describe("When user is not logged in", () => {
   test("Should see /", async ({ page }) => {
     await page.goto("");
-    await expect(page.getByRole("heading", { name: "Empowering the Open Source Hardware Community" })).toBeVisible();
-    expect(page.getByRole("button", { name: "Log In" })).toBeTruthy();
-    await expect(page.getByRole("button", { name: "Register" })).toBeVisible();
+    // Hero headline, from the Figma-matched homepage (see HomeHero.tsx).
+    await expect(page.getByRole("heading", { name: /Open hardware/i, level: 1 })).toBeVisible();
+    // Both CTAs render as links (next/link), not buttons.
+    await expect(page.getByRole("link", { name: "Explore Designs" })).toBeVisible();
+    // "Join Interfacer — free" also appears further down, in the open-source
+    // CTA section, so scope to the hero's one.
+    await expect(page.getByRole("link", { name: "Join Interfacer — free" }).first()).toBeVisible();
   });
 
   test("Should see /sign_in", async ({ page }) => {
