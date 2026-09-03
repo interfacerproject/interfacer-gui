@@ -181,6 +181,20 @@ table {
   border-radius: 0.5rem !important;
   @apply max-w-none w-full border-slate-400;
 }
+/* The map mini-card carries its own surface, border and shadow (DTEC node
+   943:60941), so the popup around it is only a positioning shell. */
+.ifr-map-popup .mapboxgl-popup-content {
+  padding: 0 !important;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0 !important;
+}
+
+.ifr-map-popup .mapboxgl-popup-tip {
+  display: none;
+}
+
 .mapboxgl-ctrl-bottom-left {
   @apply hidden;
 }

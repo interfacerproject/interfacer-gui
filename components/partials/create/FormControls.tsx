@@ -119,7 +119,7 @@ export function CheckOption({ label, checked, onChange, type = "checkbox", name 
 
 // ─── Category card ──────────────────────────────────────────────────────────
 
-interface CategoryVisual {
+export interface CategoryVisual {
   Icon: CarbonIconType;
   color: string;
   bg: string;
@@ -131,7 +131,8 @@ interface CategoryVisual {
  */
 const neutralVisual: CategoryVisual = { Icon: Tools, color: "#6c707c", bg: "#f3f3f4" };
 
-const categoryVisuals: Record<string, CategoryVisual> = {
+/** Exported so other surfaces (e.g. the homepage category chips) show the same icon per category. */
+export const categoryVisuals: Record<string, CategoryVisual> = {
   Electronics: { Icon: Chip, color: "#f1bd4d", bg: "#fefaf0" },
   Tools: neutralVisual,
   Furniture: { Icon: DeskAdjustable, color: "#6c707c", bg: "#f3f3f4" },

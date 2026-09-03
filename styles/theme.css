@@ -92,6 +92,11 @@
   --ifr-bg-bookmark: rgba(255, 255, 255, 0.9);
   --ifr-bg-avatar: rgba(3, 106, 83, 0.2);
   --ifr-bg-quote: #f6f6f7;
+  --ifr-bg-dark: #042220;
+  --ifr-bg-subdued: #fafbfb;
+
+  /* --- Inverse text, for use on --ifr-bg-dark --- */
+  --ifr-text-inverse: #ffffff;
 
   /* --- Border colors --- */
   --ifr-border: #c9cccf;
