@@ -428,3 +428,310 @@ table {
   padding-left: 1.25em !important;
   margin: 0.25em 0 !important;
 }
+
+/* ===========================================================================
+   Form controls — Figma prototype parity
+   ---------------------------------------------------------------------------
+   The create/edit forms are built on Polaris inputs, which ship Shopify's own
+   surfaces, focus rings and label typography. The prototype draws the same
+   controls from the --ifr-* palette: a tinted 36px field on a hairline border
+   with a 1px shadow, a green focus ring instead of Shopify blue, and a
+   14px/24px medium label over a 14px secondary help line.
+
+   These rules re-skin the Polaris primitives in place so every form in the app
+   picks up the prototype look without each field being rewritten. Only form
+   chrome is touched — buttons, cards and layout keep their own styling.
+   =========================================================================== */
+
+/* --- Label ---------------------------------------------------------------- */
+
+.Polaris-Labelled__LabelWrapper {
+  margin-bottom: 6px;
+}
+
+.Polaris-Label__Text,
+.Polaris-Label__Text .Polaris-Text--root {
+  font-family: var(--ifr-font-body);
+  font-size: var(--ifr-fs-base);
+  font-weight: var(--ifr-fw-medium);
+  line-height: 24px;
+  color: var(--ifr-text-primary);
+}
+
+/* Polaris paints the asterisk with its own critical colour. */
+.Polaris-Label__RequiredIndicator::after {
+  color: var(--ifr-red);
+}
+
+/* --- Help text and inline errors ------------------------------------------ */
+
+.Polaris-Labelled__HelpText,
+.Polaris-Labelled__HelpText .Polaris-Text--root {
+  margin-top: 6px;
+  font-family: var(--ifr-font-body);
+  font-size: var(--ifr-fs-base);
+  font-weight: var(--ifr-fw-regular);
+  line-height: normal;
+  color: var(--ifr-text-secondary);
+}
+
+.Polaris-Labelled__Error .Polaris-InlineError {
+  font-family: var(--ifr-font-body);
+  font-size: var(--ifr-fs-base);
+  color: var(--ifr-red);
+}
+
+/* --- Text fields ---------------------------------------------------------- */
+
+.Polaris-TextField__Backdrop {
+  background-color: var(--ifr-bg-form-input);
+  border: 1px solid var(--ifr-border-form-input);
+  border-top-color: var(--ifr-border-form-input);
+  border-radius: var(--ifr-radius-md);
+  box-shadow: var(--ifr-shadow-sm);
+}
+
+/* Focus: a 1px green ring, not Shopify's 2px blue halo. */
+.Polaris-TextField__Input:focus ~ .Polaris-TextField__Backdrop::after,
+.Polaris-TextField--focus > .Polaris-TextField__VerticalContent ~ .Polaris-TextField__Backdrop::after,
+.Polaris-TextField__Backdrop::after {
+  box-shadow: 0 0 0 0 var(--ifr-green);
+  border-radius: calc(var(--ifr-radius-md) + 1px);
+}
+
+.Polaris-TextField__Input:focus ~ .Polaris-TextField__Backdrop::after,
+.Polaris-TextField--focus > .Polaris-TextField__VerticalContent ~ .Polaris-TextField__Backdrop::after {
+  box-shadow: 0 0 0 1px var(--ifr-green);
+}
+
+.Polaris-TextField__Input {
+  min-height: var(--ifr-control-height);
+  padding: 0 13px;
+  font-family: var(--ifr-font-body);
+  font-size: var(--ifr-fs-md);
+  font-weight: var(--ifr-fw-regular);
+  color: var(--ifr-text-primary);
+}
+
+.Polaris-TextField__Input::placeholder {
+  color: var(--ifr-placeholder);
+}
+
+.Polaris-TextField--multiline .Polaris-TextField__Input {
+  min-height: 105px;
+  padding: 9px 13px;
+  resize: vertical;
+}
+
+.Polaris-TextField--error .Polaris-TextField__Backdrop {
+  background-color: var(--ifr-red-hover-bg);
+  border-color: var(--ifr-red);
+}
+
+/* --- Select --------------------------------------------------------------- */
+
+.Polaris-Select__Backdrop {
+  background-color: var(--ifr-bg-form-input);
+  border: 1px solid var(--ifr-border-form-input);
+  border-top-color: var(--ifr-border-form-input);
+  border-radius: var(--ifr-radius-md);
+  box-shadow: var(--ifr-shadow-sm);
+}
+
+.Polaris-Select__Input,
+.Polaris-Select__Content {
+  min-height: var(--ifr-control-height);
+  font-family: var(--ifr-font-body);
+  font-size: var(--ifr-fs-md);
+  font-weight: var(--ifr-fw-regular);
+  color: var(--ifr-text-primary);
+}
+
+.Polaris-Select__Input:focus-visible ~ .Polaris-Select__Backdrop::after {
+  box-shadow: 0 0 0 1px var(--ifr-green);
+}
+
+/* --- Checkbox / radio ----------------------------------------------------- */
+
+.Polaris-Checkbox__Backdrop,
+.Polaris-RadioButton__Backdrop {
+  border-color: var(--ifr-border);
+  box-shadow: var(--ifr-shadow-sm);
+}
+
+.Polaris-Checkbox__Input:checked ~ .Polaris-Checkbox__Backdrop,
+.Polaris-RadioButton__Input:checked ~ .Polaris-RadioButton__Backdrop {
+  background-color: var(--ifr-green);
+  border-color: var(--ifr-green);
+}
+
+.Polaris-Checkbox__Icon svg,
+.Polaris-RadioButton__Icon {
+  fill: #fff;
+}
+
+.Polaris-Choice__Label,
+.Polaris-Choice__Label .Polaris-Text--root {
+  font-family: var(--ifr-font-body);
+  font-size: var(--ifr-fs-base);
+  font-weight: var(--ifr-fw-medium);
+  color: var(--ifr-text-primary);
+}
+
+/* --- Range slider --------------------------------------------------------- */
+/* Polaris paints a dashed grey rail plus a blue interactive track. The
+   prototype draws one 16px pill: green up to the current value, pale blue
+   after it, with a white thumb ringed in green. */
+
+.Polaris-RangeSlider-SingleThumb {
+  --pc-range-slider-track-height: 16px;
+  --pc-range-slider-thumb-size: 16px;
+  --pc-ifr-track: linear-gradient(
+    to right,
+    var(--ifr-green) 0,
+    var(--ifr-green) var(--pc-range-slider-progress),
+    rgba(200, 212, 229, 0.5) var(--pc-range-slider-progress),
+    rgba(200, 212, 229, 0.5) 100%
+  );
+}
+
+/* The dashed rail Polaris draws behind the input. */
+.Polaris-RangeSlider-SingleThumb__InputWrapper::after {
+  display: none;
+}
+
+.Polaris-RangeSlider-SingleThumb__InputWrapper {
+  height: 16px;
+}
+
+.Polaris-RangeSlider-SingleThumb__InputWrapper input {
+  padding: 0;
+}
+
+.Polaris-RangeSlider-SingleThumb__Input::-webkit-slider-runnable-track {
+  height: 16px;
+  background-image: var(--pc-ifr-track);
+  border-radius: var(--ifr-radius-full);
+}
+
+.Polaris-RangeSlider-SingleThumb__Input::-moz-range-track {
+  height: 16px;
+  background-image: var(--pc-ifr-track);
+  border-radius: var(--ifr-radius-full);
+}
+
+.Polaris-RangeSlider-SingleThumb__Input::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  margin-top: 0;
+  background: #fff;
+  border: 1px solid var(--ifr-green);
+  box-shadow: var(--ifr-shadow-sm);
+}
+
+.Polaris-RangeSlider-SingleThumb__Input::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border: 1px solid var(--ifr-green);
+  box-shadow: var(--ifr-shadow-sm);
+}
+
+.Polaris-RangeSlider-SingleThumb__Input:hover::-webkit-slider-thumb,
+.Polaris-RangeSlider-SingleThumb__Input:hover::-moz-range-thumb {
+  background: #fff;
+}
+
+.Polaris-RangeSlider-SingleThumb__Input:active::-webkit-slider-thumb,
+.Polaris-RangeSlider-SingleThumb__Input:active::-moz-range-thumb {
+  transform: none;
+}
+
+.Polaris-RangeSlider-SingleThumb__Input:focus::-webkit-slider-thumb,
+.Polaris-RangeSlider-SingleThumb__Input:focus::-moz-range-thumb {
+  border-color: var(--ifr-green);
+  box-shadow: 0 0 0 2px var(--ifr-green-bg);
+}
+
+/* --- Drop zone ------------------------------------------------------------ */
+
+.Polaris-DropZone {
+  background-color: transparent;
+  border-radius: var(--ifr-radius-md);
+}
+
+.Polaris-DropZone::after {
+  border: 2px dashed var(--ifr-border);
+  border-radius: var(--ifr-radius-md);
+}
+
+.Polaris-DropZone--hasOutline:not(.Polaris-DropZone--isDisabled):hover {
+  background-color: var(--ifr-bg-hover-light);
+}
+
+.Polaris-DropZone-FileUpload__Action {
+  background-color: var(--ifr-bg-upload-btn);
+  border: none;
+  border-radius: var(--ifr-radius-md);
+  padding: 0 4px;
+  font-family: var(--ifr-font-body);
+  font-size: var(--ifr-fs-base);
+  font-weight: var(--ifr-fw-regular);
+  line-height: 16px;
+  color: var(--ifr-text-primary);
+  box-shadow: none;
+}
+
+/* --- Drop zone size ------------------------------------------------------- */
+/* The prototype's picture well is a tall 228px target, not Polaris' short bar. */
+
+.Polaris-DropZone--sizeLarge {
+  min-height: 228px;
+}
+
+/* --- Markdown editor ------------------------------------------------------ */
+/* react-markdown-editor-lite draws its own 1px grey frame; match the field. */
+
+.rc-md-editor {
+  background-color: var(--ifr-bg-form-input);
+  border: 1px solid var(--ifr-border-form-input);
+  border-radius: var(--ifr-radius-md);
+  box-shadow: var(--ifr-shadow-sm);
+  overflow: hidden;
+}
+
+.rc-md-editor .rc-md-navigation {
+  background-color: var(--ifr-bg-form-input);
+  border-bottom: 1px solid var(--ifr-border-form-input);
+}
+
+.rc-md-editor .sec-md .input {
+  background-color: var(--ifr-bg-form-input);
+  font-family: var(--ifr-font-body);
+  font-size: var(--ifr-fs-md);
+  color: var(--ifr-text-primary);
+  padding: 9px 13px;
+}
+
+/* --- Form action row ------------------------------------------------------ */
+/* Draft buttons are Polaris buttons; the prototype pairs a plain outlined
+   control with the yellow publish button, so re-skin them where they sit. */
+
+.ifr-form-actions .Polaris-Button {
+  min-height: var(--ifr-control-height);
+  min-width: 231px;
+  justify-content: center;
+  background: var(--ifr-bg-surface);
+  border: 1px solid var(--ifr-border);
+  border-radius: var(--ifr-radius-sm);
+  box-shadow: none;
+  font-family: var(--ifr-font-body);
+  font-size: var(--ifr-fs-base);
+  font-weight: var(--ifr-fw-medium);
+  line-height: 20px;
+  color: var(--ifr-text-primary);
+}
+
+.ifr-form-actions .Polaris-Button:hover:not(.Polaris-Button--disabled) {
+  background: var(--ifr-bg-hover);
+}

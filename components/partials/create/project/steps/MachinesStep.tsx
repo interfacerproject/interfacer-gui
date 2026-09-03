@@ -1,5 +1,5 @@
 import { Stack } from "@bbtgnn/polaris-interfacer";
-import PHelp from "components/polaris/PHelp";
+import { ToggleField } from "components/partials/create/FormControls";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import SearchMachines from "components/SearchMachines";
 import { useTranslation } from "next-i18next";
@@ -62,25 +62,14 @@ export default function MachinesStep() {
 
   return (
     <Stack vertical spacing="loose">
-      {/* Header with title and help text */}
-      <PTitleSubtitle title={t("Machines Used")} />
-      <PHelp helpText={t("Select the machines used to create this project")} />
+      <PTitleSubtitle title={t("Machines Used")} subtitle={t("Select the machines used to create this project")} />
 
-      {/* Toggle to enable/disable machines */}
-      <button
-        type="button"
-        onClick={handleMachinesToggle}
-        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-          machinesEnabled ? "bg-green-600" : "bg-gray-300"
-        }`}
-      >
-        <span className="sr-only">{t("Enable machines")}</span>
-        <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-            machinesEnabled ? "translate-x-4" : "translate-x-1"
-          }`}
-        />
-      </button>
+      <ToggleField
+        label={t("List machines")}
+        description={t("Name the equipment this project was made on")}
+        checked={machinesEnabled}
+        onChange={handleMachinesToggle}
+      />
 
       {/* Machines selection interface */}
       {machinesEnabled && (

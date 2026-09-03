@@ -8,11 +8,25 @@ import { FETCH_RESOURCES } from "lib/QueryAndMutation";
 import type { FetchInventoryQuery } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import LoadingOverlay from "components/LoadingOverlay";
+import PTitleSubtitle from "components/polaris/PTitleSubtitle";
+import {
+  FormActions,
+  FormColumns,
+  FormHeading,
+  FormSection,
+  formAccents,
+  FormNavRail,
+  formPrimaryButtonClass,
+  formPrimaryButtonStyle,
+  formSecondaryButtonClass,
+  formSecondaryButtonStyle,
+  useSectionScrollSpy,
+} from "components/partials/create/FormShell";
 import { CollapsibleSection } from "components/partials/create/project/steps/DPPStep/components";
 import { dppStepSchema } from "components/partials/create/project/steps/DPPStep/schema";
 import {
@@ -83,74 +97,19 @@ const navSections: DppNavSection[] = [
 
 function CreateDppNav() {
   const { t } = useTranslation("createProjectProps");
-  const [activeId, setActiveId] = useState<string>("");
+  const { activeId, scrollTo } = useSectionScrollSpy(navSections.map(s => s.id));
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
-        }
-      },
-      { rootMargin: "-20% 0px -60% 0px", threshold: 0 }
-    );
-
-    for (const section of navSections) {
-      const el = document.getElementById(section.id);
-      if (el) observer.observe(el);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  const scrollTo = useCallback((id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
-
-  return (
-    <nav
-      className="bg-ifr-surface border border-ifr rounded-ifr-md p-3 lg:p-4 flex flex-row lg:flex-col items-center lg:items-stretch gap-2 lg:gap-1 overflow-x-auto lg:overflow-visible overscroll-x-contain"
-      aria-label={t("Sections")}
-    >
-      <p
-        className="hidden lg:block text-ifr-text-secondary m-0 mb-2 px-3"
-        style={{
-          fontFamily: "var(--ifr-font-body)",
-          fontSize: "var(--ifr-fs-sm)",
-          fontWeight: "var(--ifr-fw-semibold)",
-          textTransform: "uppercase",
-          letterSpacing: "0.05em",
-        }}
-      >
-        {t("Sections")}
-      </p>
-      {navSections.map(section => {
-        const isActive = activeId === section.id;
-        return (
-          <button
-            key={section.id}
-            type="button"
-            onClick={() => scrollTo(section.id)}
-            className={`text-left shrink-0 whitespace-nowrap px-3 py-2 border-none cursor-pointer transition-colors rounded-sm ${
-              isActive ? "bg-ifr-hover" : "bg-transparent hover:bg-ifr-hover/50"
-            }`}
-            style={{
-              fontFamily: "var(--ifr-font-body)",
-              fontSize: "var(--ifr-fs-base)",
-              fontWeight: isActive ? "var(--ifr-fw-semibold)" : "var(--ifr-fw-medium)",
-              color: isActive ? "var(--ifr-text-primary)" : "var(--ifr-text-secondary)",
-              borderRadius: "var(--ifr-radius-sm)",
-            }}
-          >
-            {t(section.label)}
-          </button>
-        );
-      })}
-    </nav>
+  const items = useMemo(
+    () =>
+      navSections.map(section => ({
+        id: section.id,
+        label: t(section.label),
+        required: section.id === "select-product",
+      })),
+    [t]
   );
+
+  return <FormNavRail items={items} activeId={activeId} onSelect={scrollTo} ariaLabel={t("Sections")} />;
 }
 
 // ─── Main Form ──────────────────────────────────────────────────────────────
@@ -270,130 +229,38 @@ export default function CreateDppForm() {
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col min-h-screen bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-          <div className="flex-1 flex flex-col lg:flex-row lg:justify-center gap-6 lg:gap-12 p-4 md:p-6 max-w-[1280px] mx-auto w-full">
-            {/* Sidebar Nav — sticky rail on desktop, jump strip on phones */}
-            <div className="lg:w-[260px] lg:shrink-0">
-              <div className="lg:sticky lg:top-24">
-                <CreateDppNav />
-              </div>
-            </div>
+        <>
+          <FormHeading
+            title={t("Create Digital Product Passport")}
+            subtitle={t(
+              "Document the lifecycle, materials, and sustainability information of your product. Help consumers and regulators access transparent product data."
+            )}
+          />
 
-            {/* Main Content */}
-            <div className="flex-1 min-w-0 max-w-2xl pb-24">
-              <div className="flex flex-col gap-6">
-                {/* Header */}
-                <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-8 px-8">
-                  <h1
-                    className="text-ifr-text-primary m-0 mb-2"
-                    style={{
-                      fontFamily: "var(--ifr-font-heading)",
-                      fontSize: "var(--ifr-fs-2xl)",
-                      fontWeight: "var(--ifr-fw-bold)",
-                      lineHeight: "1.2",
-                    }}
-                  >
-                    {t("Create Digital Product Passport")}
-                  </h1>
-                  <p
-                    className="text-ifr-text-secondary m-0"
-                    style={{
-                      fontFamily: "var(--ifr-font-body)",
-                      fontSize: "var(--ifr-fs-md)",
-                      lineHeight: "1.6",
-                    }}
-                  >
-                    {t(
-                      "Document the lifecycle, materials, and sustainability information of your product. Help consumers and regulators access transparent product data."
-                    )}
-                  </p>
-                </div>
-
-                {/* Select Product Section */}
-                <div>
-                  <div id="select-product" className="scroll-mt-24" />
-                  <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-8 px-8">
-                    <div className="flex flex-col gap-6">
-                      <div>
-                        <h2
-                          className="text-ifr-text-primary m-0"
-                          style={{
-                            fontFamily: "var(--ifr-font-heading)",
-                            fontSize: "var(--ifr-fs-lg)",
-                            fontWeight: "var(--ifr-fw-semibold)",
-                          }}
-                        >
-                          {t("Select product")} <span style={{ color: "var(--ifr-green)" }}>*</span>
-                        </h2>
-                        <p
-                          className="text-ifr-text-secondary m-0 mt-1"
-                          style={{
-                            fontFamily: "var(--ifr-font-body)",
-                            fontSize: "var(--ifr-fs-base)",
-                            lineHeight: "1.5",
-                          }}
-                        >
-                          {t(
-                            "A DPP must be linked to one of your published products. Select the product before filling in the passport data."
-                          )}
-                        </p>
-                      </div>
-
-                      {/* Selected product badge */}
-                      {selectedProduct && (
-                        <div
-                          className="flex items-center gap-3 px-3 py-2.5 w-full"
-                          style={{
-                            borderRadius: "var(--ifr-radius-sm)",
-                            border: "1px solid var(--ifr-green)",
-                            backgroundColor: "var(--ifr-green-bg, rgba(16,185,129,0.08))",
-                          }}
-                        >
-                          <div className="flex flex-col flex-1 min-w-0">
-                            <span
-                              className="text-ifr-text-primary"
-                              style={{
-                                fontFamily: "var(--ifr-font-body)",
-                                fontSize: "var(--ifr-fs-base)",
-                                fontWeight: "var(--ifr-fw-medium)",
-                              }}
-                            >
-                              {selectedProduct.name}
-                            </span>
-                            <span
-                              className="text-ifr-text-secondary"
-                              style={{
-                                fontFamily: "var(--ifr-font-body)",
-                                fontSize: "var(--ifr-fs-sm)",
-                              }}
-                            >
-                              {selectedProduct.id}
-                            </span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setSelectedProduct(null)}
-                            className="flex items-center justify-center bg-transparent border-none cursor-pointer p-1 hover:opacity-70 transition-opacity shrink-0"
-                            aria-label={t("Deselect product")}
-                          >
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <line x1="18" y1="6" x2="6" y2="18" />
-                              <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                          </button>
-                        </div>
-                      )}
-
-                      {/* Product search dropdown */}
-                      <div className="flex flex-col gap-1.5">
-                        <label
+          <FormColumns nav={<CreateDppNav />}>
+            <>
+              {/* Select Product Section */}
+              <FormSection id="select-product" accent={formAccents.dpp}>
+                <PTitleSubtitle
+                  title={t("Select product")}
+                  required
+                  subtitle={t(
+                    "A DPP must be linked to one of your published products. Select the product before filling in the passport data."
+                  )}
+                />
+                <div className="flex flex-col gap-6 w-full">
+                  {/* Selected product badge */}
+                  {selectedProduct && (
+                    <div
+                      className="flex items-center gap-3 px-3 py-2.5 w-full"
+                      style={{
+                        borderRadius: "var(--ifr-radius-sm)",
+                        border: "1px solid var(--ifr-green)",
+                        backgroundColor: "var(--ifr-green-bg, rgba(16,185,129,0.08))",
+                      }}
+                    >
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <span
                           className="text-ifr-text-primary"
                           style={{
                             fontFamily: "var(--ifr-font-body)",
@@ -401,402 +268,408 @@ export default function CreateDppForm() {
                             fontWeight: "var(--ifr-fw-medium)",
                           }}
                         >
-                          {t("Product")} <span style={{ color: "var(--ifr-green)" }}>*</span>
-                        </label>
-                        <div className="relative" ref={dropdownRef}>
-                          <div
-                            className="flex items-center gap-2 w-full bg-transparent border border-ifr cursor-text"
-                            style={{
-                              height: "var(--ifr-control-height)",
-                              borderRadius: "var(--ifr-radius-sm)",
-                              padding: "0 12px",
-                            }}
-                            onClick={() => setProductDropdownOpen(true)}
-                          >
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              className="text-ifr-text-secondary shrink-0"
-                            >
-                              <circle cx="11" cy="11" r="8" />
-                              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                            </svg>
-                            <input
-                              type="text"
-                              value={productSearch}
-                              onChange={e => {
-                                setProductSearch(e.target.value);
-                                setProductDropdownOpen(true);
-                              }}
-                              placeholder={t("Search by product name or ID…")}
-                              className="flex-1 bg-transparent border-none outline-none text-ifr-text-primary placeholder:text-ifr-text-secondary h-full"
-                              style={{
-                                fontFamily: "var(--ifr-font-body)",
-                                fontSize: "var(--ifr-fs-base)",
-                              }}
-                              onFocus={() => setProductDropdownOpen(true)}
-                            />
-                          </div>
-                          {productDropdownOpen && userProducts.length > 0 && (
-                            <div
-                              className="absolute z-50 w-full bg-ifr-surface mt-1 overflow-hidden max-h-[280px] overflow-y-auto border border-ifr"
-                              style={{
-                                borderRadius: "var(--ifr-radius-sm)",
-                                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                              }}
-                            >
-                              {userProducts.map(product => {
-                                const isSelected = selectedProduct?.id === product.id;
-                                return (
-                                  <button
-                                    key={product.id}
-                                    type="button"
-                                    onClick={() => {
-                                      setSelectedProduct({ id: product.id, name: product.name });
-                                      setProductSearch("");
-                                      setProductDropdownOpen(false);
-                                    }}
-                                    className={`flex items-center justify-between w-full px-3 py-2.5 border-none cursor-pointer text-left ${
-                                      isSelected ? "bg-ifr-hover" : "bg-transparent hover:bg-ifr-hover/50"
-                                    }`}
-                                  >
-                                    <div className="flex flex-col gap-0.5">
-                                      <span
-                                        className="text-ifr-text-primary"
-                                        style={{
-                                          fontFamily: "var(--ifr-font-body)",
-                                          fontSize: "var(--ifr-fs-base)",
-                                          fontWeight: "var(--ifr-fw-medium)",
-                                        }}
-                                      >
-                                        {product.name}
-                                      </span>
-                                      <span
-                                        className="text-ifr-text-secondary"
-                                        style={{
-                                          fontFamily: "var(--ifr-font-body)",
-                                          fontSize: "var(--ifr-fs-sm)",
-                                        }}
-                                      >
-                                        {product.id}
-                                      </span>
-                                    </div>
-                                    {isSelected && (
-                                      <svg
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="var(--ifr-green)"
-                                        strokeWidth="2"
-                                        className="shrink-0"
-                                      >
-                                        <polyline points="20 6 9 17 4 12" />
-                                      </svg>
-                                    )}
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-                        <p
-                          className="text-ifr-text-secondary m-0"
+                          {selectedProduct.name}
+                        </span>
+                        <span
+                          className="text-ifr-text-secondary"
                           style={{
                             fontFamily: "var(--ifr-font-body)",
                             fontSize: "var(--ifr-fs-sm)",
                           }}
                         >
-                          {t(
-                            "Only your published products are listed. A DPP cannot be created without a parent product."
-                          )}
-                        </p>
+                          {selectedProduct.id}
+                        </span>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedProduct(null)}
+                        className="flex items-center justify-center bg-transparent border-none cursor-pointer p-1 hover:opacity-70 transition-opacity shrink-0"
+                        aria-label={t("Deselect product")}
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </button>
                     </div>
+                  )}
+
+                  {/* Product search dropdown */}
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      className="text-ifr-text-primary"
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-base)",
+                        fontWeight: "var(--ifr-fw-medium)",
+                      }}
+                    >
+                      {t("Product")} <span style={{ color: "var(--ifr-red)" }}>*</span>
+                    </label>
+                    <div className="relative" ref={dropdownRef}>
+                      <div
+                        className="flex items-center gap-2 w-full bg-transparent border border-ifr cursor-text"
+                        style={{
+                          height: "var(--ifr-control-height)",
+                          borderRadius: "var(--ifr-radius-sm)",
+                          padding: "0 12px",
+                        }}
+                        onClick={() => setProductDropdownOpen(true)}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className="text-ifr-text-secondary shrink-0"
+                        >
+                          <circle cx="11" cy="11" r="8" />
+                          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input
+                          type="text"
+                          value={productSearch}
+                          onChange={e => {
+                            setProductSearch(e.target.value);
+                            setProductDropdownOpen(true);
+                          }}
+                          placeholder={t("Search by product name or ID…")}
+                          className="flex-1 bg-transparent border-none outline-none text-ifr-text-primary placeholder:text-ifr-text-secondary h-full"
+                          style={{
+                            fontFamily: "var(--ifr-font-body)",
+                            fontSize: "var(--ifr-fs-base)",
+                          }}
+                          onFocus={() => setProductDropdownOpen(true)}
+                        />
+                      </div>
+                      {productDropdownOpen && userProducts.length > 0 && (
+                        <div
+                          className="absolute z-50 w-full bg-ifr-surface mt-1 overflow-hidden max-h-[280px] overflow-y-auto border border-ifr"
+                          style={{
+                            borderRadius: "var(--ifr-radius-sm)",
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                          }}
+                        >
+                          {userProducts.map(product => {
+                            const isSelected = selectedProduct?.id === product.id;
+                            return (
+                              <button
+                                key={product.id}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedProduct({ id: product.id, name: product.name });
+                                  setProductSearch("");
+                                  setProductDropdownOpen(false);
+                                }}
+                                className={`flex items-center justify-between w-full px-3 py-2.5 border-none cursor-pointer text-left ${
+                                  isSelected ? "bg-ifr-hover" : "bg-transparent hover:bg-ifr-hover/50"
+                                }`}
+                              >
+                                <div className="flex flex-col gap-0.5">
+                                  <span
+                                    className="text-ifr-text-primary"
+                                    style={{
+                                      fontFamily: "var(--ifr-font-body)",
+                                      fontSize: "var(--ifr-fs-base)",
+                                      fontWeight: "var(--ifr-fw-medium)",
+                                    }}
+                                  >
+                                    {product.name}
+                                  </span>
+                                  <span
+                                    className="text-ifr-text-secondary"
+                                    style={{
+                                      fontFamily: "var(--ifr-font-body)",
+                                      fontSize: "var(--ifr-fs-sm)",
+                                    }}
+                                  >
+                                    {product.id}
+                                  </span>
+                                </div>
+                                {isSelected && (
+                                  <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="var(--ifr-green)"
+                                    strokeWidth="2"
+                                    className="shrink-0"
+                                  >
+                                    <polyline points="20 6 9 17 4 12" />
+                                  </svg>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                    <p
+                      className="text-ifr-text-secondary m-0"
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-sm)",
+                      }}
+                    >
+                      {t("Only your published products are listed. A DPP cannot be created without a parent product.")}
+                    </p>
                   </div>
                 </div>
+              </FormSection>
 
-                {/* Identification Section */}
-                <div>
-                  <div id="identification" className="scroll-mt-24" />
-                  <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-8 px-8">
-                    <div className="flex flex-col gap-6">
-                      <h2
-                        className="text-ifr-text-primary m-0"
-                        style={{
-                          fontFamily: "var(--ifr-font-heading)",
-                          fontSize: "var(--ifr-fs-lg)",
-                          fontWeight: "var(--ifr-fw-semibold)",
-                        }}
-                      >
-                        {t("Identification")}
-                      </h2>
-
-                      {/* Batch Type */}
-                      <div className="flex flex-col gap-2">
+              {/* Identification Section */}
+              <FormSection id="identification" accent={formAccents.dpp}>
+                <PTitleSubtitle
+                  title={t("Identification")}
+                  subtitle={t("Whether this passport covers a production batch or a single unit.")}
+                />
+                <div className="flex flex-col gap-6 w-full">
+                  {/* Batch Type */}
+                  <div className="flex flex-col gap-2">
+                    <label
+                      className="text-ifr-text-primary"
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-base)",
+                        fontWeight: "var(--ifr-fw-medium)",
+                      }}
+                    >
+                      {t("Type")} <span style={{ color: "var(--ifr-red)" }}>*</span>
+                    </label>
+                    <div className="flex gap-3">
+                      {(["batch", "unit"] as const).map(type => (
                         <label
-                          className="text-ifr-text-primary"
-                          style={{
-                            fontFamily: "var(--ifr-font-body)",
-                            fontSize: "var(--ifr-fs-base)",
-                            fontWeight: "var(--ifr-fw-medium)",
-                          }}
-                        >
-                          {t("Type")} <span style={{ color: "var(--ifr-green)" }}>*</span>
-                        </label>
-                        <div className="flex gap-3">
-                          {(["batch", "unit"] as const).map(type => (
-                            <label
-                              key={type}
-                              className={`flex items-center gap-2 px-4 cursor-pointer border transition-colors ${
-                                batchType === type
-                                  ? "border-ifr bg-ifr-hover"
-                                  : "border-ifr bg-transparent hover:bg-ifr-hover/50"
-                              }`}
-                              style={{
-                                height: "var(--ifr-control-height)",
-                                borderRadius: "var(--ifr-radius-sm)",
-                                fontFamily: "var(--ifr-font-body)",
-                                fontSize: "var(--ifr-fs-base)",
-                              }}
-                            >
-                              <input
-                                type="radio"
-                                value={type}
-                                {...register("batchType")}
-                                className="accent-[var(--ifr-green)]"
-                              />
-                              <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-medium)" }}>
-                                {type === "batch" ? t("Batch") : t("Single Unit")}
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                        <p
-                          className="text-ifr-text-secondary m-0"
-                          style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-                        >
-                          {batchType === "batch"
-                            ? t("A DPP covering a batch of identical items (e.g., production run)")
-                            : t("A DPP for a single, individually tracked item")}
-                        </p>
-                      </div>
-
-                      {/* Batch / Serial ID */}
-                      <div className="flex flex-col gap-2">
-                        <label
-                          htmlFor="batchId"
-                          className="text-ifr-text-primary"
-                          style={{
-                            fontFamily: "var(--ifr-font-body)",
-                            fontSize: "var(--ifr-fs-base)",
-                            fontWeight: "var(--ifr-fw-medium)",
-                          }}
-                        >
-                          {batchType === "batch" ? t("Batch ID") : t("Serial Number")}{" "}
-                          <span style={{ color: "var(--ifr-green)" }}>*</span>
-                        </label>
-                        <input
-                          id="batchId"
-                          type="text"
-                          {...register("batchId")}
-                          placeholder={batchType === "batch" ? "e.g., BATCH-2024-001" : "e.g., SN-123456"}
-                          className="bg-transparent border border-ifr text-ifr-text-primary outline-none focus:border-[var(--ifr-green)] transition-colors"
+                          key={type}
+                          className={`flex items-center gap-2 px-4 cursor-pointer border transition-colors ${
+                            batchType === type
+                              ? "border-ifr bg-ifr-hover"
+                              : "border-ifr bg-transparent hover:bg-ifr-hover/50"
+                          }`}
                           style={{
                             height: "var(--ifr-control-height)",
                             borderRadius: "var(--ifr-radius-sm)",
-                            padding: "0 12px",
                             fontFamily: "var(--ifr-font-body)",
                             fontSize: "var(--ifr-fs-base)",
                           }}
-                        />
-                        {formState.errors.batchId && (
-                          <p className="text-red-500 m-0" style={{ fontSize: "var(--ifr-fs-sm)" }}>
-                            {formState.errors.batchId.message}
-                          </p>
-                        )}
-                      </div>
+                        >
+                          <input
+                            type="radio"
+                            value={type}
+                            {...register("batchType")}
+                            className="accent-[var(--ifr-green)]"
+                          />
+                          <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-medium)" }}>
+                            {type === "batch" ? t("Batch") : t("Single Unit")}
+                          </span>
+                        </label>
+                      ))}
                     </div>
+                    <p
+                      className="text-ifr-text-secondary m-0"
+                      style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                    >
+                      {batchType === "batch"
+                        ? t("A DPP covering a batch of identical items (e.g., production run)")
+                        : t("A DPP for a single, individually tracked item")}
+                    </p>
+                  </div>
+
+                  {/* Batch / Serial ID */}
+                  <div className="flex flex-col gap-2">
+                    <label
+                      htmlFor="batchId"
+                      className="text-ifr-text-primary"
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-base)",
+                        fontWeight: "var(--ifr-fw-medium)",
+                      }}
+                    >
+                      {batchType === "batch" ? t("Batch ID") : t("Serial Number")}{" "}
+                      <span style={{ color: "var(--ifr-red)" }}>*</span>
+                    </label>
+                    <input
+                      id="batchId"
+                      type="text"
+                      {...register("batchId")}
+                      placeholder={batchType === "batch" ? "e.g., BATCH-2024-001" : "e.g., SN-123456"}
+                      className="bg-transparent border border-ifr text-ifr-text-primary outline-none focus:border-[var(--ifr-green)] transition-colors"
+                      style={{
+                        height: "var(--ifr-control-height)",
+                        borderRadius: "var(--ifr-radius-sm)",
+                        padding: "0 12px",
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-base)",
+                      }}
+                    />
+                    {formState.errors.batchId && (
+                      <p className="text-red-500 m-0" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                        {formState.errors.batchId.message}
+                      </p>
+                    )}
                   </div>
                 </div>
+              </FormSection>
 
-                {/* DPP Sections */}
-                <div>
-                  <div className="bg-ifr-surface border border-ifr rounded-ifr-md py-8 px-8">
-                    <div className="flex flex-col">
-                      <div id="product-overview" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Product Overview")}
-                        isOpen={overviewOpen}
-                        onToggle={() => setOverviewOpen(!overviewOpen)}
-                        id="product-overview-collapse"
-                      >
-                        <ProductOverviewSection />
-                      </CollapsibleSection>
+              {/* DPP Sections */}
+              <FormSection accent={formAccents.dpp}>
+                <div className="flex flex-col w-full">
+                  <div id="product-overview" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Product Overview")}
+                    isOpen={overviewOpen}
+                    onToggle={() => setOverviewOpen(!overviewOpen)}
+                    id="product-overview-collapse"
+                  >
+                    <ProductOverviewSection />
+                  </CollapsibleSection>
 
-                      <div id="repairability" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Repairability")}
-                        isOpen={repairabilityOpen}
-                        onToggle={() => setRepairabilityOpen(!repairabilityOpen)}
-                        id="repairability-collapse"
-                      >
-                        <RepairabilitySection />
-                      </CollapsibleSection>
+                  <div id="repairability" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Repairability")}
+                    isOpen={repairabilityOpen}
+                    onToggle={() => setRepairabilityOpen(!repairabilityOpen)}
+                    id="repairability-collapse"
+                  >
+                    <RepairabilitySection />
+                  </CollapsibleSection>
 
-                      <div id="environmentalImpact" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Environmental Impact")}
-                        isOpen={environmentalOpen}
-                        onToggle={() => setEnvironmentalOpen(!environmentalOpen)}
-                        id="environmental-collapse"
-                      >
-                        <EnvironmentalSection />
-                      </CollapsibleSection>
+                  <div id="environmentalImpact" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Environmental Impact")}
+                    isOpen={environmentalOpen}
+                    onToggle={() => setEnvironmentalOpen(!environmentalOpen)}
+                    id="environmental-collapse"
+                  >
+                    <EnvironmentalSection />
+                  </CollapsibleSection>
 
-                      <div id="compliance" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Compliance & Standards")}
-                        isOpen={complianceOpen}
-                        onToggle={() => setComplianceOpen(!complianceOpen)}
-                        id="compliance-collapse"
-                      >
-                        <ComplianceSection />
-                      </CollapsibleSection>
+                  <div id="compliance" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Compliance & Standards")}
+                    isOpen={complianceOpen}
+                    onToggle={() => setComplianceOpen(!complianceOpen)}
+                    id="compliance-collapse"
+                  >
+                    <ComplianceSection />
+                  </CollapsibleSection>
 
-                      <div id="certificates" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Certificates")}
-                        isOpen={certificatesOpen}
-                        onToggle={() => setCertificatesOpen(!certificatesOpen)}
-                        id="certificates-collapse"
-                      >
-                        <CertificatesSection />
-                      </CollapsibleSection>
+                  <div id="certificates" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Certificates")}
+                    isOpen={certificatesOpen}
+                    onToggle={() => setCertificatesOpen(!certificatesOpen)}
+                    id="certificates-collapse"
+                  >
+                    <CertificatesSection />
+                  </CollapsibleSection>
 
-                      <div id="recyclability" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Recyclability")}
-                        isOpen={recyclabilityOpen}
-                        onToggle={() => setRecyclabilityOpen(!recyclabilityOpen)}
-                        id="recyclability-collapse"
-                      >
-                        <RecyclabilitySection />
-                      </CollapsibleSection>
+                  <div id="recyclability" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Recyclability")}
+                    isOpen={recyclabilityOpen}
+                    onToggle={() => setRecyclabilityOpen(!recyclabilityOpen)}
+                    id="recyclability-collapse"
+                  >
+                    <RecyclabilitySection />
+                  </CollapsibleSection>
 
-                      <div id="energy" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Energy Use & Efficiency")}
-                        isOpen={energyOpen}
-                        onToggle={() => setEnergyOpen(!energyOpen)}
-                        id="energy-collapse"
-                      >
-                        <EnergyUseEfficiencySection />
-                      </CollapsibleSection>
+                  <div id="energy" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Energy Use & Efficiency")}
+                    isOpen={energyOpen}
+                    onToggle={() => setEnergyOpen(!energyOpen)}
+                    id="energy-collapse"
+                  >
+                    <EnergyUseEfficiencySection />
+                  </CollapsibleSection>
 
-                      <div id="component" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Component Information")}
-                        isOpen={componentOpen}
-                        onToggle={() => setComponentOpen(!componentOpen)}
-                        id="component-collapse"
-                      >
-                        <ComponentInformationSection />
-                      </CollapsibleSection>
+                  <div id="component" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Component Information")}
+                    isOpen={componentOpen}
+                    onToggle={() => setComponentOpen(!componentOpen)}
+                    id="component-collapse"
+                  >
+                    <ComponentInformationSection />
+                  </CollapsibleSection>
 
-                      <div id="economic-operator" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Economic Operator")}
-                        isOpen={economicOpen}
-                        onToggle={() => setEconomicOpen(!economicOpen)}
-                        id="economic-collapse"
-                      >
-                        <EconomicOperatorSection />
-                      </CollapsibleSection>
+                  <div id="economic-operator" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Economic Operator")}
+                    isOpen={economicOpen}
+                    onToggle={() => setEconomicOpen(!economicOpen)}
+                    id="economic-collapse"
+                  >
+                    <EconomicOperatorSection />
+                  </CollapsibleSection>
 
-                      <div id="repair-info" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Repair Information")}
-                        isOpen={repairInfoOpen}
-                        onToggle={() => setRepairInfoOpen(!repairInfoOpen)}
-                        id="repair-info-collapse"
-                      >
-                        <RepairInformationSection />
-                      </CollapsibleSection>
+                  <div id="repair-info" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Repair Information")}
+                    isOpen={repairInfoOpen}
+                    onToggle={() => setRepairInfoOpen(!repairInfoOpen)}
+                    id="repair-info-collapse"
+                  >
+                    <RepairInformationSection />
+                  </CollapsibleSection>
 
-                      <div id="refurbishment-info" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Refurbishment Information")}
-                        isOpen={refurbishmentOpen}
-                        onToggle={() => setRefurbishmentOpen(!refurbishmentOpen)}
-                        id="refurbishment-collapse"
-                      >
-                        <RefurbishmentInformationSection />
-                      </CollapsibleSection>
+                  <div id="refurbishment-info" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Refurbishment Information")}
+                    isOpen={refurbishmentOpen}
+                    onToggle={() => setRefurbishmentOpen(!refurbishmentOpen)}
+                    id="refurbishment-collapse"
+                  >
+                    <RefurbishmentInformationSection />
+                  </CollapsibleSection>
 
-                      <div id="recycling-info" className="scroll-mt-24" />
-                      <CollapsibleSection
-                        title={t("Recycling Information")}
-                        isOpen={recyclingInfoOpen}
-                        onToggle={() => setRecyclingInfoOpen(!recyclingInfoOpen)}
-                        id="recycling-collapse"
-                      >
-                        <RecyclingInformationSection />
-                      </CollapsibleSection>
-                    </div>
-                  </div>
+                  <div id="recycling-info" className="scroll-mt-24" />
+                  <CollapsibleSection
+                    title={t("Recycling Information")}
+                    isOpen={recyclingInfoOpen}
+                    onToggle={() => setRecyclingInfoOpen(!recyclingInfoOpen)}
+                    id="recycling-collapse"
+                  >
+                    <RecyclingInformationSection />
+                  </CollapsibleSection>
                 </div>
-              </div>
-            </div>
-          </div>
+              </FormSection>
 
-          {/* Submit Footer */}
-          <div
-            className="sticky bottom-0 right-0 z-30 border-t border-ifr"
-            style={{ backgroundColor: "var(--ifr-bg-surface)", fontFamily: "var(--ifr-font-body)" }}
-          >
-            <div
-              className="max-w-[1280px] mx-auto flex flex-wrap items-center justify-end gap-2 md:gap-3 px-4 md:px-6 py-3"
-              style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
-            >
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className="border border-ifr bg-transparent cursor-pointer text-ifr-text-secondary hover:bg-ifr-hover transition-colors"
-                style={{
-                  height: "var(--ifr-control-height)",
-                  borderRadius: "var(--ifr-radius-sm)",
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-base)",
-                  fontWeight: "var(--ifr-fw-medium)",
-                  padding: "0 20px",
-                }}
+              <FormActions
+                secondary={
+                  <button
+                    type="button"
+                    onClick={() => router.back()}
+                    className={formSecondaryButtonClass}
+                    style={formSecondaryButtonStyle}
+                  >
+                    {t("Cancel")}
+                  </button>
+                }
               >
-                {t("Cancel")}
-              </button>
-              <button
-                type="submit"
-                disabled={!isValid || !selectedProduct}
-                className="border-none cursor-pointer text-white transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  height: "var(--ifr-control-height)",
-                  borderRadius: "var(--ifr-radius-sm)",
-                  backgroundColor: "var(--ifr-green)",
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-base)",
-                  fontWeight: "var(--ifr-fw-semibold)",
-                  padding: "0 24px",
-                }}
-              >
-                {t("Create DPP")}
-              </button>
-            </div>
-          </div>
-        </div>
+                <button
+                  type="submit"
+                  disabled={!isValid || !selectedProduct}
+                  className={formPrimaryButtonClass}
+                  style={formPrimaryButtonStyle}
+                >
+                  {t("Create DPP")}
+                </button>
+              </FormActions>
+            </>
+          </FormColumns>
+        </>
       </form>
 
       {loading && <LoadingOverlay />}

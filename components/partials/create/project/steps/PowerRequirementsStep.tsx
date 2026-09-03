@@ -1,5 +1,5 @@
 import { RangeSlider, Stack } from "@bbtgnn/polaris-interfacer";
-import PHelp from "components/polaris/PHelp";
+import { CheckOption, OptionGrid, OptionGroup } from "components/partials/create/FormControls";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useTranslation } from "next-i18next";
@@ -43,42 +43,23 @@ export default function PowerRequirementsStep() {
 
   return (
     <Stack vertical spacing="loose">
-      <PTitleSubtitle title={t("Power Requirements")} />
-      <PHelp helpText={t("Specify the power source and consumption of your project.")} />
+      <PTitleSubtitle
+        title={t("Power Requirements")}
+        subtitle={t("Specify the power source and consumption of your project.")}
+      />
 
-      <div className="flex flex-col gap-3">
-        <div className="text-ifr-text-primary" style={{ fontWeight: 600, fontSize: "var(--ifr-fs-md)" }}>
-          {t("Power Source")}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {DESIGN_POWER_SOURCE_OPTIONS.map(source => {
-            const checked = selectedSources.includes(source);
-            return (
-              <label
-                key={source}
-                className="flex items-center gap-2 cursor-pointer select-none px-3 py-2 border transition-colors"
-                style={{
-                  borderRadius: "var(--ifr-radius-sm)",
-                  borderColor: checked ? "var(--ifr-green)" : "var(--ifr-border)",
-                  backgroundColor: checked ? "var(--ifr-active)" : "var(--ifr-surface)",
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-sm)",
-                  fontWeight: checked ? "var(--ifr-fw-medium)" : "var(--ifr-fw-regular)",
-                  color: "var(--ifr-text-primary)",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  className="accent-[var(--ifr-green)]"
-                  checked={checked}
-                  onChange={e => toggleSource(source, e.target.checked)}
-                />
-                {t(source)}
-              </label>
-            );
-          })}
-        </div>
-      </div>
+      <OptionGroup label={t("Power Source")}>
+        <OptionGrid>
+          {DESIGN_POWER_SOURCE_OPTIONS.map(source => (
+            <CheckOption
+              key={source}
+              label={t(source)}
+              checked={selectedSources.includes(source)}
+              onChange={checked => toggleSource(source, checked)}
+            />
+          ))}
+        </OptionGrid>
+      </OptionGroup>
 
       <div className="flex flex-col gap-2">
         <div className="text-ifr-text-primary" style={{ fontWeight: 600, fontSize: "var(--ifr-fs-md)" }}>

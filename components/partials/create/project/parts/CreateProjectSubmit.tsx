@@ -1,8 +1,10 @@
+import { ArrowRightMinor } from "@shopify/polaris-icons";
 import { ProjectType } from "components/types";
 import useFormSaveDraft from "hooks/useFormSaveDraft";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useFormContext } from "react-hook-form";
+import { FormActions, formPrimaryButtonClass, formPrimaryButtonStyle } from "../../FormShell";
 
 export default function CreateProjectSubmit() {
   const { t } = useTranslation("common");
@@ -19,39 +21,25 @@ export default function CreateProjectSubmit() {
   );
 
   return (
-    <div
-      className="sticky bottom-0 right-0 z-30 border-t border-ifr"
-      style={{
-        backgroundColor: "var(--ifr-bg-surface)",
-        fontFamily: "var(--ifr-font-body)",
-      }}
+    <FormActions
+      secondary={
+        <>
+          <DeleteDraftButton />
+          <EditDraftButton />
+          <SaveDraftButton />
+        </>
+      }
     >
-      <div
-        className="max-w-[1280px] mx-auto flex flex-wrap items-center justify-end gap-2 md:gap-3 px-4 md:px-6 py-3"
-        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+      <button
+        id="project-create-submit"
+        type="submit"
+        disabled={!isValid}
+        className={formPrimaryButtonClass}
+        style={formPrimaryButtonStyle}
       >
-        <DeleteDraftButton />
-        <EditDraftButton />
-        <SaveDraftButton />
-        <button
-          id="project-create-submit"
-          type="submit"
-          disabled={!isValid}
-          className="border-none cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{
-            height: "var(--ifr-control-height)",
-            borderRadius: "var(--ifr-radius-sm)",
-            backgroundColor: "var(--ifr-yellow)",
-            color: "var(--ifr-text-primary)",
-            fontFamily: "var(--ifr-font-body)",
-            fontSize: "var(--ifr-fs-base)",
-            fontWeight: "var(--ifr-fw-medium)",
-            padding: "0 24px",
-          }}
-        >
-          {primaryLabel}
-        </button>
-      </div>
-    </div>
+        {primaryLabel}
+        <ArrowRightMinor className="w-4 h-4 fill-current" />
+      </button>
+    </FormActions>
   );
 }

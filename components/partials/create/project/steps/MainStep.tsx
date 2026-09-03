@@ -116,15 +116,23 @@ export default function MainStep() {
       />
 
       {projectType === ProjectType.DESIGN && (
-        <>
+        <div className="flex flex-col gap-8">
           {(() => {
             const stored = watch("main.complexity");
             const current = complexityLevelFromLabel(stored) || complexityLevelFromNumber(3);
             const display = `${t(current.label)} (${current.level})`;
             return (
-              <div className="flex flex-col gap-3">
-                <div className="text-ifr-text-primary" style={{ fontWeight: 600, fontSize: "var(--ifr-fs-md)" }}>
-                  {t("Complexity of this project")} <span style={{ color: "var(--ifr-danger)" }}>*</span>
+              <div className="flex flex-col gap-[5px]">
+                <div
+                  className="text-ifr-text-primary mb-[1px]"
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-base)",
+                    fontWeight: "var(--ifr-fw-medium)",
+                    lineHeight: "24px",
+                  }}
+                >
+                  {t("Complexity of this project")} <span style={{ color: "var(--ifr-red)" }}>*</span>
                 </div>
                 <RangeSlider
                   id="main-complexity"
@@ -139,17 +147,48 @@ export default function MainStep() {
                     setValue("main.complexity", complexityLevelFromNumber(Number(v)).label, formSetValueOptions)
                   }
                 />
-                <div className="flex justify-between text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                <div
+                  className="flex justify-between px-2"
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-base)",
+                    fontWeight: "var(--ifr-fw-bold)",
+                    lineHeight: "21px",
+                  }}
+                >
                   {[1, 2, 3, 4, 5].map(n => (
-                    <span key={n}>{n}</span>
+                    <span
+                      key={n}
+                      style={{ color: n === current.level ? "var(--ifr-text-primary)" : "var(--ifr-text-secondary)" }}
+                    >
+                      {n}
+                    </span>
                   ))}
                 </div>
-                <div className="text-ifr-text-primary" style={{ fontWeight: 600 }}>
-                  {display}
+                <div className="flex flex-col items-start gap-[2px] pt-[6px]">
+                  <p
+                    className="m-0"
+                    style={{
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "var(--ifr-fs-md)",
+                      fontWeight: "var(--ifr-fw-medium)",
+                      lineHeight: "24px",
+                      color: "var(--ifr-green)",
+                    }}
+                  >
+                    {display}
+                  </p>
+                  <p
+                    className="text-ifr-text-secondary m-0"
+                    style={{
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "var(--ifr-fs-base)",
+                      fontWeight: "var(--ifr-fw-regular)",
+                    }}
+                  >
+                    {current.description}
+                  </p>
                 </div>
-                <p className="text-ifr-text-secondary m-0" style={{ fontSize: "var(--ifr-fs-sm)" }}>
-                  {current.description}
-                </p>
               </div>
             );
           })()}
@@ -173,7 +212,7 @@ export default function MainStep() {
               />
             )}
           />
-        </>
+        </div>
       )}
     </Stack>
   );
