@@ -54,6 +54,7 @@ module.exports = {
           "text-primary": "var(--ifr-text-primary)",
           "text-secondary": "var(--ifr-text-secondary)",
           "text-muted": "var(--ifr-text-muted)",
+          "text-inverse": "var(--ifr-text-inverse)",
           green: {
             DEFAULT: "var(--ifr-green)",
             hover: "var(--ifr-green-hover)",
@@ -99,6 +100,8 @@ module.exports = {
       backgroundColor: {
         ifr: {
           page: "var(--ifr-bg-page)",
+          dark: "var(--ifr-bg-dark)",
+          subdued: "var(--ifr-bg-subdued)",
           profile: "var(--ifr-bg-profile)",
           surface: "var(--ifr-bg-surface)",
           elevated: "var(--ifr-bg-elevated)",
