@@ -47,10 +47,9 @@ const Products: NextPageWithLayout = () => {
     <CatalogLayout
       variant="products"
       hero={{
-        title: t("Open Hardware Products"),
-        description: t(
-          "Ready-made products built on open source designs by local FabLabs and manufacturers. Transparent, traceable, and community-rooted."
-        ),
+        eyebrow: t("Find a physical product"),
+        title: t("Products made from open designs"),
+        description: t("Explore physical implementations of open designs, see who makes them and how to get one."),
         stats: (
           <>
             <HeroStatCard value={totalCount ?? "—"} label={t("Total Products")} />

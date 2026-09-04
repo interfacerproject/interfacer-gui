@@ -24,6 +24,7 @@ import { useIsDesktop } from "hooks/useMediaQuery";
 import React, { ReactNode, useState } from "react";
 
 interface CatalogHeroProps {
+  eyebrow: string;
   title: string;
   description: string;
   stats: ReactNode;
@@ -137,12 +138,6 @@ export default function CatalogLayout({
     }
   }, [data, isLoading, onDataLoaded, totalCount, distinctPrimaryAccountableCount]);
 
-  const heroGradients: Record<CatalogVariant, string> = {
-    designs: "linear-gradient(83deg, rgb(3, 106, 83) 0%, rgb(57, 170, 145) 100%)",
-    products: "linear-gradient(83deg, rgb(20, 59, 181) 0%, rgb(106, 140, 246) 100%)",
-    services: "linear-gradient(83deg, rgb(130, 0, 219) 0%, rgb(193, 125, 240) 100%)",
-  };
-
   return (
     <div className="flex flex-1 items-start min-w-0">
       {/* Filter Sidebar — inline column on desktop, overlay drawer below `lg` */}
@@ -155,25 +150,27 @@ export default function CatalogLayout({
 
       {/* Main Content */}
       <div className="flex-1 min-w-0 flex flex-col overflow-y-auto">
-        {/* Hero Section */}
-        <div className="relative border-b border-ifr" style={{ background: heroGradients[variant] }}>
-          <div className="relative px-4 py-6 md:px-6 md:py-10">
-            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-6">
-              {/* Left: Title + Description */}
-              <div className="flex-1 min-w-0 flex flex-col gap-2">
+        {/* Hero Section — DTEC prototype "CatalogHeader" (nodes 1050:26375 / 26365 / 26385) */}
+        <div className="bg-ifr-dark border-b border-ifr">
+          <div className="p-6 md:p-10">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-6">
+              {/* Left: Eyebrow + Title + Description */}
+              <div className="flex-1 min-w-0 flex flex-col gap-[5px]">
+                <p
+                  className="m-0 uppercase text-ifr-yellow text-[16px] leading-[26px] md:text-[18px] md:leading-[30px]"
+                  style={{ fontFamily: "var(--ifr-font-heading)", fontWeight: 500 }}
+                >
+                  {hero.eyebrow}
+                </p>
                 <h1
-                  className="m-0 text-[24px] leading-[30px] md:text-[30px] md:leading-[36px]"
-                  style={{
-                    fontFamily: "var(--ifr-font-heading)",
-                    fontWeight: 700,
-                    color: "#ffffff",
-                  }}
+                  className="m-0 text-ifr-text-inverse text-[28px] leading-[36px] md:text-[36px] md:leading-[44px]"
+                  style={{ fontFamily: "var(--ifr-font-heading)", fontWeight: 700 }}
                 >
                   {hero.title}
                 </h1>
                 <p
-                  className="m-0 max-w-[640px] text-[15px] leading-[22px] md:text-[16px] md:leading-[24px]"
-                  style={{ fontFamily: "var(--ifr-font-body)", color: "#fafafa" }}
+                  className="m-0 max-w-[640px] text-ifr-text-inverse-secondary text-[16px] leading-[24px] md:text-[18px] md:leading-[27px]"
+                  style={{ fontFamily: "var(--ifr-font-body)" }}
                 >
                   {hero.description}
                 </p>
@@ -233,7 +230,13 @@ export default function CatalogLayout({
 
             {/* Sort */}
             <div className="order-2 md:order-3 flex items-center gap-3 shrink-0">
-              <ToolbarDropdown label={t("Sort by")} value={sortBy} options={sortOptions} onChange={handleSortChange} />
+              <ToolbarDropdown
+                label={t("Sort by")}
+                value={sortBy}
+                options={sortOptions}
+                onChange={handleSortChange}
+                getOptionLabel={o => t(o)}
+              />
             </div>
           </div>
         </div>
@@ -295,7 +298,7 @@ export default function CatalogLayout({
 
           {/* Empty state */}
           {!isLoading && !error && (showEmptyState || !projects?.length) && (
-            <EmptyState heading="No projects match your filters" />
+            <EmptyState heading={t("No projects match your filters")} />
           )}
 
           {/* Cards Grid */}
@@ -339,7 +342,7 @@ export default function CatalogLayout({
   );
 }
 
-/** Reusable stat card for hero sections — compact prototype style */
+/** Reusable stat card for hero sections — translucent, tuned to sit on --ifr-bg-dark */
 export function HeroStatCard({ value, label }: { icon?: ReactNode; value: string | number; label: string }) {
   return (
     <div
@@ -353,8 +356,8 @@ export function HeroStatCard({ value, label }: { icon?: ReactNode; value: string
         height: 56,
         padding: "10px 14px",
         borderRadius: "6px",
-        background: "#ffffff",
-        border: "1px solid #c9cccf",
+        background: "rgba(255, 255, 255, 0.08)",
+        border: "1px solid rgba(255, 255, 255, 0.18)",
       }}
     >
       <span
@@ -362,7 +365,7 @@ export function HeroStatCard({ value, label }: { icon?: ReactNode; value: string
           fontFamily: "var(--ifr-font-body)",
           fontSize: 16,
           fontWeight: 700,
-          color: "#0b1324",
+          color: "var(--ifr-text-inverse)",
           lineHeight: "1.2",
         }}
       >
@@ -373,7 +376,7 @@ export function HeroStatCard({ value, label }: { icon?: ReactNode; value: string
           fontFamily: "var(--ifr-font-body)",
           fontSize: 12,
           fontWeight: 400,
-          color: "#6c707c",
+          color: "var(--ifr-text-inverse-secondary)",
           lineHeight: "1.2",
         }}
       >

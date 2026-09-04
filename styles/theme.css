@@ -97,6 +97,7 @@
 
   /* --- Inverse text, for use on --ifr-bg-dark --- */
   --ifr-text-inverse: #ffffff;
+  --ifr-text-inverse-secondary: rgba(255, 255, 255, 0.7);
 
   /* --- Border colors --- */
   --ifr-border: #c9cccf;
