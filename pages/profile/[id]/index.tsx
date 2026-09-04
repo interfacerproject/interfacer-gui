@@ -54,4 +54,6 @@ Profile.getLayout = page => (
   </Layout>
 );
 
+Profile.publicPage = true;
+
 export default Profile;
