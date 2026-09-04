@@ -197,5 +197,7 @@
   "Electronics": "Elektronik",
   "Tools": "Werkzeuge",
   "Home": "Zuhause",
-  "Energy": "Energie"
+  "Energy": "Energie",
+  "Your passphrase": "Ihre Passphrase",
+  "Keep your passphrase safe: it is the only way to recover your account.": "Bewahren Sie Ihre Passphrase sicher auf: Sie ist der einzige Weg, Ihr Konto wiederherzustellen."
 }

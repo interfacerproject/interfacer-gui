@@ -25,7 +25,8 @@ import * as yup from "yup";
 
 // Components
 import { PERSON_EXISTS } from "@dyne/interfacer-client";
-import { Button, TextField } from "@bbtgnn/polaris-interfacer";
+import { TextField } from "@bbtgnn/polaris-interfacer";
+import { AuthActions, AuthButton, AuthCard, AuthCardHeader, AuthSuggestion } from "components/partials/auth/AuthCard";
 import createApolloClient from "lib/createApolloClient";
 import { isRequired } from "lib/isFieldRequired";
 import { PersonExistsQuery, PersonExistsQueryVariables } from "lib/types";
@@ -106,16 +107,16 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
   //
 
   return (
-    <div>
-      {/* Info */}
-      <h2>{t("Sign up")}</h2>
-      <p>
-        {t(
+    <AuthCard>
+      <AuthCardHeader
+        title={t("Create your Interfacer account")}
+        description={t(
           "The sign up process generates your private keys which are never communicate to the server; Keep a copy of your passphrase"
         )}
-      </p>
+      />
+
       {/* The form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         {/* Email */}
         <Controller
           control={control}
@@ -180,11 +181,14 @@ export default function UserData({ onSubmit }: UserDataNS.Props) {
             />
           )}
         />
-        {/* Submit button */}
-        <Button size="large" primary fullWidth submit disabled={!isValid} id="submit">
-          {t("Next step")}
-        </Button>
+        <AuthActions className="pt-2">
+          <AuthButton type="submit" disabled={!isValid} id="submit">
+            {t("Continue")}
+          </AuthButton>
+
+          <AuthSuggestion baseText={t("Do you have already an account?")} linkText={t("Sign in")} url="/sign_in" />
+        </AuthActions>
       </form>
-    </div>
+    </AuthCard>
   );
 }

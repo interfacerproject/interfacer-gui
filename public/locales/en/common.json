@@ -207,5 +207,7 @@
   "Electronics": "Electronics",
   "Tools": "Tools",
   "Home": "Home",
-  "Energy": "Energy"
+  "Energy": "Energy",
+  "Your passphrase": "Your passphrase",
+  "Keep your passphrase safe: it is the only way to recover your account.": "Keep your passphrase safe: it is the only way to recover your account."
 }

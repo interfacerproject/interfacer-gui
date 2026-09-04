@@ -44,7 +44,7 @@ test.describe("Authentication process", () => {
 
     //Enter invitation key
     // await page.fill("#invitationKey", authVariables.invitationKey!);
-    // await page.getByRole("button", { name: "Next step" }).click();
+    // await page.getByRole("button", { name: "Continue" }).click();
 
     // Enter email and submit
     await page.fill("#email", random.randomEmail());
@@ -55,7 +55,7 @@ test.describe("Authentication process", () => {
     const p = await page.$("body");
     await p?.click();
 
-    await page.getByRole("button", { name: "Next step" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
 
     // Sign up via questions
     await page.fill("#question1", authVariables.answer1!);
@@ -64,7 +64,7 @@ test.describe("Authentication process", () => {
 
     // Submit
     await page.click("#submit");
-    await page.getByRole("button", { name: "Register and login" }).click();
+    await page.getByRole("button", { name: "Create account" }).click();
     // Log out
     // await page.goto("");
     // await page.locator("#user-menu").click();

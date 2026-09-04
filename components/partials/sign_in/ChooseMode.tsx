@@ -15,36 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useTranslation } from "next-i18next";
-import { Button } from "@bbtgnn/polaris-interfacer";
+
+import { AuthBackLink, AuthButton, AuthCard, AuthCardHeader } from "components/partials/auth/AuthCard";
 
 export interface ChooseModeProps {
   viaPassphrase?: () => void;
   viaQuestions?: () => void;
+  onBack?: () => void;
 }
 
+/** Sign in · step 2 — choose sign in method (Figma 1092:14648). */
 export default function ChooseMode(props: ChooseModeProps) {
-  const { viaPassphrase = () => {}, viaQuestions = () => {} } = props;
+  const { viaPassphrase = () => {}, viaQuestions = () => {}, onBack } = props;
   const { t } = useTranslation("signInProps");
 
   return (
-    <div>
-      {/* Intro */}
-      <h2>{t("Login")}</h2>
-      <p className="mt-2 mb-6">
-        {t("Login by providing your generated passphrase or by answering the questions during your Signup proccess")}
-      </p>
+    <AuthCard>
+      <AuthCardHeader
+        back={<AuthBackLink label={t("Back to sign in")} onClick={onBack} />}
+        title={t("Choose how to sign in")}
+        description={t("You can use the passphrase generated for your account or answer your recovery questions.")}
+      />
 
-      {/* Login via passphrase */}
-      <Button size="large" primary fullWidth id="viaPassphrase" onClick={viaPassphrase}>
-        {t("Login via passphrase 🔑")}
-      </Button>
+      {/* The prototype pairs the two methods at a 12px gap, green over outlined. */}
+      <div className="flex flex-col gap-3">
+        <AuthButton id="viaPassphrase" onClick={viaPassphrase}>
+          {t("Use your passphrase")}
+        </AuthButton>
 
-      {/* Login via questions */}
-      <div className="mt-4">
-        <Button size="large" primary fullWidth id="viaQuestions" onClick={viaQuestions}>
-          {t("Login answering the signup questions 💬")}
-        </Button>
+        <AuthButton variant="secondary" id="viaQuestions" onClick={viaQuestions}>
+          {t("Use recovery questions")}
+        </AuthButton>
       </div>
-    </div>
+    </AuthCard>
   );
 }
