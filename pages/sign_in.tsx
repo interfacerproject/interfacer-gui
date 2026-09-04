@@ -29,9 +29,7 @@ import type { NextPageWithLayout } from "./_app";
 import Layout from "../components/layout/Layout";
 
 // Components
-import { Button } from "@bbtgnn/polaris-interfacer";
-import BrAuthSuggestion from "components/brickroom/BrAuthSuggestion";
-import BrError from "components/brickroom/BrError";
+import { AuthArrowLink, AuthButton, AuthError, AuthPage } from "components/partials/auth/AuthCard";
 
 // Partials
 // import Passphrase from "components/partials/auth/Passphrase";
@@ -122,6 +120,15 @@ const Sign_in: NextPageWithLayout = () => {
     setStep(2);
   };
 
+  // "← Back to sign in" returns to the email step and drops the attempt.
+  const backToEmail = () => {
+    setIsPassphrase(false);
+    setIsQuestions(false);
+    setError("");
+    loginAttempted.current = false;
+    setStep(0);
+  };
+
   const passphraseEntered = (data: ViaPassphraseNS.FormValues) => {
     setSignInData({
       ...signInData,
@@ -207,66 +214,53 @@ const Sign_in: NextPageWithLayout = () => {
   //
 
   return (
-    <div className="grid h-full grid-cols-6">
-      <div className="col-span-6 px-4 py-2 md:col-span-4 md:col-start-2 md:col-end-6">
-        <div className="w-full h-full pt-12 md:pt-32 lg:pt-56">
-          {/* Entering email */}
-          {step === 0 && (
-            <EnterEmail onSubmit={emailEntered}>{error && <BrError testID="error">{error}</BrError>}</EnterEmail>
-          )}
+    <AuthPage>
+      {/* Entering email */}
+      {step === 0 && (
+        <EnterEmail onSubmit={emailEntered}>{error && <AuthError testID="error">{error}</AuthError>}</EnterEmail>
+      )}
 
-          {/* Choose login mode */}
-          {step === 1 && <ChooseMode viaPassphrase={viaPassphrase} viaQuestions={viaQuestions} />}
+      {/* Choose login mode */}
+      {step === 1 && <ChooseMode viaPassphrase={viaPassphrase} viaQuestions={viaQuestions} onBack={backToEmail} />}
 
-          {/* Passphrase login */}
-          {step == 2 && isPassprhase && (
-            <>
-              {error && <BrError testID="loginError">{error}</BrError>}
-              <ViaPassphrase onSubmit={passphraseEntered} />
-            </>
-          )}
+      {/* Passphrase login */}
+      {step == 2 && isPassprhase && (
+        <ViaPassphrase onSubmit={passphraseEntered} onBack={backToEmail} viaQuestions={viaQuestions}>
+          {error && <AuthError testID="loginError">{error}</AuthError>}
+        </ViaPassphrase>
+      )}
 
-          {/* Questions login */}
-          {step === 2 && isQuestions && (
-            <ViaQuestions>
-              <Questions email={signInData.email} HMAC={signInData.pdfk} onSubmit={questionsEntered} />
-            </ViaQuestions>
-          )}
-          {/* Displaying seed */}
-          {step === 3 && isQuestions && (
-            <Passphrase>
-              {error && <BrError testID="loginError">{error}</BrError>}
-              <Button
-                size="large"
-                primary
-                fullWidth
-                onClick={async () => {
-                  try {
-                    await doLogin();
-                  } catch (err: any) {
-                    setError(err?.message || t("Login failed"));
-                  }
-                }}
-                id="loginBtn"
-              >
-                {t("Login")}
-              </Button>
-            </Passphrase>
-          )}
+      {/* Questions login */}
+      {step === 2 && isQuestions && (
+        <ViaQuestions onBack={backToEmail}>
+          <Questions
+            email={signInData.email}
+            HMAC={signInData.pdfk}
+            onSubmit={questionsEntered}
+            footer={<AuthArrowLink label={t("Use your passphrase instead")} onClick={viaPassphrase} />}
+          />
+        </ViaQuestions>
+      )}
 
-          {/* Link to registration */}
-          {(step === 0 || step === 1) && (
-            <div className="mt-8">
-              <BrAuthSuggestion
-                baseText={t("✌️  You don't have an account yet?")}
-                linkText={t("Sign up")}
-                url="/sign_up"
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+      {/* Displaying seed */}
+      {step === 3 && isQuestions && (
+        <Passphrase>
+          {error && <AuthError testID="loginError">{error}</AuthError>}
+          <AuthButton
+            onClick={async () => {
+              try {
+                await doLogin();
+              } catch (err: any) {
+                setError(err?.message || t("Login failed"));
+              }
+            }}
+            id="loginBtn"
+          >
+            {t("Sign in")}
+          </AuthButton>
+        </Passphrase>
+      )}
+    </AuthPage>
   );
 };
 

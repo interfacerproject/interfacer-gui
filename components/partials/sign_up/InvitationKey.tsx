@@ -22,7 +22,8 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import { Button, TextField } from "@bbtgnn/polaris-interfacer";
+import { TextField } from "@bbtgnn/polaris-interfacer";
+import { AuthActions, AuthButton, AuthCard, AuthCardHeader } from "components/partials/auth/AuthCard";
 import { isRequired } from "../../../lib/isFieldRequired";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
 
@@ -72,13 +73,11 @@ export default function InvitationKey({ onSubmit }: InvitationKeyNS.Props) {
   //
 
   return (
-    <div>
-      {/* Info */}
-      <h2>{t("Invitation key")}</h2>
-      <p className="mt-4 mb-6">{t("Do you have your invitation key?")}</p>
+    <AuthCard>
+      <AuthCardHeader title={t("Invitation key")} description={t("Do you have your invitation key?")} />
 
       {/* The form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <Controller
           control={control}
           name="invitationKey"
@@ -98,11 +97,12 @@ export default function InvitationKey({ onSubmit }: InvitationKeyNS.Props) {
           )}
         />
 
-        {/* Submit button */}
-        <Button size="large" primary fullWidth submit disabled={!isValid} id="invitationButton">
-          {t("Next step")}
-        </Button>
+        <AuthActions>
+          <AuthButton type="submit" disabled={!isValid} id="invitationButton">
+            {t("Continue")}
+          </AuthButton>
+        </AuthActions>
       </form>
-    </div>
+    </AuthCard>
   );
 }

@@ -17,7 +17,7 @@
 // Functionality
 import { useTranslation } from "next-i18next";
 
-import { Button, TextField } from "@bbtgnn/polaris-interfacer";
+import { TextField } from "@bbtgnn/polaris-interfacer";
 
 // Form imports
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -26,8 +26,9 @@ import * as yup from "yup";
 
 // Components
 import { ChildrenComponent as CC } from "components/brickroom/types";
-import { isRequired } from "../../../lib/isFieldRequired";
+import { AuthActions, AuthButton, AuthCard, AuthCardHeader, AuthSuggestion } from "components/partials/auth/AuthCard";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
+import { isRequired } from "../../../lib/isFieldRequired";
 
 //
 
@@ -43,6 +44,7 @@ export namespace EnterEmailNS {
 
 //
 
+/** Sign in · step 1 — account identification (Figma 1092:11140). */
 export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
   const { onSubmit } = props;
   const { t } = useTranslation("signInProps");
@@ -78,13 +80,13 @@ export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
   //
 
   return (
-    <div>
-      {/* Intro */}
-      <h2>{t("Login")}</h2>
-      <p className="mt-2 mb-6">{t("")}</p>
+    <AuthCard>
+      <AuthCardHeader
+        title={t("Sign in to Interfacer")}
+        description={t("Enter the email associated with your account to continue.")}
+      />
 
-      {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {/* Email field */}
         <Controller
           control={control}
@@ -99,8 +101,8 @@ export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
               onChange={onChange}
               onBlur={onBlur}
               focused={true}
-              label={t("Your email")}
-              placeholder={t("alice@email.com")}
+              label={t("Email address")}
+              placeholder={t("Enter your email address")}
               error={errors.email?.message}
               requiredIndicator={isRequired(schema, name)}
             />
@@ -110,11 +112,14 @@ export default function EnterEmail(props: CC<EnterEmailNS.Props>) {
         {/* Slot for errors */}
         {props.children}
 
-        {/* Submit button */}
-        <Button size="large" primary fullWidth submit disabled={!isValid} id="submit" data-test="submit">
-          {t("Next step")}
-        </Button>
+        <AuthActions>
+          <AuthButton type="submit" disabled={!isValid} id="submit" data-test="submit">
+            {t("Continue")}
+          </AuthButton>
+
+          <AuthSuggestion baseText={t("New to Interfacer?")} linkText={t("Create an account")} url="/sign_up" />
+        </AuthActions>
       </form>
-    </div>
+    </AuthCard>
   );
 }
