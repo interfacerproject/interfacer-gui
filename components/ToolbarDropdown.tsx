@@ -6,9 +6,17 @@ interface ToolbarDropdownProps {
   value: string;
   options: string[];
   onChange: (value: string) => void;
+  /** Maps a raw option value to its display label (e.g. i18n). Defaults to identity. */
+  getOptionLabel?: (value: string) => string;
 }
 
-export default function ToolbarDropdown({ label, value, options, onChange }: ToolbarDropdownProps) {
+export default function ToolbarDropdown({
+  label,
+  value,
+  options,
+  onChange,
+  getOptionLabel = v => v,
+}: ToolbarDropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -42,7 +50,7 @@ export default function ToolbarDropdown({ label, value, options, onChange }: Too
           lineHeight: "24px",
         }}
       >
-        {value}
+        {getOptionLabel(value)}
         <ChevronDown size={16} className={`transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
@@ -65,7 +73,7 @@ export default function ToolbarDropdown({ label, value, options, onChange }: Too
                 lineHeight: "24px",
               }}
             >
-              {option}
+              {getOptionLabel(option)}
             </button>
           ))}
         </div>
