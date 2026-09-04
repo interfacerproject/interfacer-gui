@@ -37,4 +37,14 @@ test.describe("When user is not logged in", () => {
     await page.goto("/resources");
     await expect(page.getByText("Resources")).toBeTruthy();
   });
+
+  test("Should see /search", async ({ page }) => {
+    await page.goto("/search?q=test");
+    await expect(page.getByText("Search result for")).toBeTruthy();
+  });
+
+  test("Should see /profile/:id", async ({ page }) => {
+    await page.goto(`/profile/${process.env.AUTHID}`);
+    await expect(page.getByText(process.env.AUTHNAME!)).toBeTruthy();
+  });
 });

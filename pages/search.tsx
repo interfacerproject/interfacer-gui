@@ -121,4 +121,6 @@ Search.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
+Search.publicPage = true;
+
 export default Search;
