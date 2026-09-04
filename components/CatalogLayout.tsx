@@ -255,7 +255,7 @@ export default function CatalogLayout({
           >
             {t("Showing") + " "}
             <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-medium)" }}>
-              {isLoading ? "..." : totalCount}
+              {isLoading ? "..." : projects?.length ?? 0}
             </span>
             {" " + t("results")}
           </p>
