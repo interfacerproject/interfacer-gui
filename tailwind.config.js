@@ -55,6 +55,7 @@ module.exports = {
           "text-secondary": "var(--ifr-text-secondary)",
           "text-muted": "var(--ifr-text-muted)",
           "text-inverse": "var(--ifr-text-inverse)",
+          "text-inverse-secondary": "var(--ifr-text-inverse-secondary)",
           green: {
             DEFAULT: "var(--ifr-green)",
             hover: "var(--ifr-green-hover)",
