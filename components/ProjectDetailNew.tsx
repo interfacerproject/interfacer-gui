@@ -15,6 +15,8 @@ import ProjectsCards from "components/ProjectsCards";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
 
+import BuyBlock from "components/previewCommerce/BuyBlock";
+import { commercePreviewEnabled } from "lib/previewCommerce/flag";
 import useDppApi from "lib/dpp";
 import type { DppDocument } from "lib/dpp-types";
 import findProjectImages from "lib/findProjectImages";
@@ -2316,12 +2318,16 @@ export default function ProjectDetailNew() {
 
         {/* Sidebar */}
         <div className="hidden lg:block">
-          <ProjectSidebarNew project={project} projectType={projectType} sidebarRating={sidebarRating} />
+          <div className="w-full lg:w-[300px] shrink-0 flex flex-col gap-4">
+            {commercePreviewEnabled && projectType === ProjectType.PRODUCT && <BuyBlock />}
+            <ProjectSidebarNew project={project} projectType={projectType} sidebarRating={sidebarRating} />
+          </div>
         </div>
       </div>
 
       {/* Mobile sidebar */}
-      <div className="lg:hidden px-4 md:px-6 pb-8">
+      <div className="lg:hidden px-4 md:px-6 pb-8 flex flex-col gap-4">
+        {commercePreviewEnabled && projectType === ProjectType.PRODUCT && <BuyBlock />}
         <ProjectSidebarNew project={project} projectType={projectType} sidebarRating={sidebarRating} />
       </div>
     </div>
