@@ -749,3 +749,44 @@ table {
 .ifr-form-actions .Polaris-Button:hover:not(.Polaris-Button--disabled) {
   background: var(--ifr-bg-hover);
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Commerce preview (upcoming Medusa integration) — DELETE THIS BLOCK together
+   with lib/previewCommerce/, components/previewCommerce/, pages/preview/commerce/
+   and the flagged entry points to remove the feature entirely.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@keyframes ifr-preview-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ifr-preview-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The preview strip and the topbar share ONE sticky block: the topbar must not
+   stick on its own inside the preview chrome. */
+.ifr-preview-chrome > header {
+  position: static !important;
+  top: auto !important;
+}
+
+/* Two-column preview grids collapse to one column on narrow screens. */
+@media (max-width: 900px) {
+  .ifr-pc-collapse {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .ifr-pc-kpi {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+/* ── end commerce preview ── */

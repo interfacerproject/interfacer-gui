@@ -16,6 +16,7 @@ import EntityTypeIcon from "components/EntityTypeIcon";
 import InterfacerLogo from "components/InterfacerLogo";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import { ProjectType } from "components/types";
+import { commercePreviewEnabled } from "lib/previewCommerce/flag";
 import { useAuth } from "hooks/useAuth";
 import { useInBoxContext } from "hooks/useInBox";
 import { useTranslation } from "next-i18next";
@@ -296,6 +297,29 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
             activeBg="var(--ifr-type-service-bg)"
             activeTextColor="var(--ifr-type-service)"
           />
+
+          {/* Commerce preview (upcoming Medusa integration) — flagged entry point */}
+          {commercePreviewEnabled && (
+            <NavItem
+              icon={
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path
+                    d="M3 4h2l2.3 11a2 2 0 002 1.6h8.4a2 2 0 002-1.6L21 8H6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="9.5" cy="20" r="1.4" />
+                  <circle cx="17.5" cy="20" r="1.4" />
+                </svg>
+              }
+              label={t("Commerce preview", "Commerce preview")}
+              active={router.asPath.startsWith("/preview/commerce")}
+              onClick={() => handleNavigate("/preview/commerce")}
+              activeBg="#f3e6ff"
+              activeTextColor="#8200db"
+              badge={<NavBadge value={t("UPCOMING", "UPCOMING")} color="#8200db" textColor="#ffffff" />}
+            />
+          )}
 
           {/* Logged-in section */}
           {user && (
