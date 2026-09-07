@@ -17,27 +17,30 @@
 import { ChildrenComponent as CC } from "components/brickroom/types";
 import useStorage from "hooks/useStorage";
 import { useTranslation } from "next-i18next";
+import { AuthActions, AuthCard, AuthCardHeader } from "./AuthCard";
 import SeedBox from "./SeedBox";
 
 export interface PassphraseProps {}
 
+/**
+ * The passphrase reveal, shared by the last step of both flows. Not drawn in
+ * the prototype; it reuses the card of the sign-in steps (Figma 1092:14277).
+ */
 export default function Passphrase(props: CC<PassphraseProps>) {
   const { getItem } = useStorage();
   const { t } = useTranslation("common");
 
   return (
-    <div className="space-y-6">
-      {/* Intro */}
-      <div>
-        <h2>{t("Passphrase ")}</h2>
-        <p>{t("keep your passphrase safe")}</p>
-      </div>
+    <AuthCard>
+      <AuthCardHeader
+        title={t("Your passphrase")}
+        description={t("Keep your passphrase safe: it is the only way to recover your account.")}
+      />
 
-      {/* Seed box */}
       <SeedBox>{getItem("seed")}</SeedBox>
 
       {/* Space for buttons */}
-      {props.children}
-    </div>
+      <AuthActions>{props.children}</AuthActions>
+    </AuthCard>
   );
 }

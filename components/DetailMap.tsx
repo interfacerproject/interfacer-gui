@@ -54,7 +54,7 @@ const DetailMap = (props: DetailMapProps) => {
           longitude: long,
           zoom: 7,
         }}
-        style={{ width: "full", height: height, borderRadius: "0.5rem" }}
+        style={{ width: "100%", height: height, borderRadius: "0.5rem" }}
         mapStyle={style}
         mapboxAccessToken={MAPBOX_TOKEN}
         dragPan={isFullscreen}

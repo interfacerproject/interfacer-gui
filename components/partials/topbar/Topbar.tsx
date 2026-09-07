@@ -16,8 +16,10 @@
 
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import InterfacerLogo from "components/InterfacerLogo";
+import LocationMenu from "components/LocationMenu";
 import NavigationMenu from "components/NavigationMenu";
 import UserDropdown from "components/UserDropdown";
+import { commercePreviewEnabled } from "lib/previewCommerce/flag";
 import { useAuth } from "hooks/useAuth";
 import { useInBoxContext } from "hooks/useInBox";
 import { useTranslation } from "next-i18next";
@@ -213,6 +215,58 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
             </button>
           )}
           {cta}
+
+          {/* Commerce preview (upcoming Medusa integration) — flagged entry point */}
+          {commercePreviewEnabled && (
+            <Link href="/preview/commerce/cart">
+              <a
+                aria-label={t("Shopping cart")}
+                className="relative flex items-center justify-center shrink-0 bg-transparent border border-transparent hover:border-[var(--ifr-border)] transition-colors"
+                style={{
+                  width: "var(--ifr-control-height)",
+                  height: "var(--ifr-control-height)",
+                  borderRadius: "var(--ifr-radius-sm)",
+                }}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--ifr-text-secondary)"
+                  strokeWidth="1.8"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3 4h2l2.3 11a2 2 0 002 1.6h8.4a2 2 0 002-1.6L21 8H6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="9.5" cy="20" r="1.4" />
+                  <circle cx="17.5" cy="20" r="1.4" />
+                </svg>
+                <span
+                  className="absolute flex items-center justify-center"
+                  style={{
+                    top: "-4px",
+                    right: "-4px",
+                    minWidth: "18px",
+                    height: "18px",
+                    padding: "0 4px",
+                    borderRadius: "9999px",
+                    background: "#036a53",
+                    color: "#fff",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "11px",
+                    fontWeight: 600,
+                  }}
+                >
+                  {2}
+                </span>
+              </a>
+            </Link>
+          )}
+
           {/* Sign-in / Sign-up buttons for unauthenticated users */}
           {!user && !isSignin && !isSignup && (
             <div className="flex items-center gap-2">
@@ -256,6 +310,9 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
               </button>
             </div>
           )}
+
+          {/* Language picker */}
+          <LocationMenu />
 
           {/* User avatar with notification dot */}
           {user && userMenu && (

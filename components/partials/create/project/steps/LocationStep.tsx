@@ -1,5 +1,6 @@
-import { Checkbox, Stack, TextField } from "@bbtgnn/polaris-interfacer";
+import { Stack, TextField } from "@bbtgnn/polaris-interfacer";
 import SelectLocation from "components/SelectLocation";
+import { ToggleField } from "components/partials/create/FormControls";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { ProjectType } from "components/types";
 import { formSetValueOptions } from "lib/formSetValueOptions";
@@ -74,13 +75,11 @@ export default function LocationStepProduct(props: Props) {
       />
 
       {projectType == ProjectType.SERVICE && (
-        <Checkbox
-          id="remote"
-          name="remote"
+        <ToggleField
+          label={t("Remote service")}
+          description={t("This service happens remotely / online")}
+          checked={Boolean(watch("location.remote"))}
           onChange={value => setValue("location.remote", value, formSetValueOptions)}
-          checked={watch("location.remote")}
-          label={t("This service happens remotely / online")}
-          error={errors.location?.remote?.message}
         />
       )}
     </Stack>

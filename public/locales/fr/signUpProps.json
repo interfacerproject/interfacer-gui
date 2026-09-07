@@ -36,5 +36,9 @@
   "this e-mail has already been used by another user": "cet e-mail a déjà été utilisé par un autre utilisateur",
   "Once registered, you will receive an email with a link to verify your email address.": "Une fois inscrit, vous recevrez un e-mail avec un lien pour vérifier votre adresse e-mail.",
   "This username is already in use": "Ce nom d'utilisateur est déjà utilisé",
-  "This email is already in use": "Cet e-mail est déjà utilisée"
+  "This email is already in use": "Cet e-mail est déjà utilisée",
+  "Create your Interfacer account": "Créez votre compte Interfacer",
+  "Sign in": "Se connecter",
+  "Set your recovery questions": "Définissez vos questions de récupération",
+  "Create account": "Créer un compte"
 }

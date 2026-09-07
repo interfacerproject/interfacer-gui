@@ -14,59 +14,129 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Text } from "@bbtgnn/polaris-interfacer";
+import { ChevronDownIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
-import { ChildrenProp } from "./brickroom/types";
-import TopbarPopover from "./partials/topbar/TopbarPopover";
+import { useEffect, useRef, useState } from "react";
+
+type Locale = { code: string; label: string; flag: string };
+
+// Endonyms — a language is conventionally listed in its own tongue, so these
+// are intentionally not run through i18n.
+const LOCALES: Locale[] = [
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "it", label: "Italiano", flag: "🇮🇹" },
+  { code: "de", label: "Deutsch", flag: "🇩🇪" },
+];
 
 const LocationMenu = ({ className }: { className?: string }) => {
   const router = useRouter();
   const { pathname, asPath, query, locale } = router;
-  const handleSelect = (loc: string) => {
-    router.push({ pathname, query }, asPath, { locale: loc });
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  const active = LOCALES.find(l => l.code === locale) ?? LOCALES[0];
+
+  const handleSelect = (code: string) => {
+    setOpen(false);
+    if (code === locale) return;
+    router.push({ pathname, query }, asPath, { locale: code });
   };
-  //locales with flag
-  const locales = [
-    { label: "en", flag: "🇬🇧" },
-    { label: "fr", flag: "🇫🇷" },
-    { label: "it", flag: "🇮🇹" },
-    { label: "de", flag: "🇩🇪" },
-  ];
+
+  // Click outside / Escape closes the menu, matching UserDropdown.
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: MouseEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  // A locale change is a route change — make sure the menu is closed after it.
+  useEffect(() => {
+    const close = () => setOpen(false);
+    router.events.on("routeChangeComplete", close);
+    return () => router.events.off("routeChangeComplete", close);
+  }, [router.events]);
 
   return (
-    <TopbarPopover
-      id="user-menu"
-      buttonContent={
-        <Text as="p" variant="headingXl">
-          {locales.find(l => l.label === locale)?.flag}
-        </Text>
-      }
-    >
-      <div className="divide-y-1 divide-slate-200">
-        <div>
-          {locales.map(loc => (
-            <MenuLink onclick={() => handleSelect(loc.label)} key={loc.label}>
-              <Text as="p" variant="headingXl">
-                {loc.flag}
-              </Text>
-            </MenuLink>
-          ))}
+    <div ref={rootRef} className={`relative ${className ?? ""}`}>
+      <button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={`Language: ${active.label}`}
+        className="flex items-center gap-1.5 shrink-0 bg-transparent border border-[var(--ifr-border)] cursor-pointer transition-colors hover:bg-[var(--ifr-bg-hover)]"
+        style={{
+          height: "var(--ifr-control-height)",
+          padding: "0 8px",
+          borderRadius: "var(--ifr-radius-sm)",
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: "var(--ifr-fs-sm)",
+          fontWeight: "var(--ifr-fw-medium)",
+          color: "var(--ifr-text-primary)",
+        }}
+      >
+        <span aria-hidden className="text-base leading-none">
+          {active.flag}
+        </span>
+        <span className="hidden uppercase sm:inline">{active.code}</span>
+        <ChevronDownIcon className="h-3.5 w-3.5" style={{ color: "var(--ifr-text-secondary)" }} />
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          className="absolute right-0 top-[calc(100%+6px)] z-50 overflow-hidden bg-[var(--ifr-bg-surface)]"
+          style={{
+            minWidth: "180px",
+            borderRadius: "var(--ifr-radius-sm)",
+            border: "1px solid var(--ifr-border)",
+            boxShadow: "var(--ifr-shadow-dropdown)",
+            fontFamily: "var(--ifr-font-body)",
+          }}
+        >
+          {LOCALES.map(l => {
+            const isActive = l.code === locale;
+            return (
+              <button
+                key={l.code}
+                type="button"
+                role="option"
+                aria-selected={isActive}
+                onClick={() => handleSelect(l.code)}
+                className={`flex w-full cursor-pointer items-center gap-2.5 border-none px-3 py-2 transition-colors ${
+                  isActive ? "bg-[var(--ifr-bg-hover)]" : "bg-transparent hover:bg-[var(--ifr-bg-hover-light)]"
+                }`}
+                style={{
+                  fontSize: "var(--ifr-fs-base)",
+                  fontWeight: isActive ? "var(--ifr-fw-medium)" : "var(--ifr-fw-regular)",
+                  color: "var(--ifr-text-primary)",
+                }}
+              >
+                <span aria-hidden className="text-base leading-none">
+                  {l.flag}
+                </span>
+                <span className="flex-1 text-left">{l.label}</span>
+                <span className="uppercase text-[var(--ifr-text-secondary)]" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                  {l.code}
+                </span>
+              </button>
+            );
+          })}
         </div>
-      </div>
-    </TopbarPopover>
+      )}
+    </div>
   );
 };
-export default LocationMenu;
 
-function MenuLink(props: { onclick: () => void } & ChildrenProp) {
-  const { onclick, children } = props;
-  return (
-    <button onClick={onclick} className="block w-full">
-      <a>
-        <div className="hover:bg-slate-100 py-2 px-3">
-          <div className="">{children}</div>
-        </div>
-      </a>
-    </button>
-  );
-}
+export default LocationMenu;

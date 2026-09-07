@@ -15,27 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { ChildrenComponent as CC } from "components/brickroom/types";
+import { AuthBackLink, AuthCard, AuthCardHeader } from "components/partials/auth/AuthCard";
 import { useTranslation } from "next-i18next";
 
 //
 
 export namespace ViaQuestionsNS {
-  export interface Props {}
+  export interface Props {
+    onBack?: () => void;
+  }
 }
 
 //
 
+/**
+ * Sign in · step 3B — recovery questions. The prototype only draws the
+ * passphrase branch (1092:14277); this is its sibling, built from the same
+ * card so the two methods read as one flow.
+ */
 export default function ViaQuestions(props: CC<ViaQuestionsNS.Props>) {
   const { t } = useTranslation("signInProps");
 
   return (
-    <div>
-      {/* Intro */}
-      <h2>{t("Login")}</h2>
-      <p className="mt-2 mb-6">{t("Answer the questions that you answered during the signup process")}</p>
+    <AuthCard>
+      <AuthCardHeader
+        back={<AuthBackLink label={t("Back to sign in")} onClick={props.onBack} />}
+        title={t("Answer your recovery questions")}
+        description={t("Answer the questions you set when you created your account.")}
+      />
 
       {/* Here goes the `Questions` component */}
       {props.children}
-    </div>
+    </AuthCard>
   );
 }

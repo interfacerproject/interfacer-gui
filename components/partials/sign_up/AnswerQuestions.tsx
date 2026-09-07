@@ -14,22 +14,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import { AuthCard, AuthCardHeader } from "components/partials/auth/AuthCard";
 import { useTranslation } from "next-i18next";
 import { ReactNode } from "react";
 
 //
 
+/** Sign up · recovery questions, in the card of the sign-in steps. */
 export default function AnswerQuestions(props: { children?: ReactNode }) {
   const { t } = useTranslation("signUpProps");
 
   return (
-    <div>
-      <h2>{t("Sign up")}</h2>
-      <p>{t("Answer to these questions to complete your signup 🧩")}</p>
-      <p className="mt-4 font-semibold text-primary">
-        {t("You will have to remember the answers and keep them for later as they are necessary for the log in")}
-      </p>
+    <AuthCard>
+      <AuthCardHeader
+        title={t("Set your recovery questions")}
+        description={t(
+          "You will have to remember the answers and keep them for later as they are necessary for the log in"
+        )}
+      />
+
       {props.children}
-    </div>
+    </AuthCard>
   );
 }

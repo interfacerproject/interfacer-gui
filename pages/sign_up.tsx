@@ -36,15 +36,13 @@ import InvitationKey from "components/partials/sign_up/InvitationKey";
 import UserData, { UserDataNS } from "components/partials/sign_up/UserData";
 
 // Components
-import { Text } from "@bbtgnn/polaris-interfacer";
-import BrAuthSuggestion from "components/brickroom/BrAuthSuggestion";
-import BrError from "components/brickroom/BrError";
+import { AuthButton, AuthError, AuthPage } from "components/partials/auth/AuthCard";
 import devLog from "lib/devLog";
 
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["signUpProps", "common"])),
+      ...(await serverSideTranslations(locale, ["signUpProps", "signInProps", "common"])),
     },
   };
 }
@@ -125,44 +123,40 @@ const SignUp: NextPageWithLayout = () => {
   //
 
   return (
-    <div className="grid h-full grid-cols-6 mt-2 md:mt-40">
-      <div className="col-span-6 px-4 py-2 md:col-span-4 md:col-start-2 md:col-end-6">
-        {/* Step 0: invitation key */}
-        {step === 0 && <InvitationKey onSubmit={nextStep} />}
+    <AuthPage>
+      {/* Step 0: invitation key */}
+      {step === 0 && <InvitationKey onSubmit={nextStep} />}
 
-        {/* Step 1: Collecting user data */}
-        {step === 1 && <UserData onSubmit={userDataSubmit} />}
+      {/* Step 1: Collecting user data */}
+      {step === 1 && <UserData onSubmit={userDataSubmit} />}
 
-        {/* Step 2: User questions */}
-        {step === 2 && (
-          <AnswerQuestions>
-            <Questions email={signUpData.email} HMAC={signUpData.HMAC} onSubmit={questionsSubmit} />
-          </AnswerQuestions>
-        )}
+      {/* Step 2: User questions */}
+      {step === 2 && (
+        <AnswerQuestions>
+          <Questions
+            email={signUpData.email}
+            HMAC={signUpData.HMAC}
+            onSubmit={questionsSubmit}
+            submitLabel={t("Continue")}
+          />
+        </AnswerQuestions>
+      )}
 
-        {/* Step 3: User creation */}
-        {step === 3 && (
-          <Passphrase>
-            {error && <BrError>{error}</BrError>}
+      {/* Step 3: User creation */}
+      {step === 3 && (
+        <Passphrase>
+          {error && <AuthError>{error}</AuthError>}
 
-            <button className="btn btn-block btn-accent" onClick={signUp} data-test="signUpBtn">
-              {t("Register and login")}
-            </button>
+          <AuthButton onClick={signUp} data-test="signUpBtn">
+            {t("Create account")}
+          </AuthButton>
 
-            <Text as="p" variant="bodyMd" color="subdued">
-              {t("Once registered, you will receive an email with a link to verify your email address.")}
-            </Text>
-          </Passphrase>
-        )}
-
-        {/* Invitation to login */}
-        {(step == 0 || step == 1) && (
-          <div className="mt-8">
-            <BrAuthSuggestion linkText={t("LogIn")} baseText={t("Do you have already an account?")} url="/sign_in" />
-          </div>
-        )}
-      </div>
-    </div>
+          <p className="text-[14px] leading-[21px] text-ifr-text-muted">
+            {t("Once registered, you will receive an email with a link to verify your email address.")}
+          </p>
+        </Passphrase>
+      )}
+    </AuthPage>
   );
 };
 

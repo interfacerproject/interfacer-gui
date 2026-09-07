@@ -1,5 +1,5 @@
 import { Stack } from "@bbtgnn/polaris-interfacer";
-import PHelp from "components/polaris/PHelp";
+import { CheckOption, OptionGrid, OptionGroup } from "components/partials/create/FormControls";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { AVAILABILITY_OPTIONS, SERVICE_TYPE_OPTIONS } from "lib/tagging";
@@ -33,49 +33,43 @@ export default function ServiceFiltersStep() {
         subtitle={t("These fields help users filter and find your service.")}
       />
 
-      <Stack vertical spacing="tight">
-        <PHelp helpText={t("Select the type(s) of service you offer")} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <OptionGroup label={t("Service type")} helpText={t("Select the type(s) of service you offer")}>
+        <OptionGrid>
           {SERVICE_TYPE_OPTIONS.map((option: string) => (
-            <label key={option} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={values.serviceType.includes(option)}
-                onChange={e =>
-                  setValue(
-                    "serviceFilters.serviceType",
-                    toggleValue(values.serviceType, option, e.target.checked),
-                    formSetValueOptions
-                  )
-                }
-              />
-              <span>{t(option)}</span>
-            </label>
+            <CheckOption
+              key={option}
+              label={t(option)}
+              checked={values.serviceType.includes(option)}
+              onChange={checked =>
+                setValue(
+                  "serviceFilters.serviceType",
+                  toggleValue(values.serviceType, option, checked),
+                  formSetValueOptions
+                )
+              }
+            />
           ))}
-        </div>
-      </Stack>
+        </OptionGrid>
+      </OptionGroup>
 
-      <Stack vertical spacing="tight">
-        <PHelp helpText={t("Select your availability options")} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <OptionGroup label={t("Availability")} helpText={t("Select your availability options")}>
+        <OptionGrid>
           {AVAILABILITY_OPTIONS.map((option: string) => (
-            <label key={option} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={values.availability.includes(option)}
-                onChange={e =>
-                  setValue(
-                    "serviceFilters.availability",
-                    toggleValue(values.availability, option, e.target.checked),
-                    formSetValueOptions
-                  )
-                }
-              />
-              <span>{t(option)}</span>
-            </label>
+            <CheckOption
+              key={option}
+              label={t(option)}
+              checked={values.availability.includes(option)}
+              onChange={checked =>
+                setValue(
+                  "serviceFilters.availability",
+                  toggleValue(values.availability, option, checked),
+                  formSetValueOptions
+                )
+              }
+            />
           ))}
-        </div>
-      </Stack>
+        </OptionGrid>
+      </OptionGroup>
     </Stack>
   );
 }

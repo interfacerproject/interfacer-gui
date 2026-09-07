@@ -16,10 +16,11 @@
 
 import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 // Form
-import { Button, TextField } from "@bbtgnn/polaris-interfacer";
+import { TextField } from "@bbtgnn/polaris-interfacer";
+import { AuthActions, AuthButton } from "components/partials/auth/AuthCard";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -41,6 +42,10 @@ export namespace QuestionsNS {
     email: string;
     HMAC: string;
     onSubmit: (data: FormValues) => void;
+    /** Label of the submit button — "Continue" while signing up, "Sign in" while signing in. */
+    submitLabel?: string;
+    /** Slot under the submit button, for the link to the other sign in method. */
+    footer?: ReactNode;
   }
 }
 
@@ -162,50 +167,49 @@ const Questions = (props: QuestionsNS.Props) => {
    */
 
   return (
-    <>
-      {/* Hint */}
-      {!isValid && (
-        <p className="text-amber-500 font-bold" data-test="missingQuestions">
-          {missingQuestions}
-        </p>
-      )}
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      {/* Iterating over "questions" to display fields */}
+      <div className="flex flex-col gap-4">
+        {questions.map((question, index) => (
+          <div key={index}>
+            <Controller
+              control={control}
+              // @ts-ignore
+              name={`question${index + 1}`}
+              render={({ field: { onChange, onBlur, name, value } }) => (
+                <TextField
+                  type="text"
+                  id={name}
+                  name={name}
+                  value={value}
+                  focused={index === 0}
+                  autoComplete="off"
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  label={question}
+                  requiredIndicator={isRequired(schema, name)}
+                />
+              )}
+            />
+          </div>
+        ))}
+      </div>
 
-      {/* Form */}
+      <AuthActions>
+        {/* Hint */}
+        {!isValid && (
+          <p className="text-[14px] leading-[21px] text-ifr-yellow-text" data-test="missingQuestions">
+            {missingQuestions}
+          </p>
+        )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 pt-8">
-        {/* Iterating over "questions" to display fields */}
-        <div className="space-y-4">
-          {questions.map((question, index) => (
-            <div key={index}>
-              <Controller
-                control={control}
-                // @ts-ignore
-                name={`question${index + 1}`}
-                render={({ field: { onChange, onBlur, name, value } }) => (
-                  <TextField
-                    type="text"
-                    id={name}
-                    name={name}
-                    value={value}
-                    focused={index === 0}
-                    autoComplete="off"
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    label={question}
-                    requiredIndicator={isRequired(schema, name)}
-                  />
-                )}
-              />
-            </div>
-          ))}
-        </div>
+        <AuthButton type="submit" disabled={!isValid} id="submit">
+          {props.submitLabel ?? t("Sign in")}
+        </AuthButton>
 
-        {/* Submit button */}
-        <Button size="large" primary fullWidth submit disabled={!isValid} id="submit">
-          {t("Next step")}
-        </Button>
-      </form>
-    </>
+        {props.footer}
+      </AuthActions>
+    </form>
   );
 };
 

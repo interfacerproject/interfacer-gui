@@ -47,9 +47,10 @@ const Designs: NextPageWithLayout = () => {
     <CatalogLayout
       variant="designs"
       hero={{
-        title: t("Open Source Hardware Designs"),
+        eyebrow: t("Build or adapt"),
+        title: t("Designs you can build on"),
         description: t(
-          "Free, community-driven hardware projects you can build, learn from, and improve. Every design is fully documented and open — created by makers around the world."
+          "Browse open hardware files, documentation and specifications you can inspect, adapt and manufacture."
         ),
         stats: (
           <>

@@ -4,7 +4,7 @@ import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
 // Components
-import CreateProjectLayout from "components/layout/CreateProjectLayout";
+import CreateFormLayout from "components/layout/CreateFormLayout";
 import Layout from "components/layout/Layout";
 import CreateProjectForm from "components/partials/create/project/CreateProjectForm";
 
@@ -28,7 +28,7 @@ const CreateService: NextPageWithLayout = () => {
 CreateService.getLayout = function getLayout(page: ReactElement) {
   return (
     <Layout bottomPadding="none">
-      <CreateProjectLayout>{page}</CreateProjectLayout>
+      <CreateFormLayout>{page}</CreateFormLayout>
     </Layout>
   );
 };

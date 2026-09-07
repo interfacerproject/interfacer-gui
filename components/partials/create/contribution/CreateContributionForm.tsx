@@ -22,16 +22,14 @@ import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import { Banner, Button, Card, Spinner, Stack, Text, TextField } from "@bbtgnn/polaris-interfacer";
+import { Banner, Card, Spinner, TextField } from "@bbtgnn/polaris-interfacer";
 import BrMdEditor from "components/brickroom/BrMdEditor";
 import { ChildrenProp as CP } from "components/brickroom/types";
 
 // Other
 import { MagicWand } from "@carbon/icons-react";
 import ResourceDetailsCard from "components/ResourceDetailsCard";
-import TableOfContents from "components/TableOfContents";
 import { useProject } from "components/layout/FetchProjectLayout";
-import PDivider from "components/polaris/PDivider";
 import PLabel from "components/polaris/PLabel";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
@@ -39,6 +37,16 @@ import { isRequired } from "lib/isFieldRequired";
 import React, { ReactNode } from "react";
 import SelectProjectForContribution from "../project/steps/SelectProjectForContribution";
 import Link from "next/dist/client/link";
+import {
+  FormActions,
+  FormColumns,
+  FormHeading,
+  FormNavRail,
+  FormSection,
+  formPrimaryButtonClass,
+  formPrimaryButtonStyle,
+  useSectionScrollSpy,
+} from "../FormShell";
 
 //
 
@@ -61,14 +69,22 @@ const CreateContributionForm = (props: Props) => {
   const { onSubmit, error, setError } = props;
   const { t } = useTranslation();
 
-  const sections = ["Title", t("Project to be included"), t("Description of the contribution")];
+  const sections = [
+    { id: "contribution-title", label: t("Title") },
+    { id: "contribution-project", label: t("Project to be included") },
+    { id: "contribution-description", label: t("Description of the contribution") },
+  ];
 
   function ProposeContributionNav() {
-    const links = sections.map(section => ({
-      label: <span className="capitalize">{section}</span>,
-      href: `#${section.replace(" ", "-")}`,
-    }));
-    return <TableOfContents title={t("Make a contribution")} links={links} />;
+    const { activeId, scrollTo } = useSectionScrollSpy(sections.map(s => s.id));
+    return (
+      <FormNavRail
+        items={sections.map(s => ({ ...s, required: true }))}
+        activeId={activeId}
+        onSelect={scrollTo}
+        ariaLabel={t("Sections")}
+      />
+    );
   }
 
   //
@@ -105,17 +121,11 @@ const CreateContributionForm = (props: Props) => {
 
   const Heading = () => (
     <>
-      <Stack vertical spacing="extraLoose">
-        <Stack vertical spacing="tight">
-          <Text as="h1" variant="headingXl">
-            {t("Propose a contribution")}
-          </Text>
-        </Stack>
-        <Stack vertical spacing="extraTight">
-          <PLabel label={t("You are about to propose to include a project into:")} />
-          <ResourceDetailsCard resource={resource} />
-        </Stack>
-      </Stack>
+      <FormHeading title={t("Propose a contribution")} />
+      <div className="mb-6 flex flex-col gap-1">
+        <PLabel label={t("You are about to propose to include a project into:")} />
+        <ResourceDetailsCard resource={resource} />
+      </div>
     </>
   );
 
@@ -123,9 +133,8 @@ const CreateContributionForm = (props: Props) => {
 
   const Fields = () => (
     <>
-      <Stack vertical spacing="extraLoose">
-        <PDivider id={sections[0]} />
-        <PTitleSubtitle title={t(sections[0])} />
+      <FormSection id={sections[0].id}>
+        <PTitleSubtitle title={sections[0].label} />
         <Controller
           control={control}
           name="name"
@@ -146,17 +155,19 @@ const CreateContributionForm = (props: Props) => {
             />
           )}
         />
+      </FormSection>
 
-        <PDivider id={sections[1]} />
+      <FormSection id={sections[1].id}>
         <PTitleSubtitle
-          title={t(sections[1])}
+          title={sections[1].label}
           subtitle={t("Select the project you propose to include in the original project")}
         />
         <SelectProjectForContribution />
+      </FormSection>
 
-        <PDivider id={sections[2]} />
+      <FormSection id={sections[2].id}>
         <PTitleSubtitle
-          title={t(sections[2])}
+          title={sections[2].label}
           subtitle={t(
             "Describe what your contribution adds to the original project,  and why you are proposing it. This description will be readable in the history of the project you are contributing to."
           )}
@@ -178,7 +189,9 @@ const CreateContributionForm = (props: Props) => {
           requiredIndicator={isRequired(schema, "description")}
           error={errors.description?.message}
         />
+      </FormSection>
 
+      <>
         {/* Slot to display errors, for example */}
         {error && setError && (
           <Banner
@@ -200,22 +213,19 @@ const CreateContributionForm = (props: Props) => {
             </div>
           </Card>
         )}
-      </Stack>
+      </>
     </>
   );
 
   //
 
   const SubmitBar = () => (
-    <>
-      <div className="bg-yellow-100 border-t-1 border-t-border-warning-subdued p-4 flex justify-end items-center space-x-6 sticky bottom-0 z-20">
-        <div className="space-x-2">
-          <Button primary submit disabled={!isValid} icon={<MagicWand />}>
-            {t("Propose contribution")}
-          </Button>
-        </div>
-      </div>
-    </>
+    <FormActions>
+      <button type="submit" disabled={!isValid} className={formPrimaryButtonClass} style={formPrimaryButtonStyle}>
+        <MagicWand size={16} />
+        {t("Propose contribution")}
+      </button>
+    </FormActions>
   );
 
   //
@@ -225,20 +235,27 @@ const CreateContributionForm = (props: Props) => {
     return (
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="p-4 text-text-primary">
-            <Link
-              href={`/project/${resource?.id}`}
-            >
-              {t("← Discard and go back")}
-            </Link>
-          </div>
-          <div className="flex justify-center items-start space-x-8 md:space-x-16 lg:space-x-24 p-6">
-            <div className="sticky top-24">
-              <ProposeContributionNav />
+          <div className="min-h-screen bg-ifr-profile" style={{ fontFamily: "var(--ifr-font-body)" }}>
+            <div className="max-w-[1200px] mx-auto w-full px-4 md:px-6 py-6 md:py-[42px]">
+              <Link href={`/project/${resource?.id}`}>
+                <a
+                  className="inline-flex items-center gap-2 mb-4 px-1 py-2 text-ifr-text-primary no-underline hover:bg-ifr-hover transition-colors"
+                  style={{
+                    borderRadius: "var(--ifr-radius-sm)",
+                    fontSize: "var(--ifr-fs-base)",
+                    fontWeight: "var(--ifr-fw-medium)",
+                  }}
+                >
+                  {t("← Discard and go back")}
+                </a>
+              </Link>
+              <Heading />
+              <FormColumns nav={<ProposeContributionNav />}>
+                {children}
+                <SubmitBar />
+              </FormColumns>
             </div>
-            <div className="grow max-w-xl px-6 pb-24 pt-0">{children}</div>
           </div>
-          <SubmitBar />
         </form>
       </FormProvider>
     );
@@ -246,7 +263,6 @@ const CreateContributionForm = (props: Props) => {
 
   return (
     <Layout>
-      <Heading />
       <Fields />
     </Layout>
   );
