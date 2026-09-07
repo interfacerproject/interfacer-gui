@@ -14,126 +14,127 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import DppIssuedCard from "components/previewCommerce/DppIssuedCard";
-import { CheckGlyph } from "components/previewCommerce/glyphs";
-import { placeholderBlock } from "components/previewCommerce/placeholder";
+import { CheckGlyph, DppGlyph } from "components/previewCommerce/glyphs";
+import PreviewCommerceHeader from "components/previewCommerce/PreviewCommerceHeader";
+import { usePreviewDialog } from "components/previewCommerce/PreviewDialog";
 import PreviewCommerceLayout from "components/previewCommerce/PreviewCommerceLayout";
-import { PreviewHeading } from "components/previewCommerce/ui";
+import { OutlineButton, PreviewPage, PrimaryButton } from "components/previewCommerce/ui";
 import { useCommercePreview } from "lib/previewCommerce/cart";
 import { previewCommerceGssp } from "lib/previewCommerce/gssp";
-import { formatEur, MOCK_ORDER_ID } from "lib/previewCommerce/mockData";
+import { deliveryMethodById, formatEur, MOCK_ORDER_ID, MOCK_PRODUCT } from "lib/previewCommerce/mockData";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
 const CommercePreviewOrder: NextPageWithLayout = () => {
   const { t } = useTranslation("commercePreviewProps");
-  const { lines, totals } = useCommercePreview();
+  const router = useRouter();
+  const dialog = usePreviewDialog();
+  const { lines, totals, deliveryMethod } = useCommercePreview();
+  const method = deliveryMethodById(deliveryMethod);
 
   return (
-    <main
-      style={{
-        maxWidth: "820px",
-        margin: "0 auto",
-        padding: "40px 24px 120px",
-        fontFamily: "var(--ifr-font-body)",
-        animation: "ifr-preview-fade-up 0.3s ease",
-      }}
+    <PreviewPage
+      header={
+        <PreviewCommerceHeader
+          eyebrow={t("ORDER CONFIRMED")}
+          title={t("Your purchase is complete")}
+          description={t("{{seller}} has received your order.", { seller: MOCK_PRODUCT.seller })}
+        />
+      }
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "12px",
-          textAlign: "center",
-          marginBottom: "28px",
-        }}
-      >
+      <div style={{ maxWidth: "760px", margin: "0 auto", animation: "ifr-preview-fade-up 0.3s ease" }}>
         <div
-          style={{
-            width: "56px",
-            height: "56px",
-            borderRadius: "9999px",
-            background: "#f1f8f5",
-            border: "1px solid rgba(3,106,83,0.2)",
-            display: "grid",
-            placeItems: "center",
-          }}
+          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px", marginBottom: "24px" }}
         >
-          <CheckGlyph size={26} stroke="#036a53" />
-        </div>
-        <PreviewHeading>{t("Order {{id}} confirmed", { id: MOCK_ORDER_ID })}</PreviewHeading>
-        <p style={{ margin: 0, fontSize: "15px", color: "var(--ifr-text-secondary)", maxWidth: "56ch" }}>
-          {t(
-            "Sample confirmation. In the intended flow, {{total}} is paid by card, two orders are created — one per seller — and receipts land in your inbox.",
-            { total: formatEur(totals.total) }
-          )}
-        </p>
-      </div>
-
-      <div
-        style={{
-          border: "1px solid #c9cccf",
-          borderRadius: "6px",
-          background: "#fff",
-          overflowX: "auto",
-          marginBottom: "20px",
-        }}
-      >
-        {lines.map(l => (
           <div
-            key={l.productSlug}
             style={{
-              display: "flex",
-              gap: "14px",
-              alignItems: "center",
-              padding: "16px",
-              borderBottom: "1px solid #c9cccf",
+              width: "48px",
+              height: "48px",
+              borderRadius: "9999px",
+              background: "#036a53",
+              display: "grid",
+              placeItems: "center",
             }}
           >
-            <div style={placeholderBlock(56)} />
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ margin: 0, fontSize: "15px", fontWeight: 600 }}>{t(l.name)}</p>
-              <p style={{ margin: "3px 0 0", fontSize: "12px", color: "var(--ifr-text-secondary)" }}>
-                {t("{{seller}} · {{variant}}", { seller: l.seller, variant: l.variantLabel })}
-              </p>
-            </div>
-            <span
-              style={{
-                padding: "3px 9px",
-                borderRadius: "4px",
-                background: "#fff5ea",
-                color: "#916a00",
-                fontSize: "11px",
-                fontWeight: 600,
-                whiteSpace: "nowrap",
-              }}
-            >
-              {t(l.status)}
-            </span>
-            <span style={{ fontSize: "15px", fontWeight: 600, width: "88px", textAlign: "right" }}>
-              {formatEur(l.unitPrice * l.quantity)}
-            </span>
+            <CheckGlyph size={22} stroke="#fff" />
           </div>
-        ))}
+          <span style={{ fontSize: "12px", color: "var(--ifr-text-muted)" }}>
+            {t("Order ID: {{id}}", { id: MOCK_ORDER_ID })}
+          </span>
+        </div>
+
         <div
           style={{
-            padding: "14px 16px",
+            border: "1px solid #c9cccf",
+            borderRadius: "8px",
+            background: "#fff",
+            padding: "24px",
             display: "flex",
-            justifyContent: "space-between",
-            background: "rgba(200,212,229,0.15)",
+            flexDirection: "column",
+            gap: "16px",
           }}
         >
-          <span style={{ fontSize: "13px", color: "var(--ifr-text-secondary)" }}>
-            {t("Shipping {{s}} · VAT {{v}}", { s: formatEur(totals.shipping), v: formatEur(totals.vat) })}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {lines.map(l => (
+              <div key={l.productSlug} style={{ display: "flex", justifyContent: "space-between", gap: "12px" }}>
+                <span style={{ minWidth: 0 }}>
+                  <span style={{ display: "block", fontSize: "15px", fontWeight: 600 }}>{t(l.name)}</span>
+                  <span style={{ display: "block", fontSize: "12px", color: "var(--ifr-text-muted)" }}>
+                    {t(l.variantLabel)}
+                  </span>
+                </span>
+                <span style={{ fontSize: "14px", color: "var(--ifr-text-muted)" }}>
+                  {formatEur(l.unitPrice * l.quantity)}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div style={{ height: "1px", background: "#c9cccf" }} />
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+            <span style={{ color: "var(--ifr-text-secondary)" }}>{t("Shipping")}</span>
+            <span>{formatEur(totals.shipping)}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "15px", fontWeight: 600 }}>
+            <span>{t("Total")}</span>
+            <span>{formatEur(totals.total)}</span>
+          </div>
+          <div style={{ height: "1px", background: "#c9cccf" }} />
+          <span style={{ fontSize: "13px", color: "var(--ifr-text-muted)" }}>
+            {t("{{title}} · {{detail}}", { title: t(method.title), detail: t(method.detail) })}
           </span>
-          <span style={{ fontSize: "15px", fontWeight: 700 }}>{formatEur(totals.total)}</span>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            alignItems: "flex-start",
+            border: "1px solid #c9cccf",
+            borderRadius: "8px",
+            background: "#fff",
+            padding: "16px",
+            marginTop: "20px",
+          }}
+        >
+          <DppGlyph size={18} stroke="var(--ifr-text-muted)" />
+          <div>
+            <p style={{ margin: 0, fontSize: "13px", fontWeight: 600 }}>{t("Digital Product Passports")}</p>
+            <p style={{ margin: "2px 0 0", fontSize: "12px", color: "var(--ifr-text-muted)", lineHeight: 1.5 }}>
+              {t("Eligible products will receive a Digital Product Passport after fulfilment.")}
+            </p>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "24px", flexWrap: "wrap" }}>
+          <PrimaryButton onClick={() => dialog.open(t("View order"))}>{t("View order")}</PrimaryButton>
+          <OutlineButton onClick={() => router.push("/products")}>{t("Continue exploring products")}</OutlineButton>
         </div>
       </div>
 
-      <DppIssuedCard />
-    </main>
+      {dialog.element}
+    </PreviewPage>
   );
 };
 

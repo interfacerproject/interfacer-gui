@@ -246,7 +246,7 @@ const CommercePreviewProduct: NextPageWithLayout = () => {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ margin: 0, fontSize: "16px", fontWeight: 500 }}>{p.seller}</p>
-                  <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#036a53" }}>{t("Hamburg, Germany")}</p>
+                  <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#036a53" }}>{p.location}</p>
                 </div>
               </div>
             </div>

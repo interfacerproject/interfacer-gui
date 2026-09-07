@@ -16,15 +16,20 @@
 
 import { CartTotals, formatEur, MockLine } from "lib/previewCommerce/mockData";
 import { useTranslation } from "next-i18next";
-import { placeholderBlock } from "./placeholder";
+import { PreviewClipboardGlyphSm } from "./glyphs";
 
-interface Props {
+const muted = "var(--ifr-text-secondary)";
+
+/** The order summary shown in the checkout right rail. */
+export default function OrderSummary({
+  lines,
+  totals,
+  shippingLabel,
+}: {
   lines: MockLine[];
   totals: CartTotals;
-}
-
-/** The compact order summary shown in the checkout right rail. */
-export default function OrderSummary({ lines, totals }: Props) {
+  shippingLabel?: string;
+}) {
   const { t } = useTranslation("commercePreviewProps");
   return (
     <div
@@ -32,52 +37,84 @@ export default function OrderSummary({ lines, totals }: Props) {
         border: "1px solid #c9cccf",
         borderRadius: "6px",
         background: "#fff",
-        padding: "16px",
+        padding: "24px",
         display: "flex",
         flexDirection: "column",
-        gap: "10px",
+        gap: "16px",
       }}
     >
-      <h2
-        style={{
-          margin: "0 0 4px",
-          fontFamily: "var(--ifr-font-heading)",
-          fontSize: "16px",
-          fontWeight: 700,
-        }}
-      >
-        {t("Order summary")}
-      </h2>
+      <span style={{ fontSize: "16px", fontWeight: 500 }}>{t("Order summary")}</span>
 
-      {lines.map(l => (
-        <div key={l.productSlug} style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          <div style={placeholderBlock(44)} />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ margin: 0, fontSize: "13px", fontWeight: 500 }}>{t(l.name)}</p>
-            <p style={{ margin: "2px 0 0", fontSize: "11px", color: "var(--ifr-text-secondary)" }}>{t(l.seller)}</p>
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        {lines.map(l => (
+          <div key={l.productSlug} style={{ display: "flex", justifyContent: "space-between", gap: "12px" }}>
+            <span style={{ minWidth: 0 }}>
+              <span style={{ display: "block", fontSize: "13px", fontWeight: 500 }}>{t(l.name)}</span>
+              <span style={{ display: "block", fontSize: "11px", color: "var(--ifr-text-muted)" }}>
+                {t(l.variantLabel)}
+              </span>
+            </span>
+            <span style={{ fontSize: "13px", color: "var(--ifr-text-muted)" }}>
+              {formatEur(l.unitPrice * l.quantity)}
+            </span>
           </div>
-          <span style={{ fontSize: "13px", fontWeight: 600 }}>{formatEur(l.unitPrice * l.quantity)}</span>
-        </div>
-      ))}
+        ))}
+      </div>
 
-      <hr style={{ border: "none", borderTop: "1px solid #c9cccf", margin: "4px 0" }} />
-      <Row label={t("Shipping")} value={formatEur(totals.shipping)} />
-      <Row label={t("VAT 19%")} value={formatEur(totals.vat)} />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginTop: "4px" }}>
-        <span style={{ fontSize: "13px", fontWeight: 600 }}>{t("Total")}</span>
+      <div style={{ height: "1px", background: "#c9cccf" }} />
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "13px" }}>
+        <Row label={t("Subtotal")} value={formatEur(totals.subtotal)} strong />
+        <Row
+          label={shippingLabel ? t("Shipping ({{method}})", { method: shippingLabel }) : t("Shipping")}
+          value={formatEur(totals.shipping)}
+          strong
+        />
+        <Row label={t("VAT")} value={t("Included where applicable")} muted />
+      </div>
+
+      <div style={{ height: "1px", background: "#c9cccf" }} />
+
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+        <span style={{ fontSize: "16px", fontWeight: 500 }}>{t("Total")}</span>
         <span style={{ fontFamily: "var(--ifr-font-heading)", fontSize: "20px", fontWeight: 700 }}>
           {formatEur(totals.total)}
+        </span>
+      </div>
+
+      <div style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+        <PreviewClipboardGlyphSm />
+        <span style={{ fontSize: "12px", color: "var(--ifr-text-muted)", lineHeight: 1.5 }}>
+          {t("Eligible products receive a Digital Product Passport after fulfilment.")}
         </span>
       </div>
     </div>
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({
+  label,
+  value,
+  strong,
+  muted: isMuted,
+}: {
+  label: string;
+  value: string;
+  strong?: boolean;
+  muted?: boolean;
+}) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
-      <span style={{ color: "var(--ifr-text-secondary)" }}>{label}</span>
-      <span>{value}</span>
+    <div style={{ display: "flex", justifyContent: "space-between", gap: "12px" }}>
+      <span style={{ color: muted }}>{label}</span>
+      <span
+        style={{
+          fontWeight: strong ? 500 : 400,
+          color: isMuted ? "var(--ifr-text-muted)" : "var(--ifr-text-primary)",
+          textAlign: "right",
+        }}
+      >
+        {value}
+      </span>
     </div>
   );
 }

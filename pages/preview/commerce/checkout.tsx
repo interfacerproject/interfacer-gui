@@ -14,35 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { ShieldGlyph } from "components/previewCommerce/glyphs";
 import OrderSummary from "components/previewCommerce/OrderSummary";
-import PreviewBadge from "components/previewCommerce/PreviewBadge";
+import PreviewCommerceHeader from "components/previewCommerce/PreviewCommerceHeader";
 import PreviewCommerceLayout from "components/previewCommerce/PreviewCommerceLayout";
-import { PreviewHeading } from "components/previewCommerce/ui";
+import { PreviewPage } from "components/previewCommerce/ui";
 import { useCommercePreview } from "lib/previewCommerce/cart";
 import { previewCommerceGssp } from "lib/previewCommerce/gssp";
-import { formatEur, MOCK_ADDRESS, MOCK_CARD, MOCK_DELIVERY_OPTIONS } from "lib/previewCommerce/mockData";
+import { DELIVERY_METHODS, formatEur, MOCK_ADDRESS, MOCK_PRODUCT } from "lib/previewCommerce/mockData";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
-import { CSSProperties, ReactElement, ReactNode, useEffect } from "react";
+import { CSSProperties, ReactElement, useEffect } from "react";
 
 const PLACE_DELAY_MS = 1100;
-
-function stepPillStyle(state: "current" | "done" | "todo"): CSSProperties {
-  const base: CSSProperties = {
-    flex: 1,
-    padding: "12px 16px",
-    borderRadius: "8px",
-    fontSize: "14px",
-    fontWeight: 600,
-    textAlign: "center",
-  };
-  if (state === "current") return { ...base, background: "#036a53", color: "#fff" };
-  if (state === "done")
-    return { ...base, background: "#f1f8f5", color: "#036a53", border: "1px solid rgba(3,106,83,0.2)" };
-  return { ...base, background: "#fff", color: "var(--ifr-text-secondary)", border: "1px solid #c9cccf" };
-}
+const muted = "var(--ifr-text-secondary)";
 
 const inputStyle: CSSProperties = {
   height: "40px",
@@ -58,9 +43,19 @@ const inputStyle: CSSProperties = {
 const CommercePreviewCheckout: NextPageWithLayout = () => {
   const { t } = useTranslation("commercePreviewProps");
   const router = useRouter();
-  const { lines, totals, checkoutStep, setCheckoutStep, placing, setPlacing, resetCheckout } = useCommercePreview();
+  const {
+    lines,
+    totals,
+    deliveryMethod,
+    setDeliveryMethod,
+    checkoutStep,
+    setCheckoutStep,
+    placing,
+    setPlacing,
+    resetCheckout,
+  } = useCommercePreview();
 
-  // Always land on step 1 when arriving at checkout.
+  // Always land on the first step when arriving at checkout.
   useEffect(() => {
     resetCheckout();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -84,24 +79,45 @@ const CommercePreviewCheckout: NextPageWithLayout = () => {
     }, PLACE_DELAY_MS);
   };
 
-  const nextLabel = placing
-    ? t("Placing order…")
-    : checkoutStep === 2
-    ? t("Pay {{total}}", { total: formatEur(totals.total) })
-    : t("Continue");
+  const steps = [t("Address"), t("Delivery"), t("Payment")];
+  const nextLabel =
+    checkoutStep === 0
+      ? t("Continue to delivery")
+      : checkoutStep === 1
+      ? t("Continue to payment")
+      : placing
+      ? t("Placing order…")
+      : t("Place order");
+  const backLabel =
+    checkoutStep === 0 ? t("Back to cart") : checkoutStep === 1 ? t("Back to address") : t("Back to delivery");
 
   return (
-    <main
-      style={{ maxWidth: "1080px", margin: "0 auto", padding: "24px 24px 120px", fontFamily: "var(--ifr-font-body)" }}
+    <PreviewPage
+      header={
+        <PreviewCommerceHeader
+          eyebrow={t("BUY ON INTERFACER")}
+          title={t("Checkout")}
+          description={t("Complete your order from {{seller}}.", { seller: MOCK_PRODUCT.seller })}
+        />
+      }
     >
-      <PreviewHeading style={{ marginBottom: "20px" }}>{t("Checkout")}</PreviewHeading>
-
-      <div style={{ display: "flex", gap: "8px", marginBottom: "24px", flexWrap: "wrap" }}>
-        <div style={stepPillStyle(checkoutStep === 0 ? "current" : "done")}>{t("1 Address")}</div>
-        <div style={stepPillStyle(checkoutStep === 1 ? "current" : checkoutStep > 1 ? "done" : "todo")}>
-          {t("2 Delivery")}
-        </div>
-        <div style={stepPillStyle(checkoutStep === 2 ? "current" : "todo")}>{t("3 Payment")}</div>
+      {/* Step indicator */}
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "24px", flexWrap: "wrap" }}>
+        {steps.map((label, i) => (
+          <div key={label} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <StepDot index={i} current={checkoutStep} />
+            <span
+              style={{
+                fontSize: "14px",
+                fontWeight: i === checkoutStep ? 600 : 400,
+                color: i <= checkoutStep ? "var(--ifr-text-primary)" : "var(--ifr-text-muted)",
+              }}
+            >
+              {label}
+            </span>
+            {i < steps.length - 1 && <span style={{ width: "40px", height: "1px", background: "#c9cccf" }} />}
+          </div>
+        ))}
       </div>
 
       <div
@@ -120,10 +136,18 @@ const CommercePreviewCheckout: NextPageWithLayout = () => {
           }}
         >
           {checkoutStep === 0 && <AddressStep t={t} />}
-          {checkoutStep === 1 && <DeliveryStep t={t} />}
+          {checkoutStep === 1 && <DeliveryStep t={t} selected={deliveryMethod} onSelect={setDeliveryMethod} />}
           {checkoutStep === 2 && <PaymentStep t={t} />}
 
-          <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "12px",
+              marginTop: "8px",
+              flexWrap: "wrap",
+            }}
+          >
             <button
               type="button"
               onClick={goBack}
@@ -131,14 +155,14 @@ const CommercePreviewCheckout: NextPageWithLayout = () => {
                 height: "44px",
                 padding: "0 20px",
                 border: "1px solid #c9cccf",
-                borderRadius: "8px",
+                borderRadius: "6px",
                 background: "#fff",
                 fontSize: "14px",
                 fontWeight: 500,
                 cursor: "pointer",
               }}
             >
-              {t("Back")}
+              {backLabel}
             </button>
             <button
               type="button"
@@ -147,7 +171,7 @@ const CommercePreviewCheckout: NextPageWithLayout = () => {
                 height: "44px",
                 padding: "0 24px",
                 border: "none",
-                borderRadius: "8px",
+                borderRadius: "6px",
                 background: "#036a53",
                 color: "#fff",
                 fontSize: "15px",
@@ -176,28 +200,63 @@ const CommercePreviewCheckout: NextPageWithLayout = () => {
           </div>
         </div>
 
-        <OrderSummary lines={lines} totals={totals} />
+        <OrderSummary
+          lines={lines}
+          totals={totals}
+          shippingLabel={DELIVERY_METHODS.find(m => m.id === deliveryMethod)?.title}
+        />
       </div>
-    </main>
+    </PreviewPage>
   );
 };
 
+function StepDot({ index, current }: { index: number; current: number }) {
+  const done = index < current;
+  const active = index === current;
+  const bg = done || active ? "#036a53" : "#fff";
+  const border = done || active ? "#036a53" : "#c9cccf";
+  const color = done || active ? "#fff" : "var(--ifr-text-muted)";
+  return (
+    <span
+      style={{
+        width: "24px",
+        height: "24px",
+        borderRadius: "9999px",
+        border: `1px solid ${border}`,
+        background: bg,
+        color,
+        display: "grid",
+        placeItems: "center",
+        fontSize: "12px",
+        fontWeight: 600,
+      }}
+    >
+      {done ? "✓" : index + 1}
+    </span>
+  );
+}
+
 type TFn = (key: string, opts?: Record<string, unknown>) => string;
 
-function StepTitle({ children }: { children: ReactNode }) {
+function StepTitle({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <h2 style={{ margin: 0, fontFamily: "var(--ifr-font-heading)", fontSize: "20px", fontWeight: 700 }}>{children}</h2>
+    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+      <h2 style={{ margin: 0, fontFamily: "var(--ifr-font-heading)", fontSize: "20px", fontWeight: 700 }}>{title}</h2>
+      <p style={{ margin: 0, fontSize: "13px", color: muted }}>{subtitle}</p>
+    </div>
   );
 }
 
 function Field({
   label,
   value,
+  placeholder,
   readOnly,
   span2,
 }: {
   label: string;
-  value: string;
+  value?: string;
+  placeholder?: string;
   readOnly?: boolean;
   span2?: boolean;
 }) {
@@ -208,12 +267,12 @@ function Field({
         flexDirection: "column",
         gap: "6px",
         fontSize: "12px",
-        color: "var(--ifr-text-secondary)",
+        color: muted,
         gridColumn: span2 ? "span 2" : undefined,
       }}
     >
       {label}
-      <input defaultValue={value} readOnly={readOnly} style={inputStyle} />
+      <input defaultValue={value} placeholder={placeholder} readOnly={readOnly} style={inputStyle} />
     </label>
   );
 }
@@ -221,66 +280,52 @@ function Field({
 function AddressStep({ t }: { t: TFn }) {
   return (
     <>
-      <StepTitle>{t("Shipping address")}</StepTitle>
-      <p style={{ margin: 0, fontSize: "13px", color: "var(--ifr-text-secondary)" }}>
-        {t("Prefilled from your Interfacer profile.")}
-      </p>
+      <StepTitle title={t("Shipping address")} subtitle={t("Prefilled from your Interfacer profile.")} />
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
         <Field label={t("Full name")} value={MOCK_ADDRESS.fullName} readOnly />
         <Field label={t("Email")} value={MOCK_ADDRESS.email} readOnly />
         <Field label={t("Street")} value={MOCK_ADDRESS.street} span2 />
         <Field label={t("City")} value={MOCK_ADDRESS.city} />
         <Field label={t("Postal code")} value={MOCK_ADDRESS.postalCode} />
+        <Field label={t("Country")} value={MOCK_ADDRESS.country} span2 />
       </div>
     </>
   );
 }
 
-function DeliveryStep({ t }: { t: TFn }) {
+function DeliveryStep({
+  t,
+  selected,
+  onSelect,
+}: {
+  t: TFn;
+  selected: string;
+  onSelect: (id: "standard" | "express") => void;
+}) {
   return (
     <>
-      <StepTitle>{t("Delivery")}</StepTitle>
-      <p style={{ margin: 0, fontSize: "13px", color: "var(--ifr-text-secondary)" }}>
-        {t("One choice per seller — the service item needs no shipping.")}
+      <StepTitle title={t("Delivery")} subtitle={t("Choose how you want your order delivered.")} />
+      <p style={{ margin: 0, fontSize: "12px", color: "var(--ifr-text-muted)" }}>
+        {t("Ships from")} <span style={{ fontWeight: 500 }}>{MOCK_PRODUCT.shipsFrom}</span>
       </p>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {MOCK_DELIVERY_OPTIONS.map((o, i) => {
-          const selected = i === 0;
-          if (!o.selectable) {
-            return (
-              <div
-                key={o.id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  padding: "14px",
-                  border: "1px solid #c9cccf",
-                  borderRadius: "6px",
-                  background: "#fafbfb",
-                }}
-              >
-                <div style={{ flex: 1 }}>
-                  <p style={{ margin: 0, fontSize: "14px", fontWeight: 600 }}>{t(o.title)}</p>
-                  <p style={{ margin: "2px 0 0", fontSize: "12px", color: "var(--ifr-text-secondary)" }}>
-                    {t(o.detail)}
-                  </p>
-                </div>
-                <span style={{ fontSize: "12px", color: "var(--ifr-text-secondary)" }}>{t(o.price)}</span>
-              </div>
-            );
-          }
+        {DELIVERY_METHODS.map(m => {
+          const on = m.id === selected;
           return (
-            <div
-              key={o.id}
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => onSelect(m.id)}
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: "12px",
                 padding: "14px",
-                border: selected ? "2px solid #036a53" : "1px solid #c9cccf",
+                textAlign: "left",
+                cursor: "pointer",
+                border: on ? "2px solid #036a53" : "1px solid #c9cccf",
                 borderRadius: "6px",
-                background: selected ? "#f1f8f5" : "#fff",
+                background: on ? "#f1f8f5" : "#fff",
               }}
             >
               <span
@@ -288,16 +333,16 @@ function DeliveryStep({ t }: { t: TFn }) {
                   width: "16px",
                   height: "16px",
                   borderRadius: "9999px",
-                  border: selected ? "5px solid #036a53" : "1px solid #c9cccf",
+                  border: on ? "5px solid #036a53" : "1px solid #c9cccf",
                   flex: "none",
                 }}
               />
-              <div style={{ flex: 1 }}>
-                <p style={{ margin: 0, fontSize: "14px", fontWeight: 600 }}>{t(o.title)}</p>
-                <p style={{ margin: "2px 0 0", fontSize: "12px", color: "var(--ifr-text-secondary)" }}>{t(o.detail)}</p>
-              </div>
-              <span style={{ fontSize: "14px", fontWeight: 600 }}>{o.price}</span>
-            </div>
+              <span style={{ flex: 1 }}>
+                <span style={{ display: "block", fontSize: "14px", fontWeight: 600 }}>{t(m.title)}</span>
+                <span style={{ display: "block", fontSize: "12px", color: muted }}>{t(m.detail)}</span>
+              </span>
+              <span style={{ fontSize: "14px", fontWeight: 600 }}>{formatEur(m.price)}</span>
+            </button>
           );
         })}
       </div>
@@ -308,78 +353,43 @@ function DeliveryStep({ t }: { t: TFn }) {
 function PaymentStep({ t }: { t: TFn }) {
   return (
     <>
+      <StepTitle title={t("Payment")} subtitle={t("Complete your payment securely to place the order.")} />
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
           gap: "12px",
-          flexWrap: "wrap",
+          padding: "14px",
+          border: "2px solid #036a53",
+          borderRadius: "6px",
+          background: "#f1f8f5",
         }}
       >
-        <StepTitle>{t("Payment")}</StepTitle>
-        <PreviewBadge kind="mockPayment" />
+        <span
+          style={{ width: "16px", height: "16px", borderRadius: "9999px", border: "5px solid #036a53", flex: "none" }}
+        />
+        <span style={{ fontSize: "14px", fontWeight: 600 }}>{t("Credit or debit card")}</span>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxWidth: "420px" }}>
-        <label
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "6px",
-            fontSize: "12px",
-            color: "var(--ifr-text-secondary)",
-          }}
-        >
-          {t("Card number")}
-          <input
-            defaultValue={MOCK_CARD.number}
-            style={{ ...inputStyle, height: "44px", fontSize: "15px", letterSpacing: "0.5px" }}
-          />
-        </label>
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <Field label={t("Cardholder name")} placeholder="Srfsh" />
+        <Field label={t("Card number")} placeholder="1234 5678 9012 3456" />
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-          <label
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "6px",
-              fontSize: "12px",
-              color: "var(--ifr-text-secondary)",
-            }}
-          >
-            {t("Expiry")}
-            <input defaultValue={MOCK_CARD.expiry} style={{ ...inputStyle, height: "44px", fontSize: "15px" }} />
-          </label>
-          <label
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "6px",
-              fontSize: "12px",
-              color: "var(--ifr-text-secondary)",
-            }}
-          >
-            {t("CVC")}
-            <input defaultValue={MOCK_CARD.cvc} style={{ ...inputStyle, height: "44px", fontSize: "15px" }} />
-          </label>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            gap: "10px",
-            padding: "12px 14px",
-            border: "1px solid #c9cccf",
-            borderRadius: "6px",
-            background: "rgba(200,212,229,0.15)",
-          }}
-        >
-          <ShieldGlyph size={16} stroke="#036a53" />
-          <p style={{ margin: 0, fontSize: "12px", lineHeight: 1.5, color: "var(--ifr-text-secondary)" }}>
-            {t(
-              "Card data never touches Interfacer. Medusa creates one payment intent and splits the payout between the two sellers."
-            )}
-          </p>
+          <Field label={t("Expiry date")} placeholder="MM / YY" />
+          <Field label={t("Security code")} placeholder="CVC" />
         </div>
       </div>
+      <label
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          fontSize: "13px",
+          color: "var(--ifr-text-primary)",
+        }}
+      >
+        <input type="checkbox" defaultChecked />
+        {t("Billing address is the same as shipping address")}
+      </label>
     </>
   );
 }

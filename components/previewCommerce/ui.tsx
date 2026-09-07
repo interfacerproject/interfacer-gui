@@ -14,47 +14,47 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import Link from "next/link";
 import { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react";
 
 /** Shared display primitives for the commerce preview pages. */
 
-export function PreviewHeading({
-  children,
-  size = "2xl",
-  style,
-}: {
-  children: ReactNode;
-  size?: "lg" | "xl" | "2xl";
-  style?: CSSProperties;
-}) {
-  const fs = size === "2xl" ? "30px" : size === "xl" ? "24px" : "20px";
+/** Dark header + centred light content column, matching the DTEC catalogue pages. */
+export function PreviewPage({ header, children }: { header: ReactNode; children: ReactNode }) {
   return (
-    <h1
-      style={{
-        margin: 0,
-        fontFamily: "var(--ifr-font-heading)",
-        fontSize: fs,
-        fontWeight: 700,
-        lineHeight: 1.2,
-        color: "var(--ifr-text-primary)",
-        ...style,
-      }}
-    >
-      {children}
-    </h1>
+    <div style={{ fontFamily: "var(--ifr-font-body)" }}>
+      {header}
+      <div className="max-w-[1280px] mx-auto px-6 md:px-20 py-8">{children}</div>
+    </div>
+  );
+}
+
+/** Green "← label" link shown in the light area under the dark header. */
+export function BackLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link href={href}>
+      <a
+        className="inline-flex items-center gap-1.5 no-underline"
+        style={{ color: "#036a53", fontFamily: "var(--ifr-font-body)", fontSize: "14px", fontWeight: 500 }}
+      >
+        <span aria-hidden>{"←"}</span>
+        {label}
+      </a>
+    </Link>
   );
 }
 
 type BtnProps = ButtonHTMLAttributes<HTMLButtonElement> & { fullWidth?: boolean };
 
 const baseBtn = (fullWidth?: boolean): CSSProperties => ({
-  height: "48px",
+  height: "44px",
+  padding: "0 20px",
   borderRadius: "8px",
   fontFamily: "var(--ifr-font-body)",
-  fontSize: "16px",
+  fontSize: "15px",
   fontWeight: 600,
   cursor: "pointer",
-  display: "flex",
+  display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
   gap: "8px",
@@ -91,7 +91,7 @@ export function OutlineButton({ fullWidth, style, children, ...rest }: BtnProps)
   );
 }
 
-export function Card({ children, style }: { children: ReactNode; style?: CSSProperties }) {
+export function Panel({ children, style }: { children: ReactNode; style?: CSSProperties }) {
   return (
     <div
       style={{
@@ -104,6 +104,38 @@ export function Card({ children, style }: { children: ReactNode; style?: CSSProp
     >
       {children}
     </div>
+  );
+}
+
+/** Alias kept for the product page, which uses a 4px-radius card. */
+export function Card({ children, style }: { children: ReactNode; style?: CSSProperties }) {
+  return <Panel style={{ borderRadius: "4px", ...style }}>{children}</Panel>;
+}
+
+export function PreviewHeading({
+  children,
+  size = "2xl",
+  style,
+}: {
+  children: ReactNode;
+  size?: "lg" | "xl" | "2xl";
+  style?: CSSProperties;
+}) {
+  const fs = size === "2xl" ? "30px" : size === "xl" ? "24px" : "20px";
+  return (
+    <h1
+      style={{
+        margin: 0,
+        fontFamily: "var(--ifr-font-heading)",
+        fontSize: fs,
+        fontWeight: 700,
+        lineHeight: 1.2,
+        color: "var(--ifr-text-primary)",
+        ...style,
+      }}
+    >
+      {children}
+    </h1>
   );
 }
 

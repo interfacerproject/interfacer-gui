@@ -20,39 +20,28 @@ import { CommercePreviewProvider } from "lib/previewCommerce/cart";
 import { ReactNode } from "react";
 import PreviewStrip from "./PreviewStrip";
 
-interface Props {
-  children: ReactNode;
-  /**
-   * `app` (default): the real Interfacer topbar + footer, with the preview
-   * strip above them in one sticky block.
-   * `bare`: only the preview strip — used by the Medusa admin mock, which
-   * deliberately has its own neutral shell and no Interfacer chrome.
-   */
-  chrome?: "app" | "bare";
-}
-
 /**
  * Page-level layout for `pages/preview/commerce/*`. Set as `Page.getLayout` so
  * it replaces the global `Layout` on these routes only; nothing here touches
  * the global `Layout` or `Topbar`.
  *
  * The strip and the topbar live inside ONE `position: sticky; top: 0` wrapper —
- * the topbar's own `sticky` is neutralised here so the two never fight while
- * the strip's height changes with wrapping.
+ * the topbar's own `sticky` is neutralised (see `.ifr-preview-chrome` in
+ * `globals.scss`) so the two never fight while the strip's height changes with
+ * wrapping.
  */
-export default function PreviewCommerceLayout({ children, chrome = "app" }: Props) {
-  const bare = chrome === "bare";
+export default function PreviewCommerceLayout({ children }: { children: ReactNode }) {
   return (
     <CommercePreviewProvider>
-      <div className="flex flex-col min-h-screen" style={{ background: bare ? "#fafafa" : "var(--ifr-bg-page)" }}>
+      <div className="flex flex-col min-h-screen bg-ifr-page">
         <div className="ifr-preview-chrome sticky top-0 z-50">
           <PreviewStrip />
-          {!bare && <Topbar />}
+          <Topbar />
         </div>
 
-        <div className={`max-w-full flex-grow ${bare ? "" : "pb-20"}`}>{children}</div>
+        <div className="max-w-full flex-grow pb-20">{children}</div>
 
-        {!bare && <Footer />}
+        <Footer />
       </div>
     </CommercePreviewProvider>
   );

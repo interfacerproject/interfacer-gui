@@ -4,6 +4,8 @@ import { CreateProjectValues } from "../CreateProjectForm";
 
 // Steps
 import { getSectionsByProjectType } from "components/partials/project/projectSections";
+import SalesAvailabilitySection from "components/previewCommerce/SalesAvailabilitySection";
+import { commercePreviewEnabled } from "lib/previewCommerce/flag";
 import { FormHeading, FormSection, formAccents } from "../../FormShell";
 
 //
@@ -63,6 +65,13 @@ export default function CreateProjectFields(props: Props) {
           {section.component}
         </FormSection>
       ))}
+
+      {/* Commerce preview (upcoming "sell through Interfacer" feature) — flagged, not wired to submit */}
+      {commercePreviewEnabled && projectType === ProjectType.PRODUCT && (
+        <FormSection id="preview-sales-availability" accent={formAccents.product}>
+          <SalesAvailabilitySection />
+        </FormSection>
+      )}
     </>
   );
 }

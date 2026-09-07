@@ -14,126 +14,187 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { InfoGlyph } from "components/previewCommerce/glyphs";
+import { ClipboardGlyph } from "components/previewCommerce/glyphs";
+import PreviewCommerceHeader from "components/previewCommerce/PreviewCommerceHeader";
+import { placeholderBlock } from "components/previewCommerce/placeholder";
 import PreviewCommerceLayout from "components/previewCommerce/PreviewCommerceLayout";
-import SellerGroup from "components/previewCommerce/SellerGroup";
-import { OutlineButton, PreviewHeading, PrimaryButton } from "components/previewCommerce/ui";
+import { PreviewPage } from "components/previewCommerce/ui";
 import { useCommercePreview } from "lib/previewCommerce/cart";
 import { previewCommerceGssp } from "lib/previewCommerce/gssp";
-import { formatEur, MockLine } from "lib/previewCommerce/mockData";
+import { formatEur, MOCK_PRODUCT, MockLine } from "lib/previewCommerce/mockData";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
-function groupBySeller(lines: MockLine[]): MockLine[][] {
-  const order: string[] = [];
-  const map = new Map<string, MockLine[]>();
-  for (const l of lines) {
-    if (!map.has(l.seller)) {
-      map.set(l.seller, []);
-      order.push(l.seller);
-    }
-    map.get(l.seller)!.push(l);
-  }
-  return order.map(s => map.get(s)!);
-}
+const muted = "var(--ifr-text-secondary)";
 
 const CommercePreviewCart: NextPageWithLayout = () => {
   const { t } = useTranslation("commercePreviewProps");
   const router = useRouter();
   const { lines, totals } = useCommercePreview();
-  const groups = groupBySeller(lines);
-  const sellerNames = groups.map(g => g[0].seller);
+  const itemCount = lines.reduce((n, l) => n + l.quantity, 0);
 
   return (
-    <main
-      style={{ maxWidth: "1280px", margin: "0 auto", padding: "24px 24px 120px", fontFamily: "var(--ifr-font-body)" }}
+    <PreviewPage
+      header={
+        <PreviewCommerceHeader
+          eyebrow={t("BUY ON INTERFACER")}
+          title={t("Your cart")}
+          description={t("{{count}} items · 1 manufacturer", { count: itemCount })}
+        />
+      }
     >
-      <PreviewHeading style={{ marginBottom: "4px" }}>{t("Your cart")}</PreviewHeading>
-      <p style={{ margin: "0 0 24px", fontSize: "14px", color: "var(--ifr-text-secondary)" }}>
-        {sellerNames.length === 2
-          ? t("2 items from 2 sellers — {{a}} and {{b}} · sample data", { a: sellerNames[0], b: sellerNames[1] })
-          : t("{{count}} items · sample data", { count: lines.length })}
-      </p>
-
       <div
         className="ifr-pc-collapse"
-        style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 340px", gap: "24px", alignItems: "start" }}
+        style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 360px", gap: "32px", alignItems: "start" }}
       >
+        {/* Items */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px", minWidth: 0 }}>
-          {groups.map(g => (
-            <SellerGroup key={g[0].seller} lines={g} />
-          ))}
-
-          <div
-            style={{
-              display: "flex",
-              gap: "12px",
-              padding: "14px 16px",
-              border: "1px solid #c9cccf",
-              borderRadius: "6px",
-              background: "#fff5ea",
-            }}
-          >
-            <InfoGlyph size={18} stroke="#916a00" />
-            <p style={{ margin: 0, fontSize: "13px", lineHeight: 1.5, color: "#916a00" }}>
-              {t(
-                "Two sellers in one cart: Medusa splits this into two orders — separate shipments, separate invoices, separate payouts. The buyer pays once."
-              )}
-            </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <span style={{ fontSize: "16px", color: muted }}>{MOCK_PRODUCT.seller}</span>
+            <span style={{ fontSize: "12px", color: "var(--ifr-text-muted)" }}>
+              {t("Ships from")} <span style={{ fontWeight: 500, color: "#036a53" }}>{MOCK_PRODUCT.shipsFrom}</span>
+            </span>
           </div>
+          <div style={{ height: "1px", background: "#c9cccf" }} />
+          {lines.map((l, i) => (
+            <div key={l.productSlug}>
+              <CartRow line={l} />
+              <div style={{ height: "1px", background: "#c9cccf", marginTop: i === lines.length - 1 ? 0 : 0 }} />
+            </div>
+          ))}
         </div>
 
+        {/* Summary */}
         <div
           style={{
             border: "1px solid #c9cccf",
-            borderRadius: "6px",
+            borderRadius: "4px",
             background: "#fff",
-            padding: "16px",
+            padding: "24px",
             display: "flex",
             flexDirection: "column",
-            gap: "12px",
+            gap: "16px",
           }}
         >
-          <h2 style={{ margin: 0, fontFamily: "var(--ifr-font-heading)", fontSize: "20px", fontWeight: 700 }}>
-            {t("Summary")}
-          </h2>
-          <SummaryRow label={t("Subtotal")} value={formatEur(totals.subtotal)} />
-          <SummaryRow label={t("Shipping (1 of 2 sellers)")} value={formatEur(totals.shipping)} />
-          <SummaryRow label={t("VAT 19%")} value={formatEur(totals.vat)} />
-          <hr style={{ border: "none", borderTop: "1px solid #c9cccf", margin: "4px 0" }} />
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-            <span style={{ fontSize: "14px", fontWeight: 600 }}>{t("Total")}</span>
-            <span style={{ fontFamily: "var(--ifr-font-heading)", fontSize: "24px", fontWeight: 700 }}>
-              {formatEur(totals.total)}
-            </span>
+          <span style={{ fontSize: "16px", color: muted }}>{t("Summary")}</span>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontSize: "14px" }}>
+            <Row label={t("Subtotal")} value={formatEur(totals.subtotal)} strong />
+            <Row label={t("Shipping")} value={t("Calculated at checkout")} muted />
+            <Row label={t("VAT")} value={t("Included where applicable")} muted />
           </div>
-          <PrimaryButton
-            fullWidth
-            style={{ marginTop: "4px" }}
+          <div style={{ height: "1px", background: "#c9cccf" }} />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              fontSize: "16px",
+              fontWeight: 500,
+            }}
+          >
+            <span>{t("Total")}</span>
+            <span>{formatEur(totals.subtotal)}</span>
+          </div>
+          <button
+            type="button"
             onClick={() => router.push("/preview/commerce/checkout")}
+            style={{
+              height: "48px",
+              border: "none",
+              borderRadius: "4px",
+              background: "#036a53",
+              color: "#fff",
+              fontSize: "16px",
+              fontWeight: 500,
+              cursor: "pointer",
+            }}
           >
             {t("Checkout")}
-          </PrimaryButton>
-          <OutlineButton
-            fullWidth
-            style={{ height: "40px", fontSize: "14px", fontWeight: 500 }}
+          </button>
+          <button
+            type="button"
             onClick={() => router.push("/preview/commerce")}
+            style={{
+              height: "48px",
+              border: "1px solid #c9cccf",
+              borderRadius: "4px",
+              background: "#fff",
+              color: "var(--ifr-text-primary)",
+              fontSize: "16px",
+              fontWeight: 500,
+              cursor: "pointer",
+            }}
           >
             {t("Keep browsing")}
-          </OutlineButton>
+          </button>
         </div>
       </div>
-    </main>
+
+      <div style={{ display: "flex", gap: "10px", alignItems: "center", marginTop: "16px" }}>
+        <ClipboardGlyph size={16} stroke="var(--ifr-text-muted)" />
+        <span style={{ fontSize: "14px", color: "var(--ifr-text-muted)" }}>
+          {t("Digital Product Passports are issued for eligible products after fulfilment.")}
+        </span>
+      </div>
+    </PreviewPage>
   );
 };
 
-function SummaryRow({ label, value }: { label: string; value: string }) {
+function CartRow({ line }: { line: MockLine }) {
+  const { t } = useTranslation("commercePreviewProps");
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
-      <span style={{ color: "var(--ifr-text-secondary)" }}>{label}</span>
-      <span style={{ fontWeight: 500 }}>{value}</span>
+    <div style={{ display: "flex", gap: "16px", alignItems: "center", padding: "16px 0" }}>
+      <div style={placeholderBlock(80)} />
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "4px" }}>
+        <span style={{ fontSize: "14px", fontWeight: 500 }}>{t(line.name)}</span>
+        <span style={{ fontSize: "12px", color: "var(--ifr-text-muted)" }}>{t(line.variantLabel)}</span>
+        <div style={{ display: "flex", gap: "8px", alignItems: "center", marginTop: "2px" }}>
+          <span style={qtyBtn}>{"−"}</span>
+          <span style={{ fontSize: "14px", fontWeight: 500 }}>{line.quantity}</span>
+          <span style={qtyBtn}>{"+"}</span>
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
+        <span style={{ fontSize: "14px", fontWeight: 500 }}>{formatEur(line.unitPrice * line.quantity)}</span>
+        <span style={{ fontSize: "12px", color: "var(--ifr-text-muted)" }}>{t("Remove")}</span>
+      </div>
+    </div>
+  );
+}
+
+const qtyBtn: React.CSSProperties = {
+  width: "28px",
+  height: "28px",
+  border: "1px solid #c9cccf",
+  borderRadius: "4px",
+  display: "grid",
+  placeItems: "center",
+  fontSize: "16px",
+  fontWeight: 500,
+  color: "var(--ifr-text-primary)",
+};
+
+function Row({
+  label,
+  value,
+  strong,
+  muted: isMuted,
+}: {
+  label: string;
+  value: string;
+  strong?: boolean;
+  muted?: boolean;
+}) {
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <span style={{ color: muted }}>{label}</span>
+      <span
+        style={{ fontWeight: strong ? 500 : 400, color: isMuted ? "var(--ifr-text-muted)" : "var(--ifr-text-primary)" }}
+      >
+        {value}
+      </span>
     </div>
   );
 }

@@ -15,16 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { CartTotals, computeTotals, MockLine, seedCartLines, VariantId } from "./mockData";
+import { CartTotals, computeTotals, DeliveryMethodId, MockLine, seedCartLines, VariantId } from "./mockData";
 
 /**
  * Client-only state for the commerce preview. No server, no network. The cart
- * always reflects the current variant + quantity selection (two seeded lines:
- * the shredder and a booked service), exactly like the design prototype.
+ * always reflects the current variant + quantity selection (the printer plus a
+ * fixed spare-parts line).
  *
  * `variant` and `qty` survive a reload via `sessionStorage` under the single
- * key `ifr:commercePreview`; the checkout step and the "placing" spinner are
- * deliberately ephemeral.
+ * key `ifr:commercePreview`; the checkout step, delivery choice and the
+ * "placing" spinner are deliberately ephemeral.
  */
 
 export const COMMERCE_PREVIEW_STORAGE_KEY = "ifr:commercePreview";
@@ -33,6 +33,8 @@ export const QTY_MIN = 1;
 export const QTY_MAX = 9;
 
 export const clampCommerceQty = (n: number) => Math.max(QTY_MIN, Math.min(QTY_MAX, Math.round(n)));
+
+const isVariant = (v: unknown): v is VariantId => v === "assembled" || v === "kit" || v === "bom";
 
 /**
  * Write the product-page selection so a page mounting the provider afterwards
@@ -46,6 +48,7 @@ export function persistSelection(variant: VariantId, qty: number) {
   }
 }
 
+/** 0 = Address, 1 = Delivery, 2 = Payment. */
 export type CheckoutStep = 0 | 1 | 2;
 
 interface CommercePreviewValue {
@@ -58,6 +61,9 @@ interface CommercePreviewValue {
 
   lines: MockLine[];
   totals: CartTotals;
+
+  deliveryMethod: DeliveryMethodId;
+  setDeliveryMethod: (m: DeliveryMethodId) => void;
 
   checkoutStep: CheckoutStep;
   setCheckoutStep: (s: CheckoutStep) => void;
@@ -73,6 +79,7 @@ const clampQty = clampCommerceQty;
 export function CommercePreviewProvider({ children }: { children: ReactNode }) {
   const [variant, setVariantState] = useState<VariantId>("assembled");
   const [qty, setQtyState] = useState(1);
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethodId>("standard");
   const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>(0);
   const [placing, setPlacing] = useState(false);
 
@@ -81,10 +88,8 @@ export function CommercePreviewProvider({ children }: { children: ReactNode }) {
     try {
       const raw = window.sessionStorage.getItem(STORAGE_KEY);
       if (!raw) return;
-      const saved = JSON.parse(raw) as { variant?: VariantId; qty?: number };
-      if (saved.variant === "assembled" || saved.variant === "kit" || saved.variant === "bom") {
-        setVariantState(saved.variant);
-      }
+      const saved = JSON.parse(raw) as { variant?: unknown; qty?: unknown };
+      if (isVariant(saved.variant)) setVariantState(saved.variant);
       if (typeof saved.qty === "number") setQtyState(clampQty(saved.qty));
     } catch {
       /* ignore malformed storage */
@@ -110,7 +115,7 @@ export function CommercePreviewProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const lines = useMemo(() => seedCartLines(variant, qty), [variant, qty]);
-  const totals = useMemo(() => computeTotals(lines), [lines]);
+  const totals = useMemo(() => computeTotals(lines, deliveryMethod), [lines, deliveryMethod]);
 
   const value = useMemo<CommercePreviewValue>(
     () => ({
@@ -122,13 +127,28 @@ export function CommercePreviewProvider({ children }: { children: ReactNode }) {
       decQty,
       lines,
       totals,
+      deliveryMethod,
+      setDeliveryMethod,
       checkoutStep,
       setCheckoutStep,
       placing,
       setPlacing,
       resetCheckout,
     }),
-    [variant, qty, setVariant, setQty, incQty, decQty, lines, totals, checkoutStep, placing, resetCheckout]
+    [
+      variant,
+      qty,
+      setVariant,
+      setQty,
+      incQty,
+      decQty,
+      lines,
+      totals,
+      deliveryMethod,
+      checkoutStep,
+      placing,
+      resetCheckout,
+    ]
   );
 
   return <CommercePreviewContext.Provider value={value}>{children}</CommercePreviewContext.Provider>;

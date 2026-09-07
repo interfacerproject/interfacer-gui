@@ -18,31 +18,16 @@ import { CSSProperties } from "react";
 import { ChipTone } from "lib/previewCommerce/mockData";
 
 /**
- * Colours that are NOT in `styles/theme.css` on purpose. The purple marker is
- * intentionally foreign to the Interfacer palette so it can never be mistaken
- * for real product UI. The neutrals are Medusa-admin-only.
+ * The one colour that is NOT in `styles/theme.css` on purpose: the work-in-
+ * progress marker is intentionally foreign to the Interfacer palette so it
+ * can never be mistaken for shipped product UI.
  */
 export const PREVIEW_PURPLE = "#8200db";
 export const PREVIEW_PURPLE_TEXT = "#5b1b8a";
-export const PREVIEW_PURPLE_TEXT_SOFT = "#7a4aa5";
 export const PREVIEW_HATCH = "repeating-linear-gradient(135deg,#f3e6ff 0px,#f3e6ff 14px,#ecdaff 14px,#ecdaff 28px)";
-export const PREVIEW_PURPLE_TINT = "rgba(130,0,219,0.06)";
 
-/** Height of the level-1 preview strip, used to offset the sticky topbar. */
+/** Height of the level-1 work-in-progress strip. */
 export const PREVIEW_STRIP_MIN_HEIGHT = 39;
-
-export const ADMIN = {
-  page: "#fafafa",
-  surface: "#ffffff",
-  rail: "#f4f4f5",
-  border: "#e4e4e7",
-  text: "#18181b",
-  textSoft: "#52525b",
-  muted: "#71717a",
-  ink: "#0b1324",
-  chipLiveBg: "#dcfce7",
-  chipLiveText: "#166534",
-};
 
 export function chipStyle(tone: ChipTone): CSSProperties {
   const map: Record<ChipTone, { background: string; color: string }> = {
