@@ -59,10 +59,12 @@ interface ProjectSidebarNewProps {
   project: Partial<EconomicResource>;
   projectType: ProjectType;
   sidebarRating?: ReviewSummary | null;
+  /** Optional block rendered as the first section inside the sticky card (commerce preview buy block). */
+  topSlot?: ReactNode;
 }
 
 /** Redesigned sidebar following DTEC prototype */
-function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSidebarNewProps) {
+function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: ProjectSidebarNewProps) {
   const { t } = useTranslation("common");
   const { user } = useAuth();
 
@@ -105,6 +107,14 @@ function ProjectSidebarNew({ project, projectType, sidebarRating }: ProjectSideb
           backgroundColor: "#fff",
         }}
       >
+        {/* Commerce preview buy block — unified into this card, above the title */}
+        {topSlot && (
+          <>
+            <div className="px-4 pt-4">{topSlot}</div>
+            <div className="border-t border-[#c9cccf] mt-4" />
+          </>
+        )}
+
         {/* Title */}
         <div className="px-4 pt-4">
           <h2
@@ -2318,17 +2328,23 @@ export default function ProjectDetailNew() {
 
         {/* Sidebar */}
         <div className="hidden lg:block">
-          <div className="w-full lg:w-[300px] shrink-0 flex flex-col gap-4">
-            {commercePreviewEnabled && projectType === ProjectType.PRODUCT && <BuyBlock />}
-            <ProjectSidebarNew project={project} projectType={projectType} sidebarRating={sidebarRating} />
-          </div>
+          <ProjectSidebarNew
+            project={project}
+            projectType={projectType}
+            sidebarRating={sidebarRating}
+            topSlot={commercePreviewEnabled && projectType === ProjectType.PRODUCT ? <BuyBlock embedded /> : undefined}
+          />
         </div>
       </div>
 
       {/* Mobile sidebar */}
-      <div className="lg:hidden px-4 md:px-6 pb-8 flex flex-col gap-4">
-        {commercePreviewEnabled && projectType === ProjectType.PRODUCT && <BuyBlock />}
-        <ProjectSidebarNew project={project} projectType={projectType} sidebarRating={sidebarRating} />
+      <div className="lg:hidden px-4 md:px-6 pb-8">
+        <ProjectSidebarNew
+          project={project}
+          projectType={projectType}
+          sidebarRating={sidebarRating}
+          topSlot={commercePreviewEnabled && projectType === ProjectType.PRODUCT ? <BuyBlock embedded /> : undefined}
+        />
       </div>
     </div>
   );
