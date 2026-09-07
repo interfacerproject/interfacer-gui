@@ -190,11 +190,13 @@ const CommercePreviewProduct: NextPageWithLayout = () => {
           </div>
         </div>
 
-        {/* Right column */}
-        <aside style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <BuyBlock />
-
+        {/* Right column — unified sidebar card, sticky on desktop */}
+        <aside className="lg:sticky lg:self-start lg:top-[116px] lg:max-h-[calc(100vh-140px)] lg:overflow-y-auto">
           <Card style={{ borderRadius: "4px" }}>
+            <div style={{ padding: "16px" }}>
+              <BuyBlock embedded />
+            </div>
+            <HRule />
             <div style={{ padding: "16px" }}>
               <button
                 type="button"

@@ -26,8 +26,11 @@ import { CartGlyph, ClipboardGlyph } from "./glyphs";
  * the CommercePreviewProvider is mounted and drives it live) and on the real
  * product page (no provider — it keeps local state and writes the selection to
  * sessionStorage so the preview cart picks it up).
+ *
+ * `embedded` drops the block's own card chrome so it can sit as the first
+ * section of a larger unified sidebar card.
  */
-export default function BuyBlock() {
+export default function BuyBlock({ embedded = false }: { embedded?: boolean }) {
   const { t } = useTranslation("commercePreviewProps");
   const router = useRouter();
   const ctx = useCommercePreviewOptional();
@@ -51,10 +54,10 @@ export default function BuyBlock() {
   return (
     <div
       style={{
-        border: "1px solid #c9cccf",
-        borderRadius: "4px",
-        background: "#fff",
-        padding: "16px",
+        border: embedded ? "none" : "1px solid #c9cccf",
+        borderRadius: embedded ? 0 : "4px",
+        background: embedded ? "transparent" : "#fff",
+        padding: embedded ? 0 : "16px",
         display: "flex",
         flexDirection: "column",
         gap: "14px",
