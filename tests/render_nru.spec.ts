@@ -40,7 +40,15 @@ test.describe("When user is not logged in", () => {
 
   test("Should see /search", async ({ page }) => {
     await page.goto("/search?q=test");
-    await expect(page.getByText("Search result for")).toBeTruthy();
+    // New search surface: dark header with the query as the H1.
+    await expect(page.getByRole("heading", { level: 1, name: /Results for/i })).toBeVisible();
+    // Category strip renders as a tablist.
+    await expect(page.getByRole("tablist")).toBeVisible();
+  });
+
+  test("Should see /search with no query", async ({ page }) => {
+    await page.goto("/search");
+    await expect(page.getByRole("heading", { name: /Search the platform/i })).toBeVisible();
   });
 
   test("Should see /profile/:id", async ({ page }) => {
