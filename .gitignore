@@ -73,3 +73,6 @@ cypress.env.json
 
 # Local build/screenshot artifacts
 .sw-build/
+
+# superpowers brainstorming visual companion
+.superpowers/

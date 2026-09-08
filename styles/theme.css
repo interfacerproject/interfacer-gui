@@ -54,6 +54,10 @@
   --ifr-type-dpp-border: #9e3c00;
   --ifr-type-dpp-hover: #d46a28;
   --ifr-type-dpp-bg: rgba(235, 123, 53, 0.1);
+  --ifr-type-machine: #475569;
+  --ifr-type-machine-border: #334155;
+  --ifr-type-machine-hover: #3b485c;
+  --ifr-type-machine-bg: rgba(71, 85, 105, 0.1);
   --ifr-type-location: #036a53;
   --ifr-type-location-hover: #025a46;
 
@@ -93,7 +97,9 @@
   --ifr-bg-avatar: rgba(3, 106, 83, 0.2);
   --ifr-bg-quote: #f6f6f7;
   --ifr-bg-dark: #042220;
+  --ifr-bg-dark-alt: #03302c;
   --ifr-bg-subdued: #fafbfb;
+  --ifr-bg-pill-on-dark: rgba(255, 255, 255, 0.14);
 
   /* --- Inverse text, for use on --ifr-bg-dark --- */
   --ifr-text-inverse: #ffffff;
@@ -104,6 +110,7 @@
   --ifr-border-light: #c4c4c4;
   --ifr-border-avatar: #aaa69d;
   --ifr-border-env: rgba(200, 212, 229, 0.5);
+  --ifr-border-on-dark: rgba(255, 255, 255, 0.12);
 
   /* --- Skeleton loading --- */
   --ifr-skeleton-bg: rgba(200, 212, 229, 0.3);
