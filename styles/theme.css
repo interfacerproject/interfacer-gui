@@ -54,6 +54,10 @@
   --ifr-type-dpp-border: #9e3c00;
   --ifr-type-dpp-hover: #d46a28;
   --ifr-type-dpp-bg: rgba(235, 123, 53, 0.1);
+  --ifr-type-machine: #475569;
+  --ifr-type-machine-border: #334155;
+  --ifr-type-machine-hover: #3b485c;
+  --ifr-type-machine-bg: rgba(71, 85, 105, 0.1);
   --ifr-type-location: #036a53;
   --ifr-type-location-hover: #025a46;
 

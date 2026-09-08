@@ -92,6 +92,12 @@ module.exports = {
             border: "var(--ifr-type-dpp-border)",
             bg: "var(--ifr-type-dpp-bg)",
           },
+          machine: {
+            DEFAULT: "var(--ifr-type-machine)",
+            hover: "var(--ifr-type-machine-hover)",
+            border: "var(--ifr-type-machine-border)",
+            bg: "var(--ifr-type-machine-bg)",
+          },
           location: {
             DEFAULT: "var(--ifr-type-location)",
             hover: "var(--ifr-type-location-hover)",
