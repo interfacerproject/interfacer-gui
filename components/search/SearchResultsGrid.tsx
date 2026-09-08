@@ -80,7 +80,8 @@ export default function SearchResultsGrid({ category, result, q, limit, showCoun
         >
           {t("Showing") + " "}
           <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-medium)" }}>
-            {visible.length}
+            {/* The server-side total when known, so paging doesn't understate the result set. */}
+            {result.count ?? visible.length}
           </span>
           {" " + t("results")}
         </p>

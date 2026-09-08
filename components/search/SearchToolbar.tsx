@@ -15,6 +15,8 @@ interface Props {
   view: "list" | "map";
   onViewChange: (v: "list" | "map") => void;
   showViewToggle: boolean;
+  /** Hidden where the ordering has no effect: the People query and the map view. */
+  showSort: boolean;
   onSubmitQuery: (next: string) => void;
 }
 
@@ -68,6 +70,7 @@ export default function SearchToolbar(props: Props) {
               type="search"
               value={value}
               onChange={e => setValue(e.target.value)}
+              placeholder={t("Search designs, products, services, machines, people…")}
               className="flex-1 min-w-0 bg-transparent text-ifr-text-primary placeholder:text-ifr-text-muted outline-none"
               style={{ fontFamily: "var(--ifr-font-body)", lineHeight: "21px" }}
             />
@@ -100,13 +103,15 @@ export default function SearchToolbar(props: Props) {
               ))}
             </div>
           )}
-          <ToolbarDropdown
-            label={t("Sort by")}
-            value={props.sort}
-            options={SORT_OPTIONS}
-            onChange={props.onSortChange}
-            getOptionLabel={o => t(o)}
-          />
+          {props.showSort && (
+            <ToolbarDropdown
+              label={t("Sort by")}
+              value={props.sort}
+              options={SORT_OPTIONS}
+              onChange={props.onSortChange}
+              getOptionLabel={o => t(o)}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -31,21 +31,23 @@ export default function SearchCategoryTabs({ active, counts, onSelect }: Props) 
     <div
       role="tablist"
       aria-label={t("Result categories")}
-      className="flex gap-1 px-4 md:px-6 overflow-x-auto border-b"
-      style={{ background: "#03302c", borderColor: "rgba(255,255,255,0.12)" }}
+      className="flex gap-1 px-4 md:px-6 overflow-x-auto border-b bg-ifr-dark-alt"
+      style={{ borderColor: "var(--ifr-border-on-dark)" }}
     >
       {tabs.map(tab => {
         const selected = tab.id === active;
         return (
           <button
             key={tab.id}
+            id={`search-tab-${tab.id}`}
             role="tab"
             aria-selected={selected}
+            aria-controls="search-results-panel"
             type="button"
             onClick={() => onSelect(tab.id)}
             className="flex items-center gap-2 whitespace-nowrap py-3 px-3.5 text-[13px] border-b-2 transition-colors"
             style={{
-              color: selected ? "#fff" : "rgba(255,255,255,0.72)",
+              color: selected ? "var(--ifr-text-inverse)" : "var(--ifr-text-inverse-secondary)",
               borderColor: selected ? "var(--ifr-yellow)" : "transparent",
               fontFamily: "var(--ifr-font-body)",
             }}
@@ -55,7 +57,12 @@ export default function SearchCategoryTabs({ active, counts, onSelect }: Props) 
             {typeof tab.count === "number" && (
               <span
                 aria-label={t("{{n}} results", { n: tab.count })}
-                style={{ fontSize: 11, padding: "1px 6px", borderRadius: 999, background: "rgba(255,255,255,0.14)" }}
+                style={{
+                  fontSize: 11,
+                  padding: "1px 6px",
+                  borderRadius: 999,
+                  background: "var(--ifr-bg-pill-on-dark)",
+                }}
               >
                 {tab.count}
               </span>

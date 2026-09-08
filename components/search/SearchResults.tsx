@@ -39,7 +39,8 @@ export default function SearchResults() {
   const rawTags = router.query.tags;
   const tags = useMemo(() => {
     if (!rawTags) return [] as string[];
-    return (typeof rawTags === "string" ? rawTags.split(",") : rawTags).map(decodeURI);
+    // Next already percent-decodes `router.query`; decoding again throws on values like "100%".
+    return typeof rawTags === "string" ? rawTags.split(",") : rawTags;
   }, [rawTags]);
   const { nearLat, nearLong, nearDistanceKm } = router.query;
   const near = useMemo(() => {
@@ -69,7 +70,7 @@ export default function SearchResults() {
     return typeof router.query.view === "string" ? router.query.view : null;
   };
 
-  const { byCategory, totalCount } = useSearchQueries({ q, descriptionSearch, tags, near, sort });
+  const { byCategory, totalCount, specsLoading } = useSearchQueries({ q, descriptionSearch, tags, near, sort });
   const counts = ALL_CATEGORIES.reduce((acc, c) => {
     acc[c] = byCategory[c].count;
     return acc;
@@ -77,8 +78,11 @@ export default function SearchResults() {
 
   if (!q) return <NoQueryPrompt />;
 
+  // Only claim "nothing found" once every category has actually resolved to a number
+  // and none of them errored — a pending or failed category is not an empty one.
   const allResolved = ALL_CATEGORIES.every(c => typeof counts[c] === "number");
-  const nothingFound = allResolved && ALL_CATEGORIES.every(c => counts[c] === 0);
+  const anyErrored = ALL_CATEGORIES.some(c => !!byCategory[c].error);
+  const nothingFound = !specsLoading && allResolved && !anyErrored && ALL_CATEGORIES.every(c => counts[c] === 0);
 
   const showViewToggle = activeTab !== "people";
   const effectiveView = showViewToggle ? view : "list";
@@ -116,69 +120,84 @@ export default function SearchResults() {
         />
       )}
 
-      {nothingFound ? (
-        <div className="flex flex-col items-center text-center gap-4 py-20 px-4">
-          <h2
-            className="text-ifr-text-primary"
-            style={{
-              fontFamily: "var(--ifr-font-heading)",
-              fontSize: "var(--ifr-fs-xl)",
-              fontWeight: "var(--ifr-fw-bold)",
-            }}
-          >
-            {t("Nothing found for “{{q}}”", { q })}
-          </h2>
-          <p className="text-ifr-text-secondary" style={{ fontFamily: "var(--ifr-font-body)" }}>
-            {t("Check spelling, use fewer or different words, or browse:")}
-          </p>
-          <div className="flex gap-4 text-ifr-green" style={{ fontFamily: "var(--ifr-font-body)" }}>
-            <Link href="/designs">
-              <a className="hover:underline">{t("Designs")}</a>
-            </Link>
-            <Link href="/products">
-              <a className="hover:underline">{t("Products")}</a>
-            </Link>
-            <Link href="/services">
-              <a className="hover:underline">{t("Services")}</a>
-            </Link>
-            <Link href={{ pathname: router.pathname, query: { ...router.query, view: "map" } }}>
-              <a className="hover:underline">{t("Map")}</a>
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <>
-          <SearchToolbar
-            q={q}
-            sidebarCollapsed={sidebarCollapsed}
-            onToggleSidebar={toggleSidebar}
-            sort={sort}
-            onSortChange={v => setQuery({ sort: v === "Relevance" ? null : v })}
-            view={effectiveView}
-            onViewChange={v => setQuery({ view: v === "list" ? null : v })}
-            showViewToggle={showViewToggle}
-            onSubmitQuery={next => setQuery({ q: next || null })}
-          />
+      {/* The toolbar carries the only search input on the page, so it renders in every
+          state — including "nothing found", which is a results-area state, not a takeover. */}
+      <SearchToolbar
+        q={q}
+        sidebarCollapsed={sidebarCollapsed}
+        onToggleSidebar={toggleSidebar}
+        sort={sort}
+        onSortChange={v => setQuery({ sort: v === "Relevance" ? null : v })}
+        view={effectiveView}
+        onViewChange={v => setQuery({ view: v === "list" ? null : v })}
+        showViewToggle={showViewToggle}
+        showSort={activeTab !== "people" && effectiveView !== "map"}
+        onSubmitQuery={next => setQuery({ q: next || null })}
+      />
 
-          <div className="flex flex-1 items-start min-w-0">
-            <SearchFilterPanel collapsed={sidebarCollapsed} onToggle={toggleSidebar} asDrawer={!isDesktop} />
+      <div className="flex flex-1 items-start min-w-0">
+        <SearchFilterPanel collapsed={sidebarCollapsed} onToggle={toggleSidebar} asDrawer={!isDesktop} />
 
-            <div className="flex-1 min-w-0 bg-ifr-results p-4 md:p-6">
-              {effectiveView === "map" ? (
-                <ProjectsMaps filters={mapFilter} bare />
-              ) : activeTab === "all" ? (
-                <SearchAllView
-                  byCategory={byCategory}
-                  q={q}
-                  onOpenCategory={c => setQuery({ cat: c, view: viewPatchFor(c) })}
-                />
-              ) : (
-                <SearchResultsGrid category={activeTab} result={byCategory[activeTab]} q={q} />
-              )}
+        <div
+          id="search-results-panel"
+          role="tabpanel"
+          tabIndex={0}
+          {...(nothingFound ? { "aria-label": t("Search results") } : { "aria-labelledby": `search-tab-${activeTab}` })}
+          className="flex-1 min-w-0 bg-ifr-results p-4 md:p-6"
+        >
+          {nothingFound ? (
+            <div className="flex flex-col items-center text-center gap-4 py-20 px-4">
+              <h2
+                className="text-ifr-text-primary"
+                style={{
+                  fontFamily: "var(--ifr-font-heading)",
+                  fontSize: "var(--ifr-fs-xl)",
+                  fontWeight: "var(--ifr-fw-bold)",
+                }}
+              >
+                {t("Nothing found for “{{q}}”", { q })}
+              </h2>
+              <p className="text-ifr-text-secondary" style={{ fontFamily: "var(--ifr-font-body)" }}>
+                {t("Check spelling, use fewer or different words, or browse:")}
+              </p>
+              <div className="flex gap-4 text-ifr-green" style={{ fontFamily: "var(--ifr-font-body)" }}>
+                <Link href="/designs">
+                  <a className="hover:underline">{t("Designs")}</a>
+                </Link>
+                <Link href="/products">
+                  <a className="hover:underline">{t("Products")}</a>
+                </Link>
+                <Link href="/services">
+                  <a className="hover:underline">{t("Services")}</a>
+                </Link>
+                <Link href={{ pathname: router.pathname, query: { ...router.query, view: "map" } }}>
+                  <a className="hover:underline">{t("Map")}</a>
+                </Link>
+              </div>
             </div>
-          </div>
-        </>
-      )}
+          ) : effectiveView === "map" ? (
+            // Without `conformsTo` the map would briefly plot every resource on the
+            // platform, so hold a placeholder until the specs resolve.
+            activeSpecIds.length === 0 ? (
+              <div
+                aria-hidden="true"
+                className="animate-pulse rounded-ifr-lg"
+                style={{ height: 480, background: "var(--ifr-skeleton-bg)" }}
+              />
+            ) : (
+              <ProjectsMaps filters={mapFilter} bare />
+            )
+          ) : activeTab === "all" ? (
+            <SearchAllView
+              byCategory={byCategory}
+              q={q}
+              onOpenCategory={c => setQuery({ cat: c, view: viewPatchFor(c) })}
+            />
+          ) : (
+            <SearchResultsGrid category={activeTab} result={byCategory[activeTab]} q={q} />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

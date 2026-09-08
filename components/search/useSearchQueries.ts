@@ -17,6 +17,7 @@ import { CATEGORY_PROJECT_TYPE, RESOURCE_CATEGORIES, SearchCategory } from "./co
 
 export interface CategoryResult {
   items: Array<{ node: any }>;
+  /** `null` means "not known yet" (specs or query still pending, or errored); `0` means "known to be zero". */
   count: number | null;
   loading: boolean;
   error?: Error;
@@ -43,6 +44,13 @@ const SORT_MAP: Record<string, EconomicResourceSortInput | undefined> = {
 const LOSH_ID = process.env.NEXT_PUBLIC_LOSH_ID as string;
 const PAGE_SIZE = 12;
 
+/**
+ * Raised when `useFilters` has finished loading but never resolved this category's
+ * specification id — without it the category would silently look like "zero results".
+ * Module-level so the identity is stable across renders.
+ */
+const SPECS_UNAVAILABLE_ERROR = new Error("category specs unavailable");
+
 function buildResourceFilter(specId: string | undefined, p: Params): EconomicResourceFilterParams {
   return {
     conformsTo: specId ? [specId] : undefined,
@@ -61,8 +69,17 @@ function buildResourceFilter(specId: string | undefined, p: Params): EconomicRes
 /** One economicResources query + its useLoadMore wiring. */
 function useResourceCategory(specId: string | undefined, specsLoading: boolean, p: Params): CategoryResult {
   const filter = buildResourceFilter(specId, p);
-  const orderBy = SORT_MAP[p.sort];
-  const skip = specsLoading || !specId || !p.q;
+  // Unknown sort values fall back to the default order instead of indexing off the map.
+  const orderBy = Object.prototype.hasOwnProperty.call(SORT_MAP, p.sort) ? SORT_MAP[p.sort] : undefined;
+
+  // "Not ready" (specs still resolving) is deliberately distinct from "no query":
+  // the former means the count is not known yet, the latter that it is genuinely zero.
+  const notReady = specsLoading || !specId;
+  const noQuery = !p.q;
+  const skip = notReady || noQuery;
+  // Specs finished loading but this category's id never resolved — surface it as an
+  // error rather than letting it read as an empty category.
+  const specsFailed = !specsLoading && !specId && !noQuery;
 
   const { loading, data, fetchMore, refetch, variables, error } = useQuery<FetchInventoryQuery>(FETCH_RESOURCES, {
     variables: { last: PAGE_SIZE, filter, orderBy },
@@ -77,10 +94,22 @@ function useResourceCategory(specId: string | undefined, specsLoading: boolean, 
     dataQueryIdentifier: "economicResources",
   });
 
+  if (specsFailed) {
+    return {
+      items: [],
+      count: null,
+      loading: false,
+      error: SPECS_UNAVAILABLE_ERROR,
+      hasNext: false,
+      loadMore,
+      refetch: () => refetch(),
+    };
+  }
+
   return {
     items: items ?? [],
-    count: data?.economicResources?.pageInfo?.totalCount ?? (skip ? 0 : null),
-    loading: !skip && loading && !data,
+    count: noQuery ? 0 : notReady ? null : data?.economicResources?.pageInfo?.totalCount ?? null,
+    loading: (notReady && !noQuery) || (loading && !data && !noQuery),
     error: error as Error | undefined,
     hasNext: !!getHasNextPage,
     loadMore,
@@ -89,7 +118,8 @@ function useResourceCategory(specId: string | undefined, specsLoading: boolean, 
 }
 
 function usePeopleCategory(p: Params): CategoryResult {
-  const skip = !p.q;
+  const noQuery = !p.q;
+  const skip = noQuery;
   const { loading, data, fetchMore, refetch, variables, error } = useQuery<any>(SEARCH_PEOPLE, {
     variables: { last: PAGE_SIZE, userOrName: p.q },
     skip,
@@ -105,8 +135,8 @@ function usePeopleCategory(p: Params): CategoryResult {
 
   return {
     items: items ?? [],
-    count: data?.people?.pageInfo?.totalCount ?? (skip ? 0 : null),
-    loading: !skip && loading && !data,
+    count: noQuery ? 0 : data?.people?.pageInfo?.totalCount ?? null,
+    loading: !noQuery && loading && !data,
     error: error as Error | undefined,
     hasNext: !!getHasNextPage,
     loadMore,

@@ -15,9 +15,11 @@ interface Props {
 export default function SearchAllView({ byCategory, q, onOpenCategory }: Props) {
   const { t } = useTranslation("common");
 
+  // Errored categories are kept so the grid can show its error + retry branch —
+  // dropping them would make a failure look like an empty category.
   const sections = ALL_CATEGORIES.filter(c => {
-    const { count, loading } = byCategory[c];
-    return loading || (typeof count === "number" && count > 0);
+    const { count, loading, error } = byCategory[c];
+    return loading || !!error || (typeof count === "number" && count > 0);
   });
 
   if (!sections.length) return null; // parent renders the zero-results state

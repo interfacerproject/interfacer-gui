@@ -108,6 +108,7 @@ module.exports = {
         ifr: {
           page: "var(--ifr-bg-page)",
           dark: "var(--ifr-bg-dark)",
+          "dark-alt": "var(--ifr-bg-dark-alt)",
           subdued: "var(--ifr-bg-subdued)",
           profile: "var(--ifr-bg-profile)",
           surface: "var(--ifr-bg-surface)",

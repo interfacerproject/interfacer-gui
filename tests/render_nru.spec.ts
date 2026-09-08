@@ -42,8 +42,9 @@ test.describe("When user is not logged in", () => {
     await page.goto("/search?q=test");
     // New search surface: dark header with the query as the H1.
     await expect(page.getByRole("heading", { level: 1, name: /Results for/i })).toBeVisible();
-    // Category strip renders as a tablist.
-    await expect(page.getByRole("tablist")).toBeVisible();
+    // The toolbar renders in every result state, including "nothing found",
+    // so this does not depend on the fixture data matching anything.
+    await expect(page.getByRole("button", { name: /Filters/i })).toBeVisible();
   });
 
   test("Should see /search with no query", async ({ page }) => {
