@@ -1,0 +1,19 @@
+<svg width="232" height="42" viewBox="0 0 232 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g fill="#0B1324">
+    <rect x="1" y="17" width="2.4" height="2.4" rx="0.4"/>
+    <rect x="6" y="14" width="2.4" height="2.4" rx="0.4"/>
+    <rect x="6" y="20" width="2.4" height="2.4" rx="0.4"/>
+    <rect x="11" y="11" width="2.4" height="2.4" rx="0.4"/>
+    <rect x="11" y="17" width="2.4" height="2.4" rx="0.4"/>
+    <rect x="11" y="23" width="2.4" height="2.4" rx="0.4"/>
+    <rect x="16" y="8" width="2.4" height="2.4" rx="0.4"/>
+    <rect x="16" y="14" width="2.4" height="2.4" rx="0.4"/>
+    <rect x="16" y="20" width="2.4" height="2.4" rx="0.4"/>
+    <rect x="21" y="11" width="2.4" height="2.4" rx="0.4"/>
+    <rect x="21" y="17" width="2.4" height="2.4" rx="0.4"/>
+    <rect x="26" y="14" width="2.4" height="2.4" rx="0.4"/>
+  </g>
+  <text x="33" y="22" font-family="Helvetica, Arial, sans-serif" font-size="21" font-weight="700" letter-spacing="-0.5" fill="#0B1324">dtec.bw</text>
+  <text x="33" y="32" font-family="Helvetica, Arial, sans-serif" font-size="7" fill="#6C707C">Zentrum für Digitalisierungs- und</text>
+  <text x="33" y="40" font-family="Helvetica, Arial, sans-serif" font-size="7" fill="#6C707C">Technologieforschung der Bundeswehr</text>
+</svg>
