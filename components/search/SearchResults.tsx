@@ -101,6 +101,8 @@ export default function SearchResults() {
     ...(q && descriptionSearch && { orNote: q }),
     ...(tags.length > 0 && { classifiedAs: tags.map(encodeURI) }),
     ...(near && { nearLat: near.lat, nearLong: near.long, nearDistanceKm: near.distanceKm }),
+    // Mirrors buildResourceFilter in useSearchQueries, so the map hides what the list hides.
+    ...(process.env.NEXT_PUBLIC_LOSH_ID && { notCustodian: [process.env.NEXT_PUBLIC_LOSH_ID] }),
   };
 
   return (
@@ -138,6 +140,9 @@ export default function SearchResults() {
             </Link>
             <Link href="/services">
               <a className="hover:underline">{t("Services")}</a>
+            </Link>
+            <Link href={{ pathname: router.pathname, query: { ...router.query, view: "map" } }}>
+              <a className="hover:underline">{t("Map")}</a>
             </Link>
           </div>
         </div>
