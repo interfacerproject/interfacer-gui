@@ -1,6 +1,7 @@
 import { Logout } from "@carbon/icons-react";
-import { BellIcon, BookmarkIcon, CogIcon, UserIcon } from "@heroicons/react/outline";
+import { BellIcon, BookmarkIcon, CogIcon, ShoppingBagIcon, UserIcon } from "@heroicons/react/outline";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
+import { commercePreviewEnabled } from "lib/previewCommerce/flag";
 import { useAuth } from "hooks/useAuth";
 import { useInBoxContext } from "hooks/useInBox";
 import { useTranslation } from "next-i18next";
@@ -170,6 +171,17 @@ export default function UserDropdown({ onClose }: UserDropdownProps) {
             onClick={() => handleNavigate(`${user.profileUrl}/edit`)}
           />
         </div>
+
+        {/* Selling action — commerce preview (upcoming "sell through Interfacer" feature), flag-gated */}
+        {commercePreviewEnabled && (
+          <div className="border-t border-[var(--ifr-border)]">
+            <MenuItem
+              icon={<ShoppingBagIcon className="w-4 h-4" style={{ color: "var(--ifr-text-secondary)" }} />}
+              label={t("Set up selling", "Set up selling")}
+              onClick={() => handleNavigate("/preview/commerce/sell")}
+            />
+          </div>
+        )}
 
         {/* Logout */}
         <div
