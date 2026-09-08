@@ -94,6 +94,11 @@ function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: Pro
     ? { id: designId, name: designData?.economicResource?.name || undefined }
     : undefined;
 
+  // With the commerce preview on, the unified buy block above owns the product's
+  // title and CTAs, so the sidebar drops its own title, Contact Manufacturer,
+  // Visit Store and "Based on open source design" blocks.
+  const hideForCommerce = commercePreviewEnabled && projectType === ProjectType.PRODUCT;
+
   return (
     <div className="w-full lg:w-[300px] shrink-0 h-full">
       {/* Sticks alongside the article on desktop; below `lg` it is a normal
@@ -107,92 +112,117 @@ function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: Pro
           backgroundColor: "#fff",
         }}
       >
-        {/* Commerce preview buy block — unified into this card, above the title */}
+        {/* Commerce preview buy block — unified into this card, above the title.
+            When the sidebar's own title/CTA section is hidden, the following
+            section supplies its own <hr>, so skip the trailing divider here. */}
         {topSlot && (
           <>
             <div className="px-4 pt-4">{topSlot}</div>
-            <div className="border-t border-[#c9cccf] mt-4" />
+            {!hideForCommerce && <div className="border-t border-[#c9cccf] mt-4" />}
           </>
         )}
 
         {/* Title */}
-        <div className="px-4 pt-4">
-          <h2
-            className="text-ifr-text-primary m-0"
-            style={{
-              fontFamily: "var(--ifr-font-heading)",
-              fontSize: "var(--ifr-fs-lg)",
-              fontWeight: "var(--ifr-fw-bold)",
-              lineHeight: "1.3",
-            }}
-          >
-            {project.name}
-          </h2>
-        </div>
+        {!hideForCommerce && (
+          <div className="px-4 pt-4">
+            <h2
+              className="text-ifr-text-primary m-0"
+              style={{
+                fontFamily: "var(--ifr-font-heading)",
+                fontSize: "var(--ifr-fs-lg)",
+                fontWeight: "var(--ifr-fw-bold)",
+                lineHeight: "1.3",
+              }}
+            >
+              {project.name}
+            </h2>
+          </div>
+        )}
 
-        {/* Price & CTA section */}
-        <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
-          {/* Product: Price & Availability */}
-          {projectType === ProjectType.PRODUCT && price && (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-baseline gap-1.5">
-                <p
-                  className="text-ifr-text-primary m-0"
-                  style={{
-                    fontFamily: "var(--ifr-font-heading)",
-                    fontSize: "var(--ifr-fs-2xl)",
-                    fontWeight: "var(--ifr-fw-bold)",
-                    lineHeight: "1.2",
-                  }}
-                >
-                  {price}
-                </p>
+        {/* Price & CTA section — hidden for products under the commerce preview:
+            the unified buy block above owns the price, Contact Manufacturer and
+            Visit Store. */}
+        {!hideForCommerce && (
+          <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
+            {/* Product: Price & Availability */}
+            {projectType === ProjectType.PRODUCT && price && (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-baseline gap-1.5">
+                  <p
+                    className="text-ifr-text-primary m-0"
+                    style={{
+                      fontFamily: "var(--ifr-font-heading)",
+                      fontSize: "var(--ifr-fs-2xl)",
+                      fontWeight: "var(--ifr-fw-bold)",
+                      lineHeight: "1.2",
+                    }}
+                  >
+                    {price}
+                  </p>
+                  <span
+                    className="text-ifr-text-secondary"
+                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                  >
+                    {t("estimated")}
+                  </span>
+                </div>
+                {availability && (
+                  <div className="flex items-center gap-1.5">
+                    <div
+                      className="shrink-0"
+                      style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "var(--ifr-radius-full)",
+                        backgroundColor: "var(--ifr-type-product)",
+                      }}
+                    />
+                    <span
+                      className="text-ifr-text-primary"
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-base)",
+                        fontWeight: "var(--ifr-fw-medium)",
+                      }}
+                    >
+                      {availability}
+                    </span>
+                  </div>
+                )}
                 <span
                   className="text-ifr-text-secondary"
                   style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
                 >
-                  {t("estimated")}
+                  {t("Contact the manufacturer for accurate pricing and availability details.")}
                 </span>
               </div>
-              {availability && (
-                <div className="flex items-center gap-1.5">
-                  <div
-                    className="shrink-0"
-                    style={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "var(--ifr-radius-full)",
-                      backgroundColor: "var(--ifr-type-product)",
-                    }}
-                  />
-                  <span
-                    className="text-ifr-text-primary"
-                    style={{
-                      fontFamily: "var(--ifr-font-body)",
-                      fontSize: "var(--ifr-fs-base)",
-                      fontWeight: "var(--ifr-fw-medium)",
-                    }}
-                  >
-                    {availability}
-                  </span>
-                </div>
-              )}
-              <span
-                className="text-ifr-text-secondary"
-                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-              >
-                {t("Contact the manufacturer for accurate pricing and availability details.")}
-              </span>
-            </div>
-          )}
+            )}
 
-          {projectType === ProjectType.DESIGN &&
-          basedOnDesign &&
-          typeof basedOnDesign === "object" &&
-          basedOnDesign.id ? (
-            <Link href={`/project/${basedOnDesign.id}`}>
-              <a
-                className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline"
+            {projectType === ProjectType.DESIGN &&
+            basedOnDesign &&
+            typeof basedOnDesign === "object" &&
+            basedOnDesign.id ? (
+              <Link href={`/project/${basedOnDesign.id}`}>
+                <a
+                  className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline"
+                  style={{
+                    height: "48px",
+                    borderRadius: "8px",
+                    backgroundColor: "#f1bd4d",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "16px",
+                    fontWeight: "500",
+                    color: "#1a1a1a",
+                  }}
+                >
+                  {t("Build It Yourself")}
+                </a>
+              </Link>
+            ) : projectType === ProjectType.DESIGN ? (
+              <button
+                type="button"
+                disabled
+                className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
                 style={{
                   height: "48px",
                   borderRadius: "8px",
@@ -204,126 +234,109 @@ function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: Pro
                 }}
               >
                 {t("Build It Yourself")}
-              </a>
-            </Link>
-          ) : projectType === ProjectType.DESIGN ? (
-            <button
-              type="button"
-              disabled
-              className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
-              style={{
-                height: "48px",
-                borderRadius: "8px",
-                backgroundColor: "#f1bd4d",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "16px",
-                fontWeight: "500",
-                color: "#1a1a1a",
-              }}
-            >
-              {t("Build It Yourself")}
-            </button>
-          ) : null}
-          {projectType === ProjectType.PRODUCT && project.primaryAccountable?.name ? (
-            <a
-              href={`mailto:?subject=${encodeURIComponent(project.name || "")} - ${encodeURIComponent(
-                t("Inquiry")
-              )}&body=${encodeURIComponent(
-                t("I am interested in") +
-                  " " +
-                  (project.name || "") +
-                  ".\n\n" +
-                  (typeof window !== "undefined" ? window.location.href : "")
-              )}`}
-              className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline cursor-pointer"
-              style={{
-                height: "48px",
-                borderRadius: "8px",
-                backgroundColor: "#f1bd4d",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "16px",
-                fontWeight: "500",
-                color: "#1a1a1a",
-              }}
-            >
-              {t("Contact Manufacturer")}
-            </a>
-          ) : projectType === ProjectType.PRODUCT ? (
-            <button
-              type="button"
-              disabled
-              className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
-              style={{
-                height: "48px",
-                borderRadius: "8px",
-                backgroundColor: "#f1bd4d",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "16px",
-                fontWeight: "500",
-                color: "#1a1a1a",
-              }}
-            >
-              {t("Contact Manufacturer")}
-            </button>
-          ) : null}
-          {projectType === ProjectType.PRODUCT &&
-            (websiteLink ? (
+              </button>
+            ) : null}
+            {projectType === ProjectType.PRODUCT && project.primaryAccountable?.name ? (
               <a
-                href={websiteLink.startsWith("http") ? websiteLink : `https://${websiteLink}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 no-underline cursor-pointer hover:bg-ifr-hover transition-colors"
+                href={`mailto:?subject=${encodeURIComponent(project.name || "")} - ${encodeURIComponent(
+                  t("Inquiry")
+                )}&body=${encodeURIComponent(
+                  t("I am interested in") +
+                    " " +
+                    (project.name || "") +
+                    ".\n\n" +
+                    (typeof window !== "undefined" ? window.location.href : "")
+                )}`}
+                className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline cursor-pointer"
                 style={{
                   height: "48px",
                   borderRadius: "8px",
-                  border: "1px solid #c9cccf",
+                  backgroundColor: "#f1bd4d",
                   fontFamily: "var(--ifr-font-body)",
                   fontSize: "16px",
-                  fontWeight: "600",
+                  fontWeight: "500",
                   color: "#1a1a1a",
-                  backgroundColor: "#fff",
                 }}
               >
-                <ExternalLinkIcon className="w-4 h-4" />
-                {t("Visit Store")}
+                {t("Contact Manufacturer")}
               </a>
-            ) : (
+            ) : projectType === ProjectType.PRODUCT ? (
               <button
                 type="button"
                 disabled
-                className="w-full flex items-center justify-center gap-2 opacity-40 cursor-not-allowed"
+                className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
                 style={{
                   height: "48px",
                   borderRadius: "8px",
-                  border: "1px solid #c9cccf",
+                  backgroundColor: "#f1bd4d",
                   fontFamily: "var(--ifr-font-body)",
                   fontSize: "16px",
-                  fontWeight: "600",
+                  fontWeight: "500",
                   color: "#1a1a1a",
-                  backgroundColor: "#fff",
                 }}
               >
-                <ExternalLinkIcon className="w-4 h-4" />
-                {t("Visit Store")}
+                {t("Contact Manufacturer")}
               </button>
-            ))}
-          {projectType === ProjectType.SERVICE && (
-            <button
-              type="button"
-              className="w-full text-white border-none cursor-pointer flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
-              style={{
-                height: "var(--ifr-control-height)",
-                borderRadius: "var(--ifr-radius-md)",
-                backgroundColor: "var(--ifr-type-service)",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "var(--ifr-fs-md)",
-                fontWeight: "var(--ifr-fw-semibold)",
-              }}
-            >
-              {t("Request a Quote")}
-            </button>
-          )}
-        </div>
+            ) : null}
+            {projectType === ProjectType.PRODUCT &&
+              (websiteLink ? (
+                <a
+                  href={websiteLink.startsWith("http") ? websiteLink : `https://${websiteLink}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 no-underline cursor-pointer hover:bg-ifr-hover transition-colors"
+                  style={{
+                    height: "48px",
+                    borderRadius: "8px",
+                    border: "1px solid #c9cccf",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                    color: "#1a1a1a",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <ExternalLinkIcon className="w-4 h-4" />
+                  {t("Visit Store")}
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full flex items-center justify-center gap-2 opacity-40 cursor-not-allowed"
+                  style={{
+                    height: "48px",
+                    borderRadius: "8px",
+                    border: "1px solid #c9cccf",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                    color: "#1a1a1a",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <ExternalLinkIcon className="w-4 h-4" />
+                  {t("Visit Store")}
+                </button>
+              ))}
+            {projectType === ProjectType.SERVICE && (
+              <button
+                type="button"
+                className="w-full text-white border-none cursor-pointer flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
+                style={{
+                  height: "var(--ifr-control-height)",
+                  borderRadius: "var(--ifr-radius-md)",
+                  backgroundColor: "var(--ifr-type-service)",
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-md)",
+                  fontWeight: "var(--ifr-fw-semibold)",
+                }}
+              >
+                {t("Request a Quote")}
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Created by / Manufactured by */}
         {project.primaryAccountable && (
@@ -379,7 +392,7 @@ function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: Pro
         )}
 
         {/* Based on design — products only */}
-        {projectType === ProjectType.PRODUCT && basedOnDesign && (
+        {!hideForCommerce && projectType === ProjectType.PRODUCT && basedOnDesign && (
           <>
             <hr className="border-t border-[#c9cccf] m-0 mx-4" />
             <div className="px-4 py-4">
