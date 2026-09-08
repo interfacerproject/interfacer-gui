@@ -22,6 +22,8 @@ import { ProjectType } from "./types";
 
 interface ProjectCardNewProps {
   project: Partial<EconomicResource>;
+  /** When set, overrides conformsTo-based type detection (used by /search, which knows the type per query). */
+  forcedType?: ProjectType;
 }
 
 const entityTypeColors: Record<string, string> = {
@@ -29,6 +31,7 @@ const entityTypeColors: Record<string, string> = {
   [ProjectType.PRODUCT]: "var(--ifr-type-product)",
   [ProjectType.SERVICE]: "var(--ifr-type-service)",
   [ProjectType.DPP]: "var(--ifr-type-dpp)",
+  [ProjectType.MACHINE]: "var(--ifr-type-machine)",
 };
 
 const entityTypeBg: Record<string, string> = {
@@ -36,6 +39,7 @@ const entityTypeBg: Record<string, string> = {
   [ProjectType.PRODUCT]: "var(--ifr-type-product)",
   [ProjectType.SERVICE]: "var(--ifr-type-service)",
   [ProjectType.DPP]: "var(--ifr-type-dpp)",
+  [ProjectType.MACHINE]: "var(--ifr-type-machine)",
 };
 
 function getProjectType(project: Partial<EconomicResource>): ProjectType {
@@ -82,14 +86,14 @@ function detectServiceType(classifiedAs: string[]): string | undefined {
   return undefined;
 }
 
-export default function ProjectCardNew({ project }: ProjectCardNewProps) {
+export default function ProjectCardNew({ project, forcedType }: ProjectCardNewProps) {
   const { t } = useTranslation("common");
   const { user: authUser } = useAuth();
   const { likeER, isLiked, erFollowerLength } = useSocial(project.id);
   const { addIdeaPoints } = useWallet({});
   const [bookmarked, setBookmarked] = React.useState(false);
 
-  const projectType = getProjectType(project);
+  const projectType = forcedType ?? getProjectType(project);
   const images = findProjectImages(project);
   const user = project.primaryAccountable;
   const hasStarred = project.id ? isLiked(project.id) : false;
@@ -415,6 +419,27 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
                   </div>
                 </div>
               </>
+            )}
+
+            {/* MACHINE footer */}
+            {projectType === ProjectType.MACHINE && (
+              <div className="border-t border-ifr pt-2 flex items-center justify-between gap-2">
+                {project.currentLocation?.name && (
+                  <div className="flex items-center gap-1.5">
+                    <LocationMarkerIcon className="w-3.5 h-3.5 text-ifr-text-secondary shrink-0" />
+                    <span
+                      className="text-ifr-text-secondary"
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-base)",
+                        fontWeight: "var(--ifr-fw-medium)",
+                      }}
+                    >
+                      {project.currentLocation.name}
+                    </span>
+                  </div>
+                )}
+              </div>
             )}
 
             {/* Hover action links */}
