@@ -18,25 +18,21 @@ Invoke /frontend-design — it contains design principles, anti-patterns, and th
 Analyze what's weak or generic about the current type:
 
 1. **Font choices**:
-
    - Are we using invisible defaults? (Inter, Roboto, Arial, Open Sans, system defaults)
    - Does the font match the brand personality? (A playful brand shouldn't use a corporate typeface)
    - Are there too many font families? (More than 2-3 is almost always a mess)
 
 2. **Hierarchy**:
-
    - Can you tell headings from body from captions at a glance?
    - Are font sizes too close together? (14px, 15px, 16px = muddy hierarchy)
    - Are weight contrasts strong enough? (Medium vs Regular is barely visible)
 
 3. **Sizing & scale**:
-
    - Is there a consistent type scale, or are sizes arbitrary?
    - Does body text meet minimum readability? (16px+)
    - Is the sizing strategy appropriate for the context? (Fixed `rem` scales for app UIs; fluid `clamp()` for marketing/content page headings)
 
 4. **Readability**:
-
    - Are line lengths comfortable? (45-75 characters ideal)
    - Is line-height appropriate for the font and context?
    - Is there enough contrast between text and background?
@@ -64,7 +60,6 @@ Create a systematic plan:
 ### Font Selection
 
 If fonts need replacing:
-
 - Choose fonts that reflect the brand personality
 - Pair with genuine contrast (serif + sans, geometric + humanist) — or use a single family in multiple weights
 - Ensure web font loading doesn't cause layout shift (`font-display: swap`, metric-matched fallbacks)
@@ -72,7 +67,6 @@ If fonts need replacing:
 ### Establish Hierarchy
 
 Build a clear type scale:
-
 - **5 sizes cover most needs**: caption, secondary, body, subheading, heading
 - **Use a consistent ratio** between levels (1.25, 1.333, or 1.5)
 - **Combine dimensions**: Size + weight + color + space for strong hierarchy — don't rely on size alone
@@ -100,7 +94,6 @@ Build a clear type scale:
 - Load only the weights you actually use (each weight adds to page load)
 
 **NEVER**:
-
 - Use more than 2-3 font families
 - Pick sizes arbitrarily — commit to a scale
 - Set body text below 16px

@@ -1,3 +1,4 @@
+import { Settings } from "@carbon/icons-react";
 import { ProjectType } from "./types";
 
 interface EntityTypeIconProps {
@@ -87,9 +88,10 @@ export default function EntityTypeIcon({
   const singlePath = getSinglePath(type, size);
   const multiPaths = getMultiPaths(type, size);
 
-  // Machine falls back to the Design icon (legacy type, no dedicated prototype icon)
+  // Machine: Carbon "Settings" gear, matching the machine icon used in CatalogFilterSidebar.
   if (type === ProjectType.MACHINE) {
-    return <EntityTypeIcon type={ProjectType.DESIGN} size={size} className={className} fill={fill} />;
+    const px = size === "default" ? 16 : 12;
+    return <Settings size={px} className={className} style={{ fill }} />;
   }
 
   return (

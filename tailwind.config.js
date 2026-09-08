@@ -92,6 +92,12 @@ module.exports = {
             border: "var(--ifr-type-dpp-border)",
             bg: "var(--ifr-type-dpp-bg)",
           },
+          machine: {
+            DEFAULT: "var(--ifr-type-machine)",
+            hover: "var(--ifr-type-machine-hover)",
+            border: "var(--ifr-type-machine-border)",
+            bg: "var(--ifr-type-machine-bg)",
+          },
           location: {
             DEFAULT: "var(--ifr-type-location)",
             hover: "var(--ifr-type-location-hover)",
@@ -102,6 +108,7 @@ module.exports = {
         ifr: {
           page: "var(--ifr-bg-page)",
           dark: "var(--ifr-bg-dark)",
+          "dark-alt": "var(--ifr-bg-dark-alt)",
           subdued: "var(--ifr-bg-subdued)",
           profile: "var(--ifr-bg-profile)",
           surface: "var(--ifr-bg-surface)",

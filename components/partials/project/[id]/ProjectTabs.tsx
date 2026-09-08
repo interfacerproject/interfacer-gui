@@ -15,6 +15,8 @@ const ContributorsTable = dynamic(() => import("components/ContributorsTable"), 
 const ContributionsTable = dynamic(() => import("components/ContributionsTable"), { ssr: false });
 const DynamicGC1DPP = dynamic(() => import("./GC1DPP"), { ssr: false });
 
+
+
 const ProjectTabs = () => {
   const { project } = useProject();
   const { selected, setSelected } = useProjectTabs();

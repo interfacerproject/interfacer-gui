@@ -18,7 +18,6 @@ Invoke /frontend-design — it contains design principles, anti-patterns, and th
 Analyze what makes the design feel too safe or boring:
 
 1. **Identify weakness sources**:
-
    - **Generic choices**: System fonts, basic colors, standard layouts
    - **Timid scale**: Everything is medium-sized with no drama
    - **Low contrast**: Everything has similar visual weight
@@ -54,14 +53,12 @@ Create a strategy to increase impact while maintaining coherence:
 Systematically increase impact across these dimensions:
 
 ### Typography Amplification
-
 - **Replace generic fonts**: Swap system fonts for distinctive choices (see frontend-design skill for inspiration)
 - **Extreme scale**: Create dramatic size jumps (3x-5x differences, not 1.5x)
 - **Weight contrast**: Pair 900 weights with 200 weights, not 600 with 400
 - **Unexpected choices**: Variable fonts, display fonts for headlines, condensed/extended widths, monospace as intentional accent (not as lazy "dev tool" default)
 
 ### Color Intensification
-
 - **Increase saturation**: Shift to more vibrant, energetic colors (but not neon)
 - **Bold palette**: Introduce unexpected color combinations—avoid the purple-blue gradient AI slop
 - **Dominant color strategy**: Let one bold color own 60% of the design
@@ -70,7 +67,6 @@ Systematically increase impact across these dimensions:
 - **Rich gradients**: Intentional multi-stop gradients (not generic purple-to-blue)
 
 ### Spatial Drama
-
 - **Extreme scale jumps**: Make important elements 3-5x larger than surroundings
 - **Break the grid**: Let hero elements escape containers and cross boundaries
 - **Asymmetric layouts**: Replace centered, balanced layouts with tension-filled asymmetry
@@ -78,7 +74,6 @@ Systematically increase impact across these dimensions:
 - **Overlap**: Layer elements intentionally for depth
 
 ### Visual Effects
-
 - **Dramatic shadows**: Large, soft shadows for elevation (but not generic drop shadows on rounded rectangles)
 - **Background treatments**: Mesh patterns, noise textures, geometric patterns, intentional gradients (not purple-to-blue)
 - **Texture & depth**: Grain, halftone, duotone, layered elements—NOT glassmorphism (it's overused AI slop)
@@ -86,21 +81,18 @@ Systematically increase impact across these dimensions:
 - **Custom elements**: Illustrative elements, custom icons, decorative details that reinforce brand
 
 ### Motion & Animation
-
 - **Entrance choreography**: Staggered, dramatic page load animations with 50-100ms delays
 - **Scroll effects**: Parallax, reveal animations, scroll-triggered sequences
 - **Micro-interactions**: Satisfying hover effects, click feedback, state changes
 - **Transitions**: Smooth, noticeable transitions using ease-out-quart/quint/expo (not bounce or elastic—they cheapen the effect)
 
 ### Composition Boldness
-
 - **Hero moments**: Create clear focal points with dramatic treatment
 - **Diagonal flows**: Escape horizontal/vertical rigidity with diagonal arrangements
 - **Full-bleed elements**: Use full viewport width/height for impact
 - **Unexpected proportions**: Golden ratio? Throw it out. Try 70/30, 80/20 splits
 
 **NEVER**:
-
 - Add effects randomly without purpose (chaos ≠ bold)
 - Sacrifice readability for aesthetics (body text must be readable)
 - Make everything bold (then nothing is bold - need contrast)

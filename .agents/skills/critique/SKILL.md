@@ -26,16 +26,13 @@ Review the design against ALL the **DON'T** guidelines in the frontend-design sk
 **The test**: If you showed this to someone and said "AI made this," would they believe you immediately? If yes, that's the problem.
 
 ### 2. Visual Hierarchy
-
 - Does the eye flow to the most important element first?
 - Is there a clear primary action? Can you spot it in 2 seconds?
 - Do size, color, and position communicate importance correctly?
 - Is there visual competition between elements that should have different weights?
 
 ### 3. Information Architecture & Cognitive Load
-
-> _Consult [cognitive-load](reference/cognitive-load.md) for the working memory rule and 8-item checklist_
-
+> *Consult [cognitive-load](reference/cognitive-load.md) for the working memory rule and 8-item checklist*
 - Is the structure intuitive? Would a new user understand the organization?
 - Is related content grouped logically?
 - Are there too many choices at once? Count visible options at each decision point — if >4, flag it
@@ -44,7 +41,6 @@ Review the design against ALL the **DON'T** guidelines in the frontend-design sk
 - **Run the 8-item cognitive load checklist** from the reference. Report failure count: 0–1 = low (good), 2–3 = moderate, 4+ = critical.
 
 ### 4. Emotional Journey
-
 - What emotion does this interface evoke? Is that intentional?
 - Does it match the brand personality?
 - Does it feel trustworthy, approachable, premium, playful — whatever it should feel?
@@ -54,42 +50,36 @@ Review the design against ALL the **DON'T** guidelines in the frontend-design sk
 - **Interventions at negative moments**: Are there design interventions where users are likely to feel frustrated or anxious? (progress indicators, reassurance copy, undo options, social proof)
 
 ### 5. Discoverability & Affordance
-
 - Are interactive elements obviously interactive?
 - Would a user know what to do without instructions?
 - Are hover/focus states providing useful feedback?
 - Are there hidden features that should be more visible?
 
 ### 6. Composition & Balance
-
 - Does the layout feel balanced or uncomfortably weighted?
 - Is whitespace used intentionally or just leftover?
 - Is there visual rhythm in spacing and repetition?
 - Does asymmetry feel designed or accidental?
 
 ### 7. Typography as Communication
-
 - Does the type hierarchy clearly signal what to read first, second, third?
 - Is body text comfortable to read? (line length, spacing, size)
 - Do font choices reinforce the brand/tone?
 - Is there enough contrast between heading levels?
 
 ### 8. Color with Purpose
-
 - Is color used to communicate, not just decorate?
 - Does the palette feel cohesive?
 - Are accent colors drawing attention to the right things?
 - Does it work for colorblind users? (not just technically — does meaning still come through?)
 
 ### 9. States & Edge Cases
-
 - Empty states: Do they guide users toward action, or just say "nothing here"?
 - Loading states: Do they reduce perceived wait time?
 - Error states: Are they helpful and non-blaming?
 - Success states: Do they confirm and guide next steps?
 
 ### 10. Microcopy & Voice
-
 - Is the writing clear and concise?
 - Does it sound like a human (the right human for this brand)?
 - Are labels and buttons unambiguous?
@@ -100,53 +90,46 @@ Review the design against ALL the **DON'T** guidelines in the frontend-design sk
 Structure your feedback as a design director would:
 
 ### Design Health Score
-
-> _Consult [heuristics-scoring](reference/heuristics-scoring.md)_
+> *Consult [heuristics-scoring](reference/heuristics-scoring.md)*
 
 Score each of Nielsen's 10 heuristics 0–4. Present as a table:
 
-| #         | Heuristic                       | Score     | Key Issue                          |
-| --------- | ------------------------------- | --------- | ---------------------------------- |
-| 1         | Visibility of System Status     | ?         | [specific finding or "—" if solid] |
-| 2         | Match System / Real World       | ?         |                                    |
-| 3         | User Control and Freedom        | ?         |                                    |
-| 4         | Consistency and Standards       | ?         |                                    |
-| 5         | Error Prevention                | ?         |                                    |
-| 6         | Recognition Rather Than Recall  | ?         |                                    |
-| 7         | Flexibility and Efficiency      | ?         |                                    |
-| 8         | Aesthetic and Minimalist Design | ?         |                                    |
-| 9         | Error Recovery                  | ?         |                                    |
-| 10        | Help and Documentation          | ?         |                                    |
-| **Total** |                                 | **??/40** | **[Rating band]**                  |
+| # | Heuristic | Score | Key Issue |
+|---|-----------|-------|-----------|
+| 1 | Visibility of System Status | ? | [specific finding or "—" if solid] |
+| 2 | Match System / Real World | ? | |
+| 3 | User Control and Freedom | ? | |
+| 4 | Consistency and Standards | ? | |
+| 5 | Error Prevention | ? | |
+| 6 | Recognition Rather Than Recall | ? | |
+| 7 | Flexibility and Efficiency | ? | |
+| 8 | Aesthetic and Minimalist Design | ? | |
+| 9 | Error Recovery | ? | |
+| 10 | Help and Documentation | ? | |
+| **Total** | | **??/40** | **[Rating band]** |
 
 Be honest with scores. A 4 means genuinely excellent. Most real interfaces score 20–32.
 
 ### Anti-Patterns Verdict
-
 **Start here.** Pass/fail: Does this look AI-generated? List specific tells from the skill's Anti-Patterns section. Be brutally honest.
 
 ### Overall Impression
-
 A brief gut reaction — what works, what doesn't, and the single biggest opportunity.
 
 ### What's Working
-
 Highlight 2–3 things done well. Be specific about why they work.
 
 ### Priority Issues
-
 The 3–5 most impactful design problems, ordered by importance.
 
 For each issue, tag with **P0–P3 severity** (consult [heuristics-scoring](reference/heuristics-scoring.md) for severity definitions):
-
 - **[P?] What**: Name the problem clearly
 - **Why it matters**: How this hurts users or undermines goals
 - **Fix**: What to do about it (be concrete)
 - **Suggested command**: Which command could address this (from: /animate, /quieter, /optimize, /adapt, /clarify, /distill, /delight, /onboard, /normalize, /audit, /harden, /polish, /extract, /bolder, /arrange, /typeset, /critique, /colorize, /overdrive)
 
 ### Persona Red Flags
-
-> _Consult [personas](reference/personas.md)_
+> *Consult [personas](reference/personas.md)*
 
 Auto-select 2–3 personas most relevant to this interface type (use the selection table in the reference). If `.github/copilot-instructions.md` contains a `## Design Context` section from `teach-impeccable`, also generate 1–2 project-specific personas from the audience/brand info.
 
@@ -159,11 +142,9 @@ For each selected persona, walk through the primary user action and list specifi
 Be specific — name the exact elements and interactions that fail each persona. Don't write generic persona descriptions; write what broke for them.
 
 ### Minor Observations
-
 Quick notes on smaller issues worth addressing.
 
 **Remember**:
-
 - Be direct — vague feedback wastes everyone's time
 - Be specific — "the submit button" not "some elements"
 - Say what's wrong AND why it matters to users
@@ -186,7 +167,6 @@ Ask questions along these lines (adapt to the specific findings — do NOT ask g
 4. **Constraints** (optional — only ask if relevant): If the findings touch many areas, ask if anything is off-limits. For example: "Should any sections stay as-is?" This prevents the plan from touching things the user considers done.
 
 **Rules for questions**:
-
 - Every question must reference specific findings from Phase 2 — never ask generic "who is your audience?" questions
 - Keep it to 2–4 questions maximum — respect the user's time
 - Offer concrete options, not open-ended prompts
@@ -202,10 +182,9 @@ List recommended commands in priority order, based on the user's answers:
 
 1. **`/command-name`** — Brief description of what to fix (specific context from critique findings)
 2. **`/command-name`** — Brief description (specific context)
-   ...
+...
 
 **Rules for recommendations**:
-
 - Only recommend commands from: /animate, /quieter, /optimize, /adapt, /clarify, /distill, /delight, /onboard, /normalize, /audit, /harden, /polish, /extract, /bolder, /arrange, /typeset, /critique, /colorize, /overdrive
 - Order by the user's stated priorities first, then by impact
 - Each item's description should carry enough context that the command knows what to focus on
