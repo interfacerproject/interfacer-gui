@@ -19,12 +19,13 @@ import { useTranslation } from "next-i18next";
 import { useCallback, useState } from "react";
 
 /**
- * Every outbound-looking action in the preview (Track order, View DPP, Connect
- * Stripe, Contact Manufacturer …) opens this instead of going anywhere.
+ * Buttons in the commerce screens that would trigger a real action (Place
+ * order, Set up payouts, Update stock …) open this instead — the feature is
+ * still being built.
  *
  * Usage:
  *   const dialog = usePreviewDialog();
- *   <button onClick={() => dialog.open("View DPP")}>View DPP</button>
+ *   <button onClick={() => dialog.open("Set up payouts")}>Set up payouts</button>
  *   {dialog.element}
  */
 export function usePreviewDialog() {
@@ -47,15 +48,13 @@ export default function PreviewDialog({ action, onClose }: Props) {
       sectioned
       open={action !== null}
       onClose={onClose}
-      title={t("Part of the preview")}
+      title={t("Coming soon")}
       primaryAction={{ content: t("Got it"), onAction: onClose }}
     >
       <Text as="p" variant="bodyMd">
-        {action
-          ? t('"{{action}}" is part of the commerce preview.', { action })
-          : t("This is part of the commerce preview.")}{" "}
+        {action ? t('"{{action}}" is not available yet.', { action }) : t("This is not available yet.")}{" "}
         {t(
-          "It has no live counterpart yet — no order is tracked, no passport is minted, no account is connected. The screens exist to show the shape of the upcoming Medusa integration."
+          "Selling and buying on Interfacer is an upcoming feature and is still being built — these screens preview how it will work."
         )}
       </Text>
     </Modal>

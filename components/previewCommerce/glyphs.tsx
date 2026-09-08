@@ -51,6 +51,31 @@ export function ClipboardGlyph({ size = 13, stroke = "currentColor" }: GlyphProp
   );
 }
 
+/** Small grid glyph used next to "Digital Product Passport" notes. */
+export function DppGlyph({ size = 16, stroke = "currentColor" }: GlyphProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={stroke}
+      strokeWidth="2"
+      aria-hidden="true"
+      style={{ flex: "none", marginTop: "1px" }}
+    >
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <path d="M14 14h3v3M21 21v.01M17 21h.01M21 17h.01" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function PreviewClipboardGlyphSm() {
+  return <DppGlyph size={16} stroke="var(--ifr-text-muted)" />;
+}
+
 export function CheckGlyph({ size = 26, stroke = "#036a53" }: GlyphProps) {
   return (
     <svg

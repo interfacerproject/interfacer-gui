@@ -17,43 +17,25 @@
 import { useTranslation } from "next-i18next";
 import { PREVIEW_PURPLE } from "./previewTokens";
 
-export type PreviewBadgeKind = "preview" | "upcoming" | "sample" | "mockup" | "mockPayment";
-
-const COPY: Record<PreviewBadgeKind, string> = {
-  preview: "PREVIEW · NOT LIVE",
-  upcoming: "UPCOMING",
-  sample: "SAMPLE DATA",
-  mockup: "MOCK-UP",
-  mockPayment: "MOCK PAYMENT · NO CARD IS CHARGED",
-};
-
-interface Props {
-  kind: PreviewBadgeKind;
-  /** `sm` is the 9.5px in-card size; `md` (default) is the 10px strip size. */
-  size?: "sm" | "md";
-}
-
-/** The purple pill that marks every commerce-preview surface as not-real. */
-export default function PreviewBadge({ kind, size = "md" }: Props) {
+/** Small "UPCOMING" pill, used next to the nav-drawer entry point. */
+export default function PreviewBadge() {
   const { t } = useTranslation("commercePreviewProps");
-  const fontSize = size === "sm" ? "9.5px" : "10px";
   return (
     <span
       style={{
         display: "inline-block",
-        padding: size === "sm" ? "1px 7px" : "3px 10px",
+        padding: "1px 7px",
         borderRadius: "9999px",
         background: PREVIEW_PURPLE,
         color: "#fff",
         fontFamily: "var(--ifr-font-body)",
-        fontSize,
+        fontSize: "9.5px",
         fontWeight: 700,
-        letterSpacing: size === "sm" ? "0.5px" : "0.6px",
-        lineHeight: 1.4,
+        letterSpacing: "0.5px",
         whiteSpace: "nowrap",
       }}
     >
-      {t(COPY[kind])}
+      {t("UPCOMING")}
     </span>
   );
 }

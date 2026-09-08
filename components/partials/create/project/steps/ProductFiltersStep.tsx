@@ -9,6 +9,7 @@ import {
 } from "components/partials/create/FormControls";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
+import { commercePreviewEnabled } from "lib/previewCommerce/flag";
 import { POWER_COMPATIBILITY_OPTIONS, PRODUCT_CATEGORY_OPTIONS, REPLICABILITY_OPTIONS } from "lib/tagging";
 import { useTranslation } from "next-i18next";
 import { useFormContext } from "react-hook-form";
@@ -37,30 +38,34 @@ export default function ProductFiltersStep() {
     <Stack vertical spacing="loose">
       <PTitleSubtitle title={t("Product specifications")} subtitle={t("These fields help users filter products.")} />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <TextField
-          type="text"
-          label={t("Price")}
-          placeholder={t("e.g. €1,200")}
-          value={values.price || ""}
-          onChange={value => setValue("productFilters.price", value, formSetValueOptions)}
-          helpText={t("Indicative price shown on the product page.")}
-          autoComplete="off"
-        />
-        <Select
-          label={t("Availability")}
-          options={[
-            { label: t("Select availability…"), value: "" },
-            { label: t("Available Now"), value: "Available Now" },
-            { label: t("Made to Order"), value: "Made to Order" },
-            { label: t("Limited Stock"), value: "Limited Stock" },
-            { label: t("Out of Stock"), value: "Out of Stock" },
-          ]}
-          value={values.availability || ""}
-          onChange={value => setValue("productFilters.availability", value, formSetValueOptions)}
-          helpText={t("Current availability shown on the product page.")}
-        />
-      </div>
+      {/* Price & availability move into the commerce "Sales & availability" section when the
+          commerce preview is enabled — see components/previewCommerce/SalesAvailabilitySection. */}
+      {!commercePreviewEnabled && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <TextField
+            type="text"
+            label={t("Price")}
+            placeholder={t("e.g. €1,200")}
+            value={values.price || ""}
+            onChange={value => setValue("productFilters.price", value, formSetValueOptions)}
+            helpText={t("Indicative price shown on the product page.")}
+            autoComplete="off"
+          />
+          <Select
+            label={t("Availability")}
+            options={[
+              { label: t("Select availability…"), value: "" },
+              { label: t("Available Now"), value: "Available Now" },
+              { label: t("Made to Order"), value: "Made to Order" },
+              { label: t("Limited Stock"), value: "Limited Stock" },
+              { label: t("Out of Stock"), value: "Out of Stock" },
+            ]}
+            value={values.availability || ""}
+            onChange={value => setValue("productFilters.availability", value, formSetValueOptions)}
+            helpText={t("Current availability shown on the product page.")}
+          />
+        </div>
+      )}
 
       <OptionGroup label={t("Categories")} helpText={t("Select one or more categories for your product")}>
         <CategoryGrid>

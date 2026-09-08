@@ -19,7 +19,6 @@ import { formatEur, MOCK_PRODUCT, VariantId, variantById } from "lib/previewComm
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import PreviewNotice from "./PreviewNotice";
 import { CartGlyph, ClipboardGlyph } from "./glyphs";
 
 /**
@@ -27,8 +26,11 @@ import { CartGlyph, ClipboardGlyph } from "./glyphs";
  * the CommercePreviewProvider is mounted and drives it live) and on the real
  * product page (no provider — it keeps local state and writes the selection to
  * sessionStorage so the preview cart picks it up).
+ *
+ * `embedded` drops the block's own card chrome so it can sit as the first
+ * section of a larger unified sidebar card.
  */
-export default function BuyBlock() {
+export default function BuyBlock({ embedded = false }: { embedded?: boolean }) {
   const { t } = useTranslation("commercePreviewProps");
   const router = useRouter();
   const ctx = useCommercePreviewOptional();
@@ -52,18 +54,16 @@ export default function BuyBlock() {
   return (
     <div
       style={{
-        border: "1px solid #c9cccf",
-        borderRadius: "4px",
-        background: "#fff",
-        padding: "16px",
+        border: embedded ? "none" : "1px solid #c9cccf",
+        borderRadius: embedded ? 0 : "4px",
+        background: embedded ? "transparent" : "#fff",
+        padding: embedded ? 0 : "16px",
         display: "flex",
         flexDirection: "column",
         gap: "14px",
         fontFamily: "var(--ifr-font-body)",
       }}
     >
-      <PreviewNotice />
-
       {/* Price */}
       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
@@ -208,7 +208,10 @@ export default function BuyBlock() {
       {/* Footnotes */}
       <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
         <span style={{ fontSize: "12px", color: "var(--ifr-text-secondary)" }}>
-          {t("Sold by Fab City Hamburg · payments handled by Stripe")}
+          {t("Sold by {{seller}} · ships from {{location}}", {
+            seller: MOCK_PRODUCT.seller,
+            location: MOCK_PRODUCT.shipsFrom,
+          })}
         </span>
         <span
           style={{
@@ -221,7 +224,7 @@ export default function BuyBlock() {
           }}
         >
           <ClipboardGlyph stroke="#eb7b35" />
-          {t("Each unit ships with its Digital Product Passport")}
+          {t("Eligible products receive a Digital Product Passport after fulfilment.")}
         </span>
       </div>
     </div>

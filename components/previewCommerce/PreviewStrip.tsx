@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useTranslation } from "next-i18next";
-import PreviewBadge from "./PreviewBadge";
-import { PREVIEW_HATCH, PREVIEW_PURPLE, PREVIEW_PURPLE_TEXT, PREVIEW_PURPLE_TEXT_SOFT } from "./previewTokens";
+import { PREVIEW_HATCH, PREVIEW_PURPLE, PREVIEW_PURPLE_TEXT } from "./previewTokens";
 
 /**
- * Level-1 marker: the full-width hatched strip that sits directly above the
- * topbar on every commerce-preview route. It is NOT sticky on its own — the
- * layout wraps it and the topbar in a single sticky block.
+ * The only marker: a full-width strip directly above the topbar on every
+ * commerce screen, saying the feature is a work in progress and not usable
+ * yet. It is NOT sticky on its own — the layout wraps it and the topbar in a
+ * single sticky block.
  */
 export default function PreviewStrip() {
   const { t } = useTranslation("commercePreviewProps");
@@ -37,7 +37,22 @@ export default function PreviewStrip() {
         borderBottom: `1px dashed ${PREVIEW_PURPLE}`,
       }}
     >
-      <PreviewBadge kind="preview" />
+      <span
+        style={{
+          display: "inline-block",
+          padding: "3px 10px",
+          borderRadius: "9999px",
+          background: PREVIEW_PURPLE,
+          color: "#fff",
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: "10px",
+          fontWeight: 700,
+          letterSpacing: "0.6px",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {t("WORK IN PROGRESS")}
+      </span>
       <span
         style={{
           fontFamily: "var(--ifr-font-body)",
@@ -46,19 +61,7 @@ export default function PreviewStrip() {
           color: PREVIEW_PURPLE_TEXT,
         }}
       >
-        {t(
-          "Commerce is a mock-up of an upcoming Medusa integration. Products, prices, stock, orders and payments on these screens are sample data — nothing is charged, nothing is shipped."
-        )}
-      </span>
-      <span
-        style={{
-          marginLeft: "auto",
-          fontFamily: "var(--ifr-font-body)",
-          fontSize: "11px",
-          color: PREVIEW_PURPLE_TEXT_SOFT,
-        }}
-      >
-        {t("design preview · Sep 2026")}
+        {t("Selling and buying on Interfacer is an upcoming feature and is not functional yet.")}
       </span>
     </div>
   );

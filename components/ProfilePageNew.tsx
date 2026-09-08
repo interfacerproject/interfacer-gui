@@ -20,6 +20,7 @@ import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import EntityTypeIcon from "components/EntityTypeIcon";
 import MachineDrawer from "components/MachineDrawer";
 import { useUser } from "components/layout/FetchUserLayout";
+import ManageSalesCard from "components/previewCommerce/ManageSalesCard";
 import ProjectCardNew from "components/ProjectCardNew";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
@@ -227,6 +228,9 @@ function ProfileTabContent({
               )}
             </div>
           </div>
+
+          {/* Commerce preview (upcoming "sell through Interfacer" feature) — flagged entry point */}
+          {tabType === ProjectType.PRODUCT && <ManageSalesCard />}
         </div>
       )}
 

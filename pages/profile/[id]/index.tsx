@@ -43,6 +43,7 @@ export async function getStaticProps({ locale }: any) {
         "SideBarProps",
         "ProfileProps",
         "common",
+        "commercePreviewProps",
       ])),
     },
   };

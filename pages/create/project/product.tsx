@@ -14,7 +14,7 @@ export async function getStaticProps({ locale }: any) {
   return {
     props: {
       publicPage: true,
-      ...(await serverSideTranslations(locale, ["common", "createProjectProps"])),
+      ...(await serverSideTranslations(locale, ["common", "createProjectProps", "commercePreviewProps"])),
     },
   };
 }

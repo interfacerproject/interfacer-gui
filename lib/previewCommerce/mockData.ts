@@ -15,23 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Every piece of sample data for the commerce preview lives here, typed, in one
- * place. None of it is real: no prices are charged, no stock is reserved, no
- * order is created, nothing is written to zenflows.
+ * Sample data for the commerce preview — the upcoming "sell and buy on
+ * Interfacer" feature. It is not functional yet: no prices are charged, no
+ * stock is reserved, no order is created, nothing is written to zenflows.
+ * Content mirrors the DTEC Figma prototype (OLSK products, Srfsh Manufacturing).
  */
 
 export type VariantId = "assembled" | "kit" | "bom";
 
 export interface MockVariant {
   id: VariantId;
-  /** Short label, e.g. "Assembled unit". */
   label: string;
-  /** One-line qualifier, e.g. "tested, 2-year warranty". */
   blurb: string;
   price: number;
-  /** Stock sentence shown next to the green dot. */
   stockLine: string;
-  /** Lead-time sentence shown beside the quantity stepper. */
   leadTime: string;
 }
 
@@ -41,6 +38,7 @@ export interface MockProduct {
   seller: string;
   sellerInitials: string;
   location: string;
+  shipsFrom: string;
   listedOn: string;
   description: string;
   tags: string[];
@@ -54,48 +52,10 @@ export interface MockProduct {
 export interface MockLine {
   productSlug: string;
   name: string;
-  seller: string;
-  sellerInitials: string;
-  /** "freight from Hamburg, DE" / "on-site service, Bologna, IT" */
-  fulfilment: string;
+  /** Short line under the name, e.g. "Assembled unit" / "Replacement components". */
   variantLabel: string;
-  /** Green note under the variant, e.g. "Passport issued on fulfilment". */
-  note: string;
   unitPrice: number;
   quantity: number;
-  /** Amber status chip on the order screen. */
-  status: string;
-  /** `false` for the service line — it needs no shipping choice. */
-  shippable: boolean;
-}
-
-export interface MockSellerOrderRow {
-  id: string;
-  item: string;
-  variant: string;
-  buyer: string;
-  status: string;
-  statusTone: ChipTone;
-  passport: string;
-  total: string;
-}
-
-export interface MockInventoryRow {
-  name: string;
-  sku: string;
-  lead: string;
-  qty: string;
-  qtyTone: ChipTone;
-}
-
-export interface MockAdminRow {
-  name: string;
-  variants: string;
-  seller: string;
-  status: string;
-  statusTone: "live" | "draft";
-  stock: string;
-  resource: string;
 }
 
 export type ChipTone = "green" | "amber" | "grey";
@@ -103,25 +63,26 @@ export type ChipTone = "green" | "amber" | "grey";
 /* ── The product behind the buy block ── */
 
 export const MOCK_PRODUCT: MockProduct = {
-  slug: "lignum-shredder-s1",
-  name: "Lignum Shredder S1",
-  seller: "Fab City Hamburg",
-  sellerInitials: "FH",
-  location: "Hamburg, DE",
+  slug: "olsk-large-3d-printer",
+  name: "OLSK Large 3D Printer",
+  seller: "Srfsh Manufacturing",
+  sellerInitials: "S",
+  location: "Hamburg, Germany",
+  shipsFrom: "Hamburg, Germany",
   listedOn: "listed 12 Mar 2026",
   description:
-    "A bench-top plastic shredder built from the Open Shredder v3 design, assembled and tested in Hamburg. Steel hopper, hardened blades, 1.5 kW gearmotor. Sold as a finished machine, as a kit of cut parts, or as the bill of materials for anyone who prefers to source locally.",
-  tags: ["recycling", "open-hardware", "plastic", "fab-city"],
-  machinesAndMaterials: "Machines: CNC mill, MIG welder · Materials: S235 steel, hardened tool steel, PLA",
-  basedOnDesign: "Open Shredder v3",
+    "A large-format FDM printer built from the Open Large-format Series Kit design, assembled and tested in Hamburg. Steel frame, 400 × 400 × 500 mm build volume, direct-drive extruder. Available as a finished machine, as a kit of cut parts, or as the bill of materials.",
+  tags: ["3d-printing", "open-hardware", "large-format", "fab-city"],
+  machinesAndMaterials: "Machines: CNC router, MIG welder · Materials: aluminium extrusion, steel, PETG",
+  basedOnDesign: "Open Large-format Series Kit",
   license: "CERN-OHL-S-2.0",
-  licensor: "Open Shredder Collective",
+  licensor: "OLSK Collective",
   variants: [
     {
       id: "assembled",
       label: "Assembled unit",
       blurb: "tested, 2-year warranty",
-      price: 890,
+      price: 1249,
       stockLine: "12 in stock",
       leadTime: "ships in 5 days",
     },
@@ -129,7 +90,7 @@ export const MOCK_PRODUCT: MockProduct = {
       id: "kit",
       label: "Kit of parts",
       blurb: "cut & drilled, you assemble",
-      price: 540,
+      price: 799,
       stockLine: "6 kits in stock",
       leadTime: "ships in 3 days",
     },
@@ -137,7 +98,7 @@ export const MOCK_PRODUCT: MockProduct = {
       id: "bom",
       label: "Bill of materials",
       blurb: "sourcing list + CAM files",
-      price: 35,
+      price: 39,
       stockLine: "instant download",
       leadTime: "instant download",
     },
@@ -148,64 +109,64 @@ export function variantById(id: VariantId): MockVariant {
   return MOCK_PRODUCT.variants.find(v => v.id === id) ?? MOCK_PRODUCT.variants[0];
 }
 
-/* ── The second cart line: a booked service, nothing to ship ── */
+/* ── Cart: one seller, two lines (the printer + a spare-parts set) ── */
 
-export const MOCK_SERVICE_LINE: MockLine = {
-  productSlug: "cnc-milling-2h",
-  name: "CNC milling — 2h slot",
-  seller: "Makerspace Bologna",
-  sellerInitials: "MB",
-  fulfilment: "on-site service, Bologna, IT",
-  variantLabel: "Service · 12 Sep 14:00",
-  note: "On-site, nothing to ship",
-  unitPrice: 120,
+export const MOCK_SPARE_PARTS_LINE: MockLine = {
+  productSlug: "olsk-spare-parts-set",
+  name: "OLSK Spare Parts Set",
+  variantLabel: "Replacement components",
+  unitPrice: 149,
   quantity: 1,
-  status: "Booked",
-  shippable: false,
 };
 
-/** The Lignum Shredder line, seeded from the chosen variant + quantity. */
-export function makeShredderLine(variantId: VariantId, quantity: number): MockLine {
+export function makePrinterLine(variantId: VariantId, quantity: number): MockLine {
   const v = variantById(variantId);
   return {
     productSlug: MOCK_PRODUCT.slug,
     name: MOCK_PRODUCT.name,
-    seller: MOCK_PRODUCT.seller,
-    sellerInitials: MOCK_PRODUCT.sellerInitials,
-    fulfilment: "freight from Hamburg, DE",
     variantLabel: v.label,
-    note: "Passport issued on fulfilment",
     unitPrice: v.price,
     quantity,
-    status: "Awaiting fulfilment",
-    shippable: true,
   };
 }
 
 export function seedCartLines(variantId: VariantId, quantity: number): MockLine[] {
-  return [makeShredderLine(variantId, quantity), { ...MOCK_SERVICE_LINE }];
+  return [makePrinterLine(variantId, quantity), { ...MOCK_SPARE_PARTS_LINE }];
 }
 
-/* ── Totals ── */
+/* ── Delivery + totals ── */
 
-export const SHIPPING_FLAT = 48;
-export const VAT_RATE = 0.19;
+export type DeliveryMethodId = "standard" | "express";
+
+export interface DeliveryMethod {
+  id: DeliveryMethodId;
+  title: string;
+  detail: string;
+  price: number;
+}
+
+export const DELIVERY_METHODS: DeliveryMethod[] = [
+  { id: "standard", title: "Standard shipping", detail: "3–5 business days", price: 18 },
+  { id: "express", title: "Express shipping", detail: "1–2 business days", price: 35 },
+];
+
+export function deliveryMethodById(id: DeliveryMethodId): DeliveryMethod {
+  return DELIVERY_METHODS.find(m => m.id === id) ?? DELIVERY_METHODS[0];
+}
 
 export interface CartTotals {
   subtotal: number;
   shipping: number;
-  vat: number;
   total: number;
 }
 
-export function computeTotals(lines: MockLine[]): CartTotals {
+export function computeTotals(lines: MockLine[], deliveryMethod: DeliveryMethodId = "standard"): CartTotals {
   const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
-  const shipping = SHIPPING_FLAT;
-  const vat = (subtotal + shipping) * VAT_RATE;
-  return { subtotal, shipping, vat, total: subtotal + shipping + vat };
+  const shipping = deliveryMethodById(deliveryMethod).price;
+  return { subtotal, shipping, total: subtotal + shipping };
 }
 
-/** Format as `€1,234.56` — thousands separator, two decimals. */
+/** Format as `€1,234.00` — thousands separator, two decimals. */
 export function formatEur(n: number): string {
   return "€" + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -213,56 +174,17 @@ export function formatEur(n: number): string {
 /* ── Checkout: prefilled-from-profile address (local state only, never sent) ── */
 
 export const MOCK_ADDRESS = {
-  fullName: "Servizio Due",
-  email: "servizio2@dyne.org",
-  street: "Via Zamboni 33",
-  city: "Bologna",
-  postalCode: "40126",
+  fullName: "Srfsh Manufacturing",
+  email: "orders@srfsh.example",
+  street: "Zeughausmarkt 26",
+  city: "Hamburg",
+  postalCode: "20459",
+  country: "Germany",
 };
-
-export const MOCK_DELIVERY_OPTIONS = [
-  {
-    id: "freight",
-    title: "Freight, Fab City Hamburg → Bologna",
-    detail: "5–7 working days · pallet delivery",
-    price: "€48.00",
-    selectable: true,
-  },
-  {
-    id: "pickup",
-    title: "Pick up at Fab City Hamburg",
-    detail: "ready in 3 days · Zeughausmarkt 26",
-    price: "€0.00",
-    selectable: true,
-  },
-  {
-    id: "service",
-    title: "CNC milling — 2h slot",
-    detail: "on-site service at Makerspace Bologna, 12 Sep 14:00",
-    price: "no shipping",
-    selectable: false,
-  },
-];
-
-export const MOCK_CARD = {
-  number: "4242 4242 4242 4242",
-  expiry: "09 / 29",
-  cvc: "123",
-};
-
-/* ── Order confirmation + DPP ── */
 
 export const MOCK_ORDER_ID = "IF-2026-0417";
 
-export const MOCK_DPP = {
-  passport: "DPP-2026-0421",
-  serial: "LS1-HH-000318",
-  product: "Lignum Shredder S1 · Assembled unit",
-  basedOn: "Open Shredder v3 · CERN-OHL-S-2.0",
-  note: "The order event wrote the buyer into the passport's custody chain. Repairs, spare parts and resale keep updating the same record — commerce becomes one more event in the resource's history, not a separate silo.",
-};
-
-/* ── Seller onboarding: readiness checklist ── */
+/* ── Seller: set up selling ── */
 
 export type OnboardingState = "done" | "todo" | "optional";
 
@@ -272,188 +194,192 @@ export interface OnboardingTask {
   state: OnboardingState;
   required: boolean;
   body: string;
-  /** Optional CTA on the card. */
   action?: { label: string; variant: "primary" | "outline" };
+  link?: string;
   fullWidth?: boolean;
+  toggle?: boolean;
 }
 
 export const ONBOARDING_TASKS: OnboardingTask[] = [
   {
-    id: "shop-profile",
-    label: "Shop profile",
+    id: "seller-details",
+    label: "Seller details",
     state: "done",
     required: true,
-    body: "Fab City Hamburg e.V. · Hamburg, DE",
+    body: "Srfsh Manufacturing · Hamburg, Germany",
+    link: "View details",
   },
   {
-    id: "first-listing",
-    label: "First listing",
+    id: "product-ready",
+    label: "Product ready for sale",
     state: "done",
     required: true,
-    body: "Lignum Shredder S1 · 3 variants priced",
+    body: "OLSK Large 3D Printer · 3 variants",
+    link: "View product",
   },
   {
     id: "payout-account",
     label: "Payout account",
     state: "todo",
     required: true,
-    body: "Verify the entity with Stripe. Takes about 6 minutes.",
-    action: { label: "Connect Stripe", variant: "primary" },
+    body: "Add the account where you want to receive payments.",
+    action: { label: "Set up payouts", variant: "outline" },
   },
   {
-    id: "shipping-pickup",
-    label: "Shipping & pickup",
+    id: "shipping-fulfilment",
+    label: "Shipping & fulfilment",
     state: "todo",
     required: true,
-    body: "One zone and one rate is enough to start.",
-    action: { label: "Add a rate", variant: "outline" },
+    body: "Add at least one shipping method and fulfilment location.",
+    action: { label: "Set up delivery", variant: "outline" },
   },
   {
     id: "auto-passports",
-    label: "Issue passports automatically",
+    label: "Issue Digital Product Passports automatically",
     state: "optional",
     required: false,
-    body: "Every fulfilled order mints a unit-level DPP from your product template. Buyers see it in their profile; you keep the custody chain.",
+    body: "Create a product passport for eligible units when an order is fulfilled.",
     fullWidth: true,
+    toggle: true,
   },
 ];
 
-export const ONBOARDING_PROGRESS = { done: 2, total: 5 };
+export const ONBOARDING_PROGRESS = { done: 2, total: 4 };
 
-/* ── Seller dashboard ── */
+/* ── Seller: sales overview ── */
 
-export const SHOP_KPIS = [
-  { label: "Revenue, 30 days", value: "€4,240", sub: "+18% vs previous", subTone: "success" as const },
-  { label: "Orders", value: "18", sub: "3 awaiting fulfilment", subTone: "muted" as const },
-  { label: "Next payout", value: "€1,908", sub: "Friday, via Stripe", subTone: "muted" as const },
-  { label: "Passports issued", value: "15", sub: "3 pending fulfilment", subTone: "dpp" as const },
+export const SALES_KPIS = [
+  { label: "Orders", value: "18", sub: "3 Awaiting fulfilment", subTone: "amber" as const },
+  { label: "Revenue · 30 days", value: "€4,240", sub: "", subTone: "muted" as const },
+  { label: "Products for sale", value: "4", sub: "1 low in stock", subTone: "amber" as const },
+  { label: "Passports issued", value: "15", sub: "1 pending issuance", subTone: "amber" as const },
 ];
 
-export const SHOP_ORDERS: MockSellerOrderRow[] = [
+export interface RecentOrderRow {
+  id: string;
+  product: string;
+  status: string;
+  statusTone: ChipTone;
+  total: string;
+}
+
+export const RECENT_ORDERS: RecentOrderRow[] = [
+  { id: "IF-2026-0417", product: "OLSK Large 3D Printer", status: "Paid", statusTone: "green", total: "€1,249" },
+  { id: "IF-2026-0411", product: "OLSK Spare Parts Set", status: "To fulfil", statusTone: "amber", total: "€149" },
+  { id: "IF-2026-0403", product: "OLSK Laser Cutter Desktop", status: "Paid", statusTone: "green", total: "€849" },
+  { id: "IF-2026-0328", product: "Custom CNC Assembly Kit", status: "Shipped", statusTone: "green", total: "€1,993" },
+];
+
+/* ── Seller: orders list ── */
+
+export interface OrderRow {
+  id: string;
+  product: string;
+  date: string;
+  fulfilment: string;
+  fulfilmentTone: ChipTone;
+  passport: string;
+  passportIsDpp: boolean;
+  total: string;
+}
+
+export const ORDERS: OrderRow[] = [
   {
     id: "IF-2026-0417",
-    item: "Lignum Shredder S1",
-    variant: "Assembled unit",
-    buyer: "Servizio Due",
-    status: "Paid",
-    statusTone: "green",
-    passport: "queued",
-    total: "€890.00",
+    product: "OLSK Large 3D Printer",
+    date: "7 Sep 2026",
+    fulfilment: "To fulfil",
+    fulfilmentTone: "amber",
+    passport: "Pending",
+    passportIsDpp: false,
+    total: "€1,249.00",
   },
   {
     id: "IF-2026-0411",
-    item: "Lignum Shredder S1",
-    variant: "Kit of parts",
-    buyer: "Fab Lab Torino",
-    status: "To fulfil",
-    statusTone: "amber",
-    passport: "queued",
-    total: "€540.00",
+    product: "OLSK Spare Parts Set",
+    date: "6 Sep 2026",
+    fulfilment: "To fulfil",
+    fulfilmentTone: "amber",
+    passport: "Pending",
+    passportIsDpp: false,
+    total: "€149.00",
   },
   {
-    id: "IF-2026-0404",
-    item: "Blade set, spare",
-    variant: "Pair, hardened",
-    buyer: "Makerspace Bologna",
-    status: "Shipped",
-    statusTone: "green",
+    id: "IF-2026-0403",
+    product: "OLSK Laser Cutter Desktop",
+    date: "4 Sep 2026",
+    fulfilment: "Shipped",
+    fulfilmentTone: "green",
     passport: "DPP-0418",
-    total: "€120.00",
+    passportIsDpp: true,
+    total: "€849.00",
   },
   {
-    id: "IF-2026-0398",
-    item: "Lignum Shredder S1",
-    variant: "Bill of materials",
-    buyer: "R. Marchetti",
-    status: "Delivered",
-    statusTone: "grey",
-    passport: "n/a",
-    total: "€35.00",
-  },
-  {
-    id: "IF-2026-0391",
-    item: "Shredder S1 service",
-    variant: "Blade sharpening",
-    buyer: "Fab City Rotterdam",
-    status: "Delivered",
-    statusTone: "grey",
+    id: "IF-2026-0328",
+    product: "Custom CNC Assembly Kit",
+    date: "29 Aug 2026",
+    fulfilment: "Delivered",
+    fulfilmentTone: "green",
     passport: "DPP-0402",
-    total: "€180.00",
+    passportIsDpp: true,
+    total: "€1,993.00",
   },
 ];
 
-export const SHOP_INVENTORY: MockInventoryRow[] = [
-  {
-    name: "Lignum Shredder S1 · Assembled",
-    sku: "LS1-ASM",
-    lead: "5 days lead time",
-    qty: "12 units",
-    qtyTone: "green",
-  },
-  { name: "Lignum Shredder S1 · Kit", sku: "LS1-KIT", lead: "3 days lead time", qty: "6 units", qtyTone: "green" },
-  { name: "Blade set, spare", sku: "LS1-BLD", lead: "made to order", qty: "2 left", qtyTone: "amber" },
-];
+export const ORDERS_TOTAL_COUNT = 18;
 
-/* ── Medusa admin mock ── */
+/* ── Seller: inventory list ── */
 
-export const ADMIN_NAV = ["Overview", "Products", "Orders", "Inventory", "Customers", "Promotions", "Settings"];
+export interface InventoryRow {
+  product: string;
+  variant: string;
+  sku: string;
+  stock: number;
+  reserved: number;
+  available: number;
+  lowStock: boolean;
+  location: string;
+}
 
-export const ADMIN_ROWS: MockAdminRow[] = [
+export const INVENTORY: InventoryRow[] = [
   {
-    name: "Lignum Shredder S1",
-    variants: "3 variants",
-    seller: "Fab City Hamburg",
-    status: "Published",
-    statusTone: "live",
-    stock: "18",
-    resource: "er_01HX9…f3a2",
+    product: "OLSK Large 3D Printer",
+    variant: "Assembled unit",
+    sku: "OLSK-3DP-A",
+    stock: 12,
+    reserved: 1,
+    available: 11,
+    lowStock: false,
+    location: "Hamburg, Germany",
   },
   {
-    name: "Blade set, spare",
-    variants: "1 variant",
-    seller: "Fab City Hamburg",
-    status: "Published",
-    statusTone: "live",
-    stock: "2",
-    resource: "er_01HX9…b71c",
+    product: "OLSK Large 3D Printer",
+    variant: "Kit of parts",
+    sku: "OLSK-3DP-K",
+    stock: 6,
+    reserved: 0,
+    available: 6,
+    lowStock: false,
+    location: "Hamburg, Germany",
   },
   {
-    name: "CNC milling — hourly",
-    variants: "4 slots",
-    seller: "Makerspace Bologna",
-    status: "Published",
-    statusTone: "live",
-    stock: "∞",
-    resource: "er_01HXA…9d40",
+    product: "OLSK Spare Parts Set",
+    variant: "Replacement components",
+    sku: "OLSK-SPARES",
+    stock: 2,
+    reserved: 1,
+    available: 1,
+    lowStock: true,
+    location: "Hamburg, Germany",
   },
   {
-    name: "Open Shredder v3 · BOM",
-    variants: "1 variant",
-    seller: "Fab City Hamburg",
-    status: "Published",
-    statusTone: "live",
-    stock: "∞",
-    resource: "er_01HX9…21ef",
+    product: "OLSK Laser Cutter Desktop",
+    variant: "Assembled unit",
+    sku: "OLSK-LCD-A",
+    stock: 4,
+    reserved: 0,
+    available: 4,
+    lowStock: false,
+    location: "Hamburg, Germany",
   },
-  {
-    name: "Filament, recycled PET",
-    variants: "2 variants",
-    seller: "Fab Lab Torino",
-    status: "Draft",
-    statusTone: "draft",
-    stock: "—",
-    resource: "er_01HXB…7a05",
-  },
-];
-
-export const ADMIN_WEBHOOKS = [
-  { event: "order.placed", effect: "zenflows economic event (transfer)" },
-  { event: "order.fulfilled", effect: "mint unit DPP, notify buyer inbox" },
-  { event: "payout.paid", effect: "wallet ledger entry, seller track record" },
-];
-
-export const ADMIN_OPEN_QUESTIONS = [
-  "One Medusa instance per federated node, or one shared with sales channels per node?",
-  "Who is the merchant of record for VAT — the node or each maker?",
-  "Do services (machine time) become products with a booking window, or a separate module?",
 ];
