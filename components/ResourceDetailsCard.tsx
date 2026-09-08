@@ -18,7 +18,7 @@ import { Card, Tag, Text } from "@bbtgnn/polaris-interfacer";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import ProjectThumb from "./ProjectThumb";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { QUERY_RESOURCE } from "../lib/QueryAndMutation";
 import devLog from "../lib/devLog";
 

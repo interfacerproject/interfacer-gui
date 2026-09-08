@@ -1,4 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
+import { SEARCH_TAGS } from "@dyne/interfacer-client";
 import { ActionListItemDescriptor, Autocomplete, Icon } from "@bbtgnn/polaris-interfacer";
 import { CirclePlusMinor, SearchMinor } from "@shopify/polaris-icons";
 import { SearchTagsQuery, SearchTagsQueryVariables } from "lib/types";
@@ -112,11 +113,3 @@ export default function SearchTags(props: Props) {
     />
   );
 }
-
-//
-
-const SEARCH_TAGS = gql`
-  query SearchTags($text: URI!) {
-    economicResourceClassifications(filter: { uri: $text })
-  }
-`;

@@ -1,4 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
+import { GET_USER_LAYOUT } from "@dyne/interfacer-client";
 import { Spinner } from "@bbtgnn/polaris-interfacer";
 import { GetUserQuery, GetUserQueryVariables, Person } from "lib/types";
 import { useRouter } from "next/router";
@@ -47,34 +48,3 @@ const FetchUserLayout: React.FunctionComponent<Props> = (props: Props) => {
 };
 
 export default FetchUserLayout;
-
-//
-
-export const GET_USER_LAYOUT = gql`
-  query GetUserLayout($id: ID!) {
-    person(id: $id) {
-      id
-      name
-      note
-      email
-      user
-      images {
-        hash
-        name
-        mimeType
-        bin
-        size
-        extension
-        description
-      }
-      ethereumAddress
-      primaryLocation {
-        id
-        name
-        mappableAddress
-        lat
-        long
-      }
-    }
-  }
-`;

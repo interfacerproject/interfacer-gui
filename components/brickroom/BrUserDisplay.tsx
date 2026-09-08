@@ -1,4 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
+import { SEARCH_PERSON } from "@dyne/interfacer-client";
 import { Spinner, Text } from "@bbtgnn/polaris-interfacer";
 import LocationText from "components/LocationText";
 import { GetPersonQuery, GetPersonQueryVariables } from "lib/types";
@@ -91,21 +92,3 @@ Location.DisplayName = "Location";
 BrUserDisplay.Avatar = Avatar;
 BrUserDisplay.Name = Name;
 BrUserDisplay.Location = Location;
-
-export const SEARCH_PERSON = gql`
-  query getPerson($id: ID!) {
-    person(id: $id) {
-      id
-      name
-      user
-      images {
-        bin
-        mimeType
-      }
-      primaryLocation {
-        id
-        name
-      }
-    }
-  }
-`;

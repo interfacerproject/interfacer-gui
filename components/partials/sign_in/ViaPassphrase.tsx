@@ -22,15 +22,26 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // Components
-import { Button, TextField } from "@bbtgnn/polaris-interfacer";
-import { isRequired } from "../../../lib/isFieldRequired";
+import { TextField } from "@bbtgnn/polaris-interfacer";
+import { ChildrenComponent as CC } from "components/brickroom/types";
+import {
+  AuthActions,
+  AuthArrowLink,
+  AuthBackLink,
+  AuthButton,
+  AuthCard,
+  AuthCardHeader,
+} from "components/partials/auth/AuthCard";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
+import { isRequired } from "../../../lib/isFieldRequired";
 
 //
 
 export namespace ViaPassphraseNS {
   export interface Props {
     onSubmit?: (data: FormValues) => void;
+    onBack?: () => void;
+    viaQuestions?: () => void;
   }
 
   export interface FormValues {
@@ -40,8 +51,9 @@ export namespace ViaPassphraseNS {
 
 //
 
-export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
-  const { onSubmit = () => {} } = props;
+/** Sign in · step 3A — passphrase (Figma 1092:14277). */
+export default function ViaPassphrase(props: CC<ViaPassphraseNS.Props>) {
+  const { onSubmit = () => {}, onBack, viaQuestions } = props;
   const { t } = useTranslation("signInProps");
 
   /* Form setup */
@@ -78,14 +90,17 @@ export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
   //
 
   return (
-    <div>
-      {/* Intro */}
-      <h2>{t("Login")}</h2>
-      <p className="mt-2 mb-6">{t("Input the passphrase that you kept generated during the signup process")}</p>
+    <AuthCard>
+      <AuthCardHeader
+        back={<AuthBackLink label={t("Back to sign in")} onClick={onBack} />}
+        title={t("Sign in with your passphrase")}
+        description={t("Enter the passphrase generated when you created your account.")}
+      />
 
-      {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        {/* Email field */}
+      {/* Slot for errors */}
+      {props.children}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <Controller
           control={control}
           name="passphrase"
@@ -99,18 +114,21 @@ export default function ViaPassphrase(props: ViaPassphraseNS.Props) {
               onChange={onChange}
               onBlur={onBlur}
               label={t("Passphrase")}
-              placeholder={t("penalty now before knife offer market drum flush advice frown claw hold")}
+              placeholder={t("Enter your passphrase")}
               error={errors.passphrase?.message}
               requiredIndicator={isRequired(schema, name)}
             />
           )}
         />
 
-        {/* Submit button */}
-        <Button size="large" primary fullWidth submit disabled={!isValid} id="submit">
-          {t("Login")}
-        </Button>
+        <AuthActions>
+          <AuthButton type="submit" disabled={!isValid} id="submit">
+            {t("Sign in")}
+          </AuthButton>
+
+          <AuthArrowLink label={t("Use recovery questions instead")} onClick={viaQuestions} id="viaQuestions" />
+        </AuthActions>
       </form>
-    </div>
+    </AuthCard>
   );
 }

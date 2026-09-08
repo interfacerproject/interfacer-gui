@@ -47,8 +47,8 @@ export function fileToIfile(file: File): IFile {
 
 export function getUserImage(user: Partial<PersonWithFileEssential>): string {
   const image = user.images?.[0];
-  if (image) return formatImageSrc(image.mimeType, image.bin);
-  else return "";
+  if (image?.bin) return formatImageSrc(image.mimeType, image.bin);
+  return "";
 }
 
 export function dataURLtoFile(bin: string, mimeType: string, filename: string): globalThis.File {

@@ -60,3 +60,27 @@ For example: `bd create --help` shows `--parent`, `--deps`, `--assignee`, etc.
 ---
 
 **For detailed workflows and advanced features, see [AGENTS.md](../AGENTS.md)**
+
+---
+
+## Design Context
+
+### Users
+
+Interfacer serves makers, designers, manufacturers, Fab City participants, and product auditors collaborating on open-source hardware. They use project details to understand how something can be made, verify its provenance, inspect related processes and resources, and assess whether its documentation is trustworthy and reusable.
+
+### Brand Personality
+
+Open, trustworthy, and practically technical. The interface should communicate civic infrastructure and transparent production without feeling like a developer console. It should create confidence, curiosity, and a sense that complex supply-chain information is understandable.
+
+### Aesthetic Direction
+
+Use Interfacer's existing light visual language: IBM Plex Sans for body copy, Space Grotesk for headings, restrained green as the primary action and trust color, entity colors for semantic distinctions, compact borders, and clear white surfaces. Traceability views should be approachable-technical: simplify the graph by default, progressively reveal node details, and avoid decorative data visualization.
+
+### Design Principles
+
+1. Make provenance legible: communicate resources, processes, and events through consistent shapes, colors, labels, and direction.
+2. Reveal complexity progressively: begin with a readable overview, then expose identifiers, metadata, and raw data on demand.
+3. Preserve trust through precision: distinguish loaded, empty, and error states clearly and never imply data that was not returned.
+4. Keep expensive data intentional: fetch traceability only when requested, cache it for the detail-page session, and reuse the result across consumers.
+5. Design inclusively: meet WCAG AA contrast, provide keyboard-operable controls and a structured text alternative, respect reduced motion, and adapt the graph for smaller screens.

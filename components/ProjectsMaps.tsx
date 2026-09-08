@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import Map, {
   FullscreenControl,
   Layer,
@@ -28,6 +28,7 @@ import Map, {
 import { useProjectSpecs } from "../hooks/useProjectSpecs";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
 import {
+  EconomicResource,
   EconomicResourceEdge,
   EconomicResourceFilterParams,
   FetchInventoryQuery,
@@ -37,10 +38,9 @@ import {
 import { LocationHazard } from "@carbon/icons-react";
 import useFilters from "hooks/useFilters";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import EmptyState from "./EmptyState";
-import ProjectDisplay from "./ProjectDisplay";
+import MapMiniCard from "./MapMiniCard";
 import WithFilterLayout from "./layout/WithFilterLayout";
 
 function groupByCoordinates(arr: mapboxgl.MapboxGeoJSONFeature[]): mapboxgl.MapboxGeoJSONFeature[][] {
@@ -62,12 +62,17 @@ function groupByCoordinates(arr: mapboxgl.MapboxGeoJSONFeature[]): mapboxgl.Mapb
 const ProjectsMaps = (props: {
   projects?: EconomicResourceEdge[];
   filters?: Partial<EconomicResourceFilterParams>;
+  /** Map height in px. Defaults to the catalogue page's 600. */
+  height?: number;
+  /** Drop the filter toolbar and render the map on its own, for embedding. */
+  bare?: boolean;
 }) => {
-  const { projects: givenProjects, filters } = props;
+  const { projects: givenProjects, filters, height = 600, bare = false } = props;
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_KEY;
 
   const [cursor, setCursor] = useState<string>("grab");
-  const [popUpsAnchors, setPopUpsAnchor] = useState<any>(null);
+  // One popup at a time: the point the user last clicked, and the projects there.
+  const [selected, setSelected] = useState<{ lat: number; long: number; ids: string[] } | null>(null);
   const mapRef = useRef<MapRef>(null);
   const { mapFilter, designId } = useFilters();
   const filter = filters || mapFilter;
@@ -86,39 +91,39 @@ const ProjectsMaps = (props: {
     skip: Boolean(givenProjects) || projectSpecIds.length === 0,
   });
 
-  const PopUps = () => {
-    const haveOverflows = (p: mapboxgl.MapboxGeoJSONFeature[]) => (p.length > 1 ? "max-h-128 overflow-y-scroll" : "");
+  const projects = givenProjects || data?.economicResources?.edges.filter(e => e.node.conformsTo?.id !== designId);
+
+  /** Look a project back up by id, so a popup can render from data we already hold.
+      A plain record rather than a `Map`, which react-map-gl's `Map` shadows here. */
+  const projectsById: Record<string, EconomicResource> = {};
+  for (const { node } of projects ?? []) projectsById[node.id] = node as EconomicResource;
+
+  const SelectedPopUp = () => {
+    if (!selected) return null;
+    const cards = selected.ids.map(id => projectsById[id]).filter(Boolean);
+    if (!cards.length) return null;
+
     return (
-      <>
-        {groupByCoordinates(popUpsAnchors)?.map((p: mapboxgl.MapboxGeoJSONFeature[], i: number) => (
-          <Popup
-            key={i}
-            // @ts-ignore
-            latitude={p[0].geometry.coordinates[1]}
-            // @ts-ignore
-            longitude={p[0].geometry.coordinates[0]}
-            closeButton={false}
-            closeOnClick={false}
-            focusAfterOpen={false}
-            anchor="left"
-          >
-            <div className={haveOverflows(p)}>
-              <div className="flex flex-col gap-1">
-                {p.map((e: any, i: number) => (
-                  <Link href={`/project/${e.properties.id}`} key={i}>
-                    <a className="m-1 p-1 rounded border hover:cursor-pointer hover:ring-primary hover:fill-primary hover:ring-2">
-                      <ProjectDisplay projectId={e.properties.id} />
-                    </a>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </Popup>
-        ))}
-      </>
+      <Popup
+        latitude={selected.lat}
+        longitude={selected.long}
+        closeButton={false}
+        closeOnClick={false}
+        focusAfterOpen={false}
+        maxWidth="none"
+        className="ifr-map-popup"
+        onClose={() => setSelected(null)}
+      >
+        {/* Several projects can share one address; the list scrolls rather than
+            growing a popup taller than the map. */}
+        <div className="flex max-h-[260px] flex-col gap-2 overflow-y-auto">
+          {cards.map(project => (
+            <MapMiniCard key={project.id} project={project} />
+          ))}
+        </div>
+      </Popup>
     );
   };
-  const projects = givenProjects || data?.economicResources?.edges.filter(e => e.node.conformsTo?.id !== designId);
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
   const onGrab = useCallback(() => setCursor("grabbing"), []);
@@ -161,22 +166,27 @@ const ProjectsMaps = (props: {
   const handleMapClick = (e: any) => {
     e.preventDefault();
     const features = e.features || [];
-    if (!features.length) return;
+    // Clicking the map background dismisses whatever popup is open.
+    if (!features.length) {
+      setSelected(null);
+      return;
+    }
     if (!!features[0]?.properties.cluster_id) {
       const zoom = mapRef.current?.getZoom();
+      setSelected(null);
       mapRef.current?.easeTo({
         center: features[0].geometry.coordinates,
         zoom: zoom! * 2.2,
         duration: 300,
       });
+      return;
     }
-  };
 
-  const onZoomChange = () => {
-    const points = mapRef?.current
-      ?.querySourceFeatures("projects", { sourceLayer: unclusteredPointLayer.id! })
-      .filter((e: any) => !e.properties?.cluster);
-    setPopUpsAnchor(points);
+    // A single point: open one card for it, or a short list when several
+    // projects share the same address.
+    const [long, lat] = features[0].geometry.coordinates;
+    const ids = groupByCoordinates(features)[0]?.map((f: any) => f.properties.id) ?? [];
+    if (ids.length) setSelected({ lat, long, ids });
   };
 
   if (!projects) return null;
@@ -206,54 +216,54 @@ const ProjectsMaps = (props: {
       />
     );
 
-  return (
-    <WithFilterLayout hideConformsTo>
-      <div className="flex flex-col flex-nowrap w-full">
-        <Map
-          initialViewState={{
-            latitude: 53.3,
-            longitude: 9.98,
-            zoom: 4,
-          }}
-          interactive
-          style={{ width: "full", height: 600 }}
-          mapStyle="mapbox://styles/mapbox/light-v11"
-          mapboxAccessToken={MAPBOX_TOKEN}
-          interactiveLayerIds={[clusterLayer.id!]}
-          onClick={handleMapClick}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          onMouseDown={onGrab}
-          onMouseUp={onMouseLeave}
-          ref={mapRef}
-          cursor={cursor}
-          onZoomEnd={onZoomChange}
-          onLoad={onZoomChange}
-          scrollZoom={false}
-          touchZoomRotate
-        >
-          <FullscreenControl position="top-left" />
-          <NavigationControl position="top-left" />
-          <ScaleControl />
+  const map = (
+    <div className="flex flex-col flex-nowrap w-full">
+      <Map
+        initialViewState={{
+          latitude: 53.3,
+          longitude: 9.98,
+          zoom: 4,
+        }}
+        interactive
+        style={{ width: "100%", height }}
+        mapStyle="mapbox://styles/mapbox/light-v11"
+        mapboxAccessToken={MAPBOX_TOKEN}
+        interactiveLayerIds={[clusterLayer.id!, unclusteredPointLayer.id!]}
+        onClick={handleMapClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onMouseDown={onGrab}
+        onMouseUp={onMouseLeave}
+        ref={mapRef}
+        cursor={cursor}
+        scrollZoom={false}
+        touchZoomRotate
+      >
+        <FullscreenControl position="top-left" />
+        <NavigationControl position="top-left" />
+        <ScaleControl />
 
-          <Source
-            id="projects"
-            type="geojson"
-            // @ts-ignore
-            data={geoJSON}
-            cluster={true}
-            clusterMaxZoom={14}
-            clusterRadius={15}
-          >
-            <Layer {...clusterLayer} />
-            <Layer {...clusterCountLayer} />
-            <Layer {...unclusteredPointLayer} />
-          </Source>
-          {popUpsAnchors && <PopUps />}
-        </Map>
-      </div>
-    </WithFilterLayout>
+        <Source
+          id="projects"
+          type="geojson"
+          // @ts-ignore
+          data={geoJSON}
+          cluster={true}
+          clusterMaxZoom={14}
+          clusterRadius={15}
+        >
+          <Layer {...clusterLayer} />
+          <Layer {...clusterCountLayer} />
+          <Layer {...unclusteredPointLayer} />
+        </Source>
+        <SelectedPopUp />
+      </Map>
+    </div>
   );
+
+  if (bare) return map;
+
+  return <WithFilterLayout hideConformsTo>{map}</WithFilterLayout>;
 };
 
 export default ProjectsMaps;

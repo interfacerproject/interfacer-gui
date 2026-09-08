@@ -2,7 +2,7 @@ import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
 // Components
-import { Button, Icon, Stack, Text } from "@bbtgnn/polaris-interfacer";
+import { Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { PlusMinor } from "@shopify/polaris-icons";
 import AddLicense, { ScopedLicense } from "components/AddLicense";
 import LicenseDisplay from "components/LicenseDisplay";
@@ -10,15 +10,9 @@ import PCardWithAction from "components/polaris/PCardWithAction";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { CreateProjectValues } from "../CreateProjectForm";
 
-//
-
-export type LicenseStepValues = Array<{ scope: string; licenseId: string }>;
-export const licenseStepSchema = () =>
-  yup.array().of(yup.object().shape({ scope: yup.string(), licenseId: yup.string() }));
-export const licenseStepDefaultValues: LicenseStepValues = [];
+export { type LicenseStepValues, licenseStepSchema, licenseStepDefaultValues } from "./LicenseStep.schema";
 
 //
 
@@ -69,9 +63,24 @@ export default function LicenseStep() {
       />
 
       {!showAdd && (
-        <Button id="add-license" onClick={handleShowAdd} fullWidth icon={<Icon source={PlusMinor} />}>
+        <button
+          id="add-license"
+          type="button"
+          onClick={handleShowAdd}
+          className="flex items-center gap-2 w-fit bg-ifr-surface hover:bg-ifr-hover transition-colors text-ifr-text-primary cursor-pointer"
+          style={{
+            borderRadius: "var(--ifr-radius-sm)",
+            border: "1.4px solid var(--ifr-text-primary)",
+            padding: "9px 15px 9px 17px",
+            fontFamily: "var(--ifr-font-body)",
+            fontSize: "var(--ifr-fs-base)",
+            fontWeight: "var(--ifr-fw-medium)",
+            lineHeight: "20px",
+          }}
+        >
+          <PlusMinor className="w-4 h-4 fill-current" />
           {t("Add new license")}
-        </Button>
+        </button>
       )}
 
       {showAdd && <AddLicense onAdd={handleAdd} onDiscard={handleDiscard} />}

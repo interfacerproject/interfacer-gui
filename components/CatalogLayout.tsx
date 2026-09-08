@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { AdjustmentsIcon, SearchIcon } from "@heroicons/react/outline";
 import CatalogFilterSidebar, { CatalogVariant } from "components/CatalogFilterSidebar";
 import EmptyState from "components/EmptyState";
@@ -20,9 +20,11 @@ import {
 } from "lib/types";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import { useIsDesktop } from "hooks/useMediaQuery";
 import React, { ReactNode, useState } from "react";
 
 interface CatalogHeroProps {
+  eyebrow: string;
   title: string;
   description: string;
   stats: ReactNode;
@@ -49,7 +51,13 @@ export default function CatalogLayout({
 }: CatalogLayoutProps) {
   const { t } = useTranslation("common");
   const router = useRouter();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const isDesktop = useIsDesktop();
+  // The filter panel starts open as a desktop column but closed as a mobile
+  // drawer — an overlay that covers the results on arrival would be hostile.
+  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
+  const [drawerCollapsed, setDrawerCollapsed] = useState(true);
+  const sidebarCollapsed = isDesktop ? desktopCollapsed : drawerCollapsed;
+  const toggleSidebar = () => (isDesktop ? setDesktopCollapsed(v => !v) : setDrawerCollapsed(v => !v));
   const [searchQuery, setSearchQuery] = useState((router.query.q as string) || "");
 
   const sortBy = (router.query.sort as string) || "Latest";
@@ -130,63 +138,58 @@ export default function CatalogLayout({
     }
   }, [data, isLoading, onDataLoaded, totalCount, distinctPrimaryAccountableCount]);
 
-  const heroGradients: Record<CatalogVariant, string> = {
-    designs: "linear-gradient(83deg, rgb(3, 106, 83) 0%, rgb(57, 170, 145) 100%)",
-    products: "linear-gradient(83deg, rgb(20, 59, 181) 0%, rgb(106, 140, 246) 100%)",
-    services: "linear-gradient(83deg, rgb(130, 0, 219) 0%, rgb(193, 125, 240) 100%)",
-  };
-
   return (
-    <div className="flex flex-1 min-h-0 overflow-hidden">
-      {/* Filter Sidebar */}
+    <div className="flex flex-1 items-start min-w-0">
+      {/* Filter Sidebar — inline column on desktop, overlay drawer below `lg` */}
       <CatalogFilterSidebar
         variant={variant}
         collapsed={sidebarCollapsed}
-        onToggle={() => setSidebarCollapsed(v => !v)}
+        onToggle={toggleSidebar}
+        asDrawer={!isDesktop}
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        {/* Hero Section */}
-        <div className="relative border-b border-ifr" style={{ background: heroGradients[variant] }}>
-          <div className="relative px-6 py-10">
-            <div className="relative z-10 flex items-center gap-6">
-              {/* Left: Title + Description */}
-              <div className="flex-1 flex flex-col gap-2">
+      <div className="flex-1 min-w-0 flex flex-col overflow-y-auto">
+        {/* Hero Section — DTEC prototype "CatalogHeader" (nodes 1050:26375 / 26365 / 26385) */}
+        <div className="bg-ifr-dark border-b border-ifr">
+          <div className="p-6 md:p-10">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-6">
+              {/* Left: Eyebrow + Title + Description */}
+              <div className="flex-1 min-w-0 flex flex-col gap-[5px]">
+                <p
+                  className="m-0 uppercase text-ifr-yellow text-[16px] leading-[26px] md:text-[18px] md:leading-[30px]"
+                  style={{ fontFamily: "var(--ifr-font-heading)", fontWeight: 500 }}
+                >
+                  {hero.eyebrow}
+                </p>
                 <h1
-                  className="m-0"
-                  style={{
-                    fontFamily: "var(--ifr-font-heading)",
-                    fontSize: "30px",
-                    fontWeight: 700,
-                    lineHeight: "36px",
-                    color: "#ffffff",
-                  }}
+                  className="m-0 text-ifr-text-inverse text-[28px] leading-[36px] md:text-[36px] md:leading-[44px]"
+                  style={{ fontFamily: "var(--ifr-font-heading)", fontWeight: 700 }}
                 >
                   {hero.title}
                 </h1>
                 <p
-                  className="m-0 max-w-[640px]"
-                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "16px", lineHeight: "24px", color: "#fafafa" }}
+                  className="m-0 max-w-[640px] text-ifr-text-inverse-secondary text-[16px] leading-[24px] md:text-[18px] md:leading-[27px]"
+                  style={{ fontFamily: "var(--ifr-font-body)" }}
                 >
                   {hero.description}
                 </p>
               </div>
 
-              {/* Right: Stats */}
-              <div className="flex gap-[15px] shrink-0">{hero.stats}</div>
+              {/* Right: Stats — wrap rather than overflow on narrow screens */}
+              <div className="flex flex-wrap gap-[10px] md:gap-[15px] lg:shrink-0">{hero.stats}</div>
             </div>
           </div>
         </div>
 
         {/* Search & Sort Bar */}
-        <div className="bg-ifr-surface border-b border-ifr px-6 py-5">
-          <div className="flex items-center justify-between gap-6">
+        <div className="bg-ifr-surface border-b border-ifr px-4 md:px-6 py-4 md:py-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 md:gap-6">
             {/* Filters toggle */}
             <button
               type="button"
-              onClick={() => setSidebarCollapsed(v => !v)}
-              className={`flex items-center gap-[8px] px-3 shrink-0 border transition-colors cursor-pointer ${
+              onClick={toggleSidebar}
+              className={`order-1 flex items-center gap-[8px] px-3 shrink-0 border transition-colors cursor-pointer ${
                 !sidebarCollapsed
                   ? "bg-ifr-hover border-ifr text-ifr-text-primary"
                   : "bg-ifr-surface border-transparent text-ifr-text-secondary hover:border-ifr hover:text-ifr-text-primary"
@@ -207,30 +210,39 @@ export default function CatalogLayout({
               </span>
             </button>
 
-            {/* Search */}
-            <form onSubmit={handleSearch} className="flex-1 max-w-[845px] relative">
-              <div className="bg-ifr-search border border-ifr rounded-full px-4 py-3 flex items-center gap-3">
-                <SearchIcon className="w-5 h-5 text-ifr-text-secondary" />
+            {/* Search — drops to its own full-width row once the toolbar runs out of space */}
+            <form
+              onSubmit={handleSearch}
+              className="order-3 md:order-2 w-full md:w-auto md:flex-1 max-w-[845px] relative"
+            >
+              <div className="bg-ifr-search border border-ifr rounded-full px-4 py-2.5 md:py-3 flex items-center gap-3">
+                <SearchIcon className="w-5 h-5 shrink-0 text-ifr-text-secondary" />
                 <input
-                  type="text"
+                  type="search"
                   placeholder={searchPlaceholder}
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="flex-1 bg-transparent text-ifr-text-primary placeholder:text-ifr-text-muted outline-none"
-                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)", lineHeight: "21px" }}
+                  className="flex-1 min-w-0 bg-transparent text-ifr-text-primary placeholder:text-ifr-text-muted outline-none"
+                  style={{ fontFamily: "var(--ifr-font-body)", lineHeight: "21px" }}
                 />
               </div>
             </form>
 
             {/* Sort */}
-            <div className="flex items-center gap-3 shrink-0">
-              <ToolbarDropdown label={t("Sort by")} value={sortBy} options={sortOptions} onChange={handleSortChange} />
+            <div className="order-2 md:order-3 flex items-center gap-3 shrink-0">
+              <ToolbarDropdown
+                label={t("Sort by")}
+                value={sortBy}
+                options={sortOptions}
+                onChange={handleSortChange}
+                getOptionLabel={o => t(o)}
+              />
             </div>
           </div>
         </div>
 
         {/* Results */}
-        <div className="bg-ifr-results flex-1 p-6">
+        <div className="bg-ifr-results flex-1 p-4 md:p-6">
           {/* Results count */}
           <p
             className="text-ifr-text-secondary"
@@ -243,7 +255,7 @@ export default function CatalogLayout({
           >
             {t("Showing") + " "}
             <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-medium)" }}>
-              {isLoading ? "..." : totalCount}
+              {isLoading ? "..." : projects?.length ?? 0}
             </span>
             {" " + t("results")}
           </p>
@@ -253,7 +265,7 @@ export default function CatalogLayout({
             <div
               className="grid justify-center"
               style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(var(--ifr-card-min-width), var(--ifr-card-max-width)))",
+                gridTemplateColumns: "repeat(auto-fill, var(--ifr-card-track))",
                 gap: "var(--ifr-grid-gap)",
               }}
             >
@@ -286,7 +298,7 @@ export default function CatalogLayout({
 
           {/* Empty state */}
           {!isLoading && !error && (showEmptyState || !projects?.length) && (
-            <EmptyState heading="No projects match your filters" />
+            <EmptyState heading={t("No projects match your filters")} />
           )}
 
           {/* Cards Grid */}
@@ -295,8 +307,7 @@ export default function CatalogLayout({
               <div
                 className="grid justify-center"
                 style={{
-                  gridTemplateColumns:
-                    "repeat(auto-fill, minmax(var(--ifr-card-min-width), var(--ifr-card-max-width)))",
+                  gridTemplateColumns: "repeat(auto-fill, var(--ifr-card-track))",
                   gap: "var(--ifr-grid-gap)",
                 }}
               >
@@ -331,18 +342,22 @@ export default function CatalogLayout({
   );
 }
 
-/** Reusable stat card for hero sections — compact prototype style */
+/** Reusable stat card for hero sections — translucent, tuned to sit on --ifr-bg-dark */
 export function HeroStatCard({ value, label }: { icon?: ReactNode; value: string | number; label: string }) {
   return (
     <div
-      className="flex flex-col justify-center"
+      className="flex flex-col justify-center flex-1 lg:flex-none"
       style={{
-        width: 140,
+        // Two cards still fit side by side on a 320px screen; wider viewports
+        // settle back to the fixed prototype width.
+        flexBasis: 130,
+        minWidth: 130,
+        maxWidth: 140,
         height: 56,
         padding: "10px 14px",
         borderRadius: "6px",
-        background: "#ffffff",
-        border: "1px solid #c9cccf",
+        background: "rgba(255, 255, 255, 0.08)",
+        border: "1px solid rgba(255, 255, 255, 0.18)",
       }}
     >
       <span
@@ -350,7 +365,7 @@ export function HeroStatCard({ value, label }: { icon?: ReactNode; value: string
           fontFamily: "var(--ifr-font-body)",
           fontSize: 16,
           fontWeight: 700,
-          color: "#0b1324",
+          color: "var(--ifr-text-inverse)",
           lineHeight: "1.2",
         }}
       >
@@ -361,7 +376,7 @@ export function HeroStatCard({ value, label }: { icon?: ReactNode; value: string
           fontFamily: "var(--ifr-font-body)",
           fontSize: 12,
           fontWeight: 400,
-          color: "#6c707c",
+          color: "var(--ifr-text-inverse-secondary)",
           lineHeight: "1.2",
         }}
       >

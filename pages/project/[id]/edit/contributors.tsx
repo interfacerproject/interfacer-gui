@@ -14,6 +14,7 @@ import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
+import { ProjectType } from "components/types";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -77,7 +78,7 @@ const EditContributors: NextPageWithLayout = () => {
   /* Render */
 
   return (
-    <EditFormLayout formMethods={formMethods} onSubmit={onSubmit}>
+    <EditFormLayout formMethods={formMethods} onSubmit={onSubmit} projectType={project.conformsTo?.name as ProjectType}>
       <ContributorsStep />
     </EditFormLayout>
   );

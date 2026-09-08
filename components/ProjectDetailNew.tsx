@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
+import { SEARCH_PROJECT } from "@dyne/interfacer-client";
 import { ChevronDown, ChevronLeft, ChevronRight } from "@carbon/icons-react";
 import { BookmarkIcon, ExternalLinkIcon, StarIcon } from "@heroicons/react/outline";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
@@ -14,19 +15,27 @@ import ProjectsCards from "components/ProjectsCards";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
 
-import { SEARCH_PROJECT } from "components/ProjectDisplay";
+import BuyBlock from "components/previewCommerce/BuyBlock";
+import { commercePreviewEnabled } from "lib/previewCommerce/flag";
 import useDppApi from "lib/dpp";
 import type { DppDocument } from "lib/dpp-types";
 import findProjectImages from "lib/findProjectImages";
+import findProjectModels from "lib/findProjectModels";
 import { isProjectType } from "lib/isProjectType";
 import MdParser from "lib/MdParser";
 import { extractUserTagValues } from "lib/tagging";
 
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import ReviewSection from "./ReviewSection";
+import useFeedbackApi, { type ReviewSummary } from "lib/feedback";
+import StepModelViewer from "./StepModelViewer";
+
+const ProjectTraceability = dynamic(() => import("./ProjectTraceability"), { ssr: false });
 
 function getProjectType(project: Partial<EconomicResource>): ProjectType {
   const name = project.conformsTo?.name;
@@ -49,10 +58,13 @@ const typeColors: Record<string, string> = {
 interface ProjectSidebarNewProps {
   project: Partial<EconomicResource>;
   projectType: ProjectType;
+  sidebarRating?: ReviewSummary | null;
+  /** Optional block rendered as the first section inside the sticky card (commerce preview buy block). */
+  topSlot?: ReactNode;
 }
 
 /** Redesigned sidebar following DTEC prototype */
-function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
+function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: ProjectSidebarNewProps) {
   const { t } = useTranslation("common");
   const { user } = useAuth();
 
@@ -61,6 +73,8 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
   const price = meta.price as string | undefined;
   const availability = meta.availability as string | undefined;
   const websiteLink = meta.websiteLink as string | undefined;
+  const license = project.license || (meta.licenses as Array<{ licenseId?: string }> | undefined)?.[0]?.licenseId;
+  const licensor = project.licensor || (meta.licensor as string | undefined);
   const basedOnDesignMeta = meta.basedOnDesign as { id?: string; name?: string } | string | undefined;
   const designId = basedOnDesignMeta
     ? typeof basedOnDesignMeta === "object"
@@ -80,80 +94,135 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
     ? { id: designId, name: designData?.economicResource?.name || undefined }
     : undefined;
 
+  // With the commerce preview on, the unified buy block above owns the product's
+  // title and CTAs, so the sidebar drops its own title, Contact Manufacturer,
+  // Visit Store and "Based on open source design" blocks.
+  const hideForCommerce = commercePreviewEnabled && projectType === ProjectType.PRODUCT;
+
   return (
-    <div className="w-full lg:w-[300px] shrink-0">
+    <div className="w-full lg:w-[300px] shrink-0 h-full">
+      {/* Sticks alongside the article on desktop; below `lg` it is a normal
+          block in the flow, so it must not cap its own height or scroll. */}
       <div
-        className="sticky flex flex-col"
+        className="flex flex-col lg:sticky lg:max-h-[calc(100vh-var(--ifr-topbar-height)-32px)] lg:overflow-y-auto"
         style={{
-          top: "calc(var(--ifr-topbar-height) + 80px)",
+          top: "calc(var(--ifr-topbar-height) + 16px)",
           border: "1px solid #c9cccf",
           borderRadius: "4px",
           backgroundColor: "#fff",
         }}
       >
-        {/* Price & CTA section */}
-        <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
-          {/* Product: Price & Availability */}
-          {projectType === ProjectType.PRODUCT && price && (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-baseline gap-1.5">
-                <p
-                  className="text-ifr-text-primary m-0"
-                  style={{
-                    fontFamily: "var(--ifr-font-heading)",
-                    fontSize: "var(--ifr-fs-2xl)",
-                    fontWeight: "var(--ifr-fw-bold)",
-                    lineHeight: "1.2",
-                  }}
-                >
-                  {price}
-                </p>
+        {/* Commerce preview buy block — unified into this card, above the title.
+            When the sidebar's own title/CTA section is hidden, the following
+            section supplies its own <hr>, so skip the trailing divider here. */}
+        {topSlot && (
+          <>
+            <div className="px-4 pt-4">{topSlot}</div>
+            {!hideForCommerce && <div className="border-t border-[#c9cccf] mt-4" />}
+          </>
+        )}
+
+        {/* Title */}
+        {!hideForCommerce && (
+          <div className="px-4 pt-4">
+            <h2
+              className="text-ifr-text-primary m-0"
+              style={{
+                fontFamily: "var(--ifr-font-heading)",
+                fontSize: "var(--ifr-fs-lg)",
+                fontWeight: "var(--ifr-fw-bold)",
+                lineHeight: "1.3",
+              }}
+            >
+              {project.name}
+            </h2>
+          </div>
+        )}
+
+        {/* Price & CTA section — hidden for products under the commerce preview:
+            the unified buy block above owns the price, Contact Manufacturer and
+            Visit Store. */}
+        {!hideForCommerce && (
+          <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
+            {/* Product: Price & Availability */}
+            {projectType === ProjectType.PRODUCT && price && (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-baseline gap-1.5">
+                  <p
+                    className="text-ifr-text-primary m-0"
+                    style={{
+                      fontFamily: "var(--ifr-font-heading)",
+                      fontSize: "var(--ifr-fs-2xl)",
+                      fontWeight: "var(--ifr-fw-bold)",
+                      lineHeight: "1.2",
+                    }}
+                  >
+                    {price}
+                  </p>
+                  <span
+                    className="text-ifr-text-secondary"
+                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                  >
+                    {t("estimated")}
+                  </span>
+                </div>
+                {availability && (
+                  <div className="flex items-center gap-1.5">
+                    <div
+                      className="shrink-0"
+                      style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "var(--ifr-radius-full)",
+                        backgroundColor: "var(--ifr-type-product)",
+                      }}
+                    />
+                    <span
+                      className="text-ifr-text-primary"
+                      style={{
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "var(--ifr-fs-base)",
+                        fontWeight: "var(--ifr-fw-medium)",
+                      }}
+                    >
+                      {availability}
+                    </span>
+                  </div>
+                )}
                 <span
                   className="text-ifr-text-secondary"
                   style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
                 >
-                  {t("estimated")}
+                  {t("Contact the manufacturer for accurate pricing and availability details.")}
                 </span>
               </div>
-              {availability && (
-                <div className="flex items-center gap-1.5">
-                  <div
-                    className="shrink-0"
-                    style={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "var(--ifr-radius-full)",
-                      backgroundColor: "var(--ifr-type-product)",
-                    }}
-                  />
-                  <span
-                    className="text-ifr-text-primary"
-                    style={{
-                      fontFamily: "var(--ifr-font-body)",
-                      fontSize: "var(--ifr-fs-base)",
-                      fontWeight: "var(--ifr-fw-medium)",
-                    }}
-                  >
-                    {availability}
-                  </span>
-                </div>
-              )}
-              <span
-                className="text-ifr-text-secondary"
-                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-              >
-                {t("Contact the manufacturer for accurate pricing and availability details.")}
-              </span>
-            </div>
-          )}
+            )}
 
-          {projectType === ProjectType.DESIGN &&
-          basedOnDesign &&
-          typeof basedOnDesign === "object" &&
-          basedOnDesign.id ? (
-            <Link href={`/project/${basedOnDesign.id}`}>
-              <a
-                className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline"
+            {projectType === ProjectType.DESIGN &&
+            basedOnDesign &&
+            typeof basedOnDesign === "object" &&
+            basedOnDesign.id ? (
+              <Link href={`/project/${basedOnDesign.id}`}>
+                <a
+                  className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline"
+                  style={{
+                    height: "48px",
+                    borderRadius: "8px",
+                    backgroundColor: "#f1bd4d",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "16px",
+                    fontWeight: "500",
+                    color: "#1a1a1a",
+                  }}
+                >
+                  {t("Build It Yourself")}
+                </a>
+              </Link>
+            ) : projectType === ProjectType.DESIGN ? (
+              <button
+                type="button"
+                disabled
+                className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
                 style={{
                   height: "48px",
                   borderRadius: "8px",
@@ -165,126 +234,109 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
                 }}
               >
                 {t("Build It Yourself")}
-              </a>
-            </Link>
-          ) : projectType === ProjectType.DESIGN ? (
-            <button
-              type="button"
-              disabled
-              className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
-              style={{
-                height: "48px",
-                borderRadius: "8px",
-                backgroundColor: "#f1bd4d",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "16px",
-                fontWeight: "500",
-                color: "#1a1a1a",
-              }}
-            >
-              {t("Build It Yourself")}
-            </button>
-          ) : null}
-          {projectType === ProjectType.PRODUCT && project.primaryAccountable?.name ? (
-            <a
-              href={`mailto:?subject=${encodeURIComponent(project.name || "")} - ${encodeURIComponent(
-                t("Inquiry")
-              )}&body=${encodeURIComponent(
-                t("I am interested in") +
-                  " " +
-                  (project.name || "") +
-                  ".\n\n" +
-                  (typeof window !== "undefined" ? window.location.href : "")
-              )}`}
-              className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline cursor-pointer"
-              style={{
-                height: "48px",
-                borderRadius: "8px",
-                backgroundColor: "#f1bd4d",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "16px",
-                fontWeight: "500",
-                color: "#1a1a1a",
-              }}
-            >
-              {t("Contact Manufacturer")}
-            </a>
-          ) : projectType === ProjectType.PRODUCT ? (
-            <button
-              type="button"
-              disabled
-              className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
-              style={{
-                height: "48px",
-                borderRadius: "8px",
-                backgroundColor: "#f1bd4d",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "16px",
-                fontWeight: "500",
-                color: "#1a1a1a",
-              }}
-            >
-              {t("Contact Manufacturer")}
-            </button>
-          ) : null}
-          {projectType === ProjectType.PRODUCT &&
-            (websiteLink ? (
+              </button>
+            ) : null}
+            {projectType === ProjectType.PRODUCT && project.primaryAccountable?.name ? (
               <a
-                href={websiteLink.startsWith("http") ? websiteLink : `https://${websiteLink}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 no-underline cursor-pointer hover:bg-ifr-hover transition-colors"
+                href={`mailto:?subject=${encodeURIComponent(project.name || "")} - ${encodeURIComponent(
+                  t("Inquiry")
+                )}&body=${encodeURIComponent(
+                  t("I am interested in") +
+                    " " +
+                    (project.name || "") +
+                    ".\n\n" +
+                    (typeof window !== "undefined" ? window.location.href : "")
+                )}`}
+                className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline cursor-pointer"
                 style={{
                   height: "48px",
                   borderRadius: "8px",
-                  border: "1px solid #c9cccf",
+                  backgroundColor: "#f1bd4d",
                   fontFamily: "var(--ifr-font-body)",
                   fontSize: "16px",
-                  fontWeight: "600",
+                  fontWeight: "500",
                   color: "#1a1a1a",
-                  backgroundColor: "#fff",
                 }}
               >
-                <ExternalLinkIcon className="w-4 h-4" />
-                {t("Visit Store")}
+                {t("Contact Manufacturer")}
               </a>
-            ) : (
+            ) : projectType === ProjectType.PRODUCT ? (
               <button
                 type="button"
                 disabled
-                className="w-full flex items-center justify-center gap-2 opacity-40 cursor-not-allowed"
+                className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
                 style={{
                   height: "48px",
                   borderRadius: "8px",
-                  border: "1px solid #c9cccf",
+                  backgroundColor: "#f1bd4d",
                   fontFamily: "var(--ifr-font-body)",
                   fontSize: "16px",
-                  fontWeight: "600",
+                  fontWeight: "500",
                   color: "#1a1a1a",
-                  backgroundColor: "#fff",
                 }}
               >
-                <ExternalLinkIcon className="w-4 h-4" />
-                {t("Visit Store")}
+                {t("Contact Manufacturer")}
               </button>
-            ))}
-          {projectType === ProjectType.SERVICE && (
-            <button
-              type="button"
-              className="w-full text-white border-none cursor-pointer flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
-              style={{
-                height: "var(--ifr-control-height)",
-                borderRadius: "var(--ifr-radius-md)",
-                backgroundColor: "var(--ifr-type-service)",
-                fontFamily: "var(--ifr-font-body)",
-                fontSize: "var(--ifr-fs-md)",
-                fontWeight: "var(--ifr-fw-semibold)",
-              }}
-            >
-              {t("Request a Quote")}
-            </button>
-          )}
-        </div>
+            ) : null}
+            {projectType === ProjectType.PRODUCT &&
+              (websiteLink ? (
+                <a
+                  href={websiteLink.startsWith("http") ? websiteLink : `https://${websiteLink}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 no-underline cursor-pointer hover:bg-ifr-hover transition-colors"
+                  style={{
+                    height: "48px",
+                    borderRadius: "8px",
+                    border: "1px solid #c9cccf",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                    color: "#1a1a1a",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <ExternalLinkIcon className="w-4 h-4" />
+                  {t("Visit Store")}
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full flex items-center justify-center gap-2 opacity-40 cursor-not-allowed"
+                  style={{
+                    height: "48px",
+                    borderRadius: "8px",
+                    border: "1px solid #c9cccf",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                    color: "#1a1a1a",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <ExternalLinkIcon className="w-4 h-4" />
+                  {t("Visit Store")}
+                </button>
+              ))}
+            {projectType === ProjectType.SERVICE && (
+              <button
+                type="button"
+                className="w-full text-white border-none cursor-pointer flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
+                style={{
+                  height: "var(--ifr-control-height)",
+                  borderRadius: "var(--ifr-radius-md)",
+                  backgroundColor: "var(--ifr-type-service)",
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-md)",
+                  fontWeight: "var(--ifr-fw-semibold)",
+                }}
+              >
+                {t("Request a Quote")}
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Created by / Manufactured by */}
         {project.primaryAccountable && (
@@ -299,7 +351,7 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
               </p>
               <Link href={`/profile/${project.primaryAccountable.id}`}>
                 <a className="flex items-center gap-3 p-3 border border-ifr rounded-ifr-sm no-underline group hover:bg-ifr-hover transition-colors">
-                  <BrUserAvatar userId={project.primaryAccountable.id} size="40px" />
+                  <BrUserAvatar user={project.primaryAccountable} size="40px" />
                   <div className="flex-1 min-w-0">
                     <p
                       className="text-ifr-text-primary group-hover:underline"
@@ -340,7 +392,7 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
         )}
 
         {/* Based on design — products only */}
-        {projectType === ProjectType.PRODUCT && basedOnDesign && (
+        {!hideForCommerce && projectType === ProjectType.PRODUCT && basedOnDesign && (
           <>
             <hr className="border-t border-[#c9cccf] m-0 mx-4" />
             <div className="px-4 py-4">
@@ -403,6 +455,71 @@ function ProjectSidebarNew({ project, projectType }: ProjectSidebarNewProps) {
                   <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
                 </div>
               )}
+            </div>
+          </>
+        )}
+
+        {/* License provenance */}
+        {(license || licensor) && (
+          <>
+            <hr className="border-t border-[#c9cccf] m-0 mx-4" />
+            <div className="px-4 py-4">
+              <p
+                className="text-ifr-text-secondary mb-2"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {t("License")}
+              </p>
+              {license && (
+                <p
+                  className="m-0 text-ifr-text-primary break-words"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)", fontWeight: 600 }}
+                >
+                  {license}
+                </p>
+              )}
+              {licensor && (
+                <p className="mt-1 mb-0 text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                  {t("Licensed by {{licensor}}", { licensor })}
+                </p>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Rating summary — if reviews exist */}
+        {sidebarRating && sidebarRating.total_reviews > 0 && (
+          <>
+            <hr className="border-t border-[#c9cccf] m-0 mx-4" />
+            <div className="px-4 py-4">
+              <p
+                className="text-ifr-text-secondary mb-2"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {t("Rating")}
+              </p>
+              <div className="flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="#f1bd4d">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.284-3.957z" />
+                </svg>
+                <span
+                  className="text-ifr-text-primary"
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-md)",
+                    fontWeight: "var(--ifr-fw-semibold)",
+                  }}
+                >
+                  {sidebarRating.average_rating.toFixed(1)}
+                </span>
+                <span
+                  className="text-ifr-text-secondary"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                >
+                  {" · "}
+                  {sidebarRating.total_reviews} {sidebarRating.total_reviews === 1 ? t("review") : t("reviews")}
+                </span>
+              </div>
             </div>
           </>
         )}
@@ -525,6 +642,50 @@ function ImageGallery({ images }: { images: string[] }) {
   );
 }
 
+/** Markdown body that clamps to a fixed height with a Read more / Show less toggle. */
+function ReadMoreMarkdown({ html }: { html: string }) {
+  const { t } = useTranslation("common");
+  const ref = useRef<HTMLDivElement>(null);
+  const [overflowing, setOverflowing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const CLAMP_PX = 220;
+
+  useEffect(() => {
+    if (ref.current) setOverflowing(ref.current.scrollHeight > CLAMP_PX + 20);
+  }, [html]);
+
+  return (
+    <div>
+      <div
+        ref={ref}
+        className="prose max-w-none text-ifr-text-primary"
+        style={{
+          fontFamily: "var(--ifr-font-body)",
+          fontSize: "var(--ifr-fs-md)",
+          maxHeight: expanded ? undefined : CLAMP_PX,
+          overflow: expanded ? undefined : "hidden",
+        }}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+      {overflowing && (
+        <button
+          type="button"
+          onClick={() => setExpanded(v => !v)}
+          className="mt-2 bg-transparent border-none p-0 cursor-pointer hover:underline"
+          style={{
+            color: "var(--ifr-green)",
+            fontFamily: "var(--ifr-font-body)",
+            fontSize: "var(--ifr-fs-sm)",
+            fontWeight: "var(--ifr-fw-medium)",
+          }}
+        >
+          {expanded ? t("Show less") : t("Read more")}
+        </button>
+      )}
+    </div>
+  );
+}
+
 /** Tag badge */
 function TagBadgeDetail({ text }: { text: string }) {
   return (
@@ -548,14 +709,13 @@ function TagBadgeDetail({ text }: { text: string }) {
 function DppFieldRow({ label, value }: { label: string; value?: string }) {
   if (!value) return null;
   return (
-    <div className="flex items-start gap-3 w-full">
+    <div className="flex flex-col sm:flex-row items-start gap-1 sm:gap-3 w-full">
       <span
-        className="text-ifr-text-secondary shrink-0"
+        className="text-ifr-text-secondary sm:shrink-0 sm:w-[180px]"
         style={{
           fontFamily: "var(--ifr-font-body)",
           fontSize: "var(--ifr-fs-base)",
           lineHeight: "24px",
-          width: "180px",
         }}
       >
         {label}
@@ -709,7 +869,7 @@ function SustainabilityMetrics({ dpp }: { dpp: Record<string, string> }) {
   if (metrics.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {metrics.map(m => (
         <MetricCard key={m.label} icon={m.icon} iconBg={m.iconBg} label={m.label} value={m.value} unit={m.unit} />
       ))}
@@ -1212,6 +1372,7 @@ export default function ProjectDetailNew() {
   const projectType = getProjectType(project);
   const color = typeColors[projectType] || "var(--ifr-green)";
   const images = useMemo(() => findProjectImages(project), [project]);
+  const models = useMemo(() => findProjectModels(project), [project]);
 
   // User-facing tags: filtered to `tag-*` entries (prefix stripped) with legacy
   // un-prefixed values kept visible for backwards compatibility.
@@ -1250,6 +1411,11 @@ export default function ProjectDetailNew() {
   const [productDpps, setProductDpps] = useState<DppDocument[]>([]);
   const [dppsLoading, setDppsLoading] = useState(false);
 
+  // Feedback / reviews state
+  const feedbackApi = useFeedbackApi();
+  const [sidebarRating, setSidebarRating] = useState<ReviewSummary | null>(null);
+  const [reviewKey, setReviewKey] = useState(0); // increment to force refresh
+
   useEffect(() => {
     if (projectType !== ProjectType.PRODUCT || !project.id) return;
     let cancelled = false;
@@ -1271,6 +1437,16 @@ export default function ProjectDetailNew() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project.id, projectType]);
 
+  // Fetch sidebar rating summary
+  useEffect(() => {
+    if (!project.id) return;
+    feedbackApi
+      .getReviewSummary(project.id)
+      .then(setSidebarRating)
+      .catch(() => setSidebarRating(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project.id]);
+
   // Breadcrumb
   const typeLabel =
     projectType === ProjectType.DESIGN ? "Designs" : projectType === ProjectType.PRODUCT ? "Products" : "Services";
@@ -1278,7 +1454,7 @@ export default function ProjectDetailNew() {
 
   return (
     <div className="flex-1 bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-      <div className="max-w-[1280px] mx-auto px-6 py-8 flex gap-8 items-start">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8 flex gap-8">
         {/* Main content */}
         <div className="flex-1 min-w-0 flex flex-col gap-4">
           {/* Breadcrumb */}
@@ -1293,7 +1469,7 @@ export default function ProjectDetailNew() {
           </nav>
 
           {/* Header */}
-          <div className="flex items-start justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div className="flex flex-col gap-2 flex-1 min-w-0">
               {/* Type badge + ID */}
               <div className="flex items-center gap-2">
@@ -1376,6 +1552,115 @@ export default function ProjectDetailNew() {
           {/* Image gallery */}
           <ImageGallery images={images} />
 
+          {projectType === ProjectType.DESIGN && models.length > 0 && (
+            <DetailSection
+              icon={
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 2l8 4.5v11L12 22l-8-4.5v-11L12 2z"
+                    stroke={color}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M12 22V11.5M20 6.5l-8 5-8-5"
+                    stroke={color}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              }
+              iconBg="bg-ifr-hover"
+              title={t("3D and CAD Files")}
+              subtitle={t("{{count}} file(s) attached", { count: models.length })}
+              sectionId="3d-model"
+              defaultOpen
+            >
+              <div className="flex flex-col gap-6">
+                <p className="m-0 text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-base)" }}>
+                  {t(
+                    "Interactive 3D previews are available for STEP and STL files. Use your mouse, trackpad, or the control buttons below to rotate, pan, and zoom. Non-viewable files are available for download."
+                  )}
+                </p>
+
+                <div className="flex flex-col gap-6">
+                  {models.map((model, index) => (
+                    <div key={model.url} className="border border-ifr rounded-ifr-md overflow-hidden">
+                      <div className="flex items-center justify-between px-5 py-3 bg-ifr-hover border-b border-ifr">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span
+                            className="shrink-0 flex items-center justify-center text-ifr-text-primary font-semibold"
+                            style={{
+                              width: "28px",
+                              height: "28px",
+                              borderRadius: "var(--ifr-radius-sm)",
+                              backgroundColor: "rgba(200,212,229,0.4)",
+                              fontSize: "var(--ifr-fs-xs)",
+                            }}
+                          >
+                            {index + 1}
+                          </span>
+
+                          <span
+                            className="text-ifr-text-primary font-semibold truncate"
+                            style={{
+                              fontFamily: "var(--ifr-font-body)",
+                              fontSize: "var(--ifr-fs-md)",
+                            }}
+                          >
+                            {model.name}
+                          </span>
+
+                          <span
+                            className="shrink-0 px-2 py-0.5 rounded uppercase font-medium"
+                            style={{
+                              fontSize: "var(--ifr-fs-xs)",
+                              backgroundColor: model.isViewable ? "rgba(3,106,83,0.1)" : "rgba(108,112,124,0.1)",
+                              color: model.isViewable ? "#036A53" : "#6c707c",
+                            }}
+                          >
+                            {model.extension}
+                          </span>
+                        </div>
+
+                        <a
+                          href={model.downloadUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="shrink-0 text-[#036A53] font-semibold no-underline hover:underline ml-4"
+                          style={{ fontSize: "var(--ifr-fs-sm)" }}
+                        >
+                          {t("Download")}
+                        </a>
+                      </div>
+
+                      {model.isViewable ? (
+                        <div className="p-4">
+                          <StepModelViewer
+                            modelUrl={model.url}
+                            downloadUrl={model.downloadUrl}
+                            fileName={model.name}
+                            height="min(55vh, 560px)"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3 px-5 py-4">
+                          <span className="text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                            {t(
+                              "Browser preview is only available for STEP and STL files. You can still download this file."
+                            )}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </DetailSection>
+          )}
+
           {/* Manufactured from open source design banner */}
           {projectType === ProjectType.PRODUCT &&
             (() => {
@@ -1404,17 +1689,11 @@ export default function ProjectDetailNew() {
               iconBg="bg-ifr-hover"
               title={t("Overview")}
               subtitle={t("Description and key features")}
-              defaultOpen
+              collapsible={false}
               sectionId="overview"
             >
               <div className="flex flex-col gap-6">
-                {project.note && (
-                  <div
-                    className="prose max-w-none text-ifr-text-primary"
-                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-md)" }}
-                    dangerouslySetInnerHTML={{ __html: MdParser.render(project.note) }}
-                  />
-                )}
+                {project.note && <ReadMoreMarkdown html={MdParser.render(project.note)} />}
 
                 {/* Tags */}
                 {tags.length > 0 && (
@@ -1426,6 +1705,8 @@ export default function ProjectDetailNew() {
                 )}
               </div>
             </DetailSection>
+
+            <ProjectTraceability key={project.id} projectId={project.id!} />
 
             {/* Equipment — designs */}
             {(projectType === ProjectType.DESIGN || projectType === ProjectType.MACHINE) && machines.length > 0 && (
@@ -1915,6 +2196,28 @@ export default function ProjectDetailNew() {
               )}
             </DetailSection>
 
+            {/* Reviews */}
+            <DetailSection
+              icon={
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"
+                    stroke="#0B1324"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              }
+              iconBg="bg-[rgba(241,189,77,0.15)]"
+              title={t("Reviews")}
+              subtitle={t("Community feedback and ratings")}
+              sectionId="reviews"
+              defaultOpen
+            >
+              <ReviewSection key={reviewKey} projectUlid={project.id!} projectName={project.name} />
+            </DetailSection>
+
             {/* Included Projects — sub-assemblies from metadata.relations */}
             {(() => {
               const relations = (project.metadata as Record<string, any>)?.relations;
@@ -2038,13 +2341,23 @@ export default function ProjectDetailNew() {
 
         {/* Sidebar */}
         <div className="hidden lg:block">
-          <ProjectSidebarNew project={project} projectType={projectType} />
+          <ProjectSidebarNew
+            project={project}
+            projectType={projectType}
+            sidebarRating={sidebarRating}
+            topSlot={commercePreviewEnabled && projectType === ProjectType.PRODUCT ? <BuyBlock embedded /> : undefined}
+          />
         </div>
       </div>
 
       {/* Mobile sidebar */}
-      <div className="lg:hidden px-6 pb-8">
-        <ProjectSidebarNew project={project} projectType={projectType} />
+      <div className="lg:hidden px-4 md:px-6 pb-8">
+        <ProjectSidebarNew
+          project={project}
+          projectType={projectType}
+          sidebarRating={sidebarRating}
+          topSlot={commercePreviewEnabled && projectType === ProjectType.PRODUCT ? <BuyBlock embedded /> : undefined}
+        />
       </div>
     </div>
   );

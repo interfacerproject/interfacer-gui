@@ -260,7 +260,7 @@ const DppDetailPage: NextPageWithLayout = () => {
 
   return (
     <div className="flex-1 bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
-      <div className="max-w-[1180px] mx-auto px-6 py-8 flex flex-col gap-6">
+      <div className="max-w-[1180px] mx-auto px-4 md:px-6 py-6 md:py-8 flex flex-col gap-6">
         <Link href="/products">
           <a className="inline-flex items-center gap-2 no-underline text-ifr-text-secondary hover:text-ifr-text-primary">
             <ArrowLeft size={16} />
@@ -327,7 +327,7 @@ const DppDetailPage: NextPageWithLayout = () => {
             </nav>
 
             {/* Header card */}
-            <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-6 flex flex-col gap-4">
+            <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-4 md:p-6 flex flex-col gap-4">
               {/* Top row: label + actions */}
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
                 <div className="flex flex-col gap-2">

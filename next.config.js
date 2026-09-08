@@ -24,7 +24,9 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   output: "standalone",
-  transpilePackages: ["react-markdown-editor-lite"],
+  experimental: {
+    transpilePackages: ["react-markdown-editor-lite"],
+  },
   webpack: (config, { isServer }) => {
     config.resolve.fallback = {
       fs: false,

@@ -47,9 +47,10 @@ const Services: NextPageWithLayout = () => {
     <CatalogLayout
       variant="services"
       hero={{
-        title: t("Workshops, Labs & Services"),
+        eyebrow: t("Make it near you"),
+        title: t("Tools, skills & places to make"),
         description: t(
-          "Makerspaces and FabLabs near you that open their doors — use professional equipment, learn new skills, and get expert advice from your local maker community."
+          "Find makerspaces, machines and manufacturing services that can help you build, produce or repair locally."
         ),
         stats: (
           <>

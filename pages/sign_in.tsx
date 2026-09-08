@@ -19,22 +19,17 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import * as yup from "yup";
 import { useAuth } from "../hooks/useAuth";
+import { clearInstanceVariablesCache } from "@dyne/interfacer-client";
 import type { NextPageWithLayout } from "./_app";
-
-// Login functions
-//@ts-ignore
-import keypairoomClientRecreateKeys from "zenflows-crypto/src/keypairoomClientRecreateKeys.zen";
 
 // Layout
 import Layout from "../components/layout/Layout";
 
 // Components
-import { Button } from "@bbtgnn/polaris-interfacer";
-import BrAuthSuggestion from "components/brickroom/BrAuthSuggestion";
-import BrError from "components/brickroom/BrError";
+import { AuthArrowLink, AuthButton, AuthError, AuthPage } from "components/partials/auth/AuthCard";
 
 // Partials
 // import Passphrase from "components/partials/auth/Passphrase";
@@ -74,7 +69,7 @@ export async function getStaticProps({ locale }: any) {
 
 const Sign_in: NextPageWithLayout = () => {
   const { t } = useTranslation("signInProps");
-  const { register, login } = useAuth();
+  const { register, login, client } = useAuth();
   const { getItem, setItem } = useStorage();
   const router = useRouter();
 
@@ -84,6 +79,7 @@ const Sign_in: NextPageWithLayout = () => {
   const [isQuestions, setIsQuestions] = useState(false);
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
+  const loginAttempted = useRef(false);
 
   const [signInData, setSignInData] = useState({
     email: "",
@@ -124,6 +120,15 @@ const Sign_in: NextPageWithLayout = () => {
     setStep(2);
   };
 
+  // "← Back to sign in" returns to the email step and drops the attempt.
+  const backToEmail = () => {
+    setIsPassphrase(false);
+    setIsQuestions(false);
+    setError("");
+    loginAttempted.current = false;
+    setStep(0);
+  };
+
   const passphraseEntered = (data: ViaPassphraseNS.FormValues) => {
     setSignInData({
       ...signInData,
@@ -161,8 +166,18 @@ const Sign_in: NextPageWithLayout = () => {
         .required()
         .validateSync(signInData);
 
+      // Prevent infinite retry after failure
+      if (loginAttempted.current) return;
+
       // Then logging in
-      (async () => await doLogin())();
+      (async () => {
+        try {
+          loginAttempted.current = true;
+          await doLogin();
+        } catch (err: any) {
+          setError(err?.message || t("Login failed"));
+        }
+      })();
 
       //
     } catch (error) {}
@@ -171,28 +186,25 @@ const Sign_in: NextPageWithLayout = () => {
   //
 
   async function doLogin() {
-    const zencode_exec = (await import("zenroom")).zencode_exec;
-    // Requesting data
-    const zenData = `
-    {
-        "seed": "${signInData.seed}",
-        "seedServerSideShard.HMAC": "${signInData.pdfk}"
-    }`;
-    const { result } = await zencode_exec(keypairoomClientRecreateKeys, { data: zenData });
-    const res = JSON.parse(result);
+    if (!client) return;
+    setError("");
+    clearInstanceVariablesCache();
 
-    // Setting localstorage
-    setItem("eddsaPrivateKey", res.keyring.eddsa);
-    setItem("ethereumPrivateKey", res.keyring.ethereum);
-    setItem("reflowPrivateKey", res.keyring.reflow);
-    setItem("bitcoinPrivateKey", res.keyring.bitcoin);
-    setItem("ecdhPrivateKey", res.keyring.ecdh);
-    setItem("seed", res.seed);
-    setItem("ecdhPublicKey", res.ecdh_public_key);
-    setItem("bitcoinPublicKey", res.bitcoin_public_key);
-    setItem("eddsaPublicKey", res.eddsa_public_key);
-    setItem("reflowPublicKey", res.reflow_public_key);
-    setItem("ethereumAddress", res.ethereum_address);
+    // Recreate keys from seed + HMAC via SDK
+    await client.auth.recreateKeys(signInData.seed, signInData.pdfk);
+
+    // Sync SDK store to localStorage
+    setItem("eddsaPrivateKey", client.store.getItem("eddsaPrivateKey") || "");
+    setItem("ethereumPrivateKey", client.store.getItem("ethereumPrivateKey") || "");
+    setItem("reflowPrivateKey", client.store.getItem("reflowPrivateKey") || "");
+    setItem("bitcoinPrivateKey", client.store.getItem("bitcoinPrivateKey") || "");
+    setItem("ecdhPrivateKey", client.store.getItem("ecdhPrivateKey") || "");
+    setItem("seed", client.store.getItem("seed") || "");
+    setItem("ecdhPublicKey", client.store.getItem("ecdhPublicKey") || "");
+    setItem("bitcoinPublicKey", client.store.getItem("bitcoinPublicKey") || "");
+    setItem("eddsaPublicKey", client.store.getItem("eddsaPublicKey") || "");
+    setItem("reflowPublicKey", client.store.getItem("reflowPublicKey") || "");
+    setItem("ethereumAddress", client.store.getItem("ethereumAddress") || "");
 
     // Logging in
     await login({ email: signInData.email });
@@ -202,48 +214,53 @@ const Sign_in: NextPageWithLayout = () => {
   //
 
   return (
-    <div className="grid h-full grid-cols-6">
-      <div className="col-span-6 p-2 md:col-span-4 md:col-start-2 md:col-end-6">
-        <div className="w-full h-full pt-56">
-          {/* Entering email */}
-          {step === 0 && (
-            <EnterEmail onSubmit={emailEntered}>{error && <BrError testID="error">{error}</BrError>}</EnterEmail>
-          )}
+    <AuthPage>
+      {/* Entering email */}
+      {step === 0 && (
+        <EnterEmail onSubmit={emailEntered}>{error && <AuthError testID="error">{error}</AuthError>}</EnterEmail>
+      )}
 
-          {/* Choose login mode */}
-          {step === 1 && <ChooseMode viaPassphrase={viaPassphrase} viaQuestions={viaQuestions} />}
+      {/* Choose login mode */}
+      {step === 1 && <ChooseMode viaPassphrase={viaPassphrase} viaQuestions={viaQuestions} onBack={backToEmail} />}
 
-          {/* Passphrase login */}
-          {step == 2 && isPassprhase && <ViaPassphrase onSubmit={passphraseEntered} />}
+      {/* Passphrase login */}
+      {step == 2 && isPassprhase && (
+        <ViaPassphrase onSubmit={passphraseEntered} onBack={backToEmail} viaQuestions={viaQuestions}>
+          {error && <AuthError testID="loginError">{error}</AuthError>}
+        </ViaPassphrase>
+      )}
 
-          {/* Questions login */}
-          {step === 2 && isQuestions && (
-            <ViaQuestions>
-              <Questions email={signInData.email} HMAC={signInData.pdfk} onSubmit={questionsEntered} />
-            </ViaQuestions>
-          )}
-          {/* Displaying seed */}
-          {step === 3 && isQuestions && (
-            <Passphrase>
-              <Button size="large" primary fullWidth onClick={async () => await doLogin()} id="loginBtn">
-                {t("Login")}
-              </Button>
-            </Passphrase>
-          )}
+      {/* Questions login */}
+      {step === 2 && isQuestions && (
+        <ViaQuestions onBack={backToEmail}>
+          <Questions
+            email={signInData.email}
+            HMAC={signInData.pdfk}
+            onSubmit={questionsEntered}
+            footer={<AuthArrowLink label={t("Use your passphrase instead")} onClick={viaPassphrase} />}
+          />
+        </ViaQuestions>
+      )}
 
-          {/* Link to registration */}
-          {(step === 0 || step === 1) && (
-            <div className="mt-8">
-              <BrAuthSuggestion
-                baseText={t("✌️  You don't have an account yet?")}
-                linkText={t("Sign up")}
-                url="/sign_up"
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+      {/* Displaying seed */}
+      {step === 3 && isQuestions && (
+        <Passphrase>
+          {error && <AuthError testID="loginError">{error}</AuthError>}
+          <AuthButton
+            onClick={async () => {
+              try {
+                await doLogin();
+              } catch (err: any) {
+                setError(err?.message || t("Login failed"));
+              }
+            }}
+            id="loginBtn"
+          >
+            {t("Sign in")}
+          </AuthButton>
+        </Passphrase>
+      )}
+    </AuthPage>
   );
 };
 

@@ -14,6 +14,7 @@ import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import React from "react";
+import CardPriceRow from "./previewCommerce/CardPriceRow";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
 import EntityTypeIcon from "./EntityTypeIcon";
 import ProjectCardImage from "./ProjectCardImage";
@@ -106,6 +107,7 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
 
   // License
   const license = project.license || project.metadata?.licenses?.[0]?.licenseId;
+  const licensor = project.licensor || project.metadata?.licensor;
 
   const handleStar = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -228,11 +230,15 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
             {/* Title + Description */}
             <div className="flex flex-col gap-1">
               <h3
-                className="text-ifr-text-primary leading-[30px] truncate"
+                className="text-ifr-text-primary leading-[30px]"
                 style={{
                   fontFamily: "var(--ifr-font-heading)",
                   fontSize: "var(--ifr-fs-lg)",
                   fontWeight: "var(--ifr-fw-bold)",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
                 }}
               >
                 {project.name}
@@ -308,6 +314,7 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
                       }}
                     >
                       {t("LICENSE: {{license}}", { license })}
+                      {licensor ? ` · ${t("by")} ${licensor}` : ""}
                     </span>
                   </div>
                 )}
@@ -317,6 +324,7 @@ export default function ProjectCardNew({ project }: ProjectCardNewProps) {
             {/* PRODUCT footer */}
             {projectType === ProjectType.PRODUCT && (
               <>
+                <CardPriceRow />
                 {project.metadata?.basedOnDesign && (
                   <div className="border-t border-ifr pt-2 flex items-center gap-1.5">
                     <EntityTypeIcon type={ProjectType.DESIGN} size="small" fill="var(--ifr-green)" />

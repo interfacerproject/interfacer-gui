@@ -17,5 +17,9 @@
   "Review": "Review",
   "make your call": "Make your call",
   "Make your call": "Make your call",
-  "just included your": "just included your"
+  "just included your": "just included your",
+  "Loading notifications...": "Loading notifications...",
+  "Failed to load notifications": "Failed to load notifications",
+  "No notifications at the moment :)": "No notifications at the moment :)",
+  "Retry": "Retry"
 }

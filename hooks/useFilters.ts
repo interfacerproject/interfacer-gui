@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { QUERY_PROJECT_TYPES } from "lib/QueryAndMutation";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -39,6 +39,7 @@ const useFilters = () => {
     service: specs?.specProjectService.id,
     product: specs?.specProjectProduct.id,
     design: specs?.specProjectDesign.id,
+    machine: specs?.specMachine.id,
   };
   const conformsToNoDesign = specs ? [specs.specProjectService.id, specs.specProjectProduct.id] : undefined;
 
@@ -88,6 +89,7 @@ const useFilters = () => {
     serviceId: coformsToIds.service,
     productId: coformsToIds.product,
     designId: coformsToIds.design,
+    machineId: coformsToIds.machine,
     specsLoading,
   };
 };

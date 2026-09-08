@@ -1,4 +1,5 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "lib/apollo-compat";
+import { EDIT_IMAGES } from "@dyne/interfacer-client";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
 
@@ -13,6 +14,7 @@ import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
+import { ProjectType } from "components/types";
 import { prepFilesForZenflows, uploadFiles } from "lib/fileUpload";
 import { dataURLtoFile, fileToIfile } from "lib/resourceImages";
 import { EditImagesMutation, EditImagesMutationVariables, File as ZenflowsFile } from "lib/types";
@@ -87,23 +89,11 @@ const EditImages: NextPageWithLayout = () => {
   /* Render */
 
   return (
-    <EditFormLayout formMethods={formMethods} onSubmit={onSubmit}>
+    <EditFormLayout formMethods={formMethods} onSubmit={onSubmit} projectType={project.conformsTo?.name as ProjectType}>
       <ImagesStep />
     </EditFormLayout>
   );
 };
-
-//
-
-export const EDIT_IMAGES = gql`
-  mutation EditImages($id: ID!, $images: [IFile!]) {
-    updateEconomicResource(resource: { id: $id, images: $images }) {
-      economicResource {
-        id
-      }
-    }
-  }
-`;
 
 //
 

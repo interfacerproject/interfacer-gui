@@ -53,7 +53,7 @@ const Search: NextPageWithLayout = () => {
   //
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto px-4 md:px-6">
       <div className="p-8">
         <div className="mb-6">
           <h1>
@@ -120,5 +120,7 @@ const Search: NextPageWithLayout = () => {
 Search.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
+
+Search.publicPage = true;
 
 export default Search;

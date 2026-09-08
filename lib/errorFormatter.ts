@@ -14,21 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { GraphQLErrors } from "@apollo/client/errors";
-
 export function arrayToMultilineString(a: Array<string>): string {
   return a.join("\n");
 }
 
-export function gqlErrorFormatter(errors: GraphQLErrors): string {
-  const errorsStr = errors.map(e => e.message);
-  return arrayToMultilineString(errorsStr);
-}
-
 export function errorFormatter(e: any): string {
-  if ("graphQLErrors" in e) {
-    return gqlErrorFormatter(e.graphQLErrors);
-  } else {
-    return JSON.stringify(e);
-  }
+  if (e instanceof Error) return e.message;
+  if (e?.message) return String(e.message);
+  return JSON.stringify(e);
 }

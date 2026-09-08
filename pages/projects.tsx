@@ -39,8 +39,8 @@ export default function Projects() {
   const { t } = useTranslation("lastUpdatedProps");
   const { proposalFilter } = useFilters();
   return (
-    <div className="p-8">
-      <div className="mb-6 w-96">
+    <div className="p-4 md:p-8">
+      <div className="mb-6 w-full max-w-sm">
         <h1>{t("Latest projects")}</h1>
         <p className="my-2">{t("Most recently updated projects")}</p>
         <NewProjectButton text={t("Create a new project")} />

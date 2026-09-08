@@ -14,36 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { LinkIcon } from "@heroicons/react/outline";
-import Link from "next/link";
+import { CSSProperties } from "react";
 
-//
-
-export interface BrAuthSuggestionProps {
-  baseText: string;
-  linkText: string;
-  url: string;
-}
-
-//
-
-export default function BrAuthSuggestion(props: BrAuthSuggestionProps) {
-  const { baseText, linkText, url } = props;
-
-  return (
-    <div className="flex flex-row justify-between items-baseline">
-      {/* The text */}
-      <p>{baseText}</p>
-
-      {/* The link */}
-      <p>
-        <Link href={url}>
-          <a className="flex flex-row font-semibold items-baseline">
-            <LinkIcon className="w-5 h-5 mr-1 self-center" />
-            {linkText}
-          </a>
-        </Link>
-      </p>
-    </div>
-  );
+/**
+ * Every image in the preview is a placeholder block — real product photography
+ * and a real QR image can be dropped in later without any layout change.
+ */
+export function placeholderBlock(size: number, radius = 4): CSSProperties {
+  return {
+    width: `${size}px`,
+    height: `${size}px`,
+    borderRadius: `${radius}px`,
+    background: "rgba(200,212,229,0.5)",
+    flex: "none",
+  };
 }

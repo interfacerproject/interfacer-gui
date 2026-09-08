@@ -143,16 +143,18 @@ const LicenseFooter = () => {
   // Don't render if no license available
   if (!license && !metadataLicenses) return null;
 
-  const licenseText =
-    license == undefined
-      ? `${t("LICENSE")}: ${license}`
-      : metadataLicenses
-          ?.map((l: { scope: string; licenseId: string }) => `${t("LICENSE")} (${l.scope}): ${l.licenseId}`)
-          .join(", ");
+  const licenseText = license
+    ? `${t("LICENSE")}: ${license}`
+    : metadataLicenses
+        ?.map((l: { scope: string; licenseId: string }) => `${t("LICENSE")} (${l.scope}): ${l.licenseId}`)
+        .join(", ");
+  const licensor = project.licensor || project.metadata?.licensor;
+
   return (
     <div className="px-4 py-3 border-t-1 border-t-gray-200">
       <Text as="p" variant="bodySm" fontWeight="medium">
         {licenseText}
+        {licensor ? ` · ${t("by")} ${licensor}` : ""}
       </Text>
     </div>
   );

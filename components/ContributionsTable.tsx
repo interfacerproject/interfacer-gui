@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import dayjs from "dayjs";
-import { QUERY_RESOURCE_PROPOSAlS } from "lib/QueryAndMutation";
+import { QUERY_RESOURCE_PROPOSALS } from "lib/QueryAndMutation";
 import { ResourceProposalsQuery, ResourceProposalsQueryVariables } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
@@ -26,7 +26,7 @@ import PTitleCounter from "./polaris/PTitleCounter";
 
 const ContributionsTable = ({ id, title }: { id: string; title?: string }) => {
   const { t } = useTranslation("common");
-  const { data } = useQuery<ResourceProposalsQuery, ResourceProposalsQueryVariables>(QUERY_RESOURCE_PROPOSAlS, {
+  const { data } = useQuery<ResourceProposalsQuery, ResourceProposalsQueryVariables>(QUERY_RESOURCE_PROPOSALS, {
     variables: { id: id },
   });
   const proposals = data?.proposals.edges;

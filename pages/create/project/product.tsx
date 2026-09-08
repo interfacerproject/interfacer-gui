@@ -4,7 +4,7 @@ import { NextPageWithLayout } from "pages/_app";
 import { ReactElement } from "react";
 
 // Components
-import CreateProjectLayout from "components/layout/CreateProjectLayout";
+import CreateFormLayout from "components/layout/CreateFormLayout";
 import Layout from "components/layout/Layout";
 import CreateProjectForm from "components/partials/create/project/CreateProjectForm";
 
@@ -14,7 +14,7 @@ export async function getStaticProps({ locale }: any) {
   return {
     props: {
       publicPage: true,
-      ...(await serverSideTranslations(locale, ["common", "createProjectProps"])),
+      ...(await serverSideTranslations(locale, ["common", "createProjectProps", "commercePreviewProps"])),
     },
   };
 }
@@ -28,7 +28,7 @@ const CreateProduct: NextPageWithLayout = () => {
 CreateProduct.getLayout = function getLayout(page: ReactElement) {
   return (
     <Layout bottomPadding="none">
-      <CreateProjectLayout>{page}</CreateProjectLayout>
+      <CreateFormLayout>{page}</CreateFormLayout>
     </Layout>
   );
 };

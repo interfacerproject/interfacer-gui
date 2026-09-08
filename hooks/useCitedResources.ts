@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
 import { QUERY_CITED_RESOURCES } from "lib/QueryAndMutation";
 import { EconomicResource } from "lib/types";
 import { useResourceSpecs } from "./useResourceSpecs";

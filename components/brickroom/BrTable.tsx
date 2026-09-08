@@ -25,8 +25,10 @@ type BrTableProps = {
 const BrTable = ({ headArray, children, emptyState = "0 results" }: BrTableProps) => {
   return (
     <>
-      <div className="overflow-x-auto rounded-box">
-        <div className="table w-full rounded-box">
+      {/* Below ~720px the columns would crush into unreadable slivers, so the
+          table keeps its width and scrolls sideways inside this box instead. */}
+      <div className="overflow-x-auto overscroll-x-contain rounded-box">
+        <div className="table w-full min-w-[720px] rounded-box">
           {/* The header */}
           <div className="table-header-group bg-white-100">
             <div className="table-row">

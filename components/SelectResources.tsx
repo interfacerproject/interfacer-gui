@@ -14,24 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "lib/apollo-compat";
+import { SELECT_RESOURCES } from "@dyne/interfacer-client";
 import { useAuth } from "hooks/useAuth";
 import { EconomicResource, FetchInventoryQuery } from "lib/types";
 import { forwardRef, useState } from "react";
-
-export const FETCH_RESOURCES = gql`
-  query FetchResources($filter: EconomicResourceFilterParams) {
-    economicResources(last: 10, filter: $filter) {
-      edges {
-        cursor
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
 
 // Components
 import BrSelectSearchable, { BrSelectSearchableProps } from "components/brickroom/BrSelectSearchable";
@@ -49,7 +36,7 @@ const SelectResources = forwardRef<any, SelectResourcesProps>((props, ref) => {
   const [input, setInput] = useState("");
   const { user } = useAuth();
 
-  const resources = useQuery<FetchInventoryQuery>(FETCH_RESOURCES, {
+  const resources = useQuery<FetchInventoryQuery>(SELECT_RESOURCES, {
     variables: { filter: { name: input } },
   }).data?.economicResources?.edges.map(a => a.node);
 

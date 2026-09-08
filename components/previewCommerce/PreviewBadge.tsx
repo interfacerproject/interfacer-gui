@@ -14,35 +14,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { Link as PLink } from "@bbtgnn/polaris-interfacer";
-import { useAuth } from "hooks/useAuth";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
+import { PREVIEW_PURPLE } from "./previewTokens";
 
-type LayoutProps = {
-  children: React.ReactNode;
-};
-
-const CreateProjectLayout: React.FunctionComponent<LayoutProps> = (layoutProps: LayoutProps) => {
-  const { t } = useTranslation();
-  const { children } = layoutProps;
-  const { user } = useAuth();
-
+/** Small "UPCOMING" pill, used next to the nav-drawer entry point. */
+export default function PreviewBadge() {
+  const { t } = useTranslation("commercePreviewProps");
   return (
-    <div className="h-full">
-      <div className="p-4">
-        <Link href={user?.ulid ? `/profile/${user.ulid}` : "/"}>
-          <PLink>
-            <span className="text-text-primary">
-              {"← "}
-              {t("Back to Profile")}
-            </span>
-          </PLink>
-        </Link>
-      </div>
-      <div className="mx-auto">{children}</div>
-    </div>
+    <span
+      style={{
+        display: "inline-block",
+        padding: "1px 7px",
+        borderRadius: "9999px",
+        background: PREVIEW_PURPLE,
+        color: "#fff",
+        fontFamily: "var(--ifr-font-body)",
+        fontSize: "9.5px",
+        fontWeight: 700,
+        letterSpacing: "0.5px",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {t("UPCOMING")}
+    </span>
   );
-};
-
-export default CreateProjectLayout;
+}

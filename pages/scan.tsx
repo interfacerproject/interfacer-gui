@@ -6,7 +6,7 @@ import { useTranslation } from "next-i18next";
 const Scan = () => {
   const { t } = useTranslation("common");
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto px-4 md:px-6">
       <Stack vertical>
         <PTitleSubtitle
           title={t("Scan your QR code")}

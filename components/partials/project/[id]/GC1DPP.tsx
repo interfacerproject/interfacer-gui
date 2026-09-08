@@ -54,6 +54,7 @@ interface CategoryConfig {
 
 interface GC1DPPProps {
   ulid: string;
+  productId?: string;
 }
 
 const categoryConfigs: CategoryConfig[] = [
@@ -212,7 +213,7 @@ const categoryIconMap: Record<string, string> = {
   recyclingInformation: "recycle",
 };
 
-const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
+const GC1DPP: React.FC<GC1DPPProps> = ({ ulid, productId }) => {
   const { t } = useTranslation("common");
   const [data, setData] = useState<DPPData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -223,7 +224,11 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_DPP_URL}/dpp/${ulid}`);
+        const url = new URL(`${process.env.NEXT_PUBLIC_DPP_URL}/dpp/${ulid}`);
+        if (productId) {
+          url.searchParams.set("productId", productId);
+        }
+        const response = await fetch(url.toString());
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -243,7 +248,7 @@ const GC1DPP: React.FC<GC1DPPProps> = ({ ulid }) => {
     };
 
     fetchData();
-  }, [ulid]);
+  }, [ulid, productId]);
 
   const handleToggle = useCallback((sectionKey: string) => {
     setOpenSections(prev => ({

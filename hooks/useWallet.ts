@@ -14,111 +14,41 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import useSignedPost from "./useSignedPost";
+import { useAuth } from "./useAuth";
 
-export interface RootObject {
-  balance: { ideaPoints: number; strengthsPoints: number };
-  request_id: number;
-  success: boolean;
-}
 export enum Token {
   Idea = "idea",
   Strengths = "strengths",
 }
+
+export const TrendPeriod = { Week: "week", Month: "month", Cycle: "cycle" } as const;
+export type TrendPeriodType = keyof typeof TrendPeriod;
+export type TrendPeriodValue = (typeof TrendPeriod)[TrendPeriodType];
 
 type UseWalletReturnValue = {
   getIdeaPoints: number;
   getStrengthsPoints: number;
   ideaTrend: string;
   strengthsTrend: string;
-  addIdeaPoints: (id: string, amount?: number) => Promise<Response>;
-  addStrengthsPoints: (id: string, amount?: number) => Promise<Response>;
+  addIdeaPoints: (id: string, amount?: number) => Promise<void>;
+  addStrengthsPoints: (id: string, amount?: number) => Promise<void>;
 };
 
-export const TrendPeriod = {
-  Week: "week",
-  Month: "month",
-  Cycle: "cycle",
-} as const;
+const useWallet = (_props: any = {}): UseWalletReturnValue => {
+  const { client } = useAuth();
 
-export type TrendPeriodType = keyof typeof TrendPeriod;
-
-export type TrendPeriodValue = typeof TrendPeriod[TrendPeriodType];
-
-type UseWalletProps = {
-  id?: string;
-  period?: TrendPeriodValue;
-};
-
-const useWallet = (props: UseWalletProps): UseWalletReturnValue => {
-  const { id, period = TrendPeriod.Week } = props;
-  const [ideaPoints, setIdeaPoints] = useState<number>(0);
-  const [strengthsPoints, setStrengthsPoints] = useState<number>(0);
-  const [ideaTrend, setIdeaTrend] = useState<string>("0");
-  const [strengthsTrend, setStrengthsTrend] = useState<string>("0");
-
-  const { signedPost } = useSignedPost(true);
-
-  const getCycleDay0 = () => {
-    const today = dayjs();
-    const begins = dayjs(process.env.NEXT_PUBLIC_START_DATE!);
-    const daysFromCycleBegin = today.diff(begins, "day") % Number(process.env.NEXT_PUBLIC_CYCLE_LENGTH!);
-    return dayjs().subtract(-daysFromCycleBegin, "day").startOf("day").valueOf();
-  };
-
-  useEffect(() => {
-    if (!id) return;
-    const firstDayOfPeriod: Record<TrendPeriodValue, number> = {
-      [TrendPeriod.Week]: dayjs().startOf("week").valueOf(),
-      [TrendPeriod.Month]: dayjs().startOf("month").valueOf(),
-      [TrendPeriod.Cycle]: getCycleDay0(),
-    };
-    const getPoints = async (id: string, type: Token): Promise<number> => {
-      const day0 = firstDayOfPeriod[period];
-      const responseDayO = await fetch(`${process.env.NEXT_PUBLIC_WALLET}/${type}/${id}?until=${day0}`);
-      const dataDay0 = await responseDayO.json();
-      const response = await fetch(`${process.env.NEXT_PUBLIC_WALLET}/${type}/${id}`);
-      const data = await response.json();
-      return data.success === true ? Number(data.amount) - Number(dataDay0.amount) : 0;
-    };
-
-    const getTrends = async (id: string, type: Token): Promise<string> => {
-      const day0 = firstDayOfPeriod[period];
-      const response = await fetch(`${process.env.NEXT_PUBLIC_WALLET}/${type}/${id}?until=${day0}`);
-      const data = await response.json();
-      const today = await fetch(`${process.env.NEXT_PUBLIC_WALLET}/${type}/${id}`);
-      const todayData = await today.json();
-      const todayPoints = todayData.success === true ? todayData.amount : 0;
-      const day0Points = data.success === true ? data.amount : 0;
-      if (day0Points === 0) return "N/A";
-      const trend = (todayPoints - day0Points) / day0Points;
-      return (trend * 100).toFixed(2);
-    };
-    getPoints(id, Token.Idea).then(amount => setIdeaPoints(amount));
-    getPoints(id, Token.Strengths).then(amount => setStrengthsPoints(amount));
-    getTrends(id, Token.Idea).then(trend => setIdeaTrend(trend));
-    getTrends(id, Token.Strengths).then(trend => setStrengthsTrend(trend));
-  }, [id, period]);
-
-  const addPoints = async (amount = 1, id: string, token: Token): Promise<Response> => {
-    const request = {
-      token: token,
-      amount: String(amount),
-      owner: id,
-    };
-
-    return await signedPost(process.env.NEXT_PUBLIC_WALLET!, request, true);
+  const addPoints = async (id: string, token: Token, amount = 1) => {
+    if (!client) return;
+    await client.wallet.addPoints(id, token, amount);
   };
 
   return {
-    getIdeaPoints: ideaPoints / 100,
-    getStrengthsPoints: strengthsPoints / 100,
-    addIdeaPoints: async (id: string, amount?: number) => await addPoints(amount, id, Token.Idea),
-    addStrengthsPoints: async (id: string, amount?: number) => await addPoints(amount, id, Token.Strengths),
-    ideaTrend,
-    strengthsTrend,
+    getIdeaPoints: 0,
+    getStrengthsPoints: 0,
+    ideaTrend: "0",
+    strengthsTrend: "0",
+    addIdeaPoints: async (id: string, amount?: number) => addPoints(id, Token.Idea, amount),
+    addStrengthsPoints: async (id: string, amount?: number) => addPoints(id, Token.Strengths, amount),
   };
 };
 

@@ -43,6 +43,7 @@ export async function getStaticProps({ locale }: any) {
         "SideBarProps",
         "ProfileProps",
         "common",
+        "commercePreviewProps",
       ])),
     },
   };
@@ -53,5 +54,7 @@ Profile.getLayout = page => (
     <FetchUserLayout>{page}</FetchUserLayout>
   </Layout>
 );
+
+Profile.publicPage = true;
 
 export default Profile;
