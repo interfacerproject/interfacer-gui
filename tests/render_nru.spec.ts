@@ -45,6 +45,17 @@ test.describe("When user is not logged in", () => {
     // The toolbar renders in every result state, including "nothing found",
     // so this does not depend on the fixture data matching anything.
     await expect(page.getByRole("button", { name: /Filters/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Menu" })).toBeVisible();
+    await expect(page.getByRole("contentinfo")).toBeVisible();
+  });
+
+  test("Should keep the search shell on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/search");
+
+    await expect(page.getByRole("heading", { name: /Search the platform/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Menu" })).toBeVisible();
+    await expect(page.getByRole("contentinfo")).toBeVisible();
   });
 
   test("Should see /search with no query", async ({ page }) => {
