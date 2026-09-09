@@ -83,6 +83,7 @@ interface NavItemProps {
   badge?: React.ReactNode;
   activeBg?: string;
   activeTextColor?: string;
+  disabled?: boolean;
 }
 
 function NavItem({
@@ -96,12 +97,19 @@ function NavItem({
   badge,
   activeBg,
   activeTextColor,
+  disabled = false,
 }: NavItemProps) {
   return (
     <button
-      onClick={expandable ? onToggleExpand : onClick}
-      className={`flex items-center justify-between w-full px-4 py-2.5 border-none cursor-pointer transition-colors ${
-        active ? "" : "bg-transparent hover:bg-[var(--ifr-bg-hover-light)]"
+      onClick={disabled ? undefined : expandable ? onToggleExpand : onClick}
+      disabled={disabled}
+      aria-disabled={disabled}
+      className={`flex items-center justify-between w-full px-4 py-2.5 border-none transition-colors ${
+        disabled
+          ? "bg-transparent cursor-not-allowed"
+          : active
+          ? "cursor-pointer"
+          : "bg-transparent cursor-pointer hover:bg-[var(--ifr-bg-hover-light)]"
       }`}
       style={{
         fontFamily: "var(--ifr-font-body)",
@@ -109,7 +117,9 @@ function NavItem({
         fontWeight: "var(--ifr-fw-medium)",
         lineHeight: "20px",
         borderRadius: "var(--ifr-radius-lg)",
-        ...(active
+        ...(disabled
+          ? { color: "var(--ifr-text-secondary)", opacity: 0.5 }
+          : active
           ? {
               backgroundColor: activeBg || "var(--ifr-bg-active)",
               color: activeTextColor || "var(--ifr-text-active)",
@@ -504,16 +514,12 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
               <NavItem
                 icon={<DocumentTextIcon className="w-[18px] h-[18px]" style={{ color: "var(--ifr-text-secondary)" }} />}
                 label={t("Track Record")}
-                onClick={() => handleNavigate(`${user.profileUrl}?tab=track-record`)}
-                activeBg="var(--ifr-bg-hover)"
-                activeTextColor="var(--ifr-text-primary)"
+                disabled
               />
               <NavItem
                 icon={<DocumentTextIcon className="w-[18px] h-[18px]" style={{ color: "var(--ifr-text-secondary)" }} />}
                 label={t("My drafts")}
-                onClick={() => handleNavigate(`${user.profileUrl}?tab=2`)}
-                activeBg="var(--ifr-bg-hover)"
-                activeTextColor="var(--ifr-text-primary)"
+                disabled
               />
               <NavItem
                 icon={<UploadIcon className="w-[18px] h-[18px]" style={{ color: "var(--ifr-text-secondary)" }} />}
