@@ -1,10 +1,5 @@
-import { Icon, Text } from "@bbtgnn/polaris-interfacer";
-import { StarFilledMinor, StarOutlineMinor } from "@shopify/polaris-icons";
+import { Text } from "@bbtgnn/polaris-interfacer";
 import classNames from "classnames";
-import { useAuth } from "hooks/useAuth";
-import useSocial from "hooks/useSocial";
-import useWallet from "hooks/useWallet";
-import { IdeaPoints } from "lib/PointsDistribution";
 import findProjectImages from "lib/findProjectImages";
 import { isProjectType } from "lib/isProjectType";
 import { extractUserTagValues } from "lib/tagging";
@@ -12,8 +7,8 @@ import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import React, { createContext, useContext, useState } from "react";
-import AddStar from "./AddStar";
 import ProjectCardImage from "./ProjectCardImage";
+import ReviewBadge from "./ReviewBadge";
 import ProjectTypeChip from "./ProjectTypeChip";
 import BrTags from "./brickroom/BrTags";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
@@ -253,12 +248,9 @@ function UserDisplay() {
 }
 
 const UserAndStarHeader = () => {
-  const { project } = useCardProject();
-  const { user } = useAuth();
   return (
     <div className="flex justify-between items-center">
       <UserDisplay />
-      {user && <AddStar id={project?.id!} owner={project?.primaryAccountable!.id} tiny />}
     </div>
   );
 };
@@ -299,57 +291,7 @@ function StatsDisplay() {
 
 function StarCount() {
   const { project } = useCardProject();
-  const { user } = useAuth();
-  const { likeER, isLiked, erFollowerLength } = useSocial(project.id);
-  const { addIdeaPoints } = useWallet({});
-  const hasStarred = project.id ? isLiked(project.id) : false;
-
-  // Format count: 0, 1, 12, 123, 1.2k, 12k, 123k, 1.2M
-  const formatCount = (count: number): string => {
-    if (count === 0) return "0";
-    if (count < 1000) return count.toString();
-    if (count < 10000) return `${(count / 1000).toFixed(1)}k`;
-    if (count < 1000000) return `${Math.floor(count / 1000)}k`;
-    return `${(count / 1000000).toFixed(1)}M`;
-  };
-
-  const displayCount = formatCount(erFollowerLength);
-
-  const handleClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!user) return;
-    await likeER();
-    // Award points to project owner on star
-    if (project.primaryAccountable?.id) {
-      addIdeaPoints(project.primaryAccountable.id, IdeaPoints.OnStar);
-    }
-  };
-
-  if (!user) {
-    // Show non-clickable count if not authenticated
-    return (
-      <div className="flex items-center space-x-1 text-white">
-        <Icon source={StarOutlineMinor} />
-        <Text as="span" variant="bodyMd">
-          <span className="text-white">{displayCount}</span>
-        </Text>
-      </div>
-    );
-  }
-
-  return (
-    <button
-      onClick={handleClick}
-      className="flex items-center space-x-1 text-white hover:scale-110 transition-transform"
-      aria-label={hasStarred ? "Unstar project" : "Star project"}
-    >
-      <Icon source={hasStarred ? StarFilledMinor : StarOutlineMinor} />
-      <Text as="span" variant="bodyMd">
-        <span className="text-white">{displayCount}</span>
-      </Text>
-    </button>
-  );
+  return <ReviewBadge projectId={project.id} />;
 }
 
 const CardFooter = ({ children }: { children: JSX.Element }) => <>{children}</>;

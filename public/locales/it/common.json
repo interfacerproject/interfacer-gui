@@ -274,5 +274,6 @@
   "products": "prodotti",
   "services": "servizi",
   "machines": "macchine",
-  "people": "persone"
+  "people": "persone",
+  "{{rating}} ({{count}})": "{{rating}} ({{count}})"
 }

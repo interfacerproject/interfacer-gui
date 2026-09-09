@@ -275,5 +275,6 @@
   "products": "produits",
   "services": "services",
   "machines": "machines",
-  "people": "personnes"
+  "people": "personnes",
+  "{{rating}} ({{count}})": "{{rating}} ({{count}})"
 }
