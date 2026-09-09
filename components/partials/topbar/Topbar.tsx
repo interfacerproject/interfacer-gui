@@ -16,7 +16,6 @@
 
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import InterfacerLogo from "components/InterfacerLogo";
-import LocationMenu from "components/LocationMenu";
 import NavigationMenu from "components/NavigationMenu";
 import UserDropdown from "components/UserDropdown";
 import { commercePreviewEnabled } from "lib/previewCommerce/flag";
@@ -127,7 +126,7 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
               <a
                 className={`no-underline whitespace-nowrap px-3 py-1.5 transition-colors ${
                   isDesigns
-                    ? "bg-[var(--ifr-stat-green-bg)] text-[var(--ifr-green)]"
+                    ? "bg-[var(--ifr-bg-hover)] text-[var(--ifr-text-primary)]"
                     : "text-[var(--ifr-text-primary)] hover:bg-[var(--ifr-bg-hover)]"
                 }`}
                 style={{
@@ -144,7 +143,7 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
               <a
                 className={`no-underline whitespace-nowrap px-3 py-1.5 transition-colors ${
                   isProducts
-                    ? "bg-[var(--ifr-type-product-bg)] text-[var(--ifr-type-product)]"
+                    ? "bg-[var(--ifr-bg-hover)] text-[var(--ifr-text-primary)]"
                     : "text-[var(--ifr-text-primary)] hover:bg-[var(--ifr-bg-hover)]"
                 }`}
                 style={{
@@ -161,7 +160,7 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
               <a
                 className={`no-underline whitespace-nowrap px-3 py-1.5 transition-colors ${
                   isServices
-                    ? "bg-[var(--ifr-type-service-bg)] text-[var(--ifr-type-service)]"
+                    ? "bg-[var(--ifr-bg-hover)] text-[var(--ifr-text-primary)]"
                     : "text-[var(--ifr-text-primary)] hover:bg-[var(--ifr-bg-hover)]"
                 }`}
                 style={{
@@ -310,9 +309,6 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
               </button>
             </div>
           )}
-
-          {/* Language picker */}
-          <LocationMenu />
 
           {/* User avatar with notification dot */}
           {user && userMenu && (
