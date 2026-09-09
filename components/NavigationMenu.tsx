@@ -16,12 +16,22 @@ import EntityTypeIcon from "components/EntityTypeIcon";
 import InterfacerLogo from "components/InterfacerLogo";
 import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import { ProjectType } from "components/types";
-import { commercePreviewEnabled } from "lib/previewCommerce/flag";
 import { useAuth } from "hooks/useAuth";
 import { useInBoxContext } from "hooks/useInBox";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+type Locale = { code: string; label: string; flag: string };
+
+// Endonyms — a language is conventionally listed in its own tongue, so these
+// are intentionally not run through i18n.
+const LOCALES: Locale[] = [
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "it", label: "Italiano", flag: "🇮🇹" },
+  { code: "de", label: "Deutsch", flag: "🇩🇪" },
+];
 
 /* ── Reusable sub-components ── */
 
@@ -161,6 +171,37 @@ function Divider() {
   return <div className="mx-4 my-2 border-t border-[var(--ifr-border)]" />;
 }
 
+function LanguageItem({ locale, active, onClick }: { locale: Locale; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      role="option"
+      aria-selected={active}
+      className={`flex items-center justify-between w-full px-4 py-2.5 border-none cursor-pointer transition-colors ${
+        active ? "bg-[var(--ifr-bg-hover)]" : "bg-transparent hover:bg-[var(--ifr-bg-hover-light)]"
+      }`}
+      style={{
+        fontFamily: "var(--ifr-font-body)",
+        fontSize: "var(--ifr-fs-base)",
+        fontWeight: active ? "var(--ifr-fw-medium)" : "var(--ifr-fw-regular)",
+        lineHeight: "20px",
+        borderRadius: "var(--ifr-radius-lg)",
+        color: "var(--ifr-text-primary)",
+      }}
+    >
+      <div className="flex items-center gap-3">
+        <span aria-hidden className="flex items-center justify-center w-5 h-5 shrink-0 text-base leading-none">
+          {locale.flag}
+        </span>
+        <span>{locale.label}</span>
+      </div>
+      <span className="uppercase text-[var(--ifr-text-secondary)]" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+        {locale.code}
+      </span>
+    </button>
+  );
+}
+
 /* ── Main component ── */
 
 interface NavigationMenuProps {
@@ -185,6 +226,13 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
       router.push(`${user.profileUrl}?tab=${tab}`);
       onClose();
     }
+  };
+
+  const handleLocale = (code: string) => {
+    onClose();
+    if (code === router.locale) return;
+    const { pathname, asPath, query } = router;
+    router.push({ pathname, query }, asPath, { locale: code });
   };
 
   const isActive = (path: string) => router.asPath === path || router.pathname === path;
@@ -266,8 +314,8 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
             label={t("Designs", "Designs")}
             active={isActive("/designs")}
             onClick={() => handleNavigate("/designs")}
-            activeBg="var(--ifr-stat-green-bg)"
-            activeTextColor="var(--ifr-green)"
+            activeBg="var(--ifr-bg-hover)"
+            activeTextColor="var(--ifr-text-primary)"
           />
           <NavItem
             icon={
@@ -280,8 +328,8 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
             label={t("Products", "Products")}
             active={isActive("/products")}
             onClick={() => handleNavigate("/products")}
-            activeBg="var(--ifr-type-product-bg)"
-            activeTextColor="var(--ifr-type-product)"
+            activeBg="var(--ifr-bg-hover)"
+            activeTextColor="var(--ifr-text-primary)"
           />
           <NavItem
             icon={
@@ -294,32 +342,9 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
             label={t("Services", "Services")}
             active={isActive("/services")}
             onClick={() => handleNavigate("/services")}
-            activeBg="var(--ifr-type-service-bg)"
-            activeTextColor="var(--ifr-type-service)"
+            activeBg="var(--ifr-bg-hover)"
+            activeTextColor="var(--ifr-text-primary)"
           />
-
-          {/* Commerce preview (upcoming Medusa integration) — flagged entry point */}
-          {commercePreviewEnabled && (
-            <NavItem
-              icon={
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path
-                    d="M3 4h2l2.3 11a2 2 0 002 1.6h8.4a2 2 0 002-1.6L21 8H6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <circle cx="9.5" cy="20" r="1.4" />
-                  <circle cx="17.5" cy="20" r="1.4" />
-                </svg>
-              }
-              label={t("Commerce preview", "Commerce preview")}
-              active={router.asPath.startsWith("/preview/commerce")}
-              onClick={() => handleNavigate("/preview/commerce")}
-              activeBg="#f3e6ff"
-              activeTextColor="#8200db"
-              badge={<NavBadge value={t("UPCOMING", "UPCOMING")} color="#8200db" textColor="#ffffff" />}
-            />
-          )}
 
           {/* Logged-in section */}
           {user && (
@@ -517,6 +542,21 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
               />
             </>
           )}
+
+          <Divider />
+
+          {/* Section: Language (always visible) */}
+          <SectionLabel>{t("Language", "Language")}</SectionLabel>
+          <div role="listbox" aria-label={t("Language", "Language")} className="flex flex-col">
+            {LOCALES.map(l => (
+              <LanguageItem
+                key={l.code}
+                locale={l}
+                active={l.code === router.locale}
+                onClick={() => handleLocale(l.code)}
+              />
+            ))}
+          </div>
 
           <Divider />
 
