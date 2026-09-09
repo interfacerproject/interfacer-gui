@@ -1,14 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2022-2023 Dyne.org foundation <foundation@dyne.org>.
 
-import { BookmarkIcon, ClockIcon, ExternalLinkIcon, LocationMarkerIcon, StarIcon } from "@heroicons/react/outline";
-import { StarIcon as StarIconSolid } from "@heroicons/react/solid";
-import { useAuth } from "hooks/useAuth";
-import useSocial from "hooks/useSocial";
-import useWallet from "hooks/useWallet";
+import { ClockIcon, ExternalLinkIcon, LocationMarkerIcon } from "@heroicons/react/outline";
 import findProjectImages from "lib/findProjectImages";
 import { isProjectType } from "lib/isProjectType";
-import { IdeaPoints } from "lib/PointsDistribution";
 import { extractUserTagValues } from "lib/tagging";
 import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -18,6 +13,7 @@ import CardPriceRow from "./previewCommerce/CardPriceRow";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
 import EntityTypeIcon from "./EntityTypeIcon";
 import ProjectCardImage from "./ProjectCardImage";
+import ReviewBadge from "./ReviewBadge";
 import { ProjectType } from "./types";
 
 interface ProjectCardNewProps {
@@ -62,14 +58,6 @@ function humanizeSlug(slug: string): string {
     .join(" ");
 }
 
-function formatCount(count: number): string {
-  if (count === 0) return "0";
-  if (count < 1000) return count.toString();
-  if (count < 10000) return `${(count / 1000).toFixed(1)}k`;
-  if (count < 1000000) return `${Math.floor(count / 1000)}k`;
-  return `${(count / 1000000).toFixed(1)}M`;
-}
-
 const SERVICE_TYPE_MAP: Record<string, string> = {
   fabrication: "Fabrication",
   "learning-&-education": "Learning & Education",
@@ -88,16 +76,10 @@ function detectServiceType(classifiedAs: string[]): string | undefined {
 
 export default function ProjectCardNew({ project, forcedType }: ProjectCardNewProps) {
   const { t } = useTranslation("common");
-  const { user: authUser } = useAuth();
-  const { likeER, isLiked, erFollowerLength } = useSocial(project.id);
-  const { addIdeaPoints } = useWallet({});
-  const [bookmarked, setBookmarked] = React.useState(false);
 
   const projectType = forcedType ?? getProjectType(project);
   const images = findProjectImages(project);
   const user = project.primaryAccountable;
-  const hasStarred = project.id ? isLiked(project.id) : false;
-  const displayCount = formatCount(erFollowerLength);
 
   // Extract user-facing tags (strips `tag-` prefix and filters out system tags).
   const tags = extractUserTagValues(project.classifiedAs).slice(0, 4);
@@ -112,16 +94,6 @@ export default function ProjectCardNew({ project, forcedType }: ProjectCardNewPr
   // License
   const license = project.license || project.metadata?.licenses?.[0]?.licenseId;
   const licensor = project.licensor || project.metadata?.licensor;
-
-  const handleStar = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!authUser) return;
-    await likeER();
-    if (project.primaryAccountable?.id) {
-      addIdeaPoints(project.primaryAccountable.id, IdeaPoints.OnStar);
-    }
-  };
 
   return (
     <Link href={`/project/${project.id}`}>
@@ -164,24 +136,7 @@ export default function ProjectCardNew({ project, forcedType }: ProjectCardNewPr
               </div>
             </div>
 
-            {/* Bookmark */}
-            <div className="absolute top-3 right-3.5 z-10">
-              <button
-                className="bg-ifr-bookmark border border-ifr rounded-full w-8 h-8 flex items-center justify-center hover:bg-white transition-colors"
-                onClick={e => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setBookmarked(b => !b);
-                }}
-              >
-                <BookmarkIcon
-                  className="w-4 h-4 text-ifr-text-primary"
-                  fill={bookmarked ? "var(--ifr-text-primary)" : "none"}
-                />
-              </button>
-            </div>
-
-            {/* Author + Star count */}
+            {/* Author + Review badge */}
             <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
               {user && (
                 <div className="flex items-center gap-2">
@@ -201,31 +156,7 @@ export default function ProjectCardNew({ project, forcedType }: ProjectCardNewPr
                 </div>
               )}
 
-              {/* Star count */}
-              <div
-                className="flex items-center gap-1 px-2 py-1 cursor-pointer"
-                style={{
-                  backgroundColor: "var(--ifr-overlay-dark)",
-                  borderRadius: "var(--ifr-radius-sm)",
-                }}
-                onClick={handleStar}
-              >
-                {hasStarred ? (
-                  <StarIconSolid className="w-5 h-5 text-ifr-yellow" />
-                ) : (
-                  <StarIcon className="w-5 h-5 text-white" />
-                )}
-                <span
-                  className="text-white"
-                  style={{
-                    fontFamily: "var(--ifr-font-body)",
-                    fontSize: "var(--ifr-fs-base)",
-                    fontWeight: "var(--ifr-fw-medium)",
-                  }}
-                >
-                  {displayCount}
-                </span>
-              </div>
+              <ReviewBadge projectId={project.id} />
             </div>
           </div>
 
