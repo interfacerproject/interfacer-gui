@@ -17,6 +17,7 @@
 import Topbar from "components/partials/topbar/Topbar";
 import React, { ReactNode } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import Footer from "../Footer";
 
 type layoutProps = {
   children: ReactNode;
@@ -25,17 +26,16 @@ type layoutProps = {
 const Layout: React.FunctionComponent<layoutProps> = (layoutProps: layoutProps) => {
   const { authenticated, loading } = useAuth();
 
-  if (!authenticated) return <div className="bg-[var(--ifr-bg-surface)]">{layoutProps?.children}</div>;
+  // Public search pages should keep the same shell for signed-out visitors.
+  // Only defer rendering when an authenticated session is still being restored.
+  if (authenticated && loading) return null;
 
   return (
-    <>
-      {!loading && (
-        <div className="flex flex-col min-h-screen">
-          <Topbar search={false} />
-          <div className="bg-[var(--ifr-bg-surface)] max-w-full flex-grow">{layoutProps?.children}</div>
-        </div>
-      )}
-    </>
+    <div className="flex flex-col min-h-screen">
+      <Topbar search={false} />
+      <main className="bg-[var(--ifr-bg-surface)] max-w-full flex-grow">{layoutProps?.children}</main>
+      <Footer />
+    </div>
   );
 };
 
