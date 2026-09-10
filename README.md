@@ -18,7 +18,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 <div align="center">
 
-<img src="public/IF-Logo-black.svg" width="320" alt="Interfacer">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/IF-Logo-white.svg">
+  <source media="(prefers-color-scheme: light)" srcset="public/IF-Logo-black.svg">
+  <img src="public/IF-Logo-black.svg" width="320" alt="Interfacer">
+</picture>
 
 # Open hardware, from files to fabrication
 
@@ -117,7 +121,11 @@ scanning, and a full interface in **English, German, French and Italian**.
 ## Building the digital infrastructure for Fab Cities
 
 <a href="https://www.interfacerproject.eu/">
-  <img alt="Interfacer project" src="https://dyne.org/images/projects/Interfacer_logo_color.png" width="320" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/IF-Logo-white.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://dyne.org/images/projects/Interfacer_logo_color.png">
+    <img alt="Interfacer project" src="https://dyne.org/images/projects/Interfacer_logo_color.png" width="320" />
+  </picture>
 </a>
 
 </div>
@@ -276,6 +284,8 @@ NEXT_PUBLIC_OSH=$BASE_URL/osh
 | `pnpm format`         | Format everything with Prettier         |
 | `pnpm check-format`   | Check formatting without writing        |
 | `pnpm test`           | Run the Playwright end-to-end suite     |
+| `pnpm e2e:headless`   | Build, then run the suite               |
+| `pnpm e2e`            | Build, then run it in a visible browser |
 | `pnpm translate`      | Extract and auto-translate i18n strings |
 | `pnpm types:generate` | Regenerate GraphQL types (see below)    |
 
@@ -339,18 +349,28 @@ End-to-end tests are written with [Playwright](https://playwright.dev/) and live
 in [`tests/`](tests).
 
 ```bash
-# run the whole suite
+# run the whole suite against an existing production build
 pnpm test
+
+# build first, then run — what you want from a clean checkout
+pnpm e2e:headless
+
+# same, but watch it happen in a browser
+pnpm e2e
 
 # run one spec
 pnpm exec playwright test tests/authentication.spec.ts
 
-# watch it happen in a browser
-pnpm exec playwright test --headed
-
 # open the last HTML report
 pnpm exec playwright show-report
 ```
+
+Playwright starts the app itself: the `webServer` block in
+[`playwright.config.js`](playwright.config.js) runs `pnpm start` and waits for
+it, reusing a server you already have running outside CI. That's why `pnpm test`
+needs a build to exist, and why `pnpm e2e:headless` makes one first.
+
+Test accounts and keys come from [`playwright.env`](playwright.env).
 
 CI runs the same suite on every push and pull request, and uploads the HTML
 report as a build artifact — see

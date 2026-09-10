@@ -14,9 +14,8 @@
     "check-format": "prettier --check .",
     "check-lint": "eslint . --ext ts --ext tsx --ext js",
     "reload": "pm2 startOrGracefulReload ecosystem.config.js",
-    "screenshots": "cypress run --env isTest=false --spec 'cypress/e2e/screenshots/*.cy.ts' --config baseUrl='https://interfacer-gui-staging.dyne.org/'",
-    "e2e": "pnpm build && start-server-and-test start http://localhost:3000 cypress",
-    "e2e:headless": "pnpm build && start-server-and-test start http://localhost:3000 cypress:headless",
+    "e2e": "pnpm build && playwright test --headed",
+    "e2e:headless": "pnpm build && playwright test",
     "test": "playwright test",
     "translate": "./bin/translate.sh",
     "prepare": "husky install",
@@ -115,7 +114,6 @@
     "eslint-plugin-react": "^7.37.5",
     "expect-playwright": "^0.8.0",
     "prettier": "^2.8.8",
-    "start-server-and-test": "^1.15.4",
     "typescript": "^5.9.3"
   }
 }
