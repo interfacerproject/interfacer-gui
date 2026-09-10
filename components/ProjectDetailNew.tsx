@@ -1581,7 +1581,7 @@ export default function ProjectDetailNew() {
               <div className="flex flex-col gap-6">
                 <p className="m-0 text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-base)" }}>
                   {t(
-                    "Interactive 3D previews are available for STEP and STL files. Use your mouse, trackpad, or the control buttons below to rotate, pan, and zoom. Non-viewable files are available for download."
+                    "Interactive 3D previews are available for STEP, STL and 3MF files. Use your mouse, trackpad, or the control buttons below to rotate, pan, and zoom. Non-viewable files are available for download."
                   )}
                 </p>
 
@@ -1649,7 +1649,7 @@ export default function ProjectDetailNew() {
                         <div className="flex items-center gap-3 px-5 py-4">
                           <span className="text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
                             {t(
-                              "Browser preview is only available for STEP and STL files. You can still download this file."
+                              "Browser preview is only available for STEP, STL and 3MF files. You can still download this file."
                             )}
                           </span>
                         </div>
