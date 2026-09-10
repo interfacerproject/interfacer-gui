@@ -158,7 +158,6 @@
   "Save": "Save",
   "All projects": "All projects",
   "Add project": "Add project",
-  "Import from LOSH": "Import from LOSH",
   "Report a bug": "Report a bug",
   "common.User manual": "User manual",
   "common.Help pages": "Help pages",
@@ -283,5 +282,15 @@
   "services": "services",
   "machines": "machines",
   "people": "people",
-  "{{rating}} ({{count}})": "{{rating}} ({{count}})"
+  "{{rating}} ({{count}})": "{{rating}} ({{count}})",
+  "LOSH library": "LOSH library",
+  "Library of Open Source Hardware": "Library of Open Source Hardware",
+  "Hardware documented elsewhere and mirrored here for reference. Read the files, licences and build notes behind each project.": "Hardware documented elsewhere and mirrored here for reference. Read the files, licences and build notes behind each project.",
+  "Mirrored Projects": "Mirrored Projects",
+  "Search the LOSH library...": "Search the LOSH library...",
+  "Nothing in the LOSH library matches that search": "Nothing in the LOSH library matches that search",
+  "Importing from LOSH is unavailable": "Importing from LOSH is unavailable",
+  "Mirrored on {{date}}": "Mirrored on {{date}}",
+  "Source": "Source",
+  "Import": "Import"
 }

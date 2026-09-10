@@ -9,7 +9,6 @@
   "My projects": "I miei progetti",
   "Projects": "Progetti",
   "All projects": "Tutti i progetti",
-  "Import from LOSH": "Importato da LOSH",
   "User manual": "Manuale d'uso",
   "Map": "Mappa",
   "Report a bug": "Segnala un bug",
@@ -17,5 +16,6 @@
   "Create Projects": "Crea progetto",
   "My Projects": "I miei progetti",
   "Notifications": "Notifiche",
-  "Language": "Lingua"
+  "Language": "Lingua",
+  "LOSH library": "Libreria LOSH"
 }
