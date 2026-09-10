@@ -115,7 +115,7 @@ const CommercePreviewCart: NextPageWithLayout = () => {
           </button>
           <button
             type="button"
-            onClick={() => router.push("/preview/commerce")}
+            onClick={() => router.push("/")}
             style={{
               height: "48px",
               border: "1px solid #c9cccf",
