@@ -14,32 +14,55 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import CatalogLayout, { HeroStatCard } from "components/CatalogLayout";
+import { EconomicResource } from "lib/types";
 import { useTranslation } from "next-i18next";
-import useFilters from "../hooks/useFilters";
-import devLog from "../lib/devLog";
-import ProjectsCards from "components/ProjectsCards";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useCallback, useState } from "react";
 import { NextPageWithLayout } from "./_app";
 
+const LOSH_ID = process.env.NEXT_PUBLIC_LOSH_ID as string;
+
 const Resources: NextPageWithLayout = () => {
-  const { resourceFilter } = useFilters();
-  devLog("Resources", resourceFilter);
-  const { t } = useTranslation("resourcesProps");
+  const { t } = useTranslation("common");
+  const [totalCount, setTotalCount] = useState<number | null>(null);
+
+  const handleDataLoaded = useCallback(({ totalCount }: { totalCount: number }) => {
+    setTotalCount(totalCount);
+  }, []);
+
+  // Everything mirrored from LOSH is held by a single account, so the catalog is
+  // keyed on that account rather than on a project type.
+  const filter = {
+    primaryAccountable: [LOSH_ID],
+    gtOnhandQuantityHasNumericalValue: 0,
+  };
+
   return (
-    <div className="p-4 md:p-8">
-      <div className="mb-6 w-full max-w-xs">
-        <h1>{t("Resources")}</h1>
-        <p>{t("Use this page to generate digital product passports of resources")}</p>
-      </div>
-      <ProjectsCards filter={resourceFilter} />
-    </div>
+    <CatalogLayout
+      hero={{
+        eyebrow: t("Library of Open Source Hardware"),
+        title: t("LOSH library"),
+        description: t(
+          "Hardware documented elsewhere and mirrored here for reference. Read the files, licences and build notes behind each project."
+        ),
+        stats: <HeroStatCard value={totalCount ?? "—"} label={t("Mirrored Projects")} />,
+      }}
+      searchPlaceholder={t("Search the LOSH library...")}
+      filter={filter}
+      filterReady={!!LOSH_ID}
+      showFilters={false}
+      cardHref={(project: EconomicResource) => `/resource/${project.id}`}
+      emptyHeading={t("Nothing in the LOSH library matches that search")}
+      onDataLoaded={handleDataLoaded}
+    />
   );
 };
 
 export async function getStaticProps({ locale }: any) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["resourcesProps", "signInProps", "SideBarProps", "common"])),
+      ...(await serverSideTranslations(locale, ["common", "signInProps", "SideBarProps"])),
     },
   };
 }

@@ -150,7 +150,6 @@
   "Save": "Salva",
   "All projects": "Tutti i progetti",
   "Add project": "Aggiungi progetto",
-  "Import from LOSH": "Importa da LOSH",
   "Report a bug": "Segnalare un bug",
   "User manual": "Manuale d'uso",
   "Help pages": "Pagine di aiuto",
@@ -275,5 +274,16 @@
   "services": "servizi",
   "machines": "macchine",
   "people": "persone",
-  "{{rating}} ({{count}})": "{{rating}} ({{count}})"
+  "{{rating}} ({{count}})": "{{rating}} ({{count}})",
+  "LOSH library": "Libreria LOSH",
+  "Library of Open Source Hardware": "Library of Open Source Hardware",
+  "Hardware documented elsewhere and mirrored here for reference. Read the files, licences and build notes behind each project.": "Hardware documentato altrove e replicato qui come riferimento. Consulta i file, le licenze e le note di costruzione di ogni progetto.",
+  "Mirrored Projects": "Progetti replicati",
+  "Search the LOSH library...": "Cerca nella libreria LOSH...",
+  "Nothing in the LOSH library matches that search": "Nessun risultato nella libreria LOSH per questa ricerca",
+  "Importing from LOSH is unavailable": "L'importazione da LOSH non è disponibile",
+  "Mirrored on {{date}}": "Replicato il {{date}}",
+  "Source": "Fonte",
+  "Project data": "Dati del progetto",
+  "Import": "Importa"
 }

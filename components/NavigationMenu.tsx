@@ -523,7 +523,7 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
               />
               <NavItem
                 icon={<UploadIcon className="w-[18px] h-[18px]" style={{ color: "var(--ifr-text-secondary)" }} />}
-                label={t("Import from LOSH")}
+                label={t("LOSH library")}
                 onClick={() => handleNavigate("/resources")}
                 activeBg="var(--ifr-bg-hover)"
                 activeTextColor="var(--ifr-text-primary)"

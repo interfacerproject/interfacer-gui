@@ -26,7 +26,6 @@ import { EconomicResource, EconomicResourceFilterParams, FetchInventoryQuery } f
 import Link from "next/link";
 import EmptyState from "./EmptyState";
 import EntityTypeIcon from "./EntityTypeIcon";
-import LoshCard from "./LoshCard";
 import findProjectImages from "lib/findProjectImages";
 import { isProjectType } from "lib/isProjectType";
 import { ProjectType } from "./types";
@@ -36,6 +35,7 @@ import { useTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
 import { Checkmark, Launch } from "@carbon/icons-react";
 import ProjectCardFigma from "./ProjectCardFigma";
+import ProjectCardNew from "./ProjectCardNew";
 
 const CardsGroup = dynamic(() => import("./CardsGroup"), { ssr: false });
 const DraftCard = dynamic(() => import("./DraftCard"), { ssr: false });
@@ -257,7 +257,7 @@ const ProjectsCards = (props: ProjectsCardsProps) => {
     return !isLosh ? (
       <ProjectCardFigma project={project} key={project.id} />
     ) : (
-      <LoshCard project={project} key={project.id} />
+      <ProjectCardNew project={project} href={`/resource/${project.id}`} key={project.id} />
     );
   };
 

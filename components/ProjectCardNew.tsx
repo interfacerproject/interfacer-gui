@@ -20,6 +20,8 @@ interface ProjectCardNewProps {
   project: Partial<EconomicResource>;
   /** When set, overrides conformsTo-based type detection (used by /search, which knows the type per query). */
   forcedType?: ProjectType;
+  /** When set, overrides the card's link target (LOSH entries live under /resource/). */
+  href?: string;
 }
 
 const entityTypeColors: Record<string, string> = {
@@ -74,7 +76,7 @@ function detectServiceType(classifiedAs: string[]): string | undefined {
   return undefined;
 }
 
-export default function ProjectCardNew({ project, forcedType }: ProjectCardNewProps) {
+export default function ProjectCardNew({ project, forcedType, href }: ProjectCardNewProps) {
   const { t } = useTranslation("common");
 
   const projectType = forcedType ?? getProjectType(project);
@@ -96,7 +98,7 @@ export default function ProjectCardNew({ project, forcedType }: ProjectCardNewPr
   const licensor = project.licensor || project.metadata?.licensor;
 
   return (
-    <Link href={`/project/${project.id}`}>
+    <Link href={href || `/project/${project.id}`}>
       <a className="block">
         <div
           className="group bg-ifr-surface border border-ifr overflow-hidden flex flex-col hover:shadow-lg transition-all duration-200 cursor-pointer"

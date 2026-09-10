@@ -19,6 +19,7 @@ import BuyBlock from "components/previewCommerce/BuyBlock";
 import { commercePreviewEnabled } from "lib/previewCommerce/flag";
 import useDppApi from "lib/dpp";
 import type { DppDocument } from "lib/dpp-types";
+import dayjs from "lib/dayjs";
 import findProjectImages from "lib/findProjectImages";
 import findProjectModels from "lib/findProjectModels";
 import { isProjectType } from "lib/isProjectType";
@@ -61,10 +62,12 @@ interface ProjectSidebarNewProps {
   sidebarRating?: ReviewSummary | null;
   /** Optional block rendered as the first section inside the sticky card (commerce preview buy block). */
   topSlot?: ReactNode;
+  /** LOSH mirror: the entry is reference material, so it swaps the type CTAs for source links. */
+  isResource?: boolean;
 }
 
 /** Redesigned sidebar following DTEC prototype */
-function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: ProjectSidebarNewProps) {
+function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot, isResource }: ProjectSidebarNewProps) {
   const { t } = useTranslation("common");
   const { user } = useAuth();
 
@@ -75,6 +78,7 @@ function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: Pro
   const websiteLink = meta.websiteLink as string | undefined;
   const license = project.license || (meta.licenses as Array<{ licenseId?: string }> | undefined)?.[0]?.licenseId;
   const licensor = project.licensor || (meta.licensor as string | undefined);
+  const importedOn = (meta.addedOn || meta.createdAt || meta.importedAt) as string | undefined;
   const basedOnDesignMeta = meta.basedOnDesign as { id?: string; name?: string } | string | undefined;
   const designId = basedOnDesignMeta
     ? typeof basedOnDesignMeta === "object"
@@ -97,7 +101,9 @@ function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: Pro
   // With the commerce preview on, the unified buy block above owns the product's
   // title and CTAs, so the sidebar drops its own title, Contact Manufacturer,
   // Visit Store and "Based on open source design" blocks.
-  const hideForCommerce = commercePreviewEnabled && projectType === ProjectType.PRODUCT;
+  // A LOSH mirror is reference material, never a listing we sell, so the commerce
+  // preview never takes over its sidebar.
+  const hideForCommerce = commercePreviewEnabled && projectType === ProjectType.PRODUCT && !isResource;
 
   return (
     <div className="w-full lg:w-[300px] shrink-0 h-full">
@@ -144,67 +150,15 @@ function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: Pro
             Visit Store. */}
         {!hideForCommerce && (
           <div className="flex flex-col gap-6 px-4 pt-4 pb-6">
-            {/* Product: Price & Availability */}
-            {projectType === ProjectType.PRODUCT && price && (
+            {/* LOSH mirror: nothing here is for sale or buildable through Interfacer yet, so
+                the type CTAs give way to the source links for the original documentation. */}
+            {isResource ? (
               <div className="flex flex-col gap-2">
-                <div className="flex items-baseline gap-1.5">
-                  <p
-                    className="text-ifr-text-primary m-0"
-                    style={{
-                      fontFamily: "var(--ifr-font-heading)",
-                      fontSize: "var(--ifr-fs-2xl)",
-                      fontWeight: "var(--ifr-fw-bold)",
-                      lineHeight: "1.2",
-                    }}
-                  >
-                    {price}
-                  </p>
-                  <span
-                    className="text-ifr-text-secondary"
-                    style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-                  >
-                    {t("estimated")}
-                  </span>
-                </div>
-                {availability && (
-                  <div className="flex items-center gap-1.5">
-                    <div
-                      className="shrink-0"
-                      style={{
-                        width: "8px",
-                        height: "8px",
-                        borderRadius: "var(--ifr-radius-full)",
-                        backgroundColor: "var(--ifr-type-product)",
-                      }}
-                    />
-                    <span
-                      className="text-ifr-text-primary"
-                      style={{
-                        fontFamily: "var(--ifr-font-body)",
-                        fontSize: "var(--ifr-fs-base)",
-                        fontWeight: "var(--ifr-fw-medium)",
-                      }}
-                    >
-                      {availability}
-                    </span>
-                  </div>
-                )}
-                <span
-                  className="text-ifr-text-secondary"
-                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
-                >
-                  {t("Contact the manufacturer for accurate pricing and availability details.")}
-                </span>
-              </div>
-            )}
-
-            {projectType === ProjectType.DESIGN &&
-            basedOnDesign &&
-            typeof basedOnDesign === "object" &&
-            basedOnDesign.id ? (
-              <Link href={`/project/${basedOnDesign.id}`}>
-                <a
-                  className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline"
+                <button
+                  type="button"
+                  disabled
+                  title={t("Importing from LOSH is unavailable")}
+                  className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
                   style={{
                     height: "48px",
                     borderRadius: "8px",
@@ -215,125 +169,230 @@ function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: Pro
                     color: "#1a1a1a",
                   }}
                 >
-                  {t("Build It Yourself")}
-                </a>
-              </Link>
-            ) : projectType === ProjectType.DESIGN ? (
-              <button
-                type="button"
-                disabled
-                className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
-                style={{
-                  height: "48px",
-                  borderRadius: "8px",
-                  backgroundColor: "#f1bd4d",
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "16px",
-                  fontWeight: "500",
-                  color: "#1a1a1a",
-                }}
-              >
-                {t("Build It Yourself")}
-              </button>
-            ) : null}
-            {projectType === ProjectType.PRODUCT && project.primaryAccountable?.name ? (
-              <a
-                href={`mailto:?subject=${encodeURIComponent(project.name || "")} - ${encodeURIComponent(
-                  t("Inquiry")
-                )}&body=${encodeURIComponent(
-                  t("I am interested in") +
-                    " " +
-                    (project.name || "") +
-                    ".\n\n" +
-                    (typeof window !== "undefined" ? window.location.href : "")
-                )}`}
-                className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline cursor-pointer"
-                style={{
-                  height: "48px",
-                  borderRadius: "8px",
-                  backgroundColor: "#f1bd4d",
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "16px",
-                  fontWeight: "500",
-                  color: "#1a1a1a",
-                }}
-              >
-                {t("Contact Manufacturer")}
-              </a>
-            ) : projectType === ProjectType.PRODUCT ? (
-              <button
-                type="button"
-                disabled
-                className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
-                style={{
-                  height: "48px",
-                  borderRadius: "8px",
-                  backgroundColor: "#f1bd4d",
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "16px",
-                  fontWeight: "500",
-                  color: "#1a1a1a",
-                }}
-              >
-                {t("Contact Manufacturer")}
-              </button>
-            ) : null}
-            {projectType === ProjectType.PRODUCT &&
-              (websiteLink ? (
-                <a
-                  href={websiteLink.startsWith("http") ? websiteLink : `https://${websiteLink}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 no-underline cursor-pointer hover:bg-ifr-hover transition-colors"
-                  style={{
-                    height: "48px",
-                    borderRadius: "8px",
-                    border: "1px solid #c9cccf",
-                    fontFamily: "var(--ifr-font-body)",
-                    fontSize: "16px",
-                    fontWeight: "600",
-                    color: "#1a1a1a",
-                    backgroundColor: "#fff",
-                  }}
-                >
-                  <ExternalLinkIcon className="w-4 h-4" />
-                  {t("Visit Store")}
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  disabled
-                  className="w-full flex items-center justify-center gap-2 opacity-40 cursor-not-allowed"
-                  style={{
-                    height: "48px",
-                    borderRadius: "8px",
-                    border: "1px solid #c9cccf",
-                    fontFamily: "var(--ifr-font-body)",
-                    fontSize: "16px",
-                    fontWeight: "600",
-                    color: "#1a1a1a",
-                    backgroundColor: "#fff",
-                  }}
-                >
-                  <ExternalLinkIcon className="w-4 h-4" />
-                  {t("Visit Store")}
+                  {t("Import")}
                 </button>
-              ))}
-            {projectType === ProjectType.SERVICE && (
-              <button
-                type="button"
-                className="w-full text-white border-none cursor-pointer flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
-                style={{
-                  height: "var(--ifr-control-height)",
-                  borderRadius: "var(--ifr-radius-md)",
-                  backgroundColor: "var(--ifr-type-service)",
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-md)",
-                  fontWeight: "var(--ifr-fw-semibold)",
-                }}
-              >
-                {t("Request a Quote")}
-              </button>
+                <p
+                  className="m-0 text-ifr-text-secondary"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                >
+                  {t("Importing from LOSH is unavailable")}
+                </p>
+                {project.repo && (
+                  <a
+                    href={project.repo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 no-underline cursor-pointer hover:bg-ifr-hover transition-colors mt-2"
+                    style={{
+                      height: "48px",
+                      borderRadius: "8px",
+                      border: "1px solid #c9cccf",
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "16px",
+                      fontWeight: "600",
+                      color: "#1a1a1a",
+                      backgroundColor: "#fff",
+                    }}
+                  >
+                    <ExternalLinkIcon className="w-4 h-4" />
+                    {t("Project data")}
+                  </a>
+                )}
+              </div>
+            ) : (
+              <>
+                {/* Product: Price & Availability */}
+                {projectType === ProjectType.PRODUCT && price && (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-baseline gap-1.5">
+                      <p
+                        className="text-ifr-text-primary m-0"
+                        style={{
+                          fontFamily: "var(--ifr-font-heading)",
+                          fontSize: "var(--ifr-fs-2xl)",
+                          fontWeight: "var(--ifr-fw-bold)",
+                          lineHeight: "1.2",
+                        }}
+                      >
+                        {price}
+                      </p>
+                      <span
+                        className="text-ifr-text-secondary"
+                        style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                      >
+                        {t("estimated")}
+                      </span>
+                    </div>
+                    {availability && (
+                      <div className="flex items-center gap-1.5">
+                        <div
+                          className="shrink-0"
+                          style={{
+                            width: "8px",
+                            height: "8px",
+                            borderRadius: "var(--ifr-radius-full)",
+                            backgroundColor: "var(--ifr-type-product)",
+                          }}
+                        />
+                        <span
+                          className="text-ifr-text-primary"
+                          style={{
+                            fontFamily: "var(--ifr-font-body)",
+                            fontSize: "var(--ifr-fs-base)",
+                            fontWeight: "var(--ifr-fw-medium)",
+                          }}
+                        >
+                          {availability}
+                        </span>
+                      </div>
+                    )}
+                    <span
+                      className="text-ifr-text-secondary"
+                      style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                    >
+                      {t("Contact the manufacturer for accurate pricing and availability details.")}
+                    </span>
+                  </div>
+                )}
+
+                {projectType === ProjectType.DESIGN &&
+                basedOnDesign &&
+                typeof basedOnDesign === "object" &&
+                basedOnDesign.id ? (
+                  <Link href={`/project/${basedOnDesign.id}`}>
+                    <a
+                      className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline"
+                      style={{
+                        height: "48px",
+                        borderRadius: "8px",
+                        backgroundColor: "#f1bd4d",
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "16px",
+                        fontWeight: "500",
+                        color: "#1a1a1a",
+                      }}
+                    >
+                      {t("Build It Yourself")}
+                    </a>
+                  </Link>
+                ) : projectType === ProjectType.DESIGN ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
+                    style={{
+                      height: "48px",
+                      borderRadius: "8px",
+                      backgroundColor: "#f1bd4d",
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                      color: "#1a1a1a",
+                    }}
+                  >
+                    {t("Build It Yourself")}
+                  </button>
+                ) : null}
+                {projectType === ProjectType.PRODUCT && project.primaryAccountable?.name ? (
+                  <a
+                    href={`mailto:?subject=${encodeURIComponent(project.name || "")} - ${encodeURIComponent(
+                      t("Inquiry")
+                    )}&body=${encodeURIComponent(
+                      t("I am interested in") +
+                        " " +
+                        (project.name || "") +
+                        ".\n\n" +
+                        (typeof window !== "undefined" ? window.location.href : "")
+                    )}`}
+                    className="w-full border-none flex items-center justify-center gap-2 transition-opacity hover:opacity-90 no-underline cursor-pointer"
+                    style={{
+                      height: "48px",
+                      borderRadius: "8px",
+                      backgroundColor: "#f1bd4d",
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                      color: "#1a1a1a",
+                    }}
+                  >
+                    {t("Contact Manufacturer")}
+                  </a>
+                ) : projectType === ProjectType.PRODUCT ? (
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full border-none flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
+                    style={{
+                      height: "48px",
+                      borderRadius: "8px",
+                      backgroundColor: "#f1bd4d",
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                      color: "#1a1a1a",
+                    }}
+                  >
+                    {t("Contact Manufacturer")}
+                  </button>
+                ) : null}
+                {projectType === ProjectType.PRODUCT &&
+                  (websiteLink ? (
+                    <a
+                      href={websiteLink.startsWith("http") ? websiteLink : `https://${websiteLink}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full flex items-center justify-center gap-2 no-underline cursor-pointer hover:bg-ifr-hover transition-colors"
+                      style={{
+                        height: "48px",
+                        borderRadius: "8px",
+                        border: "1px solid #c9cccf",
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "16px",
+                        fontWeight: "600",
+                        color: "#1a1a1a",
+                        backgroundColor: "#fff",
+                      }}
+                    >
+                      <ExternalLinkIcon className="w-4 h-4" />
+                      {t("Visit Store")}
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled
+                      className="w-full flex items-center justify-center gap-2 opacity-40 cursor-not-allowed"
+                      style={{
+                        height: "48px",
+                        borderRadius: "8px",
+                        border: "1px solid #c9cccf",
+                        fontFamily: "var(--ifr-font-body)",
+                        fontSize: "16px",
+                        fontWeight: "600",
+                        color: "#1a1a1a",
+                        backgroundColor: "#fff",
+                      }}
+                    >
+                      <ExternalLinkIcon className="w-4 h-4" />
+                      {t("Visit Store")}
+                    </button>
+                  ))}
+                {projectType === ProjectType.SERVICE && (
+                  <button
+                    type="button"
+                    className="w-full text-white border-none cursor-pointer flex items-center justify-center gap-2 transition-opacity hover:opacity-90"
+                    style={{
+                      height: "var(--ifr-control-height)",
+                      borderRadius: "var(--ifr-radius-md)",
+                      backgroundColor: "var(--ifr-type-service)",
+                      fontFamily: "var(--ifr-font-body)",
+                      fontSize: "var(--ifr-fs-md)",
+                      fontWeight: "var(--ifr-fw-semibold)",
+                    }}
+                  >
+                    {t("Request a Quote")}
+                  </button>
+                )}
+              </>
             )}
           </div>
         )}
@@ -454,6 +513,32 @@ function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot }: Pro
                   </span>
                   <ExternalLinkIcon className="w-3.5 h-3.5 text-ifr-green shrink-0" />
                 </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Source — LOSH mirror provenance */}
+        {isResource && (
+          <>
+            <hr className="border-t border-[#c9cccf] m-0 mx-4" />
+            <div className="px-4 py-4">
+              <p
+                className="text-ifr-text-secondary mb-2"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+              >
+                {t("Source")}
+              </p>
+              <p
+                className="m-0 text-ifr-text-primary"
+                style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)", fontWeight: 600 }}
+              >
+                {"LOSH"}
+              </p>
+              {importedOn && (
+                <p className="mt-1 mb-0 text-ifr-text-secondary" style={{ fontSize: "var(--ifr-fs-sm)" }}>
+                  {t("Mirrored on {{date}}", { date: dayjs(importedOn).format("YYYY-MM-DD") })}
+                </p>
               )}
             </div>
           </>
@@ -1365,7 +1450,12 @@ function DesignBanner({ designId, designName }: { designId?: string; designName?
 }
 
 /** Main detail page content. Requires FetchProjectLayout wrapper. */
-export default function ProjectDetailNew() {
+interface ProjectDetailNewProps {
+  /** Renders the page as a LOSH mirror entry: LOSH breadcrumb and source links instead of type CTAs. */
+  isResource?: boolean;
+}
+
+export default function ProjectDetailNew({ isResource = false }: ProjectDetailNewProps = {}) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { project, isOwner } = useProject();
@@ -1447,10 +1537,15 @@ export default function ProjectDetailNew() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project.id]);
 
-  // Breadcrumb
-  const typeLabel =
-    projectType === ProjectType.DESIGN ? "Designs" : projectType === ProjectType.PRODUCT ? "Products" : "Services";
-  const typeHref = `/${typeLabel.toLowerCase()}`;
+  // Breadcrumb — LOSH entries live in their own catalog, not under a type
+  const typeLabel = isResource
+    ? "LOSH library"
+    : projectType === ProjectType.DESIGN
+    ? "Designs"
+    : projectType === ProjectType.PRODUCT
+    ? "Products"
+    : "Services";
+  const typeHref = isResource ? "/resources" : `/${typeLabel.toLowerCase()}`;
 
   return (
     <div className="flex-1 bg-ifr-page" style={{ fontFamily: "var(--ifr-font-body)" }}>
@@ -2345,7 +2440,12 @@ export default function ProjectDetailNew() {
             project={project}
             projectType={projectType}
             sidebarRating={sidebarRating}
-            topSlot={commercePreviewEnabled && projectType === ProjectType.PRODUCT ? <BuyBlock embedded /> : undefined}
+            isResource={isResource}
+            topSlot={
+              commercePreviewEnabled && projectType === ProjectType.PRODUCT && !isResource ? (
+                <BuyBlock embedded />
+              ) : undefined
+            }
           />
         </div>
       </div>
@@ -2356,7 +2456,12 @@ export default function ProjectDetailNew() {
           project={project}
           projectType={projectType}
           sidebarRating={sidebarRating}
-          topSlot={commercePreviewEnabled && projectType === ProjectType.PRODUCT ? <BuyBlock embedded /> : undefined}
+          isResource={isResource}
+          topSlot={
+            commercePreviewEnabled && projectType === ProjectType.PRODUCT && !isResource ? (
+              <BuyBlock embedded />
+            ) : undefined
+          }
         />
       </div>
     </div>

@@ -31,11 +31,22 @@ interface CatalogHeroProps {
 }
 
 interface CatalogLayoutProps {
-  variant: CatalogVariant;
+  /** Drives the filter sidebar. Optional — omit it together with `showFilters={false}`. */
+  variant?: CatalogVariant;
   hero: CatalogHeroProps;
   searchPlaceholder: string;
   filter: EconomicResourceFilterParams;
   sortOptions?: string[];
+  /** Catalogs whose facets do not apply (e.g. the LOSH library) drop the sidebar and its toggle. */
+  showFilters?: boolean;
+  /**
+   * Catalogs keyed on something other than `conformsTo` supply their own readiness
+   * flag, so results are not held back waiting for project specs to load.
+   */
+  filterReady?: boolean;
+  /** Overrides where a card links to. Defaults to the project detail page. */
+  cardHref?: (project: EconomicResource) => string;
+  emptyHeading?: string;
   onDataLoaded?: (data: { totalCount: number; distinctPrimaryAccountableCount: number; loading: boolean }) => void;
 }
 
@@ -47,6 +58,10 @@ export default function CatalogLayout({
   searchPlaceholder,
   filter,
   sortOptions = SORT_OPTIONS_DEFAULT,
+  showFilters = true,
+  filterReady,
+  cardHref,
+  emptyHeading,
   onDataLoaded,
 }: CatalogLayoutProps) {
   const { t } = useTranslation("common");
@@ -100,7 +115,7 @@ export default function CatalogLayout({
   };
 
   const dataQueryIdentifier = "economicResources";
-  const isFilterReady = !!effectiveFilter.conformsTo?.length;
+  const isFilterReady = filterReady ?? !!effectiveFilter.conformsTo?.length;
 
   // Map UI sort label to GraphQL orderBy input
   const SORT_MAP: Record<string, EconomicResourceSortInput> = {
@@ -141,12 +156,14 @@ export default function CatalogLayout({
   return (
     <div className="flex flex-1 items-start min-w-0">
       {/* Filter Sidebar — inline column on desktop, overlay drawer below `lg` */}
-      <CatalogFilterSidebar
-        variant={variant}
-        collapsed={sidebarCollapsed}
-        onToggle={toggleSidebar}
-        asDrawer={!isDesktop}
-      />
+      {showFilters && variant && (
+        <CatalogFilterSidebar
+          variant={variant}
+          collapsed={sidebarCollapsed}
+          onToggle={toggleSidebar}
+          asDrawer={!isDesktop}
+        />
+      )}
 
       {/* Main Content */}
       <div className="flex-1 min-w-0 flex flex-col overflow-y-auto">
@@ -186,34 +203,38 @@ export default function CatalogLayout({
         <div className="bg-ifr-surface border-b border-ifr px-4 md:px-6 py-4 md:py-5">
           <div className="flex flex-wrap items-center justify-between gap-3 md:gap-6">
             {/* Filters toggle */}
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              className={`order-1 flex items-center gap-[8px] px-3 shrink-0 border transition-colors cursor-pointer ${
-                !sidebarCollapsed
-                  ? "bg-ifr-hover border-ifr text-ifr-text-primary"
-                  : "bg-ifr-surface border-transparent text-ifr-text-secondary hover:border-ifr hover:text-ifr-text-primary"
-              }`}
-              style={{ height: "var(--ifr-control-height)", borderRadius: "var(--ifr-radius-sm)" }}
-              aria-label={sidebarCollapsed ? t("Show filters") : t("Hide filters")}
-            >
-              <AdjustmentsIcon className="w-4 h-4" />
-              <span
-                style={{
-                  fontFamily: "var(--ifr-font-body)",
-                  fontSize: "var(--ifr-fs-base)",
-                  fontWeight: "var(--ifr-fw-medium)",
-                  lineHeight: "21px",
-                }}
+            {showFilters && variant && (
+              <button
+                type="button"
+                onClick={toggleSidebar}
+                className={`order-1 flex items-center gap-[8px] px-3 shrink-0 border transition-colors cursor-pointer ${
+                  !sidebarCollapsed
+                    ? "bg-ifr-hover border-ifr text-ifr-text-primary"
+                    : "bg-ifr-surface border-transparent text-ifr-text-secondary hover:border-ifr hover:text-ifr-text-primary"
+                }`}
+                style={{ height: "var(--ifr-control-height)", borderRadius: "var(--ifr-radius-sm)" }}
+                aria-label={sidebarCollapsed ? t("Show filters") : t("Hide filters")}
               >
-                {t("Filters")}
-              </span>
-            </button>
+                <AdjustmentsIcon className="w-4 h-4" />
+                <span
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-base)",
+                    fontWeight: "var(--ifr-fw-medium)",
+                    lineHeight: "21px",
+                  }}
+                >
+                  {t("Filters")}
+                </span>
+              </button>
+            )}
 
             {/* Search — drops to its own full-width row once the toolbar runs out of space */}
             <form
               onSubmit={handleSearch}
-              className="order-3 md:order-2 w-full md:w-auto md:flex-1 max-w-[845px] relative"
+              className={`${
+                showFilters && variant ? "order-3" : "order-1"
+              } md:order-2 w-full md:w-auto md:flex-1 max-w-[845px] relative`}
             >
               <div className="bg-ifr-search border border-ifr rounded-full px-4 py-2.5 md:py-3 flex items-center gap-3">
                 <SearchIcon className="w-5 h-5 shrink-0 text-ifr-text-secondary" />
@@ -298,7 +319,7 @@ export default function CatalogLayout({
 
           {/* Empty state */}
           {!isLoading && !error && (showEmptyState || !projects?.length) && (
-            <EmptyState heading={t("No projects match your filters")} />
+            <EmptyState heading={emptyHeading || t("No projects match your filters")} />
           )}
 
           {/* Cards Grid */}
@@ -312,7 +333,7 @@ export default function CatalogLayout({
                 }}
               >
                 {projects.map(({ node }: { node: EconomicResource }) => (
-                  <ProjectCardNew key={node.id} project={node} />
+                  <ProjectCardNew key={node.id} project={node} href={cardHref?.(node)} />
                 ))}
               </div>
 
