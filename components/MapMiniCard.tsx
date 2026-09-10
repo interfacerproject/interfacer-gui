@@ -65,7 +65,7 @@ export default function MapMiniCard({ project }: MapMiniCardProps) {
   return (
     <Link href={`/project/${project.id}`}>
       <a
-        className="flex h-[120px] w-[318px] items-stretch overflow-hidden rounded-ifr-lg border border-ifr bg-ifr-surface no-underline transition-shadow hover:shadow-ifr-dropdown"
+        className="flex h-[120px] w-[318px] shrink-0 items-stretch overflow-hidden rounded-ifr-lg border border-ifr bg-ifr-surface no-underline transition-shadow hover:shadow-ifr-dropdown"
         style={{ boxShadow: "0px 4px 16px 0px rgba(0, 0, 0, 0.12)" }}
       >
         <div className="relative h-auto w-[120px] shrink-0 overflow-hidden">
