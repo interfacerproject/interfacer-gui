@@ -16,6 +16,7 @@
 
 import { clearInstanceVariablesCache, InterfacerClient, createConfig } from "@dyne/interfacer-client";
 import { setFileUploadClient } from "lib/fileUpload";
+import { registerViaSignupApi, SignupInput } from "lib/signup";
 import useStorage from "hooks/useStorage";
 import { PersonWithFileEssential } from "lib/types/extensions";
 import { useRouter } from "next/router";
@@ -47,17 +48,7 @@ interface KeypairFnProps {
 }
 type KeypairFn = (props: KeypairFnProps) => Promise<void>;
 
-interface SignupFnProps {
-  name: string;
-  user: string;
-  email: string;
-  eddsaPublicKey: string;
-  ethereumAddress: string;
-  ecdhPublicKey: string;
-  reflowPublicKey: string;
-  bitcoinPublicKey: string;
-}
-type SignupFn = (props: SignupFnProps) => Promise<void>;
+type SignupFn = (props: SignupInput) => Promise<void>;
 
 export interface AuthContextValue {
   user: User | null;
@@ -99,7 +90,6 @@ function createClient() {
       },
       oshUrl: process.env.NEXT_PUBLIC_OSH || "",
       loshId: process.env.NEXT_PUBLIC_LOSH_ID || "",
-      zenflowsAdmin: process.env.NEXT_PUBLIC_ZENFLOWS_ADMIN || "",
       specs: {
         machine: process.env.NEXT_PUBLIC_SPEC_MACHINE || "",
         dpp: process.env.NEXT_PUBLIC_SPEC_DPP || "",
@@ -276,16 +266,12 @@ export const AuthProvider = ({ children, publicPage = false }: any) => {
   };
 
   const signup: SignupFn = async props => {
-    if (!client) return;
-    await client.auth.registerUser({
-      name: props.name,
-      user: props.user,
-      email: props.email,
-    });
+    if (!client) throw new Error("Client not ready");
+    await registerViaSignupApi(props, client.store);
     setItem("authId", client.store.getItem("authId") || "");
-    setItem("authName", props.name);
-    setItem("authUsername", props.user);
-    setItem("authEmail", props.email);
+    setItem("authName", client.store.getItem("authName") || "");
+    setItem("authUsername", client.store.getItem("authUsername") || "");
+    setItem("authEmail", client.store.getItem("authEmail") || "");
   };
 
   const logout: LogoutFn = (redirect = "/sign_in") => {

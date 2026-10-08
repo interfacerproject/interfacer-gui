@@ -213,7 +213,7 @@ pnpm start
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 `.env.example` points at the public staging gateway, so a fresh checkout runs
-against a working backend without any credentials of your own.
+against a working backend for browsing. Account registration requires the server-only signup settings below.
 
 **[🔝 back to top](#toc)**
 
@@ -231,7 +231,8 @@ and adjust.
 | `BASE_URL`                         | The federated instance gateway every service below hangs off |
 | `DEEPL_API_KEY`                    | DeepL key used by the i18n module for auto-translation       |
 | `NEXT_PUBLIC_LOSH_ID`              | The LUID designated as owner of the LOSH imported assets     |
-| `NEXT_PUBLIC_ZENFLOWS_ADMIN`       | Admin key of the federated zenflows instance                 |
+| `ZENFLOWS_ADMIN`                   | Server-only credential for the fixed signup API; provision at runtime |
+| `ZENFLOWS_URL`                     | Server-only GraphQL endpoint used by signup                  |
 | `NEXT_PUBLIC_INVITATION_KEY`       | Invitation key needed to register new users                  |
 | `NEXT_PUBLIC_MAPBOX_KEY`           | Mapbox token for the maps — without it, maps stay blank      |
 | `NEXT_PUBLIC_DID_EXPLORER`         | DID explorer used to resolve decentralised identifiers       |
@@ -259,6 +260,31 @@ NEXT_PUBLIC_SOCIAL_ECONOMIC_RESOURCE=$BASE_URL/inbox/economicresource
 NEXT_PUBLIC_OSH=$BASE_URL/osh
 ```
 
+### Server-side signup deployment
+
+The browser posts public registration fields to `POST /api/signup`; only the Next.js
+server adds the administrative header to a fixed `createPerson` operation. Set
+`ZENFLOWS_ADMIN` through your deployment secret manager and `ZENFLOWS_URL` to the
+trusted GraphQL endpoint (prefer HTTPS). Missing settings disable registration
+with HTTP 503. Never put the secret in `NEXT_PUBLIC_*`, `next.config.js`'s `env`,
+page props, source-controlled env files, image build arguments or logs.
+
+Remove the obsolete `NEXT_PUBLIC_ZENFLOWS_ADMIN` from every build/deployment
+configuration and rebuild the frontend. The GUI must run with the Next.js API
+server, not a static export.
+
+The handler permits five attempts per ten minutes per socket peer, with bounded
+**per-process** state. It does not trust `X-Forwarded-For`; behind a reverse proxy,
+users sharing that socket peer also share its quota. Configure shared rate limits
+and anti-bot/invitation policy at a trusted production ingress. Local limits reset
+on process restart and are not distributed across replicas.
+
+This patch contains the admin credential; it does not establish ownership of the
+submitted public keys or email. Proof-of-key challenges, email/invitation gating
+and a signup-only capability in Zenflows remain separate hardening work. The
+existing browser key generation, login and post-signup email verification remain
+unchanged; no seed or private key is sent to this API.
+
 ### Feature flags
 
 | Flag                              | Default | What it does                                                                                                                                                                                                      |
@@ -284,6 +310,7 @@ NEXT_PUBLIC_OSH=$BASE_URL/osh
 | `pnpm format`         | Format everything with Prettier         |
 | `pnpm check-format`   | Check formatting without writing        |
 | `pnpm test`           | Run the Playwright end-to-end suite     |
+| `pnpm test:signup`     | Test signup with local mocks (no services or credentials) |
 | `pnpm e2e:headless`   | Build, then run the suite               |
 | `pnpm e2e`            | Build, then run it in a visible browser |
 | `pnpm translate`      | Extract and auto-translate i18n strings |
@@ -344,6 +371,12 @@ sidecar next to them. Match the surrounding files when you add new ones.
 ---
 
 ## 📋 Testing
+
+Signup boundary tests use local mocks and require no application build, browser, env file or live backend:
+
+```bash
+pnpm test:signup
+```
 
 End-to-end tests are written with [Playwright](https://playwright.dev/) and live
 in [`tests/`](tests).

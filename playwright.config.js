@@ -14,6 +14,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
   },
   testDir: "./tests",
+  testIgnore: "**/unit/**", // Node unit tests run separately via pnpm test:signup.
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
