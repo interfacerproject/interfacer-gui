@@ -42,6 +42,8 @@ jobs:
         run: corepack enable
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Test signup boundary (local mocks only)
+        run: pnpm test:signup
       - name: Write local env file
         run: cp .env.example .env.local
       - run: pnpm build

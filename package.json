@@ -17,6 +17,7 @@
     "e2e": "pnpm build && playwright test --headed",
     "e2e:headless": "pnpm build && playwright test",
     "test": "playwright test",
+    "test:signup": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' tests/unit/signup.test.ts",
     "translate": "./bin/translate.sh",
     "prepare": "husky install",
     "release": "HUSKY=0 standard-version --no-verify",
