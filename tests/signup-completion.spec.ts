@@ -91,6 +91,7 @@ for (const [name, viewport] of [
     await submit.click();
     await expect(submit).toBeDisabled();
     await expect(submit).toHaveAttribute("aria-busy", "true");
+    await expect(page.locator('[data-test="signUpError"]')).toHaveCount(0);
     // A second programmatic click must not create another account either.
     await submit.evaluate(button => (button as HTMLButtonElement).click());
     releaseSignup();
@@ -99,7 +100,8 @@ for (const [name, viewport] of [
     await expect.poll(() => emailCalls).toBe(1);
     await expect.poll(() => didCalls).toBe(1);
     expect(creations).toBe(1);
-    await expect(page.locator('[role="alert"]')).toHaveCount(0);
+    // Next.js has its own role="alert" route announcer; it is not a signup error.
+    await expect(page.locator('[data-test="signUpError"]')).toHaveCount(0);
     expect(await page.evaluate(() => localStorage.getItem("authId"))).toBe("fixture-id");
   });
 }

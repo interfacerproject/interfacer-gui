@@ -174,7 +174,7 @@ const SignUp: NextPageWithLayout = () => {
       {step === 3 && (
         <Passphrase>
           {error && (
-            <div role="alert">
+            <div role="alert" data-test="signUpError">
               <AuthError>{error}</AuthError>
             </div>
           )}
