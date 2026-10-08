@@ -6,7 +6,7 @@ import { CreateProjectValues } from "../CreateProjectForm";
 
 export { type ModelFilesStepValues, modelFilesStepSchema, modelFilesStepDefaultValues } from "./ModelFilesStep.schema";
 
-const allowedExtensions = new Set(["step", "stp", "stl"]);
+const allowedExtensions = new Set(["step", "stp", "stl", "3mf"]);
 
 function getExtension(url: string): string {
   try {
@@ -55,7 +55,7 @@ export default function ModelFilesStep() {
       <PTitleSubtitle
         title={t("Add CAD files")}
         subtitle={t(
-          "Provide links to STEP, STP or STL files for your design. These will be viewable directly in your browser from the design detail page — no upload needed."
+          "Provide links to STEP, STP, STL or 3MF files for your design. These will be viewable directly in your browser from the design detail page — no upload needed."
         )}
       />
 
@@ -74,16 +74,16 @@ export default function ModelFilesStep() {
               placeholder="https://example.com/model.step"
               helpText={
                 !entry.url
-                  ? t("Paste a direct link to a STEP, STP or STL file")
+                  ? t("Paste a direct link to a STEP, STP, STL or 3MF file")
                   : !isValidCadUrl(entry.url)
-                  ? t("URL must point to a STEP (.step, .stp) or STL (.stl) file")
+                  ? t("URL must point to a STEP (.step, .stp), STL (.stl) or 3MF (.3mf) file")
                   : getExtension(entry.url).toUpperCase() + t(" file detected")
               }
               error={
                 !entry.url
                   ? undefined
                   : !isValidCadUrl(entry.url)
-                  ? t("Invalid CAD file URL — must be a STEP or STL file")
+                  ? t("Invalid CAD file URL — must be a STEP, STL or 3MF file")
                   : undefined
               }
               requiredIndicator={index === 0}

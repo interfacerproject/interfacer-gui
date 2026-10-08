@@ -21,7 +21,7 @@ type RawModelEntry =
 export type ProjectModelDescriptor = {
   downloadUrl: string;
   extension: string;
-  format: "step" | "stl" | "unknown";
+  format: "step" | "stl" | "3mf" | "unknown";
   hash?: string;
   id?: string;
   isViewable: boolean;
@@ -31,7 +31,7 @@ export type ProjectModelDescriptor = {
   url: string;
 };
 
-const supportedExtensions = new Set(["step", "stp", "stl"]);
+const supportedExtensions = new Set(["step", "stp", "stl", "3mf"]);
 const DPP_BASE_URL = process.env.NEXT_PUBLIC_DPP_URL;
 
 function isResolvableUrl(value: string): boolean {
@@ -63,6 +63,9 @@ function getExtensionFromMimeType(mimeType?: string): string {
   if (normalizedMimeType.includes("step") || normalizedMimeType.includes("stp")) {
     return "step";
   }
+  if (normalizedMimeType.includes("3mf") || normalizedMimeType.includes("3dmanufacturing-3dmodel")) {
+    return "3mf";
+  }
   return "";
 }
 
@@ -91,6 +94,9 @@ function formatFromExtension(extension: string): ProjectModelDescriptor["format"
   }
   if (extension === "step" || extension === "stp") {
     return "step";
+  }
+  if (extension === "3mf") {
+    return "3mf";
   }
   return "unknown";
 }

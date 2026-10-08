@@ -275,7 +275,7 @@ const StepModelViewer = ({
 
           {isLoading && elapsedSeconds > 8 && (
             <p style={{ margin: "0 0 0.5rem 0", color: "#6a665d", fontSize: "0.95rem" }}>
-              {"Large STEP files can take 20-90 seconds to parse in the browser, especially on first load."}
+              {"Large CAD files can take 20-90 seconds to parse in the browser, especially on first load."}
             </p>
           )}
 
