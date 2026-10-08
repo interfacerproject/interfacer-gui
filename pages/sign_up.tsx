@@ -22,7 +22,8 @@ import { CLAIM_DID } from "lib/QueryAndMutation";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { ReactElement, useState } from "react";
+import { ReactElement, useRef, useState } from "react";
+import { completeSignup, signupErrorMessage } from "lib/signupCompletion";
 import type { NextPageWithLayout } from "./_app";
 
 // Layout
@@ -37,7 +38,6 @@ import UserData, { UserDataNS } from "components/partials/sign_up/UserData";
 
 // Components
 import { AuthButton, AuthError, AuthPage } from "components/partials/auth/AuthCard";
-import devLog from "lib/devLog";
 
 export async function getStaticProps({ locale }: any) {
   return {
@@ -57,12 +57,11 @@ const SignUp: NextPageWithLayout = () => {
   const [claimPerson] = useMutation(CLAIM_DID);
 
   const claim = async (id: string) => {
-    try {
-      const { data } = await claimPerson({ variables: { id } });
-      setItem("didId", data?.claimPerson.did.result.didDocument.id);
-    } catch (err) {
-      devLog("signUp", "claim", err);
-    }
+    const { data, errors } = await claimPerson({ variables: { id } });
+    if (errors?.length) throw new Error("DID claim failed");
+    const didId = data?.claimPerson?.did?.result?.didDocument?.id;
+    if (typeof didId !== "string" || !didId) throw new Error("Invalid DID claim response");
+    setItem("didId", didId);
   };
 
   //
@@ -76,6 +75,9 @@ const SignUp: NextPageWithLayout = () => {
 
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const submissionInProgress = useRef(false);
+  const accountCreated = useRef(false);
 
   //
 
@@ -102,21 +104,47 @@ const SignUp: NextPageWithLayout = () => {
   }
 
   const signUp = async () => {
+    // A ref also guards clicks that arrive before React commits the disabled state.
+    if (submissionInProgress.current) return;
+    submissionInProgress.current = true;
+    setSubmitting(true);
+    setError("");
     try {
-      await signup({
-        ...signUpData,
-        eddsaPublicKey: getItem("eddsaPublicKey"),
-        ethereumAddress: getItem("ethereumAddress"),
-        bitcoinPublicKey: getItem("bitcoinPublicKey"),
-        ecdhPublicKey: getItem("ecdhPublicKey"),
-        reflowPublicKey: getItem("reflowPublicKey"),
+      await completeSignup({
+        signup: async () => {
+          // If login fails after creation, a retry must not create the same account again.
+          if (accountCreated.current) return;
+          await signup({
+            ...signUpData,
+            eddsaPublicKey: getItem("eddsaPublicKey"),
+            ethereumAddress: getItem("ethereumAddress"),
+            bitcoinPublicKey: getItem("bitcoinPublicKey"),
+            ecdhPublicKey: getItem("ecdhPublicKey"),
+            reflowPublicKey: getItem("reflowPublicKey"),
+          });
+          accountCreated.current = true;
+        },
+        login: () => login({ email: signUpData.email }),
+        sendEmailVerification,
+        claimDid: () => claim(getItem("authId")),
+        onFollowUpFailure: task => {
+          // Do not log response bodies, keys or user data.
+          console.warn("Post-signup task failed:", task);
+        },
+        navigateHome: async () => {
+          try {
+            if (await router.replace("/")) return;
+          } catch {
+            // Keep an authenticated account out of the registration error state.
+          }
+          window.location.assign("/");
+        },
       });
-      await login({ email: signUpData.email });
-      await sendEmailVerification();
-      await claim(getItem("authId"));
-      router.push("/");
     } catch (err) {
-      setError(JSON.stringify(err));
+      setError(signupErrorMessage(err, t("We couldn't complete sign up. Please try again.")));
+    } finally {
+      submissionInProgress.current = false;
+      setSubmitting(false);
     }
   };
 
@@ -145,10 +173,14 @@ const SignUp: NextPageWithLayout = () => {
       {/* Step 3: User creation */}
       {step === 3 && (
         <Passphrase>
-          {error && <AuthError>{error}</AuthError>}
+          {error && (
+            <div role="alert">
+              <AuthError>{error}</AuthError>
+            </div>
+          )}
 
-          <AuthButton onClick={signUp} data-test="signUpBtn">
-            {t("Create account")}
+          <AuthButton onClick={signUp} data-test="signUpBtn" disabled={submitting} aria-busy={submitting}>
+            {submitting ? t("Creating your account…") : t("Create account")}
           </AuthButton>
 
           <p className="text-[14px] leading-[21px] text-ifr-text-muted">

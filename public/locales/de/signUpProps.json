@@ -42,5 +42,7 @@
   "Create your Interfacer account": "Erstellen Sie Ihr Interfacer-Konto",
   "Sign in": "Anmelden",
   "Set your recovery questions": "Legen Sie Ihre Wiederherstellungsfragen fest",
-  "Create account": "Konto erstellen"
+  "Create account": "Konto erstellen",
+  "We couldn't complete sign up. Please try again.": "Die Registrierung konnte nicht abgeschlossen werden. Bitte versuche es erneut.",
+  "Creating your account…": "Dein Konto wird erstellt…"
 }
