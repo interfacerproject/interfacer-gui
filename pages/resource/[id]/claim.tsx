@@ -24,13 +24,14 @@ import { ChildrenProp as CP } from "components/brickroom/types";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import ContributorsStep from "components/partials/create/project/steps/ContributorsStep";
+import { ProjectTypeContext } from "components/partials/create/project/CreateProjectForm";
+import { ProjectType } from "components/types";
 import LicenseStep, { LicenseStepValues } from "components/partials/create/project/steps/LicenseStep";
 import RelationsStep from "components/partials/create/project/steps/RelationsStep";
 import PDivider from "components/polaris/PDivider";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
-import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { TRANSFER_PROJECT } from "lib/QueryAndMutation";
 import { errorFormatter, translateCommon } from "lib/errorFormatter";
 import { formSetValueOptions } from "lib/formSetValueOptions";
@@ -63,6 +64,7 @@ export namespace ClaimProjectNS {
 const ClaimProject: NextPageWithLayout = () => {
   const router = useRouter();
   const { project } = useProject();
+  const projectType = Object.values(ProjectType).find(type => type === project.conformsTo?.name) || ProjectType.DESIGN;
   const { user, client } = useAuth();
   const [error, setError] = useState<string>("");
   const [claimed, setClaimed] = useState<{ sourceId: string; id: string }>();
@@ -70,7 +72,6 @@ const ClaimProject: NextPageWithLayout = () => {
   if (claimGuard.current.sourceId !== project.id) claimGuard.current = { sourceId: project.id, pending: false };
   const claimedProjectId = claimed?.sourceId === project.id ? claimed?.id : undefined;
   const { t } = useTranslation("ResourceProps");
-  const { updateRelations, updateContributors } = useProjectCRUD();
 
   const [transferProject] = useMutation(TRANSFER_PROJECT);
 
@@ -99,6 +100,8 @@ const ClaimProject: NextPageWithLayout = () => {
         ...project.metadata,
         repositoryOrId: project.metadata.repo,
         licenses: formData.licenses,
+        contributors: formData.contributors,
+        relations: formData.relations,
       });
       const tags = normalizeUserTagsForSave(formData.tags);
       // The generated GUI type predates the SDK document's required loshId.
@@ -125,8 +128,8 @@ const ClaimProject: NextPageWithLayout = () => {
       attempt.claimedId = importedId;
       if (claimGuard.current === attempt) setClaimed({ sourceId: project.id!, id: importedId });
 
-      await updateContributors(importedId, formData.contributors);
-      await updateRelations(importedId, formData.relations);
+      // All selected details are part of the transfer. Separate partial
+      // updateMetadata calls replace the whole map and would erase each other.
       if (claimGuard.current === attempt) await router.replace(`/project/${importedId}`);
     } catch (error) {
       if (claimGuard.current === attempt) {
@@ -183,90 +186,92 @@ const ClaimProject: NextPageWithLayout = () => {
   };
 
   return (
-    <FormProvider {...form}>
-      <form onSubmit={handleSubmit(handleClaim)}>
-        <div className="flex flex-col lg:flex-row lg:justify-center items-stretch lg:items-start gap-6 lg:gap-0 lg:space-x-16 xl:space-x-24 p-4 md:p-6">
-          <div className="lg:sticky lg:top-24 lg:shrink-0">
-            <ClaimNav />
-          </div>
-          <div className="grow min-w-0 w-full max-w-xl mx-auto lg:mx-0 px-0 md:px-6 pb-24 pt-0">
-            <Stack vertical spacing="extraLoose">
-              <PTitleSubtitle
-                title={t("import this resource")}
-                subtitle={t(
-                  "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later."
-                )}
-              />
-              <ProjectDisplay project={project} />
-
-              <PDivider id={sectionsNames.tags} />
-              <PTitleSubtitle
-                title={t("Add tags")}
-                subtitle={t("Help us to categorize your project. This will help other people to find it.")}
-              />
-              <Controller
-                control={control}
-                name="tags"
-                render={() => (
-                  <SelectTags
-                    tags={watch("tags")}
-                    setTags={tags => {
-                      setValue("tags", tags, formSetValueOptions);
-                      trigger("tags");
-                    }}
-                    error={errors.tags?.message}
-                    label={t("Tags")}
-                    helpText={t("Add relevant keywords that describe your project.")}
-                    requiredIndicator={isRequired(schema, "tags")}
-                  />
-                )}
-              />
-
-              <PDivider id={sectionsNames.relations} />
-              <RelationsStep />
-
-              <PDivider id={sectionsNames.contributors} />
-              <ContributorsStep />
-
-              <PDivider id={sectionsNames.licenses} />
-              <LicenseStep />
-
-              {error && (
-                <Banner
-                  title={t("Import")}
-                  status="critical"
-                  onDismiss={() => {
-                    setError("");
-                  }}
-                >
-                  <p role="alert" className="whitespace-pre-wrap">
-                    {error}
-                  </p>
-                  {claimedProjectId && (
-                    <Link href={`/project/${claimedProjectId}`}>
-                      <a className="underline">{translateCommon(t, "claimFlow.openImportedProject")}</a>
-                    </Link>
+    <ProjectTypeContext.Provider value={projectType}>
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit(handleClaim)}>
+          <div className="flex flex-col lg:flex-row lg:justify-center items-stretch lg:items-start gap-6 lg:gap-0 lg:space-x-16 xl:space-x-24 p-4 md:p-6">
+            <div className="lg:sticky lg:top-24 lg:shrink-0">
+              <ClaimNav />
+            </div>
+            <div className="grow min-w-0 w-full max-w-xl mx-auto lg:mx-0 px-0 md:px-6 pb-24 pt-0">
+              <Stack vertical spacing="extraLoose">
+                <PTitleSubtitle
+                  title={t("import this resource")}
+                  subtitle={t(
+                    "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later."
                   )}
-                </Banner>
-              )}
-            </Stack>
+                />
+                <ProjectDisplay project={project} />
+
+                <PDivider id={sectionsNames.tags} />
+                <PTitleSubtitle
+                  title={t("Add tags")}
+                  subtitle={t("Help us to categorize your project. This will help other people to find it.")}
+                />
+                <Controller
+                  control={control}
+                  name="tags"
+                  render={() => (
+                    <SelectTags
+                      tags={watch("tags")}
+                      setTags={tags => {
+                        setValue("tags", tags, formSetValueOptions);
+                        trigger("tags");
+                      }}
+                      error={errors.tags?.message}
+                      label={t("Tags")}
+                      helpText={t("Add relevant keywords that describe your project.")}
+                      requiredIndicator={isRequired(schema, "tags")}
+                    />
+                  )}
+                />
+
+                <PDivider id={sectionsNames.relations} />
+                <RelationsStep />
+
+                <PDivider id={sectionsNames.contributors} />
+                <ContributorsStep />
+
+                <PDivider id={sectionsNames.licenses} />
+                <LicenseStep />
+
+                {error && (
+                  <Banner
+                    title={t("Import")}
+                    status="critical"
+                    onDismiss={() => {
+                      setError("");
+                    }}
+                  >
+                    <p role="alert" className="whitespace-pre-wrap">
+                      {error}
+                    </p>
+                    {claimedProjectId && (
+                      <Link href={`/project/${claimedProjectId}`}>
+                        <a className="underline">{translateCommon(t, "claimFlow.openImportedProject")}</a>
+                      </Link>
+                    )}
+                  </Banner>
+                )}
+              </Stack>
+            </div>
           </div>
-        </div>
-        <div className="sticky bottom-0 right-0 z-30 bg-background p-3 border-t-1 border-t-border-subdued">
-          <div className="flex flex-row justify-end">
-            <Button
-              id="project-create-submit"
-              submit
-              primary
-              loading={isSubmitting}
-              disabled={!isValid || isSubmitting || !!claimedProjectId}
-            >
-              {t("Import")}
-            </Button>
+          <div className="sticky bottom-0 right-0 z-30 bg-background p-3 border-t-1 border-t-border-subdued">
+            <div className="flex flex-row justify-end">
+              <Button
+                id="project-create-submit"
+                submit
+                primary
+                loading={isSubmitting}
+                disabled={!isValid || isSubmitting || !!claimedProjectId}
+              >
+                {t("Import")}
+              </Button>
+            </div>
           </div>
-        </div>
-      </form>
-    </FormProvider>
+        </form>
+      </FormProvider>
+    </ProjectTypeContext.Provider>
   );
 };
 

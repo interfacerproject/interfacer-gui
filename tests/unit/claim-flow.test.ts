@@ -18,6 +18,7 @@ for (const locale of ["en", "it", "de", "fr"]) {
 
 const project = {
   id: "import-source",
+  conformsTo: { name: "Design" },
   name: "Synthetic design",
   metadata: { license: "MIT", repo: "https://example.invalid/design" },
   onhandQuantity: { hasUnit: { id: "unit-one" } },
@@ -27,12 +28,15 @@ let translate: (key: string, options?: any) => string = key => key;
 let user: { ulid: string } | undefined = { ulid: "alice" };
 let writeError: Error | undefined;
 let detailsError: Error | undefined;
+let navigationError: Error | undefined;
+let submittedMetadata: Record<string, unknown> | undefined;
 let gate: Promise<void> | undefined;
 let missingResult = false;
 let variables: any[] = [];
 let steps: string[] = [];
 const transfer = async (options: any) => {
   variables.push(options.variables);
+  submittedMetadata = JSON.parse(options.variables.metadata);
   if (gate) await gate;
   if (writeError) throw writeError;
   return {
@@ -44,6 +48,7 @@ const transfer = async (options: any) => {
 const router = {
   replace: async (url: string) => {
     steps.push("navigate:" + url);
+    if (navigationError) throw navigationError;
   },
 };
 const client = {
@@ -54,6 +59,12 @@ const client = {
   },
 };
 const native = ({ children }: any) => React.createElement("div", null, children);
+const ProjectTypeContext = React.createContext<string | null>(null);
+function TypeAwareStep() {
+  const type = React.useContext(ProjectTypeContext);
+  if (!type) throw new Error("useProjectType must be used within ProjectTypeContext");
+  return React.createElement("div", { "data-step-type": type });
+}
 const loader = Module as unknown as { _load: (name: string, ...args: unknown[]) => unknown };
 const originalLoad = loader._load;
 loader._load = function (name, ...args) {
@@ -96,6 +107,10 @@ loader._load = function (name, ...args) {
   if (name === "lib/formSetValueOptions") return { formSetValueOptions: {} };
   if (name === "lib/isFieldRequired") return { isRequired: () => false };
   if (name === "lib/tagging") return { normalizeUserTagsForSave: (tags: string[]) => tags };
+  if (name === "components/types") return require("../../components/types");
+  if (name === "components/partials/create/project/CreateProjectForm") return { ProjectTypeContext };
+  if (/components\/partials\/create\/project\/steps\/(RelationsStep|ContributorsStep)$/.test(name))
+    return { __esModule: true, default: TypeAwareStep };
   if (name.startsWith("components/")) return { __esModule: true, default: native };
   return originalLoad.call(this, name, ...args);
 };
@@ -105,10 +120,12 @@ loader._load = originalLoad;
 async function render(run: (renderer: ReactTestRenderer, submit: () => Promise<void>) => Promise<void>) {
   variables = [];
   steps = [];
+  project.conformsTo.name = "Design";
   translate = key => key;
   loshId = "synthetic-losh-agent";
   user = { ulid: "alice" };
-  writeError = detailsError = undefined;
+  writeError = detailsError = navigationError = undefined;
+  submittedMetadata = undefined;
   gate = undefined;
   missingResult = false;
   let renderer!: ReactTestRenderer;
@@ -123,6 +140,18 @@ async function render(run: (renderer: ReactTestRenderer, submit: () => Promise<v
       renderer.unmount();
     });
   }
+}
+
+for (const type of ["Design", "Machine"]) {
+  test("claim gives shared relation/contributor steps their required " + type + " context", async () => {
+    await render(async renderer => {
+      project.conformsTo.name = type;
+      await act(async () => {
+        renderer.update(React.createElement(Claim));
+      });
+      assert.equal(renderer.root.findAllByProps({ "data-step-type": type }).length, 2);
+    });
+  });
 }
 
 const i18next = createRequire(require.resolve("next-i18next"))("i18next");
@@ -152,7 +181,7 @@ for (const locale of ["en", "it", "de", "fr"]) {
   });
 }
 
-test("claim sends configured LOSH agent and signed-in receiver, then updates details and navigates", async () => {
+test("claim sends configured LOSH agent and signed-in receiver, preserves submitted details and navigates", async () => {
   await render(async (_renderer, submit) => {
     await act(async () => {
       await submit();
@@ -161,7 +190,7 @@ test("claim sends configured LOSH agent and signed-in receiver, then updates det
     assert.equal(variables[0].loshId, "synthetic-losh-agent");
     assert.equal(variables[0].agent, "alice");
     assert.equal(variables[0].resource, "import-source");
-    assert.deepEqual(steps, ["contributors", "relations", "navigate:/project/imported-project"]);
+    assert.deepEqual(steps, ["navigate:/project/imported-project"]);
   });
 });
 for (const reason of ["missing LOSH", "missing session"]) {
@@ -194,13 +223,13 @@ test("denied claim shows structured localized error, halts all details writes an
     assert.equal(renderer.root.findByProps({ type: "submit" }).props.disabled, false);
   });
 });
-test("known successful import is never repeated when a subsequent details write fails", async () => {
+test("known successful import is never repeated when navigation fails", async () => {
   await render(async (renderer, submit) => {
-    detailsError = new GraphQLRequestError([{ message: "denied details", extensions: { code: "FORBIDDEN" } }]);
+    navigationError = new GraphQLRequestError([{ message: "denied details", extensions: { code: "FORBIDDEN" } }]);
     await act(async () => {
       await submit();
     });
-    assert.deepEqual(steps, ["contributors"]);
+    assert.deepEqual(steps, ["navigate:/project/imported-project"]);
     await act(async () => {
       await submit();
     });
@@ -227,6 +256,27 @@ test("double submission only sends a single transfer", async () => {
     assert.equal(variables.length, 1);
   });
 });
+test("claim stores all selected details together with existing metadata in the transfer itself", async () => {
+  await render(async (_renderer, submit) => {
+    await act(async () => {
+      await submit();
+    });
+    assert.deepEqual(submittedMetadata, {
+      license: "MIT",
+      repo: "https://example.invalid/design",
+      repositoryOrId: "https://example.invalid/design",
+      licenses: [{ licenseId: "MIT", scope: "main" }],
+      contributors: [],
+      relations: [],
+    });
+    assert.deepEqual(
+      steps,
+      ["navigate:/project/imported-project"],
+      "no partial metadata replacement requests after transfer"
+    );
+  });
+});
+
 test("malformed success response does not run details writes or navigate", async () => {
   await render(async (renderer, submit) => {
     missingResult = true;
