@@ -42,11 +42,18 @@ const codeKeys: Record<string, keyof typeof messages> = {
   HTTP_ERROR: "serviceUnavailable",
 };
 
-export function errorFormatter(e: any, translate?: (key: string) => string): string {
+type Translator = (key: string, options?: { nsSeparator: ":"; keySeparator: "." }) => string;
+
+/** Opt in only for structured common keys; legacy sentence keys stay flat. */
+export function translateCommon(translate: Translator, key: string): string {
+  return translate("common:" + key, { nsSeparator: ":", keySeparator: "." });
+}
+
+export function errorFormatter(e: any, translate?: Translator): string {
   const code = e?.code || e?.extensions?.code || e?.graphQLErrors?.[0]?.extensions?.code;
   const key =
     typeof code === "string" && Object.prototype.hasOwnProperty.call(codeKeys, code) ? codeKeys[code] : undefined;
-  if (key) return translate ? translate("common:requestErrors." + key) : messages[key];
+  if (key) return translate ? translateCommon(translate, "requestErrors." + key) : messages[key];
   if (typeof e?.message === "string" && e.message.trim()) return e.message;
   if (typeof e === "string" && e.trim()) return e;
   try {
