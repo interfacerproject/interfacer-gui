@@ -18,7 +18,7 @@
     "e2e:headless": "pnpm build && playwright test",
     "test": "playwright test",
     "test:signup": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"CommonJS\"}' node --require ts-node/register --test tests/unit/signup*.test.ts",
-    "test:authz": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"CommonJS\",\"jsx\":\"react-jsx\"}' node --require ts-node/register --test tests/unit/graphql-hooks.test.ts tests/unit/edit-form-authz.test.ts tests/unit/error-formatter.test.ts",
+    "test:authz": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"CommonJS\",\"jsx\":\"react-jsx\"}' node --require ts-node/register --test tests/unit/graphql-hooks.test.ts tests/unit/edit-form-authz.test.ts tests/unit/error-formatter.test.ts tests/unit/claim-flow.test.ts",
     "translate": "./bin/translate.sh",
     "prepare": "husky install",
     "release": "HUSKY=0 standard-version --no-verify",

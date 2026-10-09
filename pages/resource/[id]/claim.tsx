@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useMutation } from "lib/apollo-compat";
+import { GraphQLRequestError, throwIfGraphQLErrors } from "@dyne/interfacer-client";
 import { Banner, Button, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ProjectDisplay from "components/ProjectDisplay";
@@ -23,16 +24,16 @@ import { ChildrenProp as CP } from "components/brickroom/types";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import ContributorsStep from "components/partials/create/project/steps/ContributorsStep";
+import { ProjectTypeContext } from "components/partials/create/project/CreateProjectForm";
+import { ProjectType } from "components/types";
 import LicenseStep, { LicenseStepValues } from "components/partials/create/project/steps/LicenseStep";
 import RelationsStep from "components/partials/create/project/steps/RelationsStep";
 import PDivider from "components/polaris/PDivider";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
-import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { TRANSFER_PROJECT } from "lib/QueryAndMutation";
-import devLog from "lib/devLog";
-import { errorFormatter } from "lib/errorFormatter";
+import { errorFormatter, translateCommon } from "lib/errorFormatter";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
 import { normalizeUserTagsForSave } from "lib/tagging";
@@ -41,7 +42,8 @@ import { GetStaticPaths } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
-import { ReactElement, useState } from "react";
+import Link from "next/link";
+import { ReactElement, useRef, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { NextPageWithLayout } from "../../_app";
@@ -62,12 +64,16 @@ export namespace ClaimProjectNS {
 const ClaimProject: NextPageWithLayout = () => {
   const router = useRouter();
   const { project } = useProject();
-  const { user } = useAuth();
+  const projectType = Object.values(ProjectType).find(type => type === project.conformsTo?.name) || ProjectType.DESIGN;
+  const { user, client } = useAuth();
   const [error, setError] = useState<string>("");
+  const [claimed, setClaimed] = useState<{ sourceId: string; id: string }>();
+  const claimGuard = useRef<{ sourceId?: string; pending: boolean; claimedId?: string }>({ pending: false });
+  if (claimGuard.current.sourceId !== project.id) claimGuard.current = { sourceId: project.id, pending: false };
+  const claimedProjectId = claimed?.sourceId === project.id ? claimed?.id : undefined;
   const { t } = useTranslation("ResourceProps");
-  const { updateRelations, updateContributors } = useProjectCRUD();
 
-  const [transferProject, { data: economicResource }] = useMutation(TRANSFER_PROJECT);
+  const [transferProject] = useMutation(TRANSFER_PROJECT);
 
   const sectionsNames = {
     tags: t("Tags"),
@@ -77,49 +83,60 @@ const ClaimProject: NextPageWithLayout = () => {
   };
 
   async function handleClaim(formData: ClaimProjectNS.FormValues) {
+    const attempt = claimGuard.current;
+    if (attempt.pending || attempt.claimedId) return;
+    attempt.pending = true;
+    setError("");
     try {
-      const tags = normalizeUserTagsForSave(formData.tags);
-      devLog("info: tags prepared", tags);
-      const contributors = formData.contributors;
-      devLog("info: contributors prepared", contributors);
+      if (!client || !user) {
+        throw new GraphQLRequestError([
+          { message: "Authentication required", extensions: { code: "UNAUTHENTICATED" } },
+        ]);
+      }
+      const loshId = client.config.loshId?.trim();
+      if (!loshId) throw new Error(translateCommon(t, "claimFlow.unavailable"));
+
       const metadata = JSON.stringify({
         ...project.metadata,
         repositoryOrId: project.metadata.repo,
         licenses: formData.licenses,
+        contributors: formData.contributors,
+        relations: formData.relations,
       });
-      devLog("info: metadata prepared", metadata);
-
-      const variables: TransferProjectMutationVariables = {
+      const tags = normalizeUserTagsForSave(formData.tags);
+      // The generated GUI type predates the SDK document's required loshId.
+      const variables: TransferProjectMutationVariables & { loshId: string } = {
         resource: project.id!,
-        agent: user!.ulid,
+        agent: user.ulid,
+        loshId,
         name: project.name!,
         note: project.note || "",
-        metadata: metadata,
+        metadata,
         oneUnit: project.onhandQuantity!.hasUnit!.id,
         creationTime: dayjs().toISOString(),
         tags: tags.length > 0 ? tags : undefined,
       };
-      devLog("info: project variables created", variables);
 
-      //transfer project
-      const { data: transferProjectData, errors } = await transferProject({ variables });
-      if (errors) throw new Error("ProjectNotTransfered");
+      const result = await transferProject({ variables });
+      throwIfGraphQLErrors(result);
+      const importedId = result.data?.createEconomicEvent?.economicEvent?.toResourceInventoriedAs?.id;
+      if (typeof importedId !== "string" || !importedId) {
+        throw new GraphQLRequestError([{ message: "Invalid import result", extensions: { code: "INVALID_RESPONSE" } }]);
+      }
+      // The transfer has committed. Never repeat it because later detail writes
+      // or navigation fail; keep a link to the actual imported resource instead.
+      attempt.claimedId = importedId;
+      if (claimGuard.current === attempt) setClaimed({ sourceId: project.id!, id: importedId });
 
-      const economicEvent = transferProjectData?.createEconomicEvent.economicEvent!;
-      const projectTransfered = economicEvent?.toResourceInventoriedAs!;
-      devLog("success: project transfered");
-      devLog("info: economicEvent", economicEvent);
-      devLog("info: project", projectTransfered);
-
-      await updateContributors(projectTransfered.id!, contributors);
-      await updateRelations(projectTransfered.id!, formData.relations);
-
-      // Redirecting user
-      await router.replace(`/project/${projectTransfered.id}`);
-    } catch (e) {
-      devLog(e);
-      let err = errorFormatter(e);
-      setError(err);
+      // All selected details are part of the transfer. Separate partial
+      // updateMetadata calls replace the whole map and would erase each other.
+      if (claimGuard.current === attempt) await router.replace(`/project/${importedId}`);
+    } catch (error) {
+      if (claimGuard.current === attempt) {
+        setError(attempt.claimedId ? translateCommon(t, "claimFlow.detailsIncomplete") : errorFormatter(error, t));
+      }
+    } finally {
+      attempt.pending = false;
     }
   }
 
@@ -146,7 +163,7 @@ const ClaimProject: NextPageWithLayout = () => {
   });
 
   const { formState, control, handleSubmit, watch, setValue, trigger } = form;
-  const { isValid, errors } = formState;
+  const { isValid, isSubmitting, errors } = formState;
 
   const ClaimNav = () => {
     return (
@@ -169,77 +186,92 @@ const ClaimProject: NextPageWithLayout = () => {
   };
 
   return (
-    <FormProvider {...form}>
-      <form onSubmit={handleSubmit(handleClaim)}>
-        <div className="flex flex-col lg:flex-row lg:justify-center items-stretch lg:items-start gap-6 lg:gap-0 lg:space-x-16 xl:space-x-24 p-4 md:p-6">
-          <div className="lg:sticky lg:top-24 lg:shrink-0">
-            <ClaimNav />
-          </div>
-          <div className="grow min-w-0 w-full max-w-xl mx-auto lg:mx-0 px-0 md:px-6 pb-24 pt-0">
-            <Stack vertical spacing="extraLoose">
-              <PTitleSubtitle
-                title={t("import this resource")}
-                subtitle={t(
-                  "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later."
-                )}
-              />
-              <ProjectDisplay project={project} />
+    <ProjectTypeContext.Provider value={projectType}>
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit(handleClaim)}>
+          <div className="flex flex-col lg:flex-row lg:justify-center items-stretch lg:items-start gap-6 lg:gap-0 lg:space-x-16 xl:space-x-24 p-4 md:p-6">
+            <div className="lg:sticky lg:top-24 lg:shrink-0">
+              <ClaimNav />
+            </div>
+            <div className="grow min-w-0 w-full max-w-xl mx-auto lg:mx-0 px-0 md:px-6 pb-24 pt-0">
+              <Stack vertical spacing="extraLoose">
+                <PTitleSubtitle
+                  title={t("import this resource")}
+                  subtitle={t(
+                    "Read the guidelines. Be sure to fill in all the required fields. You can always edit them later."
+                  )}
+                />
+                <ProjectDisplay project={project} />
 
-              <PDivider id={sectionsNames.tags} />
-              <PTitleSubtitle
-                title={t("Add tags")}
-                subtitle={t("Help us to categorize your project. This will help other people to find it.")}
-              />
-              <Controller
-                control={control}
-                name="tags"
-                render={() => (
-                  <SelectTags
-                    tags={watch("tags")}
-                    setTags={tags => {
-                      setValue("tags", tags, formSetValueOptions);
-                      trigger("tags");
+                <PDivider id={sectionsNames.tags} />
+                <PTitleSubtitle
+                  title={t("Add tags")}
+                  subtitle={t("Help us to categorize your project. This will help other people to find it.")}
+                />
+                <Controller
+                  control={control}
+                  name="tags"
+                  render={() => (
+                    <SelectTags
+                      tags={watch("tags")}
+                      setTags={tags => {
+                        setValue("tags", tags, formSetValueOptions);
+                        trigger("tags");
+                      }}
+                      error={errors.tags?.message}
+                      label={t("Tags")}
+                      helpText={t("Add relevant keywords that describe your project.")}
+                      requiredIndicator={isRequired(schema, "tags")}
+                    />
+                  )}
+                />
+
+                <PDivider id={sectionsNames.relations} />
+                <RelationsStep />
+
+                <PDivider id={sectionsNames.contributors} />
+                <ContributorsStep />
+
+                <PDivider id={sectionsNames.licenses} />
+                <LicenseStep />
+
+                {error && (
+                  <Banner
+                    title={t("Import")}
+                    status="critical"
+                    onDismiss={() => {
+                      setError("");
                     }}
-                    error={errors.tags?.message}
-                    label={t("Tags")}
-                    helpText={t("Add relevant keywords that describe your project.")}
-                    requiredIndicator={isRequired(schema, "tags")}
-                  />
+                  >
+                    <p role="alert" className="whitespace-pre-wrap">
+                      {error}
+                    </p>
+                    {claimedProjectId && (
+                      <Link href={`/project/${claimedProjectId}`}>
+                        <a className="underline">{translateCommon(t, "claimFlow.openImportedProject")}</a>
+                      </Link>
+                    )}
+                  </Banner>
                 )}
-              />
-
-              <PDivider id={sectionsNames.relations} />
-              <RelationsStep />
-
-              <PDivider id={sectionsNames.contributors} />
-              <ContributorsStep />
-
-              <PDivider id={sectionsNames.licenses} />
-              <LicenseStep />
-
-              {error && (
-                <Banner
-                  title={t("Import")}
-                  status="critical"
-                  onDismiss={() => {
-                    setError("");
-                  }}
-                >
-                  <p className="whitespace-pre-wrap">{error}</p>
-                </Banner>
-              )}
-            </Stack>
+              </Stack>
+            </div>
           </div>
-        </div>
-        <div className="sticky bottom-0 right-0 z-30 bg-background p-3 border-t-1 border-t-border-subdued">
-          <div className="flex flex-row justify-end">
-            <Button id="project-create-submit" submit primary disabled={!isValid}>
-              {t("Import")}
-            </Button>
+          <div className="sticky bottom-0 right-0 z-30 bg-background p-3 border-t-1 border-t-border-subdued">
+            <div className="flex flex-row justify-end">
+              <Button
+                id="project-create-submit"
+                submit
+                primary
+                loading={isSubmitting}
+                disabled={!isValid || isSubmitting || !!claimedProjectId}
+              >
+                {t("Import")}
+              </Button>
+            </div>
           </div>
-        </div>
-      </form>
-    </FormProvider>
+        </form>
+      </FormProvider>
+    </ProjectTypeContext.Provider>
   );
 };
 
