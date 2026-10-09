@@ -1,4 +1,14 @@
 {
+  "requestErrors": {
+    "permissionDenied": "Tu n’as pas l’autorisation d’effectuer cette action.",
+    "sessionRequired": "Ta session n’a pas pu être vérifiée. Connecte-toi avant de réessayer.",
+    "signingFailed": "La requête n’a pas pu être signée. Rétablis ta session avant d’enregistrer.",
+    "networkError": "Le service est inaccessible. Vérifie si tes modifications ont été enregistrées avant de réessayer.",
+    "invalidResponse": "Le service a renvoyé une réponse invalide. Vérifie si tes modifications ont été enregistrées avant de réessayer.",
+    "conflict": "Cet élément a changé. Consulte la version à jour avant d’enregistrer à nouveau.",
+    "rateLimited": "Trop de requêtes. Attends un moment avant de réessayer.",
+    "serviceUnavailable": "Le service est indisponible. Vérifie si tes modifications ont été enregistrées avant de réessayer."
+  },
   "Go back and discard": "Revenir en arrière et jeter",
   "all set!": "tout est prêt !",
   "Go to home": "Aller à l'accueil",

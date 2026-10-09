@@ -1,4 +1,14 @@
 {
+  "requestErrors": {
+    "permissionDenied": "You do not have permission to perform this action.",
+    "sessionRequired": "Your session could not be verified. Sign in before trying again.",
+    "signingFailed": "The request could not be signed. Restore your session before saving.",
+    "networkError": "The service could not be reached. Check whether your changes were saved before trying again.",
+    "invalidResponse": "The service returned an invalid response. Check whether your changes were saved before trying again.",
+    "conflict": "This item has changed. Review the latest version before saving again.",
+    "rateLimited": "Too many requests. Wait a moment before trying again.",
+    "serviceUnavailable": "The service is unavailable. Check whether your changes were saved before trying again."
+  },
   "Go back and discard": "Go back and discard",
   "all set!": "all set!",
   "Go to home": "Go to home",

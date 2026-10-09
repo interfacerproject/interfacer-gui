@@ -1,4 +1,14 @@
 {
+  "requestErrors": {
+    "permissionDenied": "Non hai il permesso di eseguire questa azione.",
+    "sessionRequired": "Non è stato possibile verificare la sessione. Accedi prima di riprovare.",
+    "signingFailed": "Non è stato possibile firmare la richiesta. Ripristina la sessione prima di salvare.",
+    "networkError": "Il servizio non è raggiungibile. Verifica se le modifiche sono state salvate prima di riprovare.",
+    "invalidResponse": "Il servizio ha restituito una risposta non valida. Verifica se le modifiche sono state salvate prima di riprovare.",
+    "conflict": "Questo elemento è cambiato. Controlla la versione aggiornata prima di salvare di nuovo.",
+    "rateLimited": "Troppe richieste. Attendi un momento prima di riprovare.",
+    "serviceUnavailable": "Il servizio non è disponibile. Verifica se le modifiche sono state salvate prima di riprovare."
+  },
   "Go back and discard": "Tornare indietro e scartare",
   "all set!": "tutto pronto!",
   "Go to home": "Vai a casa",

@@ -1,4 +1,14 @@
 {
+  "requestErrors": {
+    "permissionDenied": "Du hast keine Berechtigung für diese Aktion.",
+    "sessionRequired": "Deine Sitzung konnte nicht überprüft werden. Melde dich an, bevor du es erneut versuchst.",
+    "signingFailed": "Die Anfrage konnte nicht signiert werden. Stelle deine Sitzung wieder her, bevor du speicherst.",
+    "networkError": "Der Dienst ist nicht erreichbar. Prüfe vor einem erneuten Versuch, ob deine Änderungen gespeichert wurden.",
+    "invalidResponse": "Der Dienst hat eine ungültige Antwort zurückgegeben. Prüfe vor einem erneuten Versuch, ob deine Änderungen gespeichert wurden.",
+    "conflict": "Dieser Eintrag wurde geändert. Prüfe die aktuelle Version, bevor du erneut speicherst.",
+    "rateLimited": "Zu viele Anfragen. Warte einen Moment, bevor du es erneut versuchst.",
+    "serviceUnavailable": "Der Dienst ist nicht verfügbar. Prüfe vor einem erneuten Versuch, ob deine Änderungen gespeichert wurden."
+  },
   "Go back and discard": "Zurückgehen und verwerfen",
   "all set!": "alles klar!",
   "Go to home": "Zur Homepage",
