@@ -1,4 +1,9 @@
 {
+  "claimFlow": {
+    "unavailable": "L’importation est indisponible car l’agent source n’est pas configuré. Ton formulaire n’a pas été envoyé.",
+    "detailsIncomplete": "La ressource a été importée, mais ses détails ou la navigation n’ont pas pu être finalisés. Ouvre le projet importé pour le vérifier. Ne l’importe pas à nouveau.",
+    "openImportedProject": "Ouvrir le projet importé"
+  },
   "requestErrors": {
     "permissionDenied": "Tu n’as pas l’autorisation d’effectuer cette action.",
     "sessionRequired": "Ta session n’a pas pu être vérifiée. Connecte-toi avant de réessayer.",

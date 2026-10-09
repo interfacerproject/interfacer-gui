@@ -1,4 +1,9 @@
 {
+  "claimFlow": {
+    "unavailable": "Import is unavailable because the source agent is not configured. Your form has not been submitted.",
+    "detailsIncomplete": "The resource was imported, but its details or navigation could not be completed. Open the imported project to review it. Do not import it again.",
+    "openImportedProject": "Open imported project"
+  },
   "requestErrors": {
     "permissionDenied": "You do not have permission to perform this action.",
     "sessionRequired": "Your session could not be verified. Sign in before trying again.",
