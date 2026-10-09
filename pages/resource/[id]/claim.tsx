@@ -32,7 +32,7 @@ import dayjs from "dayjs";
 import { useAuth } from "hooks/useAuth";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { TRANSFER_PROJECT } from "lib/QueryAndMutation";
-import { errorFormatter } from "lib/errorFormatter";
+import { errorFormatter, translateCommon } from "lib/errorFormatter";
 import { formSetValueOptions } from "lib/formSetValueOptions";
 import { isRequired } from "lib/isFieldRequired";
 import { normalizeUserTagsForSave } from "lib/tagging";
@@ -93,7 +93,7 @@ const ClaimProject: NextPageWithLayout = () => {
         ]);
       }
       const loshId = client.config.loshId?.trim();
-      if (!loshId) throw new Error(t("common:claimFlow.unavailable"));
+      if (!loshId) throw new Error(translateCommon(t, "claimFlow.unavailable"));
 
       const metadata = JSON.stringify({
         ...project.metadata,
@@ -130,7 +130,7 @@ const ClaimProject: NextPageWithLayout = () => {
       if (claimGuard.current === attempt) await router.replace(`/project/${importedId}`);
     } catch (error) {
       if (claimGuard.current === attempt) {
-        setError(attempt.claimedId ? t("common:claimFlow.detailsIncomplete") : errorFormatter(error, t));
+        setError(attempt.claimedId ? translateCommon(t, "claimFlow.detailsIncomplete") : errorFormatter(error, t));
       }
     } finally {
       attempt.pending = false;
@@ -244,7 +244,7 @@ const ClaimProject: NextPageWithLayout = () => {
                   </p>
                   {claimedProjectId && (
                     <Link href={`/project/${claimedProjectId}`}>
-                      <a className="underline">{t("common:claimFlow.openImportedProject")}</a>
+                      <a className="underline">{translateCommon(t, "claimFlow.openImportedProject")}</a>
                     </Link>
                   )}
                 </Banner>

@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { GraphQLRequestError, GraphQLSigningError } from "@dyne/interfacer-client";
 import { errorFormatter } from "../../lib/errorFormatter";
 
@@ -51,7 +52,27 @@ test("legacy validation messages remain usable; unknown/circular failures have a
   assert.equal(typeof format(circular), "string");
   assert.ok(format(undefined));
 });
+const i18next = createRequire(require.resolve("next-i18next"))("i18next");
+const localeConfig = require("../../next-i18next.config");
 for (const locale of ["en", "it", "de", "fr"]) {
+  test(locale + " resolves structured error copy with the real application's flat-key i18n configuration", async () => {
+    const common = JSON.parse(readFileSync("public/locales/" + locale + "/common.json", "utf8"));
+    const i18n = i18next.createInstance();
+    await i18n.init({
+      ...localeConfig,
+      lng: locale,
+      defaultNS: "common",
+      resources: { [locale]: { common } },
+      initImmediate: false,
+    });
+    const error = new GraphQLRequestError([{ message: "forbidden", extensions: { code: "FORBIDDEN" } }]);
+    assert.equal(format(error, i18n.t.bind(i18n)), common.requestErrors.permissionDenied);
+    assert.equal(
+      i18n.t("Go back and discard"),
+      common["Go back and discard"],
+      "legacy sentence keys must stay unchanged"
+    );
+  });
   test(
     locale + " has all request-error translations without promising that a timed-out write was not committed",
     () => {
