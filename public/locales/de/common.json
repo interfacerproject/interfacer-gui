@@ -1,4 +1,13 @@
 {
+  "resourceAccess": {
+    "controller": "Du kontrollierst diese Ressource.",
+    "loading": "Bearbeitungszugriff wird geprüft… Dein Entwurf bleibt erhalten.",
+    "read-only": "Diese Ressource wird von einer anderen Person kontrolliert. Du kannst das Formular ansehen, aber die Bearbeitung ist pausiert. Dein Entwurf bleibt erhalten.",
+    "unassigned": "Dieser Ressource ist keine Kontrolle zugewiesen. Die Bearbeitung erfordert eine Zuweisung der Kontrolle. Dein Entwurf bleibt erhalten.",
+    "organization": "Organisationsberechtigungen werden in dieser Ansicht für persönlichen Zugriff nicht bewertet. Die Bearbeitung ist pausiert; dein Entwurf bleibt erhalten.",
+    "error": "Der Bearbeitungszugriff konnte nicht geprüft werden. Die Bearbeitung ist pausiert; dein Entwurf bleibt erhalten. Prüfe den Zugriff erneut.",
+    "checkAgain": "Zugriff erneut prüfen"
+  },
   "claimFlow": {
     "unavailable": "Der Import ist nicht verfügbar, weil der Quellagent nicht konfiguriert ist. Dein Formular wurde nicht gesendet.",
     "detailsIncomplete": "Die Ressource wurde importiert, aber Details oder Navigation konnten nicht abgeschlossen werden. Öffne das importierte Projekt zur Prüfung. Importiere es nicht erneut.",

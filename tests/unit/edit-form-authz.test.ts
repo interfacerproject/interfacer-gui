@@ -9,6 +9,7 @@ import { GraphQLRequestError } from "@dyne/interfacer-client";
 
 let reloads = 0;
 let pushes = 0;
+let editAccess: any;
 const router = {
   asPath: "/project/fixture/edit",
   reload: () => {
@@ -25,6 +26,7 @@ const originalLoad = loader._load;
 loader._load = function (name, ...args) {
   if (name === "@bbtgnn/polaris-interfacer")
     return { Banner: ({ children }: any) => React.createElement("section", null, children) };
+  if (name === "components/layout/FetchProjectLayout") return { useProject: () => ({ editAccess }) };
   if (name === "next/router") return { useRouter: () => router };
   if (name === "next-i18next") return { useTranslation: () => ({ t }) };
   if (name === "components/LoadingOverlay")
@@ -52,6 +54,7 @@ const Layout = EditFormLayout as React.ComponentType<{
 test("denied save retains the draft, shows an error and does not mark RHF submission successful or navigate", async () => {
   (globalThis as any).window = { addEventListener() {}, removeEventListener() {}, confirm: () => false };
   reloads = pushes = 0;
+  editAccess = undefined;
   let renderer!: ReactTestRenderer;
 
   let form!: UseFormReturn<{ title: string }>;
@@ -108,3 +111,54 @@ test("denied save retains the draft, shows an error and does not mark RHF submis
     delete (globalThis as any).window;
   }
 });
+
+for (const status of ["read-only", "loading", "error", "controller"]) {
+  test("submission guard and denial recheck preserve the draft: " + status, async () => {
+    (globalThis as any).window = { addEventListener() {}, removeEventListener() {}, confirm: () => false };
+    let writes = 0,
+      refreshes = 0;
+    editAccess = {
+      status,
+      refetch: async () => {
+        refreshes++;
+      },
+    };
+    let r!: ReactTestRenderer, form!: UseFormReturn<{ title: string }>;
+    function Harness() {
+      form = useForm({ defaultValues: { title: "original" } });
+      return React.createElement(
+        Layout,
+        {
+          formMethods: form,
+          onSubmit: async () => {
+            writes++;
+            throw new GraphQLRequestError([{ message: "denied", extensions: { code: "FORBIDDEN" } }]);
+          },
+        },
+        React.createElement("input", { ...form.register("title") })
+      );
+    }
+    try {
+      await act(async () => {
+        r = create(React.createElement(Harness));
+      });
+      await act(async () => {
+        form.setValue("title", "unsent", { shouldDirty: true });
+        await form.trigger();
+      });
+      await act(async () => {
+        await r.root.findByType("form").props.onSubmit({ preventDefault() {}, persist() {} });
+      });
+      assert.equal(writes, status === "controller" ? 1 : 0);
+      assert.equal(refreshes, 1);
+      assert.equal(form.getValues("title"), "unsent");
+      assert.equal(form.formState.isSubmitSuccessful, false);
+    } finally {
+      await act(async () => {
+        r?.unmount();
+      });
+      editAccess = undefined;
+      delete (globalThis as any).window;
+    }
+  });
+}
