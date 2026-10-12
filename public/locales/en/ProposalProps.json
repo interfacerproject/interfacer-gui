@@ -10,5 +10,10 @@
   "Proposed Income": "Proposed Income",
   "Your actions": "Your actions",
   "Reject contribution": "Reject contribution",
-  "Accept contribution": "Accept contribution"
+  "Accept contribution": "Accept contribution",
+  "notification": "notification",
+  "strengths points": "strengths points",
+  "idea points": "idea points",
+  "The contribution was accepted, but these follow-up steps failed – {{steps}}": "The contribution was accepted, but these follow-up steps failed – {{steps}}",
+  "The contribution was rejected, but these follow-up steps failed – {{steps}}": "The contribution was rejected, but these follow-up steps failed – {{steps}}"
 }
