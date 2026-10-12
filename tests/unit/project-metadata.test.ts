@@ -10,6 +10,9 @@ let readError: Error | undefined;
 let writeError: Error | undefined;
 let writes: any[] = [];
 let reads = 0;
+let race: (() => void) | undefined;
+let version = 0;
+const initialHash = "a".repeat(64);
 const client = {
   graphql: {
     request: async () => {
@@ -21,8 +24,26 @@ const client = {
   resources: {
     updateMetadata: async (id: string, metadata: any) => {
       if (writeError) throw writeError;
-      writes.push({ id, metadata });
-      current = { data: { economicResource: { id, metadata: JSON.parse(JSON.stringify(metadata)) } } };
+      writes.push({ id, replacement: metadata });
+      current = {
+        data: { economicResource: { id, metadata: JSON.parse(JSON.stringify(metadata)), metadataHash: initialHash } },
+      };
+    },
+    patchMetadata: async (id: string, fields: any, options: { expectedMetadataHash?: string }) => {
+      race?.();
+      if (writeError) throw writeError;
+      if (options.expectedMetadataHash !== current.data.economicResource.metadataHash)
+        throw new GraphQLRequestError([{ message: "changed", extensions: { code: "CONFLICT" } }]);
+      writes.push({ id, fields, expectedMetadataHash: options.expectedMetadataHash });
+      current = {
+        data: {
+          economicResource: {
+            id,
+            metadata: { ...(current.data.economicResource.metadata || {}), ...fields },
+            metadataHash: (++version).toString(16).padStart(64, "0"),
+          },
+        },
+      };
     },
   },
 };
@@ -56,6 +77,7 @@ async function render(run: (api: ReturnType<typeof useProjectCRUD>) => Promise<v
     data: {
       economicResource: {
         id: "resource",
+        metadataHash: initialHash,
         metadata: {
           repo: "https://example.invalid/source",
           licenses: [{ licenseId: "MIT", scope: "main" }],
@@ -67,6 +89,8 @@ async function render(run: (api: ReturnType<typeof useProjectCRUD>) => Promise<v
     },
   };
   reads = 0;
+  race = undefined;
+  version = 0;
   writes = [];
   readError = writeError = undefined;
   try {
@@ -88,10 +112,9 @@ for (const [method, key, value] of [
 ] as const) {
   test(method + " preserves the latest unrelated metadata", async () =>
     render(async api => {
-      const before = current.data.economicResource.metadata;
       await (api[method] as any)("resource", value);
       assert.equal(reads, 1);
-      assert.deepEqual(writes, [{ id: "resource", metadata: { ...before, [key]: value } }]);
+      assert.deepEqual(writes, [{ id: "resource", fields: { [key]: value }, expectedMetadataHash: initialHash }]);
     })
   );
 }
@@ -107,13 +130,14 @@ test("does not merge from a stale project argument or cached metadata", async ()
   render(async api => {
     current.data.economicResource.metadata.externalChange = "fresh";
     await api.updateMetadata({ id: "resource" }, { models: [] });
-    assert.equal(writes[0].metadata.externalChange, "fresh");
+    assert.deepEqual(writes[0].fields, { models: [] });
+    assert.equal(current.data.economicResource.metadata.externalChange, "fresh");
   }));
 test("null metadata is an empty map, not an unavailable response", async () =>
   render(async api => {
     current.data.economicResource.metadata = null;
     await api.updateRelations("resource", []);
-    assert.deepEqual(writes[0].metadata, { relations: [] });
+    assert.deepEqual(writes[0].fields, { relations: [] });
   }));
 for (const bad of [undefined, [], "{}", 4]) {
   test("malformed metadata blocks write: " + String(bad), async () =>
@@ -137,6 +161,33 @@ test("structured read denial halts the write, without losing its code", async ()
     current.errors = [{ message: "private upstream detail", extensions: { code: "FORBIDDEN" } }];
     await assert.rejects(api.updateRelations("resource", []), (e: any) => e.code === "FORBIDDEN");
     assert.equal(writes.length, 0);
+  }));
+for (const bad of [undefined, null, "", "not-a-fingerprint", 4]) {
+  test("missing/invalid token cannot fall back to legacy metadata writes: " + String(bad), async () =>
+    render(async api => {
+      current.data.economicResource.metadataHash = bad;
+      await assert.rejects(api.updateRelations("resource", []), (e: any) => e.code === "INVALID_RESPONSE");
+      assert.equal(writes.length, 0);
+    })
+  );
+}
+test("read-to-write race conflicts without overwriting newer fields or retrying", async () =>
+  render(async api => {
+    race = () => {
+      current.data.economicResource.metadataHash = "b".repeat(64);
+      current.data.economicResource.metadata.relations = ["newer"];
+    };
+    await assert.rejects(api.updateRelations("resource", []), (e: any) => e.code === "CONFLICT");
+    assert.deepEqual(current.data.economicResource.metadata.relations, ["newer"]);
+    assert.equal(writes.length, 0);
+    assert.equal(reads, 1);
+  }));
+test("uncertain patch failure never retries or falls back", async () =>
+  render(async api => {
+    writeError = new GraphQLRequestError([{ message: "safe", extensions: { code: "NETWORK_ERROR" } }]);
+    await assert.rejects(api.updateRelations("resource", []), e => e === writeError);
+    assert.equal(writes.length, 0);
+    assert.equal(reads, 1);
   }));
 test("network read failure and denied write propagate, without retry", async () =>
   render(async api => {
