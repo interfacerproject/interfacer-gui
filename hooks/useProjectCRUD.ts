@@ -18,6 +18,7 @@ import { LocationStepValues } from "components/partials/create/project/steps/Loc
 import { useAuth } from "./useAuth";
 import { useResourceSpecs } from "./useResourceSpecs";
 import devLog from "lib/devLog";
+import { updateResourceMetadataFields } from "lib/resourceMetadata";
 import { useState } from "react";
 import { AddedAsContributorNotification, MessageSubject, ProposalNotification } from "pages/notification";
 
@@ -310,7 +311,7 @@ export const useProjectCRUD = () => {
   const updateMetadata = async (projectOrId: string | Partial<{ id: string }>, metadata: Record<string, unknown>) => {
     if (!client) throw new Error("Not authenticated");
     const projectId = typeof projectOrId === "string" ? projectOrId : projectOrId.id!;
-    await client.resources.updateMetadata(projectId, metadata);
+    await updateResourceMetadataFields(client, projectId, metadata);
   };
 
   return {

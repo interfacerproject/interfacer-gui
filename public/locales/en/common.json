@@ -1,4 +1,13 @@
 {
+  "resourceAccess": {
+    "controller": "You control this resource.",
+    "loading": "Checking editing access… Your draft is kept.",
+    "read-only": "This resource is controlled by another person. You can review the form, but editing is paused. Your draft is kept.",
+    "unassigned": "No controller is assigned to this resource. Editing is unavailable until control is assigned. Your draft is kept.",
+    "organization": "Organization permissions are not evaluated in this personal-access view. Editing is paused; your draft is kept.",
+    "error": "Editing access could not be verified. Editing is paused; your draft is kept. Check again to retry.",
+    "checkAgain": "Check access again"
+  },
   "claimFlow": {
     "unavailable": "Import is unavailable because the source agent is not configured. Your form has not been submitted.",
     "detailsIncomplete": "The resource was imported, but its details or navigation could not be completed. Open the imported project to review it. Do not import it again.",
