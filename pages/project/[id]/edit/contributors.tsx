@@ -15,7 +15,7 @@ import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLa
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
 import { ProjectType } from "components/types";
-import { useProjectCRUD } from "hooks/useProjectCRUD";
+import { useMetadataDraft } from "hooks/useMetadataDraft";
 import { GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
@@ -69,10 +69,11 @@ const EditContributors: NextPageWithLayout = () => {
 
   /* Submit logic */
 
-  const { updateContributors } = useProjectCRUD();
+  // Saves against the values this form opened with (same-field conflicts are surfaced).
+  const { save } = useMetadataDraft(project);
 
   async function onSubmit(values: EditContributorsValues) {
-    await updateContributors(project.id!, values.contributors);
+    await save({ contributors: values.contributors });
   }
 
   /* Render */

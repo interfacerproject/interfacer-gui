@@ -306,5 +306,10 @@
   "Importing from LOSH is unavailable": "Der Import aus LOSH ist nicht verfügbar",
   "Mirrored on {{date}}": "Gespiegelt am {{date}}",
   "Source": "Quelle",
-  "Import": "Importieren"
+  "Import": "Importieren",
+  "draftConflict": {
+    "message": "Jemand hat {{fields}} geändert, nachdem du dieses Formular geöffnet hast. Dein Entwurf bleibt erhalten: Vergleiche ihn mit dem aktuellen Projekt und entscheide dann.",
+    "keepMine": "Meine Version trotzdem speichern",
+    "discard": "Entwurf verwerfen und neueste Version laden"
+  }
 }

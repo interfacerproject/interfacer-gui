@@ -38,6 +38,7 @@ loader._load = function (name, ...args) {
   if (name === "./EditProjectNav") return { __esModule: true, default: () => null };
   if (name === "./SubmitChangesBar") return require("../../components/partials/project/edit/SubmitChangesBar");
   if (name === "lib/errorFormatter") return require("../../lib/errorFormatter");
+  if (name === "lib/resourceMetadata") return require("../../lib/resourceMetadata");
   return originalLoad.call(this, name, ...args);
 };
 const EditFormLayout = require("../../components/partials/project/edit/EditFormLayout")

@@ -316,5 +316,10 @@
   "Importing from LOSH is unavailable": "Importing from LOSH is unavailable",
   "Mirrored on {{date}}": "Mirrored on {{date}}",
   "Source": "Source",
-  "Import": "Import"
+  "Import": "Import",
+  "draftConflict": {
+    "message": "Someone changed {{fields}} after you opened this form. Your draft is kept: compare it with the current project, then choose.",
+    "keepMine": "Save my version anyway",
+    "discard": "Discard my draft and load the latest version"
+  }
 }
