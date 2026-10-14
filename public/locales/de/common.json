@@ -318,5 +318,27 @@
     "notification": "Benachrichtigung",
     "ideaPoints": "Ideenpunkte",
     "strengthsPoints": "Stärkepunkte"
+  },
+  "projectCreation": {
+    "errorTitle": "Das Projekt konnte nicht erstellt werden",
+    "createdWithIssues": "Dein Projekt wurde erstellt.",
+    "failed": "Diese Schritte sind fehlgeschlagen – {{steps}}",
+    "skippedTitle": "Diese Schritte wurden übersprungen:",
+    "open": "Projekt öffnen",
+    "steps": {
+      "image": "Bild {{name}}",
+      "dpp": "digitaler Produktpass",
+      "citeDesign": "verknüpftes Design zitieren",
+      "markManufacturable": "verknüpftes Design als herstellbar markieren",
+      "relation": "Beziehung {{id}}",
+      "contributor": "Mitwirkende/r {{id}}",
+      "ideaPoints": "Ideenpunkte",
+      "strengthsPoints": "Stärkepunkte",
+      "skipped": {
+        "notController": "nur der Controller des Designs kann das tun",
+        "controlUnknown": "der Controller des Designs konnte nicht geprüft werden"
+      }
+    },
+    "skippedItem": "{{name}} – {{reason}}"
   }
 }
