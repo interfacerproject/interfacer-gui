@@ -321,5 +321,12 @@
     "message": "Someone changed {{fields}} after you opened this form. Your draft is kept: compare it with the current project, then choose.",
     "keepMine": "Save my version anyway",
     "discard": "Discard my draft and load the latest version"
+  },
+  "contributionProposal": {
+    "followUpsFailed": "Your proposal was created, but these follow-up steps failed – {{steps}}",
+    "openProposal": "Open the proposal",
+    "notification": "notification",
+    "ideaPoints": "idea points",
+    "strengthsPoints": "strengths points"
   }
 }
