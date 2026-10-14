@@ -314,5 +314,12 @@
     "message": "Qualcuno ha modificato {{fields}} dopo che hai aperto questo form. La tua bozza è conservata: confrontala con il progetto attuale, poi scegli.",
     "keepMine": "Salva comunque la mia versione",
     "discard": "Scarta la bozza e carica l’ultima versione"
+  },
+  "contributionProposal": {
+    "followUpsFailed": "La proposta è stata creata, ma questi passaggi successivi non sono riusciti – {{steps}}",
+    "openProposal": "Apri la proposta",
+    "notification": "notifica",
+    "ideaPoints": "punti idea",
+    "strengthsPoints": "punti forza"
   }
 }

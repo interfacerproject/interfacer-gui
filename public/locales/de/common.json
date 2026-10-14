@@ -311,5 +311,12 @@
     "message": "Jemand hat {{fields}} geändert, nachdem du dieses Formular geöffnet hast. Dein Entwurf bleibt erhalten: Vergleiche ihn mit dem aktuellen Projekt und entscheide dann.",
     "keepMine": "Meine Version trotzdem speichern",
     "discard": "Entwurf verwerfen und neueste Version laden"
+  },
+  "contributionProposal": {
+    "followUpsFailed": "Dein Vorschlag wurde erstellt, aber diese Folgeschritte sind fehlgeschlagen – {{steps}}",
+    "openProposal": "Vorschlag öffnen",
+    "notification": "Benachrichtigung",
+    "ideaPoints": "Ideenpunkte",
+    "strengthsPoints": "Stärkepunkte"
   }
 }
