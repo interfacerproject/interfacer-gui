@@ -1,4 +1,4 @@
-import { useProjectCRUD } from "hooks/useProjectCRUD";
+import { useMetadataDraft } from "hooks/useMetadataDraft";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
 
@@ -69,10 +69,11 @@ const EditMain: NextPageWithLayout = () => {
 
   /* Submit logic */
 
-  const { updateRelations } = useProjectCRUD();
+  // Saves against the values this form opened with (same-field conflicts are surfaced).
+  const { save } = useMetadataDraft(project);
 
   async function onSubmit(values: EditRelationsValues) {
-    await updateRelations(project.id!, values.relations);
+    await save({ relations: values.relations });
   }
 
   /* Render */

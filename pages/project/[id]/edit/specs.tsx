@@ -10,7 +10,7 @@ import ProductFiltersStep, {
   ProductFiltersStepValues,
 } from "components/partials/create/project/steps/ProductFiltersStep";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
-import { useProjectCRUD } from "hooks/useProjectCRUD";
+import { useMetadataDraft } from "hooks/useMetadataDraft";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
 import {
   derivedProductFilterTags,
@@ -51,7 +51,8 @@ export interface EditSpecsValues {
 
 const EditSpecs: NextPageWithLayout = () => {
   const { project } = useProject();
-  const { updateMetadata } = useProjectCRUD();
+  // Saves against the values this form opened with (same-field conflicts are surfaced).
+  const { save } = useMetadataDraft(project);
 
   const inferFromTags = (prefix: string, options: readonly string[]) => {
     const tags = project.classifiedAs || [];
@@ -159,7 +160,7 @@ const EditSpecs: NextPageWithLayout = () => {
       },
     });
 
-    await updateMetadata(project, {
+    await save({
       productFilters: normalized,
       price: normalized.price || "",
       availability: normalized.availability || "",

@@ -309,5 +309,10 @@
   "Importing from LOSH is unavailable": "L'import depuis LOSH est indisponible",
   "Mirrored on {{date}}": "Répliqué le {{date}}",
   "Source": "Source",
-  "Import": "Importer"
+  "Import": "Importer",
+  "draftConflict": {
+    "message": "Quelqu’un a modifié {{fields}} après l’ouverture de ce formulaire. Votre brouillon est conservé : comparez-le avec le projet actuel, puis choisissez.",
+    "keepMine": "Enregistrer quand même ma version",
+    "discard": "Abandonner mon brouillon et charger la dernière version"
+  }
 }

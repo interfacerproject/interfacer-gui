@@ -1,4 +1,4 @@
-import { useProjectCRUD } from "hooks/useProjectCRUD";
+import { useMetadataDraft } from "hooks/useMetadataDraft";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "pages/_app";
 
@@ -68,10 +68,11 @@ const EditLicenses: NextPageWithLayout = () => {
 
   /* Submit logic */
 
-  const { updateLicenses } = useProjectCRUD();
+  // Saves against the values this form opened with (same-field conflicts are surfaced).
+  const { save } = useMetadataDraft(project);
 
   async function onSubmit(values: EditLicensesValues) {
-    await updateLicenses(project.id!, values.licenses);
+    await save({ licenses: values.licenses });
   }
 
   /* Render */
