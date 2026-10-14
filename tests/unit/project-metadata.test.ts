@@ -59,6 +59,7 @@ loader._load = function (name, ...args) {
   if (name === "lib/tagging") return { TAG_PREFIX: {} };
   if (name === "lib/PointsDistribution" || name === "pages/notification") return {};
   if (name === "lib/resourceMetadata") return require("../../lib/resourceMetadata");
+  if (name === "lib/projectCreation") return require("../../lib/projectCreation");
   if (name === "lib/errorFormatter") return require("../../lib/errorFormatter");
   if (name === "lib/devLog") return { __esModule: true, default() {} };
   if (name === "next-i18next") return { useTranslation: () => ({ t: (s: string) => s }) };
