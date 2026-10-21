@@ -24,7 +24,6 @@ import PLabel from "components/polaris/PLabel";
 import PTitleSubtitle from "components/polaris/PTitleSubtitle";
 import { useAuth } from "hooks/useAuth";
 import useWallet from "hooks/useWallet";
-import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import {
   ACCEPT_PROPOSAL,
   QUERY_PROPOSAL,
@@ -50,7 +49,7 @@ const Proposal = () => {
     variables: { id: id?.toString() || "" },
   });
   const { sendMessage } = useInBoxContext();
-  const { addStrengthsPoints, addIdeaPoints } = useWallet({});
+  const { issueForEvent } = useWallet({});
 
   const unitAndCurrency = useQuery<GetUnitAndCurrencyQuery>(QUERY_UNIT_AND_CURRENCY).data?.instanceVariables;
   const [acceptProposal] = useMutation(ACCEPT_PROPOSAL);
@@ -147,9 +146,9 @@ const Proposal = () => {
       MessageSubject.CONTRIBUTION_ACCEPTED
     );
 
-    //economic system: points assignments
-    addStrengthsPoints(proposal.primaryIntents![0].resourceInventoriedAs!.primaryAccountable.id, IdeaPoints.OnAccept);
-    addIdeaPoints(user!.ulid, StrengthsPoints.OnAccept);
+    // economic system: points are now issued server-side from the verified
+    // accept event (recipient + amount derived by the Zenflows PDP, not here).
+    await issueForEvent({ type: "accept", id: economicEvents.data.accept.economicEvent.id });
 
     await refetch();
   };
