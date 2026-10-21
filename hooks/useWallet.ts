@@ -32,6 +32,7 @@ type UseWalletReturnValue = {
   strengthsTrend: string;
   addIdeaPoints: (id: string, amount?: number) => Promise<void>;
   addStrengthsPoints: (id: string, amount?: number) => Promise<void>;
+  issueForEvent: (event: { type: string; id: string }) => Promise<void>;
 };
 
 const useWallet = (_props: any = {}): UseWalletReturnValue => {
@@ -49,6 +50,10 @@ const useWallet = (_props: any = {}): UseWalletReturnValue => {
     strengthsTrend: "0",
     addIdeaPoints: async (id: string, amount?: number) => addPoints(id, Token.Idea, amount),
     addStrengthsPoints: async (id: string, amount?: number) => addPoints(id, Token.Strengths, amount),
+    issueForEvent: async (event: { type: string; id: string }) => {
+      if (!client) return;
+      await client.wallet.issueForEvent(event);
+    },
   };
 };
 
