@@ -148,7 +148,13 @@ const Proposal = () => {
 
     // economic system: points are now issued server-side from the verified
     // accept event (recipient + amount derived by the Zenflows PDP, not here).
-    await issueForEvent({ type: "accept", id: economicEvents.data.accept.economicEvent.id });
+    // The acceptance has already committed above; a point-issuance denial must
+    // not break the post-accept UX, so it is logged, not thrown.
+    try {
+      await issueForEvent({ type: "accept", id: economicEvents.data.accept.economicEvent.id });
+    } catch (e) {
+      devLog("point issuance for accept failed (non-fatal)", e);
+    }
 
     await refetch();
   };
