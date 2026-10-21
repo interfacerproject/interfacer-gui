@@ -13,28 +13,25 @@ import React, { useCallback, useState } from "react";
 const MEDUSA_URL = process.env.NEXT_PUBLIC_MEDUSA_URL || "http://localhost:9000";
 const ENDPOINT = `${MEDUSA_URL}/dev/interfacer/listings`;
 
+// Matches the accepted schema (medusa/src/modules/interfacer/project-resource.ts):
+// Passport uses ID/ProductID (capitalized); ProductID must equal resource.id;
+// actingPersonId must equal resource.primaryAccountable.id (the controller).
 const SAMPLE = {
-  actingPersonId: "01J8PERSONALICE0000000001",
+  actingPersonId: "01JTESTPERSON00000000000001",
   resource: {
-    id: "01J8RESALICE000000000001",
-    name: "3D-printed prosthetic hand v2",
-    note: "Open-source hardware; community fork, accepted contribution",
-    primaryAccountable: { id: "01J8PERSONALICE0000000001", name: "Alice" },
-    custodian: { id: "01J8PERSONALICE0000000001", name: "Alice" },
-    conformsTo: { id: "01J8SPEC0000000000000000001", name: "Prosthetic hand spec" },
-    accountingQuantity: { hasNumericalValue: 1, hasUnit: { label: "one" } },
-    trackingIdentifier: "PH2-0001",
+    id: "01JTESTRESOURCE000000000001",
+    name: "Recycled PETG desk organizer — sample",
+    primaryAccountable: { id: "01JTESTPERSON00000000000001" },
+    classifiedAs: ["Product"],
+    trackingIdentifier: "IF-SAMPLE-001",
+    onhandQuantity: { hasNumericalValue: 1, hasUnit: "unit:piece" },
   },
   dpp: {
-    productId: "01J8RESALICE000000000001",
-    name: "3D-printed prosthetic hand v2 — Digital Product Passport",
-    status: "published",
-    spec: { conformsTo: "01J8SPEC0000000000000000001", version: "2.0" },
-    attachments: [
-      { id: "att-001", kind: "design", url: "https://losh.example/ph2/design.zip" },
-      { id: "att-002", kind: "bom", url: "https://losh.example/ph2/bom.csv" },
-    ],
-    createdBy: "01J8PERSONALICE0000000001",
+    ID: "dpp-sample-0001",
+    ProductID: "01JTESTRESOURCE000000000001",
+    Status: "draft",
+    ProductOverview: { description: "PRIVATE SAMPLE: do not project passport sections" },
+    Attachments: [{ id: "private-attachment-sample" }],
   },
 };
 
@@ -143,5 +140,10 @@ const CommerceDevPage = () => {
     </main>
   );
 };
+
+// Local-dev tester: skip the auth wall and the app Layout so it is reachable
+// without a logged-in session / live Interfacer backend.
+(CommerceDevPage as any).publicPage = true;
+(CommerceDevPage as any).getLayout = (page: React.ReactNode) => page;
 
 export default CommerceDevPage;
