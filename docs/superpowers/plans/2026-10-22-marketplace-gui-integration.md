@@ -143,3 +143,18 @@ unit/proxy tests still green; docs present.
   → VF produce receipt ifrea_01M5HCB6…, provider p4-demo-provider-standard→buyer, resource
   ifdes_p4_organizer, service ifsvc_p4_standard, qty 2). Match showed 2 compatible + 4
   reasoned rejections; match-only design (no origin DPP) correctly disables purchase.
+- Phase 4: DONE (commit 2743370 + lint 1dc896b). e2e: build journey PASS end-to-end;
+  stock PASS-or-skip (skips when the demo run is sold out, by design). Unit 13/13,
+  check-types + eslint clean. STATUS doc written.
+- Final review: self-review (no subagent — session instruction is not to spawn agents).
+  Re-graded by effect. No Critical/Important. Review-focus items all covered by the
+  proxy/client unit tests + the live drives. Deferred minors:
+  - Final: minor (deferred): a non-JSON upstream error (e.g. an HTML 500 from Medusa)
+    surfaces as the generic "server not reachable" notice rather than the raw reason,
+    because the client parses JSON before checking status. Dev-only; endpoints return
+    JSON in practice.
+  - Final: minor (deferred): no explicit "retry capture" control if the local test
+    payment authorizes but capture fails (near-impossible with pp_system_default);
+    delivery still works, so the VF receipt is still reachable.
+
+## MARKETPLACE-GUI COMPLETE (bridge A)
