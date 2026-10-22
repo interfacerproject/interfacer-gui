@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Dyne.org foundation <foundation@dyne.org>.
 
+/* eslint-disable i18next/no-literal-string -- LOCAL DEV marketplace page, intentionally not translated */
 import React from "react";
 import { Receipt } from "../../lib/market/types";
 

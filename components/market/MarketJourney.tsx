@@ -7,6 +7,7 @@
 // journey so a reload resumes the same cart/order, mirroring the reference
 // storefront client.
 
+/* eslint-disable i18next/no-literal-string -- LOCAL DEV marketplace page, intentionally not translated */
 import React, { useCallback, useEffect, useState } from "react";
 import { JourneyState, Order, Receipt } from "../../lib/market/types";
 import { MarketClient } from "../../lib/market/client";

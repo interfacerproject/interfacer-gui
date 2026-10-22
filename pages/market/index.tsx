@@ -7,6 +7,7 @@
 // envelope produced by the Medusa dev signer (via /api/market), never a key in
 // the browser. Public dev page (no auth chrome), mirroring /dev/commerce.
 
+/* eslint-disable i18next/no-literal-string -- LOCAL DEV marketplace page, intentionally not translated */
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";

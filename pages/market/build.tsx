@@ -6,6 +6,7 @@
 // data), buy the build, mark it produced, and see the ValueFlows produce
 // receipt. All writes are signed with a real Ed25519 envelope via /api/market.
 
+/* eslint-disable i18next/no-literal-string -- LOCAL DEV marketplace page, intentionally not translated */
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
