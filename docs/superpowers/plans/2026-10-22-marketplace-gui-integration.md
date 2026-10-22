@@ -126,4 +126,20 @@ unit/proxy tests still green; docs present.
 
 ## Ledger (append-only; one line per phase)
 
-- (phases recorded here as completed)
+- Phase 1: DONE (commit e8b1aa4, tests: node --test market-client+market-proxy → 13/13).
+  Ruling: proxy allowlist extended to `store/*` and `auth/customer/emailpass` + the
+  `authorization`/`x-publishable-api-key` headers — the real checkout flow (ported from
+  app.js) needs Medusa store endpoints and the demo-customer bearer token, not only
+  `/dev/*` — cost if wrong: an over-broad allowlist, bounded to four known prefixes with
+  no client-chosen host. Proxy verified live through the running GUI → Medusa.
+- Phase 2: DONE (commit e8dbcfa, check-types clean; stock journey driven live in the
+  GUI → VF transfer receipt ifrea_01M5HC74…). Ruling: marketplace pages render standalone
+  (`getLayout = page => page`, `publicPage = true`) rather than inside the auth-gated
+  Layout/Sidebar chrome — the Sidebar returns null without a user, so wrapping a public
+  dev page in it would blank the nav anyway — cost if wrong: the page lacks the app chrome,
+  reachable by direct URL + the sidebar link for logged-in users. localStorage journey
+  state is wrapped in try/catch per the browser-storage guidance.
+- Phase 3: DONE (commit b314d42, check-types clean; build journey driven live in the GUI
+  → VF produce receipt ifrea_01M5HCB6…, provider p4-demo-provider-standard→buyer, resource
+  ifdes_p4_organizer, service ifsvc_p4_standard, qty 2). Match showed 2 compatible + 4
+  reasoned rejections; match-only design (no origin DPP) correctly disables purchase.
