@@ -89,6 +89,8 @@ export interface Receipt {
   quantity: number;
   has_point_in_time: string;
   service_id?: string;
+  // Bridge C: id of the live Zenflows EconomicEvent this receipt mirrors.
+  zenflows_event_id?: string | null;
   [k: string]: unknown;
 }
 

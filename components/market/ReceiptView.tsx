@@ -31,7 +31,17 @@ const ReceiptView = ({ receipt }: { receipt: Receipt }) => (
         receipt.has_point_in_time ? " · " + new Date(receipt.has_point_in_time).toLocaleString() : ""
       }`}
     />
-    <p className="mt-1 text-xs text-gray-400">Labeled local stand-in for a live Zenflows economic event.</p>
+    {receipt.zenflows_event_id ? (
+      <p className="mt-2 text-sm" data-testid="market-zenflows-event">
+        <span className="px-1.5 py-0.5 mr-1 text-xs font-semibold rounded bg-emerald-600 text-white">LIVE</span>
+        <span className="text-gray-500">Zenflows event: </span>
+        <code className="break-all">{receipt.zenflows_event_id}</code>
+      </p>
+    ) : (
+      <p className="mt-1 text-xs text-gray-400">
+        Labeled local stand-in for a live Zenflows economic event (set INTERFACER_ZENFLOWS_URL to write live).
+      </p>
+    )}
   </div>
 );
 
