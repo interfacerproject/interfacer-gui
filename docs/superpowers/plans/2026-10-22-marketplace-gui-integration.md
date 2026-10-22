@@ -55,11 +55,20 @@ doc written. No changes to gui `main` or zenflows. Draft PR open.
 
 **Build:**
 
-- Proxy: accept `GET/POST /api/market/<rest>`, where `<rest>` must match
-  `^(dev/store/(config|sign|capture)|dev/interfacer/[a-z0-9/_:-]+)$` (reject otherwise
-  with 400 `{reason:"market_path_forbidden"}`). Forward method, JSON body, and
-  `x-interfacer-auth` header to `${MEDUSA_INTERNAL_URL}/${rest}` with `Host` implied
-  by the URL. Relay upstream status + JSON + any `x-interfacer-auth` response header.
+- Proxy: accept `GET/POST /api/market/<rest>` (plus query string), where `<rest>`
+  must match
+  `^(dev/store/(config|sign|capture)|dev/interfacer/[a-z0-9/_:-]+|store/[a-z0-9/_:-]+|auth/customer/emailpass)$`
+  (the `auth/customer/emailpass` login yields the demo customer's Bearer token; forward
+  the `authorization` header too)
+  (reject otherwise with 400 `{reason:"market_path_forbidden"}`). The `store/*` prefix
+  is required: the real checkout flow (ported from `app.js`) uses Medusa store endpoints
+  `store/products`, `store/carts`, `store/carts/:id/customer`, `store/carts/:id/line-items`,
+  `store/carts/:id/complete`, `store/payment-collections`,
+  `store/payment-collections/:id/payment-sessions`, `store/orders/:id`. Forward method,
+  JSON body, the original query string, and BOTH `x-interfacer-auth` and
+  `x-publishable-api-key` headers to `${MEDUSA_INTERNAL_URL}/${rest}` (Host implied by the
+  URL). Relay upstream status + JSON + any `x-interfacer-auth` response header. The
+  publishable key is client-safe by Medusa design; no secret crosses the browser.
   Transport failure → 502 `{reason:"market_upstream_unreachable"}`.
 - Client: typed `loadScene/buyStock/deliver/listDesigns/match/buyBuild/produce/receiptsFor`
   calling only `/api/market/*`, orchestrating sign→write sequences, returning
