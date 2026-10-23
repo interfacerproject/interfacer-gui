@@ -113,6 +113,38 @@ test("an upstream refusal surfaces as ok:false with the reason", async () => {
   assert.equal((out as { ok: false; reason: string }).reason, "demo_product_required");
 });
 
+test("logged-in buyers authenticate with a signed challenge, not the disclosed fixture login", async () => {
+  const { fetchImpl, calls } = scriptedFetch({
+    "GET /api/market/dev/store/config": { body: SCENE },
+    "GET /api/market/dev/store/session": { body: { challenge: "one-use" } },
+    "POST /api/market/dev/store/session": { body: { token: "real-token", customer_id: "cus_real", buyer_person_id: "real-person", email: "real@market.invalid" } },
+    "POST /api/market/dev/store/prepare": { body: { op: "commerce.order.dev.capture", params: { order_id: "order_1" }, person: "real-person" } },
+    "POST /api/market/dev/store/capture": { body: { captured: true } },
+  });
+  const signed: unknown[] = [];
+  const client = createMarketClient({ fetchImpl, wallet: { personId: "real-person", sign: async op => { signed.push(op); return "REAL_PROOF"; } } });
+  assert.equal((await client.connect()).ok, true);
+  assert.equal(client.scene?.buyer_person_id, "real-person");
+  assert.equal(client.scene?.customer_id, "cus_real");
+  assert.ok(!calls.some(c => c.url.includes("emailpass")));
+  assert.deepEqual(signed[0], { op: "commerce.session.create", params: { challenge: "one-use" }, person: "real-person" });
+  await client.signed("/api/market/dev/store/capture", { orderId: "order_1" }, { action: "capture", orderId: "order_1" });
+  assert.equal(calls[calls.length - 1].headers["X-Interfacer-Auth"], "REAL_PROOF");
+  assert.ok(!calls.some(c => c.url.endsWith("/sign")));
+});
+
+test("a failed real-buyer session never falls back to the demo account", async () => {
+  const { fetchImpl, calls } = scriptedFetch({
+    "GET /api/market/dev/store/config": { body: SCENE },
+    "GET /api/market/dev/store/session": { body: { challenge: "one-use" } },
+    "POST /api/market/dev/store/session": { status: 403, body: { reason: "authorization_denied" } },
+  });
+  const client = createMarketClient({ fetchImpl, wallet: { personId: "real-person", sign: async () => "PROOF" } });
+  assert.deepEqual(await client.connect(), { ok: false, reason: "authorization_denied" });
+  assert.ok(!calls.some(c => c.url.includes("emailpass")));
+  await assert.rejects(client.signed("/api/market/dev/store/capture", {}, {}));
+});
+
 test("the low-level api throws a MarketError carrying the reason on a non-ok response", async () => {
   const { fetchImpl } = scriptedFetch({
     "GET /api/market/dev/store/config": { body: SCENE },

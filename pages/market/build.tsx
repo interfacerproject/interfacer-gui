@@ -7,11 +7,12 @@
 // receipt. All writes are signed with a real Ed25519 envelope via /api/market.
 
 /* eslint-disable i18next/no-literal-string -- LOCAL DEV marketplace page, intentionally not translated */
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "../_app";
-import { createMarketClient, MarketClient } from "../../lib/market/client";
+import type { MarketClient } from "../../lib/market/client";
+import { useMarketClient } from "../../hooks/useMarketClient";
 import { Design, MatchResult } from "../../lib/market/types";
 import DevBanner from "../../components/market/DevBanner";
 import MatchResults from "../../components/market/MatchResults";
@@ -98,13 +99,16 @@ const DesignRow = ({ client, design }: { client: MarketClient; design: Design })
 };
 
 const MarketBuild: NextPageWithLayout = () => {
-  const client = useMemo(() => createMarketClient(), []);
+  const client = useMarketClient();
   const [designs, setDesigns] = useState<Design[] | null>(null);
   const [status, setStatus] = useState("Connecting and loading designs…");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
+    setError(null);
+    setDesigns(null);
+    setStatus("Connecting the buyer session…");
     (async () => {
       const c = await client.connect();
       if (!alive) return;
@@ -137,6 +141,12 @@ const MarketBuild: NextPageWithLayout = () => {
         </Link>
       </div>
       <DevBanner />
+      {client.scene ? (
+        <p className="mb-4 text-sm break-words" data-testid="market-buyer">
+          Buyer: <code>{client.scene.buyer_person_id}</code>
+          {client.scene.password ? " · disposable demo account" : " · verified Interfacer account"}
+        </p>
+      ) : null}
 
       {error ? (
         <div className="p-4 border-l-4 rounded bg-red-50 border-red-500 text-red-900" data-testid="market-page-error">

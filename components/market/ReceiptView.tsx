@@ -34,7 +34,7 @@ const ReceiptView = ({ receipt }: { receipt: Receipt }) => (
     {receipt.zenflows_event_id ? (
       <p className="mt-2 text-sm" data-testid="market-zenflows-event">
         <span className="px-1.5 py-0.5 mr-1 text-xs font-semibold rounded bg-emerald-600 text-white">LIVE</span>
-        <span className="text-gray-500">Zenflows event: </span>
+        <span className="text-emerald-900">Zenflows handover event: </span>
         <code className="break-all">{receipt.zenflows_event_id}</code>
       </p>
     ) : (

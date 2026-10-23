@@ -38,7 +38,7 @@ function saveState(key: string, state: JourneyState) {
 }
 
 const MarketJourney = ({ client, kind, target, purchasable, unavailableReason }: Props) => {
-  const storageKey = `market:${kind}:${target}`;
+  const storageKey = `market:${client.scene?.run}:${client.scene?.customer_id}:${kind}:${target}`;
   const [state, setState] = useState<JourneyState>({});
   const [order, setOrder] = useState<Order | null>(null);
   const [busy, setBusy] = useState(false);
@@ -63,6 +63,8 @@ const MarketJourney = ({ client, kind, target, purchasable, unavailableReason }:
   useEffect(() => {
     const restored = loadState(storageKey);
     setState(restored);
+    setOrder(null);
+    setError(null);
     if (restored.orderId) void refreshOrder(restored.orderId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storageKey]);

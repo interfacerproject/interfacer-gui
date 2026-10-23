@@ -3,16 +3,16 @@
 //
 // LOCAL DEV marketplace — Catalog (stock journey). Browse resource-backed
 // products with their passport reference, buy one, mark it delivered, and see
-// the ValueFlows receipt. All commerce writes are signed with a REAL Ed25519
-// envelope produced by the Medusa dev signer (via /api/market), never a key in
-// the browser. Public dev page (no auth chrome), mirroring /dev/commerce.
+// the ValueFlows receipt. Logged-in buyers sign in their browser wallet;
+// suppliers and anonymous demo buyers use disposable Medusa fixture keys.
+// Public dev page (no auth chrome), mirroring /dev/commerce.
 
 /* eslint-disable i18next/no-literal-string -- LOCAL DEV marketplace page, intentionally not translated */
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "../_app";
-import { createMarketClient } from "../../lib/market/client";
+import { useMarketClient } from "../../hooks/useMarketClient";
 import { StoreProduct } from "../../lib/market/types";
 import DevBanner from "../../components/market/DevBanner";
 import ProductCard from "../../components/market/ProductCard";
@@ -28,13 +28,16 @@ export async function getStaticProps({ locale }: { locale: string }) {
 }
 
 const MarketCatalog: NextPageWithLayout = () => {
-  const client = useMemo(() => createMarketClient(), []);
+  const client = useMarketClient();
   const [products, setProducts] = useState<StoreProduct[] | null>(null);
   const [status, setStatus] = useState("Connecting and loading the current demo run…");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
+    setError(null);
+    setProducts(null);
+    setStatus("Connecting the buyer session…");
     (async () => {
       const c = await client.connect();
       if (!alive) return;
@@ -67,6 +70,12 @@ const MarketCatalog: NextPageWithLayout = () => {
         </Link>
       </div>
       <DevBanner />
+      {client.scene ? (
+        <p className="mb-4 text-sm break-words" data-testid="market-buyer">
+          Buyer: <code>{client.scene.buyer_person_id}</code>
+          {client.scene.password ? " · disposable demo account" : " · verified Interfacer account"}
+        </p>
+      ) : null}
 
       {error ? (
         <div className="p-4 border-l-4 rounded bg-red-50 border-red-500 text-red-900" data-testid="market-page-error">

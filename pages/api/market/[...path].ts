@@ -20,7 +20,7 @@ const UPSTREAM = process.env.MEDUSA_INTERNAL_URL || "http://localhost:9000";
 // traversal nor an absolute "http://" target can pass. Uppercase IS allowed
 // because real Medusa ids (order_01M5GW…, variant_…) are uppercase base32.
 const ALLOWED =
-  /^(dev\/store\/(config|sign|capture)|dev\/interfacer\/[A-Za-z0-9/_-]+|store\/[A-Za-z0-9/_-]+|auth\/customer\/emailpass)$/;
+  /^(dev\/store\/(config|sign|capture|session|prepare)|dev\/interfacer\/[A-Za-z0-9/_-]+|store\/[A-Za-z0-9/_-]+|auth\/customer\/emailpass)$/;
 
 const FORWARD_HEADERS = ["x-interfacer-auth", "x-publishable-api-key", "authorization"];
 
@@ -30,6 +30,22 @@ export async function proxy(
   fetchImpl: typeof fetch = fetch,
   upstream: string = UPSTREAM
 ): Promise<void> {
+  // Preserve Medusa's local-only boundary at the GUI hop too. Otherwise this
+  // proxy would make loopback-only fixture credentials/signing remotely usable.
+  const host = req.headers.host;
+  const origin = req.headers.origin;
+  const localSocket = ["127.0.0.1", "::1", "::ffff:127.0.0.1"].includes(req.socket?.remoteAddress || "");
+  res.setHeader("cache-control", "no-store");
+  if (process.env.NODE_ENV === "production" || !localSocket || typeof host !== "string" ||
+      !/^(localhost|127\.0\.0\.1|\[::1\])(?::\d{1,5})?$/.test(host) ||
+      (origin && origin !== `http://${host}`) || req.headers["sec-fetch-site"] === "cross-site") {
+    res.status(403).json({ reason: "local_marketplace_only" });
+    return;
+  }
+  if (!["GET", "HEAD", "POST"].includes((req.method || "GET").toUpperCase())) {
+    res.status(405).json({ reason: "market_method_forbidden" });
+    return;
+  }
   const raw = (req.query as { path?: string[] | string }).path;
   const parts = Array.isArray(raw) ? raw : raw ? [raw] : [];
   const rest = parts.join("/");

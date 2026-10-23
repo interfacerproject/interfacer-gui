@@ -3,8 +3,8 @@
 //
 // Browser-side client for the local Interfacer × Medusa marketplace. It talks
 // ONLY to the GUI's own /api/market/* proxy (never to Medusa directly, never
-// holding a key). Every protected write gets a fresh real Ed25519 envelope from
-// the Medusa dev signer via the proxy; no private key is ever present here.
+// receiving a private key). Logged-in buyers sign with their browser wallet;
+// only disposable demo buyers/suppliers use the Medusa dev signer.
 //
 // This is a faithful port of the reference storefront client
 // (interfacer-medusa/medusa/src/storefront/app.js): same call sequences, same
@@ -12,7 +12,10 @@
 
 import { Design, JourneyState, MarketError, MatchResult, Order, Receipt, Result, Scene, StoreProduct } from "./types";
 
+import type { BuyerWallet, PreparedOperation } from "./wallet";
+
 export interface MarketClientOptions {
+  wallet?: BuyerWallet;
   baseUrl?: string; // default "" (relative; the browser same-origin proxy)
   fetchImpl?: typeof fetch;
 }
@@ -43,12 +46,21 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     });
     const result: any = await res.json();
     if (!res.ok) {
-      throw new MarketError(result?.reason || "market_error", res.status, result?.message || result?.reason);
+      throw new MarketError(result?.reason || result?.message || "market_error", res.status, result?.message || result?.reason);
     }
     return result as T;
   }
 
   async function sign(action: Record<string, unknown>): Promise<{ header: string }> {
+    if (!token) throw new MarketError("not_connected", 401);
+    if (opts.wallet) {
+      const operation = await api<PreparedOperation>(url("dev/store/prepare"), action);
+      if (operation.person === opts.wallet.personId) return { header: await opts.wallet.sign(operation) };
+      // Supplier milestone assertions stay deliberately fixture-only. A server
+      // response must never trick the buyer wallet into signing another role.
+      if (!["deliver", "produce"].includes(String(action.action)))
+        throw new MarketError("buyer_wallet_operation_forbidden", 403);
+    }
     return api(url("dev/store/sign"), action);
   }
 
@@ -61,7 +73,8 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     return { ok: true, data };
   }
   function fail(e: unknown): Result<never> {
-    const reason = e instanceof MarketError ? e.reason : "market_upstream_unreachable";
+    const reason = e instanceof MarketError ? e.reason :
+      e instanceof Error && /^(buyer_wallet_|invalid_base58_key)/.test(e.message) ? e.message : "market_upstream_unreachable";
     return { ok: false, reason };
   }
 
@@ -70,13 +83,32 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   async function connect(): Promise<Result<Scene>> {
     try {
       scene = await api<Scene>(url("dev/store/config"));
-      const login = await api<{ token: string }>(url("auth/customer/emailpass"), {
-        email: scene.email,
-        password: scene.password,
-      });
-      token = login.token;
+      token = null;
+      if (opts.wallet) {
+        const { challenge } = await api<{ challenge: string }>(
+          url("dev/store/session") + "?" + new URLSearchParams({ person: opts.wallet.personId })
+        );
+        const signature = await opts.wallet.sign({
+          op: "commerce.session.create", params: { challenge }, person: opts.wallet.personId,
+        });
+        const login = await api<{ token: string; customer_id: string; buyer_person_id: string; email: string }>(
+          url("dev/store/session"), {}, signature
+        );
+        if (login.buyer_person_id !== opts.wallet.personId) throw new MarketError("buyer_identity_mismatch", 403);
+        token = login.token;
+        scene = { ...scene, customer_id: login.customer_id, buyer_person_id: login.buyer_person_id,
+          email: login.email, password: "" };
+      } else {
+        const login = await api<{ token: string }>(url("auth/customer/emailpass"), {
+          email: scene.email,
+          password: scene.password,
+        });
+        token = login.token;
+      }
       return ok(scene);
     } catch (e) {
+      scene = null;
+      token = null;
       return fail(e);
     }
   }

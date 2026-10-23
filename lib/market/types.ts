@@ -2,8 +2,8 @@
 // Copyright (C) 2026 Dyne.org foundation <foundation@dyne.org>.
 //
 // Types for the local Interfacer × Medusa marketplace client. LOCAL DEV ONLY:
-// the data is seeded and the receipts are a labeled local stand-in, not a live
-// Zenflows ledger. See docs/superpowers/specs/2026-10-22-marketplace-gui-integration-design.md
+// catalog is seeded. A zenflows_event_id confirms a live handover on the local
+// ledger; otherwise the receipt is local-only. See docs/marketplace-gui-STATUS.md
 
 export interface SceneProduct {
   product_id: string;
@@ -89,7 +89,7 @@ export interface Receipt {
   quantity: number;
   has_point_in_time: string;
   service_id?: string;
-  // Bridge C: id of the live Zenflows EconomicEvent this receipt mirrors.
+  // Id of the final live Zenflows transfer/handover (also after build production).
   zenflows_event_id?: string | null;
   [k: string]: unknown;
 }

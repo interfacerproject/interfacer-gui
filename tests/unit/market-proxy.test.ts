@@ -44,7 +44,8 @@ function mockReq(opts: {
     method: opts.method ?? "GET",
     url: opts.url ?? "/api/market/" + opts.path.join("/"),
     query: { path: opts.path },
-    headers: opts.headers ?? {},
+    headers: { host: "localhost:3002", ...opts.headers },
+    socket: { remoteAddress: "127.0.0.1" },
     body: opts.body,
   } as any;
 }
@@ -136,6 +137,43 @@ test("returns 502 with a reason when the upstream is unreachable", async () => {
   await proxy(mockReq({ path: ["dev", "store", "config"] }), res, fetchImpl as any, "http://up");
   assert.equal(cap.status, 502);
   assert.deepEqual(cap.body, { reason: "market_upstream_unreachable" });
+});
+
+test("keeps the local-only boundary at the proxy, including host rebinding, cross-site and production", async () => {
+  const { fetchImpl, calls } = mockUpstream(200, {});
+  const remote = mockReq({ path: ["dev", "store", "config"] });
+  remote.socket.remoteAddress = "10.0.0.2";
+  for (const req of [remote,
+    mockReq({ path: ["dev", "store", "config"], headers: { host: "evil.test:3002" } }),
+    mockReq({ path: ["dev", "store", "session"], method: "POST", headers: { origin: "http://evil.test" } }),
+    mockReq({ path: ["dev", "store", "config"], headers: { "sec-fetch-site": "cross-site" } })]) {
+    const { res, cap } = mockRes();
+    await proxy(req, res, fetchImpl, "http://up");
+    assert.equal(cap.status, 403);
+  }
+  const env: Record<string, string | undefined> = process.env;
+  const previous = env.NODE_ENV;
+  env.NODE_ENV = "production";
+  try {
+    const { res, cap } = mockRes();
+    await proxy(mockReq({ path: ["dev", "store", "config"] }), res, fetchImpl, "http://up");
+    assert.equal(cap.status, 403);
+  } finally { if (previous === undefined) delete env.NODE_ENV; else env.NODE_ENV = previous; }
+  assert.equal(calls.length, 0);
+});
+
+test("allows session and prepare but refuses unsupported methods", async () => {
+  const { fetchImpl, calls } = mockUpstream(200, {});
+  for (const path of ["session", "prepare"]) {
+    const { res, cap } = mockRes();
+    await proxy(mockReq({ path: ["dev", "store", path], method: "POST", headers: { origin: "http://localhost:3002" } }), res, fetchImpl, "http://up");
+    assert.equal(cap.status, 200);
+    assert.equal(cap.headers["cache-control"], "no-store");
+  }
+  const { res, cap } = mockRes();
+  await proxy(mockReq({ path: ["store", "carts"], method: "DELETE" }), res, fetchImpl, "http://up");
+  assert.equal(cap.status, 405);
+  assert.equal(calls.length, 2);
 });
 
 test("allows an uppercase Medusa id in the path (real order/variant ids)", async () => {
