@@ -17,6 +17,7 @@
     "e2e": "pnpm build && playwright test --headed",
     "e2e:headless": "pnpm build && playwright test",
     "test": "playwright test",
+    "test:market": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"CommonJS\",\"target\":\"ES2020\"}' node --require ts-node/register --test tests/unit/market-*.test.ts",
     "test:signup": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"CommonJS\"}' node --require ts-node/register --test tests/unit/signup*.test.ts",
     "translate": "./bin/translate.sh",
     "prepare": "husky install",
