@@ -3,6 +3,11 @@
 **Branch:** `feat/medusa-marketplace-gui` · **Updated:** 2026-10-23
 Backend: `interfacer-medusa`, `feat/zenflows-real-events` (PR #1); GUI draft PR #922.
 No main/Zenflows/SDK changes in this continuation.
+Implementation pins: backend `ef02bdb`, GUI `9c503df`. Maintained bilingual Medusa
+review snapshot: backend `docs/review/README.md` and
+http://127.0.0.1:3110/it/medusa.html (also `/en/medusa.html`).
+PR descriptions #1/#922 are refreshed with current evidence and scope; the earlier
+Claude cloud artifact is a historical snapshot, not a republished current guide.
 
 ## Implemented and verified
 
