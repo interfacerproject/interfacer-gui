@@ -100,6 +100,27 @@ test("a produce milestone routes to build-orders/:id/produce", async () => {
   assert.ok(calls.some(c => c.url === "/api/market/dev/interfacer/build-orders/bo_1/produce"));
 });
 
+test("retrySync advances the sync with an empty body, unsigned, then returns this order's refreshed receipt", async () => {
+  const live = { id: "r", action: "transfer", order_id: "order_1", receiver_id: SCENE.buyer_person_id,
+    zenflows_event_id: "06GEVENT", zenflows_sync: { id: "ifzs_1", status: "done" } };
+  const { fetchImpl, calls } = scriptedFetch({
+    "GET /api/market/dev/store/config": { body: SCENE },
+    "POST /api/market/auth/customer/emailpass": { body: { token: "t" } },
+    "POST /api/market/dev/interfacer/zenflows-sync/ifzs_1/retry": { body: { sync: { status: "done" } } },
+    "GET /api/market/dev/interfacer/receipts": { body: { receipts: [
+      { ...live, id: "other", order_id: "order_2" }, live] } },
+  });
+  const client = createMarketClient({ fetchImpl });
+  await client.connect();
+  const out = await client.retrySync("order_1", "ifzs_1");
+  assert.equal(out.ok, true);
+  assert.equal((out as { ok: true; data: { id: string } }).data.id, "r");
+  const retry = calls.find(c => c.url.endsWith("/retry"))!;
+  assert.deepEqual(retry.body, {});
+  assert.equal(retry.headers["X-Interfacer-Auth"], undefined);
+  assert.ok(!calls.some(c => c.url.includes("dev/store/sign")));
+});
+
 test("an upstream refusal surfaces as ok:false with the reason", async () => {
   const { fetchImpl } = scriptedFetch({
     "GET /api/market/dev/store/config": { body: SCENE },

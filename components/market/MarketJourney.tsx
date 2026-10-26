@@ -66,6 +66,13 @@ const MarketJourney = ({ client, kind, target, purchasable, unavailableReason }:
     setOrder(null);
     setError(null);
     if (restored.orderId) void refreshOrder(restored.orderId);
+    // A saved receipt may have synced in the background (scheduled outbox job).
+    if (restored.orderId && restored.receipt?.zenflows_sync && !restored.receipt.zenflows_event_id) {
+      void client.receipts().then(res => {
+        const fresh = res.ok ? res.data.find(r => r.order_id === restored.orderId) : undefined;
+        if (fresh) persist({ ...restored, receipt: fresh });
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storageKey]);
 
@@ -96,6 +103,20 @@ const MarketJourney = ({ client, kind, target, purchasable, unavailableReason }:
     }
     persist({ ...state, receipt: res.data });
   }, [client, kind, state, persist]);
+
+  const retrySync = useCallback(async () => {
+    const syncId = state.receipt?.zenflows_sync?.id;
+    if (!state.orderId || !syncId) return;
+    setBusy(true);
+    setError(null);
+    const res = await client.retrySync(state.orderId, syncId);
+    setBusy(false);
+    if (!res.ok) {
+      setError(res.reason);
+      return;
+    }
+    persist({ ...state, receipt: res.data });
+  }, [client, state, persist]);
 
   const receipt: Receipt | undefined = state.receipt;
   const captured = order?.payment_collections?.some(c => c.payments?.some(p => p.captured_at));
@@ -142,7 +163,7 @@ const MarketJourney = ({ client, kind, target, purchasable, unavailableReason }:
           ) : null}
 
           {receipt ? (
-            <ReceiptView receipt={receipt} />
+            <ReceiptView receipt={receipt} onRetry={retrySync} retrying={busy} />
           ) : (
             <>
               <p className="mt-2 text-sm text-gray-500">

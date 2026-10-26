@@ -12,8 +12,82 @@ const Row = ({ label, value }: { label: string; value?: string | number | null }
   </p>
 );
 
+const Badge = ({ tone, children }: { tone: string; children: React.ReactNode }) => (
+  <span className={`px-1.5 py-0.5 mr-1 text-xs font-semibold rounded text-white ${tone}`}>{children}</span>
+);
+
+// The live Zenflows side of a receipt: LIVE, SYNC PENDING (durable, retried),
+// SYNC BLOCKED (needs an operator; never auto-replayed) or LOCAL ONLY.
+const ZenflowsStatus = ({
+  receipt,
+  onRetry,
+  retrying,
+}: {
+  receipt: Receipt;
+  onRetry?: () => void;
+  retrying?: boolean;
+}) => {
+  const sync = receipt.zenflows_sync;
+  if (receipt.zenflows_event_id)
+    return (
+      <p className="mt-2 text-sm" data-testid="market-zenflows-event">
+        <Badge tone="bg-emerald-600">LIVE</Badge>
+        <span className="text-emerald-900">Zenflows handover event: </span>
+        <code className="break-all">{receipt.zenflows_event_id}</code>
+      </p>
+    );
+  if (sync?.status === "pending")
+    return (
+      <div className="mt-2 text-sm" data-testid="market-zenflows-pending">
+        <p>
+          <Badge tone="bg-amber-600">SYNC PENDING</Badge>
+          <span className="text-amber-900">
+            Saved locally; the Zenflows write is retried and reconciled, never duplicated.
+          </span>
+        </p>
+        <p className="text-xs text-gray-600">
+          Attempts: {sync.attempts}
+          {sync.inflight_step ? ` · checking step “${sync.inflight_step}”` : ""}
+          {sync.last_error ? ` · last error: ${sync.last_error}` : ""}
+        </p>
+        {onRetry ? (
+          <button
+            type="button"
+            className="mt-1 btn btn-outline btn-xs"
+            disabled={retrying}
+            onClick={onRetry}
+            data-testid="market-zenflows-retry"
+          >
+            {retrying ? "Retrying…" : "Retry now"}
+          </button>
+        ) : null}
+      </div>
+    );
+  if (sync?.status === "blocked")
+    return (
+      <p className="mt-2 text-sm" data-testid="market-zenflows-blocked">
+        <Badge tone="bg-red-600">SYNC BLOCKED</Badge>
+        <span className="text-red-900">Needs operator reconciliation: </span>
+        <code className="break-all">{sync.last_error}</code>
+      </p>
+    );
+  return (
+    <p className="mt-1 text-xs text-gray-400" data-testid="market-zenflows-local">
+      LOCAL ONLY — labeled stand-in for a live Zenflows economic event (set INTERFACER_ZENFLOWS_URL to write live).
+    </p>
+  );
+};
+
 // Presentational render of one local ValueFlows receipt (transfer | produce).
-const ReceiptView = ({ receipt }: { receipt: Receipt }) => (
+const ReceiptView = ({
+  receipt,
+  onRetry,
+  retrying,
+}: {
+  receipt: Receipt;
+  onRetry?: () => void;
+  retrying?: boolean;
+}) => (
   <div
     className="p-4 mt-3 border rounded bg-emerald-50 border-emerald-300"
     data-testid="market-receipt"
@@ -31,17 +105,7 @@ const ReceiptView = ({ receipt }: { receipt: Receipt }) => (
         receipt.has_point_in_time ? " · " + new Date(receipt.has_point_in_time).toLocaleString() : ""
       }`}
     />
-    {receipt.zenflows_event_id ? (
-      <p className="mt-2 text-sm" data-testid="market-zenflows-event">
-        <span className="px-1.5 py-0.5 mr-1 text-xs font-semibold rounded bg-emerald-600 text-white">LIVE</span>
-        <span className="text-emerald-900">Zenflows handover event: </span>
-        <code className="break-all">{receipt.zenflows_event_id}</code>
-      </p>
-    ) : (
-      <p className="mt-1 text-xs text-gray-400">
-        Labeled local stand-in for a live Zenflows economic event (set INTERFACER_ZENFLOWS_URL to write live).
-      </p>
-    )}
+    <ZenflowsStatus receipt={receipt} onRetry={onRetry} retrying={retrying} />
   </div>
 );
 

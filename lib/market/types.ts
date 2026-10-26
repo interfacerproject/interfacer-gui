@@ -91,7 +91,22 @@ export interface Receipt {
   service_id?: string;
   // Id of the final live Zenflows transfer/handover (also after build production).
   zenflows_event_id?: string | null;
+  // Durable outbox state; absent = local-only receipt (standalone or pre-outbox).
+  zenflows_sync?: ZenflowsSync;
   [k: string]: unknown;
+}
+
+export interface ZenflowsSync {
+  id: string;
+  status: "pending" | "done" | "blocked";
+  attempts: number;
+  last_error: string | null;
+  inflight_step: "process" | "create" | "transfer" | null;
+  next_attempt_at: string | null;
+  process_id: string | null;
+  resource_id: string | null;
+  creation_event_id: string | null;
+  transfer_event_id: string | null;
 }
 
 // Per-journey purchase state, persisted by the page (localStorage or React state).

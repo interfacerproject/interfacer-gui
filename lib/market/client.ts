@@ -246,6 +246,21 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     }
   }
 
+  // Advances a pending Zenflows sync now (the server still reconciles first and
+  // never re-sends a step it cannot prove absent), then re-reads that receipt.
+  async function retrySync(orderId: string, syncId: string): Promise<Result<Receipt>> {
+    try {
+      await api(url(`dev/interfacer/zenflows-sync/${encodeURIComponent(syncId)}/retry`), {});
+      const all = await receipts();
+      if (!all.ok) return all;
+      const receipt = all.data.find(r => r.order_id === orderId);
+      if (!receipt) throw new MarketError("receipt_not_found", 404);
+      return ok(receipt);
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
   return {
     api,
     signed,
@@ -257,6 +272,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     purchase,
     markMilestone,
     receipts,
+    retrySync,
     get scene() {
       return scene;
     },
