@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useAuth } from "./useAuth";
 import { createMarketClient } from "../lib/market/client";
-import { createBuyerWallet } from "../lib/market/wallet";
+import { createMarketWallet } from "../lib/market/wallet";
 
 export function useMarketClient() {
   const { user } = useAuth();
@@ -11,7 +11,12 @@ export function useMarketClient() {
   const privateKey = user?.privateKey;
   // Remount the client when the account changes. No bearer token, signing key or
   // order state is shared with the next buyer or silently downgraded to demo.
-  return useMemo(() => createMarketClient({
-    wallet: personId ? createBuyerWallet(personId, () => privateKey || "") : undefined,
-  }), [personId, privateKey]);
+  // The same wallet signs buyer actions and this person's own seller actions.
+  return useMemo(
+    () =>
+      createMarketClient({
+        wallet: personId ? createMarketWallet(personId, () => privateKey || "") : undefined,
+      }),
+    [personId, privateKey]
+  );
 }

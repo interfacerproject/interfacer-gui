@@ -104,6 +104,17 @@ const MarketJourney = ({ client, kind, target, purchasable, unavailableReason }:
     persist({ ...state, receipt: res.data });
   }, [client, kind, state, persist]);
 
+  // Live buyers wait for the seller's signed milestone, then see its receipt.
+  const checkReceipt = useCallback(async () => {
+    if (!state.orderId) return;
+    setBusy(true);
+    const res = await client.receipts();
+    setBusy(false);
+    const fresh = res.ok ? res.data.find(r => r.order_id === state.orderId) : undefined;
+    if (fresh) persist({ ...state, receipt: fresh });
+    else if (!res.ok) setError(res.reason);
+  }, [client, state, persist]);
+
   const retrySync = useCallback(async () => {
     const syncId = state.receipt?.zenflows_sync?.id;
     if (!state.orderId || !syncId) return;
@@ -164,6 +175,22 @@ const MarketJourney = ({ client, kind, target, purchasable, unavailableReason }:
 
           {receipt ? (
             <ReceiptView receipt={receipt} onRetry={retrySync} retrying={busy} />
+          ) : client.scene?.live ? (
+            <>
+              <p className="mt-2 text-sm text-gray-500" data-testid="market-awaiting-seller">
+                No VF event on payment. The {kind === "stock" ? "seller" : "maker"} signs the{" "}
+                {kind === "stock" ? "delivery" : "production"} with their own wallet; the receipt appears here then.
+              </p>
+              <button
+                type="button"
+                className="btn btn-outline btn-sm"
+                disabled={busy}
+                onClick={checkReceipt}
+                data-testid={`market-check-${kind}`}
+              >
+                {busy ? "Checking…" : "Check status"}
+              </button>
+            </>
           ) : (
             <>
               <p className="mt-2 text-sm text-gray-500">

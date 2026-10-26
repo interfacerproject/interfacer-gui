@@ -20,6 +20,12 @@ const ENABLED = process.env.MARKET_E2E === "1";
 
 test.describe("marketplace GUI journeys", () => {
   test.skip(!ENABLED, "set MARKET_E2E=1 with the GUI (:3002) and Medusa (:9000) running");
+  // Fixture journeys (disposable demo buyer/supplier keys) exist only when Medusa
+  // runs standalone; live mode refuses them. See tests/market-sellers.spec.ts.
+  test.beforeEach(async ({ request }) => {
+    const scene = await (await request.get("/api/market/dev/store/config")).json().catch(() => ({}));
+    test.skip(Boolean(scene.live), "standalone fixture journeys: run dev:up without INTERFACER_ZENFLOWS_URL");
+  });
 
   test("stock: buy an available unit, mark delivered, see the transfer receipt", async ({ page }) => {
     await page.goto("/market");

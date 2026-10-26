@@ -11,11 +11,15 @@ export interface SceneProduct {
   listing_id: string;
   resource_id: string;
   dpp_id: string;
+  seller_person_id?: string; // live listings only
 }
 
+// Standalone: a disposable fixture buyer login. Live (Medusa configured with a
+// Zenflows URL): no login is disclosed; every person signs with their wallet.
 export interface Scene {
   label: string;
   run: string;
+  live?: boolean;
   email: string;
   password: string;
   buyer_person_id: string;
@@ -133,4 +137,82 @@ export class MarketError extends Error {
     this.reason = reason;
     this.status = status;
   }
+}
+
+// --- live sellers (Zenflows-registered owners) ---
+
+export type CatalogKind = "design" | "service";
+
+export interface Requirements {
+  process: string[];
+  materials: string[];
+  max_dimensions_mm: { x: number; y: number; z: number };
+  tolerance_mm: number;
+  quantity: number;
+}
+export interface Capabilities {
+  processes: string[];
+  materials: string[];
+  build_volume_mm: { x: number; y: number; z: number };
+  min_tolerance_mm: number;
+}
+export type CatalogDocument =
+  | { schema_version: "interfacer-build-requirements-v1"; requirements: Requirements }
+  | {
+      schema_version: "interfacer-fabrication-capabilities-v1";
+      capabilities: Capabilities;
+      base_price_eur: number;
+      per_unit_price_eur: number;
+      location: { country_code: string; city: string };
+    };
+
+export interface CatalogEntry {
+  id: string;
+  kind: CatalogKind;
+  zenflows_resource_id: string;
+  revision: number;
+  resource_name: string;
+  document: CatalogDocument;
+  created_at?: string;
+}
+
+export interface ListingBinding {
+  id: string;
+  catalog_resource_id: string;
+  source_dpp_id: string;
+  seller_agent_id: string;
+  medusa_product_id: string;
+  medusa_variant_id: string;
+  policy_version: string;
+}
+
+export interface SellerOrder {
+  id: string;
+  status: string;
+  created_at?: string;
+  captured: boolean;
+  kind: "stock" | "build";
+  listing_id?: string;
+  resource_id?: string;
+  quote_id?: string;
+  design_id?: string;
+  service_id?: string;
+  quantity?: number;
+  total_eur?: number;
+  receipt: Receipt | null;
+}
+
+export interface SellerDashboard {
+  person: string;
+  listings: ListingBinding[];
+  catalog: CatalogEntry[];
+  orders: SellerOrder[];
+}
+
+// A Zenflows resource the signed-in person is accountable for (from the SDK).
+export interface OwnedResource {
+  id: string;
+  name: string;
+  conformsTo: { id: string; name: string };
+  onhandQuantity?: { hasNumericalValue: number | string };
 }

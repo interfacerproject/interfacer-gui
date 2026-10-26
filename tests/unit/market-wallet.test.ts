@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { createPrivateKey, createPublicKey, verify } from "node:crypto";
-import { canonicalOperation, createBuyerWallet, decodeBase58 } from "../../lib/market/wallet";
+import { canonicalOperation, createBuyerWallet, createMarketWallet, decodeBase58 } from "../../lib/market/wallet";
 
 // Public deterministic test seed (32 bytes of 0x07), NOT an account credential.
 const seed = "US517G5965aydkZ46HS38QLi7UQiSojurfbQfKCELFx";
@@ -35,6 +35,17 @@ test("browser wallet signs exact canonical UTF8 bytes with the existing Zenroom 
     { keys: JSON.stringify({ keyring: { eddsa: seed } }), data: JSON.stringify({ payload: canonicalOperation(auth.envelope) }) }
   );
   assert.equal(JSON.parse(result).eddsa_signature, auth.signature);
+});
+
+test("market wallet signs seller/owner operations only as itself; unknown operations are refused", async () => {
+  const wallet = createMarketWallet(person, () => seed);
+  for (const op of ["commerce.order.deliver", "commerce.order.produce", "catalog.design.register",
+    "catalog.service.register", "commerce.listing.live.create", "commerce.listing.publish"]) {
+    const auth = JSON.parse(Buffer.from(await wallet.sign({ person, op, params: {} }), "base64url").toString("utf8"));
+    assert.equal(auth.envelope.op, op);
+    await assert.rejects(wallet.sign({ person: "06GOTHERSELLER000000000000", op, params: {} }), /buyer_wallet_operation_forbidden/);
+  }
+  await assert.rejects(wallet.sign({ person, op: "commerce.admin.anything", params: {} }), /buyer_wallet_operation_forbidden/);
 });
 
 test("wallet refuses supplier actions and another person; canonicalizer rejects non-JSON", async () => {

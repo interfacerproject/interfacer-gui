@@ -20,7 +20,7 @@ const UPSTREAM = process.env.MEDUSA_INTERNAL_URL || "http://localhost:9000";
 // traversal nor an absolute "http://" target can pass. Uppercase IS allowed
 // because real Medusa ids (order_01M5GW…, variant_…) are uppercase base32.
 const ALLOWED =
-  /^(dev\/store\/(config|sign|capture|session|prepare)|dev\/interfacer\/[A-Za-z0-9/_-]+|store\/[A-Za-z0-9/_-]+|auth\/customer\/emailpass)$/;
+  /^(dev\/store\/(config|sign|capture|session|prepare|seller)|dev\/interfacer\/[A-Za-z0-9/_-]+|store\/[A-Za-z0-9/_-]+|auth\/customer\/emailpass)$/;
 
 const FORWARD_HEADERS = ["x-interfacer-auth", "x-publishable-api-key", "authorization"];
 

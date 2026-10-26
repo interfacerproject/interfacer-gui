@@ -10,7 +10,20 @@
 // (interfacer-medusa/medusa/src/storefront/app.js): same call sequences, same
 // shapes. LOCAL DEV ONLY — seeded data, labeled stand-in receipts.
 
-import { Design, JourneyState, MarketError, MatchResult, Order, Receipt, Result, Scene, StoreProduct } from "./types";
+import {
+  CatalogDocument,
+  CatalogKind,
+  Design,
+  JourneyState,
+  MarketError,
+  MatchResult,
+  Order,
+  Receipt,
+  Result,
+  Scene,
+  SellerDashboard,
+  StoreProduct,
+} from "./types";
 
 import type { BuyerWallet, PreparedOperation } from "./wallet";
 
@@ -46,22 +59,45 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     });
     const result: any = await res.json();
     if (!res.ok) {
-      throw new MarketError(result?.reason || result?.message || "market_error", res.status, result?.message || result?.reason);
+      throw new MarketError(
+        result?.reason || result?.message || "market_error",
+        res.status,
+        result?.message || result?.reason
+      );
     }
     return result as T;
   }
+
+  // The one operation each user action may sign: a server-prepared operation
+  // for any other op (or another person) is refused before the wallet sees it.
+  const EXPECTED_OP: Record<string, string> = {
+    checkout: "commerce.order.authorize",
+    build: "commerce.order.build.purchase",
+    capture: "commerce.order.dev.capture",
+    deliver: "commerce.order.deliver",
+    produce: "commerce.order.produce",
+  };
 
   async function sign(action: Record<string, unknown>): Promise<{ header: string }> {
     if (!token) throw new MarketError("not_connected", 401);
     if (opts.wallet) {
       const operation = await api<PreparedOperation>(url("dev/store/prepare"), action);
+      if (operation.op !== EXPECTED_OP[String(action.action)])
+        throw new MarketError("buyer_wallet_operation_forbidden", 403);
       if (operation.person === opts.wallet.personId) return { header: await opts.wallet.sign(operation) };
-      // Supplier milestone assertions stay deliberately fixture-only. A server
-      // response must never trick the buyer wallet into signing another role.
-      if (!["deliver", "produce"].includes(String(action.action)))
+      // Live: there is no dev signer; only standalone fixture suppliers remain.
+      if (scene?.live || !["deliver", "produce"].includes(String(action.action)))
         throw new MarketError("buyer_wallet_operation_forbidden", 403);
     }
     return api(url("dev/store/sign"), action);
+  }
+
+  // Owner/seller operations whose params the user chose (catalog documents,
+  // listings): signed directly by the wallet as the signed-in person.
+  async function ownerSigned<T = any>(path: string, op: string, params: Record<string, unknown>, body: unknown) {
+    if (!opts.wallet) throw new MarketError("login_required", 401);
+    const header = await opts.wallet.sign({ op, params, person: opts.wallet.personId });
+    return api<T>(path, body, header);
   }
 
   async function signed<T = any>(path: string, body: unknown, action: Record<string, unknown>): Promise<T> {
@@ -73,8 +109,12 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     return { ok: true, data };
   }
   function fail(e: unknown): Result<never> {
-    const reason = e instanceof MarketError ? e.reason :
-      e instanceof Error && /^(buyer_wallet_|invalid_base58_key)/.test(e.message) ? e.message : "market_upstream_unreachable";
+    const reason =
+      e instanceof MarketError
+        ? e.reason
+        : e instanceof Error && /^(buyer_wallet_|invalid_base58_key)/.test(e.message)
+        ? e.message
+        : "market_upstream_unreachable";
     return { ok: false, reason };
   }
 
@@ -89,15 +129,27 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
           url("dev/store/session") + "?" + new URLSearchParams({ person: opts.wallet.personId })
         );
         const signature = await opts.wallet.sign({
-          op: "commerce.session.create", params: { challenge }, person: opts.wallet.personId,
+          op: "commerce.session.create",
+          params: { challenge },
+          person: opts.wallet.personId,
         });
         const login = await api<{ token: string; customer_id: string; buyer_person_id: string; email: string }>(
-          url("dev/store/session"), {}, signature
+          url("dev/store/session"),
+          {},
+          signature
         );
         if (login.buyer_person_id !== opts.wallet.personId) throw new MarketError("buyer_identity_mismatch", 403);
         token = login.token;
-        scene = { ...scene, customer_id: login.customer_id, buyer_person_id: login.buyer_person_id,
-          email: login.email, password: "" };
+        scene = {
+          ...scene,
+          customer_id: login.customer_id,
+          buyer_person_id: login.buyer_person_id,
+          email: login.email,
+          password: "",
+        };
+      } else if (scene.live) {
+        // Live mode discloses no demo login: buying and selling need a wallet.
+        throw new MarketError("login_required", 401);
       } else {
         const login = await api<{ token: string }>(url("auth/customer/emailpass"), {
           email: scene.email,
@@ -251,14 +303,69 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   async function retrySync(orderId: string, syncId: string): Promise<Result<Receipt>> {
     try {
       await api(url(`dev/interfacer/zenflows-sync/${encodeURIComponent(syncId)}/retry`), {});
-      const all = await receipts();
-      if (!all.ok) return all;
-      const receipt = all.data.find(r => r.order_id === orderId);
+      // By order, not by buyer: a seller retries the sync of an order they sold.
+      const all = await api<{ receipts: Receipt[] }>(url("dev/interfacer/receipts"));
+      const receipt = all.receipts.find(r => r.order_id === orderId);
       if (!receipt) throw new MarketError("receipt_not_found", 404);
       return ok(receipt);
     } catch (e) {
       return fail(e);
     }
+  }
+
+  // --- seller / owner (live mode) ---
+
+  async function sellerDashboard(): Promise<Result<SellerDashboard>> {
+    try {
+      return ok(await api<SellerDashboard>(url("dev/store/seller")));
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  async function registerCatalog(kind: CatalogKind, resourceId: string, document: CatalogDocument) {
+    try {
+      const params = { resource_id: resourceId, document };
+      const path = url(`dev/interfacer/catalog/${kind === "design" ? "designs" : "services"}`);
+      return ok(await ownerSigned<{ created: boolean }>(path, `catalog.${kind}.register`, params, params));
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  // List one unit of the person's own Zenflows product: create the live listing,
+  // publish its EUR price and allocate its single unit (all owner-signed).
+  async function listProduct(resourceId: string, priceEUR: number): Promise<Result<{ listing_id: string }>> {
+    try {
+      const body = { resource_id: resourceId };
+      const created = await ownerSigned<{ binding: { id: string } }>(
+        url("dev/interfacer/listings/live"),
+        "commerce.listing.live.create",
+        body,
+        body
+      );
+      const id = created.binding.id;
+      await ownerSigned(
+        url(`dev/interfacer/listings/${id}/publish`),
+        "commerce.listing.publish",
+        { listing_id: id, priceEUR },
+        { priceEUR }
+      );
+      await ownerSigned(
+        url(`dev/interfacer/listings/${id}/checkout`),
+        "commerce.listing.checkout.setup",
+        { listing_id: id },
+        {}
+      );
+      return ok({ listing_id: id });
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  // Sellers sign their own milestone; the order need not be theirs as a buyer.
+  async function markSold(kind: "stock" | "build", orderId: string) {
+    return markMilestone(kind, orderId);
   }
 
   return {
@@ -273,6 +380,10 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     markMilestone,
     receipts,
     retrySync,
+    sellerDashboard,
+    registerCatalog,
+    listProduct,
+    markSold,
     get scene() {
       return scene;
     },

@@ -9,12 +9,12 @@
 
 /* eslint-disable i18next/no-literal-string -- LOCAL DEV marketplace page, intentionally not translated */
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "../_app";
 import { useMarketClient } from "../../hooks/useMarketClient";
 import { StoreProduct } from "../../lib/market/types";
 import DevBanner from "../../components/market/DevBanner";
+import MarketNav from "../../components/market/MarketNav";
 import ProductCard from "../../components/market/ProductCard";
 import MarketJourney from "../../components/market/MarketJourney";
 
@@ -63,13 +63,8 @@ const MarketCatalog: NextPageWithLayout = () => {
 
   return (
     <main className="max-w-4xl p-6 mx-auto">
-      <div className="flex items-center justify-between mb-2">
-        <h1 className="text-2xl font-bold">Interfacer marketplace — Catalog</h1>
-        <Link href="/market/build">
-          <a className="link link-primary">Build on demand →</a>
-        </Link>
-      </div>
-      <DevBanner />
+      <MarketNav title="Catalog" current="/market" />
+      <DevBanner live={client.scene?.live} />
       {client.scene ? (
         <p className="mb-4 text-sm break-words" data-testid="market-buyer">
           Buyer: <code>{client.scene.buyer_person_id}</code>
@@ -84,6 +79,10 @@ const MarketCatalog: NextPageWithLayout = () => {
               Marketplace server not reachable. Start it with <code>npm run dev:up</code> in interfacer-medusa, then
               reload.
             </p>
+          ) : error === "login_required" ? (
+            <p data-testid="market-login-required">
+              This marketplace runs against live Zenflows: sign in to Interfacer to buy with your own wallet.
+            </p>
           ) : (
             <p>Could not load the marketplace: {error}</p>
           )}
@@ -93,7 +92,11 @@ const MarketCatalog: NextPageWithLayout = () => {
       ) : (
         <div className="space-y-4" data-testid="market-catalog">
           {products && products.length === 0 ? (
-            <p>No published resource-backed products in this demo run. Restart dev:up to seed fresh units.</p>
+            <p>
+              {client.scene?.live
+                ? "Nothing listed yet. Sellers list their own Zenflows products from the Offer page."
+                : "No published resource-backed products in this demo run. Restart dev:up to seed fresh units."}
+            </p>
           ) : null}
           {products?.map(product => {
             const variant = product.variants?.[0];

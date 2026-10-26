@@ -8,13 +8,13 @@
 
 /* eslint-disable i18next/no-literal-string -- LOCAL DEV marketplace page, intentionally not translated */
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { NextPageWithLayout } from "../_app";
 import type { MarketClient } from "../../lib/market/client";
 import { useMarketClient } from "../../hooks/useMarketClient";
 import { Design, MatchResult } from "../../lib/market/types";
 import DevBanner from "../../components/market/DevBanner";
+import MarketNav from "../../components/market/MarketNav";
 import MatchResults from "../../components/market/MatchResults";
 import MarketJourney from "../../components/market/MarketJourney";
 
@@ -134,13 +134,8 @@ const MarketBuild: NextPageWithLayout = () => {
 
   return (
     <main className="max-w-4xl p-6 mx-auto">
-      <div className="flex items-center justify-between mb-2">
-        <h1 className="text-2xl font-bold">Interfacer marketplace — Build on demand</h1>
-        <Link href="/market">
-          <a className="link link-primary">← Catalog</a>
-        </Link>
-      </div>
-      <DevBanner />
+      <MarketNav title="Build on demand" current="/market/build" />
+      <DevBanner live={client.scene?.live} />
       {client.scene ? (
         <p className="mb-4 text-sm break-words" data-testid="market-buyer">
           Buyer: <code>{client.scene.buyer_person_id}</code>
@@ -163,7 +158,13 @@ const MarketBuild: NextPageWithLayout = () => {
         <p className="text-gray-500">{status}</p>
       ) : (
         <div className="space-y-4" data-testid="market-designs">
-          {designs && designs.length === 0 ? <p>No designs seeded. Restart the local demo.</p> : null}
+          {designs && designs.length === 0 ? (
+            <p>
+              {client.scene?.live
+                ? "No registered designs yet. Owners register a design's requirements from the Offer page."
+                : "No designs seeded. Restart the local demo."}
+            </p>
+          ) : null}
           {designs?.map(design => (
             <DesignRow key={design.id} client={client} design={design} />
           ))}
