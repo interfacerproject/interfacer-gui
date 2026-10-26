@@ -1,108 +1,107 @@
 # Marketplace GUI integration — STATUS
 
-**Branch:** `feat/medusa-marketplace-gui` · **Updated:** 2026-10-23
+**Branch:** `feat/medusa-marketplace-gui` · **Updated:** 2026-10-26
 Backend: `interfacer-medusa`, `feat/zenflows-real-events` (PR #1); GUI draft PR #922.
-No main/Zenflows/SDK changes in this continuation.
-Implementation pins: backend `ef02bdb`, GUI `9c503df`. Maintained bilingual Medusa
-review snapshot: backend `docs/review/README.md` and
+No main/Zenflows/SDK changes. Implementation pins: backend `8018cb4`, GUI `f76a53e`.
+Maintained bilingual review snapshot: backend `docs/review/README.md` and
 http://127.0.0.1:3110/it/medusa.html (also `/en/medusa.html`).
-PR descriptions #1/#922 are refreshed with current evidence and scope; the earlier
-Claude cloud artifact is a historical snapshot, not a republished current guide.
 
 ## Implemented and verified
 
-- Native `/market` and `/market/build` journeys: Medusa products, carts, orders,
-  manual/test payment, deterministic matching and immutable priced quotes.
-- **Logged-in buyers sign with their existing browser wallet.** A one-use challenge
-  is verified against the Person's registered Zenflows Ed25519 public key. The
-  backend provisions/reuses a native customer and immutable identity link. It never
-  receives a private key or trusts a requested buyer/customer/public key.
-- Buyer checkout/build/capture signatures bind the actual server-resolved facts.
-  Registry/signature failure never downgrades the account to the demo customer.
-- Anonymous visitors can still run the original explicitly labeled fixture demo.
-  Supplier delivery/production assertions still use disposable fixture keys;
-  the dev signer refuses to sign for a real buyer.
-- Live stock: `raise` a distinct per-listing resource → `transfer` to the buyer.
-- Live build: **Process → produce → transfer**. Production has `outputOf`, and the
-  provider receives its own output before handing it over to the buyer.
-- The receiver comes from the order's verified identity link, not the fixed demo
-  receiver environment variable. **LIVE** links the final Zenflows handover event,
-  including for a local receipt whose milestone action is `produce`.
-- Browser purchase state is scoped to run/customer/target. Changing account cannot
-  restore another customer's saved cart/order/receipt.
-- Server-side proxy: fixed upstream, allowlisted paths/methods, loopback socket and
-  Host, same-origin, non-production, no-store responses. It forwards signed proofs,
-  never a private key, trusted user header or client-chosen target.
+**Live mode** = Medusa started with a Zenflows URL. In live mode there is no demo
+login and no dev signer: every person signs with their own Interfacer wallet.
+Standalone Medusa keeps the original fixture demo (`tests/market.spec.ts`,
+`tests/market-identity.spec.ts` skip themselves in live mode).
+
+- **Buyers** (`/market`, `/market/build`):
+  - Session: a one-use challenge signed by the browser wallet and verified against
+    the key registered in Zenflows.
+  - Checkout, build acceptance and capture are wallet-signed.
+  - After paying, the buyer waits for the seller's signed milestone ("Check
+    status").
+- **Owners and sellers**
+  - `/market/offer` lists only the person's OWN Zenflows Design, Service and
+    Product resources (SDK query). From there they can:
+    - register a design's structured requirements;
+    - register a service's capabilities, fixed prices and location (versioned
+      documents);
+    - list one unit of a product.
+    All signed with the wallet.
+  - `/market/sales` is the seller console: orders on my listings and services,
+    "Mark delivered / produced" signed with my wallet, and receipts with their
+    Zenflows sync state.
+- **Wallet roles:**
+  - The market wallet signs buyer and seller operations only as itself.
+  - The client pins the one operation each clicked action may sign, so a server
+    response cannot swap it.
+- **Receipts**:
+  - **LIVE**: the handover id of the completed durable sync.
+  - **SYNC PENDING**: saved, still being written or awaiting my signature. Has
+    Retry.
+  - **SYNC BLOCKED**: needs an operator.
+  - **LOCAL ONLY**: no remote write claimed.
+- **Enforced Zenflows authorization** (`GQL_AUTH_CALLS` + `AUTHZ_ENFORCE`):
+  - The sales console fetches Medusa's exact body for each pending write.
+  - `lib/market/relay.ts` checks it: pinned mutation shape, provider = me, a
+    handover's receiver = the order's buyer.
+  - The console signs it with the SDK's `signGraphQLRequest` and posts the
+    signature.
+  - Medusa verifies it against my registered key and relays it once.
+- The server-side proxy stays loopback-only and allowlisted. It forwards signed
+  proofs, never a private key, trusted user header or client-chosen target.
 
 ## Deliberate local boundaries
 
-The match catalog, service capabilities, prices and merchant assertions remain
-seeded demo data. Payments are manual/test, not real money. The seller agent/unit
-mapping is still a single configured provider. Without live configuration, or on a
-write failure, receipts are local-only and **do not** show LIVE. No successor DPP,
-remote PDP/delegation authorization, production deployment or crash-safe outbox is
-claimed. General commerce nonce replay/revocation remains inherited; session
-challenges alone are single-use and single-process.
-
-The current local Zenflows demo has auth enforcement disabled. Do not expose it or
-the GUI fixture proxy publicly. See the backend's `docs/zenflows-bridge.md` for the
-protocol, environment, migration, live evidence and recovery limitations.
+Payments are manual/test. Catalog documents are owner assertions validated for
+shape, not physical capability proof. Owners must be Persons; organisation owners
+are follow-up `interfacer-gui-4j3`. The outbox marker currently shows as the project
+description of marketplace-created resources in GUI lists (`interfacer-gui-zzi`).
+General commerce nonce replay/revocation remains inherited. Do not expose these
+dev endpoints publicly. Protocol, environment and limits:
+backend `docs/zenflows-bridge.md`.
 
 ## Run and click
 
 ```bash
-# Backend: configure the local Zenflows bridge before starting, as documented.
-cd interfacer-medusa && npm run dev:up
-
-# GUI, with compatible Zenflows PR #84 and locally linked SDK PR #7:
-cd interfacer-gui-medusa
-pnpm exec next dev -p 3002
+# Zenflows PR #84 at :8000 (optionally GQL_AUTH_CALLS=true AUTHZ_ENFORCE=true AUTHZ_ALLOW_UNCHECKED=false)
+cd interfacer-medusa && INTERFACER_ZENFLOWS_URL=http://127.0.0.1:8000/api npm run dev:up
+# enforced Zenflows also needs INTERFACER_ZENFLOWS_SIGNED_WRITES=true and the
+# Medusa service Person (INTERFACER_ZENFLOWS_SERVICE_USER / _SEED), see TESTING.md P9.
+cd interfacer-gui-medusa && pnpm exec next dev -p 3002
 ```
 
-The server-only `MEDUSA_INTERNAL_URL` defaults to `http://localhost:9000`.
-For a real buyer, sign in to Interfacer first, then open `/market` or `/market/build`.
-The page identifies the buyer and whether the session is verified or disposable.
-An anonymous visit intentionally uses the demo account instead.
+1. A design owner and a maker sign in and open **Offer**. They register their
+   Design and Service. A seller lists a Product.
+2. A buyer opens **Catalog** (stock) or **Build on demand** (Match, Buy build), and
+   pays.
+3. The seller or maker opens **My sales** and signs Mark delivered / produced (and,
+   with enforced Zenflows, each write).
+4. The buyer's receipt turns LIVE.
 
-**Stock:** enabled Buy → order/test payment → Mark delivered → transfer receipt.
+## Validation (2026-10-26)
 
-**Build:** design with origin DPP → Match → Buy build → Mark produced → produce
-milestone receipt, whose LIVE handover follows an actual Process/produce.
-
-Stock is finite. Restarting `dev:up` explicitly publishes a new demo run without
-replenishing old units or deleting existing orders/receipts.
-
-## Validation (2026-10-23)
-
-- `npm run test:market`: **20/20** client, proxy, wallet tests.
-- `npm run check-types`: clean; targeted ESLint clean.
-- Backend `npm run test:unit`: **21/21**; backend typecheck clean.
-- Backend historical `npm run test:all`: **9/9 suites**, including signed refusal
-  matrices, native commerce workflows and driven storefront browsers. Afterward
-  Medusa was restored with the same live bridge environment and a fresh run with
-  three available stock units; existing orders/receipts were retained.
-- Four **Chromium end-to-end journeys pass**, no stock skip in this run: original
-  demo stock/build and new verified-account stock/build.
-- Live suite queries the actual Zenflows events to verify receiver, produce event,
-  finished Process, quantities and references; session-proof replay, signer misuse
-  and cross-account order access are refused. Normal stock retry reuses the receipt.
-- Desktop/mobile (1440/390px) inspected; no horizontal overflow. Captures under
-  `test-results/market-identity-{desktop,mobile}.png` (ignored generated artifacts).
+- `npm run test:market`: **28/28** (proxy, client incl. pinned actions and live
+  mode, wallet roles, relay checks, Zenroom/Node/WebCrypto signing).
+- `npm run check-types` and targeted ESLint: clean.
+- `tests/market-sellers.spec.ts` (Chromium, live Medusa, fresh registered People):
+  - registration and listing via the GUI;
+  - buyer stock + build;
+  - each seller signs their own milestone;
+  - Zenflows confirms provider/receiver, the finished Process and the buyer-owned
+    destination;
+  - proof replay, the dev signer and a foreign-order prepare are refused;
+  - no overflow at 390 px.
+  It passes with Zenflows enforcement off and **on**. Ordinary GUI pages (home,
+  projects, profile) load without Zenflows errors under enforcement.
+- Backend: 50 unit tests, live fault proxy 8/8 + restart (both modes), real-actor
+  probe, `test:all` 9/9 — see backend `TESTING.md` P7–P9.
 
 ```bash
 npm run test:market
 npm run check-types
-MARKET_LIVE_E2E=1 MARKET_E2E=1 TEST_BASE_URL=http://localhost:3002 \
-  ./node_modules/.bin/playwright test tests/market-identity.spec.ts tests/market.spec.ts \
-  --project=chromium --workers=1
+MARKET_LIVE_E2E=1 TEST_BASE_URL=http://localhost:3002 \
+  [MARKET_TEST_ZENFLOWS_ADMIN=<admin, enforced Zenflows only>] \
+  ./node_modules/.bin/playwright test tests/market-sellers.spec.ts --project=chromium --workers=1
 ```
 
-`tests/market-identity.spec.ts` registers fresh disposable test People and drives
-real buyer-wallet signatures; it requires the local Zenflows test configuration.
-It creates retained local test data. Stock tests skip when a run is sold out;
-production/build remains repeatable. Unit tests require no services.
-
-The earlier Bridge A spec/plan under `docs/superpowers/` records the historical
-fixture-only implementation; this status and the backend bridge document describe
-the current buyer-wallet/live-event behavior. Task tracking: Beads
-`interfacer-gui-25f`, not a new markdown task ledger.
+Task tracking: Beads `interfacer-gui-nhn`, `-h0n`, `-dz7` (done), `-zzi`, `-4j3`.
