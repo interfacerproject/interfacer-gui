@@ -26,9 +26,13 @@ import {
 } from "./types";
 
 import type { BuyerWallet, PreparedOperation } from "./wallet";
+import { checkRelayBody, type RelayStep } from "./relay";
 
 export interface MarketClientOptions {
   wallet?: BuyerWallet;
+  // Enforced Zenflows authz: signs an exact GraphQL body as the signed-in person
+  // (the SDK's signGraphQLRequest), returning the zenflows-sign value.
+  zenflowsSigner?: (body: string) => Promise<string>;
   baseUrl?: string; // default "" (relative; the browser same-origin proxy)
   fetchImpl?: typeof fetch;
 }
@@ -363,6 +367,31 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     }
   }
 
+  // Enforced authz: sign each pending Zenflows write of my own sale. Medusa
+  // hands over the exact body; it is checked (my mutation shapes, me as
+  // provider, the order's buyer as receiver) before the wallet signs it.
+  async function signSync(orderId: string, syncId: string, buyer: string): Promise<Result<Receipt>> {
+    try {
+      if (!opts.wallet || !opts.zenflowsSigner) throw new MarketError("login_required", 401);
+      const path = url(`dev/store/zenflows-sync/${encodeURIComponent(syncId)}`);
+      for (let i = 0; i < 4; i++) {
+        const next = await api<{ step?: RelayStep; body?: string }>(path + "/next");
+        if (!next.step || !next.body) break;
+        checkRelayBody(next.step, next.body, opts.wallet.personId, buyer);
+        const signature = await opts.zenflowsSigner(next.body);
+        await api(path + "/sign", { step: next.step, body: next.body, signature });
+      }
+      const all = await api<{ receipts: Receipt[] }>(url("dev/interfacer/receipts"));
+      const receipt = all.receipts.find(r => r.order_id === orderId);
+      if (!receipt) throw new MarketError("receipt_not_found", 404);
+      return ok(receipt);
+    } catch (e) {
+      return fail(
+        e instanceof Error && e.message.startsWith("relay_body_refused") ? new MarketError(e.message, 400) : e
+      );
+    }
+  }
+
   // Sellers sign their own milestone; the order need not be theirs as a buyer.
   async function markSold(kind: "stock" | "build", orderId: string) {
     return markMilestone(kind, orderId);
@@ -384,6 +413,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     registerCatalog,
     listProduct,
     markSold,
+    signSync,
     get scene() {
       return scene;
     },

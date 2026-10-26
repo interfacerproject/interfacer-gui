@@ -7,9 +7,12 @@
 // - a buyer buys stock and a build;
 // - each seller signs their own milestone on /market/sales.
 // Zenflows is then queried for who did what. No fixture key is involved.
+// With Zenflows GQL_AUTH_CALLS/AUTHZ_ENFORCE on, setup calls are signed like the SDK
+// (zenflows-user + zenflows-sign over the body without spaces); createPerson uses
+// MARKET_TEST_ZENFLOWS_ADMIN, and every economic write is signed by its own provider.
 // MARKET_LIVE_E2E=1 TEST_BASE_URL=http://localhost:3002 playwright test tests/market-sellers.spec.ts
 import { expect, test, type Browser, type Page } from "@playwright/test";
-import { generateKeyPairSync } from "node:crypto";
+import { generateKeyPairSync, sign, type KeyObject } from "node:crypto";
 
 const enabled = process.env.MARKET_LIVE_E2E === "1";
 const zenflows = process.env.MARKET_TEST_ZENFLOWS_URL || "http://localhost:8000/api";
@@ -43,29 +46,45 @@ function base58(bytes: Uint8Array): string {
   );
 }
 
-async function gql(request: any, query: string, variables: unknown = {}) {
-  const res = await request.post(zenflows, { data: { query, variables } });
+type Person = { id: string; seed: string; publicKey: string; email: string; user: string; key: KeyObject };
+let observer: Person | null = null; // signs verification reads once people exist
+
+async function gql(request: any, query: string, variables: unknown = {}, opts: { as?: Person; admin?: boolean } = {}) {
+  const body = JSON.stringify({ query: query.replace(/\s+/g, " ").trim(), variables });
+  const as = opts.as ?? observer;
+  const headers: Record<string, string> = { "content-type": "application/json" };
+  // Zenflows ignores zenflows-user/-sign when zenflows-admin is present: never both.
+  if (opts.admin) headers["zenflows-admin"] = process.env.MARKET_TEST_ZENFLOWS_ADMIN || "";
+  else if (as)
+    Object.assign(headers, {
+      "zenflows-user": as.user,
+      "zenflows-sign": sign(null, Buffer.from(body.replace(/ /g, ""), "utf8"), as.key).toString("base64"),
+    });
+  const res = await request.post(zenflows, { data: body, headers });
   expect(res.ok()).toBeTruthy();
-  const body = await res.json();
-  expect(body.errors).toBeUndefined();
-  return body.data;
+  const json = await res.json();
+  expect(json.errors).toBeUndefined();
+  return json.data;
 }
 
-type Person = { id: string; seed: string; publicKey: string; email: string; user: string };
 async function newPerson(request: any, role: string): Promise<Person> {
   const { privateKey } = generateKeyPairSync("ed25519");
   const key = privateKey.export({ format: "jwk" }) as { d: string; x: string };
   const user = `market${role}${Date.now()}`;
   const publicKey = base58(Uint8Array.from(Buffer.from(key.x, "base64url")));
-  const data = await gql(request, `mutation($p: PersonCreateParams!) { createPerson(person: $p) { agent { id } } }`, {
-    p: { name: `Marketplace ${role}`, user, email: `${user}@market.invalid`, eddsaPublicKey: publicKey },
-  });
+  const data = await gql(
+    request,
+    `mutation($p: PersonCreateParams!) { createPerson(person: $p) { agent { id } } }`,
+    { p: { name: `Marketplace ${role}`, user, email: `${user}@market.invalid`, eddsaPublicKey: publicKey } },
+    { admin: true }
+  );
   return {
     id: data.createPerson.agent.id,
     seed: base58(Uint8Array.from(Buffer.from(key.d, "base64url"))),
     publicKey,
     email: `${user}@market.invalid`,
     user,
+    key: privateKey,
   };
 }
 
@@ -74,7 +93,9 @@ async function ownResource(request: any, owner: Person, spec: "Design" | "Servic
     await gql(
       request,
       `{ instanceVariables { specs { specProjectDesign { id } specProjectService { id }
-    specProjectProduct { id } } units { unitOne { id } } } }`
+    specProjectProduct { id } } units { unitOne { id } } } }`,
+      {},
+      { as: owner }
     )
   ).instanceVariables;
   const conformsTo = {
@@ -96,7 +117,8 @@ async function ownResource(request: any, owner: Person, spec: "Design" | "Servic
         hasPointInTime: new Date().toISOString(),
       },
       r: { name },
-    }
+    },
+    { as: owner }
   );
   return data.createEconomicEvent.economicEvent.resourceInventoriedAs.id as string;
 }
@@ -104,12 +126,15 @@ async function ownResource(request: any, owner: Person, spec: "Design" | "Servic
 async function as(browser: Browser, person: Person): Promise<Page> {
   const context = await browser.newContext({ baseURL: test.info().project.use.baseURL });
   const page = await context.newPage();
-  await page.addInitScript((p: Person) => {
-    localStorage.setItem("eddsaPrivateKey", p.seed);
-    localStorage.setItem("eddsaPublicKey", p.publicKey);
-    localStorage.setItem("authEmail", p.email);
-    localStorage.setItem("authUsername", p.user);
-  }, person);
+  await page.addInitScript(
+    (p: { seed: string; publicKey: string; email: string; user: string }) => {
+      localStorage.setItem("eddsaPrivateKey", p.seed);
+      localStorage.setItem("eddsaPublicKey", p.publicKey);
+      localStorage.setItem("authEmail", p.email);
+      localStorage.setItem("authUsername", p.user);
+    },
+    { seed: person.seed, publicKey: person.publicKey, email: person.email, user: person.user }
+  );
   return page;
 }
 
@@ -145,6 +170,7 @@ test.describe("live marketplace with real sellers", () => {
     const [designer, maker, seller, buyer, outsider] = await Promise.all(
       ["designer", "maker", "seller", "buyer", "outsider"].map(r => newPerson(request, r))
     );
+    observer = buyer;
     const design = await ownResource(request, designer, "Design", `Live lamp shade ${stamp}`);
     const service = await ownResource(request, maker, "Service", `Live Torino FDM ${stamp}`);
     const product = await ownResource(request, seller, "Product", `Live recycled lamp ${stamp}`);

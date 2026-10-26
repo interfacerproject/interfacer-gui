@@ -90,9 +90,12 @@ const MarketSales: NextPageWithLayout = () => {
   const act = async (order: SellerOrder, retry: boolean) => {
     setBusy(order.id);
     setError(null);
-    const syncId = order.receipt?.zenflows_sync?.id;
-    const res =
-      retry && syncId ? await market.retrySync(order.id, syncId) : await market.markSold(order.kind, order.id);
+    const sync = order.receipt?.zenflows_sync;
+    let res = retry && sync ? await market.retrySync(order.id, sync.id) : await market.markSold(order.kind, order.id);
+    // Enforced authz: my own signature carries each Zenflows write of this sale.
+    const pending = res.ok ? res.data.zenflows_sync : undefined;
+    if (res.ok && pending?.status === "pending" && pending.last_error?.startsWith("awaiting_seller_signature"))
+      res = await market.signSync(order.id, pending.id, res.data.receiver_id);
     setBusy(null);
     if (!res.ok) setError(res.reason);
     await refresh();
