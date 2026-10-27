@@ -27,7 +27,8 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Pinned: Playwright 1.56 cannot install browsers on ubuntu-latest (26.04).
+    runs-on: ubuntu-24.04
     name: Test on Node
     steps:
       - name: Checkout 🛎️
