@@ -1,8 +1,11 @@
 # Marketplace GUI integration — STATUS
 
-**Branch:** `feat/medusa-marketplace-gui` · **Updated:** 2026-10-26
+**Branch:** `feat/medusa-marketplace-gui` · **Updated:** 2026-10-27
 Backend: `interfacer-medusa`, `feat/zenflows-real-events` (PR #1); GUI draft PR #922.
 No main/Zenflows/SDK changes. Implementation pins: backend `8018cb4`, GUI `f76a53e`.
+Pushed 2026-10-27: PR #1 and #922 descriptions refreshed, both labelled
+`workstream:authz-integration` and listed in Zenflows issue #74. Checkpoint
+comments on GUI #921, Zenflows #84, SDK #7 and #74.
 Maintained bilingual review snapshot: backend `docs/review/README.md` and
 http://127.0.0.1:3110/it/medusa.html (also `/en/medusa.html`).
 
@@ -104,4 +107,5 @@ MARKET_LIVE_E2E=1 TEST_BASE_URL=http://localhost:3002 \
   ./node_modules/.bin/playwright test tests/market-sellers.spec.ts --project=chromium --workers=1
 ```
 
-Task tracking: Beads `interfacer-gui-nhn`, `-h0n`, `-dz7` (done), `-zzi`, `-4j3`.
+Task tracking: Beads `interfacer-gui-nhn`, `-h0n`, `-dz7` (done), publication
+`-in3`, open follow-ups `-zzi`, `-4j3`; export in `.beads/issues.jsonl`.
