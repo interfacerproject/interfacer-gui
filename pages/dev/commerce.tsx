@@ -8,6 +8,7 @@
 // signed envelope); the endpoint only runs under INTERFACER_AUTH_MODE=
 // fixture-controller-stub in non-production. Point NEXT_PUBLIC_MEDUSA_URL at
 // the running Medusa (default http://localhost:9000).
+/* eslint-disable i18next/no-literal-string -- LOCAL DEV tester page, intentionally not translated */
 import React, { useCallback, useState } from "react";
 
 const MEDUSA_URL = process.env.NEXT_PUBLIC_MEDUSA_URL || "http://localhost:9000";
