@@ -7,10 +7,10 @@
 
 type Kind = "design" | "product" | "service";
 
-const PALETTE: Record<Kind, { ground: string; dots: string; accent: string; label: string }> = {
-  design: { ground: "#eef3f0", dots: "#cbd8d1", accent: "#036a53", label: "DESIGN" },
-  product: { ground: "#efeeea", dots: "#d3d1c9", accent: "#143bb5", label: "PRODUCT" },
-  service: { ground: "#f2eff6", dots: "#d9d1e4", accent: "#8200db", label: "SERVICE" },
+const PALETTE: Record<Kind, { ground: string; dots: string; accent: string }> = {
+  design: { ground: "#eef3f0", dots: "#cbd8d1", accent: "#036a53" },
+  product: { ground: "#efeeea", dots: "#d3d1c9", accent: "#143bb5" },
+  service: { ground: "#f2eff6", dots: "#d9d1e4", accent: "#8200db" },
 };
 
 // Line drawings in a 200 × 140 box; `A` marks the accent element.
@@ -82,8 +82,6 @@ ${
     : ""
 }
 <g font-family="ui-sans-serif, Helvetica, Arial, sans-serif">
-<rect x="36" y="36" width="190" height="52" fill="${c.accent}"/>
-<text x="131" y="71" text-anchor="middle" font-size="24" font-weight="700" letter-spacing="3" fill="#fff">${c.label}</text>
 <rect x="744" y="772" width="420" height="92" fill="#fff" stroke="#0b1324" stroke-width="2"/>
 <text x="764" y="808" font-size="26" font-weight="700" fill="#0b1324">${escapeXml(p.title)}</text>
 <text x="764" y="844" font-size="20" fill="${DIM}">${escapeXml(p.subtitle)}</text>
