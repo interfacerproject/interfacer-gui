@@ -271,7 +271,11 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   async function myOrders(): Promise<Result<Order[]>> {
     try {
       if (!token) throw new MarketError("login_required", 401);
-      const q = new URLSearchParams({ fields: ORDER_FIELDS + ",+items.title,+items.product_title", order: "-created_at", limit: "50" });
+      const q = new URLSearchParams({
+        fields: ORDER_FIELDS + ",+items.title,+items.product_title",
+        order: "-created_at",
+        limit: "50",
+      });
       const { orders } = await api<{ orders: Order[] }>(url("store/orders") + "?" + q.toString());
       return ok(orders);
     } catch (e) {

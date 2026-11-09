@@ -19,6 +19,7 @@ import InterfacerLogo from "components/InterfacerLogo";
 import NavigationMenu from "components/NavigationMenu";
 import UserDropdown from "components/UserDropdown";
 import { commercePreviewEnabled } from "lib/previewCommerce/flag";
+import { marketplaceEnabled } from "lib/market/flag";
 import { useAuth } from "hooks/useAuth";
 import { useInBoxContext } from "hooks/useInBox";
 import { useTranslation } from "next-i18next";
@@ -74,6 +75,7 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
   const isDesigns = path === "/designs" || path.startsWith("/designs/");
   const isProducts = path === "/products" || path.startsWith("/products/");
   const isServices = path === "/services" || path.startsWith("/services/");
+  const isMarket = path === "/market" || path.startsWith("/market?") || path.startsWith("/market/");
 
   return (
     <>
@@ -173,6 +175,25 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
                 {t("Services")}
               </a>
             </Link>
+            {marketplaceEnabled && (
+              <Link href="/market">
+                <a
+                  className={`no-underline whitespace-nowrap px-3 py-1.5 transition-colors ${
+                    isMarket
+                      ? "bg-[var(--ifr-green-bg)] text-[var(--ifr-green)]"
+                      : "text-[var(--ifr-text-primary)] hover:bg-[var(--ifr-bg-hover)]"
+                  }`}
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-base)",
+                    fontWeight: isMarket ? "var(--ifr-fw-semibold)" : "var(--ifr-fw-medium)",
+                    borderRadius: "var(--ifr-radius-lg)",
+                  }}
+                >
+                  {t("Marketplace")}
+                </a>
+              </Link>
+            )}
           </nav>
         </div>
 
@@ -215,8 +236,37 @@ function Topbar({ search = true, userMenu = true, cta, burger = true }: topbarPr
           )}
           {cta}
 
+          {/* Marketplace: the signed-in person's orders */}
+          {marketplaceEnabled && user && (
+            <Link href="/market/orders">
+              <a
+                aria-label={t("My orders")}
+                className="flex items-center justify-center shrink-0 bg-transparent border border-transparent hover:border-[var(--ifr-border)] transition-colors"
+                style={{
+                  width: "var(--ifr-control-height)",
+                  height: "var(--ifr-control-height)",
+                  borderRadius: "var(--ifr-radius-sm)",
+                }}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--ifr-text-secondary)"
+                  strokeWidth="1.8"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 8h14l-1.2 12H6.2L5 8z" />
+                  <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+                </svg>
+              </a>
+            </Link>
+          )}
+
           {/* Commerce preview (upcoming Medusa integration) — flagged entry point */}
-          {commercePreviewEnabled && (
+          {commercePreviewEnabled && !marketplaceEnabled && (
             <Link href="/preview/commerce/cart">
               <a
                 aria-label={t("Shopping cart")}
