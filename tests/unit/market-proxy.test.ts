@@ -192,3 +192,49 @@ test("allows an uppercase Medusa id in the path (real order/variant ids)", async
   assert.equal(calls.length, 1);
   assert.equal(calls[0].url, "http://up/store/orders/order_01M5GW32D4SKX2J24SJWMCM4KH?fields=id");
 });
+
+const PILOT = {
+  NODE_ENV: "production",
+  MARKET_PROXY_MODE: "pilot",
+  MEDUSA_INTERNAL_URL: "http://medusa:9000",
+  MEDUSA_PROXY_KEY: "k".repeat(40),
+};
+function pilotReq(opts: Parameters<typeof mockReq>[0]) {
+  const req = mockReq({ ...opts, headers: { host: "dpp-dev.example.org", ...opts.headers } });
+  req.socket.remoteAddress = "172.18.0.5";
+  return req;
+}
+
+test("pilot: forwards same-origin marketplace calls with the shared key to the private Medusa", async () => {
+  const { fetchImpl, calls } = mockUpstream(200, { ok: true });
+  for (const headers of [
+    {} as Record<string, string>,
+    { origin: "https://dpp-dev.example.org", "sec-fetch-site": "same-origin" },
+  ]) {
+    const { res, cap } = mockRes();
+    await proxy(pilotReq({ path: ["market", "store", "config"], headers }), res, fetchImpl, undefined, PILOT);
+    assert.equal(cap.status, 200);
+  }
+  assert.equal(calls.length, 2);
+  assert.equal(calls[0].url, "http://medusa:9000/market/store/config");
+  assert.equal(calls[0].init.headers["x-interfacer-proxy-key"], "k".repeat(40));
+});
+
+test("pilot: refuses other origins, dev paths, the demo login and a missing key", async () => {
+  const { fetchImpl, calls } = mockUpstream(200, {});
+  const cases: [any, any, number, string][] = [
+    [pilotReq({ path: ["market", "store", "config"], headers: { origin: "https://evil.test" } }), PILOT, 403, "market_same_origin_only"],
+    [pilotReq({ path: ["market", "store", "config"], headers: { "sec-fetch-site": "same-site" } }), PILOT, 403, "market_same_origin_only"],
+    [pilotReq({ path: ["dev", "store", "sign"], method: "POST" }), PILOT, 400, "market_path_forbidden"],
+    [pilotReq({ path: ["dev", "interfacer", "receipts"] }), PILOT, 400, "market_path_forbidden"],
+    [pilotReq({ path: ["auth", "customer", "emailpass"], method: "POST" }), PILOT, 400, "market_path_forbidden"],
+    [pilotReq({ path: ["market", "store", "config"] }), { ...PILOT, MEDUSA_PROXY_KEY: "short" }, 503, "market_proxy_unconfigured"],
+  ];
+  for (const [req, env, status, reason] of cases) {
+    const { res, cap } = mockRes();
+    await proxy(req, res, fetchImpl, undefined, env);
+    assert.equal(cap.status, status, reason);
+    assert.deepEqual(cap.body, { reason });
+  }
+  assert.equal(calls.length, 0);
+});

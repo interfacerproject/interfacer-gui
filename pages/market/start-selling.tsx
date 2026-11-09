@@ -628,7 +628,10 @@ function ServiceCard({
               {t("Edit machines")}
             </button>
           </div>
-        ) : (
+        ) : null}
+        {/* The outcome stays visible once the card switches to its summary. */}
+        {cap && !editing ? <Message text={message} testid="market-offer-message" /> : null}
+        {cap && !editing ? null : (
           <>
             <p className="m-0 text-[14px] text-ifr-text-secondary">
               {t("Describe what your machines can do. Matching only uses these facts, never tags.")}
