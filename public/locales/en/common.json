@@ -328,5 +328,27 @@
     "notification": "notification",
     "ideaPoints": "idea points",
     "strengthsPoints": "strengths points"
+  },
+  "projectCreation": {
+    "errorTitle": "The project could not be created",
+    "createdWithIssues": "Your project was created.",
+    "failed": "These steps failed – {{steps}}",
+    "skippedTitle": "These steps were skipped:",
+    "open": "Open the project",
+    "steps": {
+      "image": "image {{name}}",
+      "dpp": "digital product passport",
+      "citeDesign": "cite the linked design",
+      "markManufacturable": "mark the linked design manufacturable",
+      "relation": "relation {{id}}",
+      "contributor": "contributor {{id}}",
+      "ideaPoints": "idea points",
+      "strengthsPoints": "strengths points",
+      "skipped": {
+        "notController": "only the design’s controller can do this",
+        "controlUnknown": "the design’s controller could not be checked"
+      }
+    },
+    "skippedItem": "{{name}} – {{reason}}"
   }
 }

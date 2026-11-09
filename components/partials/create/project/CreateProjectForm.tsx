@@ -1,7 +1,7 @@
 import { ProjectType } from "components/types";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { useRouter } from "next/router";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 // Steps
 import {
@@ -32,7 +32,10 @@ import CreateProjectSubmit from "./parts/CreateProjectSubmit";
 import LoadingOverlay from "components/LoadingOverlay";
 
 // Form
-import { Spinner } from "@bbtgnn/polaris-interfacer";
+import { Banner, Spinner } from "@bbtgnn/polaris-interfacer";
+import type { ProjectCreationOutcome } from "lib/projectCreation";
+import ProjectCreationResult from "./ProjectCreationResult";
+import { useTranslation } from "next-i18next";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "hooks/useAuth";
 import { useDrafts } from "hooks/useFormSaveDraft";
@@ -138,8 +141,11 @@ export type CreateProjectSchemaContext = LocationStepSchemaContext;
 
 export default function CreateProjectForm(props: Props) {
   const { projectType } = props;
-  const { handleProjectCreation, handleMachineCreation } = useProjectCRUD();
+  const { handleProjectCreation, handleMachineCreation, error: createProjectError } = useProjectCRUD();
   const [loading, setLoading] = useState(false);
+  const [created, setCreated] = useState<Extract<ProjectCreationOutcome, { kind: "created" }>>();
+  const submitting = useRef(false);
+  const { t: tc } = useTranslation("common");
   const router = useRouter();
   const yupLocaleObject = useYupLocaleObject();
   yup.setLocale(yupLocaleObject);
@@ -207,19 +213,26 @@ export default function CreateProjectForm(props: Props) {
   const { handleSubmit } = formMethods;
 
   async function onSubmit(values: CreateProjectValues) {
+    // One creation per submit: a second click while one is running does nothing.
+    if (submitting.current) return;
+    submitting.current = true;
     setLoading(true);
+    try {
+      // For MACHINE type, create a machine resource instead of a project
+      if (projectType === ProjectType.MACHINE) {
+        const machineID = await handleMachineCreation(values);
+        if (machineID) await router.replace(`/project/${machineID}?created=true`);
+        return;
+      }
 
-    // For MACHINE type, create a machine resource instead of a project
-    if (projectType === ProjectType.MACHINE) {
-      const machineID = await handleMachineCreation(values);
-      if (machineID) await router.replace(`/project/${machineID}?created=true`);
+      const outcome = await handleProjectCreation(values, projectType);
+      if (outcome?.kind !== "created") return; // the error is shown above the form
+      if (outcome.failed.length || outcome.skipped.length) setCreated(outcome);
+      else await router.replace(`/project/${outcome.projectId}?created=true`);
+    } finally {
+      submitting.current = false;
       setLoading(false);
-      return;
     }
-
-    const projectID = await handleProjectCreation(values, projectType);
-    if (projectID) await router.replace(`/project/${projectID}?created=true`);
-    setLoading(false);
   }
 
   useEffect(() => {
@@ -229,6 +242,7 @@ export default function CreateProjectForm(props: Props) {
   }, [projectType]);
 
   if (!storedValues && draft_id) return <Spinner />;
+  if (created) return <ProjectCreationResult result={created} />;
 
   return (
     <FormProvider {...formMethods}>
@@ -237,6 +251,14 @@ export default function CreateProjectForm(props: Props) {
           <CreateProjectHeader projectType={projectType} />
 
           <FormColumns nav={<CreateProjectNav projectType={projectType} />}>
+            {createProjectError && (
+              <Banner
+                status="critical"
+                title={tc("common:projectCreation.errorTitle", { nsSeparator: ":", keySeparator: "." })}
+              >
+                <p role="alert">{createProjectError}</p>
+              </Banner>
+            )}
             <CreateProjectFields projectType={projectType} onSubmit={onSubmit} />
             <CreateProjectSubmit />
           </FormColumns>

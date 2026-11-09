@@ -321,5 +321,27 @@
     "notification": "notifica",
     "ideaPoints": "punti idea",
     "strengthsPoints": "punti forza"
+  },
+  "projectCreation": {
+    "errorTitle": "Non è stato possibile creare il progetto",
+    "createdWithIssues": "Il progetto è stato creato.",
+    "failed": "Questi passaggi non sono riusciti – {{steps}}",
+    "skippedTitle": "Questi passaggi sono stati saltati:",
+    "open": "Apri il progetto",
+    "steps": {
+      "image": "immagine {{name}}",
+      "dpp": "passaporto digitale di prodotto",
+      "citeDesign": "citare il design collegato",
+      "markManufacturable": "segnare come producibile il design collegato",
+      "relation": "relazione {{id}}",
+      "contributor": "contributor {{id}}",
+      "ideaPoints": "punti idea",
+      "strengthsPoints": "punti forza",
+      "skipped": {
+        "notController": "può farlo solo il controller del design",
+        "controlUnknown": "non è stato possibile verificare il controller del design"
+      }
+    },
+    "skippedItem": "{{name}} – {{reason}}"
   }
 }
