@@ -57,7 +57,9 @@ test("fit checks list every requirement and whether the maker meets it", () => {
 
 test("Medusa rejection reasons become short labelled reasons; unknown ones stay visible", () => {
   assert.deepEqual(
-    parseRejection("missing_material: PETG; too_big: x requires 300mm > 250mm; tolerance: service 0.5mm > required 0.3mm"),
+    parseRejection(
+      "missing_material: PETG; too_big: x requires 300mm > 250mm; tolerance: service 0.5mm > required 0.3mm"
+    ),
     [
       { kind: "material", detail: "PETG" },
       { kind: "size", detail: "300 mm > 250 mm" },
@@ -75,7 +77,9 @@ const paid = { payment_collections: [{ payments: [{ captured_at: "2026-11-09T10:
 test("orders: kind and resource come from the line metadata Medusa stamped at checkout", () => {
   const build: Order = {
     id: "order_1",
-    items: [{ id: "i", metadata: { interfacer_build: { design_id: "D1", service_id: "S1", quote_id: "q", quantity: 2 } } }],
+    items: [
+      { id: "i", metadata: { interfacer_build: { design_id: "D1", service_id: "S1", quote_id: "q", quantity: 2 } } },
+    ],
   };
   const stock: Order = { id: "order_2", items: [{ id: "i", metadata: { interfacer_resource_id: "R1" } }] };
   assert.equal(orderKind(build), "build");
