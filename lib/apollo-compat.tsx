@@ -9,6 +9,7 @@
  */
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { GraphQLRequestError, throwIfGraphQLErrors } from "@dyne/interfacer-client";
 import { useAuth } from "../hooks/useAuth";
 
 // ─── gql tag ───────────────────────────────────────────────────────
@@ -47,17 +48,18 @@ export function useQuery<TData = any, TVars = Record<string, any>>(
       setLoading(true);
       try {
         const res = await client.graphql.request<any>(query, v);
+        throwIfGraphQLErrors(res);
         if (mountedRef.current) {
-          if (res.errors?.length) setError(res.errors[0]);
-          else {
-            setData(res.data);
-            setError(undefined);
-          }
+          setData(res.data);
+          setError(undefined);
         }
-        return { data: res.data as TData | undefined };
+        return { data: res.data as TData | undefined, error: undefined };
       } catch (e) {
-        if (mountedRef.current) setError(e);
-        return { data: undefined as TData | undefined };
+        if (mountedRef.current) {
+          setData(undefined);
+          setError(e);
+        }
+        return { data: undefined as TData | undefined, error: e };
       } finally {
         if (mountedRef.current) setLoading(false);
       }
@@ -77,8 +79,8 @@ export function useQuery<TData = any, TVars = Record<string, any>>(
   // Using Partial to allow callers to pass optional/partial variables
   const refetch = useCallback(
     async (newVars?: Partial<TVars>): Promise<SdkQueryResult<TData>> => {
-      const { data: resultData } = await doFetch(newVars as Record<string, any>);
-      return { data: resultData as TData, loading: false, networkStatus: 7 };
+      const result = await doFetch(newVars as Record<string, any>);
+      return { data: result.data as TData, error: result.error, loading: false, networkStatus: result.error ? 8 : 7 };
     },
     [doFetch]
   );
@@ -90,6 +92,14 @@ export function useQuery<TData = any, TVars = Record<string, any>>(
         ...(options?.variables as any),
         ...opts.variables,
       });
+      if (res.errors?.length) {
+        const error = new GraphQLRequestError(res.errors);
+        if (mountedRef.current) {
+          setData(undefined);
+          setError(error);
+        }
+        throw error;
+      }
       if (mountedRef.current && res.data) {
         setData(prev => opts.updateQuery(prev, { fetchMoreResult: res.data }));
       }
@@ -133,25 +143,32 @@ export function useMutation<TData = any, TVars = any>(
   const [error, setError] = useState<any>(undefined);
   const [data, setData] = useState<TData | undefined>();
 
+  const { onCompleted, onError } = options || {};
+
   const mutate = useCallback(
     async ({ variables }: { variables: TVars }) => {
       if (!client) throw new Error("Client not ready");
       setLoading(true);
       setError(undefined);
-      const res = await client.graphql.request<TData>(mutation, variables as any);
-      if (res.errors?.length) {
-        setError(res.errors[0]);
-      } else {
+      setData(undefined);
+      try {
+        const res = await client.graphql.request<TData>(mutation, variables as any);
+        throwIfGraphQLErrors(res);
         setData(res.data);
-        options?.onCompleted?.(res.data as TData);
+        onCompleted?.(res.data as TData);
+        return res;
+      } catch (error) {
+        setError(error);
+        onError?.(error);
+        throw error;
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-      return res;
     },
-    [client, mutation]
+    [client, mutation, onCompleted, onError]
   );
 
   return [mutate, { loading, error, data }];
 }
 
-export type SdkQueryResult<T> = { data: T; loading: boolean; networkStatus: number };
+export type SdkQueryResult<T> = { data: T; error?: unknown; loading: boolean; networkStatus: number };

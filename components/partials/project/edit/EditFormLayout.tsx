@@ -1,4 +1,6 @@
 import { NextRouter, useRouter } from "next/router";
+import { Banner } from "@bbtgnn/polaris-interfacer";
+import { errorFormatter } from "lib/errorFormatter";
 import { useEffect, useState } from "react";
 import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form";
 
@@ -29,16 +31,23 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
   const { t } = useTranslation("common");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
-  const { handleSubmit, formState } = formMethods;
+  const { handleSubmit, formState, reset } = formMethods;
   const { isDirty, isSubmitSuccessful } = formState;
 
   async function onSubmitWrapper(values: T) {
     setLoading(true);
+    setSaveError("");
     try {
       await onSubmit(values);
-      setLoading(false);
-    } catch (e) {
+    } catch (error) {
+      const message = errorFormatter(error, t);
+      setSaveError(message);
+      // Let RHF record an unsuccessful submission without invalidating valid
+      // fields: the draft must remain editable and retryable after recovery.
+      throw error;
+    } finally {
       setLoading(false);
     }
   }
@@ -70,7 +79,7 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
       else if (typeof redirect === "string" && router.asPath === redirect) {
         // Already on the redirect URL — reset form state to break the infinite loop
         // caused by react-hook-form preserving isSubmitSuccessful across same-page navigations
-        formMethods.reset();
+        reset();
         setLoading(false);
       } else router.push(redirect);
     }
@@ -79,19 +88,32 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
       window.removeEventListener("beforeunload", handleWindowClose);
       router.events.off("routeChangeStart", handleBrowseAway);
     };
-  }, [isSubmitSuccessful, redirect, router, preventNavigation, t]);
+  }, [isSubmitSuccessful, redirect, router, preventNavigation, t, reset]);
 
   /* Render */
 
   const content = (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(onSubmitWrapper)}>
+      <form
+        onSubmit={event =>
+          handleSubmit(onSubmitWrapper)(event).catch(() => {
+            // The error is already visible; do not leak a rejected DOM-event promise.
+          })
+        }
+      >
         {/* Same page as the creation flows: one tinted 1200px column with the
             section rail beside the fields from `lg` up, lying down into a jump
             strip on phones. */}
         <div className="min-h-screen bg-ifr-profile" style={{ fontFamily: "var(--ifr-font-body)" }}>
           <div className="max-w-[1200px] mx-auto w-full px-4 md:px-6 py-6 md:py-[42px]">
-            <FormColumns nav={nav || <EditProjectNav />}>{children}</FormColumns>
+            <FormColumns nav={nav || <EditProjectNav />}>
+              {saveError && (
+                <Banner status="critical">
+                  <p role="alert">{saveError}</p>
+                </Banner>
+              )}
+              {children}
+            </FormColumns>
           </div>
         </div>
         <SubmitChangesBar />
