@@ -1,4 +1,9 @@
 {
+  "claimFlow": {
+    "unavailable": "Der Import ist nicht verfügbar, weil der Quellagent nicht konfiguriert ist. Dein Formular wurde nicht gesendet.",
+    "detailsIncomplete": "Die Ressource wurde importiert, aber Details oder Navigation konnten nicht abgeschlossen werden. Öffne das importierte Projekt zur Prüfung. Importiere es nicht erneut.",
+    "openImportedProject": "Importiertes Projekt öffnen"
+  },
   "requestErrors": {
     "permissionDenied": "Du hast keine Berechtigung für diese Aktion.",
     "sessionRequired": "Deine Sitzung konnte nicht überprüft werden. Melde dich an, bevor du es erneut versuchst.",

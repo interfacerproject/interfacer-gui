@@ -1,4 +1,9 @@
 {
+  "claimFlow": {
+    "unavailable": "L’importazione non è disponibile perché l’agente sorgente non è configurato. Il modulo non è stato inviato.",
+    "detailsIncomplete": "La risorsa è stata importata, ma non è stato possibile completare i dettagli o la navigazione. Apri il progetto importato per verificarlo. Non importarlo di nuovo.",
+    "openImportedProject": "Apri il progetto importato"
+  },
   "requestErrors": {
     "permissionDenied": "Non hai il permesso di eseguire questa azione.",
     "sessionRequired": "Non è stato possibile verificare la sessione. Accedi prima di riprovare.",
