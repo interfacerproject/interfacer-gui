@@ -41,9 +41,9 @@
 - Produces: signed op `catalog.build.list` with params `{ service_id, design_id, base_price_eur, per_unit_price_eur, lead_days, active }`; `POST /dev/interfacer/catalog/build-listings` (body = params) → `{ created, listing }`; `GET /dev/interfacer/catalog/build-listings?service=&design=&provider=&include_inactive=1` → `{ listings: BuildListingView[] }` where `BuildListingView = { id, service_id, service_name, provider_person_id, location, design_id, design_name, base_price_eur, per_unit_price_eur, lead_days, quantity, total_eur, active, revision }`; match entries gain `listing: { lead_days }`.
 - Pure helpers: `parseBuildListingParams(params)`, `latestListings(rows)`, `listedCandidates(designId, services, listings)`.
 
-- [ ] Tests: params parsing (exact keys, ULIDs, price rules, lead days bounds, boolean active); latest revision wins and inactive hides; candidates carry listed prices; listed-but-incompatible goes to `rejected`; listings of services/designs missing from the live catalog are dropped.
-- [ ] Implement, generate + apply the migration, run `npm run test:unit` (all suites green).
-- [ ] Commit `feat(build-listings): makers list the designs they build`.
+- [x] Tests: params parsing (exact keys, ULIDs, price rules, lead days bounds, boolean active); latest revision wins and inactive hides; candidates carry listed prices; listed-but-incompatible goes to `rejected`; listings of services/designs missing from the live catalog are dropped.
+- [x] Implement, generate + apply the migration, run `npm run test:unit` (all suites green).
+- [x] Commit `feat(build-listings): makers list the designs they build`.
 
 ### Task 2: Client, wallet and formatting (GUI)
 
@@ -54,34 +54,34 @@
 - `format.ts`: `eur(cents)`, `eurAmount(eur)`, `processLabel(id)`, `dims({x,y,z})`, `fitChecks(req, cap) → {label, ok}[]`, `orderStage(order, receipt)`.
 - `SELLER_OPS` gains `catalog.build.list`.
 
-- [ ] Tests for browse without wallet, setBuildListing signing the exact params, address passed to the cart, `fitChecks`, `orderStage`; run `pnpm test:market`; commit.
+- [x] Tests for browse without wallet, setBuildListing signing the exact params, address passed to the cart, `fitChecks`, `orderStage`; run `pnpm test:market`; commit.
 
 ### Task 3: UI primitives and the catalogue
 
 **Files:** create `components/market/ui/*` (`MarketHero`, `TypeChip`, `FitChips`, `Drawing`, `MakerBadge`, `StatusChip`, `MarketEmpty`), rewrite `pages/market/index.tsx` (Layout, tabs `?view=ready|build`), `pages/market/build.tsx` → redirect; delete `DevBanner`, `MarketNav`, `ProductCard`, `MarketJourney`, `MatchResults` once unused.
 
-- [ ] Ready-made: store products of live listings → cards (price, seller, availability) linking to `/project/[resource]`. Built on demand: catalog designs with their listings aggregated (from-price, maker count) linking to `/project/[design]`. Search filter; empty states. Commit.
+- [x] Ready-made: store products of live listings → cards (price, seller, availability) linking to `/project/[resource]`. Built on demand: catalog designs with their listings aggregated (from-price, maker count) linking to `/project/[design]`. Search filter; empty states. Commit.
 
 ### Task 4: Project page panels
 
 **Files:** create `components/market/MarketProjectPanel.tsx`, `BuyPanel.tsx`, `GetItBuiltPanel.tsx`; modify `components/ProjectDetailNew.tsx` (topSlot when flag on).
 
-- [ ] Product listed in Medusa → price, availability, seller, "Buy" → `/market/checkout?kind=stock&variant=…&resource=…`. Design registered → requirements, maker list from `match` with fit chips, price, lead time, rejected makers collapsed; "Order from X" → `/market/checkout?kind=build&quote=…&design=…`. Not in the marketplace → nothing rendered. Commit.
+- [x] Product listed in Medusa → price, availability, seller, "Buy" → `/market/checkout?kind=stock&variant=…&resource=…`. Design registered → requirements, maker list from `match` with fit chips, price, lead time, rejected makers collapsed; "Order from X" → `/market/checkout?kind=build&quote=…&design=…`. Not in the marketplace → nothing rendered. Commit.
 
 ### Task 5: Checkout and buyer orders
 
 **Files:** create `pages/market/checkout.tsx`, `pages/market/orders/index.tsx`, `pages/market/orders/[id].tsx`.
 
-- [ ] Checkout: summary (item, maker, price breakdown), delivery address form (required fields), pilot test-payment note, sign-in gate, readable errors; on success → order page. Orders: list from `myOrders()`; order page: progress (paid → made/delivered → recorded), traceability log from the receipt and its Zenflows sync. Commit.
+- [x] Checkout: summary (item, maker, price breakdown), delivery address form (required fields), pilot test-payment note, sign-in gate, readable errors; on success → order page. Orders: list from `myOrders()`; order page: progress (paid → made/delivered → recorded), traceability log from the receipt and its Zenflows sync. Commit.
 
 ### Task 6: Selling, Start selling, profile Shop tab, navigation
 
 **Files:** create `pages/market/selling.tsx`, `pages/market/start-selling.tsx`, `components/market/ProfileShop.tsx`; redirects from `/market/sales` and `/market/offer`; modify `components/ProfilePageNew.tsx` (Shop tab), `components/NavigationMenu.tsx` (Marketplace, My orders, Selling).
 
-- [ ] Selling: stats, orders with the next action (mark made/delivered, then sign the Interfacer record), my listings and build listings. Start selling: three tracks — service (capabilities → designs you build with setup/per-piece/lead, signed per design), products (list one unit), designs (register build requirements). Profile Shop tab: the person's build listings and products for sale. Commit.
+- [x] Selling: stats, orders with the next action (mark made/delivered, then sign the Interfacer record), my listings and build listings. Start selling: three tracks — service (capabilities → designs you build with setup/per-piece/lead, signed per design), products (list one unit), designs (register build requirements). Profile Shop tab: the person's build listings and products for sale. Commit.
 
 ### Task 7: End-to-end and showcase
 
 **Files:** update `tests/market-sellers.spec.ts` (new flow incl. build listing), `tests/market.spec.ts` (paths); update `docs/marketplace-gui-STATUS.md`.
 
-- [ ] Run the live e2e against local Zenflows + Medusa; phone-width screenshots; commit. Update Beads 5q3 and the PR stack notes.
+- [x] Run the live e2e against local Zenflows + Medusa; phone-width screenshots; commit. Update Beads 5q3 and the PR stack notes.
