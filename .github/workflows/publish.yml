@@ -26,7 +26,7 @@
 name: 🐳 Docker image
 on:
   push:
-    branches: ["main", "dtec", "tchibo"]
+    branches: ["main", "dtec", "tchibo", "staging"]
 
 env:
   REGISTRY: ghcr.io
