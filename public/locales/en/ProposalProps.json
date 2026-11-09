@@ -15,5 +15,6 @@
   "strengths points": "strengths points",
   "idea points": "idea points",
   "The contribution was accepted, but these follow-up steps failed – {{steps}}": "The contribution was accepted, but these follow-up steps failed – {{steps}}",
-  "The contribution was rejected, but these follow-up steps failed – {{steps}}": "The contribution was rejected, but these follow-up steps failed – {{steps}}"
+  "The contribution was rejected, but these follow-up steps failed – {{steps}}": "The contribution was rejected, but these follow-up steps failed – {{steps}}",
+  "points": "points"
 }

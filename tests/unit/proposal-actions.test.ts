@@ -85,11 +85,11 @@ loader._load = function (name, ...args) {
     return {
       __esModule: true,
       default: () => ({
-        addStrengthsPoints: async (id: string) => {
+        // Points come from the verified accept event (the PDP derives who gets what).
+        issueForEvent: async (event: { type: string; id: string }) => {
           if (walletFails) throw new Error("wallet down");
-          log.push("strengths:" + id);
+          log.push(`points:${event.type}:${event.id}`);
         },
-        addIdeaPoints: async (id: string) => void log.push("ideas:" + id),
       }),
     };
   if (name === "pages/notification")
@@ -178,7 +178,7 @@ test("accept: one atomic call, then notification and points, then refetch", asyn
   await act(async () => button(r, "Accept contribution").props.onClick());
   assert.deepEqual(
     log.filter(e => !e.startsWith("control:")),
-    ["accept:proposal", "message:accepted:bob", "strengths:bob", "ideas:alice"]
+    ["accept:proposal", "message:accepted:bob", "points:accept:a"]
   );
   assert.equal(refetches, 1);
 });
@@ -218,7 +218,7 @@ test("a failed follow-up after a confirmed accept is a warning; accept is not re
   const r = await render();
   await act(async () => button(r, "Accept contribution").props.onClick());
   assert.equal(log.filter(e => e.startsWith("accept:")).length, 1);
-  assert.ok(log.includes("ideas:alice"));
+  assert.ok(log.includes("message:accepted:bob"));
   assert.match(text(r), /The contribution was accepted, but these follow-up steps failed/);
   assert.match(text(r), /"warning"/);
 });

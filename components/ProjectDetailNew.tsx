@@ -2459,7 +2459,11 @@ export default function ProjectDetailNew({ isResource = false }: ProjectDetailNe
             isResource={isResource}
             marketSlot={
               marketplaceEnabled && !isResource && project.id ? (
-                <MarketProjectPanel projectId={project.id} projectType={projectType} isOwner={isOwner} />
+                <MarketProjectPanel
+                  projectId={project.id}
+                  projectType={projectType}
+                  isOwner={editAccess?.status === "controller"}
+                />
               ) : undefined
             }
             topSlot={
@@ -2480,7 +2484,11 @@ export default function ProjectDetailNew({ isResource = false }: ProjectDetailNe
           isResource={isResource}
           marketSlot={
             marketplaceEnabled && !isResource && project.id ? (
-              <MarketProjectPanel projectId={project.id} projectType={projectType} isOwner={isOwner} />
+              <MarketProjectPanel
+                projectId={project.id}
+                projectType={projectType}
+                isOwner={editAccess?.status === "controller"}
+              />
             ) : undefined
           }
           topSlot={
