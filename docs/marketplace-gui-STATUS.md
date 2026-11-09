@@ -2,7 +2,8 @@
 
 **Branch:** `feat/marketplace-ux` (stacked on `feat/medusa-marketplace-gui`, #922) · **Updated:** 2026-11-09
 Backend: `interfacer-medusa`, `feat/build-listings` (stacked on `feat/zenflows-real-events`, PR #1).
-No main/Zenflows/SDK changes. Not pushed yet.
+No main/Zenflows/SDK changes. Draft PRs: GUI #924 and interfacer-medusa#2 (listed in Zenflows #74).
+Local demo data: `pnpm market:showcase` (7 designs, 5 workshops, 6 units; keys in `interfacer-medusa/.tmp/showcase-actors.json`).
 Earlier pins (2026-10-27): backend `8018cb4`, GUI `f76a53e`; PR #1 and #922 descriptions,
 label `workstream:authz-integration`, Zenflows issue #74 table, checkpoint comments on
 #921, #84, SDK #7 and #74. Bilingual review snapshot: backend `docs/review/README.md`.
