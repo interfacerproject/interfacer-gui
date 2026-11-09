@@ -62,12 +62,14 @@ export interface Quote {
 }
 
 export interface MatchEntry {
-  service: { id: string; name: string; [k: string]: unknown };
+  service: ServiceData;
   quote: Quote;
+  // Live: the maker's listed lead time for this design (null when standalone).
+  listing?: { lead_days: number | null };
 }
 
 export interface RejectedEntry {
-  service: { id: string; name: string; [k: string]: unknown };
+  service: ServiceData;
   reason: string;
 }
 
@@ -76,11 +78,36 @@ export interface MatchResult {
   rejected: RejectedEntry[];
 }
 
+export interface OrderItem {
+  id: string;
+  title?: string;
+  product_title?: string;
+  quantity?: number;
+  unit_price?: number;
+  metadata?: Record<string, unknown> | null;
+}
+
 export interface Order {
   id: string;
+  display_id?: number;
+  created_at?: string;
   total?: number;
+  currency_code?: string;
+  metadata?: Record<string, unknown> | null;
+  items?: OrderItem[];
+  shipping_address?: Partial<ShippingAddress> | null;
   payment_collections?: Array<{ payments?: Array<{ captured_at?: string | null }> }>;
   [k: string]: unknown;
+}
+
+export interface ShippingAddress {
+  first_name: string;
+  last_name: string;
+  address_1: string;
+  city: string;
+  postal_code: string;
+  country_code: string;
+  phone?: string;
 }
 
 export interface Receipt {
@@ -165,6 +192,59 @@ export type CatalogDocument =
       per_unit_price_eur: number;
       location: { country_code: string; city: string };
     };
+
+// A registered fabrication service as matching sees it (live: from the catalog).
+export interface ServiceData {
+  id: string;
+  name: string;
+  provider_person_id: string;
+  capabilities: Capabilities;
+  base_price_eur: number;
+  per_unit_price_eur: number;
+  location: { country_code: string; city: string };
+}
+
+export interface LiveDesign {
+  id: string;
+  name: string;
+  origin_dpp_id: string | null;
+  requirements: Requirements;
+}
+
+export interface LiveCatalog {
+  live: boolean;
+  designs: LiveDesign[];
+  services: ServiceData[];
+  excluded: Array<{ kind: CatalogKind; resource_id: string; name: string; reason: string }>;
+}
+
+// "My service builds this design for setup + per piece, ready in N days".
+export interface BuildListingParams {
+  service_id: string;
+  design_id: string;
+  base_price_eur: number;
+  per_unit_price_eur: number;
+  lead_days: number;
+  active: boolean;
+}
+
+export interface BuildListing {
+  id: string;
+  service_id: string;
+  service_name: string;
+  provider_person_id: string;
+  location: { country_code: string; city: string };
+  design_id: string;
+  design_name: string;
+  base_price_eur: number;
+  per_unit_price_eur: number;
+  lead_days: number;
+  quantity: number;
+  total_eur: number | null;
+  active: boolean;
+  compatible: boolean;
+  revision: number;
+}
 
 export interface CatalogEntry {
   id: string;

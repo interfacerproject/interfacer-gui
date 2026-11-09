@@ -11,10 +11,13 @@
 // shapes. LOCAL DEV ONLY — seeded data, labeled stand-in receipts.
 
 import {
+  BuildListing,
+  BuildListingParams,
   CatalogDocument,
   CatalogKind,
   Design,
   JourneyState,
+  LiveCatalog,
   MarketError,
   MatchResult,
   Order,
@@ -22,6 +25,8 @@ import {
   Result,
   Scene,
   SellerDashboard,
+  ServiceData,
+  ShippingAddress,
   StoreProduct,
 } from "./types";
 
@@ -169,6 +174,17 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     }
   }
 
+  // Read-only: the public scene (publishable key, region, live listings) with
+  // no session, so anyone can browse. Buying still needs connect().
+  async function browse(): Promise<Result<Scene>> {
+    try {
+      if (!scene) scene = await api<Scene>(url("dev/store/config"));
+      return ok(scene);
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
   async function catalog(): Promise<Result<StoreProduct[]>> {
     try {
       if (!scene) throw new MarketError("not_connected", 0);
@@ -204,6 +220,65 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     }
   }
 
+  async function services(): Promise<Result<ServiceData[]>> {
+    try {
+      const { services } = await api<{ services: ServiceData[] }>(url("dev/interfacer/services"));
+      return ok(services);
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  async function liveCatalog(): Promise<Result<LiveCatalog>> {
+    try {
+      return ok(await api<LiveCatalog>(url("dev/interfacer/catalog")));
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  async function buildListings(
+    q: { service?: string; design?: string; provider?: string; includeInactive?: boolean } = {}
+  ): Promise<Result<BuildListing[]>> {
+    try {
+      const query = new URLSearchParams();
+      if (q.service) query.set("service", q.service);
+      if (q.design) query.set("design", q.design);
+      if (q.provider) query.set("provider", q.provider);
+      if (q.includeInactive) query.set("include_inactive", "1");
+      const qs = query.toString();
+      const { listings } = await api<{ listings: BuildListing[] }>(
+        url("dev/interfacer/catalog/build-listings") + (qs ? "?" + qs : "")
+      );
+      return ok(listings);
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  // The service owner signs exactly these params; Medusa rechecks ownership,
+  // registration and fit before recording a new revision.
+  async function setBuildListing(params: BuildListingParams): Promise<Result<{ created: boolean }>> {
+    try {
+      const path = url("dev/interfacer/catalog/build-listings");
+      return ok(await ownerSigned<{ created: boolean }>(path, "catalog.build.list", { ...params }, { ...params }));
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  // The signed-in buyer's own Medusa orders, newest first.
+  async function myOrders(): Promise<Result<Order[]>> {
+    try {
+      if (!token) throw new MarketError("login_required", 401);
+      const q = new URLSearchParams({ fields: ORDER_FIELDS + ",+items.title,+items.product_title", order: "-created_at", limit: "50" });
+      const { orders } = await api<{ orders: Order[] }>(url("store/orders") + "?" + q.toString());
+      return ok(orders);
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
   async function readOrder(id: string): Promise<Result<Order>> {
     try {
       const q = new URLSearchParams({ fields: ORDER_FIELDS });
@@ -214,20 +289,22 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     }
   }
 
-  async function newCart(): Promise<string> {
+  const DEMO_ADDRESS: ShippingAddress = {
+    first_name: "Local",
+    last_name: "Demo",
+    address_1: "Teststrasse 1",
+    city: "Berlin",
+    postal_code: "10115",
+    country_code: "de",
+  };
+
+  async function newCart(address: ShippingAddress = DEMO_ADDRESS): Promise<string> {
     if (!scene) throw new MarketError("not_connected", 0);
     const { cart } = await api<{ cart: { id: string } }>(url("store/carts"), {
       region_id: scene.context.region_id,
       sales_channel_id: scene.context.sales_channel_id,
       email: scene.email,
-      shipping_address: {
-        first_name: "Local",
-        last_name: "Demo",
-        address_1: "Teststrasse 1",
-        city: "Berlin",
-        postal_code: "10115",
-        country_code: "de",
-      },
+      shipping_address: address,
     });
     const bound = await api<{ cart: { id: string } }>(url(`store/carts/${cart.id}/customer`), {});
     return bound.cart.id;
@@ -235,9 +312,14 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
 
   // Drives the full purchase for one journey. `state` is owned and persisted by
   // the caller; it is mutated and returned so a retry resumes the same cart/order.
-  async function purchase(kind: "stock" | "build", target: string, state: JourneyState): Promise<Result<JourneyState>> {
+  async function purchase(
+    kind: "stock" | "build",
+    target: string,
+    state: JourneyState,
+    address?: ShippingAddress
+  ): Promise<Result<JourneyState>> {
     try {
-      if (!state.cartId) state.cartId = await newCart();
+      if (!state.cartId) state.cartId = await newCart(address);
       if (!state.orderId) {
         const { cart } = await api<{ cart: { completed_at?: string | null; items?: unknown[] } }>(
           url(`store/carts/${state.cartId}`)
@@ -400,9 +482,15 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   return {
     api,
     signed,
+    browse,
     connect,
     catalog,
     listDesigns,
+    services,
+    liveCatalog,
+    buildListings,
+    setBuildListing,
+    myOrders,
     match,
     readOrder,
     purchase,

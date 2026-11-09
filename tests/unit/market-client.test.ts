@@ -253,3 +253,74 @@ test("the low-level api throws a MarketError carrying the reason on a non-ok res
     (e: unknown) => e instanceof MarketError && (e as MarketError).reason === "local_storefront_only"
   );
 });
+
+test("browse loads the public scene without a session, so anyone can see the catalog", async () => {
+  const { fetchImpl, calls } = scriptedFetch({
+    "GET /api/market/dev/store/config": { body: LIVE },
+    "GET /api/market/store/products": { body: { products: [] } },
+  });
+  const client = createMarketClient({ fetchImpl });
+  assert.equal((await client.browse()).ok, true);
+  assert.equal((await client.catalog()).ok, true);
+  assert.ok(!calls.some(c => c.url.includes("session") || c.url.includes("emailpass")));
+  assert.equal(calls[1].headers["x-publishable-api-key"], "pk_test");
+  assert.equal(calls[1].headers["Authorization"], undefined);
+});
+
+test("setBuildListing: the service owner signs exactly the listing params", async () => {
+  const { wallet, signedOps } = liveWallet();
+  const params = {
+    service_id: "06GSERVCE0000000000000000A",
+    design_id: "06GDESGN0000000000000000AA",
+    base_price_eur: 10,
+    per_unit_price_eur: 4.5,
+    lead_days: 4,
+    active: true,
+  };
+  const { fetchImpl, calls } = scriptedFetch({
+    "POST /api/market/dev/interfacer/catalog/build-listings": { status: 201, body: { created: true } },
+  });
+  const out = await createMarketClient({ fetchImpl, wallet }).setBuildListing(params);
+  assert.equal(out.ok, true);
+  assert.deepEqual(signedOps, [{ op: "catalog.build.list", params, person: wallet.personId }]);
+  assert.deepEqual(calls[0].body, params);
+  assert.equal(calls[0].headers["X-Interfacer-Auth"], "H:catalog.build.list");
+});
+
+test("buildListings forwards only the filters given", async () => {
+  const { fetchImpl, calls } = scriptedFetch({
+    "GET /api/market/dev/interfacer/catalog/build-listings": { body: { listings: [] } },
+  });
+  const client = createMarketClient({ fetchImpl });
+  await client.buildListings();
+  await client.buildListings({ provider: "P1", includeInactive: true });
+  assert.equal(calls[0].url, "/api/market/dev/interfacer/catalog/build-listings");
+  assert.equal(calls[1].url, "/api/market/dev/interfacer/catalog/build-listings?provider=P1&include_inactive=1");
+});
+
+test("purchase ships to the address the buyer typed; myOrders needs a session", async () => {
+  const { fetchImpl, calls } = scriptedFetch({
+    "GET /api/market/dev/store/config": { body: SCENE },
+    "POST /api/market/auth/customer/emailpass": { body: { token: "tok" } },
+    "POST /api/market/store/carts": { body: { cart: { id: "cart_1" } } },
+    "POST /api/market/store/carts/cart_1/customer": { body: { cart: { id: "cart_1" } } },
+    "GET /api/market/store/carts/cart_1": { body: { cart: { completed_at: null, items: [] } } },
+    "POST /api/market/store/carts/cart_1/line-items": { status: 500, body: { reason: "stop_here" } },
+  });
+  const client = createMarketClient({ fetchImpl });
+  const signedOut = await client.myOrders();
+  assert.equal(signedOut.ok, false);
+  await client.connect();
+  const address = {
+    first_name: "Luca",
+    last_name: "Bianchi",
+    address_1: "Via Po 18",
+    city: "Torino",
+    postal_code: "10123",
+    country_code: "it",
+  };
+  const out = await client.purchase("stock", "var_1", {}, address);
+  assert.equal(out.ok, false);
+  const created = calls.find(c => c.method === "POST" && c.url === "/api/market/store/carts");
+  assert.deepEqual((created!.body as any).shipping_address, address);
+});
