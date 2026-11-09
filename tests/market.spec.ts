@@ -20,6 +20,10 @@ const ENABLED = process.env.MARKET_E2E === "1";
 
 test.describe("marketplace GUI journeys", () => {
   test.skip(!ENABLED, "set MARKET_E2E=1 with the GUI (:3002) and Medusa (:9000) running");
+  // Superseded by the integrated marketplace UI: fixture resources have no
+  // project page, so these journeys are not reachable. Live coverage:
+  // tests/market-sellers.spec.ts. Port or retire: Beads interfacer-gui-337.
+  test.skip(true, "superseded by the integrated marketplace UI (Beads interfacer-gui-337)");
   // Fixture journeys (disposable demo buyer/supplier keys) exist only when Medusa
   // runs standalone; live mode refuses them. See tests/market-sellers.spec.ts.
   test.beforeEach(async ({ request }) => {

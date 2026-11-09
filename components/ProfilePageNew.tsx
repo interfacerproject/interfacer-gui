@@ -34,10 +34,12 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { marketplaceEnabled } from "lib/market/flag";
+import ProfileShop from "components/market/ProfileShop";
 
 // ─── Tab definitions ────────────────────────────────────────────────────────
 
-type ProfileTabId = "designs" | "products" | "services" | "dpps" | "machines" | "community";
+type ProfileTabId = "designs" | "products" | "services" | "dpps" | "machines" | "shop" | "community";
 
 interface TabDef {
   id: ProfileTabId;
@@ -63,7 +65,7 @@ interface TabCtaConfig {
   searchPlaceholder: string;
 }
 
-const tabCtaConfig: Record<Exclude<ProfileTabId, "community">, TabCtaConfig> = {
+const tabCtaConfig: Record<Exclude<ProfileTabId, "community" | "shop">, TabCtaConfig> = {
   designs: {
     ctaTitle: "Publish your design documentation",
     ctaDescription:
@@ -1214,7 +1216,17 @@ export default function ProfilePageNew() {
   // Tab state from URL
   const tabParam = (router.query.tab as string) || "designs";
   const activeTab: ProfileTabId = (
-    ["designs", "products", "services", "dpps", "machines", "community"].includes(tabParam) ? tabParam : "designs"
+    [
+      "designs",
+      "products",
+      "services",
+      "dpps",
+      "machines",
+      "community",
+      ...(marketplaceEnabled ? ["shop"] : []),
+    ].includes(tabParam)
+      ? tabParam
+      : "designs"
   ) as ProfileTabId;
 
   const setActiveTab = useCallback(
@@ -1400,6 +1412,41 @@ export default function ProfilePageNew() {
               {t(tab.labelKey)}
             </button>
           ))}
+          {marketplaceEnabled ? (
+            <button
+              type="button"
+              onClick={() => setActiveTab("shop")}
+              aria-current={activeTab === "shop" ? "page" : undefined}
+              data-testid="profile-tab-shop"
+              className={`flex items-center gap-2 px-4 border-none cursor-pointer transition-colors whitespace-nowrap ${
+                activeTab === "shop" ? "bg-ifr-hover border border-ifr" : "bg-transparent hover:bg-ifr-hover/50"
+              }`}
+              style={{
+                height: "var(--ifr-control-height)",
+                borderRadius: "var(--ifr-radius-sm)",
+                fontFamily: "var(--ifr-font-body)",
+                fontSize: "var(--ifr-fs-base)",
+                fontWeight: activeTab === "shop" ? "var(--ifr-fw-semibold)" : "var(--ifr-fw-medium)",
+                color: activeTab === "shop" ? "var(--ifr-text-primary)" : "var(--ifr-text-secondary)",
+              }}
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={activeTab === "shop" ? "var(--ifr-green)" : "var(--ifr-text-secondary)"}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 8h14l-1.2 12H6.2L5 8z" />
+                <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+              </svg>
+              {t("Shop")}
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={() => setActiveTab("community")}
@@ -1438,6 +1485,8 @@ export default function ProfilePageNew() {
         {/* Tab Content */}
         {activeTab === "community" ? (
           <CommunityTabContent />
+        ) : activeTab === "shop" ? (
+          <ProfileShop personId={id} isOwner={isOwner} />
         ) : activeTab === "dpps" ? (
           <DppsTabContent userId={id} isOwner={isOwner} ctaConfig={tabCtaConfig.dpps} />
         ) : (
@@ -1446,7 +1495,7 @@ export default function ProfilePageNew() {
             specId={specIdMap[activeTab]}
             tabType={tabs.find(t => t.id === activeTab)?.type || ProjectType.DESIGN}
             isOwner={isOwner}
-            ctaConfig={tabCtaConfig[activeTab as Exclude<ProfileTabId, "community">]}
+            ctaConfig={tabCtaConfig[activeTab as Exclude<ProfileTabId, "community" | "shop">]}
           />
         )}
       </div>

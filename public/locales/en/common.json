@@ -292,5 +292,18 @@
   "Importing from LOSH is unavailable": "Importing from LOSH is unavailable",
   "Mirrored on {{date}}": "Mirrored on {{date}}",
   "Source": "Source",
-  "Import": "Import"
+  "Import": "Import",
+  "{{count}} makers_one": "{{count}} maker",
+  "{{count}} makers can build this_one": "{{count}} maker can build this",
+  "{{count}} makers can't build it right now_one": "{{count}} maker can't build it right now",
+  "{{count}} pieces_one": "{{count}} piece",
+  "{{count}} pieces, material included_one": "{{count}} piece, material included",
+  "ready in {{count}} days_one": "ready in {{count}} day",
+  "{{count}} days_one": "{{count}} day",
+  "About {{count}} days. You can follow each step._one": "About {{count}} day. You can follow each step.",
+  "{{count}} ready-made products_one": "{{count}} ready-made product",
+  "{{count}} designs you can get built_one": "{{count}} design you can get built",
+  "{{count}} designs your machines can't build yet_one": "{{count}} design your machines can't build yet",
+  "Published · {{count}} makers build it_one": "Published · {{count}} maker builds it",
+  "{{count}} pieces by {{maker}}_one": "{{count}} piece by {{maker}}"
 }

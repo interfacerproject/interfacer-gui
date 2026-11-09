@@ -17,6 +17,7 @@ import BrUserAvatar from "components/brickroom/BrUserAvatar";
 import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
 import { useInBoxContext } from "hooks/useInBox";
+import { marketplaceEnabled } from "lib/market/flag";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -354,6 +355,30 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
             activeBg="var(--ifr-bg-hover)"
             activeTextColor="var(--ifr-text-primary)"
           />
+          {marketplaceEnabled && (
+            <NavItem
+              icon={
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--ifr-text-secondary)"
+                  strokeWidth="1.6"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 8h14l-1.2 12H6.2L5 8z" />
+                  <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+                </svg>
+              }
+              label={t("Marketplace")}
+              active={isActive("/market")}
+              onClick={() => handleNavigate("/market")}
+              activeBg="var(--ifr-bg-hover)"
+              activeTextColor="var(--ifr-text-primary)"
+            />
+          )}
 
           {/* Logged-in section */}
           {user && (
@@ -499,6 +524,42 @@ export default function NavigationMenu({ open, onClose }: NavigationMenuProps) {
 
               <div className="h-1.5" />
 
+              {marketplaceEnabled && (
+                <>
+                  <NavItem
+                    icon={
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="var(--ifr-text-secondary)"
+                        strokeWidth="1.6"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M5 8h14l-1.2 12H6.2L5 8z" />
+                        <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+                      </svg>
+                    }
+                    label={t("My orders")}
+                    active={isActive("/market/orders")}
+                    onClick={() => handleNavigate("/market/orders")}
+                    activeBg="var(--ifr-bg-hover)"
+                    activeTextColor="var(--ifr-text-primary)"
+                  />
+                  <NavItem
+                    icon={
+                      <DocumentTextIcon className="w-[18px] h-[18px]" style={{ color: "var(--ifr-text-secondary)" }} />
+                    }
+                    label={t("Selling")}
+                    active={isActive("/market/selling")}
+                    onClick={() => handleNavigate("/market/selling")}
+                    activeBg="var(--ifr-bg-hover)"
+                    activeTextColor="var(--ifr-text-primary)"
+                  />
+                </>
+              )}
               <NavItem
                 icon={<BellIcon className="w-[18px] h-[18px]" style={{ color: "var(--ifr-text-secondary)" }} />}
                 label={t("Notifications")}
