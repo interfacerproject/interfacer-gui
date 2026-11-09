@@ -314,5 +314,12 @@
     "message": "Quelqu’un a modifié {{fields}} après l’ouverture de ce formulaire. Votre brouillon est conservé : comparez-le avec le projet actuel, puis choisissez.",
     "keepMine": "Enregistrer quand même ma version",
     "discard": "Abandonner mon brouillon et charger la dernière version"
+  },
+  "contributionProposal": {
+    "followUpsFailed": "Votre proposition a été créée, mais ces étapes suivantes ont échoué – {{steps}}",
+    "openProposal": "Ouvrir la proposition",
+    "notification": "notification",
+    "ideaPoints": "points d’idée",
+    "strengthsPoints": "points de force"
   }
 }
