@@ -13,7 +13,7 @@ import ModelFilesStep, {
   ModelFilesStepValues,
 } from "components/partials/create/project/steps/ModelFilesStep";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
-import { useProjectCRUD } from "hooks/useProjectCRUD";
+import { useMetadataDraft } from "hooks/useMetadataDraft";
 import findProjectModels, { getRawMetadataModelEntries } from "lib/findProjectModels";
 
 interface EditModelFilesValues {
@@ -22,7 +22,8 @@ interface EditModelFilesValues {
 
 const EditModelFiles: NextPageWithLayout = () => {
   const { project } = useProject();
-  const { updateMetadata } = useProjectCRUD();
+  // Saves against the values this form opened with (same-field conflicts are surfaced).
+  const { save } = useMetadataDraft(project);
 
   const metadata = ((project.metadata || {}) as Record<string, unknown>) || {};
   const existingEntries = getRawMetadataModelEntries(metadata);
@@ -53,7 +54,7 @@ const EditModelFiles: NextPageWithLayout = () => {
     // Preserve any existing non-URL entries (e.g. DPP-stored files)
     const preservedEntries = existingEntries.filter(entry => typeof entry !== "string");
 
-    await updateMetadata(project, {
+    await save({
       models: [...preservedEntries, ...newModelUrls],
     });
   }

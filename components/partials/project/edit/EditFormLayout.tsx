@@ -1,6 +1,7 @@
 import { NextRouter, useRouter } from "next/router";
-import { Banner } from "@bbtgnn/polaris-interfacer";
+import { Banner, Button } from "@bbtgnn/polaris-interfacer";
 import { errorFormatter } from "lib/errorFormatter";
+import { StaleDraft, staleDraftOf } from "lib/resourceMetadata";
 import { useProject } from "components/layout/FetchProjectLayout";
 import { GraphQLRequestError } from "@dyne/interfacer-client";
 import { useEffect, useState } from "react";
@@ -35,6 +36,8 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
   const { editAccess } = useProject();
   const [loading, setLoading] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [staleDraft, setStaleDraft] = useState<StaleDraft>();
+  const [discarding, setDiscarding] = useState(false);
 
   const { handleSubmit, formState, reset } = formMethods;
   const { isDirty, isSubmitSuccessful } = formState;
@@ -42,14 +45,20 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
   async function onSubmitWrapper(values: T) {
     setLoading(true);
     setSaveError("");
+    setStaleDraft(undefined);
     try {
       if (editAccess && editAccess.status !== "controller") {
         throw new GraphQLRequestError([{ message: "Editing is not available.", extensions: { code: "FORBIDDEN" } }]);
       }
       await onSubmit(values);
     } catch (error) {
-      const message = errorFormatter(error, t);
-      setSaveError(message);
+      const stale = staleDraftOf(error);
+      setStaleDraft(stale);
+      setSaveError(
+        stale
+          ? t("common:draftConflict.message", { nsSeparator: ":", keySeparator: ".", fields: stale.fields.join(", ") })
+          : errorFormatter(error, t)
+      );
       if (error instanceof GraphQLRequestError && ["FORBIDDEN", "UNAUTHENTICATED"].includes(error.code)) {
         void editAccess?.refetch();
       }
@@ -60,6 +69,27 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
       setLoading(false);
     }
   }
+
+  /* Stale draft: the user decides, nothing happens automatically */
+
+  const submit = () =>
+    handleSubmit(onSubmitWrapper)().catch(() => {
+      // The error is already visible; do not leak a rejected promise.
+    });
+  const keepMine = () => {
+    staleDraft?.keepMine();
+    return submit();
+  };
+  const discardDraft = () => {
+    reset();
+    setStaleDraft(undefined);
+    setSaveError("");
+    setDiscarding(true);
+  };
+  useEffect(() => {
+    // Reload only after reset() has cleared the unsaved-changes guard.
+    if (discarding && !formState.isDirty) router.reload();
+  }, [discarding, formState.isDirty, router]);
 
   /* Prevent navigation if unsaved changes */
 
@@ -119,6 +149,16 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
               {saveError && (
                 <Banner status="critical">
                   <p role="alert">{saveError}</p>
+                  {staleDraft && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      <Button onClick={keepMine}>
+                        {t("common:draftConflict.keepMine", { nsSeparator: ":", keySeparator: "." })}
+                      </Button>
+                      <Button onClick={discardDraft}>
+                        {t("common:draftConflict.discard", { nsSeparator: ":", keySeparator: "." })}
+                      </Button>
+                    </div>
+                  )}
                 </Banner>
               )}
               {children}

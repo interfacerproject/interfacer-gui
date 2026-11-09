@@ -16,7 +16,7 @@ import EditProjectLayout from "components/layout/EditProjectLayout";
 import FetchProjectLayout, { useProject } from "components/layout/FetchProjectLayout";
 import Layout from "components/layout/Layout";
 import EditFormLayout from "components/partials/project/edit/EditFormLayout";
-import { useProjectCRUD } from "hooks/useProjectCRUD";
+import { useMetadataDraft } from "hooks/useMetadataDraft";
 import { GetStaticPaths } from "next";
 import useYupLocaleObject from "hooks/useYupLocaleObject";
 
@@ -69,10 +69,11 @@ const EditDeclarations: NextPageWithLayout = () => {
 
   /* Submit logic */
 
-  const { updateDeclarations } = useProjectCRUD();
+  // Saves against the values this form opened with (same-field conflicts are surfaced).
+  const { save } = useMetadataDraft(project);
 
   async function onSubmit(values: EditDeclarationsValues) {
-    await updateDeclarations(project.id!, values.declarations);
+    await save({ declarations: values.declarations });
   }
 
   /* Render */

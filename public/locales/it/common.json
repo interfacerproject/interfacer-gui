@@ -309,5 +309,10 @@
   "Mirrored on {{date}}": "Replicato il {{date}}",
   "Source": "Fonte",
   "Project data": "Dati del progetto",
-  "Import": "Importa"
+  "Import": "Importa",
+  "draftConflict": {
+    "message": "Qualcuno ha modificato {{fields}} dopo che hai aperto questo form. La tua bozza è conservata: confrontala con il progetto attuale, poi scegli.",
+    "keepMine": "Salva comunque la mia versione",
+    "discard": "Scarta la bozza e carica l’ultima versione"
+  }
 }
