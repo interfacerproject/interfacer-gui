@@ -2,7 +2,7 @@ import { GraphQLRequestError, InterfacerClient, throwIfGraphQLErrors } from "@dy
 
 const READ_METADATA = `
   query ResourceMetadataForEdit($id: ID!) {
-    economicResource(id: $id) { id metadata }
+    economicResource(id: $id) { id metadata metadataHash }
   }
 `;
 
@@ -22,10 +22,12 @@ function invalidResponse(): never {
 }
 
 /**
- * Preserve unrelated keys for serial edits against the current replacement API.
- * This is NOT an atomic patch/CAS: another client can write between read and
- * replacement. Backend atomic patch support remains required for concurrent edits.
- * Never reuse a project snapshot, retry an uncertain write, or swallow a denial.
+ * Read a fresh content fingerprint, then make one backend atomic field patch.
+ * CAS closes the read-to-write race; unrelated fields are never resent/replaced.
+ * No legacy process/accept/modify fallback or automatic retry after conflict or
+ * ambiguous transport failure. This is NOT stale-draft reconciliation: a draft
+ * opened before this fresh read can still replace a later same-field edit.
+ * Backend/SDK patch support is required; missing capability fails closed.
  */
 export async function updateResourceMetadataFields(
   client: Pick<InterfacerClient, "graphql" | "resources">,
@@ -34,18 +36,12 @@ export async function updateResourceMetadataFields(
 ): Promise<void> {
   if (!id || !isMap(patch)) throw new Error("Resource ID and metadata fields are required.");
   const result = await client.graphql.request<{
-    economicResource: { id: string; metadata: unknown } | null;
+    economicResource: { id: string; metadata: unknown; metadataHash: unknown } | null;
   }>(READ_METADATA, { id });
   throwIfGraphQLErrors(result);
   const resource = result.data?.economicResource;
   if (!resource || resource.id !== id) invalidResponse();
   if (resource.metadata !== null && !isMap(resource.metadata)) invalidResponse();
-  const metadata = { ...(resource.metadata || {}), ...patch };
-  // Validate serialization before the SDK creates its metadata process.
-  try {
-    JSON.stringify(metadata);
-  } catch {
-    throw new Error("Metadata fields must be JSON serializable.");
-  }
-  await client.resources.updateMetadata(id, metadata);
+  if (typeof resource.metadataHash !== "string" || !/^[0-9a-f]{64}$/.test(resource.metadataHash)) invalidResponse();
+  await client.resources.patchMetadata(id, patch, { expectedMetadataHash: resource.metadataHash });
 }

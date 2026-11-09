@@ -51,66 +51,69 @@ const Layout = EditFormLayout as React.ComponentType<{
   children?: React.ReactNode;
 }>;
 
-test("denied save retains the draft, shows an error and does not mark RHF submission successful or navigate", async () => {
-  (globalThis as any).window = { addEventListener() {}, removeEventListener() {}, confirm: () => false };
-  reloads = pushes = 0;
-  editAccess = undefined;
-  let renderer!: ReactTestRenderer;
+for (const code of ["FORBIDDEN", "CONFLICT"]) {
+  test(
+    code + " retains the draft, shows an error and does not mark RHF submission successful or navigate",
+    async () => {
+      (globalThis as any).window = { addEventListener() {}, removeEventListener() {}, confirm: () => false };
+      reloads = pushes = 0;
+      editAccess = undefined;
+      let renderer!: ReactTestRenderer;
 
-  let form!: UseFormReturn<{ title: string }>;
-  let failure: Error | undefined = new GraphQLRequestError([
-    { message: "forbidden", extensions: { code: "FORBIDDEN" } },
-  ]);
-  function Harness() {
-    form = useForm({ defaultValues: { title: "Original" } });
-    return React.createElement(
-      Layout,
-      {
-        formMethods: form,
-        onSubmit: async () => {
-          if (failure) throw failure;
-        },
-      },
-      React.createElement("input", { ...form.register("title") })
-    );
-  }
-  try {
-    await act(async () => {
-      renderer = create(React.createElement(Harness));
-    });
-    await act(async () => {
-      form.setValue("title", "Unsent draft", { shouldDirty: true });
-      await form.trigger();
-    });
-    const submit = () => renderer.root.findByType("form").props.onSubmit({ preventDefault() {}, persist() {} });
-    await act(async () => {
-      await submit();
-    });
-    assert.equal(form.getValues("title"), "Unsent draft");
-    assert.equal(form.formState.isSubmitSuccessful, false);
-    assert.equal(form.formState.isDirty, true);
-    assert.equal(reloads + pushes, 0);
-    assert.equal(renderer.root.findAllByProps({ "data-loading": true }).length, 0);
-    assert.equal(renderer.root.findAllByProps({ role: "alert" }).length, 1);
-    assert.equal(
-      renderer.root.findByProps({ type: "submit" }).props.disabled,
-      false,
-      "a failed request must not disable retry for an unchanged valid draft"
-    );
-    failure = undefined;
-    await act(async () => {
-      await submit();
-    });
-    assert.equal(form.formState.isSubmitSuccessful, true);
-    assert.equal(renderer.root.findAllByProps({ role: "alert" }).length, 0);
-    assert.equal(reloads, 1);
-  } finally {
-    await act(async () => {
-      renderer?.unmount();
-    });
-    delete (globalThis as any).window;
-  }
-});
+      let form!: UseFormReturn<{ title: string }>;
+      let failure: Error | undefined = new GraphQLRequestError([{ message: "safe", extensions: { code } }]);
+      function Harness() {
+        form = useForm({ defaultValues: { title: "Original" } });
+        return React.createElement(
+          Layout,
+          {
+            formMethods: form,
+            onSubmit: async () => {
+              if (failure) throw failure;
+            },
+          },
+          React.createElement("input", { ...form.register("title") })
+        );
+      }
+      try {
+        await act(async () => {
+          renderer = create(React.createElement(Harness));
+        });
+        await act(async () => {
+          form.setValue("title", "Unsent draft", { shouldDirty: true });
+          await form.trigger();
+        });
+        const submit = () => renderer.root.findByType("form").props.onSubmit({ preventDefault() {}, persist() {} });
+        await act(async () => {
+          await submit();
+        });
+        assert.equal(form.getValues("title"), "Unsent draft");
+        assert.equal(form.formState.isSubmitSuccessful, false);
+        assert.equal(form.formState.isDirty, true);
+        assert.equal(reloads + pushes, 0);
+        assert.equal(renderer.root.findAllByProps({ "data-loading": true }).length, 0);
+        assert.equal(renderer.root.findAllByProps({ role: "alert" }).length, 1);
+        assert.equal(
+          renderer.root.findByProps({ type: "submit" }).props.disabled,
+          false,
+          "a failed request must not disable retry for an unchanged valid draft"
+        );
+        failure = undefined;
+        await act(async () => {
+          await submit();
+        });
+        assert.equal(form.formState.isSubmitSuccessful, true);
+        assert.equal(renderer.root.findAllByProps({ role: "alert" }).length, 0);
+        assert.equal(reloads, 1);
+      } finally {
+        await act(async () => {
+          renderer?.unmount();
+        });
+        delete (globalThis as any).window;
+      }
+    }
+  );
+}
 
 for (const status of ["read-only", "loading", "error", "controller"]) {
   test("submission guard and denial recheck preserve the draft: " + status, async () => {
