@@ -179,7 +179,7 @@ export function Drawing({
         </svg>
       )}
       {chip ? <span className="absolute top-3 left-3">{chip}</span> : null}
-      {caption ? (
+      {caption && !image ? (
         <span
           className="absolute right-3 bottom-2 px-1 text-[11px]"
           style={{ ...mono, color: "#565a64", background: image ? "rgba(255,255,255,0.85)" : "transparent" }}
