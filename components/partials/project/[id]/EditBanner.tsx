@@ -3,15 +3,16 @@ import FullWidthBanner from "components/FullWidthBanner";
 import { useProject } from "components/layout/FetchProjectLayout";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { translateCommon } from "lib/errorFormatter";
 
 const EditBanner = () => {
   const { t } = useTranslation();
-  const { project, isOwner } = useProject();
+  const { project, editAccess } = useProject();
 
-  return !isOwner ? null : (
+  return editAccess?.status !== "controller" ? null : (
     <FullWidthBanner open status="basic">
       <Text as="p" variant="bodyMd" id="is-owner-banner-content">
-        {t("This project is yours")}
+        {translateCommon(t, "resourceAccess.controller")}
       </Text>
       <Link href={`/project/${project.id}/edit`}>
         <Button monochrome outline>

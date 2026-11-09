@@ -1458,7 +1458,7 @@ interface ProjectDetailNewProps {
 export default function ProjectDetailNew({ isResource = false }: ProjectDetailNewProps = {}) {
   const { t } = useTranslation("common");
   const router = useRouter();
-  const { project, isOwner } = useProject();
+  const { project, editAccess } = useProject();
   const projectType = getProjectType(project);
   const color = typeColors[projectType] || "var(--ifr-green)";
   const images = useMemo(() => findProjectImages(project), [project]);
@@ -1624,7 +1624,7 @@ export default function ProjectDetailNew({ isResource = false }: ProjectDetailNe
 
             {/* Actions */}
             <div className="flex items-center gap-3 shrink-0 ml-4">
-              {isOwner && (
+              {editAccess?.status === "controller" && (
                 <Link href={`/project/${project.id}/edit`}>
                   <a
                     className="flex items-center gap-1.5 px-3 bg-ifr-surface border border-ifr hover:bg-ifr-hover transition-colors no-underline"

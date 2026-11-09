@@ -1,6 +1,8 @@
 import { NextRouter, useRouter } from "next/router";
 import { Banner } from "@bbtgnn/polaris-interfacer";
 import { errorFormatter } from "lib/errorFormatter";
+import { useProject } from "components/layout/FetchProjectLayout";
+import { GraphQLRequestError } from "@dyne/interfacer-client";
 import { useEffect, useState } from "react";
 import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form";
 
@@ -30,6 +32,7 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
   const { children, formMethods, nav, onSubmit = () => {}, redirect, projectType } = props;
   const { t } = useTranslation("common");
   const router = useRouter();
+  const { editAccess } = useProject();
   const [loading, setLoading] = useState(false);
   const [saveError, setSaveError] = useState("");
 
@@ -40,10 +43,16 @@ export default function EditFormLayout<T extends FieldValues>(props: EditFormLay
     setLoading(true);
     setSaveError("");
     try {
+      if (editAccess && editAccess.status !== "controller") {
+        throw new GraphQLRequestError([{ message: "Editing is not available.", extensions: { code: "FORBIDDEN" } }]);
+      }
       await onSubmit(values);
     } catch (error) {
       const message = errorFormatter(error, t);
       setSaveError(message);
+      if (error instanceof GraphQLRequestError && ["FORBIDDEN", "UNAUTHENTICATED"].includes(error.code)) {
+        void editAccess?.refetch();
+      }
       // Let RHF record an unsuccessful submission without invalidating valid
       // fields: the draft must remain editable and retryable after recovery.
       throw error;

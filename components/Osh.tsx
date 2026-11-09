@@ -1,7 +1,6 @@
 import { Button, Card, Spinner, Stack, Text } from "@bbtgnn/polaris-interfacer";
 import { CheckmarkFilled, View, ViewOff, WarningAltFilled } from "@carbon/icons-react";
 import dayjs from "dayjs";
-import { useAuth } from "hooks/useAuth";
 import useAutoimport from "hooks/useAutoimport";
 import { useProjectCRUD } from "hooks/useProjectCRUD";
 import { url } from "lib/regex";
@@ -78,15 +77,14 @@ const OshLine = ({
 };
 
 const OshTool = () => {
-  const { project, refetch } = useProject();
+  const { project, refetch, editAccess } = useProject();
   const [loading, setLoading] = useState<boolean>(false);
   const [oshRatings, setOshRatings] = useState<any>(project?.metadata?.ratings);
   const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
   const { analyzeRepository } = useAutoimport();
   const { updateMetadata } = useProjectCRUD();
-  const { user } = useAuth();
-  const isOwner = user?.ulid === project.primaryAccountable!.id;
+  const isOwner = editAccess?.status === "controller";
   const isDesign = project.conformsTo?.name === ProjectType.DESIGN;
   const handleAnalyze = async () => {
     setLoading(true);

@@ -5,6 +5,7 @@ import {
   formSecondaryButtonStyle,
 } from "components/partials/create/FormShell";
 import { useTranslation } from "next-i18next";
+import { useProject } from "components/layout/FetchProjectLayout";
 import { useFormContext } from "react-hook-form";
 
 export interface SubmitChangesProps {}
@@ -15,13 +16,14 @@ export interface SubmitChangesProps {}
 export default function SubmitChangesBar(props: SubmitChangesProps) {
   const { t } = useTranslation();
   const { formState, reset } = useFormContext();
+  const { editAccess } = useProject();
   const { isValid, isDirty } = formState;
 
   function handleReset() {
     reset();
   }
 
-  if (!isDirty) return null;
+  if (!isDirty || (editAccess && editAccess.status !== "controller")) return null;
 
   return (
     <div

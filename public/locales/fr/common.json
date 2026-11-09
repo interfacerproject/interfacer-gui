@@ -1,4 +1,13 @@
 {
+  "resourceAccess": {
+    "controller": "Vous contrôlez cette ressource.",
+    "loading": "Vérification de l’accès à la modification… Votre brouillon est conservé.",
+    "read-only": "Cette ressource est contrôlée par une autre personne. Vous pouvez consulter le formulaire, mais la modification est suspendue. Votre brouillon est conservé.",
+    "unassigned": "Aucun contrôle n’est attribué à cette ressource. La modification nécessite l’attribution du contrôle. Votre brouillon est conservé.",
+    "organization": "Les autorisations d’organisation ne sont pas évaluées dans cette vue d’accès personnel. La modification est suspendue ; votre brouillon est conservé.",
+    "error": "L’accès à la modification n’a pas pu être vérifié. La modification est suspendue ; votre brouillon est conservé. Réessayez la vérification.",
+    "checkAgain": "Vérifier à nouveau l’accès"
+  },
   "claimFlow": {
     "unavailable": "L’importation est indisponible car l’agent source n’est pas configuré. Ton formulaire n’a pas été envoyé.",
     "detailsIncomplete": "La ressource a été importée, mais ses détails ou la navigation n’ont pas pu être finalisés. Ouvre le projet importé pour le vérifier. Ne l’importe pas à nouveau.",

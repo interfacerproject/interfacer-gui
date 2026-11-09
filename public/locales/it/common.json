@@ -1,4 +1,13 @@
 {
+  "resourceAccess": {
+    "controller": "Hai il controllo di questa risorsa.",
+    "loading": "Verifica dei permessi di modifica… La bozza è conservata.",
+    "read-only": "Questa risorsa è controllata da un’altra persona. Puoi consultare il modulo, ma la modifica è sospesa. La bozza è conservata.",
+    "unassigned": "Questa risorsa non ha un controller assegnato. La modifica richiede l’assegnazione del controllo. La bozza è conservata.",
+    "organization": "I permessi organizzativi non sono valutati in questa vista di accesso personale. La modifica è sospesa; la bozza è conservata.",
+    "error": "Non è stato possibile verificare i permessi di modifica. La modifica è sospesa; la bozza è conservata. Riprova la verifica.",
+    "checkAgain": "Verifica di nuovo i permessi"
+  },
   "claimFlow": {
     "unavailable": "L’importazione non è disponibile perché l’agente sorgente non è configurato. Il modulo non è stato inviato.",
     "detailsIncomplete": "La risorsa è stata importata, ma non è stato possibile completare i dettagli o la navigazione. Apri il progetto importato per verificarlo. Non importarlo di nuovo.",
