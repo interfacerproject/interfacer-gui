@@ -197,7 +197,7 @@ test.describe("live marketplace with real sellers", () => {
     browser,
     request,
   }) => {
-    const config = await (await request.get("/api/market/dev/store/config")).json();
+    const config = await (await request.get("/api/market/market/store/config")).json();
     test.skip(!config.live, "Medusa is in standalone fixture mode");
     expect(config.password).toBeUndefined();
     const stamp = Date.now();
@@ -232,7 +232,7 @@ test.describe("live marketplace with real sellers", () => {
 
     // Ready-made: the product page's Buy block → checkout, signed by the buyer.
     const login = buyerPage.waitForResponse(
-      res => res.url().endsWith("/dev/store/session") && res.request().method() === "POST"
+      res => res.url().endsWith("/market/store/session") && res.request().method() === "POST"
     );
     await buyerPage.goto(`/project/${product}`);
     await buyerPage.getByTestId("market-buy-stock").filter({ visible: true }).click();
@@ -240,7 +240,7 @@ test.describe("live marketplace with real sellers", () => {
     const sessionResponse = await login;
     const session = await sessionResponse.json();
     expect(session.buyer_person_id).toBe(buyer.id);
-    const replay = await buyerPage.request.post("/api/market/dev/store/session", {
+    const replay = await buyerPage.request.post("/api/market/market/store/session", {
       headers: { "x-interfacer-auth": sessionResponse.request().headers()["x-interfacer-auth"] },
       data: {},
     });
@@ -249,8 +249,10 @@ test.describe("live marketplace with real sellers", () => {
       headers: { authorization: `Bearer ${session.token}` },
       data: { action: "capture", orderId: "x" },
     });
-    expect(devSigner.status()).toBe(403);
-    expect((await devSigner.json()).reason).toBe("dev_signer_disabled_live");
+    // Locally Medusa refuses its dev signer in live mode; a pilot proxy never forwards it.
+    const pilot = Boolean(config.context.audience);
+    expect(devSigner.status()).toBe(pilot ? 400 : 403);
+    expect((await devSigner.json()).reason).toBe(pilot ? "market_path_forbidden" : "dev_signer_disabled_live");
     await expect(buyerPage.getByTestId("market-order-status")).toHaveText("Awaiting delivery");
 
     // Built on demand: the design page lists the maker at the LISTED price.
@@ -275,7 +277,7 @@ test.describe("live marketplace with real sellers", () => {
     await signMilestone(makerPage, "build", buildOrder);
     await expect(makerPage.getByTestId("market-stat-earned")).toHaveText("€15.00");
     await expect(makerPage.getByTestId("market-stat-designs")).toHaveText("1");
-    const forbidden = await request.post("/api/market/dev/store/prepare", {
+    const forbidden = await request.post("/api/market/market/store/prepare", {
       headers: { authorization: `Bearer ${session.token}` },
       data: { action: "deliver", orderId: stockOrder },
     });
@@ -286,7 +288,12 @@ test.describe("live marketplace with real sellers", () => {
     await expect(buyerPage.getByTestId("market-order-status")).toHaveText("Built and handed over", { timeout: 30000 });
     await expect(buyerPage.getByTestId("market-zenflows-id").first()).toBeVisible();
 
-    const receipts = (await (await request.get("/api/market/dev/interfacer/receipts")).json()).receipts;
+    // Receipts are per person: the buyer sees both of their orders.
+    const receipts = (
+      await (
+        await request.get("/api/market/market/receipts", { headers: { authorization: `Bearer ${session.token}` } })
+      ).json()
+    ).receipts;
     const stockReceipt = receipts.find((r: any) => r.order_id === stockOrder);
     const buildReceipt = receipts.find((r: any) => r.order_id === buildOrder);
     const transfer = (

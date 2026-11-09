@@ -26,6 +26,9 @@ export interface PreparedOperation {
   op: string;
   params: unknown;
   person: string;
+  // The Medusa instance the operation is for, when it names one (a pilot):
+  // signed as `aud`, so the envelope is valid there and nowhere else.
+  audience?: string;
 }
 export interface BuyerWallet {
   personId: string;
@@ -113,6 +116,7 @@ export function createMarketWallet(
         person_id: personId,
         nonce: Array.from(nonce, b => b.toString(16).padStart(2, "0")).join(""),
         issued_at: new Date().toISOString(),
+        ...(operation.audience ? { aud: operation.audience } : {}),
       };
       const signature = await crypto.subtle.sign(
         "Ed25519",

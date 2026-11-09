@@ -208,6 +208,9 @@ async function createProject(
   return created.createEconomicEvent.economicEvent.resourceInventoriedAs.id;
 }
 
+// A pilot Medusa names the audience its envelopes must carry (scene context).
+let audience: string | undefined;
+
 // The marketplace wallet envelope (lib/market/wallet.ts), signed in Node.
 function interfacerAuth(as: Actor, op: string, params: unknown): string {
   const envelope = {
@@ -216,6 +219,7 @@ function interfacerAuth(as: Actor, op: string, params: unknown): string {
     person_id: as.id,
     nonce: randomBytes(16).toString("hex"),
     issued_at: new Date().toISOString(),
+    ...(audience ? { aud: audience } : {}),
   };
   const signature = sign(null, new Uint8Array(Buffer.from(canonicalOperation(envelope), "utf8")), as.privateKey).toString("base64");
   return Buffer.from(JSON.stringify({ envelope, signature }), "utf8").toString("base64url");
@@ -236,8 +240,9 @@ async function main() {
   if (!ADMIN) throw new Error("set MARKET_SHOWCASE_ZENFLOWS_ADMIN to the Zenflows ADMIN_KEY");
   if (existsSync(OUT) && process.env.MARKET_SHOWCASE_FORCE !== "1")
     throw new Error(`${OUT} exists: the showcase is already seeded (MARKET_SHOWCASE_FORCE=1 to add another)`);
-  const config: any = await (await fetch(`${GUI}/api/market/dev/store/config`)).json();
+  const config: any = await (await fetch(`${GUI}/api/market/market/store/config`)).json();
   if (!config.live) throw new Error("Medusa must run in live mode (with a Zenflows URL)");
+  audience = config.context?.audience;
 
   const stamp = Date.now().toString(36);
   const people: Record<string, Actor> = {};
@@ -262,7 +267,7 @@ async function main() {
     });
     resources[d.key] = id;
     const params = { resource_id: id, document: { schema_version: "interfacer-build-requirements-v1", requirements: d.requirements } };
-    await market("dev/interfacer/catalog/designs", owner, "catalog.design.register", params);
+    await market("market/catalog/designs", owner, "catalog.design.register", params);
     console.log(`design   ${d.name} (${owner.name})`);
   }
 
@@ -285,7 +290,7 @@ async function main() {
       per_unit_price_eur: s.per_unit_price_eur,
       location: { country_code: place.country, city: town(place.address) },
     };
-    await market("dev/interfacer/catalog/services", owner, "catalog.service.register", { resource_id: id, document });
+    await market("market/catalog/services", owner, "catalog.service.register", { resource_id: id, document });
     for (const [design, [base, unit, days]] of Object.entries(s.builds)) {
       const params = {
         service_id: id,
@@ -295,7 +300,7 @@ async function main() {
         lead_days: days,
         active: true,
       };
-      await market("dev/interfacer/catalog/build-listings", owner, "catalog.build.list", params);
+      await market("market/catalog/build-listings", owner, "catalog.build.list", params);
     }
     console.log(`service  ${s.name}: builds ${Object.keys(s.builds).join(", ")}`);
   }
@@ -311,12 +316,12 @@ async function main() {
       svg: plate({ kind: "product", drawing: p.drawing, title: p.name, subtitle: owner.name, sheet: `EUR ${p.price_eur}`, dims: p.dims }),
     });
     resources[p.key] = id;
-    const created = await market<{ binding: { id: string } }>("dev/interfacer/listings/live", owner, "commerce.listing.live.create", {
+    const created = await market<{ binding: { id: string } }>("market/listings/live", owner, "commerce.listing.live.create", {
       resource_id: id,
     });
     const listing = created.binding.id;
-    await market(`dev/interfacer/listings/${listing}/publish`, owner, "commerce.listing.publish", { listing_id: listing, priceEUR: p.price_eur }, { priceEUR: p.price_eur });
-    await market(`dev/interfacer/listings/${listing}/checkout`, owner, "commerce.listing.checkout.setup", { listing_id: listing }, {});
+    await market(`market/listings/${listing}/publish`, owner, "commerce.listing.publish", { listing_id: listing, priceEUR: p.price_eur }, { priceEUR: p.price_eur });
+    await market(`market/listings/${listing}/checkout`, owner, "commerce.listing.checkout.setup", { listing_id: listing }, {});
     console.log(`product  ${p.name}: EUR ${p.price_eur} (${owner.name})`);
   }
 

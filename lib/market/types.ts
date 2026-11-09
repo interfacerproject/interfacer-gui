@@ -28,6 +28,7 @@ export interface Scene {
     publishable_key: string;
     region_id: string;
     sales_channel_id: string;
+    audience?: string; // a pilot Medusa's envelope audience
   };
   products: SceneProduct[];
 }

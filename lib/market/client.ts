@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Dyne.org foundation <foundation@dyne.org>.
 //
-// Browser-side client for the local Interfacer × Medusa marketplace. It talks
+// Browser-side client for the Interfacer × Medusa marketplace. It talks
 // ONLY to the GUI's own /api/market/* proxy (never to Medusa directly, never
 // receiving a private key). Logged-in buyers sign with their browser wallet;
 // only disposable demo buyers/suppliers use the Medusa dev signer.
@@ -52,6 +52,8 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   let token: string | null = null;
 
   const url = (medusaPath: string) => `${base}/api/market/${medusaPath}`;
+  // A pilot names the instance every envelope is for; a local stack names none.
+  const audience = () => (scene?.context.audience ? { audience: scene.context.audience } : {});
 
   // Low-level call. Throws MarketError(reason,status) on a non-ok response, so
   // callers either catch it or let a page-facing wrapper turn it into Result.
@@ -90,10 +92,11 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   async function sign(action: Record<string, unknown>): Promise<{ header: string }> {
     if (!token) throw new MarketError("not_connected", 401);
     if (opts.wallet) {
-      const operation = await api<PreparedOperation>(url("dev/store/prepare"), action);
+      const operation = await api<PreparedOperation>(url("market/store/prepare"), action);
       if (operation.op !== EXPECTED_OP[String(action.action)])
         throw new MarketError("buyer_wallet_operation_forbidden", 403);
-      if (operation.person === opts.wallet.personId) return { header: await opts.wallet.sign(operation) };
+      if (operation.person === opts.wallet.personId)
+        return { header: await opts.wallet.sign({ ...operation, ...audience() }) };
       // Live: there is no dev signer; only standalone fixture suppliers remain.
       if (scene?.live || !["deliver", "produce"].includes(String(action.action)))
         throw new MarketError("buyer_wallet_operation_forbidden", 403);
@@ -105,7 +108,8 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   // listings): signed directly by the wallet as the signed-in person.
   async function ownerSigned<T = any>(path: string, op: string, params: Record<string, unknown>, body: unknown) {
     if (!opts.wallet) throw new MarketError("login_required", 401);
-    const header = await opts.wallet.sign({ op, params, person: opts.wallet.personId });
+    if (!scene) scene = await api<Scene>(url("market/store/config"));
+    const header = await opts.wallet.sign({ op, params, person: opts.wallet.personId, ...audience() });
     return api<T>(path, body, header);
   }
 
@@ -131,19 +135,20 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
 
   async function connect(): Promise<Result<Scene>> {
     try {
-      scene = await api<Scene>(url("dev/store/config"));
+      scene = await api<Scene>(url("market/store/config"));
       token = null;
       if (opts.wallet) {
         const { challenge } = await api<{ challenge: string }>(
-          url("dev/store/session") + "?" + new URLSearchParams({ person: opts.wallet.personId })
+          url("market/store/session") + "?" + new URLSearchParams({ person: opts.wallet.personId })
         );
         const signature = await opts.wallet.sign({
           op: "commerce.session.create",
           params: { challenge },
           person: opts.wallet.personId,
+          ...audience(),
         });
         const login = await api<{ token: string; customer_id: string; buyer_person_id: string; email: string }>(
-          url("dev/store/session"),
+          url("market/store/session"),
           {},
           signature
         );
@@ -178,7 +183,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   // no session, so anyone can browse. Buying still needs connect().
   async function browse(): Promise<Result<Scene>> {
     try {
-      if (!scene) scene = await api<Scene>(url("dev/store/config"));
+      if (!scene) scene = await api<Scene>(url("market/store/config"));
       return ok(scene);
     } catch (e) {
       return fail(e);
@@ -204,7 +209,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
 
   async function listDesigns(): Promise<Result<Design[]>> {
     try {
-      const { designs } = await api<{ designs: Design[] }>(url("dev/interfacer/designs"));
+      const { designs } = await api<{ designs: Design[] }>(url("market/designs"));
       return ok(designs);
     } catch (e) {
       return fail(e);
@@ -213,7 +218,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
 
   async function match(designId: string): Promise<Result<MatchResult>> {
     try {
-      const result = await api<MatchResult>(url("dev/interfacer/match"), { designId });
+      const result = await api<MatchResult>(url("market/match"), { designId });
       return ok(result);
     } catch (e) {
       return fail(e);
@@ -222,7 +227,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
 
   async function services(): Promise<Result<ServiceData[]>> {
     try {
-      const { services } = await api<{ services: ServiceData[] }>(url("dev/interfacer/services"));
+      const { services } = await api<{ services: ServiceData[] }>(url("market/services"));
       return ok(services);
     } catch (e) {
       return fail(e);
@@ -231,7 +236,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
 
   async function liveCatalog(): Promise<Result<LiveCatalog>> {
     try {
-      return ok(await api<LiveCatalog>(url("dev/interfacer/catalog")));
+      return ok(await api<LiveCatalog>(url("market/catalog")));
     } catch (e) {
       return fail(e);
     }
@@ -248,7 +253,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
       if (q.includeInactive) query.set("include_inactive", "1");
       const qs = query.toString();
       const { listings } = await api<{ listings: BuildListing[] }>(
-        url("dev/interfacer/catalog/build-listings") + (qs ? "?" + qs : "")
+        url("market/catalog/build-listings") + (qs ? "?" + qs : "")
       );
       return ok(listings);
     } catch (e) {
@@ -260,7 +265,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   // registration and fit before recording a new revision.
   async function setBuildListing(params: BuildListingParams): Promise<Result<{ created: boolean }>> {
     try {
-      const path = url("dev/interfacer/catalog/build-listings");
+      const path = url("market/catalog/build-listings");
       return ok(await ownerSigned<{ created: boolean }>(path, "catalog.build.list", { ...params }, { ...params }));
     } catch (e) {
       return fail(e);
@@ -331,7 +336,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
         if (!cart.completed_at) {
           if (kind === "build") {
             await signed(
-              url("dev/interfacer/build-orders"),
+              url("market/build-orders"),
               { cartId: state.cartId, quoteId: target },
               { action: "build", cartId: state.cartId, quoteId: target }
             );
@@ -355,7 +360,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
           throw new MarketError(result.error?.message || "order_refused", 400);
         state.orderId = result.order.id;
       }
-      await signed(url("dev/store/capture"), { orderId: state.orderId }, { action: "capture", orderId: state.orderId });
+      await signed(url("market/store/capture"), { orderId: state.orderId }, { action: "capture", orderId: state.orderId });
       state.captured = true;
       return ok(state);
     } catch (e) {
@@ -368,7 +373,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
       const action = kind === "stock" ? "deliver" : "produce";
       const route = kind === "stock" ? "orders" : "build-orders";
       const result = await signed<{ receipt: Receipt }>(
-        url(`dev/interfacer/${route}/${orderId}/${action}`),
+        url(`market/${route}/${orderId}/${action}`),
         {},
         { action, orderId }
       );
@@ -380,7 +385,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
 
   async function receipts(): Promise<Result<Receipt[]>> {
     try {
-      const { receipts } = await api<{ receipts: Receipt[] }>(url("dev/interfacer/receipts"));
+      const { receipts } = await api<{ receipts: Receipt[] }>(url("market/receipts"));
       const mine = scene ? receipts.filter(r => r.receiver_id === scene!.buyer_person_id) : receipts;
       return ok(mine);
     } catch (e) {
@@ -392,9 +397,9 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   // never re-sends a step it cannot prove absent), then re-reads that receipt.
   async function retrySync(orderId: string, syncId: string): Promise<Result<Receipt>> {
     try {
-      await api(url(`dev/interfacer/zenflows-sync/${encodeURIComponent(syncId)}/retry`), {});
+      await api(url(`market/zenflows-sync/${encodeURIComponent(syncId)}/retry`), {});
       // By order, not by buyer: a seller retries the sync of an order they sold.
-      const all = await api<{ receipts: Receipt[] }>(url("dev/interfacer/receipts"));
+      const all = await api<{ receipts: Receipt[] }>(url("market/receipts"));
       const receipt = all.receipts.find(r => r.order_id === orderId);
       if (!receipt) throw new MarketError("receipt_not_found", 404);
       return ok(receipt);
@@ -407,7 +412,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
 
   async function sellerDashboard(): Promise<Result<SellerDashboard>> {
     try {
-      return ok(await api<SellerDashboard>(url("dev/store/seller")));
+      return ok(await api<SellerDashboard>(url("market/store/seller")));
     } catch (e) {
       return fail(e);
     }
@@ -416,7 +421,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   async function registerCatalog(kind: CatalogKind, resourceId: string, document: CatalogDocument) {
     try {
       const params = { resource_id: resourceId, document };
-      const path = url(`dev/interfacer/catalog/${kind === "design" ? "designs" : "services"}`);
+      const path = url(`market/catalog/${kind === "design" ? "designs" : "services"}`);
       return ok(await ownerSigned<{ created: boolean }>(path, `catalog.${kind}.register`, params, params));
     } catch (e) {
       return fail(e);
@@ -429,20 +434,20 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     try {
       const body = { resource_id: resourceId };
       const created = await ownerSigned<{ binding: { id: string } }>(
-        url("dev/interfacer/listings/live"),
+        url("market/listings/live"),
         "commerce.listing.live.create",
         body,
         body
       );
       const id = created.binding.id;
       await ownerSigned(
-        url(`dev/interfacer/listings/${id}/publish`),
+        url(`market/listings/${id}/publish`),
         "commerce.listing.publish",
         { listing_id: id, priceEUR },
         { priceEUR }
       );
       await ownerSigned(
-        url(`dev/interfacer/listings/${id}/checkout`),
+        url(`market/listings/${id}/checkout`),
         "commerce.listing.checkout.setup",
         { listing_id: id },
         {}
@@ -459,7 +464,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
   async function signSync(orderId: string, syncId: string, buyer: string): Promise<Result<Receipt>> {
     try {
       if (!opts.wallet || !opts.zenflowsSigner) throw new MarketError("login_required", 401);
-      const path = url(`dev/store/zenflows-sync/${encodeURIComponent(syncId)}`);
+      const path = url(`market/store/zenflows-sync/${encodeURIComponent(syncId)}`);
       for (let i = 0; i < 4; i++) {
         const next = await api<{ step?: RelayStep; body?: string }>(path + "/next");
         if (!next.step || !next.body) break;
@@ -467,7 +472,7 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
         const signature = await opts.zenflowsSigner(next.body);
         await api(path + "/sign", { step: next.step, body: next.body, signature });
       }
-      const all = await api<{ receipts: Receipt[] }>(url("dev/interfacer/receipts"));
+      const all = await api<{ receipts: Receipt[] }>(url("market/receipts"));
       const receipt = all.receipts.find(r => r.order_id === orderId);
       if (!receipt) throw new MarketError("receipt_not_found", 404);
       return ok(receipt);
