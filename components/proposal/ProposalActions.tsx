@@ -21,7 +21,6 @@ import { useInBoxContext } from "hooks/useInBox";
 import { useResourceControl } from "hooks/useResourceControl";
 import useWallet from "hooks/useWallet";
 import { errorFormatter } from "lib/errorFormatter";
-import { IdeaPoints, StrengthsPoints } from "lib/PointsDistribution";
 import { acceptContribution, runFollowUps } from "lib/proposalAcceptance";
 import { ProposedStatus } from "lib/types";
 import { useTranslation } from "next-i18next";
@@ -51,7 +50,7 @@ export default function ProposalActions({ proposal, refetch }: ProposalActionsPr
   const { t } = useTranslation("ProposalProps");
   const { user, client } = useAuth();
   const { sendMessage } = useInBoxContext();
-  const { addStrengthsPoints, addIdeaPoints } = useWallet({});
+  const { issueForEvent } = useWallet({});
   const [cite, accept, modify] = proposal.primaryIntents ?? [];
   const fork = cite?.resourceInventoriedAs;
   const origin = accept?.resourceInventoriedAs;
@@ -98,8 +97,9 @@ export default function ProposalActions({ proposal, refetch }: ProposalActionsPr
   };
 
   const onAccept = exclusive(async () => {
+    let accepted: Awaited<ReturnType<typeof acceptContribution>>;
     try {
-      await acceptContribution(client, proposal.id);
+      accepted = await acceptContribution(client, proposal.id);
     } catch (e) {
       return fail(e);
     }
@@ -109,8 +109,9 @@ export default function ProposalActions({ proposal, refetch }: ProposalActionsPr
         name: t("notification"),
         run: () => sendMessage(message(), [proposer!], MessageSubject.CONTRIBUTION_ACCEPTED),
       },
-      { name: t("strengths points"), run: () => addStrengthsPoints(proposer!, IdeaPoints.OnAccept) },
-      { name: t("idea points"), run: () => addIdeaPoints(user!.ulid, StrengthsPoints.OnAccept) },
+      // Points are issued server-side from the verified accept event: the
+      // Zenflows PDP derives recipients and amounts, not this page.
+      { name: t("points"), run: () => issueForEvent({ type: "accept", id: accepted.acceptEventId }) },
     ]);
     if (failed.length && mounted.current)
       setWarning(
