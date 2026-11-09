@@ -69,6 +69,7 @@ export const BUYER_OPS = [
 export const SELLER_OPS = [
   "catalog.design.register",
   "catalog.service.register",
+  "catalog.build.list",
   "commerce.listing.live.create",
   "commerce.listing.publish",
   "commerce.listing.checkout.setup",

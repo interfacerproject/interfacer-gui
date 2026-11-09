@@ -16,7 +16,12 @@ import { ProjectType } from "components/types";
 import { useAuth } from "hooks/useAuth";
 
 import BuyBlock from "components/previewCommerce/BuyBlock";
-import { commercePreviewEnabled } from "lib/previewCommerce/flag";
+import { commercePreviewEnabled as commercePreviewFlag } from "lib/previewCommerce/flag";
+import { marketplaceEnabled } from "lib/market/flag";
+import MarketProjectPanel from "components/market/MarketProjectPanel";
+
+// The real marketplace replaces the "coming soon" commerce preview.
+const commercePreviewEnabled = commercePreviewFlag && !marketplaceEnabled;
 import useDppApi from "lib/dpp";
 import type { DppDocument } from "lib/dpp-types";
 import dayjs from "lib/dayjs";
@@ -62,12 +67,21 @@ interface ProjectSidebarNewProps {
   sidebarRating?: ReviewSummary | null;
   /** Optional block rendered as the first section inside the sticky card (commerce preview buy block). */
   topSlot?: ReactNode;
+  /** Full-bleed marketplace panel (Buy / Get it built), first in the card. */
+  marketSlot?: ReactNode;
   /** LOSH mirror: the entry is reference material, so it swaps the type CTAs for source links. */
   isResource?: boolean;
 }
 
 /** Redesigned sidebar following DTEC prototype */
-function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot, isResource }: ProjectSidebarNewProps) {
+function ProjectSidebarNew({
+  project,
+  projectType,
+  sidebarRating,
+  topSlot,
+  marketSlot,
+  isResource,
+}: ProjectSidebarNewProps) {
   const { t } = useTranslation("common");
   const { user } = useAuth();
 
@@ -118,6 +132,8 @@ function ProjectSidebarNew({ project, projectType, sidebarRating, topSlot, isRes
           backgroundColor: "#fff",
         }}
       >
+        {marketSlot}
+
         {/* Commerce preview buy block — unified into this card, above the title.
             When the sidebar's own title/CTA section is hidden, the following
             section supplies its own <hr>, so skip the trailing divider here. */}
@@ -2441,6 +2457,11 @@ export default function ProjectDetailNew({ isResource = false }: ProjectDetailNe
             projectType={projectType}
             sidebarRating={sidebarRating}
             isResource={isResource}
+            marketSlot={
+              marketplaceEnabled && !isResource && project.id ? (
+                <MarketProjectPanel projectId={project.id} projectType={projectType} isOwner={isOwner} />
+              ) : undefined
+            }
             topSlot={
               commercePreviewEnabled && projectType === ProjectType.PRODUCT && !isResource ? (
                 <BuyBlock embedded />
@@ -2457,6 +2478,11 @@ export default function ProjectDetailNew({ isResource = false }: ProjectDetailNe
           projectType={projectType}
           sidebarRating={sidebarRating}
           isResource={isResource}
+          marketSlot={
+            marketplaceEnabled && !isResource && project.id ? (
+              <MarketProjectPanel projectId={project.id} projectType={projectType} isOwner={isOwner} />
+            ) : undefined
+          }
           topSlot={
             commercePreviewEnabled && projectType === ProjectType.PRODUCT && !isResource ? (
               <BuyBlock embedded />

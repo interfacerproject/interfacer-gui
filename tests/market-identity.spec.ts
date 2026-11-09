@@ -73,6 +73,10 @@ async function installBuyer(page: any, buyer: Awaited<ReturnType<typeof newBuyer
 
 test.describe("verified marketplace identity + live production", () => {
   test.skip(!enabled, "set MARKET_LIVE_E2E=1 with GUI, Medusa and local Zenflows running");
+  // Superseded by the integrated marketplace UI: fixture resources have no
+  // project page, so these journeys are not reachable. Live coverage:
+  // tests/market-sellers.spec.ts. Port or retire: Beads interfacer-gui-337.
+  test.skip(true, "superseded by the integrated marketplace UI (Beads interfacer-gui-337)");
   test.setTimeout(120000);
   // Fixture journeys (disposable demo buyer/supplier keys) exist only when Medusa
   // runs standalone; live mode refuses them. See tests/market-sellers.spec.ts.

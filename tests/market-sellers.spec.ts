@@ -2,10 +2,13 @@
 // Copyright (C) 2026 Dyne.org foundation <foundation@dyne.org>.
 // LIVE marketplace with real actors only (Medusa started with INTERFACER_ZENFLOWS_URL).
 // Creates disposable registered People and their own Zenflows resources:
-// - a designer registers a Design and a maker a Service on /market/offer;
-// - a seller lists a Product;
-// - a buyer buys stock and a build;
-// - each seller signs their own milestone on /market/sales.
+// - on Start selling a designer publishes a Design's requirements, a maker
+//   registers a Service and lists that design at their own price, a seller puts
+//   a Product on sale;
+// - a buyer buys the unit from the product page and orders the build from the
+//   design page, through checkout;
+// - each seller signs their own milestone on Selling; the buyer's order page
+//   shows the Interfacer record.
 // Zenflows is then queried for who did what. No fixture key is involved.
 // With Zenflows GQL_AUTH_CALLS/AUTHZ_ENFORCE on, setup calls are signed like the SDK
 // (zenflows-user + zenflows-sign over the body without spaces); createPerson uses
@@ -138,28 +141,59 @@ async function as(browser: Browser, person: Person): Promise<Page> {
   return page;
 }
 
-async function offer(page: Page, resource: string, expected: string) {
-  await page.goto("/market/offer");
+type Track = "design" | "service" | "product";
+
+// Start selling, focused on one of the person's own resources: fill what the
+// form needs (no prefilled sizes or places) and sign it.
+async function offer(page: Page, track: Track, resource: string, fields: Record<string, string>, expected: string) {
+  await page.goto(`/market/start-selling?${track}=${resource}`);
   const card = page.locator(`[data-resource="${resource}"]`);
   await expect(card).toBeVisible({ timeout: 30000 });
+  for (const [field, value] of Object.entries(fields))
+    await card.getByTestId(`market-offer-field-${field}`).fill(value);
   await card.getByTestId("market-offer-submit").click();
   await expect(card.getByTestId("market-offer-message")).toHaveText(expected, { timeout: 30000 });
 }
 
-async function signMilestone(page: Page, kind: "stock" | "build") {
-  await page.goto("/market/sales");
-  const sale = page.locator(`[data-testid="market-sale"][data-kind="${kind}"]`).first();
+// The maker ticks a registered design their machines fit, at their own price.
+async function listBuild(page: Page, service: string, design: string) {
+  await page.goto(`/market/start-selling?service=${service}`);
+  const row = page.locator(`[data-testid="market-build-listing"][data-design="${design}"]`);
+  await expect(row).toBeVisible({ timeout: 30000 });
+  await row.getByTestId("market-build-field-base").fill("8");
+  await row.getByTestId("market-build-field-unit").fill("3.5");
+  await row.getByTestId("market-build-field-days").fill("4");
+  await row.getByTestId("market-build-list-btn").click();
+  await expect(row.getByTestId("market-build-message")).toHaveText("Listed. Buyers see you on this design.", {
+    timeout: 30000,
+  });
+}
+
+async function checkout(page: Page) {
+  const form = page.getByTestId("market-checkout");
+  await expect(form).toBeVisible({ timeout: 30000 });
+  await form.getByLabel("Street and number").fill("Via Po 18");
+  await form.getByLabel("Postal code").fill("10123");
+  await form.getByLabel("City").fill("Torino");
+  await form.getByTestId("market-place-order").click();
+  await page.waitForURL(/\/market\/orders\/[^/?]+\?placed=1/, { timeout: 90000 });
+  await expect(page.getByTestId("market-order-placed")).toBeVisible({ timeout: 30000 });
+  return new URL(page.url()).pathname.split("/").pop()!;
+}
+
+async function signMilestone(page: Page, kind: "stock" | "build", order: string) {
+  await page.goto("/market/selling");
+  const sale = page.locator(`[data-testid="market-sale"][data-order="${order}"]`);
   await expect(sale).toBeVisible({ timeout: 30000 });
+  await expect(sale).toHaveAttribute("data-kind", kind);
   await sale.getByTestId(`market-sale-milestone-${kind}`).click();
-  await expect(sale.getByTestId("market-zenflows-event")).toContainText("LIVE", { timeout: 30000 });
-  return (await sale.getAttribute("data-order"))!;
+  await expect(sale.getByTestId("market-zenflows-event")).toContainText("Recorded on Interfacer", { timeout: 60000 });
 }
 
 test.describe("live marketplace with real sellers", () => {
   test.skip(!enabled, "set MARKET_LIVE_E2E=1 with GUI, live Medusa and local Zenflows running");
-  test.setTimeout(240000);
-
-  test("owners register and list their own resources; buyer pays; each seller signs their own milestone", async ({
+  test.setTimeout(300000);
+  test("owners bring their resources; a maker lists a design; the buyer buys and orders a build; each seller signs", async ({
     browser,
     request,
   }) => {
@@ -176,20 +210,33 @@ test.describe("live marketplace with real sellers", () => {
     const product = await ownResource(request, seller, "Product", `Live recycled lamp ${stamp}`);
 
     const designerPage = await as(browser, designer);
-    await offer(designerPage, design, "Registered.");
+    await offer(designerPage, "design", design, { x: "120", y: "80", z: "60", quantity: "2" }, "Registered.");
     const makerPage = await as(browser, maker);
-    await offer(makerPage, service, "Registered.");
+    await offer(makerPage, "service", service, { x: "220", y: "220", z: "250", city: "Torino" }, "Registered.");
+    await listBuild(makerPage, service, design);
     const sellerPage = await as(browser, seller);
-    await offer(sellerPage, product, "Listed for sale.");
+    await offer(sellerPage, "product", product, { price: "24.50" }, "Listed for sale.");
     // The seller does not see the designer's resource (accountable-only listing).
+    await sellerPage.getByTestId("market-track-design").click();
     await expect(sellerPage.locator(`[data-resource="${design}"]`)).toHaveCount(0);
 
+    // Anyone can browse: the catalogue shows the unit and the buildable design.
     const buyerPage = await as(browser, buyer);
+    await buyerPage.goto("/market");
+    await expect(buyerPage.locator(`[data-testid="market-product"][data-resource="${product}"]`)).toBeVisible({
+      timeout: 30000,
+    });
+    await buyerPage.getByTestId("market-view-build").click();
+    const designCard = buyerPage.locator(`[data-testid="market-design"][data-resource="${design}"]`);
+    await expect(designCard.getByTestId("market-design-makers")).toHaveText("1 maker", { timeout: 30000 });
+
+    // Ready-made: the product page's Buy block → checkout, signed by the buyer.
     const login = buyerPage.waitForResponse(
       res => res.url().endsWith("/dev/store/session") && res.request().method() === "POST"
     );
-    await buyerPage.goto("/market");
-    await expect(buyerPage.getByTestId("market-catalog")).toBeVisible({ timeout: 30000 });
+    await buyerPage.goto(`/project/${product}`);
+    await buyerPage.getByTestId("market-buy-stock").filter({ visible: true }).click();
+    const stockOrder = await checkout(buyerPage);
     const sessionResponse = await login;
     const session = await sessionResponse.json();
     expect(session.buyer_person_id).toBe(buyer.id);
@@ -204,36 +251,40 @@ test.describe("live marketplace with real sellers", () => {
     });
     expect(devSigner.status()).toBe(403);
     expect((await devSigner.json()).reason).toBe("dev_signer_disabled_live");
+    await expect(buyerPage.getByTestId("market-order-status")).toHaveText("Awaiting delivery");
 
-    const card = buyerPage.getByTestId("market-product").filter({ hasText: `Live recycled lamp ${stamp}` });
-    await card.getByTestId("market-buy-stock").click();
-    await expect(card.getByTestId("market-awaiting-seller")).toBeVisible({ timeout: 60000 });
-
-    await buyerPage.goto("/market/build");
-    const row = buyerPage.getByTestId("market-design").filter({ hasText: `Live lamp shade ${stamp}` });
-    await row.getByTestId("market-match-btn").click();
-    const offerRow = row.getByTestId("market-match-service").filter({ hasText: `Live Torino FDM ${stamp}` });
-    await offerRow.getByTestId("market-buy-build").click();
-    await expect(offerRow.getByTestId("market-awaiting-seller")).toBeVisible({ timeout: 60000 });
+    // Built on demand: the design page lists the maker at the LISTED price.
+    await buyerPage.goto(`/project/${design}`);
+    const panel = buyerPage.getByTestId("market-get-it-built").filter({ visible: true });
+    const makerOption = panel.locator(`[data-testid="market-match-service"][data-service="${service}"]`);
+    await expect(makerOption).toContainText("€15.00", { timeout: 30000 }); // 8 + 3.5 × 2
+    await expect(makerOption).toContainText("ready in 4 days");
+    await makerOption.click();
+    await panel.getByTestId("market-order-build").click();
+    const buildOrder = await checkout(buyerPage);
+    await expect(buyerPage.getByTestId("market-order-status")).toHaveText("In production");
 
     // Another person sees none of these sales and cannot prepare their milestone.
     const outsiderPage = await as(browser, outsider);
-    await outsiderPage.goto("/market/sales");
+    await outsiderPage.goto("/market/selling");
     await expect(outsiderPage.getByTestId("market-sales")).toBeVisible({ timeout: 30000 });
     await expect(outsiderPage.getByTestId("market-sale")).toHaveCount(0);
 
-    const stockOrder = await signMilestone(sellerPage, "stock");
-    const buildOrder = await signMilestone(makerPage, "build");
+    await signMilestone(sellerPage, "stock", stockOrder);
+    await expect(sellerPage.getByTestId("market-stat-earned")).toHaveText("€24.50");
+    await signMilestone(makerPage, "build", buildOrder);
+    await expect(makerPage.getByTestId("market-stat-earned")).toHaveText("€15.00");
+    await expect(makerPage.getByTestId("market-stat-designs")).toHaveText("1");
     const forbidden = await request.post("/api/market/dev/store/prepare", {
       headers: { authorization: `Bearer ${session.token}` },
       data: { action: "deliver", orderId: stockOrder },
     });
     expect((await forbidden.json()).message).toBe("seller_order_required");
 
-    await buyerPage.goto("/market");
-    const bought = buyerPage.getByTestId("market-product").filter({ hasText: `Live recycled lamp ${stamp}` });
-    await bought.getByTestId("market-check-stock").click();
-    await expect(bought.getByTestId("market-zenflows-event")).toContainText("LIVE", { timeout: 30000 });
+    // The buyer's order page shows the handover with its Interfacer ids.
+    await buyerPage.goto(`/market/orders/${buildOrder}`);
+    await expect(buyerPage.getByTestId("market-order-status")).toHaveText("Built and handed over", { timeout: 30000 });
+    await expect(buyerPage.getByTestId("market-zenflows-id").first()).toBeVisible();
 
     const receipts = (await (await request.get("/api/market/dev/interfacer/receipts")).json()).receipts;
     const stockReceipt = receipts.find((r: any) => r.order_id === stockOrder);
@@ -283,15 +334,14 @@ test.describe("live marketplace with real sellers", () => {
         process: buildReceipt.zenflows_sync.process_id,
       })
     );
-    for (const [page, name] of [
-      [sellerPage, "sales"],
-      [buyerPage, "catalog"],
+    for (const [page, path, name] of [
+      [sellerPage, "/market/selling", "selling"],
+      [buyerPage, "/market", "catalogue"],
+      [buyerPage, `/market/orders/${buildOrder}`, "order"],
     ] as const) {
       await page.setViewportSize({ width: 390, height: 844 });
-      if (name === "sales") await page.goto("/market/sales");
-      await expect(page.getByTestId(name === "sales" ? "market-sale" : "market-receipt").first()).toBeVisible({
-        timeout: 30000,
-      });
+      await page.goto(path);
+      await page.waitForLoadState("networkidle");
       await page.screenshot({ path: `test-results/market-live-${name}-mobile.png`, fullPage: true });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     }

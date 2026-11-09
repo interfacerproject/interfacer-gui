@@ -101,14 +101,21 @@ test("a produce milestone routes to build-orders/:id/produce", async () => {
 });
 
 test("retrySync advances the sync with an empty body, unsigned, then returns this order's refreshed receipt", async () => {
-  const live = { id: "r", action: "transfer", order_id: "order_1", receiver_id: SCENE.buyer_person_id,
-    zenflows_event_id: "06GEVENT", zenflows_sync: { id: "ifzs_1", status: "done" } };
+  const live = {
+    id: "r",
+    action: "transfer",
+    order_id: "order_1",
+    receiver_id: SCENE.buyer_person_id,
+    zenflows_event_id: "06GEVENT",
+    zenflows_sync: { id: "ifzs_1", status: "done" },
+  };
   const { fetchImpl, calls } = scriptedFetch({
     "GET /api/market/dev/store/config": { body: SCENE },
     "POST /api/market/auth/customer/emailpass": { body: { token: "t" } },
     "POST /api/market/dev/interfacer/zenflows-sync/ifzs_1/retry": { body: { sync: { status: "done" } } },
-    "GET /api/market/dev/interfacer/receipts": { body: { receipts: [
-      { ...live, id: "other", order_id: "order_2" }, live] } },
+    "GET /api/market/dev/interfacer/receipts": {
+      body: { receipts: [{ ...live, id: "other", order_id: "order_2" }, live] },
+    },
   });
   const client = createMarketClient({ fetchImpl });
   await client.connect();
@@ -124,13 +131,29 @@ test("retrySync advances the sync with an empty body, unsigned, then returns thi
 const LIVE = { label: "live", run: "r", live: true, context: SCENE.context, products: [] };
 function liveWallet(personId = "06GSELLER0000000000000000A") {
   const signedOps: Array<{ op: string; params: unknown; person: string }> = [];
-  return { signedOps, wallet: { personId, sign: async (o: any) => { signedOps.push(o); return "H:" + o.op; } } };
+  return {
+    signedOps,
+    wallet: {
+      personId,
+      sign: async (o: any) => {
+        signedOps.push(o);
+        return "H:" + o.op;
+      },
+    },
+  };
 }
 function liveRoutes(extra: Record<string, any> = {}) {
   return {
     "GET /api/market/dev/store/config": { body: LIVE },
     "GET /api/market/dev/store/session": { body: { challenge: "c" } },
-    "POST /api/market/dev/store/session": { body: { token: "t", customer_id: "cus", buyer_person_id: "06GSELLER0000000000000000A", email: "x@market.invalid" } },
+    "POST /api/market/dev/store/session": {
+      body: {
+        token: "t",
+        customer_id: "cus",
+        buyer_person_id: "06GSELLER0000000000000000A",
+        email: "x@market.invalid",
+      },
+    },
     ...extra,
   };
 }
@@ -145,9 +168,13 @@ test("live mode discloses no demo login: connecting without a wallet asks for lo
 
 test("the wallet signs only the operation pinned to the clicked action, never a swapped one", async () => {
   const { wallet, signedOps } = liveWallet();
-  const { fetchImpl, calls } = scriptedFetch(liveRoutes({
-    "POST /api/market/dev/store/prepare": { body: { op: "commerce.order.authorize", params: {}, person: wallet.personId } },
-  }));
+  const { fetchImpl, calls } = scriptedFetch(
+    liveRoutes({
+      "POST /api/market/dev/store/prepare": {
+        body: { op: "commerce.order.authorize", params: {}, person: wallet.personId },
+      },
+    })
+  );
   const client = createMarketClient({ fetchImpl, wallet });
   await client.connect();
   const out = await client.markMilestone("stock", "order_1");
@@ -158,17 +185,28 @@ test("the wallet signs only the operation pinned to the clicked action, never a 
 
 test("live seller milestone: wallet signs its own deliver; another person's op is refused with no dev signer", async () => {
   const { wallet, signedOps } = liveWallet();
-  const ok = scriptedFetch(liveRoutes({
-    "POST /api/market/dev/store/prepare": { body: { op: "commerce.order.deliver", params: { order_id: "o" }, person: wallet.personId } },
-    "POST /api/market/dev/interfacer/orders/o/deliver": { body: { receipt: { id: "r", action: "transfer" } } },
-  }));
+  const ok = scriptedFetch(
+    liveRoutes({
+      "POST /api/market/dev/store/prepare": {
+        body: { op: "commerce.order.deliver", params: { order_id: "o" }, person: wallet.personId },
+      },
+      "POST /api/market/dev/interfacer/orders/o/deliver": { body: { receipt: { id: "r", action: "transfer" } } },
+    })
+  );
   const seller = createMarketClient({ fetchImpl: ok.fetchImpl, wallet });
   await seller.connect();
   assert.equal((await seller.markSold("stock", "o")).ok, true);
-  assert.equal(ok.calls.find(c => c.url.endsWith("/deliver"))!.headers["X-Interfacer-Auth"], "H:commerce.order.deliver");
-  const other = scriptedFetch(liveRoutes({
-    "POST /api/market/dev/store/prepare": { body: { op: "commerce.order.deliver", params: { order_id: "o" }, person: "06GSOMEONEELSE00000000000A" } },
-  }));
+  assert.equal(
+    ok.calls.find(c => c.url.endsWith("/deliver"))!.headers["X-Interfacer-Auth"],
+    "H:commerce.order.deliver"
+  );
+  const other = scriptedFetch(
+    liveRoutes({
+      "POST /api/market/dev/store/prepare": {
+        body: { op: "commerce.order.deliver", params: { order_id: "o" }, person: "06GSOMEONEELSE00000000000A" },
+      },
+    })
+  );
   const client = createMarketClient({ fetchImpl: other.fetchImpl, wallet });
   await client.connect();
   assert.equal((await client.markSold("stock", "o")).ok, false);
@@ -178,20 +216,25 @@ test("live seller milestone: wallet signs its own deliver; another person's op i
 
 test("listProduct owner-signs create, publish and stock allocation for the person's own resource", async () => {
   const { wallet, signedOps } = liveWallet();
-  const { fetchImpl, calls } = scriptedFetch(liveRoutes({
-    "POST /api/market/dev/interfacer/listings/live": { status: 201, body: { binding: { id: "iflb_1" } } },
-    "POST /api/market/dev/interfacer/listings/iflb_1/publish": { body: {} },
-    "POST /api/market/dev/interfacer/listings/iflb_1/checkout": { body: {} },
-  }));
+  const { fetchImpl, calls } = scriptedFetch(
+    liveRoutes({
+      "POST /api/market/dev/interfacer/listings/live": { status: 201, body: { binding: { id: "iflb_1" } } },
+      "POST /api/market/dev/interfacer/listings/iflb_1/publish": { body: {} },
+      "POST /api/market/dev/interfacer/listings/iflb_1/checkout": { body: {} },
+    })
+  );
   const client = createMarketClient({ fetchImpl, wallet });
   await client.connect();
   const out = await client.listProduct("06GRESOURCE00000000000000A", 24.5);
   assert.equal(out.ok, true);
-  assert.deepEqual(signedOps.filter(o => o.op !== "commerce.session.create").map(o => [o.op, o.params]), [
-    ["commerce.listing.live.create", { resource_id: "06GRESOURCE00000000000000A" }],
-    ["commerce.listing.publish", { listing_id: "iflb_1", priceEUR: 24.5 }],
-    ["commerce.listing.checkout.setup", { listing_id: "iflb_1" }],
-  ]);
+  assert.deepEqual(
+    signedOps.filter(o => o.op !== "commerce.session.create").map(o => [o.op, o.params]),
+    [
+      ["commerce.listing.live.create", { resource_id: "06GRESOURCE00000000000000A" }],
+      ["commerce.listing.publish", { listing_id: "iflb_1", priceEUR: 24.5 }],
+      ["commerce.listing.checkout.setup", { listing_id: "iflb_1" }],
+    ]
+  );
   assert.deepEqual(calls.find(c => c.url.endsWith("/publish"))!.body, { priceEUR: 24.5 });
 });
 
@@ -212,18 +255,44 @@ test("logged-in buyers authenticate with a signed challenge, not the disclosed f
   const { fetchImpl, calls } = scriptedFetch({
     "GET /api/market/dev/store/config": { body: SCENE },
     "GET /api/market/dev/store/session": { body: { challenge: "one-use" } },
-    "POST /api/market/dev/store/session": { body: { token: "real-token", customer_id: "cus_real", buyer_person_id: "real-person", email: "real@market.invalid" } },
-    "POST /api/market/dev/store/prepare": { body: { op: "commerce.order.dev.capture", params: { order_id: "order_1" }, person: "real-person" } },
+    "POST /api/market/dev/store/session": {
+      body: {
+        token: "real-token",
+        customer_id: "cus_real",
+        buyer_person_id: "real-person",
+        email: "real@market.invalid",
+      },
+    },
+    "POST /api/market/dev/store/prepare": {
+      body: { op: "commerce.order.dev.capture", params: { order_id: "order_1" }, person: "real-person" },
+    },
     "POST /api/market/dev/store/capture": { body: { captured: true } },
   });
   const signed: unknown[] = [];
-  const client = createMarketClient({ fetchImpl, wallet: { personId: "real-person", sign: async op => { signed.push(op); return "REAL_PROOF"; } } });
+  const client = createMarketClient({
+    fetchImpl,
+    wallet: {
+      personId: "real-person",
+      sign: async op => {
+        signed.push(op);
+        return "REAL_PROOF";
+      },
+    },
+  });
   assert.equal((await client.connect()).ok, true);
   assert.equal(client.scene?.buyer_person_id, "real-person");
   assert.equal(client.scene?.customer_id, "cus_real");
   assert.ok(!calls.some(c => c.url.includes("emailpass")));
-  assert.deepEqual(signed[0], { op: "commerce.session.create", params: { challenge: "one-use" }, person: "real-person" });
-  await client.signed("/api/market/dev/store/capture", { orderId: "order_1" }, { action: "capture", orderId: "order_1" });
+  assert.deepEqual(signed[0], {
+    op: "commerce.session.create",
+    params: { challenge: "one-use" },
+    person: "real-person",
+  });
+  await client.signed(
+    "/api/market/dev/store/capture",
+    { orderId: "order_1" },
+    { action: "capture", orderId: "order_1" }
+  );
   assert.equal(calls[calls.length - 1].headers["X-Interfacer-Auth"], "REAL_PROOF");
   assert.ok(!calls.some(c => c.url.endsWith("/sign")));
 });
@@ -252,4 +321,75 @@ test("the low-level api throws a MarketError carrying the reason on a non-ok res
     () => client.api("/api/market/dev/interfacer/designs"),
     (e: unknown) => e instanceof MarketError && (e as MarketError).reason === "local_storefront_only"
   );
+});
+
+test("browse loads the public scene without a session, so anyone can see the catalog", async () => {
+  const { fetchImpl, calls } = scriptedFetch({
+    "GET /api/market/dev/store/config": { body: LIVE },
+    "GET /api/market/store/products": { body: { products: [] } },
+  });
+  const client = createMarketClient({ fetchImpl });
+  assert.equal((await client.browse()).ok, true);
+  assert.equal((await client.catalog()).ok, true);
+  assert.ok(!calls.some(c => c.url.includes("session") || c.url.includes("emailpass")));
+  assert.equal(calls[1].headers["x-publishable-api-key"], "pk_test");
+  assert.equal(calls[1].headers["Authorization"], undefined);
+});
+
+test("setBuildListing: the service owner signs exactly the listing params", async () => {
+  const { wallet, signedOps } = liveWallet();
+  const params = {
+    service_id: "06GSERVCE0000000000000000A",
+    design_id: "06GDESGN0000000000000000AA",
+    base_price_eur: 10,
+    per_unit_price_eur: 4.5,
+    lead_days: 4,
+    active: true,
+  };
+  const { fetchImpl, calls } = scriptedFetch({
+    "POST /api/market/dev/interfacer/catalog/build-listings": { status: 201, body: { created: true } },
+  });
+  const out = await createMarketClient({ fetchImpl, wallet }).setBuildListing(params);
+  assert.equal(out.ok, true);
+  assert.deepEqual(signedOps, [{ op: "catalog.build.list", params, person: wallet.personId }]);
+  assert.deepEqual(calls[0].body, params);
+  assert.equal(calls[0].headers["X-Interfacer-Auth"], "H:catalog.build.list");
+});
+
+test("buildListings forwards only the filters given", async () => {
+  const { fetchImpl, calls } = scriptedFetch({
+    "GET /api/market/dev/interfacer/catalog/build-listings": { body: { listings: [] } },
+  });
+  const client = createMarketClient({ fetchImpl });
+  await client.buildListings();
+  await client.buildListings({ provider: "P1", includeInactive: true });
+  assert.equal(calls[0].url, "/api/market/dev/interfacer/catalog/build-listings");
+  assert.equal(calls[1].url, "/api/market/dev/interfacer/catalog/build-listings?provider=P1&include_inactive=1");
+});
+
+test("purchase ships to the address the buyer typed; myOrders needs a session", async () => {
+  const { fetchImpl, calls } = scriptedFetch({
+    "GET /api/market/dev/store/config": { body: SCENE },
+    "POST /api/market/auth/customer/emailpass": { body: { token: "tok" } },
+    "POST /api/market/store/carts": { body: { cart: { id: "cart_1" } } },
+    "POST /api/market/store/carts/cart_1/customer": { body: { cart: { id: "cart_1" } } },
+    "GET /api/market/store/carts/cart_1": { body: { cart: { completed_at: null, items: [] } } },
+    "POST /api/market/store/carts/cart_1/line-items": { status: 500, body: { reason: "stop_here" } },
+  });
+  const client = createMarketClient({ fetchImpl });
+  const signedOut = await client.myOrders();
+  assert.equal(signedOut.ok, false);
+  await client.connect();
+  const address = {
+    first_name: "Luca",
+    last_name: "Bianchi",
+    address_1: "Via Po 18",
+    city: "Torino",
+    postal_code: "10123",
+    country_code: "it",
+  };
+  const out = await client.purchase("stock", "var_1", {}, address);
+  assert.equal(out.ok, false);
+  const created = calls.find(c => c.method === "POST" && c.url === "/api/market/store/carts");
+  assert.deepEqual((created!.body as any).shipping_address, address);
 });

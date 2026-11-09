@@ -1,13 +1,45 @@
 # Marketplace GUI integration — STATUS
 
-**Branch:** `feat/medusa-marketplace-gui` · **Updated:** 2026-10-27
-Backend: `interfacer-medusa`, `feat/zenflows-real-events` (PR #1); GUI draft PR #922.
-No main/Zenflows/SDK changes. Implementation pins: backend `8018cb4`, GUI `f76a53e`.
-Pushed 2026-10-27: PR #1 and #922 descriptions refreshed, both labelled
-`workstream:authz-integration` and listed in Zenflows issue #74. Checkpoint
-comments on GUI #921, Zenflows #84, SDK #7 and #74.
-Maintained bilingual review snapshot: backend `docs/review/README.md` and
-http://127.0.0.1:3110/it/medusa.html (also `/en/medusa.html`).
+**Branch:** `feat/marketplace-ux` (stacked on `feat/medusa-marketplace-gui`, #922) · **Updated:** 2026-11-09
+Backend: `interfacer-medusa`, `feat/build-listings` (stacked on `feat/zenflows-real-events`, PR #1).
+No main/Zenflows/SDK changes. Draft PRs: GUI #924 and interfacer-medusa#2 (listed in Zenflows #74).
+Local demo data: `pnpm market:showcase` (7 designs, 5 workshops, 6 units; keys in `interfacer-medusa/.tmp/showcase-actors.json`).
+Earlier pins (2026-10-27): backend `8018cb4`, GUI `f76a53e`; PR #1 and #922 descriptions,
+label `workstream:authz-integration`, Zenflows issue #74 table, checkpoint comments on
+#921, #84, SDK #7 and #74. Bilingual review snapshot: backend `docs/review/README.md`.
+
+## 2026-11-09 — the marketplace inside the app (Beads `interfacer-gui-5q3`)
+
+Design: Claude Design canvas https://claude.ai/artifact/5cdcPtwAUCZAbFsDGsHPFn.
+Plan: `docs/superpowers/plans/2026-11-09-marketplace-ux.md`. Behind
+`NEXT_PUBLIC_FF_MARKETPLACE=true` (local `.env`) and the local-only `/api/market` proxy.
+
+- `/market`: one catalogue, **Ready-made** (units on sale) and **Built on demand**
+  (registered designs with the makers who listed them). Public browsing.
+- Project pages: **Buy** block on listed products, **Get it built** on registered
+  designs (listed makers, fit chips, price for the lot, lead time, makers that no
+  longer fit), designs a service builds; owners get an invitation to sell.
+- `/market/checkout` (address, pilot test payment, signed order),
+  `/market/orders` and `/market/orders/[id]` (progress, signed traceability log
+  with Interfacer ids), `/market/selling` (next signed step per order, earnings,
+  build listings, units on sale), `/market/start-selling` (service machines →
+  designs you build; products; designs' build requirements).
+- Profile **Shop** tab; Marketplace, My orders, Selling in topbar and menu.
+- Backend: **build listings** — a service owner signs `catalog.build.list` (setup
+  fee, per-piece price, lead time, active/paused) per registered design; live
+  matching quotes only listed services, at the listed price, rechecking the fit.
+- Deferred by the user: build request → maker accepts/refuses/counter-offers
+  (`interfacer-gui-pvo`). Not modelled yet: buyer-chosen quantity (the design's
+  lot), delivery options/prices (the maker arranges pickup or delivery).
+- Old routes redirect (`/market/build`, `/market/sales`, `/market/offer`). The
+  standalone-fixture UI e2e are skipped as superseded (`interfacer-gui-337`).
+
+Validation: `pnpm test:market` 37/37; tsc and ESLint (i18n rule on) clean;
+`tests/market-sellers.spec.ts` live against enforced Zenflows: **passed** (Start
+selling with a signed build listing, product-page buy, design-page build order,
+checkout, Selling milestones and earnings, buyer order page with Interfacer ids,
+Zenflows provider/receiver/Process checks, 390 px without sideways scroll).
+Backend unit tests 56/56.
 
 ## Implemented and verified
 
@@ -73,13 +105,14 @@ cd interfacer-medusa && INTERFACER_ZENFLOWS_URL=http://127.0.0.1:8000/api npm ru
 cd interfacer-gui-medusa && pnpm exec next dev -p 3002
 ```
 
-1. A design owner and a maker sign in and open **Offer**. They register their
-   Design and Service. A seller lists a Product.
-2. A buyer opens **Catalog** (stock) or **Build on demand** (Match, Buy build), and
-   pays.
-3. The seller or maker opens **My sales** and signs Mark delivered / produced (and,
-   with enforced Zenflows, each write).
-4. The buyer's receipt turns LIVE.
+1. Owners open **Start selling**: a designer publishes a design's build
+   requirements; a maker describes the service's machines, then ticks the designs
+   it can build with a price and lead time; a seller puts a unit on sale.
+2. A buyer opens **Marketplace**, then a product page (**Buy now**) or a design
+   page (**Get it built** → pick a maker), and places the order at checkout.
+3. The seller or maker opens **Selling** and marks it delivered / built and handed
+   over (and, with enforced Zenflows, signs the Interfacer record).
+4. The buyer's order page shows the handover with its Interfacer ids.
 
 ## Validation (2026-10-26)
 
