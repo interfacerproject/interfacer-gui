@@ -31,6 +31,7 @@ import {
   CubeIcon,
   GlobeIcon,
   HomeIcon,
+  ShoppingCartIcon,
   SupportIcon,
 } from "@heroicons/react/outline";
 
@@ -80,6 +81,11 @@ function Sidebar() {
     my_drafts: {
       text: t("My drafts"),
       link: `${user?.profileUrl}?tab=2`,
+    },
+    marketplace: {
+      text: "Marketplace (dev)",
+      link: "/market",
+      leftIcon: <ShoppingCartIcon className="w-5 h-5" />,
     },
     ScanQr: {
       text: t("Scan QR"),
@@ -143,6 +149,7 @@ function Sidebar() {
             <IfSideBarLink {...items.my_drafts} />
             <IfSideBarLink {...items.resources} />
           </IfSidebarDropdown>
+          <IfSideBarLink {...items.marketplace} />
           <IfSideBarLink {...items.ScanQr} />
           <IfSideBarLink {...items.reportBug} />
           <IfSideBarLink {...items.userGuide} />
