@@ -21,8 +21,8 @@ importers:
         specifier: ^11.68.0
         version: 11.69.0(react@18.2.0)
       '@dyne/interfacer-client':
-        specifier: https://github.com/interfacerproject/interfacer-client/releases/download/staging-sdk-0.7.0-staging.1/dyne-interfacer-client-0.7.0-staging.1.tgz
-        version: https://github.com/interfacerproject/interfacer-client/releases/download/staging-sdk-0.7.0-staging.1/dyne-interfacer-client-0.7.0-staging.1.tgz(zenroom@5.36.1)
+        specifier: ^0.7.0
+        version: 0.7.0(zenroom@5.36.1)
       '@fontsource/ibm-plex-sans':
         specifier: ^5.2.8
         version: 5.2.8
@@ -688,9 +688,8 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.10
 
-  '@dyne/interfacer-client@https://github.com/interfacerproject/interfacer-client/releases/download/staging-sdk-0.7.0-staging.1/dyne-interfacer-client-0.7.0-staging.1.tgz':
-    resolution: {tarball: https://github.com/interfacerproject/interfacer-client/releases/download/staging-sdk-0.7.0-staging.1/dyne-interfacer-client-0.7.0-staging.1.tgz}
-    version: 0.7.0-staging.1
+  '@dyne/interfacer-client@0.7.0':
+    resolution: {integrity: sha512-tF2fg97VRmoBrkG0P6tpYMUsvlI05g8IsYt7y9rZQef5/DHKeY/IH/havapIJg1OSnB843cd3bq2olHrOjzO7g==}
     peerDependencies:
       zenroom: ^5.36.1
 
@@ -5676,7 +5675,7 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.1.2
 
-  '@dyne/interfacer-client@https://github.com/interfacerproject/interfacer-client/releases/download/staging-sdk-0.7.0-staging.1/dyne-interfacer-client-0.7.0-staging.1.tgz(zenroom@5.36.1)':
+  '@dyne/interfacer-client@0.7.0(zenroom@5.36.1)':
     dependencies:
       base64url: 3.0.1
       zenroom: 5.36.1
