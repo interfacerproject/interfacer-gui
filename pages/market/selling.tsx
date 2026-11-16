@@ -11,10 +11,12 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { NextPageWithLayout } from "../_app";
 import { useAuth } from "hooks/useAuth";
+import { useInBoxContext } from "hooks/useInBox";
 import { useMarketClient } from "hooks/useMarketClient";
 import { useMarketResources } from "hooks/useMarketResources";
 import type { BuildListing, SellerDashboard, SellerOrder } from "lib/market/types";
 import { eur } from "lib/market/format";
+import { fulfilledNotice, sendMarketNotice } from "lib/market/notify";
 import { MarketHero, MarketNotice, Panel, StatusChip, TypeChip, heading, mono } from "components/market/ui";
 
 export async function getStaticProps({ locale }: { locale: string }) {
@@ -40,6 +42,7 @@ function stepOf(order: SellerOrder): Step {
 const Selling: NextPageWithLayout = () => {
   const { t } = useTranslation("common");
   const { user } = useAuth();
+  const { sendMessage } = useInBoxContext();
   const market = useMarketClient();
   const [dash, setDash] = useState<SellerDashboard | null>(null);
   const [builds, setBuilds] = useState<BuildListing[]>([]);
@@ -85,6 +88,22 @@ const Selling: NextPageWithLayout = () => {
     setError(null);
     const sync = order.receipt?.zenflows_sync;
     let res = retry && sync ? await market.retrySync(order.id, sync.id) : await market.markSold(order.kind, order.id);
+    // First time the milestone is recorded: tell the buyer it was built/delivered.
+    if (!retry && res.ok && !order.receipt) {
+      const itemId = (order.kind === "build" ? order.design_id : order.resource_id) ?? "";
+      await sendMarketNotice(
+        sendMessage,
+        fulfilledNotice({
+          kind: order.kind,
+          orderId: order.id,
+          itemId,
+          itemName: resources[itemId]?.name || order.kind,
+          sellerName: user?.name ?? "",
+          buyerId: res.data.receiver_id,
+        }),
+        user?.ulid
+      );
+    }
     // Enforced authz: the seller's own signature carries each Interfacer write.
     const pending = res.ok ? res.data.zenflows_sync : undefined;
     if (res.ok && pending?.status === "pending" && pending.last_error?.startsWith("awaiting_seller_signature"))

@@ -6,6 +6,7 @@ import dayjs from "lib/dayjs";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Tree, { CustomNodeElementProps, RawNodeDatum } from "react-d3-tree";
+import { displayNote } from "lib/market/note";
 
 type TraceView = "graph" | "outline";
 type NodeKind = "resource" | "event" | "process" | "other";
@@ -206,7 +207,9 @@ function NodeDetails({ node }: { node?: TraceDppNode }) {
       >
         {nodeLabel(node)}
       </h4>
-      {node.node.note ? <p className="mt-2 mb-0 text-ifr-text-secondary">{node.node.note}</p> : null}
+      {displayNote(node.node.note) ? (
+        <p className="mt-2 mb-0 text-ifr-text-secondary">{displayNote(node.node.note)}</p>
+      ) : null}
 
       <dl className="mt-5 mb-0 divide-y divide-[#e5e7eb]">
         {fields.map(([label, value]) => (

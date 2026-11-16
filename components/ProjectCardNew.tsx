@@ -15,6 +15,7 @@ import EntityTypeIcon from "./EntityTypeIcon";
 import ProjectCardImage from "./ProjectCardImage";
 import ReviewBadge from "./ReviewBadge";
 import { ProjectType } from "./types";
+import { displayNote } from "lib/market/note";
 
 interface ProjectCardNewProps {
   project: Partial<EconomicResource>;
@@ -184,7 +185,7 @@ export default function ProjectCardNew({ project, forcedType, href }: ProjectCar
                 className="text-ifr-text-secondary leading-[21px] line-clamp-2"
                 style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
               >
-                {project.note}
+                {displayNote(project.note)}
               </p>
             </div>
 

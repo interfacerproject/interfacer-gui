@@ -8,14 +8,13 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useProjectTabs } from "pages/project/[id]";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { displayNote } from "lib/market/note";
 
 const DynamicProjectDpp = dynamic(() => import("./ProjectDpp"), { ssr: false });
 const RelationshipTree = dynamic(() => import("components/RelationshipTree"), { ssr: false });
 const ContributorsTable = dynamic(() => import("components/ContributorsTable"), { ssr: false });
 const ContributionsTable = dynamic(() => import("components/ContributionsTable"), { ssr: false });
 const DynamicGC1DPP = dynamic(() => import("./GC1DPP"), { ssr: false });
-
-
 
 const ProjectTabs = () => {
   const { project } = useProject();
@@ -57,7 +56,7 @@ const ProjectTabs = () => {
   // Determine which tabs have content
   const tabsContentMap = useMemo(
     () => ({
-      overview: !!project?.note,
+      overview: !!displayNote(project?.note),
       relationships: !!project?.metadata?.relations?.length,
       graph: true,
       contributors: authenticated && !!project.metadata?.contributors?.length,

@@ -29,6 +29,7 @@ import { NextPageWithLayout } from "pages/_app";
 
 //opengraph
 import { NextSeo } from "next-seo";
+import { displayNote } from "lib/market/note";
 
 interface ProjectTabsContextValue {
   selected: number;
@@ -58,12 +59,12 @@ const Project: NextPageWithLayout = () => {
     <>
       <NextSeo
         title={project?.name}
-        description={project?.note || undefined}
+        description={displayNote(project?.note) || undefined}
         canonical="https://www.canonical.ie/"
         openGraph={{
           url: window.location.origin + router.asPath,
           title: project?.name,
-          description: project?.note || undefined,
+          description: displayNote(project?.note) || undefined,
           images: images?.map((image, i) => ({
             url: image,
             width: 800,

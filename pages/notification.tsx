@@ -22,6 +22,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { useMemo } from "react";
 import ContributionMessage from "../components/ContributionMessage";
+import MarketMessage from "../components/market/MarketMessage";
+import { isMarketSubject } from "../lib/market/notify";
 import { useInBoxContext } from "../hooks/useInBox";
 
 export enum ProposalType {
@@ -63,6 +65,7 @@ export enum MessageGroup {
   CONTRIBUTION_RESPONSES = "contributionResponses",
   CITATIONS = "citations",
   ADDED_AS_CONTRIBUTOR = "addedAsContributor",
+  MARKETPLACE = "marketplace",
 }
 
 const Notification = () => {
@@ -79,6 +82,7 @@ const Notification = () => {
       [MessageGroup.CONTRIBUTION_RESPONSES]: [],
       [MessageGroup.CITATIONS]: [],
       [MessageGroup.ADDED_AS_CONTRIBUTOR]: [],
+      [MessageGroup.MARKETPLACE]: [],
     };
     if (isLoading || error) return group;
     for (const m of messages) {
@@ -93,6 +97,8 @@ const Notification = () => {
         group.citations.push(m);
       } else if (m.content.subject === MessageSubject.ADDED_AS_CONTRIBUTOR) {
         group.addedAsContributor.push(m);
+      } else if (isMarketSubject(m.content.subject)) {
+        group.marketplace.push(m);
       }
     }
     return group;
@@ -103,6 +109,7 @@ const Notification = () => {
     [MessageGroup.CONTRIBUTION_RESPONSES]: t("Contribution Responses"),
     [MessageGroup.CITATIONS]: t("Included"),
     [MessageGroup.ADDED_AS_CONTRIBUTOR]: t("Added as contributor"),
+    [MessageGroup.MARKETPLACE]: t("Marketplace"),
   };
 
   /* Loading state */
@@ -197,7 +204,17 @@ const Notification = () => {
                 });
                 return (
                   <div key={m.id} className={classes}>
-                    <ContributionMessage message={m.content} sender={m.sender} data={m.content.data} id={m.id} />
+                    {isMarketSubject(m.content.subject) ? (
+                      <MarketMessage
+                        id={m.id}
+                        subject={m.content.subject}
+                        message={m.content.message}
+                        sender={m.sender}
+                        data={m.content.data}
+                      />
+                    ) : (
+                      <ContributionMessage message={m.content} sender={m.sender} data={m.content.data} id={m.id} />
+                    )}
                     {isUnread && (
                       <div className="absolute -top-2 -right-2 w-4 h-4 bg-text-primary border-2 border-white rounded-full shadow-md" />
                     )}
