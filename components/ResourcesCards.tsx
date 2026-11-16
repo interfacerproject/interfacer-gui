@@ -20,6 +20,7 @@ import { useQuery } from "lib/apollo-compat";
 import CardsGroup from "./CardsGroup";
 import useLoadMore from "../hooks/useLoadMore";
 import { FETCH_RESOURCES } from "../lib/QueryAndMutation";
+import { displayNote } from "lib/market/note";
 
 export interface ResourcesCardsProps {
   filter?: EconomicResourceFilterParams;
@@ -97,7 +98,7 @@ const ResourcesCards = (props: ResourcesCardsProps) => {
               ]}
             >
               <img src={e.node.metadata?.image} className="w-20 h-20" alt={e.node.name} />
-              <p className="w-full max-w-xs">{e.node.note}</p>
+              <p className="w-full max-w-xs">{displayNote(e.node.note)}</p>
             </Card>
           </>
         ))}

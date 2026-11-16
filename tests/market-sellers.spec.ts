@@ -126,8 +126,36 @@ async function ownResource(request: any, owner: Person, spec: "Design" | "Servic
   return data.createEconomicEvent.economicEvent.resourceInventoriedAs.id as string;
 }
 
+// The Interfacer inbox does not run locally: each browser context talks to this
+// in-memory stand-in (same request/response shapes as the SDK's inbox calls), so
+// the test sees exactly which notices the GUI sends and how /notification shows them.
+type InboxMessage = { id: number; sender: string; receivers: string[]; content: any; read: boolean };
+const inbox: InboxMessage[] = [];
+const mailbox = (receiver: string) => inbox.filter(m => m.receivers.includes(receiver));
+
 async function as(browser: Browser, person: Person): Promise<Page> {
   const context = await browser.newContext({ baseURL: test.info().project.use.baseURL });
+  await context.route(/\/inbox\/(send|read|count-unread|set-read)$/, async route => {
+    const op = route.request().url().split("/").pop();
+    const body = route.request().postDataJSON() ?? {};
+    const json = (data: unknown) =>
+      route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(data) });
+    if (op === "send") {
+      inbox.push({
+        id: inbox.length + 1,
+        sender: body.sender,
+        receivers: body.receivers,
+        content: body.content,
+        read: false,
+      });
+      return json({ success: true });
+    }
+    if (op === "read") return json({ success: true, request_id: body.request_id, messages: mailbox(person.id) });
+    if (op === "count-unread") return json({ success: true, count: mailbox(person.id).filter(m => !m.read).length });
+    const m = inbox.find(x => x.id === body.message_id);
+    if (m) m.read = true;
+    return json({ success: true });
+  });
   const page = await context.newPage();
   await page.addInitScript(
     (p: { seed: string; publicKey: string; email: string; user: string }) => {
@@ -272,6 +300,23 @@ test.describe("live marketplace with real sellers", () => {
     await expect(outsiderPage.getByTestId("market-sales")).toBeVisible({ timeout: 30000 });
     await expect(outsiderPage.getByTestId("market-sale")).toHaveCount(0);
 
+    // The buyer's checkout told each seller about their new order, once.
+    const toSeller = mailbox(seller.id).filter(m => m.content.subject === "marketNewOrder");
+    expect(toSeller).toHaveLength(1);
+    expect(toSeller[0].sender).toBe(buyer.id);
+    expect(toSeller[0].content.message).toMatchObject({ kind: "stock", orderId: stockOrder, totalEur: 24.5 });
+    const toMaker = mailbox(maker.id).filter(m => m.content.subject === "marketNewOrder");
+    expect(toMaker).toHaveLength(1);
+    expect(toMaker[0].content.message).toMatchObject({ kind: "build", orderId: buildOrder, itemId: design });
+    expect(mailbox(designer.id)).toHaveLength(0);
+
+    // The seller finds it in Notifications and goes straight to Selling.
+    await sellerPage.goto("/notification");
+    const notice = sellerPage.getByTestId("market-notice-marketNewOrder");
+    await expect(notice).toContainText(`Live recycled lamp ${stamp}`, { timeout: 30000 });
+    await notice.getByRole("button").click();
+    await sellerPage.waitForURL(/\/market\/selling$/);
+
     await signMilestone(sellerPage, "stock", stockOrder);
     await expect(sellerPage.getByTestId("market-stat-earned")).toHaveText("€24.50");
     await signMilestone(makerPage, "build", buildOrder);
@@ -282,6 +327,17 @@ test.describe("live marketplace with real sellers", () => {
       data: { action: "deliver", orderId: stockOrder },
     });
     expect((await forbidden.json()).message).toBe("seller_order_required");
+
+    // Each milestone told the buyer, signed by the seller who recorded it.
+    const toBuyer = mailbox(buyer.id).filter(m => m.content.subject === "marketOrderFulfilled");
+    expect(toBuyer.map(m => [m.sender, m.content.message.orderId]).sort()).toEqual(
+      [
+        [seller.id, stockOrder],
+        [maker.id, buildOrder],
+      ].sort()
+    );
+    await buyerPage.goto("/notification");
+    await expect(buyerPage.getByTestId("market-notice-marketOrderFulfilled")).toHaveCount(2, { timeout: 30000 });
 
     // The buyer's order page shows the handover with its Interfacer ids.
     await buyerPage.goto(`/market/orders/${buildOrder}`);

@@ -13,10 +13,12 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { NextPageWithLayout } from "../_app";
 import { useAuth } from "hooks/useAuth";
+import { useInBoxContext } from "hooks/useInBox";
 import { useMarketClient } from "hooks/useMarketClient";
 import { useMarketResources } from "hooks/useMarketResources";
 import type { JourneyState, MatchEntry, Requirements, ShippingAddress, StoreProduct } from "lib/market/types";
 import { eur, eurCents, processLabel } from "lib/market/format";
+import { newOrderNotice, sendMarketNotice } from "lib/market/notify";
 import { Avatar, Drawing, MarketNotice, Panel, TypeChip, heading, primaryButton } from "components/market/ui";
 
 export async function getStaticProps({ locale }: { locale: string }) {
@@ -61,6 +63,7 @@ const Checkout: NextPageWithLayout = () => {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { user } = useAuth();
+  const { sendMessage } = useInBoxContext();
   const client = useMarketClient();
   const { kind, product, resource, design, quote } = router.query as Record<string, string | undefined>;
   const [item, setItem] = useState<Item | null>(null);
@@ -155,6 +158,7 @@ const Checkout: NextPageWithLayout = () => {
     }
     const clean: ShippingAddress = { ...address, country_code: address.country_code.toLowerCase() };
     if (!clean.phone) delete clean.phone;
+    const wasPaid = !!state.captured; // purchase() mutates state
     const res = await client.purchase(item.kind, target, state, clean);
     try {
       localStorage.setItem(key, JSON.stringify(res.ok ? res.data : state));
@@ -170,6 +174,22 @@ const Checkout: NextPageWithLayout = () => {
     } catch {
       /* ignore */
     }
+    // Tell the seller once, when this attempt is the one that paid the order.
+    const sellerId = item.kind === "stock" ? item.sellerId : item.match.service.provider_person_id;
+    if (!wasPaid && res.data.orderId && sellerId)
+      await sendMarketNotice(
+        sendMessage,
+        newOrderNotice({
+          kind: item.kind,
+          orderId: res.data.orderId,
+          itemId: resourceIds[0],
+          itemName: (item.kind === "stock" ? resources[item.resourceId]?.name : item.designName) || item.kind,
+          buyerName: user?.name ?? "",
+          totalEur: total,
+          sellerId,
+        }),
+        user?.ulid
+      );
     router.push(`/market/orders/${res.data.orderId}?placed=1`);
   };
 

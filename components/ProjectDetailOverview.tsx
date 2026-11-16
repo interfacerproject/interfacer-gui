@@ -19,6 +19,7 @@ import { useTranslation } from "next-i18next";
 import MdParser from "../lib/MdParser";
 import { MACHINE_TYPES } from "../lib/resourceSpecs";
 import { EconomicResource } from "../lib/types";
+import { displayNote } from "lib/market/note";
 
 interface ProjectDetailOverviewProps {
   project: Partial<EconomicResource>;
@@ -26,7 +27,7 @@ interface ProjectDetailOverviewProps {
 }
 
 const ProjectDetailOverview = ({ project, machines = [] }: ProjectDetailOverviewProps) => {
-  const text = project?.note;
+  const text = displayNote(project?.note);
   const { t } = useTranslation("common");
 
   return (

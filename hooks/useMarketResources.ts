@@ -7,6 +7,7 @@
 import { useMemo } from "react";
 import { useQuery } from "lib/apollo-compat";
 import findProjectImages from "lib/findProjectImages";
+import { displayNote } from "lib/market/note";
 
 const MARKET_RESOURCES = `query MarketResources($ids: [ID!], $first: Int) {
   economicResources(first: $first, filter: { id: $ids }) {
@@ -41,7 +42,7 @@ export function useMarketResources(ids: string[]): { resources: Record<string, M
       out[node.id] = {
         id: node.id,
         name: node.name,
-        note: node.note,
+        note: displayNote(node.note),
         owner: node.primaryAccountable ?? null,
         location: node.currentLocation?.name ?? null,
         image: findProjectImages(node)[0] ?? null,

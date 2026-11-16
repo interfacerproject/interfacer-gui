@@ -21,5 +21,14 @@
   "Loading notifications...": "Loading notifications...",
   "Failed to load notifications": "Failed to load notifications",
   "No notifications at the moment :)": "No notifications at the moment :)",
-  "Retry": "Retry"
+  "Retry": "Retry",
+  "Marketplace": "Marketplace",
+  "ordered a build of": "ordered a build of",
+  "bought": "bought",
+  "built your order of": "built your order of",
+  "delivered your order of": "delivered your order of",
+  "Open Selling to fulfil it and sign the Interfacer record.": "Open Selling to fulfil it and sign the Interfacer record.",
+  "The handover is recorded on Interfacer; see your order for the details.": "The handover is recorded on Interfacer; see your order for the details.",
+  "Go to Selling": "Go to Selling",
+  "See your order": "See your order"
 }

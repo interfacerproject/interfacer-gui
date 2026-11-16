@@ -13,6 +13,7 @@ import ProjectTypeChip from "./ProjectTypeChip";
 import BrTags from "./brickroom/BrTags";
 import BrUserAvatar from "./brickroom/BrUserAvatar";
 import { ProjectType } from "./types";
+import { displayNote } from "lib/market/note";
 
 export interface GeneralCardProps {
   project: Partial<EconomicResource>;
@@ -223,7 +224,7 @@ const ProjectTitleAndStats = () => {
         <span className="line-clamp-1">{project.name}</span>
       </Text>
       <Text as="p" variant="bodyMd" color="subdued">
-        <span className="line-clamp-2">{project.note}</span>
+        <span className="line-clamp-2">{displayNote(project.note)}</span>
       </Text>
     </div>
   );

@@ -40,6 +40,7 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import ReviewSection from "./ReviewSection";
 import useFeedbackApi, { type ReviewSummary } from "lib/feedback";
 import StepModelViewer from "./StepModelViewer";
+import { displayNote } from "lib/market/note";
 
 const ProjectTraceability = dynamic(() => import("./ProjectTraceability"), { ssr: false });
 
@@ -1804,7 +1805,7 @@ export default function ProjectDetailNew({ isResource = false }: ProjectDetailNe
               sectionId="overview"
             >
               <div className="flex flex-col gap-6">
-                {project.note && <ReadMoreMarkdown html={MdParser.render(project.note)} />}
+                {displayNote(project.note) && <ReadMoreMarkdown html={MdParser.render(displayNote(project.note))} />}
 
                 {/* Tags */}
                 {tags.length > 0 && (
