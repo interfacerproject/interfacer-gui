@@ -122,7 +122,7 @@ function Processes({ value, onChange }: { value: string; onChange: (v: string) =
               onChange={() => toggle(p)}
               style={{ accentColor: "var(--ifr-green)" }}
             />
-            {processLabel(p)}
+            {t(processLabel(p))}
           </label>
         ))}
       </div>
