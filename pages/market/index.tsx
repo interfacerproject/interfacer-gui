@@ -226,7 +226,7 @@ const MarketCatalogue: NextPageWithLayout = () => {
                     className="w-[18px] h-[18px]"
                     style={{ accentColor: "var(--ifr-green)" }}
                   />
-                  {p ? processLabel(p) : t("All processes")}
+                  {p ? t(processLabel(p)) : t("All processes")}
                 </label>
               ))}
             </fieldset>
