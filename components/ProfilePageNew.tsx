@@ -29,7 +29,7 @@ import useLoadMore from "hooks/useLoadMore";
 import useDppApi from "lib/dpp";
 import type { DppDocument, DppStatus, ListDppsResponse, StatusFacets } from "lib/dpp-types";
 import { FETCH_RESOURCES } from "lib/QueryAndMutation";
-import { FetchInventoryQuery } from "lib/types";
+import { FetchInventoryQuery, SpatialThing } from "lib/types";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -37,7 +37,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 // ─── Tab definitions ────────────────────────────────────────────────────────
 
-type ProfileTabId = "designs" | "products" | "services" | "dpps" | "machines" | "community";
+type ProfileTabId = "designs" | "products" | "services" | "dpps" | "machines" | "locations" | "community";
 
 interface TabDef {
   id: ProfileTabId;
@@ -63,7 +63,7 @@ interface TabCtaConfig {
   searchPlaceholder: string;
 }
 
-const tabCtaConfig: Record<Exclude<ProfileTabId, "community">, TabCtaConfig> = {
+const tabCtaConfig: Record<Exclude<ProfileTabId, "community" | "locations">, TabCtaConfig> = {
   designs: {
     ctaTitle: "Publish your design documentation",
     ctaDescription:
@@ -1192,6 +1192,376 @@ function CommunityTabContent() {
   );
 }
 
+// ─── Locations Tab ─────────────────────────────────────────────────────────
+
+function LocationsTabContent({
+  primaryLocation,
+  isOwner,
+  ownerId,
+}: {
+  primaryLocation?: Partial<SpatialThing> | null;
+  isOwner: boolean;
+  ownerId: string;
+}) {
+  const { t } = useTranslation("common");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"latest" | "oldest">("latest");
+  const [showSortMenu, setShowSortMenu] = useState(false);
+  const [showActionsMenu, setShowActionsMenu] = useState(false);
+
+  const editUrl = `/profile/${ownerId}/edit`;
+
+  // Only the agent's primaryLocation is available today; render it as a single row.
+  const locations = useMemo(() => (primaryLocation?.name ? [primaryLocation] : []), [primaryLocation]);
+
+  const filteredLocations = useMemo(() => {
+    if (!searchQuery) return locations;
+    const q = searchQuery.toLowerCase();
+    return locations.filter(
+      loc => loc.name?.toLowerCase().includes(q) || loc.mappableAddress?.toLowerCase().includes(q)
+    );
+  }, [locations, searchQuery]);
+
+  const stats = {
+    total: locations.length,
+    active: locations.length,
+    inactive: 0,
+  };
+
+  const sortLabels: Record<string, string> = { latest: "Latest", oldest: "Oldest" };
+
+  return (
+    <div className="flex flex-col gap-5">
+      {/* CTA + KPI stats row (owner only) */}
+      {isOwner && (
+        <div className="flex flex-col md:flex-row gap-6 py-6">
+          {/* CTA left */}
+          <div className="flex-1 flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <h3
+                className="text-ifr-text-primary m-0"
+                style={{
+                  fontFamily: "var(--ifr-font-heading)",
+                  fontSize: "var(--ifr-fs-lg)",
+                  fontWeight: "var(--ifr-fw-bold)",
+                  lineHeight: "1.3",
+                }}
+              >
+                {t("Manage your locations")}
+              </h3>
+              <p
+                className="text-ifr-text-secondary m-0"
+                style={{
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-md)",
+                  lineHeight: "1.5",
+                }}
+              >
+                {t(
+                  "Add and manage locations where your products are available. This helps in tracking manufacturing and distribution."
+                )}
+              </p>
+            </div>
+            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+              <Link href={editUrl}>
+                <a
+                  className="flex items-center gap-2 px-4 no-underline transition-colors hover:opacity-90"
+                  style={{
+                    height: "var(--ifr-control-height)",
+                    borderRadius: "var(--ifr-radius-sm)",
+                    backgroundColor: "var(--ifr-yellow)",
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-base)",
+                    fontWeight: "var(--ifr-fw-medium)",
+                    color: "var(--ifr-text-primary)",
+                  }}
+                >
+                  <Add size={16} />
+                  {t("Add a New Location")}
+                </a>
+              </Link>
+              <button
+                type="button"
+                className="flex items-center gap-2 px-4 bg-transparent border-none cursor-pointer hover:underline"
+                style={{
+                  height: "var(--ifr-control-height)",
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-base)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                  color: "var(--ifr-text-secondary)",
+                }}
+              >
+                <Information size={16} />
+                {t("Learn more about Locations")}
+              </button>
+            </div>
+          </div>
+
+          {/* KPI stats right */}
+          <div className="grid grid-cols-3 gap-px border border-ifr rounded-ifr-md overflow-hidden w-full md:w-[360px] md:shrink-0">
+            {(
+              [
+                { label: "Total Locations", value: stats.total },
+                { label: "Active", value: stats.active },
+                { label: "Inactive", value: stats.inactive },
+              ] as const
+            ).map(kpi => (
+              <div key={kpi.label} className="bg-ifr-surface p-4 flex flex-col gap-1">
+                <span
+                  className="text-ifr-text-secondary"
+                  style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-sm)" }}
+                >
+                  {t(kpi.label)}
+                </span>
+                <span
+                  className="text-ifr-text-primary"
+                  style={{
+                    fontFamily: "var(--ifr-font-heading)",
+                    fontSize: "var(--ifr-fs-2xl)",
+                    fontWeight: "var(--ifr-fw-bold)",
+                    lineHeight: "1.2",
+                  }}
+                >
+                  {kpi.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Search & Sort toolbar */}
+      <div
+        className="bg-ifr-surface border border-ifr rounded-ifr-md flex flex-col items-stretch gap-3 px-4 sm:flex-row sm:items-center"
+        style={{ minHeight: "var(--ifr-control-height)", padding: "12px 16px" }}
+      >
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <Search size={18} className="text-ifr-text-secondary shrink-0" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder={t("Search by location name or address...")}
+            className="flex-1 bg-transparent border-none outline-none text-ifr-text-primary"
+            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-base)" }}
+          />
+        </div>
+
+        {/* Sort dropdown */}
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setShowSortMenu(!showSortMenu)}
+            className="flex w-full items-center justify-between gap-2 px-3 bg-transparent border border-ifr cursor-pointer hover:bg-ifr-hover transition-colors sm:w-auto sm:justify-start"
+            style={{
+              height: "var(--ifr-control-height)",
+              borderRadius: "var(--ifr-radius-sm)",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-sm)",
+              fontWeight: "var(--ifr-fw-medium)",
+              color: "var(--ifr-text-secondary)",
+            }}
+          >
+            <span>{t("Sort by")}</span>
+            <span className="text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-semibold)" }}>
+              {t(sortLabels[sortBy])}
+            </span>
+            <ChevronDown size={14} />
+          </button>
+          {showSortMenu && (
+            <div
+              className="absolute right-0 top-full mt-1 bg-ifr-surface border border-ifr shadow-lg z-20"
+              style={{ borderRadius: "var(--ifr-radius-sm)", minWidth: "160px" }}
+            >
+              {(["latest", "oldest"] as const).map(opt => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => {
+                    setSortBy(opt);
+                    setShowSortMenu(false);
+                  }}
+                  className={`w-full text-left px-4 py-2 border-none cursor-pointer transition-colors ${
+                    sortBy === opt ? "bg-ifr-hover" : "bg-transparent hover:bg-ifr-hover/50"
+                  }`}
+                  style={{
+                    fontFamily: "var(--ifr-font-body)",
+                    fontSize: "var(--ifr-fs-sm)",
+                    color: "var(--ifr-text-primary)",
+                  }}
+                >
+                  {t(sortLabels[opt])}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {isOwner && (
+          <Link href={editUrl}>
+            <a
+              className="flex w-full items-center justify-center gap-2 px-3 no-underline transition-colors hover:opacity-90 sm:w-auto"
+              style={{
+                height: "var(--ifr-control-height)",
+                borderRadius: "var(--ifr-radius-sm)",
+                backgroundColor: "var(--ifr-yellow)",
+                fontFamily: "var(--ifr-font-body)",
+                fontSize: "var(--ifr-fs-sm)",
+                fontWeight: "var(--ifr-fw-medium)",
+                color: "var(--ifr-text-primary)",
+              }}
+            >
+              <Add size={16} />
+              {t("Add New Location")}
+            </a>
+          </Link>
+        )}
+      </div>
+
+      {/* Results */}
+      {filteredLocations.length === 0 ? (
+        <div className="bg-ifr-surface border border-ifr rounded-ifr-md p-6 text-center md:p-12">
+          <LocationMarkerIcon className="mx-auto mb-3 h-8 w-8 opacity-40" />
+          <p
+            className="text-ifr-text-secondary"
+            style={{ fontFamily: "var(--ifr-font-body)", fontSize: "var(--ifr-fs-md)" }}
+          >
+            {t("No locations yet")}
+          </p>
+          {isOwner && (
+            <Link href={editUrl}>
+              <a
+                className="mt-4 inline-flex items-center gap-2 px-4 no-underline transition-colors hover:opacity-90"
+                style={{
+                  height: "var(--ifr-control-height)",
+                  borderRadius: "var(--ifr-radius-sm)",
+                  backgroundColor: "var(--ifr-yellow)",
+                  fontFamily: "var(--ifr-font-body)",
+                  fontSize: "var(--ifr-fs-sm)",
+                  fontWeight: "var(--ifr-fw-medium)",
+                  color: "var(--ifr-text-primary)",
+                }}
+              >
+                <Add size={16} />
+                {t("Add a New Location")}
+              </a>
+            </Link>
+          )}
+        </div>
+      ) : (
+        <div className="bg-ifr-surface border border-ifr rounded-ifr-md overflow-hidden">
+          {/* Table header (desktop) */}
+          <div
+            className="hidden gap-4 border-b border-ifr px-5 py-3 text-ifr-text-secondary md:grid"
+            style={{
+              gridTemplateColumns: "1.5fr 2fr 1.5fr 50px",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-sm)",
+              fontWeight: "var(--ifr-fw-semibold)",
+            }}
+          >
+            <span>{t("Location Name")}</span>
+            <span>{t("Address")}</span>
+            <span>{t("Tags")}</span>
+            <span />
+          </div>
+
+          {/* Table rows (desktop) */}
+          {filteredLocations.map(loc => (
+            <div
+              key={loc.id || loc.name}
+              className="hidden gap-4 border-b border-ifr px-5 py-4 transition-colors hover:bg-ifr-hover/50 md:grid md:items-center"
+              style={{
+                gridTemplateColumns: "1.5fr 2fr 1.5fr 50px",
+                fontFamily: "var(--ifr-font-body)",
+                fontSize: "var(--ifr-fs-base)",
+              }}
+            >
+              <span className="text-ifr-text-primary truncate" style={{ fontWeight: "var(--ifr-fw-medium)" }}>
+                {loc.name}
+              </span>
+              <span className="text-ifr-text-secondary truncate">{loc.mappableAddress || "—"}</span>
+              <span className="text-ifr-text-secondary">{"—"}</span>
+              <div className="relative">
+                {isOwner && (
+                  <>
+                    <button
+                      type="button"
+                      title={t("More actions")}
+                      onClick={() => setShowActionsMenu(!showActionsMenu)}
+                      className="inline-flex items-center justify-center bg-transparent border-none cursor-pointer hover:opacity-70 transition-opacity"
+                      style={{ width: 32, height: 32, color: "var(--ifr-text-secondary)" }}
+                    >
+                      <OverflowMenuVertical size={18} />
+                    </button>
+                    {showActionsMenu && (
+                      <div
+                        className="absolute right-0 top-full mt-1 bg-ifr-surface border border-ifr shadow-lg z-30"
+                        style={{ borderRadius: "var(--ifr-radius-sm)", minWidth: "160px" }}
+                      >
+                        <Link href={editUrl}>
+                          <a
+                            className="block w-full text-left px-4 py-2 no-underline hover:bg-ifr-hover/50 transition-colors"
+                            style={{
+                              fontFamily: "var(--ifr-font-body)",
+                              fontSize: "var(--ifr-fs-sm)",
+                              color: "var(--ifr-text-primary)",
+                            }}
+                          >
+                            {t("Edit")}
+                          </a>
+                        </Link>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {/* Mobile cards */}
+          <div className="divide-y divide-ifr md:hidden">
+            {filteredLocations.map(loc => (
+              <article
+                key={loc.id || loc.name}
+                className="flex flex-col gap-3 p-4"
+                style={{ fontFamily: "var(--ifr-font-body)" }}
+              >
+                <p className="m-0 text-ifr-text-primary" style={{ fontWeight: "var(--ifr-fw-semibold)" }}>
+                  {loc.name}
+                </p>
+                <dl
+                  className="grid grid-cols-1 gap-y-2 m-0 text-ifr-text-secondary"
+                  style={{ fontSize: "var(--ifr-fs-sm)" }}
+                >
+                  <div>
+                    <dt>{t("Address")}</dt>
+                    <dd className="m-0 text-ifr-text-primary">{loc.mappableAddress || "—"}</dd>
+                  </div>
+                  <div>
+                    <dt>{t("Tags")}</dt>
+                    <dd className="m-0 text-ifr-text-primary">{"—"}</dd>
+                  </div>
+                </dl>
+                {isOwner && (
+                  <Link href={editUrl}>
+                    <a
+                      className="inline-flex min-h-[var(--ifr-tap-min)] items-center px-3 text-ifr-text-primary no-underline hover:underline"
+                      style={{ fontSize: "var(--ifr-fs-sm)", fontWeight: "var(--ifr-fw-medium)" }}
+                    >
+                      {t("Edit")}
+                    </a>
+                  </Link>
+                )}
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Profile Page ──────────────────────────────────────────────────────
 
 export default function ProfilePageNew() {
@@ -1214,7 +1584,9 @@ export default function ProfilePageNew() {
   // Tab state from URL
   const tabParam = (router.query.tab as string) || "designs";
   const activeTab: ProfileTabId = (
-    ["designs", "products", "services", "dpps", "machines", "community"].includes(tabParam) ? tabParam : "designs"
+    ["designs", "products", "services", "dpps", "machines", "locations", "community"].includes(tabParam)
+      ? tabParam
+      : "designs"
   ) as ProfileTabId;
 
   const setActiveTab = useCallback(
@@ -1402,6 +1774,28 @@ export default function ProfilePageNew() {
           ))}
           <button
             type="button"
+            onClick={() => setActiveTab("locations")}
+            aria-current={activeTab === "locations" ? "page" : undefined}
+            className={`flex items-center gap-2 px-4 border-none cursor-pointer transition-colors whitespace-nowrap ${
+              activeTab === "locations" ? "bg-ifr-hover border border-ifr" : "bg-transparent hover:bg-ifr-hover/50"
+            }`}
+            style={{
+              height: "var(--ifr-control-height)",
+              borderRadius: "var(--ifr-radius-sm)",
+              fontFamily: "var(--ifr-font-body)",
+              fontSize: "var(--ifr-fs-base)",
+              fontWeight: activeTab === "locations" ? "var(--ifr-fw-semibold)" : "var(--ifr-fw-medium)",
+              color: activeTab === "locations" ? "var(--ifr-text-primary)" : "var(--ifr-text-secondary)",
+            }}
+          >
+            <LocationMarkerIcon
+              className="h-3 w-3"
+              style={{ color: activeTab === "locations" ? "var(--ifr-green)" : "var(--ifr-text-secondary)" }}
+            />
+            {t("Locations")}
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab("community")}
             aria-current={activeTab === "community" ? "page" : undefined}
             className={`flex items-center gap-2 px-4 border-none cursor-pointer transition-colors whitespace-nowrap ${
@@ -1438,6 +1832,8 @@ export default function ProfilePageNew() {
         {/* Tab Content */}
         {activeTab === "community" ? (
           <CommunityTabContent />
+        ) : activeTab === "locations" ? (
+          <LocationsTabContent primaryLocation={person?.primaryLocation} isOwner={isOwner} ownerId={id} />
         ) : activeTab === "dpps" ? (
           <DppsTabContent userId={id} isOwner={isOwner} ctaConfig={tabCtaConfig.dpps} />
         ) : (
@@ -1446,7 +1842,7 @@ export default function ProfilePageNew() {
             specId={specIdMap[activeTab]}
             tabType={tabs.find(t => t.id === activeTab)?.type || ProjectType.DESIGN}
             isOwner={isOwner}
-            ctaConfig={tabCtaConfig[activeTab as Exclude<ProfileTabId, "community">]}
+            ctaConfig={tabCtaConfig[activeTab as Exclude<ProfileTabId, "community" | "locations">]}
           />
         )}
       </div>
