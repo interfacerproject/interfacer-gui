@@ -24,6 +24,7 @@
  */
 
 import { useAuth } from "hooks/useAuth";
+import { throwIfGraphQLErrors } from "@dyne/interfacer-client";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // ─── useQuery replacement ──────────────────────────────────────────
@@ -57,16 +58,16 @@ export function useSdkQuery<TData = any>(
     setLoading(true);
     try {
       const res = await client.graphql.request<TData>(query, options?.variables);
+      throwIfGraphQLErrors(res);
       if (mountedRef.current) {
-        if (res.errors?.length) {
-          setError(new Error(res.errors[0]!.message));
-        } else {
-          setData(res.data);
-          setError(undefined);
-        }
+        setData(res.data);
+        setError(undefined);
       }
     } catch (e) {
-      if (mountedRef.current) setError(e as Error);
+      if (mountedRef.current) {
+        setData(undefined);
+        setError(e as Error);
+      }
     } finally {
       if (mountedRef.current) setLoading(false);
     }
@@ -106,11 +107,7 @@ export function useSdkMutation<TVariables = any>(
       setError(undefined);
       try {
         const res = await client.graphql.request(mutation, variables);
-        if (res.errors?.length) {
-          const err = new Error(res.errors[0]!.message);
-          setError(err);
-          return res;
-        }
+        throwIfGraphQLErrors(res);
         return res;
       } catch (e) {
         const err = e as Error;

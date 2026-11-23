@@ -18,8 +18,47 @@ export function arrayToMultilineString(a: Array<string>): string {
   return a.join("\n");
 }
 
-export function errorFormatter(e: any): string {
-  if (e instanceof Error) return e.message;
-  if (e?.message) return String(e.message);
-  return JSON.stringify(e);
+const messages = {
+  permissionDenied: "You do not have permission to perform this action.",
+  sessionRequired: "Your session could not be verified. Sign in before trying again.",
+  signingFailed: "The request could not be signed. Restore your session before saving.",
+  networkError: "The service could not be reached. Check whether your changes were saved before trying again.",
+  invalidResponse:
+    "The service returned an invalid response. Check whether your changes were saved before trying again.",
+  conflict: "This item has changed. Review the latest version before saving again.",
+  rateLimited: "Too many requests. Wait a moment before trying again.",
+  serviceUnavailable: "The service is unavailable. Check whether your changes were saved before trying again.",
+};
+
+const codeKeys: Record<string, keyof typeof messages> = {
+  FORBIDDEN: "permissionDenied",
+  UNAUTHENTICATED: "sessionRequired",
+  SIGNING_FAILED: "signingFailed",
+  NETWORK_ERROR: "networkError",
+  INVALID_RESPONSE: "invalidResponse",
+  CONFLICT: "conflict",
+  RATE_LIMITED: "rateLimited",
+  SERVICE_UNAVAILABLE: "serviceUnavailable",
+  HTTP_ERROR: "serviceUnavailable",
+};
+
+type Translator = (key: string, options?: { nsSeparator: ":"; keySeparator: "." }) => string;
+
+/** Opt in only for structured common keys; legacy sentence keys stay flat. */
+export function translateCommon(translate: Translator, key: string): string {
+  return translate("common:" + key, { nsSeparator: ":", keySeparator: "." });
+}
+
+export function errorFormatter(e: any, translate?: Translator): string {
+  const code = e?.code || e?.extensions?.code || e?.graphQLErrors?.[0]?.extensions?.code;
+  const key =
+    typeof code === "string" && Object.prototype.hasOwnProperty.call(codeKeys, code) ? codeKeys[code] : undefined;
+  if (key) return translate ? translateCommon(translate, "requestErrors." + key) : messages[key];
+  if (typeof e?.message === "string" && e.message.trim()) return e.message;
+  if (typeof e === "string" && e.trim()) return e;
+  try {
+    return JSON.stringify(e) || "The operation could not be completed.";
+  } catch {
+    return "The operation could not be completed.";
+  }
 }
