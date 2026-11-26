@@ -61,11 +61,6 @@ next-env.d.ts
 /playwright-report/
 /playwright/.cache/
 
-# Beads / Dolt files (added by bd init)
-.dolt/
-*.db
-.beads-credential-key
-.beads/proxieddb/
 
 # Local build/screenshot artifacts
 .sw-build/
