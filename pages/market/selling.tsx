@@ -347,7 +347,8 @@ const Selling: NextPageWithLayout = () => {
               </section>
 
               <aside className="flex-[1_1_340px] min-w-0 flex flex-col gap-4">
-                <PayoutsPanel client={market} />
+                {/* Only once connected: the panel reads the seller's account with the session token. */}
+                {dash ? <PayoutsPanel client={market} /> : null}
                 <Panel>
                   <div className="px-[18px] py-4 flex justify-between items-baseline border-b border-[#e3e4e6]">
                     <h2 className="m-0 text-[17px]" style={heading}>
