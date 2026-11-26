@@ -40,6 +40,7 @@
     "@heroicons/react": "^1.0.6",
     "@hookform/resolvers": "^2.9.11",
     "@shopify/polaris-icons": "^6.16.0",
+    "@stripe/stripe-js": "10.2.1",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/typography": "^0.5.19",
     "@types/base45": "^2.0.2",

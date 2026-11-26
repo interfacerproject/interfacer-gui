@@ -11,6 +11,8 @@
 // shapes. LOCAL DEV ONLY — seeded data, labeled stand-in receipts.
 
 import {
+  AfterSaleCase,
+  AfterSaleView,
   BuildListing,
   BuildListingParams,
   CatalogDocument,
@@ -20,7 +22,12 @@ import {
   LiveCatalog,
   MarketError,
   MatchResult,
+  CaseKind,
+  MarketPaymentSession,
+  MarketRefund,
+  OnboardResult,
   Order,
+  PaymentsOverview,
   Receipt,
   Result,
   Scene,
@@ -31,6 +38,17 @@ import {
 } from "./types";
 
 import type { BuyerWallet, PreparedOperation } from "./wallet";
+
+// Real payments (Stripe direct charges): the payment is made on the SELLER's
+// Stripe account. The page confirms it with Stripe.js (an authorization only;
+// builds are charged once the order exists, products at delivery) and persists
+// the journey before a payment method may redirect the browser away.
+export interface PaymentConfirmation {
+  confirm(clientSecret: string, stripeAccount: string): Promise<void>;
+  save(state: JourneyState): void;
+}
+
+export const SYSTEM_PROVIDER = "pp_system_default";
 import { checkRelayBody, type RelayStep } from "./relay";
 
 export interface MarketClientOptions {
@@ -319,13 +337,47 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     return bound.cart.id;
   }
 
+  // Stripe, step 1 of the checkout: the cart (and the build's accepted quote)
+  // and the payment session the server opens on the seller's account, with
+  // Interfacer's commission. Stripe.js needs that account to show the form.
+  async function preparePayment(
+    kind: "stock" | "build",
+    target: string,
+    state: JourneyState,
+    address?: ShippingAddress
+  ): Promise<Result<JourneyState & { amountCents: number }>> {
+    try {
+      if (!state.cartId) state.cartId = await newCart(address);
+      const { cart } = await api<{ cart: { completed_at?: string | null; items?: unknown[] } }>(
+        url(`store/carts/${state.cartId}`)
+      );
+      if (cart.completed_at) throw new MarketError("cart_already_completed", 409);
+      if (kind === "build") {
+        await signed(
+          url("market/build-orders"),
+          { cartId: state.cartId, quoteId: target },
+          { action: "build", cartId: state.cartId, quoteId: target }
+        );
+      } else if (!cart.items?.length) {
+        await api(url(`store/carts/${state.cartId}/line-items`), { variant_id: target, quantity: 1 });
+      }
+      const session = await api<MarketPaymentSession>(url("market/store/payment"), { cartId: state.cartId });
+      state.clientSecret = session.client_secret;
+      state.stripeAccount = session.stripe_account;
+      return ok({ ...state, amountCents: session.amount_cents });
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
   // Drives the full purchase for one journey. `state` is owned and persisted by
   // the caller; it is mutated and returned so a retry resumes the same cart/order.
   async function purchase(
     kind: "stock" | "build",
     target: string,
     state: JourneyState,
-    address?: ShippingAddress
+    address?: ShippingAddress,
+    pay?: PaymentConfirmation
   ): Promise<Result<JourneyState>> {
     try {
       if (!state.cartId) state.cartId = await newCart(address);
@@ -334,22 +386,42 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
           url(`store/carts/${state.cartId}`)
         );
         if (!cart.completed_at) {
-          if (kind === "build") {
+          const provider = scene?.payments?.provider_id ?? SYSTEM_PROVIDER;
+          // Stripe: preparePayment() already filled the cart.
+          if (provider === SYSTEM_PROVIDER && kind === "build") {
             await signed(
               url("market/build-orders"),
               { cartId: state.cartId, quoteId: target },
               { action: "build", cartId: state.cartId, quoteId: target }
             );
-          } else if (!cart.items?.length) {
+          } else if (provider === SYSTEM_PROVIDER && !cart.items?.length) {
             await api(url(`store/carts/${state.cartId}/line-items`), { variant_id: target, quantity: 1 });
           }
-          const { payment_collection } = await api<{ payment_collection: { id: string } }>(
-            url("store/payment-collections"),
-            { cart_id: state.cartId }
-          );
-          await api(url(`store/payment-collections/${payment_collection.id}/payment-sessions`), {
-            provider_id: "pp_system_default",
-          });
+          if (provider === SYSTEM_PROVIDER) {
+            const { payment_collection } = await api<{ payment_collection: { id: string } }>(
+              url("store/payment-collections"),
+              { cart_id: state.cartId }
+            );
+            await api(url(`store/payment-collections/${payment_collection.id}/payment-sessions`), {
+              provider_id: provider,
+            });
+          } else if (!state.authorized) {
+            // Stripe: preparePayment() opened the payment on the seller's
+            // account; the buyer confirms it now (or did, before a bank redirect).
+            if (!pay) throw new MarketError("payment_confirmation_required", 400);
+            if (!state.clientSecret || !state.stripeAccount) throw new MarketError("payment_session_required", 400);
+            try {
+              await pay.confirm(state.clientSecret, state.stripeAccount);
+            } catch (e) {
+              // A refused or abandoned payment starts over with a fresh session.
+              delete state.clientSecret;
+              delete state.stripeAccount;
+              pay.save(state);
+              throw e;
+            }
+            state.authorized = true;
+            pay.save(state);
+          }
         }
         const result = await signed<{ type: string; order?: { id: string }; error?: { message?: string } }>(
           url(`store/carts/${state.cartId}/complete`),
@@ -360,8 +432,15 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
           throw new MarketError(result.error?.message || "order_refused", 400);
         state.orderId = result.order.id;
       }
-      await signed(url("market/store/capture"), { orderId: state.orderId }, { action: "capture", orderId: state.orderId });
-      state.captured = true;
+      // Test provider and Stripe builds are charged now; Stripe products when
+      // the seller delivers (the server decides and says which).
+      const capture = await signed<{ captured?: boolean }>(
+        url("market/store/capture"),
+        { orderId: state.orderId },
+        { action: "capture", orderId: state.orderId }
+      );
+      state.paid = true;
+      state.captured = capture?.captured !== false;
       return ok(state);
     } catch (e) {
       return fail(e);
@@ -483,6 +562,110 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     }
   }
 
+  // --- the seller's own Stripe account (direct charges) ---
+
+  async function payouts(): Promise<Result<PaymentsOverview>> {
+    try {
+      return ok(await api<PaymentsOverview>(url("market/store/payouts")));
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  // The seller signs the commission terms in force and gets a link to Stripe's
+  // onboarding of their own Stripe account: nothing of it passes through us.
+  async function onboardPayouts(
+    country: string,
+    terms: { terms_version: string; fee_bps: number; fee_fixed_cents: number }
+  ): Promise<Result<OnboardResult>> {
+    try {
+      const params = { country, ...terms };
+      return ok(
+        await ownerSigned<OnboardResult>(
+          url("market/store/payouts/onboard"),
+          "commerce.payouts.onboard",
+          params,
+          params
+        )
+      );
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  // --- after-sale: the order's buyer or seller ---
+
+  async function aftersale(orderId: string): Promise<Result<AfterSaleView>> {
+    try {
+      return ok(await api<AfterSaleView>(url(`market/orders/${encodeURIComponent(orderId)}/aftersale`)));
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  const orderPath = (orderId: string, rest: string) => url(`market/orders/${encodeURIComponent(orderId)}/${rest}`);
+
+  async function openCase(orderId: string, kind: CaseKind, reason: string): Promise<Result<AfterSaleCase>> {
+    try {
+      const params = { order_id: orderId, kind, reason };
+      const res = await ownerSigned<{ case: AfterSaleCase }>(
+        orderPath(orderId, "cases"),
+        "commerce.order.case.open",
+        params,
+        params
+      );
+      return ok(res.case);
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  async function caseStep(
+    orderId: string,
+    caseId: string,
+    step: "withdraw" | "respond" | "returned",
+    params: Record<string, unknown>
+  ): Promise<Result<AfterSaleCase>> {
+    try {
+      const op = {
+        withdraw: "commerce.order.case.withdraw",
+        respond: "commerce.order.case.respond",
+        returned: "commerce.order.case.returned",
+      }[step];
+      const body = { order_id: orderId, case_id: caseId, ...params };
+      const res = await ownerSigned<{ case: AfterSaleCase }>(
+        orderPath(orderId, `cases/${encodeURIComponent(caseId)}/${step}`),
+        op,
+        body,
+        body
+      );
+      return ok(res.case);
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
+  const withdrawCase = (orderId: string, caseId: string) => caseStep(orderId, caseId, "withdraw", {});
+  const respondCase = (orderId: string, caseId: string, decision: "accept" | "reject", note: string) =>
+    caseStep(orderId, caseId, "respond", { decision, note });
+  const confirmReturn = (orderId: string, caseId: string, refundCents: number, note: string) =>
+    caseStep(orderId, caseId, "returned", { refund_cents: refundCents, note });
+
+  async function refund(orderId: string, amountCents: number, reason: string): Promise<Result<MarketRefund>> {
+    try {
+      const params = { order_id: orderId, amount_cents: amountCents, reason };
+      const res = await ownerSigned<{ refund: MarketRefund }>(
+        orderPath(orderId, "refunds"),
+        "commerce.order.refund",
+        params,
+        params
+      );
+      return ok(res.refund);
+    } catch (e) {
+      return fail(e);
+    }
+  }
+
   // Sellers sign their own milestone; the order need not be theirs as a buyer.
   async function markSold(kind: "stock" | "build", orderId: string) {
     return markMilestone(kind, orderId);
@@ -511,6 +694,15 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
     listProduct,
     markSold,
     signSync,
+    payouts,
+    onboardPayouts,
+    preparePayment,
+    aftersale,
+    openCase,
+    withdrawCase,
+    respondCase,
+    confirmReturn,
+    refund,
     get scene() {
       return scene;
     },

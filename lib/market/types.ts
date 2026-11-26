@@ -31,6 +31,124 @@ export interface Scene {
     audience?: string; // a pilot Medusa's envelope audience
   };
   products: SceneProduct[];
+  payments?: ScenePayments;
+}
+
+// How buyers pay and what sellers keep (public facts from Medusa's config).
+// Stripe: direct charges, the buyer pays the seller's own Stripe account and
+// Interfacer's commission is deducted by Stripe; stock is charged at delivery.
+export interface ScenePayments {
+  provider: "system" | "stripe";
+  provider_id: string;
+  terms: FeeTerms;
+  return_window_days: number;
+  publishable_key?: string; // Stripe only
+  live?: boolean; // Stripe live keys: real money
+  charges?: "direct";
+  capture?: { stock: "delivery"; build: "order" };
+  authorization_days?: number;
+}
+
+export interface FeeTerms {
+  terms_version: string;
+  fee_bps: number;
+  fee_fixed_cents: number;
+}
+
+// --- the seller's own Stripe account ---
+
+export interface ConnectStatus {
+  account_id: string;
+  details_submitted: boolean;
+  charges_enabled: boolean;
+  payouts_enabled: boolean;
+  ready: boolean;
+  requirements_due: string[];
+  disabled_reason: string | null;
+  stale?: boolean;
+}
+
+export interface PaymentsOverview {
+  provider: "system" | "stripe";
+  terms: FeeTerms;
+  return_window_days: number;
+  authorization_days: number;
+  countries: string[];
+  dashboard_url: string;
+  account: null | {
+    account_id: string;
+    country: string;
+    signed_terms: FeeTerms;
+    terms_current: boolean;
+    status: ConnectStatus;
+  };
+}
+
+export interface OnboardResult {
+  account_id: string;
+  status: ConnectStatus;
+  onboarding_url: string | null;
+}
+
+// The buyer's Stripe payment, on the seller's account (from /market/store/payment).
+export interface MarketPaymentSession {
+  provider_id: string;
+  client_secret: string;
+  stripe_account: string;
+  amount_cents: number;
+}
+
+// --- after-sale (cancellations, returns, refunds) ---
+
+export type CaseKind = "cancellation" | "return";
+export type CaseStatus = "requested" | "accepted" | "rejected" | "withdrawn" | "returned" | "refunded";
+export type Eligibility = { ok: true } | { ok: false; reason: string };
+
+export interface AfterSaleCase {
+  id: string;
+  kind: CaseKind;
+  status: CaseStatus;
+  reason: string;
+  seller_note: string | null;
+  created_at: string;
+  responded_at: string | null;
+  returned_at: string | null;
+  closed_at: string | null;
+}
+
+export interface MarketRefund {
+  id: string;
+  case_id: string | null;
+  amount_cents: number;
+  reason: string;
+  status: "pending" | "done" | "failed";
+  created_at: string;
+}
+
+export interface AfterSaleView {
+  order_id: string;
+  role: "buyer" | "seller";
+  kind: "stock" | "build";
+  provider: string;
+  counterpart_person_id: string;
+  paid_cents: number;
+  refunded_cents: number;
+  canceled: boolean;
+  captured: boolean; // Stripe stock: false until the delivery charges it
+  milestone_at: string | null;
+  return_until: string | null;
+  can: { cancellation?: Eligibility; return?: Eligibility; refund?: boolean };
+  cases: AfterSaleCase[];
+  refunds: MarketRefund[];
+}
+
+export interface OpenCase {
+  id: string;
+  order_id: string;
+  kind: CaseKind;
+  status: CaseStatus;
+  reason: string;
+  created_at: string;
 }
 
 export interface StoreVariant {
@@ -145,7 +263,11 @@ export interface ZenflowsSync {
 export interface JourneyState {
   cartId?: string;
   orderId?: string;
-  captured?: boolean;
+  clientSecret?: string; // Stripe: the PaymentIntent being confirmed (survives a bank redirect)
+  stripeAccount?: string; // Stripe: the seller's account the PaymentIntent lives on
+  authorized?: boolean; // Stripe: the buyer confirmed the payment (not yet captured)
+  paid?: boolean; // the order is placed and its payment step done
+  captured?: boolean; // charged (Stripe products: only at delivery)
   receipt?: Receipt;
 }
 
@@ -281,6 +403,10 @@ export interface SellerOrder {
   quantity?: number;
   total_eur?: number;
   receipt: Receipt | null;
+  // Stripe stock orders are authorized (paid) but charged at delivery, by capture_by.
+  paid?: boolean;
+  capture_by?: string;
+  open_case?: OpenCase | null;
 }
 
 export interface SellerDashboard {
@@ -288,6 +414,7 @@ export interface SellerDashboard {
   listings: ListingBinding[];
   catalog: CatalogEntry[];
   orders: SellerOrder[];
+  cases?: OpenCase[];
 }
 
 // A Zenflows resource the signed-in person is accountable for (from the SDK).

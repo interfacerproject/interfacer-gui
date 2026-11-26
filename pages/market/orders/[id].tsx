@@ -18,6 +18,7 @@ import type { Order, Receipt } from "lib/market/types";
 import { buildReference, eur, orderKind, orderNumber, orderResourceId, orderStage } from "lib/market/format";
 import { Drawing, MarketNotice, Panel, TypeChip, heading, mono } from "components/market/ui";
 import { ProgressSteps, TraceEntry, TraceLog, receiptIds, useStageLabel } from "components/market/OrderProgress";
+import { AfterSalePanel } from "components/market/AfterSalePanel";
 
 export const getStaticPaths: GetStaticPaths = async () => ({ paths: [], fallback: "blocking" });
 
@@ -257,6 +258,7 @@ const OrderPage: NextPageWithLayout = () => {
               </dl>
             </div>
           </Panel>
+          <AfterSalePanel client={client} orderId={order.id} item={rid ? { id: rid, name: title } : undefined} />
           <Panel className="p-5 flex flex-col gap-2.5">
             <p className="m-0 text-[12px] font-semibold uppercase tracking-[0.08em] text-ifr-text-secondary">
               {t("Digital Product Passport")}

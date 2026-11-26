@@ -6,6 +6,7 @@ import { test } from "node:test";
 import {
   MARKET_SUBJECTS,
   MarketSubject,
+  aftersaleNotice,
   fulfilledNotice,
   isMarketSubject,
   marketNoticeLink,
@@ -81,4 +82,23 @@ test("a failing inbox never breaks the marketplace flow", async () => {
     sellerId: "SELLER",
   });
   assert.equal(await sendMarketNotice(send, n, "ME"), false);
+});
+
+test("after-sale: a request goes to the seller's dashboard; an answer or refund to the buyer's order", () => {
+  const base = { kind: "stock" as const, orderId: "order_9", itemId: "06RES", itemName: "Desk lamp", actorName: "Ada" };
+  const asked = aftersaleNotice({ ...base, event: "requested", caseKind: "return", receiverId: "06SELLER" });
+  assert.equal(asked.subject, MarketSubject.AFTERSALE);
+  assert.deepEqual(asked.receivers, ["06SELLER"]);
+  assert.equal(marketNoticeLink(asked.subject, asked.message), "/market/selling");
+  const refunded = aftersaleNotice({
+    ...base,
+    event: "refunded",
+    caseKind: "return",
+    amountCents: 1995,
+    receiverId: "06BUYER",
+  });
+  assert.equal(refunded.message.amountCents, 1995);
+  assert.equal(marketNoticeLink(refunded.subject, refunded.message), "/market/orders/order_9");
+  assert.ok(isMarketSubject("marketAfterSale"));
+  assert.ok(MARKET_SUBJECTS.includes(MarketSubject.AFTERSALE));
 });
