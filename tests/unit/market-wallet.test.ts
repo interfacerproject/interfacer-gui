@@ -19,8 +19,19 @@ test("browser wallet signs exact canonical UTF8 bytes with the existing Zenroom 
   const params = { z: [1, false, null], name: "Unicode — café with spaces" };
   const header = await createBuyerWallet(person, () => seed).sign({ person, op: "commerce.order.authorize", params });
   const auth = JSON.parse(Buffer.from(header, "base64url").toString("utf8"));
-  const privateKey = createPrivateKey({ key: Buffer.from("302e020100300506032b657004220420" + "07".repeat(32), "hex"), type: "pkcs8", format: "der" });
-  assert.ok(verify(null, new TextEncoder().encode(canonicalOperation(auth.envelope)), createPublicKey(privateKey), Uint8Array.from(Buffer.from(auth.signature, "base64"))));
+  const privateKey = createPrivateKey({
+    key: Buffer.from("302e020100300506032b657004220420" + "07".repeat(32), "hex"),
+    type: "pkcs8",
+    format: "der",
+  });
+  assert.ok(
+    verify(
+      null,
+      new TextEncoder().encode(canonicalOperation(auth.envelope)),
+      createPublicKey(privateKey),
+      Uint8Array.from(Buffer.from(auth.signature, "base64"))
+    )
+  );
   assert.deepEqual(auth.envelope.params, params);
   assert.equal(auth.envelope.person_id, person);
   assert.match(auth.envelope.nonce, /^[0-9a-f]{32}$/);
@@ -31,21 +42,58 @@ test("browser wallet signs exact canonical UTF8 bytes with the existing Zenroom 
   const { zencode_exec } = await import("zenroom");
   const { result } = await zencode_exec(
     "Scenario eddsa\nGiven I have the 'keyring'\nGiven I have a 'string' named 'payload'\n" +
-    "When I create the eddsa signature of 'payload'\nThen print the 'eddsa signature' as 'base64'",
-    { keys: JSON.stringify({ keyring: { eddsa: seed } }), data: JSON.stringify({ payload: canonicalOperation(auth.envelope) }) }
+      "When I create the eddsa signature of 'payload'\nThen print the 'eddsa signature' as 'base64'",
+    {
+      keys: JSON.stringify({ keyring: { eddsa: seed } }),
+      data: JSON.stringify({ payload: canonicalOperation(auth.envelope) }),
+    }
   );
   assert.equal(JSON.parse(result).eddsa_signature, auth.signature);
 });
 
 test("market wallet signs seller/owner operations only as itself; unknown operations are refused", async () => {
   const wallet = createMarketWallet(person, () => seed);
-  for (const op of ["commerce.order.deliver", "commerce.order.produce", "catalog.design.register",
-    "catalog.service.register", "commerce.listing.live.create", "commerce.listing.publish"]) {
+  for (const op of [
+    "commerce.order.deliver",
+    "commerce.order.produce",
+    "catalog.design.register",
+    "catalog.service.register",
+    "commerce.listing.live.create",
+    "commerce.listing.publish",
+  ]) {
     const auth = JSON.parse(Buffer.from(await wallet.sign({ person, op, params: {} }), "base64url").toString("utf8"));
     assert.equal(auth.envelope.op, op);
-    await assert.rejects(wallet.sign({ person: "06GOTHERSELLER000000000000", op, params: {} }), /buyer_wallet_operation_forbidden/);
+    await assert.rejects(
+      wallet.sign({ person: "06GOTHERSELLER000000000000", op, params: {} }),
+      /buyer_wallet_operation_forbidden/
+    );
   }
-  await assert.rejects(wallet.sign({ person, op: "commerce.admin.anything", params: {} }), /buyer_wallet_operation_forbidden/);
+  await assert.rejects(
+    wallet.sign({ person, op: "commerce.admin.anything", params: {} }),
+    /buyer_wallet_operation_forbidden/
+  );
+});
+
+test("market wallet signs the payments and after-sale steps a buyer or seller takes in the GUI", async () => {
+  // Each is an ownerSigned call in lib/market/client.ts; Medusa checks who may take it.
+  const wallet = createMarketWallet(person, () => seed);
+  for (const op of [
+    "commerce.payouts.onboard",
+    "commerce.order.case.open",
+    "commerce.order.case.withdraw",
+    "commerce.order.case.respond",
+    "commerce.order.case.returned",
+    "commerce.order.refund",
+  ]) {
+    const auth = JSON.parse(Buffer.from(await wallet.sign({ person, op, params: {} }), "base64url").toString("utf8"));
+    assert.equal(auth.envelope.op, op);
+    await assert.rejects(
+      wallet.sign({ person: "06GOTHERSELLER000000000000", op, params: {} }),
+      /buyer_wallet_operation_forbidden/
+    );
+  }
+  // The buyer-only wallet still refuses them.
+  await assert.rejects(createBuyerWallet(person, () => seed).sign({ person, op: "commerce.order.refund", params: {} }));
 });
 
 test("wallet refuses supplier actions and another person; canonicalizer rejects non-JSON", async () => {
