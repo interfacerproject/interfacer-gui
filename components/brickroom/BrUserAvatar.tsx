@@ -16,13 +16,17 @@ export default function BrUserAvatar(props: Props) {
   const { user, userId, size = "100%" } = props;
   const { authenticated } = useAuth();
 
+  // A person handed over without their pictures' contents (a card's author
+  // comes with id, name and images' mimeType only) is looked up by id, so the
+  // avatar is their picture, not a generated one.
+  const lookupId = userId ?? (user && !user.images?.some(i => !!i?.bin) ? user.id : undefined);
   const { data, loading } = useQuery<GetUserImagesQuery, GetUserImagesQueryVariables>(GET_USER_IMAGES, {
-    variables: { userId: userId! },
-    skip: !userId || !authenticated,
+    variables: { userId: lookupId! },
+    skip: !lookupId || !authenticated,
   });
 
   let u: Partial<PersonWithFileEssential> | null = null;
-  if (user) u = user;
+  if (user) u = data?.person ? { ...user, images: data.person.images } : user;
   else if (userId && data?.person) u = data?.person;
 
   if (!u) return <AvatarContainer size={size} />;

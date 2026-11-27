@@ -4,12 +4,17 @@
 // Marketplace notifications through the Interfacer inbox. The person who acts
 // sends them, signed with their own key (the inbox binds sender = signer):
 // the buyer tells the seller about a new order, the seller tells the buyer the
-// order was built or delivered. Best-effort: a notice never blocks a sale.
+// order was built or delivered; after the sale, each side tells the other
+// about a cancellation/return request, the answer and the refund.
+// Best-effort: a notice never blocks a sale.
 
 export enum MarketSubject {
   NEW_ORDER = "marketNewOrder",
   ORDER_FULFILLED = "marketOrderFulfilled",
+  AFTERSALE = "marketAfterSale",
 }
+
+export type AfterSaleEvent = "requested" | "accepted" | "rejected" | "withdrawn" | "refunded";
 
 export const MARKET_SUBJECTS: readonly string[] = Object.values(MarketSubject);
 
@@ -26,6 +31,11 @@ export interface MarketNoticeMessage {
   buyerName?: string;
   totalEur?: number;
   sellerName?: string;
+  // AFTERSALE: what happened, on which kind of request, who did it, how much.
+  event?: AfterSaleEvent;
+  caseKind?: "cancellation" | "return" | "refund";
+  actorName?: string;
+  amountCents?: number;
 }
 
 export interface MarketNotice {
@@ -72,10 +82,43 @@ export function fulfilledNotice(o: {
   };
 }
 
+// A request or withdrawal goes to the seller; an answer or a refund to the buyer.
+export function aftersaleNotice(o: {
+  event: AfterSaleEvent;
+  caseKind: "cancellation" | "return" | "refund";
+  kind: "stock" | "build";
+  orderId: string;
+  itemId: string;
+  itemName: string;
+  actorName: string;
+  amountCents?: number;
+  receiverId: string;
+}): MarketNotice {
+  return {
+    subject: MarketSubject.AFTERSALE,
+    receivers: o.receiverId ? [o.receiverId] : [],
+    message: {
+      kind: o.kind,
+      orderId: o.orderId,
+      itemId: o.itemId,
+      itemName: o.itemName,
+      event: o.event,
+      caseKind: o.caseKind,
+      actorName: o.actorName,
+      ...(typeof o.amountCents === "number" ? { amountCents: o.amountCents } : {}),
+    },
+  };
+}
+
+export function toSeller(subject: MarketSubject, message: MarketNoticeMessage): boolean {
+  return (
+    subject === MarketSubject.NEW_ORDER ||
+    (subject === MarketSubject.AFTERSALE && (message.event === "requested" || message.event === "withdrawn"))
+  );
+}
+
 export function marketNoticeLink(subject: MarketSubject, message: MarketNoticeMessage): string {
-  return subject === MarketSubject.NEW_ORDER
-    ? "/market/selling"
-    : `/market/orders/${encodeURIComponent(message.orderId)}`;
+  return toSeller(subject, message) ? "/market/selling" : `/market/orders/${encodeURIComponent(message.orderId)}`;
 }
 
 type Send = (message: MarketNoticeMessage, receivers: string[], subject: MarketSubject) => Promise<unknown>;

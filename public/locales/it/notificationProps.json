@@ -25,5 +25,14 @@
   "Open Selling to fulfil it and sign the Interfacer record.": "Apri Vendite per evaderlo e firmare la registrazione su Interfacer.",
   "The handover is recorded on Interfacer; see your order for the details.": "La consegna è registrata su Interfacer; trovi i dettagli nel tuo ordine.",
   "Go to Selling": "Vai a Vendite",
-  "See your order": "Vedi il tuo ordine"
+  "See your order": "Vedi il tuo ordine",
+  "asks to return": "chiede di restituire",
+  "asks to cancel the order of": "chiede di annullare l'ordine di",
+  "withdrew their request on": "ha ritirato la richiesta su",
+  "accepted your return of": "ha accettato il reso di",
+  "cancelled your order of": "ha annullato il tuo ordine di",
+  "declined your request on": "ha rifiutato la tua richiesta su",
+  "refunded you for": "ti ha rimborsato per",
+  "Open Selling to answer the request.": "Apri Vendite per rispondere alla richiesta.",
+  "See your order for the details.": "Guarda il tuo ordine per i dettagli."
 }

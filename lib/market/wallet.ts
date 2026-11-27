@@ -78,6 +78,14 @@ export const SELLER_OPS = [
   "commerce.listing.checkout.setup",
   "commerce.order.deliver",
   "commerce.order.produce",
+  // Payments and after-sale: the seller's Stripe onboarding, and the steps a
+  // buyer or seller takes on an order. Medusa checks who may take each one.
+  "commerce.payouts.onboard",
+  "commerce.order.case.open",
+  "commerce.order.case.withdraw",
+  "commerce.order.case.respond",
+  "commerce.order.case.returned",
+  "commerce.order.refund",
 ];
 
 export function createBuyerWallet(personId: string, getSeed: () => string): BuyerWallet {

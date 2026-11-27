@@ -7,13 +7,17 @@ import {
   eur,
   fitChecks,
   initials,
+  listingsOnSale,
+  num,
+  badNumbers,
+  sellerEarned,
   orderKind,
   orderResourceId,
   orderStage,
   parseRejection,
   processLabel,
 } from "../../lib/market/format";
-import type { Order, Receipt } from "../../lib/market/types";
+import type { ListingBinding, Order, Receipt, SellerDashboard, SellerOrder } from "../../lib/market/types";
 
 const req = {
   process: ["fdm_3d_print"],
@@ -86,6 +90,51 @@ test("orders: kind and resource come from the line metadata Medusa stamped at ch
   assert.equal(orderResourceId(build), "D1");
   assert.equal(orderKind(stock), "stock");
   assert.equal(orderResourceId(stock), "R1");
+});
+
+test("numbers as people type them: a decimal comma is a decimal point; a typo is caught, not signed", () => {
+  assert.equal(num("1,50"), 1.5);
+  assert.equal(num(" 12 "), 12);
+  assert.ok(Number.isNaN(num("0.30.2")));
+  assert.ok(Number.isNaN(num("")));
+  assert.deepEqual(badNumbers({ X: "140", Tolerance: "0.30.2", Pieces: "", Fee: "-1", Unit: "1,5" }), [
+    "Tolerance",
+    "Pieces",
+    "Fee",
+  ]);
+});
+
+test("earned: what was charged, less what was refunded", () => {
+  const o = (captured: boolean, total_eur: number, refunded_eur?: number) =>
+    ({ captured, total_eur, refunded_eur } as unknown as SellerOrder);
+  assert.equal(sellerEarned([o(true, 64, 64), o(true, 30, 5), o(false, 48)]), 25);
+});
+
+test("products on sale: a listing whose one unit was ordered is not on sale, unless that order was cancelled", () => {
+  const l = (id: string) => ({ id, catalog_resource_id: "R" + id } as unknown as ListingBinding);
+  const o = (listing_id: string, status: string) =>
+    ({ id: "o" + listing_id, kind: "stock", listing_id, status } as unknown as SellerOrder);
+  const dash = {
+    listings: [l("1"), l("2"), l("3")],
+    orders: [o("1", "pending"), o("2", "canceled")],
+  } as unknown as SellerDashboard;
+  assert.deepEqual(
+    listingsOnSale(dash).map(x => x.id),
+    ["2", "3"]
+  );
+  assert.deepEqual(listingsOnSale(null), []);
+});
+
+test("order stage: a card authorised at checkout is paid; a cancelled order says so", () => {
+  // Stripe products: the payment is authorised at checkout and captured at delivery.
+  const authorised = { payment_collections: [{ payments: [{ captured_at: null, canceled_at: null }] }] };
+  assert.equal(orderStage({ id: "o", ...authorised }, null), "paid");
+  const released = {
+    payment_collections: [{ payments: [{ captured_at: null, canceled_at: "2026-11-27T00:00:00Z" }] }],
+  };
+  assert.equal(orderStage({ id: "o", ...released }, null), "placed");
+  assert.equal(orderStage({ id: "o", status: "canceled", ...released }, null), "canceled");
+  assert.equal(orderStage({ id: "o", payment_collections: [{ payments: [] }] }, null), "placed");
 });
 
 test("order stage: placed → paid → made (record syncing) → recorded", () => {

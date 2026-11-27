@@ -3,12 +3,14 @@
 //
 // Checkout for both paths: a ready-made unit (?kind=stock&product=…) or a build
 // (?kind=build&design=…&quote=…). The buyer types where it should go, signs
-// with their wallet and pays (pilot: test payment, nothing is charged). The
-// purchase state is kept per item so a retry resumes the same cart and order.
+// with their wallet and pays: with Stripe (the Payment Element; the card goes
+// to Stripe only), or in the pilot with a test payment where nothing is
+// charged. The purchase state is kept per item so a retry, or the return from
+// a bank redirect, resumes the same cart, payment and order.
 
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { NextPageWithLayout } from "../_app";
@@ -16,7 +18,16 @@ import { useAuth } from "hooks/useAuth";
 import { useInBoxContext } from "hooks/useInBox";
 import { useMarketClient } from "hooks/useMarketClient";
 import { useMarketResources } from "hooks/useMarketResources";
-import type { JourneyState, MatchEntry, Requirements, ShippingAddress, StoreProduct } from "lib/market/types";
+import type {
+  JourneyState,
+  MatchEntry,
+  Requirements,
+  ScenePayments,
+  ShippingAddress,
+  StoreProduct,
+} from "lib/market/types";
+import type { PaymentConfirmation } from "lib/market/client";
+import { mountPayment, resumeConfirmation, type MountedPayment } from "lib/market/stripe";
 import { eur, eurCents, processLabel } from "lib/market/format";
 import { newOrderNotice, sendMarketNotice } from "lib/market/notify";
 import { Avatar, Drawing, MarketNotice, Panel, TypeChip, heading, primaryButton } from "components/market/ui";
@@ -53,6 +64,14 @@ const REASONS: Record<string, string> = {
   market_upstream_unreachable: "The marketplace is offline right now. Try again in a moment.",
   build_quote_not_found: "This offer changed. Go back and pick the maker again.",
   interfacer_single_unit_required: "This unit is no longer available.",
+  seller_payouts_not_ready:
+    "The seller can't receive payments yet, so this can't be bought right now. Nothing was charged.",
+  seller_terms_outdated:
+    "The seller can't receive payments yet, so this can't be bought right now. Nothing was charged.",
+  payment_not_authorized: "Your payment was not confirmed. Nothing was charged.",
+  card_declined: "Your card was declined. Nothing was charged.",
+  payment_details_invalid: "Check your payment details.",
+  stripe_unavailable: "The payment form could not load. Check your connection and try again.",
 };
 
 function journeyKey(item: { kind: string; id: string }) {
@@ -71,6 +90,10 @@ const Checkout: NextPageWithLayout = () => {
   const [address, setAddress] = useState<ShippingAddress>(EMPTY);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [payments, setPayments] = useState<ScenePayments | null>(null);
+  const paymentNode = useRef<HTMLDivElement>(null);
+  const [payment, setPayment] = useState<MountedPayment | null>(null);
+  const stripe = payments?.provider === "stripe" && !!payments.publishable_key;
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -79,6 +102,7 @@ const Checkout: NextPageWithLayout = () => {
       const scene = await client.browse();
       if (!alive) return;
       if (!scene.ok) return setLoadError(scene.reason);
+      setPayments(scene.data.payments ?? null);
       if (kind === "stock" && product && resource) {
         const products = await client.catalog();
         const p = products.ok ? products.data.find(x => x.id === product) : undefined;
@@ -133,13 +157,39 @@ const Checkout: NextPageWithLayout = () => {
     !!item &&
     (item.kind === "stock" ? item.sellerId === user.ulid : item.match.service.provider_person_id === user.ulid);
 
+  // The address is fixed once the payment is opened (it is on the cart).
   const field = (key: keyof ShippingAddress) => ({
+    disabled: !!session,
     value: address[key] ?? "",
     onChange: (e: { target: { value: string } }) => setAddress(a => ({ ...a, [key]: e.target.value })),
   });
 
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
+  const target = item ? (item.kind === "stock" ? item.product.variants[0].id : item.match.quote.id) : "";
+  const key = item ? journeyKey({ kind: item.kind, id: target }) : "";
+  const loadJourney = (): JourneyState => {
+    try {
+      return JSON.parse(localStorage.getItem(key) || "{}");
+    } catch {
+      return {};
+    }
+  };
+  const saveJourney = (st: JourneyState) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(st));
+    } catch {
+      /* per-browser convenience only */
+    }
+  };
+  const cleanAddress = () => {
+    const clean: ShippingAddress = { ...address, country_code: address.country_code.toLowerCase() };
+    if (!clean.phone) delete clean.phone;
+    return clean;
+  };
+
+  // Stripe, step 1: the server opens the payment on the seller's own Stripe
+  // account (with Interfacer's commission); then the form can be shown.
+  const [session, setSession] = useState<{ clientSecret: string; stripeAccount: string } | null>(null);
+  const continueToPayment = async () => {
     if (!item) return;
     setBusy(true);
     setError(null);
@@ -148,25 +198,96 @@ const Checkout: NextPageWithLayout = () => {
       setBusy(false);
       return setError(connected.reason);
     }
-    const target = item.kind === "stock" ? item.product.variants[0].id : item.match.quote.id;
-    const key = journeyKey({ kind: item.kind, id: target });
-    let state: JourneyState = {};
-    try {
-      state = JSON.parse(localStorage.getItem(key) || "{}");
-    } catch {
-      state = {};
+    const state = loadJourney();
+    const res = await client.preparePayment(item.kind, target, state, cleanAddress());
+    saveJourney(res.ok ? res.data : state);
+    setBusy(false);
+    if (!res.ok) return setError(res.reason);
+    setSession({ clientSecret: res.data.clientSecret!, stripeAccount: res.data.stripeAccount! });
+  };
+
+  // Stripe, step 2: the Payment Element for that payment.
+  useEffect(() => {
+    if (!stripe || !session || !paymentNode.current) return;
+    let mounted: MountedPayment | null = null;
+    let alive = true;
+    mountPayment(paymentNode.current, {
+      publishableKey: payments!.publishable_key!,
+      stripeAccount: session.stripeAccount,
+      clientSecret: session.clientSecret,
+      locale: router.locale,
+    })
+      .then(m => {
+        if (alive) setPayment((mounted = m));
+        else m.destroy();
+      })
+      .catch(e => setError(e?.reason ?? "stripe_unavailable"));
+    return () => {
+      alive = false;
+      mounted?.destroy();
+      setPayment(null);
+    };
+  }, [stripe, session, payments, router.locale]);
+
+  const runPurchase = async (resume: boolean) => {
+    if (!item) return;
+    setBusy(true);
+    setError(null);
+    if (stripe && !resume) {
+      if (!payment) {
+        setBusy(false);
+        return setError("stripe_unavailable");
+      }
+      try {
+        await payment.validate();
+      } catch (e: any) {
+        setBusy(false);
+        return setError(e?.reason ?? "payment_details_invalid");
+      }
     }
-    const clean: ShippingAddress = { ...address, country_code: address.country_code.toLowerCase() };
-    if (!clean.phone) delete clean.phone;
-    const wasPaid = !!state.captured; // purchase() mutates state
-    const res = await client.purchase(item.kind, target, state, clean);
-    try {
-      localStorage.setItem(key, JSON.stringify(res.ok ? res.data : state));
-    } catch {
-      /* per-browser convenience only */
+    await placeOrder(resume);
+  };
+  const latestRun = useRef(runPurchase);
+  latestRun.current = runPurchase;
+
+  // Back from a bank redirect (iDEAL, Bancontact, 3-D Secure pages…): resume.
+  const resumed = useRef(false);
+  useEffect(() => {
+    if (resumed.current || !stripe || !item || !user || !router.query.payment_intent_client_secret) return;
+    resumed.current = true;
+    latestRun.current(true);
+  }, [stripe, item, user, router.query.payment_intent_client_secret]);
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (stripe && !session) return continueToPayment();
+    await runPurchase(false);
+  };
+
+  const placeOrder = async (resume: boolean) => {
+    if (!item) return;
+    const connected = await client.connect();
+    if (!connected.ok) {
+      setBusy(false);
+      return setError(connected.reason);
     }
+    const state = loadJourney();
+    const wasPaid = !!state.paid; // purchase() mutates state
+    let pay: PaymentConfirmation | undefined;
+    if (stripe) {
+      const back = new URL(window.location.href);
+      ["payment_intent", "payment_intent_client_secret", "redirect_status"].forEach(k => back.searchParams.delete(k));
+      const confirm = resume
+        ? resumeConfirmation(payments!.publishable_key!)
+        : (secret: string) => payment!.confirm(secret, back.toString());
+      pay = { confirm, save: saveJourney };
+    }
+    const res = await client.purchase(item.kind, target, state, cleanAddress(), pay);
+    saveJourney(res.ok ? res.data : state);
     if (!res.ok) {
       setBusy(false);
+      // A refused payment needs a fresh one: back to step 1.
+      if (stripe && !state.clientSecret) setSession(null);
       return setError(res.reason);
     }
     try {
@@ -174,7 +295,7 @@ const Checkout: NextPageWithLayout = () => {
     } catch {
       /* ignore */
     }
-    // Tell the seller once, when this attempt is the one that paid the order.
+    // Tell the seller once, when this attempt is the one that placed the order.
     const sellerId = item.kind === "stock" ? item.sellerId : item.match.service.provider_person_id;
     if (!wasPaid && res.data.orderId && sellerId)
       await sendMarketNotice(
@@ -300,17 +421,63 @@ const Checkout: NextPageWithLayout = () => {
                 <h2 className="m-0 text-[19px]" style={heading}>
                   {t("Payment")}
                 </h2>
-                <div
-                  className="flex gap-3 items-start p-3.5 border"
-                  style={{ background: "var(--ifr-yellow-bg)", borderColor: "var(--ifr-yellow)" }}
-                >
-                  <span className="text-[14px]" style={{ color: "#5c4400" }}>
-                    <strong>{t("Pilot: test payment.")}</strong>{" "}
-                    {t(
-                      "Nothing is charged while the marketplace is in its pilot. The order, its signature and its record on Interfacer are real."
+                {stripe ? (
+                  <>
+                    {!payments?.live ? (
+                      <p className="m-0 text-[13px]" style={{ color: "#5c4400" }} data-testid="market-stripe-test-mode">
+                        <strong>{t("Test mode.")}</strong>{" "}
+                        {t("Use a Stripe test card such as 4242 4242 4242 4242. Nothing is charged.")}
+                      </p>
+                    ) : null}
+                    {session ? (
+                      <div ref={paymentNode} data-testid="market-stripe-payment" className="min-h-[120px]" />
+                    ) : (
+                      <p className="m-0 text-[14px]">
+                        {t("Fill in the address, then continue: you pay {{seller}} directly, through Stripe.", {
+                          seller: sellerName ?? t("the seller"),
+                        })}
+                      </p>
                     )}
-                  </span>
-                </div>
+                    <p className="m-0 text-[13px] text-ifr-text-secondary">
+                      {item.kind === "build"
+                        ? t(
+                            "Your card goes to Stripe only; Interfacer never sees it. The payment is taken once the order is placed, and refunded if it is cancelled."
+                          )
+                        : t(
+                            "Your card goes to Stripe only; Interfacer never sees it. The payment is reserved now and taken only when the seller delivers; if the order is cancelled, nothing is charged."
+                          )}
+                    </p>
+                  </>
+                ) : (
+                  <div
+                    className="flex gap-3 items-start p-3.5 border"
+                    style={{ background: "var(--ifr-yellow-bg)", borderColor: "var(--ifr-yellow)" }}
+                  >
+                    <span className="text-[14px]" style={{ color: "#5c4400" }}>
+                      <strong>{t("Pilot: test payment.")}</strong>{" "}
+                      {t(
+                        "Nothing is charged while the marketplace is in its pilot. The order, its signature and its record on Interfacer are real."
+                      )}
+                    </span>
+                  </div>
+                )}
+                {payments ? (
+                  <p className="m-0 text-[13px] text-ifr-text-secondary" data-testid="market-return-policy">
+                    {item.kind === "build"
+                      ? t(
+                          "You can ask to cancel until it is built, and to return it within {{count}} days of the handover.",
+                          {
+                            count: payments.return_window_days,
+                          }
+                        )
+                      : t(
+                          "You can ask to cancel until it is delivered, and to return it within {{count}} days of delivery.",
+                          {
+                            count: payments.return_window_days,
+                          }
+                        )}
+                  </p>
+                ) : null}
               </Panel>
 
               {error ? (
@@ -325,10 +492,16 @@ const Checkout: NextPageWithLayout = () => {
                 <button
                   type="submit"
                   className={primaryButton + " h-[54px] text-[17px]"}
-                  disabled={busy || !user || own}
+                  disabled={busy || !user || own || (stripe && !!session && !payment)}
                   data-testid="market-place-order"
                 >
-                  {busy ? t("Signing and placing your order…") : t("Place order · {{total}}", { total: eur(total) })}
+                  {busy
+                    ? stripe && !session
+                      ? t("Preparing the payment…")
+                      : t("Signing and placing your order…")
+                    : stripe && !session
+                    ? t("Continue to payment · {{total}}", { total: eur(total) })
+                    : t("Place order · {{total}}", { total: eur(total) })}
                 </button>
                 <p className="m-0 text-[13px] text-ifr-text-secondary text-center">
                   {own

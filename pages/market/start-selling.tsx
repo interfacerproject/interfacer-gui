@@ -32,7 +32,7 @@ import type {
   SellerDashboard,
   ServiceData,
 } from "lib/market/types";
-import { dims, eur, fitChecks, processLabel, tolerance } from "lib/market/format";
+import { dims, eur, fitChecks, processLabel, tolerance, badNumbers, num } from "lib/market/format";
 import {
   FitChips,
   MarketHero,
@@ -193,9 +193,9 @@ function documentFor(kind: CatalogKind, f: FormState) {
       requirements: {
         process: list(f.process),
         materials: list(f.materials),
-        max_dimensions_mm: { x: Number(f.x), y: Number(f.y), z: Number(f.z) },
-        tolerance_mm: Number(f.tolerance),
-        quantity: Number(f.quantity),
+        max_dimensions_mm: { x: num(f.x), y: num(f.y), z: num(f.z) },
+        tolerance_mm: num(f.tolerance),
+        quantity: num(f.quantity),
       },
     };
   return {
@@ -203,11 +203,11 @@ function documentFor(kind: CatalogKind, f: FormState) {
     capabilities: {
       processes: list(f.processes),
       materials: list(f.materials),
-      build_volume_mm: { x: Number(f.x), y: Number(f.y), z: Number(f.z) },
-      min_tolerance_mm: Number(f.tolerance),
+      build_volume_mm: { x: num(f.x), y: num(f.y), z: num(f.z) },
+      min_tolerance_mm: num(f.tolerance),
     },
-    base_price_eur: Number(f.base),
-    per_unit_price_eur: Number(f.unit),
+    base_price_eur: num(f.base),
+    per_unit_price_eur: num(f.unit),
     location: { country_code: f.country.trim(), city: f.city.trim() },
   };
 }
@@ -243,6 +243,14 @@ function DesignCard({
   const [message, setMessage] = useState<string | null>(null);
   const set = (k: string) => (v: string) => setForm(f => ({ ...f, [k]: v }));
   const submit = async () => {
+    const bad = badNumbers({
+      [t("Largest part X")]: form.x,
+      [t("Y")]: form.y,
+      [t("Z")]: form.z,
+      [t("Tolerance ±")]: form.tolerance,
+      [t("Pieces per build")]: form.quantity,
+    });
+    if (bad.length) return setMessage(t("Check these numbers: {{fields}}", { fields: bad.join(", ") }));
     setBusy(true);
     setMessage(null);
     const res = await market.registerCatalog("design", resource.id, documentFor("design", form));
@@ -334,9 +342,11 @@ function ProductCard({
   const [message, setMessage] = useState<string | null>(null);
   const listed = dash.listings.some(l => l.catalog_resource_id === resource.id);
   const submit = async () => {
+    if (badNumbers({ [t("Price (one unit)")]: price }).length || !(num(price) > 0))
+      return setMessage(t("Check these numbers: {{fields}}", { fields: t("Price (one unit)") }));
     setBusy(true);
     setMessage(null);
-    const res = await market.listProduct(resource.id, Number(price));
+    const res = await market.listProduct(resource.id, num(price));
     setBusy(false);
     setMessage(res.ok ? t("Listed for sale.") : t("Refused: {{reason}}", { reason: res.reason }));
     if (res.ok) onDone();
@@ -413,20 +423,22 @@ function BuildRow({
   const live = !!listing?.active;
   const changed =
     !listing ||
-    Number(base) !== listing.base_price_eur ||
-    Number(unit) !== listing.per_unit_price_eur ||
-    Number(days) !== listing.lead_days;
-  const total = Number(base) + Number(unit) * design.requirements.quantity;
+    num(base) !== listing.base_price_eur ||
+    num(unit) !== listing.per_unit_price_eur ||
+    num(days) !== listing.lead_days;
+  const total = num(base) + num(unit) * design.requirements.quantity;
 
   const save = async (active: boolean) => {
+    const bad = badNumbers({ [t("Setup fee")]: base, [t("Per piece")]: unit, [t("Ready in")]: days });
+    if (bad.length) return setMessage(t("Check these numbers: {{fields}}", { fields: bad.join(", ") }));
     setBusy(true);
     setMessage(null);
     const res = await market.setBuildListing({
       service_id: service.id,
       design_id: design.id,
-      base_price_eur: Number(base),
-      per_unit_price_eur: Number(unit),
-      lead_days: Number(days),
+      base_price_eur: num(base),
+      per_unit_price_eur: num(unit),
+      lead_days: num(days),
       active,
     });
     setBusy(false);
@@ -566,6 +578,15 @@ function ServiceCard({
   const set = (k: string) => (v: string) => setForm(f => ({ ...f, [k]: v }));
 
   const submit = async () => {
+    const bad = badNumbers({
+      [t("Build volume X")]: form.x,
+      [t("Y")]: form.y,
+      [t("Z")]: form.z,
+      [t("Best tolerance ±")]: form.tolerance,
+      [t("Default setup fee")]: form.base,
+      [t("Default per piece")]: form.unit,
+    });
+    if (bad.length) return setMessage(t("Check these numbers: {{fields}}", { fields: bad.join(", ") }));
     setBusy(true);
     setMessage(null);
     const res = await market.registerCatalog("service", resource.id, documentFor("service", form));

@@ -368,9 +368,17 @@ test("a pilot's audience goes into every signature: owner, session and prepared 
   const client = createMarketClient({ fetchImpl, wallet });
   assert.equal((await client.connect()).ok, true);
   await client.setBuildListing({
-    service_id: "s", design_id: "d", base_price_eur: 1, per_unit_price_eur: 1, lead_days: 1, active: true,
+    service_id: "s",
+    design_id: "d",
+    base_price_eur: 1,
+    per_unit_price_eur: 1,
+    lead_days: 1,
+    active: true,
   });
-  assert.deepEqual(signedOps.map(o => (o as any).audience), ["interfacer-commerce:dpp-dev", "interfacer-commerce:dpp-dev"]);
+  assert.deepEqual(
+    signedOps.map(o => (o as any).audience),
+    ["interfacer-commerce:dpp-dev", "interfacer-commerce:dpp-dev"]
+  );
 });
 
 test("buildListings forwards only the filters given", async () => {
@@ -409,4 +417,206 @@ test("purchase ships to the address the buyer typed; myOrders needs a session", 
   assert.equal(out.ok, false);
   const created = calls.find(c => c.method === "POST" && c.url === "/api/market/store/carts");
   assert.deepEqual((created!.body as any).shipping_address, address);
+});
+
+// --- real payments (Stripe Connect direct charges) ---
+
+const STRIPE_SCENE = {
+  ...SCENE,
+  payments: {
+    provider: "stripe",
+    provider_id: "pp_stripe_stripe",
+    publishable_key: "pk_test_x",
+    terms: { terms_version: "2026-11", fee_bps: 800, fee_fixed_cents: 0 },
+    return_window_days: 14,
+    charges: "direct",
+    capture: { stock: "delivery", build: "order" },
+    authorization_days: 7,
+  },
+};
+
+function stripeRoutes(extra: Record<string, { status?: number; body: unknown }> = {}) {
+  return {
+    "GET /api/market/market/store/config": { body: STRIPE_SCENE },
+    "POST /api/market/auth/customer/emailpass": { body: { token: "tok" } },
+    "POST /api/market/store/carts": { body: { cart: { id: "cart_1" } } },
+    "POST /api/market/store/carts/cart_1/customer": { body: { cart: { id: "cart_1" } } },
+    "GET /api/market/store/carts/cart_1": { body: { cart: { completed_at: null, items: [] } } },
+    "POST /api/market/store/carts/cart_1/line-items": { body: { cart: { id: "cart_1" } } },
+    "POST /api/market/market/store/payment": {
+      body: {
+        provider_id: "pp_stripe_stripe",
+        client_secret: "pi_1_secret_a",
+        stripe_account: "acct_seller",
+        amount_cents: 1995,
+      },
+    },
+    "POST /api/market/dev/store/sign": { body: { header: "SIG" } },
+    "POST /api/market/store/carts/cart_1/complete": { body: { type: "order", order: { id: "order_1" } } },
+    "POST /api/market/market/store/capture": { body: { captured: false, capture_at: "delivery" } },
+    ...extra,
+  };
+}
+
+const paths = (calls: Array<{ method: string; url: string }>) => calls.map(c => `${c.method} ${c.url.split("?")[0]}`);
+
+test("stripe: preparing opens the payment on the seller's account through the marketplace route only", async () => {
+  const { fetchImpl, calls } = scriptedFetch(stripeRoutes());
+  const client = createMarketClient({ fetchImpl });
+  await client.connect();
+  const out = await client.preparePayment("stock", "var_1", {});
+  assert.deepEqual(out.ok && [out.data.clientSecret, out.data.stripeAccount, out.data.amountCents], [
+    "pi_1_secret_a",
+    "acct_seller",
+    1995,
+  ]);
+  const called = paths(calls);
+  assert.ok(
+    called.indexOf("POST /api/market/store/carts/cart_1/line-items") <
+      called.indexOf("POST /api/market/market/store/payment")
+  );
+  assert.deepEqual(calls.find(c => c.url.endsWith("/market/store/payment"))!.body, { cartId: "cart_1" });
+  // Never a client-made Stripe session (account and fee are the server's).
+  assert.equal(calls.filter(c => c.url.includes("payment-sessions")).length, 0);
+});
+
+test("stripe: paying confirms on the seller's account, places the order; a product is charged at delivery", async () => {
+  const { fetchImpl, calls } = scriptedFetch(stripeRoutes());
+  const client = createMarketClient({ fetchImpl });
+  await client.connect();
+  const confirmed: string[][] = [];
+  const saved: any[] = [];
+  const state: any = { cartId: "cart_1", clientSecret: "pi_1_secret_a", stripeAccount: "acct_seller" };
+  const out = await client.purchase("stock", "var_1", state, undefined, {
+    confirm: async (secret, account) => {
+      confirmed.push([secret, account]);
+    },
+    save: st => saved.push({ ...st }),
+  });
+  assert.equal(out.ok, true);
+  assert.deepEqual(confirmed, [["pi_1_secret_a", "acct_seller"]]);
+  const called = paths(calls);
+  assert.ok(
+    called.indexOf("POST /api/market/store/carts/cart_1/complete") <
+      called.indexOf("POST /api/market/market/store/capture")
+  );
+  assert.equal(calls.filter(c => c.url.includes("line-items") || c.url.includes("payment")).length, 0);
+  assert.equal(out.ok && out.data.authorized, true);
+  assert.equal(out.ok && out.data.paid, true);
+  assert.equal(out.ok && out.data.captured, false); // charged when the seller delivers
+  assert.equal(saved.at(-1).authorized, true);
+});
+
+test("stripe: a refused payment is forgotten, so the next attempt opens a fresh one; no order is placed", async () => {
+  const { fetchImpl, calls } = scriptedFetch(stripeRoutes());
+  const client = createMarketClient({ fetchImpl });
+  await client.connect();
+  const state: any = { cartId: "cart_1", clientSecret: "pi_1_secret_a", stripeAccount: "acct_seller" };
+  const out = await client.purchase("stock", "var_1", state, undefined, {
+    confirm: async () => {
+      throw new MarketError("card_declined", 402);
+    },
+    save: () => undefined,
+  });
+  assert.deepEqual(out, { ok: false, reason: "card_declined" });
+  assert.equal(state.clientSecret, undefined);
+  assert.equal(state.stripeAccount, undefined);
+  assert.equal(calls.filter(c => c.url.includes("/complete")).length, 0);
+});
+
+test("stripe: a seller who cannot be paid stops the checkout before any payment form", async () => {
+  const { fetchImpl } = scriptedFetch(
+    stripeRoutes({
+      "POST /api/market/market/store/payment": { status: 400, body: { message: "seller_payouts_not_ready" } },
+    })
+  );
+  const client = createMarketClient({ fetchImpl });
+  await client.connect();
+  assert.deepEqual(await client.preparePayment("stock", "var_1", {}), {
+    ok: false,
+    reason: "seller_payouts_not_ready",
+  });
+});
+
+test("stripe: without the page's Payment Element, or before preparing, the client refuses rather than paying", async () => {
+  const { fetchImpl } = scriptedFetch(stripeRoutes());
+  const client = createMarketClient({ fetchImpl });
+  await client.connect();
+  assert.deepEqual(await client.purchase("stock", "var_1", { cartId: "cart_1" }), {
+    ok: false,
+    reason: "payment_confirmation_required",
+  });
+  const pay = { confirm: async () => undefined, save: () => undefined };
+  assert.deepEqual(await client.purchase("stock", "var_1", { cartId: "cart_1" }, undefined, pay), {
+    ok: false,
+    reason: "payment_session_required",
+  });
+});
+
+test("after-sale: the buyer signs a case with exactly its params; the seller signs a partial refund", async () => {
+  const { fetchImpl, calls } = scriptedFetch({
+    "GET /api/market/market/store/config": { body: STRIPE_SCENE },
+    "POST /api/market/market/orders/order_1/cases": { status: 201, body: { case: { id: "ifcase_1" } } },
+    "POST /api/market/market/orders/order_1/cases/ifcase_1/returned": { body: { case: { id: "ifcase_1" } } },
+    "POST /api/market/market/orders/order_1/refunds": { status: 201, body: { refund: { id: "ifrf_1" } } },
+  });
+  const signedOps: any[] = [];
+  const wallet = {
+    personId: "person_buyer",
+    sign: async (op: any) => {
+      signedOps.push(op);
+      return "SIGNED";
+    },
+  } as any;
+  const client = createMarketClient({ fetchImpl, wallet });
+  assert.equal((await client.openCase("order_1", "return", "Too small")).ok, true);
+  assert.equal((await client.confirmReturn("order_1", "ifcase_1", 1500, "Scratched")).ok, true);
+  assert.equal((await client.refund("order_1", 500, "Late")).ok, true);
+  assert.deepEqual(
+    signedOps.map(o => [o.op, o.params]),
+    [
+      ["commerce.order.case.open", { order_id: "order_1", kind: "return", reason: "Too small" }],
+      [
+        "commerce.order.case.returned",
+        { order_id: "order_1", case_id: "ifcase_1", refund_cents: 1500, note: "Scratched" },
+      ],
+      ["commerce.order.refund", { order_id: "order_1", amount_cents: 500, reason: "Late" }],
+    ]
+  );
+  // The request body IS the signed params.
+  const posted = calls.filter(c => c.method === "POST").map(c => c.body);
+  assert.deepEqual(
+    posted,
+    signedOps.map(o => o.params)
+  );
+  assert.ok(calls.filter(c => c.method === "POST").every(c => c.headers["X-Interfacer-Auth"] === "SIGNED"));
+});
+
+test("live connect: two connects at once share one login", async () => {
+  const { wallet } = liveWallet();
+  const { fetchImpl, calls } = scriptedFetch(liveRoutes());
+  const client = createMarketClient({ fetchImpl, wallet });
+  const [a, b] = await Promise.all([client.connect(), client.connect()]);
+  assert.equal(a.ok && b.ok, true);
+  assert.equal(calls.filter(c => c.method === "POST" && c.url.endsWith("/market/store/session")).length, 1);
+});
+
+test("live connect: a login refused while the signature check timed out is tried once more", async () => {
+  const { wallet } = liveWallet();
+  const routes = liveRoutes();
+  const base = scriptedFetch(routes);
+  let logins = 0;
+  const fetchImpl = (async (url: string, init: any = {}) => {
+    if ((init.method ?? "GET") === "POST" && url.split("?")[0].endsWith("/market/store/session") && logins++ === 0)
+      return {
+        status: 400,
+        ok: false,
+        headers: { get: () => null },
+        json: async () => ({ message: "authorization_denied" }),
+      } as any;
+    return base.fetchImpl(url, init);
+  }) as unknown as typeof fetch;
+  const res = await createMarketClient({ fetchImpl, wallet }).connect();
+  assert.equal(res.ok, true);
+  assert.equal(logins, 2);
 });

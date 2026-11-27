@@ -15,9 +15,11 @@ import { useInBoxContext } from "hooks/useInBox";
 import { useMarketClient } from "hooks/useMarketClient";
 import { useMarketResources } from "hooks/useMarketResources";
 import type { BuildListing, SellerDashboard, SellerOrder } from "lib/market/types";
-import { eur } from "lib/market/format";
+import { eur, listingsOnSale, sellerEarned } from "lib/market/format";
 import { fulfilledNotice, sendMarketNotice } from "lib/market/notify";
 import { MarketHero, MarketNotice, Panel, StatusChip, TypeChip, heading, mono } from "components/market/ui";
+import { AfterSalePanel } from "components/market/AfterSalePanel";
+import { PayoutsPanel } from "components/market/PayoutsPanel";
 
 export async function getStaticProps({ locale }: { locale: string }) {
   return {
@@ -28,10 +30,12 @@ export async function getStaticProps({ locale }: { locale: string }) {
   };
 }
 
-type Step = "awaiting_payment" | "to_fulfil" | "to_sign" | "on_hold" | "done";
+type Step = "canceled" | "awaiting_payment" | "to_fulfil" | "to_sign" | "on_hold" | "done";
 
 function stepOf(order: SellerOrder): Step {
-  if (!order.captured) return "awaiting_payment";
+  if (order.status === "canceled") return "canceled";
+  // Stripe products are paid (authorized) at order, charged at delivery.
+  if (!(order.paid ?? order.captured)) return "awaiting_payment";
   if (!order.receipt) return "to_fulfil";
   const sync = order.receipt.zenflows_sync;
   if (!sync || sync.status === "done") return "done";
@@ -48,6 +52,7 @@ const Selling: NextPageWithLayout = () => {
   const [builds, setBuilds] = useState<BuildListing[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     const d = await market.sellerDashboard();
@@ -114,8 +119,9 @@ const Selling: NextPageWithLayout = () => {
   };
 
   const orders = dash?.orders ?? [];
-  const open = orders.filter(o => !["done", "awaiting_payment"].includes(stepOf(o)));
-  const earned = orders.filter(o => o.captured).reduce((sum, o) => sum + (o.total_eur ?? 0), 0);
+  const onSale = listingsOnSale(dash);
+  const open = orders.filter(o => !["done", "awaiting_payment", "canceled"].includes(stepOf(o)));
+  const earned = sellerEarned(orders);
 
   return (
     <div className="bg-ifr-profile min-h-full">
@@ -169,7 +175,7 @@ const Selling: NextPageWithLayout = () => {
                 ["to-fulfil", t("To fulfil"), String(open.length)],
                 ["earned", t("Earned"), eur(earned)],
                 ["designs", t("Designs you build"), String(builds.filter(b => b.active).length)],
-                ["products", t("Products on sale"), String(dash?.listings.length ?? 0)],
+                ["products", t("Products on sale"), String(onSale.length)],
               ].map(([key, label, value]) => (
                 <Panel key={key} className="p-[18px] flex flex-col gap-1.5">
                   <dt className="text-[13px] text-ifr-text-secondary">{label}</dt>
@@ -237,13 +243,25 @@ const Selling: NextPageWithLayout = () => {
                                 .join(" · ")}
                             </span>
                           </span>
-                          {step === "awaiting_payment" ? (
+                          {step === "canceled" ? (
+                            <StatusChip tone="grey">{t("Cancelled")}</StatusChip>
+                          ) : step === "awaiting_payment" ? (
                             <StatusChip tone="grey">{t("Awaiting payment")}</StatusChip>
                           ) : step === "to_fulfil" ? (
                             <>
                               <StatusChip tone="amber">
                                 {o.kind === "build" ? t("To build") : t("To deliver")}
                               </StatusChip>
+                              {o.capture_by ? (
+                                <span
+                                  className="text-[12px] text-ifr-text-secondary"
+                                  data-testid="market-sale-capture-by"
+                                >
+                                  {t("Deliver by {{date}}, or the payment lapses", {
+                                    date: new Date(o.capture_by).toLocaleDateString(),
+                                  })}
+                                </span>
+                              ) : null}
                               <button
                                 type="button"
                                 className="h-11 px-[18px] rounded-[6px] bg-ifr-green text-white font-semibold disabled:opacity-60"
@@ -294,6 +312,37 @@ const Selling: NextPageWithLayout = () => {
                               {o.receipt?.zenflows_event_id ? t("Recorded on Interfacer") : t("Done (local record)")}
                             </span>
                           )}
+                          {o.paid ?? o.captured ? (
+                            <span className="basis-full flex flex-wrap items-center gap-2">
+                              {o.open_case ? (
+                                <StatusChip tone="amber" testid="market-sale-request">
+                                  {o.open_case.kind === "cancellation"
+                                    ? t("The buyer asks to cancel")
+                                    : t("The buyer asks to return it")}
+                                </StatusChip>
+                              ) : null}
+                              <button
+                                type="button"
+                                className="text-[13px] font-semibold underline bg-transparent p-0"
+                                aria-expanded={expanded === o.id}
+                                onClick={() => setExpanded(expanded === o.id ? null : o.id)}
+                                data-testid="market-sale-aftersale"
+                              >
+                                {o.open_case ? t("Answer the request") : t("Returns and refunds")}
+                              </button>
+                            </span>
+                          ) : null}
+                          {expanded === o.id ? (
+                            <div className="basis-full border-t border-[#e3e4e6] pt-3">
+                              <AfterSalePanel
+                                compact
+                                client={market}
+                                orderId={o.id}
+                                onChange={refresh}
+                                item={rid ? { id: rid, name: name ?? "" } : undefined}
+                              />
+                            </div>
+                          ) : null}
                         </li>
                       );
                     })}
@@ -302,6 +351,8 @@ const Selling: NextPageWithLayout = () => {
               </section>
 
               <aside className="flex-[1_1_340px] min-w-0 flex flex-col gap-4">
+                {/* Only once connected: the panel reads the seller's account with the session token. */}
+                {dash ? <PayoutsPanel client={market} /> : null}
                 <Panel>
                   <div className="px-[18px] py-4 flex justify-between items-baseline border-b border-[#e3e4e6]">
                     <h2 className="m-0 text-[17px]" style={heading}>
@@ -351,13 +402,13 @@ const Selling: NextPageWithLayout = () => {
                       {t("Products on sale")}
                     </h2>
                   </div>
-                  {!dash?.listings.length ? (
+                  {!onSale.length ? (
                     <p className="m-0 px-[18px] py-4 text-[14px] text-ifr-text-secondary">
                       {t("Nothing on sale yet.")}
                     </p>
                   ) : (
                     <ul className="m-0 p-0 list-none">
-                      {dash.listings.map(l => (
+                      {onSale.map(l => (
                         <li key={l.id} className="px-[18px] py-3 [&:not(:last-child)]:border-b border-[#e3e4e6]">
                           <Link href={`/project/${l.catalog_resource_id}`}>
                             <a className="text-[14px] font-semibold text-ifr-text-primary">
