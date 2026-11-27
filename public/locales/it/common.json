@@ -721,5 +721,7 @@
   "Your card goes to Stripe only; Interfacer never sees it. The payment is taken once the order is placed, and refunded if it is cancelled.": "La carta va solo a Stripe: Interfacer non la vede mai. Il pagamento viene addebitato quando l'ordine è effettuato, e rimborsato se viene annullato.",
   "Your card goes to Stripe only; Interfacer never sees it. The payment is reserved now and taken only when the seller delivers; if the order is cancelled, nothing is charged.": "La carta va solo a Stripe: Interfacer non la vede mai. Il pagamento viene riservato ora e addebitato solo quando il venditore consegna; se l'ordine viene annullato, non viene addebitato nulla.",
   "Preparing the payment…": "Preparazione del pagamento…",
-  "Continue to payment · {{total}}": "Continua al pagamento · {{total}}"
+  "Continue to payment · {{total}}": "Continua al pagamento · {{total}}",
+  "This profile could not be loaded right now.": "Non è stato possibile caricare questo profilo, per ora.",
+  "Try again": "Riprova"
 }
