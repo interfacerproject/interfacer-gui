@@ -720,5 +720,6 @@
   "Preparing the payment…": "Zahlung wird vorbereitet…",
   "Continue to payment · {{total}}": "Weiter zur Zahlung · {{total}}",
   "This profile could not be loaded right now.": "Dieses Profil konnte gerade nicht geladen werden.",
-  "Try again": "Erneut versuchen"
+  "Try again": "Erneut versuchen",
+  "Check these numbers: {{fields}}": "Bitte diese Zahlen prüfen: {{fields}}"
 }

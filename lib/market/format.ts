@@ -143,6 +143,21 @@ export function orderCaptured(order: Order): boolean {
   return !!order.payment_collections?.some(pc => pc.payments?.some(p => !!p.captured_at));
 }
 
+// A number as people type it in a form: "1.50" or "1,50", spaces around.
+export function num(value: string | number | null | undefined): number {
+  if (typeof value === "number") return value;
+  const s = (value ?? "").trim().replace(",", ".");
+  return s === "" ? NaN : Number(s);
+}
+
+// The fields of a form whose value is not a number of zero or more: a signed
+// document must hold real numbers, and the person should know which to fix.
+export function badNumbers(values: Record<string, string>): string[] {
+  return Object.entries(values)
+    .filter(([, v]) => !(Number.isFinite(num(v)) && num(v) >= 0))
+    .map(([k]) => k);
+}
+
 // What the seller has earned: what was charged, less what went back to buyers.
 export function sellerEarned(orders: SellerOrder[]): number {
   return orders.filter(o => o.captured).reduce((sum, o) => sum + (o.total_eur ?? 0) - (o.refunded_eur ?? 0), 0);

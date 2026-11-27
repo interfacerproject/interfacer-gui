@@ -723,5 +723,6 @@
   "Preparing the payment…": "Préparation du paiement…",
   "Continue to payment · {{total}}": "Continuer vers le paiement · {{total}}",
   "This profile could not be loaded right now.": "Ce profil n'a pas pu être chargé pour le moment.",
-  "Try again": "Réessayer"
+  "Try again": "Réessayer",
+  "Check these numbers: {{fields}}": "Vérifiez ces nombres : {{fields}}"
 }

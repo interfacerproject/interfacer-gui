@@ -8,6 +8,8 @@ import {
   fitChecks,
   initials,
   listingsOnSale,
+  num,
+  badNumbers,
   sellerEarned,
   orderKind,
   orderResourceId,
@@ -88,6 +90,18 @@ test("orders: kind and resource come from the line metadata Medusa stamped at ch
   assert.equal(orderResourceId(build), "D1");
   assert.equal(orderKind(stock), "stock");
   assert.equal(orderResourceId(stock), "R1");
+});
+
+test("numbers as people type them: a decimal comma is a decimal point; a typo is caught, not signed", () => {
+  assert.equal(num("1,50"), 1.5);
+  assert.equal(num(" 12 "), 12);
+  assert.ok(Number.isNaN(num("0.30.2")));
+  assert.ok(Number.isNaN(num("")));
+  assert.deepEqual(badNumbers({ X: "140", Tolerance: "0.30.2", Pieces: "", Fee: "-1", Unit: "1,5" }), [
+    "Tolerance",
+    "Pieces",
+    "Fee",
+  ]);
 });
 
 test("earned: what was charged, less what was refunded", () => {
