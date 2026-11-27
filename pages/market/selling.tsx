@@ -15,7 +15,7 @@ import { useInBoxContext } from "hooks/useInBox";
 import { useMarketClient } from "hooks/useMarketClient";
 import { useMarketResources } from "hooks/useMarketResources";
 import type { BuildListing, SellerDashboard, SellerOrder } from "lib/market/types";
-import { eur } from "lib/market/format";
+import { eur, listingsOnSale, sellerEarned } from "lib/market/format";
 import { fulfilledNotice, sendMarketNotice } from "lib/market/notify";
 import { MarketHero, MarketNotice, Panel, StatusChip, TypeChip, heading, mono } from "components/market/ui";
 import { AfterSalePanel } from "components/market/AfterSalePanel";
@@ -119,8 +119,9 @@ const Selling: NextPageWithLayout = () => {
   };
 
   const orders = dash?.orders ?? [];
+  const onSale = listingsOnSale(dash);
   const open = orders.filter(o => !["done", "awaiting_payment", "canceled"].includes(stepOf(o)));
-  const earned = orders.filter(o => o.captured).reduce((sum, o) => sum + (o.total_eur ?? 0), 0);
+  const earned = sellerEarned(orders);
 
   return (
     <div className="bg-ifr-profile min-h-full">
@@ -174,7 +175,7 @@ const Selling: NextPageWithLayout = () => {
                 ["to-fulfil", t("To fulfil"), String(open.length)],
                 ["earned", t("Earned"), eur(earned)],
                 ["designs", t("Designs you build"), String(builds.filter(b => b.active).length)],
-                ["products", t("Products on sale"), String(dash?.listings.length ?? 0)],
+                ["products", t("Products on sale"), String(onSale.length)],
               ].map(([key, label, value]) => (
                 <Panel key={key} className="p-[18px] flex flex-col gap-1.5">
                   <dt className="text-[13px] text-ifr-text-secondary">{label}</dt>
@@ -401,13 +402,13 @@ const Selling: NextPageWithLayout = () => {
                       {t("Products on sale")}
                     </h2>
                   </div>
-                  {!dash?.listings.length ? (
+                  {!onSale.length ? (
                     <p className="m-0 px-[18px] py-4 text-[14px] text-ifr-text-secondary">
                       {t("Nothing on sale yet.")}
                     </p>
                   ) : (
                     <ul className="m-0 p-0 list-none">
-                      {dash.listings.map(l => (
+                      {onSale.map(l => (
                         <li key={l.id} className="px-[18px] py-3 [&:not(:last-child)]:border-b border-[#e3e4e6]">
                           <Link href={`/project/${l.catalog_resource_id}`}>
                             <a className="text-[14px] font-semibold text-ifr-text-primary">

@@ -7,13 +7,15 @@ import {
   eur,
   fitChecks,
   initials,
+  listingsOnSale,
+  sellerEarned,
   orderKind,
   orderResourceId,
   orderStage,
   parseRejection,
   processLabel,
 } from "../../lib/market/format";
-import type { Order, Receipt } from "../../lib/market/types";
+import type { ListingBinding, Order, Receipt, SellerDashboard, SellerOrder } from "../../lib/market/types";
 
 const req = {
   process: ["fdm_3d_print"],
@@ -86,6 +88,27 @@ test("orders: kind and resource come from the line metadata Medusa stamped at ch
   assert.equal(orderResourceId(build), "D1");
   assert.equal(orderKind(stock), "stock");
   assert.equal(orderResourceId(stock), "R1");
+});
+
+test("earned: what was charged, less what was refunded", () => {
+  const o = (captured: boolean, total_eur: number, refunded_eur?: number) =>
+    ({ captured, total_eur, refunded_eur } as unknown as SellerOrder);
+  assert.equal(sellerEarned([o(true, 64, 64), o(true, 30, 5), o(false, 48)]), 25);
+});
+
+test("products on sale: a listing whose one unit was ordered is not on sale, unless that order was cancelled", () => {
+  const l = (id: string) => ({ id, catalog_resource_id: "R" + id } as unknown as ListingBinding);
+  const o = (listing_id: string, status: string) =>
+    ({ id: "o" + listing_id, kind: "stock", listing_id, status } as unknown as SellerOrder);
+  const dash = {
+    listings: [l("1"), l("2"), l("3")],
+    orders: [o("1", "pending"), o("2", "canceled")],
+  } as unknown as SellerDashboard;
+  assert.deepEqual(
+    listingsOnSale(dash).map(x => x.id),
+    ["2", "3"]
+  );
+  assert.deepEqual(listingsOnSale(null), []);
 });
 
 test("order stage: a card authorised at checkout is paid; a cancelled order says so", () => {

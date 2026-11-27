@@ -5,7 +5,16 @@
 // fit between a design's requirements and a maker's capabilities, and where an
 // order stands. No React, no i18n: callers translate the labels they render.
 
-import type { Capabilities, Order, OrderItem, Receipt, Requirements } from "./types";
+import type {
+  Capabilities,
+  ListingBinding,
+  Order,
+  OrderItem,
+  Receipt,
+  Requirements,
+  SellerDashboard,
+  SellerOrder,
+} from "./types";
 
 export function eur(amount: number): string {
   return "€" + amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -132,6 +141,21 @@ export function orderResourceId(order: Order): string | null {
 
 export function orderCaptured(order: Order): boolean {
   return !!order.payment_collections?.some(pc => pc.payments?.some(p => !!p.captured_at));
+}
+
+// What the seller has earned: what was charged, less what went back to buyers.
+export function sellerEarned(orders: SellerOrder[]): number {
+  return orders.filter(o => o.captured).reduce((sum, o) => sum + (o.total_eur ?? 0) - (o.refunded_eur ?? 0), 0);
+}
+
+// A listing sells one unit: it is on sale until an order takes it, and again
+// if that order is cancelled.
+export function listingsOnSale(
+  dash: Pick<SellerDashboard, "listings" | "orders"> | null | undefined
+): ListingBinding[] {
+  if (!dash) return [];
+  const taken = new Set(dash.orders.filter(o => o.kind === "stock" && o.status !== "canceled").map(o => o.listing_id));
+  return dash.listings.filter(l => !taken.has(l.id));
 }
 
 // Paid from the buyer's side: charged, or (Stripe products) a card authorised

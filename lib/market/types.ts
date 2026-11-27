@@ -407,6 +407,8 @@ export interface SellerOrder {
   // Stripe stock orders are authorized (paid) but charged at delivery, by capture_by.
   paid?: boolean;
   capture_by?: string;
+  // Refunds done on this order (medusa: refunded_eur).
+  refunded_eur?: number;
   open_case?: OpenCase | null;
 }
 
