@@ -151,25 +151,48 @@ export function createMarketClient(opts: MarketClientOptions = {}) {
 
   // --- page-facing API (each returns a Result) ---
 
-  async function connect(): Promise<Result<Scene>> {
-    try {
-      scene = await api<Scene>(url("market/store/config"));
-      token = null;
-      if (opts.wallet) {
+  // One login at a time: components that connect together share it (a second
+  // challenge would make the first one's signature stale).
+  let connecting: Promise<Result<Scene>> | null = null;
+  function connect(): Promise<Result<Scene>> {
+    if (!connecting) connecting = connectOnce().finally(() => (connecting = null));
+    return connecting;
+  }
+
+  // A fresh challenge signed by the wallet. Medusa checks the signature with
+  // Zenflows; when that check times out under load it answers
+  // authorization_denied, so a refused login is tried once more.
+  async function walletLogin(wallet: NonNullable<typeof opts.wallet>) {
+    for (let attempt = 0; ; attempt++) {
+      try {
         const { challenge } = await api<{ challenge: string }>(
-          url("market/store/session") + "?" + new URLSearchParams({ person: opts.wallet.personId })
+          url("market/store/session") + "?" + new URLSearchParams({ person: wallet.personId })
         );
-        const signature = await opts.wallet.sign({
+        const signature = await wallet.sign({
           op: "commerce.session.create",
           params: { challenge },
-          person: opts.wallet.personId,
+          person: wallet.personId,
           ...audience(),
         });
-        const login = await api<{ token: string; customer_id: string; buyer_person_id: string; email: string }>(
+        return await api<{ token: string; customer_id: string; buyer_person_id: string; email: string }>(
           url("market/store/session"),
           {},
           signature
         );
+      } catch (e) {
+        const transient =
+          e instanceof MarketError && ["authorization_denied", "buyer_challenge_invalid"].includes(e.reason);
+        if (!transient || attempt >= 1) throw e;
+      }
+    }
+  }
+
+  async function connectOnce(): Promise<Result<Scene>> {
+    try {
+      scene = await api<Scene>(url("market/store/config"));
+      token = null;
+      if (opts.wallet) {
+        const login = await walletLogin(opts.wallet);
         if (login.buyer_person_id !== opts.wallet.personId) throw new MarketError("buyer_identity_mismatch", 403);
         token = login.token;
         scene = {

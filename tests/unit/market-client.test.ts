@@ -591,3 +591,32 @@ test("after-sale: the buyer signs a case with exactly its params; the seller sig
   );
   assert.ok(calls.filter(c => c.method === "POST").every(c => c.headers["X-Interfacer-Auth"] === "SIGNED"));
 });
+
+test("live connect: two connects at once share one login", async () => {
+  const { wallet } = liveWallet();
+  const { fetchImpl, calls } = scriptedFetch(liveRoutes());
+  const client = createMarketClient({ fetchImpl, wallet });
+  const [a, b] = await Promise.all([client.connect(), client.connect()]);
+  assert.equal(a.ok && b.ok, true);
+  assert.equal(calls.filter(c => c.method === "POST" && c.url.endsWith("/market/store/session")).length, 1);
+});
+
+test("live connect: a login refused while the signature check timed out is tried once more", async () => {
+  const { wallet } = liveWallet();
+  const routes = liveRoutes();
+  const base = scriptedFetch(routes);
+  let logins = 0;
+  const fetchImpl = (async (url: string, init: any = {}) => {
+    if ((init.method ?? "GET") === "POST" && url.split("?")[0].endsWith("/market/store/session") && logins++ === 0)
+      return {
+        status: 400,
+        ok: false,
+        headers: { get: () => null },
+        json: async () => ({ message: "authorization_denied" }),
+      } as any;
+    return base.fetchImpl(url, init);
+  }) as unknown as typeof fetch;
+  const res = await createMarketClient({ fetchImpl, wallet }).connect();
+  assert.equal(res.ok, true);
+  assert.equal(logins, 2);
+});
