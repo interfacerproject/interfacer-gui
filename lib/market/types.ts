@@ -215,7 +215,8 @@ export interface Order {
   metadata?: Record<string, unknown> | null;
   items?: OrderItem[];
   shipping_address?: Partial<ShippingAddress> | null;
-  payment_collections?: Array<{ payments?: Array<{ captured_at?: string | null }> }>;
+  status?: string;
+  payment_collections?: Array<{ payments?: Array<{ captured_at?: string | null; canceled_at?: string | null }> }>;
   [k: string]: unknown;
 }
 

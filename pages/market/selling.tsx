@@ -30,9 +30,10 @@ export async function getStaticProps({ locale }: { locale: string }) {
   };
 }
 
-type Step = "awaiting_payment" | "to_fulfil" | "to_sign" | "on_hold" | "done";
+type Step = "canceled" | "awaiting_payment" | "to_fulfil" | "to_sign" | "on_hold" | "done";
 
 function stepOf(order: SellerOrder): Step {
+  if (order.status === "canceled") return "canceled";
   // Stripe products are paid (authorized) at order, charged at delivery.
   if (!(order.paid ?? order.captured)) return "awaiting_payment";
   if (!order.receipt) return "to_fulfil";
@@ -118,7 +119,7 @@ const Selling: NextPageWithLayout = () => {
   };
 
   const orders = dash?.orders ?? [];
-  const open = orders.filter(o => !["done", "awaiting_payment"].includes(stepOf(o)));
+  const open = orders.filter(o => !["done", "awaiting_payment", "canceled"].includes(stepOf(o)));
   const earned = orders.filter(o => o.captured).reduce((sum, o) => sum + (o.total_eur ?? 0), 0);
 
   return (
@@ -241,7 +242,9 @@ const Selling: NextPageWithLayout = () => {
                                 .join(" · ")}
                             </span>
                           </span>
-                          {step === "awaiting_payment" ? (
+                          {step === "canceled" ? (
+                            <StatusChip tone="grey">{t("Cancelled")}</StatusChip>
+                          ) : step === "awaiting_payment" ? (
                             <StatusChip tone="grey">{t("Awaiting payment")}</StatusChip>
                           ) : step === "to_fulfil" ? (
                             <>

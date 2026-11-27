@@ -134,12 +134,19 @@ export function orderCaptured(order: Order): boolean {
   return !!order.payment_collections?.some(pc => pc.payments?.some(p => !!p.captured_at));
 }
 
+// Paid from the buyer's side: charged, or (Stripe products) a card authorised
+// at checkout and charged at delivery. A released authorisation is not paid.
+export function orderPaid(order: Order): boolean {
+  return !!order.payment_collections?.some(pc => pc.payments?.some(p => !!p.captured_at || !p.canceled_at));
+}
+
 // placed → paid → made (handed over; the Interfacer record may still be
-// syncing) → recorded (the handover is on the ledger, or local-only).
-export type OrderStage = "placed" | "paid" | "made" | "recorded";
+// syncing) → recorded (the handover is on the ledger, or local-only); or canceled.
+export type OrderStage = "placed" | "paid" | "made" | "recorded" | "canceled";
 
 export function orderStage(order: Order, receipt: Receipt | null | undefined): OrderStage {
-  if (!orderCaptured(order)) return "placed";
+  if (order.status === "canceled") return "canceled";
+  if (!orderPaid(order)) return "placed";
   if (!receipt) return "paid";
   if (receipt.zenflows_sync && receipt.zenflows_sync.status !== "done") return "made";
   return "recorded";

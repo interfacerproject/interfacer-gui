@@ -14,7 +14,9 @@ const STAGES: OrderStage[] = ["placed", "paid", "made", "recorded"];
 export function useStageLabel() {
   const { t } = useTranslation("common");
   return (stage: OrderStage, kind: OrderKind) =>
-    stage === "placed"
+    stage === "canceled"
+      ? t("Cancelled")
+      : stage === "placed"
       ? t("Awaiting payment")
       : stage === "paid"
       ? kind === "build"
@@ -31,7 +33,14 @@ export function useStageLabel() {
 
 export function StageChip({ stage, kind }: { stage: OrderStage; kind: OrderKind }) {
   const label = useStageLabel();
-  const tone = stage === "placed" ? "grey" : stage === "paid" ? "amber" : stage === "made" ? "blue" : "green";
+  const tone =
+    stage === "placed" || stage === "canceled"
+      ? "grey"
+      : stage === "paid"
+      ? "amber"
+      : stage === "made"
+      ? "blue"
+      : "green";
   return (
     <StatusChip tone={tone} testid="market-order-stage">
       {label(stage, kind)}
@@ -52,7 +61,8 @@ export function ProgressSteps({ stage, kind }: { stage: OrderStage; kind: OrderK
     { title: t("Recorded on Interfacer"), sub: t("Ownership and passport are yours") },
   ];
   // Progress index: placed=0 → step 0 current; paid → step 1 current; made → step 3 current; recorded → all done.
-  const current = at === 0 ? 0 : at === 1 ? 1 : at === 2 ? 3 : 4;
+  // A cancelled order shows no step done or under way.
+  const current = stage === "canceled" ? -1 : at === 0 ? 0 : at === 1 ? 1 : at === 2 ? 3 : 4;
   return (
     <ol
       aria-label={t("Order progress")}

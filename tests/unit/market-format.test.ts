@@ -88,6 +88,18 @@ test("orders: kind and resource come from the line metadata Medusa stamped at ch
   assert.equal(orderResourceId(stock), "R1");
 });
 
+test("order stage: a card authorised at checkout is paid; a cancelled order says so", () => {
+  // Stripe products: the payment is authorised at checkout and captured at delivery.
+  const authorised = { payment_collections: [{ payments: [{ captured_at: null, canceled_at: null }] }] };
+  assert.equal(orderStage({ id: "o", ...authorised }, null), "paid");
+  const released = {
+    payment_collections: [{ payments: [{ captured_at: null, canceled_at: "2026-11-27T00:00:00Z" }] }],
+  };
+  assert.equal(orderStage({ id: "o", ...released }, null), "placed");
+  assert.equal(orderStage({ id: "o", status: "canceled", ...released }, null), "canceled");
+  assert.equal(orderStage({ id: "o", payment_collections: [{ payments: [] }] }, null), "placed");
+});
+
 test("order stage: placed → paid → made (record syncing) → recorded", () => {
   const receipt = { id: "r", zenflows_sync: { status: "pending" } } as unknown as Receipt;
   assert.equal(orderStage({ id: "o" }, null), "placed");
