@@ -145,8 +145,11 @@ function ProfileTabContent({
 
   const dataQueryIdentifier = "economicResources";
 
+  // Wait for the tab's type: without it the query lists every resource of the
+  // person (a Designs tab showing their products), and may answer last.
   const { loading, data, fetchMore, refetch, variables } = useQuery<FetchInventoryQuery>(FETCH_RESOURCES, {
     variables: { last: 12, filter },
+    skip: !specId,
   });
 
   const { loadMore, showEmptyState, items, getHasNextPage } = useLoadMore({
@@ -327,7 +330,7 @@ function ProfileTabContent({
       </div>
 
       {/* Results grid */}
-      {loading && !projects?.length ? (
+      {(loading || !specId) && !projects?.length ? (
         <div className="flex items-center justify-center py-20">
           <div
             className="animate-spin rounded-full border-2 border-ifr border-t-ifr-green"

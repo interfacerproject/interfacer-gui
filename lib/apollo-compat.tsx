@@ -37,9 +37,14 @@ export function useQuery<TData = any, TVars = Record<string, any>>(
   const [loading, setLoading] = useState(!options?.skip);
   const [error, setError] = useState<any>(undefined);
   const mountedRef = useRef(true);
+  // Only the latest request may set the state: an earlier one that answers
+  // late (other variables, a slow server) must not overwrite it.
+  const seqRef = useRef(0);
 
   const doFetch = useCallback(
     async (overrideVars?: Record<string, any>) => {
+      const seq = ++seqRef.current;
+      const current = () => mountedRef.current && seq === seqRef.current;
       if (!client || options?.skip) {
         setLoading(false);
         return { data: undefined as TData | undefined };
@@ -49,19 +54,19 @@ export function useQuery<TData = any, TVars = Record<string, any>>(
       try {
         const res = await client.graphql.request<any>(query, v);
         throwIfGraphQLErrors(res);
-        if (mountedRef.current) {
+        if (current()) {
           setData(res.data);
           setError(undefined);
         }
         return { data: res.data as TData | undefined, error: undefined };
       } catch (e) {
-        if (mountedRef.current) {
+        if (current()) {
           setData(undefined);
           setError(e);
         }
         return { data: undefined as TData | undefined, error: e };
       } finally {
-        if (mountedRef.current) setLoading(false);
+        if (current()) setLoading(false);
       }
     },
     [client, query, JSON.stringify(options?.variables), options?.skip]
